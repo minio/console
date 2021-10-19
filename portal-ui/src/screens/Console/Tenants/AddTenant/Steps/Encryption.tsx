@@ -43,6 +43,7 @@ import {
   IValidation,
 } from "../../../../../utils/validationFunctions";
 import { KeyPair } from "../../ListTenants/utils";
+import { ISecurityContext } from "../../types";
 
 interface IEncryptionProps {
   classes: any;
@@ -94,6 +95,8 @@ interface IEncryptionProps {
   vaultCertificate: KeyPair;
   vaultCA: KeyPair;
   gemaltoCA: KeyPair;
+  kesSecurityContext: ISecurityContext;
+  replicas: string;
 }
 
 const styles = (theme: Theme) =>
@@ -155,6 +158,8 @@ const Encryption = ({
   vaultCertificate,
   vaultCA,
   gemaltoCA,
+  kesSecurityContext,
+  replicas,
 }: IEncryptionProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
@@ -187,6 +192,44 @@ const Encryption = ({
     let encryptionValidation: IValidation[] = [];
 
     if (enableEncryption) {
+      encryptionValidation = [
+        ...encryptionValidation,
+        {
+          fieldKey: "replicas",
+          required: true,
+          value: replicas,
+          customValidation: parseInt(replicas) < 1,
+          customValidationMessage: "Replicas needs to be 1 or greater",
+        },
+        {
+          fieldKey: "kes_securityContext_runAsUser",
+          required: true,
+          value: kesSecurityContext.runAsUser,
+          customValidation:
+            kesSecurityContext.runAsUser === "" ||
+            parseInt(kesSecurityContext.runAsUser) < 0,
+          customValidationMessage: `runAsUser must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "kes_securityContext_runAsGroup",
+          required: true,
+          value: kesSecurityContext.runAsGroup,
+          customValidation:
+            kesSecurityContext.runAsGroup === "" ||
+            parseInt(kesSecurityContext.runAsGroup) < 0,
+          customValidationMessage: `runAsGroup must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "kes_securityContext_fsGroup",
+          required: true,
+          value: kesSecurityContext.fsGroup,
+          customValidation:
+            kesSecurityContext.fsGroup === "" ||
+            parseInt(kesSecurityContext.fsGroup) < 0,
+          customValidationMessage: `fsGroup must be present and be 0 or more`,
+        },
+      ];
+
       if (enableCustomCerts) {
         encryptionValidation = [
           ...encryptionValidation,
@@ -368,6 +411,8 @@ const Encryption = ({
     serverCertificate.encoded_cert,
     clientCertificate.encoded_key,
     clientCertificate.encoded_cert,
+    kesSecurityContext,
+    replicas,
   ]);
 
   return (
@@ -961,6 +1006,122 @@ const Encryption = ({
               </Grid>
             </Fragment>
           )}
+          <div className={classes.headerElement}>
+            <h3 className={classes.h3Section}>Additional Configurations</h3>
+          </div>
+          <Grid item xs={12}>
+            <Fragment>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  type="number"
+                  min="1"
+                  id="replicas"
+                  name="replicas"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("replicas", e.target.value);
+                    cleanValidation("replicas");
+                  }}
+                  label="Replicas"
+                  value={replicas}
+                  required
+                  error={validationErrors["replicas"] || ""}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <span className={classes.descriptionText}>
+                  SecurityContext for KES pods
+                </span>
+              </Grid>
+              <br />
+              <Grid item xs={12}>
+                <div className={classes.multiContainer}>
+                  <div>
+                    <InputBoxWrapper
+                      type="number"
+                      id="kes_securityContext_runAsUser"
+                      name="kes_securityContext_runAsUser"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("kesSecurityContext", {
+                          ...kesSecurityContext,
+                          runAsUser: e.target.value,
+                        });
+                        cleanValidation("kes_securityContext_runAsUser");
+                      }}
+                      label="Run As User"
+                      value={kesSecurityContext.runAsUser}
+                      required
+                      error={
+                        validationErrors["kes_securityContext_runAsUser"] || ""
+                      }
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <InputBoxWrapper
+                      type="number"
+                      id="kes_securityContext_runAsGroup"
+                      name="kes_securityContext_runAsGroup"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("kesSecurityContext", {
+                          ...kesSecurityContext,
+                          runAsGroup: e.target.value,
+                        });
+                        cleanValidation("kes_securityContext_runAsGroup");
+                      }}
+                      label="Run As Group"
+                      value={kesSecurityContext.runAsGroup}
+                      required
+                      error={
+                        validationErrors["kes_securityContext_runAsGroup"] || ""
+                      }
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <InputBoxWrapper
+                      type="number"
+                      id="kes_securityContext_fsGroup"
+                      name="kes_securityContext_fsGroup"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("kesSecurityContext", {
+                          ...kesSecurityContext,
+                          fsGroup: e.target.value,
+                        });
+                        cleanValidation("kes_securityContext_fsGroup");
+                      }}
+                      label="FsGroup"
+                      value={kesSecurityContext.fsGroup}
+                      required
+                      error={
+                        validationErrors["kes_securityContext_fsGroup"] || ""
+                      }
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </Grid>
+              <br />
+              <Grid item xs={12}>
+                <div className={classes.multiContainer}>
+                  <FormSwitchWrapper
+                    value="kesSecurityContextRunAsNonRoot"
+                    id="kes_securityContext_runAsNonRoot"
+                    name="kes_securityContext_runAsNonRoot"
+                    checked={kesSecurityContext.runAsNonRoot}
+                    onChange={(e) => {
+                      const targetD = e.target;
+                      const checked = targetD.checked;
+                      updateField("kesSecurityContext", {
+                        ...kesSecurityContext,
+                        runAsNonRoot: checked,
+                      });
+                    }}
+                    label={"Do not run as Root"}
+                  />
+                </div>
+              </Grid>
+            </Fragment>
+          </Grid>
         </Fragment>
       )}
     </Paper>
@@ -968,6 +1129,7 @@ const Encryption = ({
 };
 
 const mapState = (state: AppState) => ({
+  replicas: state.tenants.createTenant.fields.encryption.replicas,
   enableEncryption:
     state.tenants.createTenant.fields.encryption.enableEncryption,
   encryptionType: state.tenants.createTenant.fields.encryption.encryptionType,
@@ -1014,6 +1176,8 @@ const mapState = (state: AppState) => ({
   gemaltoCA: state.tenants.createTenant.certificates.gemaltoCA,
   enableCustomCerts:
     state.tenants.createTenant.fields.security.enableCustomCerts,
+  kesSecurityContext:
+    state.tenants.createTenant.fields.encryption.kesSecurityContext,
 });
 
 const connector = connect(mapState, {

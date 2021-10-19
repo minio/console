@@ -1329,6 +1329,12 @@ definitions:
         default: 5
       image:
         type: string
+      securityContext:
+        type: object
+        $ref: '#/definitions/securityContext'
+      postgres_securityContext:
+        type: object
+        $ref: '#/definitions/securityContext'
       postgres_image:
         type: string
       postgres_init_image:
@@ -1452,6 +1458,9 @@ definitions:
           azure:
             type: object
             $ref: "#/definitions/azureConfiguration"
+          securityContext:
+            type: object
+            $ref: '#/definitions/securityContext'
 
   vaultConfiguration:
     type: object
@@ -1696,6 +1705,9 @@ definitions:
         $ref: "#/definitions/poolAffinity"
       tolerations:
         $ref: "#/definitions/poolTolerations"
+      securityContext:
+        type: object
+        $ref: '#/definitions/securityContext'
 
   poolTolerations:
     description: Tolerations allows users to set entries like effect,
@@ -2332,14 +2344,11 @@ definitions:
        - fsGroup
      properties:
        runAsUser:
-         type: integer
-         format: int64
+         type: string
        runAsGroup:
-         type: integer
-         format: int64
+         type: string
        runAsNonRoot:
          type: boolean
        fsGroup:
-         type: integer
-         format: int64
+         type: string
 

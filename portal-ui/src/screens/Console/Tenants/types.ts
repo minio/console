@@ -121,6 +121,13 @@ export interface INameTenantFields {
   selectedStorageClass: string;
 }
 
+export interface ISecurityContext {
+  runAsUser: string;
+  runAsGroup: string;
+  runAsNonRoot: boolean;
+  fsGroup: string;
+}
+
 export interface IConfigureFields {
   customImage: boolean;
   imageName: string;
@@ -131,6 +138,7 @@ export interface IConfigureFields {
   exposeMinIO: boolean;
   exposeConsole: boolean;
   prometheusCustom: boolean;
+  tenantCustom: boolean;
   logSearchCustom: boolean;
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;
@@ -145,6 +153,10 @@ export interface IConfigureFields {
   prometheusImage: string;
   prometheusSidecarImage: string;
   prometheusInitImage: string;
+  tenantSecurityContext: ISecurityContext;
+  logSearchSecurityContext: ISecurityContext;
+  logSearchPostgresSecurityContext: ISecurityContext;
+  prometheusSecurityContext: ISecurityContext;
 }
 
 export interface IIdentityProviderFields {
@@ -212,6 +224,8 @@ export interface IEncryptionFields {
   gcpPrivateKeyID: string;
   gcpPrivateKey: string;
   enableCustomCertsForKES: boolean;
+  replicas: string;
+  kesSecurityContext: ISecurityContext;
 }
 
 export interface ITenantSizeFields {

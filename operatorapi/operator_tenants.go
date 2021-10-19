@@ -1147,6 +1147,14 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		minInst.Spec.KES.Labels = tenantReq.Encryption.Labels
 		minInst.Spec.KES.Annotations = tenantReq.Encryption.Annotations
 		minInst.Spec.KES.NodeSelector = tenantReq.Encryption.NodeSelector
+
+		if tenantReq.Encryption.SecurityContext != nil {
+			sc, err := parseSecurityContext(tenantReq.Encryption.SecurityContext)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			minInst.Spec.KES.SecurityContext = sc
+		}
 	}
 	// External TLS CA certificates for MinIO
 	if tenantReq.TLS != nil && len(tenantReq.TLS.CaCertificates) > 0 {
@@ -1229,6 +1237,8 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	logSearchImage := ""
 	logSearchPgImage := ""
 	logSearchPgInitImage := ""
+	var logSearchSecurityContext *corev1.PodSecurityContext
+	var logSearchPgSecurityContext *corev1.PodSecurityContext
 
 	if tenantReq.LogSearchConfiguration != nil {
 		if tenantReq.LogSearchConfiguration.StorageSize != nil {
@@ -1248,6 +1258,22 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 		if tenantReq.LogSearchConfiguration.PostgresInitImage != "" {
 			logSearchPgInitImage = tenantReq.LogSearchConfiguration.PostgresInitImage
+		}
+		// if security context for logSearch is present, configure it.
+		if tenantReq.LogSearchConfiguration.SecurityContext != nil {
+			sc, err := parseSecurityContext(tenantReq.LogSearchConfiguration.SecurityContext)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			logSearchSecurityContext = sc
+		}
+		// if security context for logSearch is present, configure it.
+		if tenantReq.LogSearchConfiguration.PostgresSecurityContext != nil {
+			sc, err := parseSecurityContext(tenantReq.LogSearchConfiguration.PostgresSecurityContext)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			logSearchPgSecurityContext = sc
 		}
 	}
 
@@ -1289,6 +1315,12 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 	if logSearchPgInitImage != "" {
 		minInst.Spec.Log.Db.InitImage = logSearchPgInitImage
+	}
+	if logSearchSecurityContext != nil {
+		minInst.Spec.Log.SecurityContext = logSearchSecurityContext
+	}
+	if logSearchPgSecurityContext != nil {
+		minInst.Spec.Log.Db.SecurityContext = logSearchPgSecurityContext
 	}
 
 	prometheusDiskSpace := 5      // Default is 5 by API
@@ -1336,13 +1368,11 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 	// if security context for prometheus is present, configure it.
 	if tenantReq.PrometheusConfiguration != nil && tenantReq.PrometheusConfiguration.SecurityContext != nil {
-		sc := tenantReq.PrometheusConfiguration.SecurityContext
-		minInst.Spec.Prometheus.SecurityContext = &corev1.PodSecurityContext{
-			RunAsUser:    sc.RunAsUser,
-			RunAsGroup:   sc.RunAsGroup,
-			RunAsNonRoot: sc.RunAsNonRoot,
-			FSGroup:      sc.FsGroup,
+		sc, err := parseSecurityContext(tenantReq.PrometheusConfiguration.SecurityContext)
+		if err != nil {
+			return nil, prepareError(err)
 		}
+		minInst.Spec.Prometheus.SecurityContext = sc
 	}
 
 	// expose services
@@ -1911,6 +1941,14 @@ func parseTenantPoolRequest(poolParams *models.Pool) (*miniov2.Pool, error) {
 		NodeSelector: poolParams.NodeSelector,
 		Affinity:     affinity,
 		Tolerations:  tolerations,
+	}
+	// if security context for Tenant is present, configure it.
+	if poolParams.SecurityContext != nil {
+		sc, err := parseSecurityContext(poolParams.SecurityContext)
+		if err != nil {
+			return nil, err
+		}
+		pool.SecurityContext = sc
 	}
 	return pool, nil
 }

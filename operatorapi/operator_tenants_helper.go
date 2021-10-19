@@ -38,6 +38,31 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// parseSecurityContext validate and return securityContext for pods
+func parseSecurityContext(sc *models.SecurityContext) (*corev1.PodSecurityContext, error) {
+	if sc == nil {
+		return nil, errors.New("invalid security context")
+	}
+	runAsUser, err := strconv.ParseInt(*sc.RunAsUser, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	RunAsGroup, err := strconv.ParseInt(*sc.RunAsGroup, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	FsGroup, err := strconv.ParseInt(*sc.FsGroup, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	return &corev1.PodSecurityContext{
+		RunAsUser:    &runAsUser,
+		RunAsGroup:   &RunAsGroup,
+		RunAsNonRoot: sc.RunAsNonRoot,
+		FSGroup:      &FsGroup,
+	}, nil
+}
+
 // tenantUpdateCertificates receives the keyPair certificates (public and private keys) for Minio and Console and will try
 // to replace the existing kubernetes secrets with the new values, then will restart the affected pods so the new volumes can be mounted
 func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClientI, clientSet K8sClientI, namespace string, params operator_api.TenantUpdateCertificateParams) error {

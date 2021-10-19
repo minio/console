@@ -39,7 +39,7 @@ import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
-import { ICertificatesItems, IFieldStore } from "../types";
+import { ICertificatesItems, IFieldStore, ISecurityContext } from "../types";
 import { resetAddTenantForm, updateAddField } from "../actions";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
@@ -172,6 +172,7 @@ const AddTenant = ({
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
     const memorySize = fields.tenantSize.memorySize;
+    const tenantCustom = fields.configure.tenantCustom;
     const logSearchCustom = fields.configure.logSearchCustom;
     const prometheusCustom = fields.configure.prometheusCustom;
     const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
@@ -191,6 +192,15 @@ const AddTenant = ({
     const affinityType = fields.affinity.podAffinity;
     const nodeSelectorLabels = fields.affinity.nodeSelectorLabels;
     const withPodAntiAffinity = fields.affinity.withPodAntiAffinity;
+
+    const tenantSecurityContext = fields.configure.tenantSecurityContext;
+    const logSearchSecurityContext = fields.configure.logSearchSecurityContext;
+    const logSearchPostgresSecurityContext =
+      fields.configure.logSearchPostgresSecurityContext;
+    const prometheusSecurityContext =
+      fields.configure.prometheusSecurityContext;
+    const kesSecurityContext = fields.encryption.kesSecurityContext;
+    const kesReplicas = fields.encryption.replicas;
 
     if (addSending) {
       const poolName = generatePoolName([]);
@@ -248,6 +258,7 @@ const AddTenant = ({
                 memory: memorySize.limit,
               },
             },
+            securityContext: tenantCustom ? tenantSecurityContext : null,
             ...affinityObject,
           },
         ],
@@ -274,6 +285,8 @@ const AddTenant = ({
             image: logSearchImage,
             postgres_image: logSearchPostgresImage,
             postgres_init_image: logSearchPostgresInitImage,
+            securityContext: logSearchSecurityContext,
+            postgres_securityContext: logSearchPostgresSecurityContext,
           },
         };
       } else {
@@ -296,6 +309,7 @@ const AddTenant = ({
             image: prometheusImage,
             sidecar_image: prometheusSidecarImage,
             init_image: prometheusInitImage,
+            securityContext: prometheusSecurityContext,
           },
         };
       } else {
@@ -517,6 +531,8 @@ const AddTenant = ({
         dataSend = {
           ...dataSend,
           encryption: {
+            replicas: kesReplicas,
+            securityContext: kesSecurityContext,
             image: kesImage,
             ...encryptionClientKeyPair,
             ...encryptionServerKeyPair,
@@ -626,14 +642,22 @@ const AddTenant = ({
       history.push("/tenants");
     },
   };
-
+  const requiredPages = [
+    "nameTenant",
+    "tenantSize",
+    "configure",
+    "affinity",
+    "identityProvider",
+    "security",
+    "encryption",
+  ];
   const createButton = {
     label: "Create",
     type: "submit",
     enabled:
       !addSending &&
       selectedStorageClass !== "" &&
-      validPages.includes("tenantSize"),
+      requiredPages.every((v) => validPages.includes(v)),
     action: () => {
       setAddSending(true);
     },
