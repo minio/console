@@ -328,7 +328,16 @@ func downloadObject(ctx context.Context, client MCClient, versionID *string) (io
 // getDeleteObjectResponse returns whether there was an error on deletion of object
 func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteObjectParams) *models.Error {
 	ctx := context.Background()
-	s3Client, err := newS3BucketClient(session, params.BucketName, params.Path)
+	var prefix string
+	if params.Path != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Path)
+		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+		if err != nil {
+			return prepareError(err)
+		}
+		prefix = string(decodedPrefix)
+	}
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -343,7 +352,7 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	if params.VersionID != nil {
 		version = *params.VersionID
 	}
-	err = deleteObjects(ctx, mcClient, params.BucketName, params.Path, version, rec)
+	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec)
 	if err != nil {
 		return prepareError(err)
 	}
