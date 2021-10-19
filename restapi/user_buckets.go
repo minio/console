@@ -838,7 +838,7 @@ func getBucketRewindResponse(session *models.Principal, params user_api.GetBucke
 	defer cancel()
 	var prefix = ""
 	if params.Prefix != nil {
-		encodedPrefix := *params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return nil, prepareError(err)

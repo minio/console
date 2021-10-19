@@ -77,6 +77,7 @@ import EditIcon from "../../../../../../icons/EditIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
+import { decodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -256,7 +257,7 @@ const ObjectDetails = ({
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
   const internalPaths = get(match.params, "subpaths", "");
-  const internalPathsDecoded = atob(internalPaths) || "";
+  const internalPathsDecoded = decodeFileName(internalPaths) || "";
   const bucketName = match.params["bucketName"];
   const allPathData = internalPathsDecoded.split("/");
   const currentItem = allPathData.pop() || "";

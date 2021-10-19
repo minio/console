@@ -136,3 +136,8 @@ func ExpireSessionCookie() http.Cookie {
 		SameSite: http.SameSiteLaxMode,
 	}
 }
+
+// SanitizeEncodedPrefix replaces spaces for + since those are lost when you do GET parameters
+func SanitizeEncodedPrefix(rawPrefix string) string {
+	return strings.Replace(rawPrefix, " ", "+", -1)
+}

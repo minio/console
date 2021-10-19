@@ -37,6 +37,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
+import { decodeFileName } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -164,7 +165,9 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
     setSelectedUser(selectionElement);
   };
 
-  const userLoggedIn = atob(localStorage.getItem("userLoggedIn") || "");
+  const userLoggedIn = decodeFileName(
+    localStorage.getItem("userLoggedIn") || ""
+  );
 
   const tableActions = [
     { type: "view", onClick: viewAction },
