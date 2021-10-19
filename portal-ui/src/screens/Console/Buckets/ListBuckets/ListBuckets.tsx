@@ -114,6 +114,9 @@ const styles = (theme: Theme) =>
       marginLeft: 10,
     },
     ...containerForHeader(theme.spacing(4)),
+    constrainedContainer: {
+      maxWidth: 1180,
+    },
   });
 
 interface IListBucketsProps {
@@ -360,7 +363,7 @@ const ListBuckets = ({
           </Fragment>
         }
       />
-      <Grid container>
+      <Grid container className={classes.constrainedContainer}>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.buttonTray}>
             <Button
