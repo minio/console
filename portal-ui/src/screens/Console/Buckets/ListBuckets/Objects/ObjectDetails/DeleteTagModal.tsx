@@ -32,6 +32,7 @@ import { setErrorSnackMessage } from "../../../../../../actions";
 import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
+import { encodeFileName } from "../../../../../../common/utils";
 
 interface IDeleteTagModal {
   deleteOpen: boolean;
@@ -83,7 +84,7 @@ const DeleteTagModal = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${btoa(
+        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${encodeFileName(
           selectedObject
         )}&version_id=${verID}`,
         { tags: cleanObject }

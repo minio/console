@@ -30,7 +30,11 @@ import {
 } from "./types";
 import api from "../../../../../../common/api";
 import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
-import { niceBytes } from "../../../../../../common/utils";
+import {
+  decodeFileName,
+  encodeFileName,
+  niceBytes,
+} from "../../../../../../common/utils";
 import DeleteObject from "./DeleteObject";
 
 import {
@@ -327,7 +331,7 @@ const ListObjects = ({
         const rewindParsed = rewindDate.toISOString();
         let pathPrefix = "";
         if (internalPaths) {
-          const decodedPath = atob(internalPaths);
+          const decodedPath = decodeFileName(internalPaths);
           pathPrefix = decodedPath.endsWith("/")
             ? decodedPath
             : decodedPath + "/";
@@ -336,7 +340,7 @@ const ListObjects = ({
           .invoke(
             "GET",
             `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-              pathPrefix ? `?prefix=${btoa(pathPrefix)}` : ``
+              pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
             }`
           )
           .then((res: RewindObjectList) => {
@@ -372,7 +376,7 @@ const ListObjects = ({
     if (loading) {
       let pathPrefix = "";
       if (internalPaths) {
-        const decodedPath = atob(internalPaths);
+        const decodedPath = decodeFileName(internalPaths);
         pathPrefix = decodedPath.endsWith("/")
           ? decodedPath
           : decodedPath + "/";
@@ -385,7 +389,7 @@ const ListObjects = ({
         .invoke(
           "GET",
           `/api/v1/buckets/${bucketName}/objects${
-            pathPrefix ? `?prefix=${btoa(pathPrefix)}` : ``
+            pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
           }`
         )
         .then((res: BucketObjectsList) => {
@@ -411,7 +415,7 @@ const ListObjects = ({
 
               let pathPrefix = "";
               if (internalPaths) {
-                const decodedPath = atob(internalPaths);
+                const decodedPath = decodeFileName(internalPaths);
                 pathPrefix = decodedPath.endsWith("/")
                   ? decodedPath
                   : decodedPath + "/";
@@ -421,7 +425,7 @@ const ListObjects = ({
                 .invoke(
                   "GET",
                   `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-                    pathPrefix ? `?prefix=${btoa(pathPrefix)}` : ``
+                    pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
                   }`
                 )
                 .then((res: RewindObjectList) => {
@@ -624,7 +628,7 @@ const ListObjects = ({
 
   const openPath = (idElement: string) => {
     const newPath = `/buckets/${bucketName}/browse${
-      idElement ? `/${btoa(idElement)}` : ``
+      idElement ? `/${encodeFileName(idElement)}` : ``
     }`;
     history.push(newPath);
     return;
@@ -633,10 +637,10 @@ const ListObjects = ({
   const uploadObject = (e: any): void => {
     let pathPrefix = "";
     if (internalPaths) {
-      const decodedPath = atob(internalPaths);
+      const decodedPath = decodeFileName(internalPaths);
       pathPrefix = decodedPath.endsWith("/") ? decodedPath : decodedPath + "/";
     }
-    upload(e, bucketName, btoa(pathPrefix));
+    upload(e, bucketName, encodeFileName(pathPrefix));
   };
 
   const openPreview = (fileObject: BucketObject) => {
@@ -895,7 +899,7 @@ const ListObjects = ({
 
   const ccPath = internalPaths.split("/").pop();
 
-  const pageTitle = ccPath !== "" ? atob(ccPath) : "/";
+  const pageTitle = ccPath !== "" ? decodeFileName(ccPath) : "/";
   // console.log("pageTitle", pageTitle);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
   // console.log("currentPath", currentPath);
