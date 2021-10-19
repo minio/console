@@ -19,6 +19,7 @@ import { createStyles, withStyles } from "@material-ui/core/styles";
 import { Grid, LinearProgress } from "@material-ui/core";
 import { BucketObject } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
+import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = () =>
   createStyles({
@@ -72,7 +73,7 @@ const PreviewFile = ({
   let path = "";
 
   if (object) {
-    const encodedPath = btoa(object.name);
+    const encodedPath = encodeFileName(object.name);
     path = `${window.location.origin}/api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
     if (object.version_id) {
       path = path.concat(`&version_id=${object.version_id}`);
