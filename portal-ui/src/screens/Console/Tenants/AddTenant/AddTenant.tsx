@@ -45,7 +45,6 @@ import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
 import Security from "./Steps/Security";
 import Encryption from "./Steps/Encryption";
-import Preview from "./Steps/Preview";
 import Affinity from "./Steps/Affinity";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import history from "../../../../history";
@@ -705,11 +704,6 @@ const AddTenant = ({
       componentRender: <Encryption />,
       buttons: [cancelButton, createButton],
     },
-    {
-      label: "Review",
-      componentRender: <Preview />,
-      buttons: [cancelButton, createButton],
-    },
   ];
 
   let filteredWizardSteps = wizardSteps;
@@ -732,7 +726,7 @@ const AddTenant = ({
         />
       )}
       <PageHeader label={"Create New Tenant"} />
-      <Grid container className={classes.container}>
+      <Grid container>
         {addSending && (
           <Grid item xs={12}>
             <LinearProgress />

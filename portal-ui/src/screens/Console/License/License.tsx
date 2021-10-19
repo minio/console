@@ -274,6 +274,12 @@ const styles = (theme: Theme) =>
     clickableBlock: {
       cursor: "pointer",
     },
+    agplFlavorText: {
+      color: "white",
+    },
+    chooseFlavorText: {
+      color: "#777777",
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -494,7 +500,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                       className={classes.clickableBlock}
                     >
                       <Typography component="h3">Version 3</Typography>
-                      <Typography component="h6">
+                      <Typography className={classes.agplFlavorText}>
                         The GNU Affero General Public License is a free,
                         copyleft license for software and other kinds of works,
                         specifically designed to ensure cooperation with the
@@ -564,7 +570,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   >
                     Choosing between GNU AGPL v3 and Commercial License
                   </Typography>
-                  <Typography component="h6">
+                  <Typography className={classes.chooseFlavorText}>
                     If you are building proprietary applications, you may want
                     to choose the commercial license included as part of the
                     Standard and Enterprise subscription plans. Applications
