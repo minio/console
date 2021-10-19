@@ -114,6 +114,9 @@ const styles = (theme: Theme) =>
       marginLeft: 10,
     },
     ...containerForHeader(theme.spacing(4)),
+    constrainedContainer: {
+      maxWidth: 1180,
+    },
   });
 
 interface IListBucketsProps {
