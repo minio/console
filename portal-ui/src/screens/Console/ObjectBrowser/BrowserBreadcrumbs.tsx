@@ -24,6 +24,7 @@ import { createStyles, Theme } from "@material-ui/core/styles";
 import { ObjectBrowserState } from "./reducers";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { Link } from "react-router-dom";
+import { encodeFileName } from "../../../common/utils";
 
 interface ObjectBrowserReducer {
   objectBrowser: ObjectBrowserState;
@@ -60,7 +61,7 @@ const BrowserBreadcrumbs = ({
     (objectItem: string, index: number) => {
       const subSplit = splitPaths.slice(0, index + 1).join("/");
       const route = `/buckets/${bucketName}/browse/${
-        subSplit ? `${btoa(subSplit)}` : ``
+        subSplit ? `${encodeFileName(subSplit)}` : ``
       }`;
       return (
         <React.Fragment key={`breadcrumbs-${index.toString()}`}>

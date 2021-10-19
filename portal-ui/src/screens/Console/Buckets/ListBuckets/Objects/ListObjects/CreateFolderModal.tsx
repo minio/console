@@ -23,6 +23,7 @@ import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrar
 import { connect } from "react-redux";
 import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
 import history from "../../../../../../history";
+import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 
 interface ICreateFolder {
   classes: any;
@@ -57,7 +58,7 @@ const CreateFolderModal = ({
   const [nameInputError, setNameInputError] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const currentPath = `${bucketName}/${atob(folderName)}`;
+  const currentPath = `${bucketName}/${decodeFileName(folderName)}`;
 
   const resetForm = () => {
     setPathUrl("");
@@ -66,12 +67,12 @@ const CreateFolderModal = ({
   const createProcess = () => {
     let folderPath = "";
     if (folderName !== "") {
-      const decodedFolderName = atob(folderName);
+      const decodedFolderName = decodeFileName(folderName);
       folderPath = decodedFolderName.endsWith("/")
         ? decodedFolderName
         : `${decodedFolderName}/`;
     }
-    const newPath = `/buckets/${bucketName}/browse/${btoa(
+    const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
       `${folderPath}${pathUrl}`
     )}/`;
     history.push(newPath);

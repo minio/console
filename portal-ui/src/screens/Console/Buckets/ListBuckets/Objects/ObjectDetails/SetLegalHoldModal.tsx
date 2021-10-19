@@ -27,6 +27,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../../common/api";
+import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,7 +77,7 @@ const SetLegalHoldModal = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/legalhold?prefix=${btoa(
+        `/api/v1/buckets/${bucketName}/objects/legalhold?prefix=${encodeFileName(
           objectName
         )}&version_id=${versionId}`,
         { status: legalHoldEnabled ? "enabled" : "disabled" }

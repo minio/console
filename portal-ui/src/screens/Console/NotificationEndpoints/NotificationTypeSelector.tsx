@@ -24,6 +24,9 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../history";
+import { BackSettingsIcon } from "../../../icons";
+import { Link } from "react-router-dom";
+import BackLink from "../../../common/BackLink";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -35,6 +38,14 @@ const styles = (theme: Theme) =>
   createStyles({
     ...settingsCommon,
     ...typesSelection,
+    mainCont: {
+      ...settingsCommon.mainCont,
+      maxWidth: 1180,
+    },
+    link: {
+      textDecoration: "none",
+      color: theme.palette.primary.main,
+    },
   });
 
 const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
@@ -43,7 +54,10 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
       <PageHeader label="Notification Endpoints" />
       <Grid container className={classes.mainCont}>
         <Grid item xs={12} className={classes.mainTitle}>
-          Pick a supported service
+          <BackLink
+            to="/notification-endpoints"
+            label="Pick a supported service"
+          />
         </Grid>
         <Grid item xs={12} className={classes.centerElements}>
           <div className={classes.iconContainer}>

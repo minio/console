@@ -29,6 +29,7 @@ import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapp
 import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
+import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -119,7 +120,7 @@ const SetRetention = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${btoa(
+        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${encodeFileName(
           selectedObject
         )}&version_id=${versionId}`,
         {
@@ -144,7 +145,7 @@ const SetRetention = ({
     api
       .invoke(
         "DELETE",
-        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${btoa(
+        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${encodeFileName(
           selectedObject
         )}&version_id=${versionId}`
       )
