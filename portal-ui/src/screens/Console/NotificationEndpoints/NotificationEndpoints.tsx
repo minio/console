@@ -50,11 +50,7 @@ const NotificationEndpoints = ({
   return (
     <Fragment>
       <PageHeader label="Notification Endpoints" />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <ListNotificationEndpoints />
-        </Grid>
-      </Grid>
+      <ListNotificationEndpoints />
     </Fragment>
   );
 };
