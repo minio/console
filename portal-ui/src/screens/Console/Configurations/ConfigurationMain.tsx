@@ -14,18 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Grid } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
-import { AppState } from "../../../store";
-import { connect } from "react-redux";
 import { ISessionResponse } from "../types";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 
 interface IConfigurationMain {
   classes: any;
@@ -44,48 +39,19 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const ConfigurationMain = ({
-  classes,
-  session,
-  distributedSetup,
-}: IConfigurationMain) => {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
-
+const ConfigurationMain = ({ classes }: IConfigurationMain) => {
   return (
     <Fragment>
       <PageHeader label="Settings" />
       <Grid container className={classes.container}>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={selectedTab === 0}
-              onClick={() => {
-                setSelectedTab(0);
-              }}
-            >
-              <ListItemText primary="Configurations" />
-            </ListItem>
-          </List>
-        </Grid>
-        <Grid item xs={10}>
-          {selectedTab === 0 && (
-            <Grid item xs={12}>
-              <h1 className={classes.sectionTitle}>Configurations</h1>
-              <ConfigurationsList />
-            </Grid>
-          )}
+        <Grid item xs={12}>
+          <Grid item xs={12}>
+            <ConfigurationsList />
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  distributedSetup: state.system.distributedSetup,
-});
-
-const connector = connect(mapState, {});
-
-export default withStyles(styles)(connector(ConfigurationMain));
+export default withStyles(styles)(ConfigurationMain);
