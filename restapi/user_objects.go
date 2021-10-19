@@ -87,7 +87,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			var prefixPath string
 			var filename string
 			if params.Prefix != "" {
-				encodedPrefix := params.Prefix
+				encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 				decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 				if err != nil {
 					log.Println(err)
@@ -187,7 +187,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	var withVersions bool
 	var withMetadata bool
 	if params.Prefix != nil {
-		encodedPrefix := *params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return nil, prepareError(err)
@@ -290,7 +290,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	ctx := context.Background()
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return nil, prepareError(err)
@@ -492,7 +492,7 @@ func getUploadObjectResponse(session *models.Principal, params user_api.PostBuck
 func uploadFiles(ctx context.Context, client MinioClient, params user_api.PostBucketsBucketNameObjectsUploadParams) error {
 	var prefix string
 	if params.Prefix != nil {
-		encodedPrefix := *params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return err
@@ -541,7 +541,7 @@ func getShareObjectResponse(session *models.Principal, params user_api.ShareObje
 	ctx := context.Background()
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return nil, prepareError(err)
@@ -595,7 +595,7 @@ func getSetObjectLegalHoldResponse(session *models.Principal, params user_api.Pu
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return prepareError(err)
@@ -631,7 +631,7 @@ func getSetObjectRetentionResponse(session *models.Principal, params user_api.Pu
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return prepareError(err)
@@ -684,7 +684,7 @@ func deleteObjectRetentionResponse(session *models.Principal, params user_api.De
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return prepareError(err)
@@ -719,7 +719,7 @@ func getPutObjectTagsResponse(session *models.Principal, params user_api.PutObje
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := params.Prefix
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return prepareError(err)
