@@ -66,6 +66,10 @@ const styles = (theme: Theme) =>
       ...settingsCommon.customTitle,
       marginTop: 0,
     },
+    mainCont: {
+      ...settingsCommon.mainCont,
+      maxWidth: 1180,
+    },
   });
 
 const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
@@ -79,9 +83,9 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
       <Grid container className={classes.mainCont}>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.mainTitle}>
-            Pick a supported Configuration
+            Pick an object store
           </Grid>
-          <Grid item xs={12} className={classes.settingsFormContainer}>
+          <Grid item xs={12}>
             <Grid item xs={12}>
               <Grid item xs={12} className={classes.centerElements}>
                 <div className={classes.iconContainer}>
