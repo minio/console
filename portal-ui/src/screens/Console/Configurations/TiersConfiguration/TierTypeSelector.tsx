@@ -26,6 +26,9 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { tierTypes } from "./utils";
+import { BackSettingsIcon } from "../../../../icons";
+import { Link } from "react-router-dom";
+import BackLink from "../../../../common/BackLink";
 
 interface ITypeTiersConfig {
   classes: any;
@@ -70,6 +73,10 @@ const styles = (theme: Theme) =>
       ...settingsCommon.mainCont,
       maxWidth: 1180,
     },
+    link: {
+      textDecoration: "none",
+      color: theme.palette.primary.main,
+    },
   });
 
 const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
@@ -83,7 +90,7 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
       <Grid container className={classes.mainCont}>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.mainTitle}>
-            Pick an object store
+            <BackLink to="/tiers" label="Pick an object store" />
           </Grid>
           <Grid item xs={12}>
             <Grid item xs={12}>
