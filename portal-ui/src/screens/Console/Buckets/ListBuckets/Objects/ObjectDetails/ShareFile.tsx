@@ -35,6 +35,7 @@ import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { LinearProgress } from "@material-ui/core";
+import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -95,7 +96,7 @@ const ShareFile = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects?prefix=${btoa(
+            `/api/v1/buckets/${bucketName}/objects?prefix=${encodeFileName(
               dataObject.name
             )}${distributedSetup ? "&with_versions=true" : ""}`
           )
@@ -143,7 +144,7 @@ const ShareFile = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects/share?prefix=${btoa(
+            `/api/v1/buckets/${bucketName}/objects/share?prefix=${encodeFileName(
               dataObject.name
             )}&version_id=${versionID}${
               selectedDate !== "" ? `&expires=${diffDate}ms` : ""

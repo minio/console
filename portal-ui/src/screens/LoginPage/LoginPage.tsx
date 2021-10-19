@@ -41,6 +41,7 @@ import api from "../../common/api";
 import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
+import { encodeFileName } from "../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -240,7 +241,7 @@ const Login = ({
         // We set the state in redux
         userLoggedIn(true);
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
-          localStorage.setItem("userLoggedIn", btoa(accessKey));
+          localStorage.setItem("userLoggedIn", encodeFileName(accessKey));
         }
         history.push("/");
       })

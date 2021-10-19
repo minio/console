@@ -26,6 +26,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
+import { decodeFileName } from "../../../../../../common/utils";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -107,7 +108,7 @@ const AddTagModal = ({
       >
         <Grid container>
           <h3 className={classes.pathLabel}>
-            Selected Object: {atob(selectedObject)}
+            Selected Object: {decodeFileName(selectedObject)}
           </h3>
           <Grid item xs={12}>
             <InputBoxWrapper

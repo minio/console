@@ -582,3 +582,11 @@ export const representationNumber = (number: number | undefined) => {
 
   return `${returnValue}${unit}`;
 };
+
+export const encodeFileName = (name: string) => {
+  return btoa(unescape(encodeURIComponent(name)));
+};
+
+export const decodeFileName = (text: string) => {
+  return decodeURIComponent(escape(window.atob(text)));
+};
