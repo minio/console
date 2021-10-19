@@ -17,23 +17,17 @@
 package operatorapi
 
 import (
-	"bytes"
-	"context"
 	"net/http"
-	"time"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/minio/console/restapi"
-
-	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/user_api"
-	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/pkg/auth"
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 )
@@ -55,10 +49,8 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookies := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
-			for _, cookie := range cookies {
-				http.SetCookie(w, &cookie)
-			}
+			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
 			user_api.NewLoginCreated().WithPayload(loginResponse).WriteResponse(w, p)
 		})
 	})
@@ -69,10 +61,8 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookies := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
-			for _, cookie := range cookies {
-				http.SetCookie(w, &cookie)
-			}
+			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
 			user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse).WriteResponse(w, p)
 		})
 	})
@@ -83,10 +73,8 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookies := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
-			for _, cookie := range cookies {
-				http.SetCookie(w, &cookie)
-			}
+			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
 			user_api.NewLoginOperatorCreated().WithPayload(loginResponse).WriteResponse(w, p)
 		})
 	})
@@ -101,7 +89,7 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), credentials.GetActions())
+	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey())
 	if err != nil {
 		LogError("error authenticating user: %v", err)
 		return nil, errInvalidCredentials
@@ -109,67 +97,22 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 	return &token, nil
 }
 
-// getAccountPolicy will return the associated policy of the current account
-func getAccountPolicy(ctx context.Context, client restapi.MinioAdmin) (*iampolicy.Policy, error) {
-	// Obtain the current policy assigned to this user
-	// necessary for generating the list of allowed endpoints
-	accountInfo, err := client.AccountInfo(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return iampolicy.ParseConfig(bytes.NewReader(accountInfo.Policy))
-}
-
 // getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
-func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*restapi.ConsoleCredentials, error) {
+func getConsoleCredentials(accessKey, secretKey string) (*restapi.ConsoleCredentials, error) {
 	creds, err := newConsoleCredentials(secretKey)
 	if err != nil {
 		return nil, err
 	}
-	// cCredentials will be sts credentials, account credentials will be need it in the scenario the user wish
-	// to change its password
-	cCredentials := &restapi.ConsoleCredentials{
+	return &restapi.ConsoleCredentials{
 		ConsoleCredentials: creds,
 		AccountAccessKey:   accessKey,
-	}
-	tokens, err := cCredentials.Get()
-	if err != nil {
-		return nil, err
-	}
-	// initialize admin client
-	mAdminClient, err := restapi.NewMinioAdminClient(&models.Principal{
-		STSAccessKeyID:     tokens.AccessKeyID,
-		STSSecretAccessKey: tokens.SecretAccessKey,
-		STSSessionToken:    tokens.SessionToken,
-	})
-	if err != nil {
-		return nil, err
-	}
-	userAdminClient := restapi.AdminClient{Client: mAdminClient}
-	// Obtain the current policy assigned to this user
-	// necessary for generating the list of allowed endpoints
-	policy, err := getAccountPolicy(ctx, userAdminClient)
-	if err != nil {
-		return nil, err
-	}
-	// by default every user starts with an empty array of available actions
-	// therefore we would have access only to pages that doesn't require any privilege
-	// ie: service-account page
-	var actions []string
-	// if a policy is assigned to this user we parse the actions from there
-	if policy != nil {
-		actions = acl.GetActionsStringFromPolicy(policy)
-	}
-	cCredentials.Actions = actions
-	return cCredentials, nil
+	}, nil
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
 	// prepare console credentials
-	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
+	consolCreds, err := getConsoleCredentials(*lr.AccessKey, *lr.SecretKey)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
@@ -214,7 +157,7 @@ func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	consoleCredentials := restapi.ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
+	consoleCredentials := restapi.ConsoleCredentials{ConsoleCredentials: creds}
 	token, err := login(consoleCredentials)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
@@ -240,7 +183,7 @@ func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginRe
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	consoleCreds := restapi.ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
+	consoleCreds := restapi.ConsoleCredentials{ConsoleCredentials: creds}
 	token, err := login(consoleCreds)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)

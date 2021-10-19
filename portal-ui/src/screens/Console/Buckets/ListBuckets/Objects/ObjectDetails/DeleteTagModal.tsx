@@ -83,7 +83,9 @@ const DeleteTagModal = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${selectedObject}&version_id=${verID}`,
+        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${btoa(
+          selectedObject
+        )}&version_id=${verID}`,
         { tags: cleanObject }
       )
       .then((res: any) => {

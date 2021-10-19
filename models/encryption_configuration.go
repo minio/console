@@ -57,6 +57,9 @@ type EncryptionConfiguration struct {
 	// replicas
 	Replicas string `json:"replicas,omitempty"`
 
+	// security context
+	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 	// server
 	Server *KeyPairConfiguration `json:"server,omitempty"`
 
@@ -89,6 +92,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 
 		Replicas string `json:"replicas,omitempty"`
 
+		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 		Server *KeyPairConfiguration `json:"server,omitempty"`
 
 		Vault *VaultConfiguration `json:"vault,omitempty"`
@@ -110,6 +115,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 	m.Image = dataAO1.Image
 
 	m.Replicas = dataAO1.Replicas
+
+	m.SecurityContext = dataAO1.SecurityContext
 
 	m.Server = dataAO1.Server
 
@@ -142,6 +149,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 
 		Replicas string `json:"replicas,omitempty"`
 
+		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 		Server *KeyPairConfiguration `json:"server,omitempty"`
 
 		Vault *VaultConfiguration `json:"vault,omitempty"`
@@ -160,6 +169,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	dataAO1.Image = m.Image
 
 	dataAO1.Replicas = m.Replicas
+
+	dataAO1.SecurityContext = m.SecurityContext
 
 	dataAO1.Server = m.Server
 
@@ -199,6 +210,10 @@ func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGemalto(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecurityContext(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -306,6 +321,24 @@ func (m *EncryptionConfiguration) validateGemalto(formats strfmt.Registry) error
 	return nil
 }
 
+func (m *EncryptionConfiguration) validateSecurityContext(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.SecurityContext) { // not required
+		return nil
+	}
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *EncryptionConfiguration) validateServer(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Server) { // not required
@@ -368,6 +401,10 @@ func (m *EncryptionConfiguration) ContextValidate(ctx context.Context, formats s
 	}
 
 	if err := m.contextValidateGemalto(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSecurityContext(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -447,6 +484,20 @@ func (m *EncryptionConfiguration) contextValidateGemalto(ctx context.Context, fo
 		if err := m.Gemalto.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gemalto")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
 			}
 			return err
 		}

@@ -1732,6 +1732,10 @@ func init() {
             "replicas": {
               "type": "string"
             },
+            "securityContext": {
+              "type": "object",
+              "$ref": "#/definitions/securityContext"
+            },
             "server": {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
@@ -2136,6 +2140,14 @@ func init() {
         "postgres_init_image": {
           "type": "string"
         },
+        "postgres_securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -2444,6 +2456,10 @@ func init() {
         },
         "resources": {
           "$ref": "#/definitions/poolResources"
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "servers": {
           "type": "integer"
@@ -2778,19 +2794,16 @@ func init() {
       ],
       "properties": {
         "fsGroup": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         },
         "runAsGroup": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         },
         "runAsNonRoot": {
           "type": "boolean"
         },
         "runAsUser": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         }
       }
     },
@@ -5570,6 +5583,10 @@ func init() {
             "replicas": {
               "type": "string"
             },
+            "securityContext": {
+              "type": "object",
+              "$ref": "#/definitions/securityContext"
+            },
             "server": {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
@@ -5962,6 +5979,14 @@ func init() {
         "postgres_init_image": {
           "type": "string"
         },
+        "postgres_securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -6204,6 +6229,10 @@ func init() {
         },
         "resources": {
           "$ref": "#/definitions/poolResources"
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "servers": {
           "type": "integer"
@@ -6469,19 +6498,16 @@ func init() {
       ],
       "properties": {
         "fsGroup": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         },
         "runAsGroup": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         },
         "runAsNonRoot": {
           "type": "boolean"
         },
         "runAsUser": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         }
       }
     },

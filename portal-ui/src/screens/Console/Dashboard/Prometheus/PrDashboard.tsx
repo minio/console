@@ -17,35 +17,34 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import ScheduleIcon from "@material-ui/icons/Schedule";
-import WatchLaterIcon from "@material-ui/icons/WatchLater";
+
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, GridSize } from "@material-ui/core";
 import {
   actionsTray,
   widgetContainerCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { IDashboardPanel, widgetType } from "./types";
+import { IDashboardPanel } from "./types";
 import { getWidgetsWithValue, panelsConfiguration } from "./utils";
 import { TabPanel } from "../../../shared/tabs";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
-import SingleValueWidget from "./Widgets/SingleValueWidget";
-import LinearGraphWidget from "./Widgets/LinearGraphWidget";
-import BarChartWidget from "./Widgets/BarChartWidget";
-import PieChartWidget from "./Widgets/PieChartWidget";
-import SingleRepWidget from "./Widgets/SingleRepWidget";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import api from "../../../../common/api";
-import SyncIcon from "../../../../icons/SyncIcon";
+
 import TabSelector from "../../Common/TabSelector/TabSelector";
-import SimpleWidget from "./Widgets/SimpleWidget";
 import MergedWidgets from "./MergedWidgets";
+import { componentToUse } from "./widgetUtils";
+import ZoomWidget from "./ZoomWidget";
+import { AppState } from "../../../../store";
+import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
 
 interface IPrDashboard {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
   apiPrefix?: string;
+  zoomOpen: boolean;
+  zoomWidget: null | IDashboardPanel;
 }
 
 const styles = (theme: Theme) =>
@@ -82,6 +81,8 @@ const PrDashboard = ({
   classes,
   displayErrorMessage,
   apiPrefix = "admin",
+  zoomOpen,
+  zoomWidget,
 }: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
@@ -92,88 +93,6 @@ const PrDashboard = ({
 
   const panels = useCallback(
     (tabName: string, filterPanels?: number[][] | null) => {
-      const componentToUse = (value: IDashboardPanel, index: number) => {
-        switch (value.type) {
-          case widgetType.singleValue:
-            return (
-              <SingleValueWidget
-                title={value.title}
-                panelItem={value}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                propLoading={loading}
-                apiPrefix={apiPrefix}
-              />
-            );
-          case widgetType.simpleWidget:
-            return (
-              <SimpleWidget
-                title={value.title}
-                panelItem={value}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                propLoading={loading}
-                apiPrefix={apiPrefix}
-                iconWidget={value.widgetIcon}
-              />
-            );
-          case widgetType.pieChart:
-            return (
-              <PieChartWidget
-                title={value.title}
-                panelItem={value}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                propLoading={loading}
-                apiPrefix={apiPrefix}
-              />
-            );
-          case widgetType.linearGraph:
-          case widgetType.areaGraph:
-            return (
-              <LinearGraphWidget
-                title={value.title}
-                panelItem={value}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                propLoading={loading}
-                hideYAxis={value.disableYAxis}
-                xAxisFormatter={value.xAxisFormatter}
-                yAxisFormatter={value.yAxisFormatter}
-                apiPrefix={apiPrefix}
-                areaWidget={value.type === widgetType.areaGraph}
-              />
-            );
-          case widgetType.barChart:
-            return (
-              <BarChartWidget
-                title={value.title}
-                panelItem={value}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                propLoading={loading}
-                apiPrefix={apiPrefix}
-              />
-            );
-          case widgetType.singleRep:
-            const fillColor = value.fillColor ? value.fillColor : value.color;
-            return (
-              <SingleRepWidget
-                title={value.title}
-                panelItem={value}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                propLoading={loading}
-                color={value.color as string}
-                fillColor={fillColor as string}
-                apiPrefix={apiPrefix}
-              />
-            );
-          default:
-            return null;
-        }
-      };
-
       return filterPanels?.map((panelLine, indexLine) => {
         const totalPanelsContained = panelLine.length;
 
@@ -216,16 +135,28 @@ const PrDashboard = ({
                               title={panelInfo.title}
                               leftComponent={componentToUse(
                                 panelInfo.mergedPanels[0],
-                                0
+                                timeStart,
+                                timeEnd,
+                                loading,
+                                apiPrefix
                               )}
                               rightComponent={componentToUse(
                                 panelInfo.mergedPanels[1],
-                                1
+                                timeStart,
+                                timeEnd,
+                                loading,
+                                apiPrefix
                               )}
                             />
                           </Fragment>
                         ) : (
-                          componentToUse(panelInfo, indexPanel)
+                          componentToUse(
+                            panelInfo,
+                            timeStart,
+                            timeEnd,
+                            loading,
+                            apiPrefix
+                          )
                         )}
                       </Fragment>
                     ) : null}
@@ -313,45 +244,23 @@ const PrDashboard = ({
 
   return (
     <Fragment>
-      <Grid
-        item
-        xs={12}
-        className={`${classes.actionsTray} ${classes.timeContainers}`}
-      >
-        <span className={classes.filterTitle}>Filter:</span>
-        <span className={`${classes.filterTitle} ${classes.schedulerIcon}`}>
-          <ScheduleIcon />
-        </span>
-        <span className={classes.label}>Start Time:</span>
-        <DateTimePickerWrapper
-          value={timeStart}
-          onChange={setTimeStart}
-          forSearchBlock
-          id="stTime"
-          noInputIcon
+      {zoomOpen && (
+        <ZoomWidget
+          modalOpen={zoomOpen}
+          timeStart={timeStart}
+          timeEnd={timeEnd}
+          widgetRender={0}
+          value={zoomWidget}
+          apiPrefix={apiPrefix}
         />
-        <span className={`${classes.filterTitle} ${classes.schedulerIcon}`}>
-          <WatchLaterIcon />
-        </span>
-        <span className={classes.label}>End Time:</span>
-        <DateTimePickerWrapper
-          value={timeEnd}
-          onChange={setTimeEnd}
-          forSearchBlock
-          id="endTime"
-          noInputIcon
-        />
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          onClick={triggerLoad}
-          endIcon={<SyncIcon />}
-          className={classes.syncButton}
-        >
-          Sync
-        </Button>
-      </Grid>
+      )}
+      <DateRangeSelector
+        timeStart={timeStart}
+        setTimeStart={setTimeStart}
+        timeEnd={timeEnd}
+        setTimeEnd={setTimeEnd}
+        triggerSync={triggerLoad}
+      />
       <Grid item xs={12}>
         <TabSelector
           selectedTab={curTab}
@@ -379,11 +288,13 @@ const PrDashboard = ({
     </Fragment>
   );
 };
-/*
-<
-*/
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  zoomOpen: state.dashboard.zoom.openZoom,
+  zoomWidget: state.dashboard.zoom.widgetRender,
+});
+
+const connector = connect(mapState, {
   displayErrorMessage: setErrorSnackMessage,
 });
 

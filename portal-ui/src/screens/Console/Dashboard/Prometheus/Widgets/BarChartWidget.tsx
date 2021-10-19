@@ -28,6 +28,7 @@ import {
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { CircularProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import ZoomOutMapIcon from "@material-ui/icons/ZoomOutMap";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
@@ -36,6 +37,7 @@ import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
+import { openZoomPage } from "../../actions";
 
 interface IBarChartWidget {
   classes: any;
@@ -46,6 +48,8 @@ interface IBarChartWidget {
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;
+  zoomActivated?: boolean;
+  openZoomPage: typeof openZoomPage;
 }
 
 const styles = (theme: Theme) =>
@@ -84,6 +88,8 @@ const BarChartWidget = ({
   propLoading,
   displayErrorMessage,
   apiPrefix,
+  zoomActivated = false,
+  openZoomPage,
 }: IBarChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
@@ -147,15 +153,31 @@ const BarChartWidget = ({
   }
 
   return (
-    <div className={classes.singleValueContainer}>
-      <div className={classes.titleContainer}>{title}</div>
+    <div className={zoomActivated ? "" : classes.singleValueContainer}>
+      {!zoomActivated && (
+        <div className={classes.titleContainer}>
+          {title}{" "}
+          <button
+            onClick={() => {
+              openZoomPage(panelItem);
+            }}
+            className={classes.zoomChartIcon}
+          >
+            <ZoomOutMapIcon />
+          </button>
+        </div>
+      )}
       {loading && (
         <div className={classes.loadingAlign}>
           <CircularProgress />
         </div>
       )}
       {!loading && (
-        <div className={classes.contentContainer}>
+        <div
+          className={
+            zoomActivated ? classes.zoomChartCont : classes.contentContainer
+          }
+        >
           <ResponsiveContainer width="99%">
             <BarChart
               data={data as object[]}
@@ -178,7 +200,7 @@ const BarChartWidget = ({
                   dataKey={bar.dataKey}
                   fill={bar.color}
                   background={bar.background}
-                  barSize={12}
+                  barSize={zoomActivated ? 25 : 12}
                 >
                   {barChartConfiguration.length === 1 ? (
                     <Fragment>
@@ -214,6 +236,7 @@ const BarChartWidget = ({
 
 const connector = connect(null, {
   displayErrorMessage: setErrorSnackMessage,
+  openZoomPage: openZoomPage,
 });
 
 export default withStyles(styles)(connector(BarChartWidget));

@@ -76,9 +76,6 @@ export const deleteCookie = (name: string) => {
 export const clearSession = () => {
   storage.removeItem("token");
   deleteCookie("token");
-  for (let i = 1; i < 10; i++) {
-    deleteCookie(`token${i}`);
-  }
 };
 
 // timeFromDate gets time string from date input
@@ -558,4 +555,30 @@ export const prettyNumber = (usage: number | undefined) => {
   }
 
   return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const representationNumber = (number: number | undefined) => {
+  if (number === undefined) {
+    return "0";
+  }
+
+  let returnValue = number.toString();
+  let unit = "";
+
+  if (number > 999 && number < 1000000) {
+    returnValue = (number / 1000).toFixed(1); // convert to K, numbers > 999
+    unit = "K";
+  } else if (number >= 1000000 && number < 1000000000) {
+    returnValue = (number / 1000000).toFixed(1); // convert to M, numbers >= 1 million
+    unit = "M";
+  } else if (number >= 1000000000) {
+    returnValue = (number / 1000000000).toFixed(1); // convert to B, numbers >= 1 billion
+    unit = "B";
+  }
+
+  if (returnValue.endsWith(".0")) {
+    returnValue = returnValue.slice(0, -2);
+  }
+
+  return `${returnValue}${unit}`;
 };

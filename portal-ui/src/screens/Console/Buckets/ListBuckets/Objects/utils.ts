@@ -23,8 +23,7 @@ export const download = (
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  const encodedPath = btoa(objectPath);
-  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${encodedPath}`;
+  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}`;
   if (versionID) {
     path = path.concat(`&version_id=${versionID}`);
   }
