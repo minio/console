@@ -23,17 +23,20 @@ import ScheduleIcon from "@material-ui/icons/Schedule";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import { OpenListIcon } from "../../../../../icons";
 
 interface IDateTimePicker {
   value: any;
   onChange: (value: any) => any;
   classes: any;
   forSearchBlock?: boolean;
+  forFilterContained?: boolean;
   label?: string;
   required?: boolean;
   tooltip?: string;
   id: string;
   disabled?: boolean;
+  noInputIcon?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -65,6 +68,31 @@ const styles = (theme: Theme) =>
         color: "#393939",
       },
     },
+    dateSelectorFilterOverride: {
+      width: 180,
+      height: 42,
+      marginLeft: 20,
+      padding: 0,
+      borderRadius: 5,
+      "&.MuiInput-underline:hover:not(.Mui-disabled):before": {
+        borderBottom: 0,
+      },
+      "&:hover": {
+        "&:before, &:after": {
+          borderColor: "transparent",
+          borderBottom: 0,
+        },
+      },
+      "&:before, &:after": {
+        borderColor: "transparent",
+        borderBottom: 0,
+      },
+      "& input": {
+        fontSize: 12,
+        fontWeight: "bold",
+        color: "#081C42",
+      },
+    },
     dateSelectorFormOverride: {
       width: "100%",
       maxWidth: 840,
@@ -79,6 +107,11 @@ const styles = (theme: Theme) =>
       position: "relative",
       paddingRight: 25,
     },
+    openListIcon: {
+      color: "#9D9E9D",
+      width: 8,
+      marginTop: 2,
+    },
     ...fieldBasic,
     ...tooltipHelper,
   });
@@ -88,24 +121,52 @@ const DateTimePickerWrapper = ({
   onChange,
   classes,
   forSearchBlock = false,
+  forFilterContained = false,
   label,
   tooltip = "",
   required,
   id,
   disabled = false,
+  noInputIcon = false,
 }: IDateTimePicker) => {
+  let adornment = {};
+
+  if (!noInputIcon) {
+    adornment = {
+      startAdornment: (
+        <InputAdornment position="start">
+          <ScheduleIcon />
+        </InputAdornment>
+      ),
+    };
+  }
+
+  if (forFilterContained) {
+    adornment = {
+      endAdornment: (
+        <InputAdornment position="end">
+          <OpenListIcon className={classes.openListIcon} />
+        </InputAdornment>
+      ),
+    };
+  }
+
+  let classOverriden = "";
+
+  if (forSearchBlock) {
+    classOverriden = classes.dateSelectorOverride;
+  } else if (forFilterContained) {
+    classOverriden = classes.dateSelectorFilterOverride;
+  }
+
   const inputItem = (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <DateTimePicker
         value={value}
         onChange={onChange}
         InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <ScheduleIcon />
-            </InputAdornment>
-          ),
-          className: forSearchBlock ? classes.dateSelectorOverride : "",
+          ...adornment,
+          className: classOverriden,
         }}
         label=""
         ampm={false}
@@ -128,7 +189,11 @@ const DateTimePickerWrapper = ({
 
   return (
     <Fragment>
-      <Grid item xs={12} className={`${classes.fieldContainer}`}>
+      <Grid
+        item
+        xs={12}
+        className={!forFilterContained ? classes.fieldContainer : ""}
+      >
         {label !== "" && (
           <InputLabel htmlFor={id} className={classes.inputLabel}>
             <span>

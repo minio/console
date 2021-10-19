@@ -23,6 +23,7 @@ import clsx from "clsx";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   CircularProgress,
+  LinearProgress,
   Paper,
   Table,
   TableBody,
@@ -76,7 +77,6 @@ import EditIcon from "../../../../../../icons/EditIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
-import { BucketObject } from "../ListObjects/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -246,7 +246,8 @@ const ObjectDetails = ({
   const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
-  const [actualInfo, setActualInfo] = useState<IFileInfo>(emptyFile);
+  const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
+  const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -255,25 +256,23 @@ const ObjectDetails = ({
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
   const internalPaths = get(match.params, "subpaths", "");
+  const internalPathsDecoded = atob(internalPaths) || "";
   const bucketName = match.params["bucketName"];
-  const allPathData = internalPaths.split("/");
-  const currentItem = allPathData.pop();
+  const allPathData = internalPathsDecoded.split("/");
+  const currentItem = allPathData.pop() || "";
 
-  const previewObject: BucketObject = {
-    name: actualInfo.name,
-    version_id: actualInfo.version_id || "null",
-    size: parseInt(actualInfo.size || "0"),
-    content_type: "",
-    last_modified: new Date(actualInfo.last_modified),
-  };
+  // calculate object name to display
+  let objectNameArray: string[] = [];
+  if (actualInfo) {
+    objectNameArray = actualInfo.name.split("/");
+  }
 
   useEffect(() => {
     if (loadObjectData) {
-      const encodedPath = encodeURIComponent(internalPaths);
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}${
+          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}${
             distributedSetup ? "&with_versions=true" : ""
           }`
         )
@@ -307,11 +306,10 @@ const ObjectDetails = ({
 
   useEffect(() => {
     if (metadataLoad) {
-      const encodedPath = encodeURIComponent(internalPaths);
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}&with_metadata=true`
+          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}&with_metadata=true`
         )
         .then((res: FileInfoResponse) => {
           const fileData = res.objects[0];
@@ -328,7 +326,7 @@ const ObjectDetails = ({
 
   let tagKeys: string[] = [];
 
-  if (actualInfo.tags) {
+  if (actualInfo && actualInfo.tags) {
     tagKeys = Object.keys(actualInfo.tags);
   }
 
@@ -348,6 +346,7 @@ const ObjectDetails = ({
   };
 
   const closeShareModal = () => {
+    setObjectToShare(null);
     setShareFileModalOpen(false);
   };
 
@@ -375,8 +374,11 @@ const ObjectDetails = ({
   const tableActions: ItemActions[] = [
     {
       type: "share",
-      onClick: shareObject,
-      sendOnlyId: true,
+      onClick: (item: any) => {
+        setObjectToShare(item);
+        shareObject();
+      },
+      sendOnlyId: false,
       disableButtonFunction: (item: string) => {
         const element = versions.find((elm) => elm.version_id === item);
         if (element && element.is_delete_marker) {
@@ -448,15 +450,15 @@ const ObjectDetails = ({
 
   return (
     <React.Fragment>
-      {shareFileModalOpen && (
+      {shareFileModalOpen && actualInfo && (
         <ShareFile
           open={shareFileModalOpen}
           closeModalAndRefresh={closeShareModal}
           bucketName={bucketName}
-          dataObject={actualInfo}
+          dataObject={objectToShare || actualInfo}
         />
       )}
-      {retentionModalOpen && (
+      {retentionModalOpen && actualInfo && (
         <SetRetention
           open={retentionModalOpen}
           closeModalAndRefresh={closeRetentionModal}
@@ -473,7 +475,7 @@ const ObjectDetails = ({
           closeDeleteModalAndRefresh={closeDeleteModal}
         />
       )}
-      {tagModalOpen && (
+      {tagModalOpen && actualInfo && (
         <AddTagModal
           modalOpen={tagModalOpen}
           currentTags={actualInfo.tags}
@@ -483,353 +485,383 @@ const ObjectDetails = ({
           onCloseAndUpdate={closeAddTagModal}
         />
       )}
-      {deleteTagModalOpen && (
+      {deleteTagModalOpen && actualInfo && (
         <DeleteTagModal
           deleteOpen={deleteTagModalOpen}
           currentTags={actualInfo.tags}
-          selectedObject={internalPaths}
+          selectedObject={actualInfo.name}
           versionId={actualInfo.version_id}
           bucketName={bucketName}
           onCloseAndUpdate={closeDeleteTagModal}
           selectedTag={selectedTag}
         />
       )}
-      {legalholdOpen && (
+      {legalholdOpen && actualInfo && (
         <SetLegalHoldModal
           open={legalholdOpen}
           closeModalAndRefresh={closeLegalholdModal}
-          objectName={internalPaths}
+          objectName={actualInfo.name}
           bucketName={bucketName}
           actualInfo={actualInfo}
         />
       )}
 
       <Grid container>
-        <Grid item xs={12}>
-          <ScreenTitle
-            icon={
-              <Fragment>
-                <ObjectBrowserIcon width={40} />
-              </Fragment>
-            }
-            title={currentItem}
-            subTitle={
-              <Fragment>
-                <BrowserBreadcrumbs
-                  bucketName={bucketName}
-                  internalPaths={internalPaths}
-                />
-              </Fragment>
-            }
-            actions={
-              <Fragment>
-                <Tooltip title="Share">
-                  <IconButton
-                    color="primary"
-                    aria-label="share"
-                    onClick={() => {
-                      shareObject();
-                    }}
-                    disabled={actualInfo.is_delete_marker}
-                  >
-                    <ShareIcon />
-                  </IconButton>
-                </Tooltip>
-
-                {downloadingFiles.includes(
-                  `${bucketName}/${actualInfo.name}`
-                ) ? (
-                  <div className="progressDetails">
-                    <CircularProgress
-                      color="primary"
-                      size={17}
-                      variant="indeterminate"
-                    />
-                  </div>
-                ) : (
-                  <Tooltip title="Download">
-                    <IconButton
-                      color="primary"
-                      aria-label="download"
-                      onClick={() => {
-                        downloadObject(actualInfo);
-                      }}
-                      disabled={actualInfo.is_delete_marker}
-                    >
-                      <DownloadIcon />
-                    </IconButton>
-                  </Tooltip>
-                )}
-
-                <Tooltip title="Delete Object">
-                  <IconButton
-                    color="primary"
-                    aria-label="delete"
-                    onClick={() => {
-                      setDeleteOpen(true);
-                    }}
-                    disabled={actualInfo.is_delete_marker}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </Fragment>
-            }
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={selectedTab === 0}
-              onClick={() => {
-                setSelectedTab(0);
-              }}
-            >
-              <ListItemText primary="Details" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedTab === 1}
-              onClick={() => {
-                setSelectedTab(1);
-              }}
-              disabled={
-                !(actualInfo.version_id && actualInfo.version_id !== "null")
-              }
-            >
-              <ListItemText primary="Versions" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedTab === 2}
-              onClick={() => {
-                setSelectedTab(2);
-              }}
-              disabled={extensionPreview(currentItem) === "none"}
-            >
-              <ListItemText primary="Preview" />
-            </ListItem>
-          </List>
-        </Grid>
-        <Grid item xs={10}>
+        {!actualInfo && (
           <Grid item xs={12}>
-            <TabPanel index={0} value={selectedTab}>
-              <div className={classes.actionsTray}>
-                <h1 className={classes.sectionTitle}>Details</h1>
-              </div>
-              <br />
-              <Paper className={classes.paperContainer}>
-                <Grid container>
-                  <Grid item xs={10}>
-                    <table width={"100%"}>
-                      <tbody>
-                        <tr>
-                          <td className={classes.titleCol}>Legal Hold:</td>
-                          <td className={classes.capitalizeFirst}>
-                            {actualInfo.version_id &&
-                            actualInfo.version_id !== "null" ? (
-                              <Fragment>
-                                {actualInfo.legal_hold_status
-                                  ? actualInfo.legal_hold_status.toLowerCase()
-                                  : "Off"}
+            <LinearProgress />
+          </Grid>
+        )}
+
+        {actualInfo && (
+          <Fragment>
+            <Grid item xs={12}>
+              <ScreenTitle
+                icon={
+                  <Fragment>
+                    <ObjectBrowserIcon width={40} />
+                  </Fragment>
+                }
+                title={
+                  objectNameArray.length > 0
+                    ? objectNameArray[objectNameArray.length - 1]
+                    : actualInfo.name
+                }
+                subTitle={
+                  <Fragment>
+                    <BrowserBreadcrumbs
+                      bucketName={bucketName}
+                      internalPaths={actualInfo.name}
+                    />
+                  </Fragment>
+                }
+                actions={
+                  <Fragment>
+                    <Tooltip title="Share">
+                      <IconButton
+                        color="primary"
+                        aria-label="share"
+                        onClick={() => {
+                          shareObject();
+                        }}
+                        disabled={actualInfo.is_delete_marker}
+                      >
+                        <ShareIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    {downloadingFiles.includes(
+                      `${bucketName}/${actualInfo.name}`
+                    ) ? (
+                      <div className="progressDetails">
+                        <CircularProgress
+                          color="primary"
+                          size={17}
+                          variant="indeterminate"
+                        />
+                      </div>
+                    ) : (
+                      <Tooltip title="Download">
+                        <IconButton
+                          color="primary"
+                          aria-label="download"
+                          onClick={() => {
+                            downloadObject(actualInfo);
+                          }}
+                          disabled={actualInfo.is_delete_marker}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    <Tooltip title="Delete Object">
+                      <IconButton
+                        color="primary"
+                        aria-label="delete"
+                        onClick={() => {
+                          setDeleteOpen(true);
+                        }}
+                        disabled={actualInfo.is_delete_marker}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Fragment>
+                }
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <List component="nav" dense={true}>
+                <ListItem
+                  button
+                  selected={selectedTab === 0}
+                  onClick={() => {
+                    setSelectedTab(0);
+                  }}
+                >
+                  <ListItemText primary="Details" />
+                </ListItem>
+                <ListItem
+                  button
+                  selected={selectedTab === 1}
+                  onClick={() => {
+                    setSelectedTab(1);
+                  }}
+                  disabled={
+                    !(actualInfo.version_id && actualInfo.version_id !== "null")
+                  }
+                >
+                  <ListItemText primary="Versions" />
+                </ListItem>
+                <ListItem
+                  button
+                  selected={selectedTab === 2}
+                  onClick={() => {
+                    setSelectedTab(2);
+                  }}
+                  disabled={extensionPreview(currentItem) === "none"}
+                >
+                  <ListItemText primary="Preview" />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={10}>
+              <Grid item xs={12}>
+                <TabPanel index={0} value={selectedTab}>
+                  <div className={classes.actionsTray}>
+                    <h1 className={classes.sectionTitle}>Details</h1>
+                  </div>
+                  <br />
+                  <Paper className={classes.paperContainer}>
+                    <Grid container>
+                      <Grid item xs={10}>
+                        <table width={"100%"}>
+                          <tbody>
+                            <tr>
+                              <td className={classes.titleCol}>Legal Hold:</td>
+                              <td className={classes.capitalizeFirst}>
+                                {actualInfo.version_id &&
+                                actualInfo.version_id !== "null" ? (
+                                  <Fragment>
+                                    {actualInfo.legal_hold_status
+                                      ? actualInfo.legal_hold_status.toLowerCase()
+                                      : "Off"}
+                                    <IconButton
+                                      color="primary"
+                                      aria-label="legal-hold"
+                                      size="small"
+                                      className={classes.propertiesIcon}
+                                      onClick={() => {
+                                        setLegalholdOpen(true);
+                                      }}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  </Fragment>
+                                ) : (
+                                  "Disabled"
+                                )}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className={classes.titleCol}>Retention:</td>
+                              <td className={classes.capitalizeFirst}>
+                                {actualInfo.retention_mode
+                                  ? actualInfo.retention_mode.toLowerCase()
+                                  : "None"}
                                 <IconButton
                                   color="primary"
-                                  aria-label="legal-hold"
+                                  aria-label="retention"
                                   size="small"
                                   className={classes.propertiesIcon}
                                   onClick={() => {
-                                    setLegalholdOpen(true);
+                                    openRetentionModal();
                                   }}
                                 >
                                   <EditIcon />
                                 </IconButton>
-                              </Fragment>
-                            ) : (
-                              "Disabled"
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className={classes.titleCol}>Retention:</td>
-                          <td className={classes.capitalizeFirst}>
-                            {actualInfo.retention_mode
-                              ? actualInfo.retention_mode.toLowerCase()
-                              : "Undefined"}
-                            <IconButton
-                              color="primary"
-                              aria-label="retention"
-                              size="small"
-                              className={classes.propertiesIcon}
-                              onClick={() => {
-                                openRetentionModal();
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className={classes.titleCol}>Tags:</td>
-                          <td>
-                            {tagKeys &&
-                              tagKeys.map((tagKey, index) => {
-                                const tag = get(
-                                  actualInfo,
-                                  `tags.${tagKey}`,
-                                  ""
-                                );
-                                if (tag !== "") {
-                                  return (
-                                    <Chip
-                                      key={`chip-${index}`}
-                                      className={classes.tag}
-                                      size="small"
-                                      label={`${tagKey} : ${tag}`}
-                                      color="primary"
-                                      deleteIcon={<CloseIcon />}
-                                      onDelete={() => {
-                                        deleteTag(tagKey, tag);
-                                      }}
-                                    />
-                                  );
-                                }
-                                return null;
-                              })}
-                            <Chip
-                              className={classes.tag}
-                              icon={<AddIcon />}
-                              clickable
-                              size="small"
-                              label="Add tag"
-                              color="primary"
-                              variant="outlined"
-                              onClick={() => {
-                                setTagModalOpen(true);
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </Grid>
-                </Grid>
-              </Paper>
-              <br />
-              <br />
-              <Paper className={classes.paperContainer}>
-                <Grid item xs={12}>
-                  <Grid item xs={12}>
-                    <h2>Object Metadata</h2>
-                    <hr className={classes.hr}></hr>
-                  </Grid>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className={classes.titleCol}>Tags:</td>
+                              <td>
+                                {tagKeys &&
+                                  tagKeys.map((tagKey, index) => {
+                                    const tag = get(
+                                      actualInfo,
+                                      `tags.${tagKey}`,
+                                      ""
+                                    );
+                                    if (tag !== "") {
+                                      return (
+                                        <Chip
+                                          key={`chip-${index}`}
+                                          className={classes.tag}
+                                          size="small"
+                                          label={`${tagKey} : ${tag}`}
+                                          color="primary"
+                                          deleteIcon={<CloseIcon />}
+                                          onDelete={() => {
+                                            deleteTag(tagKey, tag);
+                                          }}
+                                        />
+                                      );
+                                    }
+                                    return null;
+                                  })}
+                                <Chip
+                                  className={classes.tag}
+                                  icon={<AddIcon />}
+                                  clickable
+                                  size="small"
+                                  label="Add tag"
+                                  color="primary"
+                                  variant="outlined"
+                                  onClick={() => {
+                                    setTagModalOpen(true);
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                  <br />
+                  <br />
+                  <Paper className={classes.paperContainer}>
+                    <Grid item xs={12}>
+                      <Grid item xs={12}>
+                        <h2>Object Metadata</h2>
+                        <hr className={classes.hr}></hr>
+                      </Grid>
 
-                  <Grid item xs={12}>
-                    <Table className={classes.table} aria-label="simple table">
-                      <TableBody>
-                        {Object.keys(metadata).map((element, index) => {
-                          return (
-                            <TableRow key={`tRow-${index.toString()}`}>
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                className={classes.titleItem}
-                              >
-                                {element}
-                              </TableCell>
-                              <TableCell align="right">
-                                {metadata[element]}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </Grid>
-                </Grid>
-              </Paper>
-            </TabPanel>
-            <TabPanel index={1} value={selectedTab}>
-              <Fragment>
-                <div className={classes.actionsTray}>
-                  <h1 className={classes.sectionTitle}>Versions</h1>
-                </div>
-                <br />
-                <Grid item xs={12} className={classes.actionsTray}>
-                  {actualInfo.version_id && actualInfo.version_id !== "null" && (
-                    <TextField
-                      placeholder={`Search ${currentItem}`}
-                      className={clsx(classes.search, classes.searchField)}
-                      id="search-resource"
-                      label=""
-                      onChange={(val) => {
-                        setFilterVersion(val.target.value);
+                      <Grid item xs={12}>
+                        <Table
+                          className={classes.table}
+                          aria-label="simple table"
+                        >
+                          <TableBody>
+                            {Object.keys(metadata).map((element, index) => {
+                              return (
+                                <TableRow key={`tRow-${index.toString()}`}>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    className={classes.titleItem}
+                                  >
+                                    {element}
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    {metadata[element]}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                </TabPanel>
+                <TabPanel index={1} value={selectedTab}>
+                  <Fragment>
+                    <div className={classes.actionsTray}>
+                      <h1 className={classes.sectionTitle}>Versions</h1>
+                    </div>
+                    <br />
+                    <Grid item xs={12} className={classes.actionsTray}>
+                      {actualInfo.version_id &&
+                        actualInfo.version_id !== "null" && (
+                          <TextField
+                            placeholder={`Search ${currentItem}`}
+                            className={clsx(
+                              classes.search,
+                              classes.searchField
+                            )}
+                            id="search-resource"
+                            label=""
+                            onChange={(val) => {
+                              setFilterVersion(val.target.value);
+                            }}
+                            InputProps={{
+                              disableUnderline: true,
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <SearchIcon />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        )}
+                    </Grid>
+                    <Grid item xs={12}>
+                      {actualInfo.version_id &&
+                        actualInfo.version_id !== "null" && (
+                          <TableWrapper
+                            itemActions={tableActions}
+                            columns={[
+                              {
+                                label: "",
+                                width: 20,
+                                renderFullObject: true,
+                                renderFunction: (r) => {
+                                  const versOrd =
+                                    versions.length - versions.indexOf(r);
+                                  return `v${versOrd}`;
+                                },
+                                elementKey: "version_id",
+                              },
+                              { label: "Version ID", elementKey: "version_id" },
+                              {
+                                label: "Last Modified",
+                                elementKey: "last_modified",
+                                renderFunction: displayParsedDate,
+                              },
+                              {
+                                label: "Deleted",
+                                width: 60,
+                                contentTextAlign: "center",
+                                renderFullObject: true,
+                                elementKey: "is_delete_marker",
+                                renderFunction: (r) => {
+                                  const versOrd = r.is_delete_marker
+                                    ? "Yes"
+                                    : "No";
+                                  return `${versOrd}`;
+                                },
+                              },
+                            ]}
+                            isLoading={false}
+                            entityName="Versions"
+                            idField="version_id"
+                            records={filteredRecords}
+                          />
+                        )}
+                    </Grid>
+                  </Fragment>
+                </TabPanel>
+                <TabPanel index={2} value={selectedTab}>
+                  {selectedTab === 2 && actualInfo && (
+                    <PreviewFileContent
+                      bucketName={bucketName}
+                      object={{
+                        name: actualInfo.name,
+                        version_id: actualInfo.version_id || "null",
+                        size: parseInt(actualInfo.size || "0"),
+                        content_type: "",
+                        last_modified: new Date(actualInfo.last_modified),
                       }}
-                      InputProps={{
-                        disableUnderline: true,
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
+                      isFullscreen
                     />
                   )}
-                </Grid>
-                <Grid item xs={12}>
-                  {actualInfo.version_id && actualInfo.version_id !== "null" && (
-                    <TableWrapper
-                      itemActions={tableActions}
-                      columns={[
-                        {
-                          label: "",
-                          width: 20,
-                          renderFullObject: true,
-                          renderFunction: (r) => {
-                            const versOrd =
-                              versions.length - versions.indexOf(r);
-                            return `v${versOrd}`;
-                          },
-                          elementKey: "version_id",
-                        },
-                        { label: "Version ID", elementKey: "version_id" },
-                        {
-                          label: "Last Modified",
-                          elementKey: "last_modified",
-                          renderFunction: displayParsedDate,
-                        },
-                        {
-                          label: "Deleted",
-                          width: 60,
-                          contentTextAlign: "center",
-                          renderFullObject: true,
-                          elementKey: "is_delete_marker",
-                          renderFunction: (r) => {
-                            const versOrd = r.is_delete_marker ? "Yes" : "No";
-                            return `${versOrd}`;
-                          },
-                        },
-                      ]}
-                      isLoading={false}
-                      entityName="Versions"
-                      idField="version_id"
-                      records={filteredRecords}
-                    />
-                  )}
-                </Grid>
-              </Fragment>
-            </TabPanel>
-            <TabPanel index={2} value={selectedTab}>
-              {selectedTab === 2 && (
-                <PreviewFileContent
-                  bucketName={bucketName}
-                  object={previewObject}
-                  isFullscreen
-                />
-              )}
-            </TabPanel>
-          </Grid>
-        </Grid>
+                </TabPanel>
+              </Grid>
+            </Grid>
+          </Fragment>
+        )}
       </Grid>
     </React.Fragment>
   );

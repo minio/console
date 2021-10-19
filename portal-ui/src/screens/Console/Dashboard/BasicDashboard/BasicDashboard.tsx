@@ -20,13 +20,12 @@ import Grid from "@material-ui/core/Grid";
 import { IDriveInfo, Usage } from "../types";
 import { calculateBytes } from "../../../../common/utils";
 import { TabPanel } from "../../../shared/tabs";
-import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import ServerInfoCard from "./ServerInfoCard";
 import DriveInfoCard from "./DriveInfoCard";
-import { BucketsIcon, TotalObjectsIcon } from "../../../../icons";
 import CommonCard from "../CommonCard";
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import GeneralUsePaginator from "../../Common/GeneralUsePaginator/GeneralUsePaginator";
+import { widgetContainerCommon } from "../../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,6 +49,7 @@ const styles = (theme: Theme) =>
       maxWidth: 1185,
       width: "100%",
     },
+    ...widgetContainerCommon,
   });
 
 interface IDashboardProps {
@@ -95,10 +95,12 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
         }
         return 0;
       });
-    } else return [];
+    }
+
+    return [];
   };
 
-  const serverArray = makeServerArray(usage);
+  const serverArray = makeServerArray(usage || null);
 
   const usageToRepresent = prettyUsage(
     usage && usage.usage ? usage.usage.toString() : "0"
@@ -131,29 +133,65 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
         <Grid item xs={12} className={classes.generalStatusTitle}>
           General Status
         </Grid>
-        <Grid item xs={12} className={classes.generalStatusCards}>
-          <CommonCard
-            avatar={<BucketsIcon />}
-            title={"All Buckets"}
-            metricValue={usage ? prettyNumber(usage.buckets) : 0}
-          />
-          <CommonCard
-            avatar={<ReportedUsageIcon />}
-            title={"Usage"}
-            metricValue={usageToRepresent.total}
-            metricUnit={usageToRepresent.unit}
-          />
-          <CommonCard
-            avatar={<TotalObjectsIcon />}
-            title={"Total Objects"}
-            metricValue={usage ? prettyNumber(usage.objects) : 0}
-          />
-          <CommonCard
-            avatar={<TotalObjectsIcon />}
-            title={"Servers"}
-            metricValue={usage ? prettyNumber(serverArray.length) : 0}
-            subMessage={{ message: "Total" }}
-          />
+        <Grid item xs={12} className={classes.dashboardRow}>
+          <Grid
+            item
+            xs={7}
+            sm={8}
+            md={6}
+            lg={3}
+            className={classes.widgetPanelDelimiter}
+          >
+            <CommonCard
+              title={"All Buckets"}
+              metricValue={usage ? prettyNumber(usage.buckets) : 0}
+              extraMargin
+            />
+          </Grid>
+          <Grid
+            item
+            xs={7}
+            sm={8}
+            md={6}
+            lg={3}
+            className={classes.widgetPanelDelimiter}
+          >
+            <CommonCard
+              title={"Usage"}
+              metricValue={usageToRepresent.total}
+              metricUnit={usageToRepresent.unit}
+              extraMargin
+            />
+          </Grid>
+          <Grid
+            item
+            xs={7}
+            sm={8}
+            md={6}
+            lg={3}
+            className={classes.widgetPanelDelimiter}
+          >
+            <CommonCard
+              title={"Total Objects"}
+              metricValue={usage ? prettyNumber(usage.objects) : 0}
+              extraMargin
+            />
+          </Grid>
+          <Grid
+            item
+            xs={7}
+            sm={8}
+            md={6}
+            lg={3}
+            className={classes.widgetPanelDelimiter}
+          >
+            <CommonCard
+              title={"Servers"}
+              metricValue={usage ? prettyNumber(serverArray.length) : 0}
+              subMessage={{ message: "Total" }}
+              extraMargin
+            />
+          </Grid>
         </Grid>
         <Grid item xs={12}>
           <TabSelector

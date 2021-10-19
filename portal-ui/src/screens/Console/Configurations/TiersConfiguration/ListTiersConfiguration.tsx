@@ -35,15 +35,15 @@ import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import SlideOptions from "../../Common/SlideOptions/SlideOptions";
-import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
-import AddTierConfiguration from "./AddTierConfiguration";
+
 import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface IListTiersConfig {
   classes: any;
+  history: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
@@ -64,7 +64,7 @@ const styles = (theme: Theme) =>
       lineHeight: "24px",
     },
     customConfigurationPage: {
-      height: "calc(100vh - 410px)",
+      height: "calc(100vh - 210px)",
       scrollbarWidth: "none" as const,
       "&::-webkit-scrollbar": {
         display: "none",
@@ -75,7 +75,6 @@ const styles = (theme: Theme) =>
     },
     actionsTray: {
       ...actionsTray.actionsTray,
-      padding: "0 38px",
     },
     customTitle: {
       ...settingsCommon.customTitle,
@@ -85,18 +84,17 @@ const styles = (theme: Theme) =>
 
 const ListTiersConfiguration = ({
   classes,
+  history,
   setErrorSnackMessage,
 }: IListTiersConfig) => {
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [currentPanel, setCurrentPanel] = useState<number>(0);
   const [updateCredentialsOpen, setUpdateCredentialsOpen] =
     useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
     type: "unsupported",
   });
-  const [type, setType] = useState<string>("");
 
   useEffect(() => {
     if (isLoading) {
@@ -126,17 +124,8 @@ const ListTiersConfiguration = ({
     return getItemName.indexOf(filter) >= 0 || getItemType.indexOf(filter) >= 0;
   });
 
-  const backClick = () => {
-    setCurrentPanel(currentPanel - 1);
-  };
-
   const addTier = () => {
-    setCurrentPanel(1);
-  };
-
-  const tierAdded = () => {
-    setCurrentPanel(0);
-    setIsLoading(true);
+    history.push("/tiers/add");
   };
 
   const renderTierName = (item: ITierElement) => {
@@ -193,11 +182,6 @@ const ListTiersConfiguration = ({
     setUpdateCredentialsOpen(false);
   };
 
-  const typeSelect = (typeItem: string) => {
-    setType(typeItem);
-    setCurrentPanel(2);
-  };
-
   return (
     <Fragment>
       {updateCredentialsOpen && (
@@ -207,213 +191,107 @@ const ListTiersConfiguration = ({
           closeModalAndRefresh={closeTierCredentials}
         />
       )}
-      <Grid container>
-        <Grid item xs={12}>
-          <Grid item xs={12}>
-            <div className={classes.settingsOptionsContainer}>
-              <SlideOptions
-                slideOptions={[
-                  <Fragment>
-                    <Grid item xs={12} className={classes.lambdaContainer}>
-                      <Grid item xs={12} className={classes.actionsTray}>
-                        <TextField
-                          placeholder="Filter"
-                          className={classes.searchField}
-                          id="search-resource"
-                          label=""
-                          onChange={(event) => {
-                            setFilter(event.target.value);
-                          }}
-                          InputProps={{
-                            disableUnderline: true,
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                        <IconButton
-                          color="primary"
-                          aria-label="Refresh List"
-                          component="span"
-                          onClick={() => {
-                            setIsLoading(true);
-                          }}
-                        >
-                          <RefreshIcon />
-                        </IconButton>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          startIcon={<AddIcon />}
-                          onClick={addTier}
-                        >
-                          Add Tier
-                        </Button>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <br />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TableWrapper
-                          itemActions={[
-                            {
-                              type: "edit",
-                              onClick: (tierData: ITierElement) => {
-                                setSelectedTier(tierData);
-                                setUpdateCredentialsOpen(true);
-                              },
-                            },
-                          ]}
-                          columns={[
-                            {
-                              label: "Tier Name",
-                              elementKey: "type",
-                              renderFunction: renderTierName,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Type",
-                              elementKey: "type",
-                              width: 150,
-                            },
-                            {
-                              label: "Endpoint",
-                              elementKey: "type",
-                              renderFunction: renderTierEndpoint,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Bucket",
-                              elementKey: "type",
-                              renderFunction: renderTierBucket,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Prefix",
-                              elementKey: "type",
-                              renderFunction: renderTierPrefix,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Region",
-                              elementKey: "type",
-                              renderFunction: renderTierRegion,
-                              renderFullObject: true,
-                            },
-                          ]}
-                          isLoading={isLoading}
-                          records={filteredRecords}
-                          entityName="Tiers"
-                          idField="service_name"
-                          customPaperHeight={classes.customConfigurationPage}
-                          noBackground
-                        />
-                      </Grid>
-                    </Grid>
-                  </Fragment>,
-                  <Fragment>
-                    <Grid item xs={12} className={classes.backContainer}>
-                      <button
-                        onClick={backClick}
-                        className={classes.backButton}
-                      >
-                        <BackSettingsIcon />
-                        Back To Tiers
-                      </button>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid item xs={12} className={classes.customTitle}>
-                        Add Tier Configuration
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        className={classes.settingsFormContainer}
-                      >
-                        <Grid item xs={12}>
-                          <Grid item xs={12} className={classes.centerElements}>
-                            <div className={classes.iconContainer}>
-                              <button
-                                className={classes.lambdaNotif}
-                                onClick={() => {
-                                  typeSelect("minio");
-                                }}
-                              >
-                                <img
-                                  src={"/minioTier.png"}
-                                  className={classes.logoButton}
-                                  alt={"MinIO"}
-                                />
-                              </button>
-                              <button
-                                className={classes.lambdaNotif}
-                                onClick={() => {
-                                  typeSelect("gcs");
-                                }}
-                              >
-                                <img
-                                  src={"/gcs.png"}
-                                  className={classes.logoButton}
-                                  alt={"GCS"}
-                                />
-                              </button>
-                              <button
-                                className={classes.lambdaNotif}
-                                onClick={() => {
-                                  typeSelect("s3");
-                                }}
-                              >
-                                <img
-                                  src={"/amazon.png"}
-                                  className={classes.logoButton}
-                                  alt={"s3"}
-                                />
-                              </button>
-                              <button
-                                className={classes.lambdaNotif}
-                                onClick={() => {
-                                  typeSelect("azure");
-                                }}
-                              >
-                                <img
-                                  src={"/azure.png"}
-                                  className={classes.logoButton}
-                                  alt={"Azure"}
-                                />
-                              </button>
-                            </div>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Fragment>,
-                  <Fragment>
-                    <Grid item xs={12} className={classes.backContainer}>
-                      <button
-                        onClick={backClick}
-                        className={classes.backButton}
-                      >
-                        <BackSettingsIcon />
-                        Back To Tier Type Selection
-                      </button>
-                    </Grid>
-                    <Grid item xs={12}>
-                      {currentPanel === 2 && (
-                        <AddTierConfiguration
-                          type={type}
-                          saveAndRefresh={tierAdded}
-                        />
-                      )}
-                    </Grid>
-                  </Fragment>,
-                ]}
-                currentSlide={currentPanel}
+      <PageHeader label="Tiers" />
+      <Grid container className={classes.container}>
+        <Fragment>
+          <Grid item xs={12} className={classes.lambdaContainer}>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Filter"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                onChange={(event) => {
+                  setFilter(event.target.value);
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </div>
+              <IconButton
+                color="primary"
+                aria-label="Refresh List"
+                component="span"
+                onClick={() => {
+                  setIsLoading(true);
+                }}
+              >
+                <RefreshIcon />
+              </IconButton>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={addTier}
+              >
+                Add Tier
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <TableWrapper
+                itemActions={[
+                  {
+                    type: "edit",
+                    onClick: (tierData: ITierElement) => {
+                      setSelectedTier(tierData);
+                      setUpdateCredentialsOpen(true);
+                    },
+                  },
+                ]}
+                columns={[
+                  {
+                    label: "Tier Name",
+                    elementKey: "type",
+                    renderFunction: renderTierName,
+                    renderFullObject: true,
+                  },
+                  {
+                    label: "Type",
+                    elementKey: "type",
+                    width: 150,
+                  },
+                  {
+                    label: "Endpoint",
+                    elementKey: "type",
+                    renderFunction: renderTierEndpoint,
+                    renderFullObject: true,
+                  },
+                  {
+                    label: "Bucket",
+                    elementKey: "type",
+                    renderFunction: renderTierBucket,
+                    renderFullObject: true,
+                  },
+                  {
+                    label: "Prefix",
+                    elementKey: "type",
+                    renderFunction: renderTierPrefix,
+                    renderFullObject: true,
+                  },
+                  {
+                    label: "Region",
+                    elementKey: "type",
+                    renderFunction: renderTierRegion,
+                    renderFullObject: true,
+                  },
+                ]}
+                isLoading={isLoading}
+                records={filteredRecords}
+                entityName="Tiers"
+                idField="service_name"
+                customPaperHeight={classes.customConfigurationPage}
+              />
+            </Grid>
           </Grid>
-        </Grid>
+        </Fragment>
       </Grid>
     </Fragment>
   );

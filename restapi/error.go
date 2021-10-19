@@ -33,7 +33,8 @@ var (
 	errLicenseNotFound              = errors.New("license not found")
 	errAvoidSelfAccountDelete       = errors.New("logged in user cannot be deleted by itself")
 	errAccessDenied                 = errors.New("access denied")
-	errOauth2Provider               = errors.New("error contacting the external identity provider")
+	errOauth2Provider               = errors.New("unable to contact configured identity provider")
+	errNonUniqueAccessKey           = errors.New("access key already in use")
 )
 
 // Tiering errors

@@ -62,11 +62,10 @@ func IsSessionTokenValid(token string) bool {
 
 // TokenClaims claims struct for decrypted credentials
 type TokenClaims struct {
-	STSAccessKeyID     string   `json:"stsAccessKeyID,omitempty"`
-	STSSecretAccessKey string   `json:"stsSecretAccessKey,omitempty"`
-	STSSessionToken    string   `json:"stsSessionToken,omitempty"`
-	AccountAccessKey   string   `json:"accountAccessKey,omitempty"`
-	Actions            []string `json:"actions,omitempty"`
+	STSAccessKeyID     string `json:"stsAccessKeyID,omitempty"`
+	STSSecretAccessKey string `json:"stsSecretAccessKey,omitempty"`
+	STSSessionToken    string `json:"stsSessionToken,omitempty"`
+	AccountAccessKey   string `json:"accountAccessKey,omitempty"`
 }
 
 // SessionTokenAuthenticate takes a session token, decode it, extract claims and validate the signature
@@ -79,7 +78,6 @@ type TokenClaims struct {
 //		STSSecretAccessKey
 //		STSSessionToken
 //		AccountAccessKey
-//		Actions
 //	}
 func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 	if token == "" {
@@ -98,14 +96,13 @@ func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 
 // NewEncryptedTokenForClient generates a new session token with claims based on the provided STS credentials, first
 // encrypts the claims and the sign them
-func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey string, actions []string) (string, error) {
+func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey string) (string, error) {
 	if credentials != nil {
 		encryptedClaims, err := encryptClaims(&TokenClaims{
 			STSAccessKeyID:     credentials.AccessKeyID,
 			STSSecretAccessKey: credentials.SecretAccessKey,
 			STSSessionToken:    credentials.SessionToken,
 			AccountAccessKey:   accountAccessKey,
-			Actions:            actions,
 		})
 		if err != nil {
 			return "", err
@@ -311,7 +308,6 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 	}
 	return &models.Principal{
 		STSAccessKeyID:     claims.STSAccessKeyID,
-		Actions:            claims.Actions,
 		STSSecretAccessKey: claims.STSSecretAccessKey,
 		STSSessionToken:    claims.STSSessionToken,
 		AccountAccessKey:   claims.AccountAccessKey,

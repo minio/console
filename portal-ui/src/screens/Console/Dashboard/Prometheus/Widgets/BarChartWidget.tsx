@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import {
   Bar,
@@ -23,10 +23,12 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  Cell,
 } from "recharts";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { CircularProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import ZoomOutMapIcon from "@material-ui/icons/ZoomOutMap";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
@@ -35,6 +37,7 @@ import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
+import { openZoomPage } from "../../actions";
 
 interface IBarChartWidget {
   classes: any;
@@ -45,6 +48,8 @@ interface IBarChartWidget {
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;
+  zoomActivated?: boolean;
+  openZoomPage: typeof openZoomPage;
 }
 
 const styles = (theme: Theme) =>
@@ -58,14 +63,15 @@ const styles = (theme: Theme) =>
     },
   });
 
-const CustomizedAxisTick = ({ x, y, payload }: any) => {
+const CustomizedAxisTick = ({ y, payload }: any) => {
   return (
     <text
       width={50}
       fontSize={"63%"}
-      textAnchor="end"
+      textAnchor="start"
       fill="#333"
-      transform={`translate(${x},${y})`}
+      transform={`translate(5,${y})`}
+      fontWeight={700}
       dy={3}
     >
       {payload.value}
@@ -82,6 +88,8 @@ const BarChartWidget = ({
   propLoading,
   displayErrorMessage,
   apiPrefix,
+  zoomActivated = false,
+  openZoomPage,
 }: IBarChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
@@ -131,17 +139,46 @@ const BarChartWidget = ({
     ? (result.widgetConfiguration as IBarChartConfiguration[])
     : [];
 
+  let greatestIndex = 0;
+  let currentValue = 0;
+
+  if (barChartConfiguration.length === 1) {
+    const dataGraph = barChartConfiguration[0];
+    data.forEach((item: any, index: number) => {
+      if (item[dataGraph.dataKey] > currentValue) {
+        currentValue = item[dataGraph.dataKey];
+        greatestIndex = index;
+      }
+    });
+  }
+
   return (
-    <div className={classes.singleValueContainer}>
-      <div className={classes.titleContainer}>{title}</div>
+    <div className={zoomActivated ? "" : classes.singleValueContainer}>
+      {!zoomActivated && (
+        <div className={classes.titleContainer}>
+          {title}{" "}
+          <button
+            onClick={() => {
+              openZoomPage(panelItem);
+            }}
+            className={classes.zoomChartIcon}
+          >
+            <ZoomOutMapIcon />
+          </button>
+        </div>
+      )}
       {loading && (
         <div className={classes.loadingAlign}>
           <CircularProgress />
         </div>
       )}
       {!loading && (
-        <div className={classes.contentContainer}>
-          <ResponsiveContainer>
+        <div
+          className={
+            zoomActivated ? classes.zoomChartCont : classes.contentContainer
+          }
+        >
+          <ResponsiveContainer width="99%">
             <BarChart
               data={data as object[]}
               layout={"vertical"}
@@ -163,7 +200,23 @@ const BarChartWidget = ({
                   dataKey={bar.dataKey}
                   fill={bar.color}
                   background={bar.background}
-                />
+                  barSize={zoomActivated ? 25 : 12}
+                >
+                  {barChartConfiguration.length === 1 ? (
+                    <Fragment>
+                      {data.map((_: any, index: number) => (
+                        <Cell
+                          key={`chart-bar-${index.toString()}`}
+                          fill={
+                            index === greatestIndex
+                              ? bar.greatestColor
+                              : bar.color
+                          }
+                        />
+                      ))}
+                    </Fragment>
+                  ) : null}
+                </Bar>
               ))}
               <Tooltip
                 cursor={{ fill: "rgba(255, 255, 255, 0.3)" }}
@@ -183,6 +236,7 @@ const BarChartWidget = ({
 
 const connector = connect(null, {
   displayErrorMessage: setErrorSnackMessage,
+  openZoomPage: openZoomPage,
 });
 
 export default withStyles(styles)(connector(BarChartWidget));

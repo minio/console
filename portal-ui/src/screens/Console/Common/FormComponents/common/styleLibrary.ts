@@ -84,6 +84,11 @@ export const modalBasic = {
     height: 170,
     maxWidth: 840,
   },
+  moduleDescription: {
+    color: "#848484",
+    fontSize: 12,
+    fontStyle: "italic" as string,
+  },
 };
 
 export const tooltipHelper = {
@@ -127,7 +132,8 @@ export const radioIcons = {
 
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
-    padding: "8px 16px 0",
+    position: "relative" as const,
+    padding: "20px 35px 0",
     "& h6": {
       color: "#777777",
       fontSize: 30,
@@ -148,9 +154,17 @@ export const containerForHeader = (bottomSpacing: any) => ({
 });
 
 export const actionsTray = {
+  filterTitle: {
+    color: "#848484",
+    fontSize: 13,
+    alignSelf: "center" as const,
+    whiteSpace: "nowrap" as const,
+    "&:not(:first-of-type)": {
+      marginLeft: 10,
+    },
+  },
   label: {
-    color: "#393939",
-    fontWeight: 600,
+    color: "#07193E",
     fontSize: 13,
     alignSelf: "center" as const,
     whiteSpace: "nowrap" as const,
@@ -159,7 +173,18 @@ export const actionsTray = {
     },
   },
   timeContainers: {
+    display: "flex" as const,
+    "& button": {
+      flexGrow: 0,
+      marginLeft: 15,
+    },
     height: 40,
+    maxWidth: 1185,
+    marginBottom: 15,
+    justifyContent: "flex-start" as const,
+    "& > *": {
+      marginRight: 15,
+    },
   },
   actionsTray: {
     display: "flex" as const,
@@ -168,6 +193,19 @@ export const actionsTray = {
       flexGrow: 0,
       marginLeft: 15,
     },
+  },
+  filterContainer: {
+    backgroundColor: "#fff",
+    border: "#EEF1F4 2px solid",
+    borderRadius: 2,
+    display: "flex",
+    alignItems: "center",
+    padding: "0 12px",
+  },
+  divisorLine: {
+    borderRight: "#EEF1F4 1px solid",
+    height: 20,
+    margin: "0 15px",
   },
 };
 
@@ -338,14 +376,25 @@ export const settingsCommon = {
   backContainer: {
     margin: "20px 38px 0",
   },
+  mainCont: {
+    paddingLeft: 50,
+    paddingRight: 50,
+  },
+  mainTitle: {
+    fontSize: 18,
+    color: "#000",
+    fontWeight: 600,
+    marginBottom: 10,
+    marginTop: 10,
+  },
 };
 
 export const typesSelection = {
   iconContainer: {
     display: "flex" as const,
     flexDirection: "row" as const,
-    maxWidth: 455,
-    justifyContent: "space-between" as const,
+    maxWidth: 1180,
+    justifyContent: "start" as const,
     flexWrap: "wrap" as const,
     width: "100%",
   },
@@ -373,20 +422,39 @@ export const typesSelection = {
     height: "80px",
   },
   lambdaNotif: {
-    backgroundColor: "#fff",
-    border: "#393939 1px solid",
+    background:
+      "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
+    border: "#E5E5E5 1px solid",
     borderRadius: 5,
-    width: 101,
-    height: 91,
+    width: 250,
+    height: 80,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "start",
+    marginBottom: 16,
+    marginRight: 8,
+    cursor: "pointer",
+    padding: 0,
+    overflow: "hidden",
+  },
+  lambdaNotifIcon: {
+    backgroundColor: "#FEFEFE",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
-    cursor: "pointer",
+    width: 80,
+    height: 80,
+
     "& img": {
-      maxWidth: 71,
-      maxHeight: 71,
+      maxWidth: 46,
+      maxHeight: 46,
     },
+  },
+  lambdaNotifTitle: {
+    color: "#07193E",
+    fontSize: 16,
+    fontFamily: "Lato,sans-serif",
+    paddingLeft: 18,
   },
 };
 
@@ -399,29 +467,31 @@ export const logsCommon = {
 
 export const widgetCommon = {
   singleValueContainer: {
-    position: "relative" as const,
-    flexGrow: 1,
-    width: "100%",
-    height: "100%",
-    border: "#EAEAEA 1px solid",
-    borderRadius: 5,
+    height: 200,
+    maxWidth: 1185,
+    border: "#eef1f4 2px solid",
     backgroundColor: "#fff",
+    borderRadius: 10,
+    width: "100%",
+    padding: 16,
   },
   titleContainer: {
-    color: "#393939",
-    fontWeight: 600,
-    height: 15,
-    textAlign: "center" as const,
-    fontSize: 10,
+    color: "#404143",
+    fontSize: 14,
+    textTransform: "uppercase" as const,
+    fontWeight: 800,
+    borderBottom: "#eef1f4 1px solid",
+    paddingBottom: 14,
+    marginBottom: 5,
+    display: "flex" as const,
+    justifyContent: "space-between" as const,
   },
   contentContainer: {
-    flexGrow: 2,
     justifyContent: "center" as const,
     alignItems: "center" as const,
     display: "flex" as const,
-    position: "absolute" as const,
     width: "100%",
-    height: "calc(100% - 15px)",
+    height: 140,
   },
   contentContainerWithLabel: {
     height: "calc(100% - 25px)",
@@ -445,7 +515,6 @@ export const widgetCommon = {
     width: 8,
     height: 8,
     minWidth: 8,
-    borderRadius: "100%",
     marginRight: 5,
   },
   legendLabel: {
@@ -454,6 +523,39 @@ export const widgetCommon = {
     whiteSpace: "nowrap" as const,
     overflow: "hidden" as const,
     textOverflow: "ellipsis" as const,
+  },
+  zoomChartCont: {
+    position: "relative" as const,
+    height: 340,
+    width: "100%",
+  },
+  zoomChartIcon: {
+    backgroundColor: "transparent",
+    border: 0,
+    padding: 0,
+    cursor: "pointer",
+    "& svg": {
+      color: "#D0D0D0",
+      height: 16,
+    },
+    "&:hover": {
+      "& svg": {
+        color: "#404143",
+      },
+    },
+  },
+};
+
+export const widgetContainerCommon = {
+  widgetPanelDelimiter: {
+    padding: 10,
+  },
+  dashboardRow: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    justifyContent: "flex-start" as const,
+    flexWrap: "wrap" as const,
+    maxWidth: 1180,
   },
 };
 

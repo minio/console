@@ -27,6 +27,7 @@ import { widgetDetailsToPanel } from "../utils";
 import { CircularProgress } from "@material-ui/core";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
+import { representationNumber } from "../../../../../common/utils";
 
 interface ISingleRepWidget {
   classes: any;
@@ -107,6 +108,8 @@ const SingleRepWidget = ({
         });
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  const gradientID = `colorGradient-${title.split(" ").join("-")}`;
+
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
@@ -117,8 +120,14 @@ const SingleRepWidget = ({
       )}
       {!loading && (
         <div className={classes.contentContainer}>
-          <ResponsiveContainer>
+          <ResponsiveContainer width="99%">
             <AreaChart data={data}>
+              <defs>
+                <linearGradient id={gradientID} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={fillColor} stopOpacity={1} />
+                  <stop offset="95%" stopColor={fillColor} stopOpacity={0} />
+                </linearGradient>
+              </defs>
               <YAxis
                 domain={[0, (dataMax: number) => dataMax * 2]}
                 hide={true}
@@ -127,19 +136,21 @@ const SingleRepWidget = ({
                 type="monotone"
                 dataKey={"value"}
                 stroke={color}
-                fill={fillColor}
+                fill={`url(#${gradientID})`}
                 fillOpacity={1}
               />
               <text
-                x={"50%"}
-                y={"50%"}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontWeight={600}
-                fontSize={18}
-                fill={color}
+                x={"0%"}
+                y={"80%"}
+                textAnchor="start"
+                dominantBaseline="auto"
+                fontWeight={700}
+                fontSize={65}
+                fill={"#07193E"}
               >
-                {result ? result.innerLabel : ""}
+                {result
+                  ? representationNumber(parseInt(result.innerLabel || "0"))
+                  : ""}
               </text>
             </AreaChart>
           </ResponsiveContainer>

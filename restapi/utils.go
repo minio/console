@@ -106,14 +106,12 @@ func FileExists(filename string) bool {
 }
 
 func NewSessionCookieForConsole(token string) http.Cookie {
-	expiration := time.Now().Add(SessionDuration)
-
 	return http.Cookie{
 		Path:     "/",
 		Name:     "token",
 		Value:    token,
 		MaxAge:   int(SessionDuration.Seconds()), // 45 minutes
-		Expires:  expiration,
+		Expires:  time.Now().Add(SessionDuration),
 		HttpOnly: true,
 		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
 		// should not leak any cookie if we access the site using HTTP

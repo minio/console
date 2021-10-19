@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -835,13 +836,15 @@ func getBucketObjectLockingResponse(session *models.Principal, bucketName string
 func getBucketRewindResponse(session *models.Principal, params user_api.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
-
 	var prefix = ""
-
 	if params.Prefix != nil {
-		prefix = *params.Prefix
+		encodedPrefix := *params.Prefix
+		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		prefix = string(decodedPrefix)
 	}
-
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
 		LogError("error creating S3Client: %v", err)

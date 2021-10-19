@@ -18,7 +18,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
 import Snackbar from "@material-ui/core/Snackbar";
 import history from "../../history";
 import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";
@@ -57,6 +56,12 @@ import Metrics from "./Dashboard/Metrics";
 import Hop from "./Tenants/TenantDetails/hop/Hop";
 import MainError from "./Common/MainError/MainError";
 import AddTenant from "./Tenants/AddTenant/AddTenant";
+import NotificationEndpoints from "./NotificationEndpoints/NotificationEndpoints";
+import AddNotificationEndpoint from "./NotificationEndpoints/AddNotificationEndpoint";
+import NotificationTypeSelector from "./NotificationEndpoints/NotificationTypeSelector";
+import ListTiersConfiguration from "./Configurations/TiersConfiguration/ListTiersConfiguration";
+import TierTypeSelector from "./Configurations/TiersConfiguration/TierTypeSelector";
+import AddTierConfiguration from "./Configurations/TiersConfiguration/AddTierConfiguration";
 
 const drawerWidth = 245;
 
@@ -278,6 +283,30 @@ const Console = ({
     {
       component: ConfigurationMain,
       path: "/settings",
+    },
+    {
+      component: AddNotificationEndpoint,
+      path: "/notification-endpoints/add/:service",
+    },
+    {
+      component: NotificationTypeSelector,
+      path: "/notification-endpoints/add",
+    },
+    {
+      component: NotificationEndpoints,
+      path: "/notification-endpoints",
+    },
+    {
+      component: AddTierConfiguration,
+      path: "/tiers/add/:service",
+    },
+    {
+      component: TierTypeSelector,
+      path: "/tiers/add",
+    },
+    {
+      component: ListTiersConfiguration,
+      path: "/tiers",
     },
     {
       component: Account,

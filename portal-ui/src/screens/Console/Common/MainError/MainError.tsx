@@ -35,7 +35,7 @@ interface IMainErrorProps {
 const styles = (theme: Theme) =>
   createStyles({
     mainErrorContainer: {
-      position: "absolute",
+      position: "fixed",
       width: "100%",
       backgroundColor: "#fff",
       border: "#C72C48 1px solid",

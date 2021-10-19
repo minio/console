@@ -3044,10 +3044,6 @@ definitions:
         type: string
       STSSessionToken:
         type: string
-      actions:
-        type: array
-        items:
-          type: string
       accountAccessKey:
         type: string
   startProfilingItem:

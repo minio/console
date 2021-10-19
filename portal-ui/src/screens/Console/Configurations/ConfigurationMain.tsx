@@ -20,8 +20,6 @@ import { Grid } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
-import ListNotificationEndpoints from "./NotificationEndpoints/ListNotificationEndpoints";
-import ListTiersConfiguration from "./TiersConfiguration/ListTiersConfiguration";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { ISessionResponse } from "../types";
@@ -68,24 +66,6 @@ const ConfigurationMain = ({
             >
               <ListItemText primary="Configurations" />
             </ListItem>
-            <ListItem
-              button
-              selected={selectedTab === 1}
-              onClick={() => {
-                setSelectedTab(1);
-              }}
-            >
-              <ListItemText primary="Lambda Notifications" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedTab === 2}
-              onClick={() => {
-                setSelectedTab(2);
-              }}
-            >
-              <ListItemText primary="Tiers" />
-            </ListItem>
           </List>
         </Grid>
         <Grid item xs={10}>
@@ -93,18 +73,6 @@ const ConfigurationMain = ({
             <Grid item xs={12}>
               <h1 className={classes.sectionTitle}>Configurations</h1>
               <ConfigurationsList />
-            </Grid>
-          )}
-          {selectedTab === 1 && (
-            <Grid item xs={12}>
-              <h1 className={classes.sectionTitle}>Lambda Notifications</h1>
-              <ListNotificationEndpoints />
-            </Grid>
-          )}
-          {selectedTab === 2 && distributedSetup && (
-            <Grid item xs={12}>
-              <h1 className={classes.sectionTitle}>Tiers</h1>
-              <ListTiersConfiguration />
             </Grid>
           )}
         </Grid>

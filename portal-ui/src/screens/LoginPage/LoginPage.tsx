@@ -212,7 +212,7 @@ const Login = ({
   });
   const [loginSending, setLoginSending] = useState<boolean>(false);
   const [loadingFetchConfiguration, setLoadingFetchConfiguration] =
-    useState<boolean>(false);
+    useState<boolean>(true);
 
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
@@ -225,16 +225,6 @@ const Login = ({
 
   const fetchConfiguration = () => {
     setLoadingFetchConfiguration(true);
-    api
-      .invoke("GET", "/api/v1/login")
-      .then((loginDetails: ILoginDetails) => {
-        setLoginStrategy(loginDetails);
-        setLoadingFetchConfiguration(false);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
-        setLoadingFetchConfiguration(false);
-      });
   };
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -261,8 +251,19 @@ const Login = ({
   };
 
   useEffect(() => {
-    fetchConfiguration();
-  }, []);
+    if (loadingFetchConfiguration) {
+      api
+        .invoke("GET", "/api/v1/login")
+        .then((loginDetails: ILoginDetails) => {
+          setLoginStrategy(loginDetails);
+          setLoadingFetchConfiguration(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setErrorSnackMessage(err);
+          setLoadingFetchConfiguration(false);
+        });
+    }
+  }, [loadingFetchConfiguration, setErrorSnackMessage]);
 
   let loginComponent = null;
 
