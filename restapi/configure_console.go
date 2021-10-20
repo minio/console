@@ -186,7 +186,28 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		IsDevelopment:                   false,
 	}
 	secureMiddleware := secure.New(secureOptions)
-	return secureMiddleware.Handler(next)
+	return RejectS3Middleware(secureMiddleware.Handler(next))
+}
+
+// RejectS3Middleware will reject requests that have AWS S3 specific headers.
+func RejectS3Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if len(r.Header.Get("X-Amz-Content-Sha256")) > 0 ||
+			len(r.Header.Get("X-Amz-Date")) > 0 ||
+			strings.HasPrefix(r.Header.Get("Authorization"), "AWS4-HMAC-SHA256") ||
+			r.URL.Query().Get("AWSAccessKeyId") != "" {
+			w.WriteHeader(http.StatusForbidden)
+			w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+<Error>
+  <Code>AccessDenied</Code>
+  <Message>S3 API Request made to Console port. S3 Requests should be sent to API port.</Message>
+  <RequestId>0</RequestId>
+</Error>
+`))
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func AuthenticationMiddleware(next http.Handler) http.Handler {
