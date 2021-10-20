@@ -55,7 +55,6 @@ const CreateFolderModal = ({
   classes,
 }: ICreateFolder) => {
   const [pathUrl, setPathUrl] = useState("");
-  const [nameInputError, setNameInputError] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const currentPath = `${bucketName}/${decodeFileName(folderName)}`;
@@ -80,21 +79,9 @@ const CreateFolderModal = ({
     onClose();
   };
 
-  const validPathURL = useCallback(() => {
-    const patternAgainst = /^[a-zA-Z0-9*'#-\[\]_/&.@\s()]+$/; // Only allow uppercase, numbers, dashes and underscores
-    if (patternAgainst.test(pathUrl)) {
-      setNameInputError("");
-      return true;
-    }
-    setNameInputError(
-      "Please verify the folder path contains valid characters only (letters, numbers and some special characters)."
-    );
-    return false;
-  }, [pathUrl]);
-
   useEffect(() => {
     let valid = true;
-    if (pathUrl.trim().length === 0 || !validPathURL()) {
+    if (pathUrl.trim().length === 0) {
       valid = false;
     }
     setIsFormValid(valid);
@@ -120,7 +107,6 @@ const CreateFolderModal = ({
                 setPathUrl(e.target.value);
               }}
               required
-              error={nameInputError}
             />
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>

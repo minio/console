@@ -77,7 +77,7 @@ import EditIcon from "../../../../../../icons/EditIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
-import { decodeFileName } from "../../../../../../common/utils";
+import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -420,7 +420,9 @@ const ObjectDetails = ({
     if (redirectBack) {
       const newPath = allPathData.join("/");
       history.push(
-        `/buckets/${bucketName}/browse${newPath === "" ? "" : `/${newPath}`}`
+        `/buckets/${bucketName}/browse${
+          newPath === "" ? "" : `/${encodeFileName(newPath)}`
+        }`
       );
     }
   };

@@ -897,12 +897,8 @@ const ListObjects = ({
     },
   ];
 
-  const ccPath = internalPaths.split("/").pop();
-
-  const pageTitle = ccPath !== "" ? decodeFileName(ccPath) : "/";
-  // console.log("pageTitle", pageTitle);
+  const pageTitle = decodeFileName(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
-  // console.log("currentPath", currentPath);
 
   return (
     <React.Fragment>
@@ -922,7 +918,7 @@ const ListObjects = ({
         <DeleteObject
           deleteOpen={deleteOpen}
           selectedBucket={bucketName}
-          selectedObject={selectedObject}
+          selectedObject={encodeFileName(selectedObject)}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}

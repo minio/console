@@ -584,9 +584,17 @@ export const representationNumber = (number: number | undefined) => {
 };
 
 export const encodeFileName = (name: string) => {
-  return btoa(unescape(encodeURIComponent(name)));
+  try {
+    return btoa(unescape(encodeURIComponent(name)));
+  } catch (err) {
+    return "";
+  }
 };
 
 export const decodeFileName = (text: string) => {
-  return decodeURIComponent(escape(window.atob(text)));
+  try {
+    return decodeURIComponent(escape(window.atob(text)));
+  } catch (err) {
+    return text;
+  }
 };
