@@ -134,6 +134,7 @@ interface IBucketListItem {
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selected: boolean;
   bulkSelect: boolean;
+  userCanManage: boolean;
 }
 
 const BucketListItem = ({
@@ -143,6 +144,7 @@ const BucketListItem = ({
   onSelect,
   selected,
   bulkSelect,
+  userCanManage,
 }: IBucketListItem) => {
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
@@ -241,20 +243,22 @@ const BucketListItem = ({
                   <div style={{ marginBottom: 10 }} />
                 </Box>
               </Grid>
-              <Grid item xs={6} sm={12} md={12}>
-                <Link
-                  to={`/buckets/${bucket.name}/admin`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Button
-                    variant={"outlined"}
-                    endIcon={<SettingsIcon />}
-                    className={classes.manageButton}
+              {userCanManage && (
+                <Grid item xs={6} sm={12} md={12}>
+                  <Link
+                    to={`/buckets/${bucket.name}/admin`}
+                    style={{ textDecoration: "none" }}
                   >
-                    Manage
-                  </Button>
-                </Link>
-              </Grid>
+                    <Button
+                      variant={"outlined"}
+                      endIcon={<SettingsIcon />}
+                      className={classes.manageButton}
+                    >
+                      Manage
+                    </Button>
+                  </Link>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>
