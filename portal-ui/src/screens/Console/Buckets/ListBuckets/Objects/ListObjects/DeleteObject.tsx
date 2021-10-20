@@ -28,6 +28,7 @@ import {
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
+import { decodeFileName } from "../../../../../../common/utils";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -50,13 +51,8 @@ const DeleteObject = ({
     if (deleteLoading) {
       return;
     }
-    let recursive = false;
-    if (selectedObject.endsWith("/")) {
-      recursive = true;
-    }
-    // Escape object name
-    selectedObject = encodeURIComponent(selectedObject);
-
+    const decodedSelectedObject = decodeFileName(selectedObject);
+    const recursive = decodedSelectedObject.endsWith("/");
     api
       .invoke(
         "DELETE",
@@ -85,7 +81,8 @@ const DeleteObject = ({
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete: <b>{selectedObject}</b>?{" "}
+          Are you sure you want to delete:{" "}
+          <b>{decodeFileName(selectedObject)}</b>?{" "}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
