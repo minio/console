@@ -315,9 +315,10 @@ export const fieldsConfigurations: any = {
       name: "config_url",
       required: false,
       label: "Config URL",
-      tooltip: "Config URL for Client ID configuration",
+      tooltip: "Config URL for identity provider configuration",
       type: "string",
-      placeholder: "Enter Config URL",
+      placeholder:
+        "https://identity-provider-url/.well-known/openid-configuration",
     },
     {
       name: "client_id",
@@ -327,10 +328,17 @@ export const fieldsConfigurations: any = {
       placeholder: "Enter Client ID",
     },
     {
+      name: "client_secret",
+      required: false,
+      label: "Secret ID",
+      type: "string",
+      placeholder: "Enter Secret ID",
+    },
+    {
       name: "claim_name",
       required: false,
       label: "Claim Name",
-      tooltip: "Claim Name",
+      tooltip: "Claim from which MinIO will read the policy or role to use",
       type: "string",
       placeholder: "Enter Claim Name",
     },
@@ -341,6 +349,26 @@ export const fieldsConfigurations: any = {
       tooltip: "Claim Prefix",
       type: "string",
       placeholder: "Enter Claim Prefix",
+    },
+    {
+      name: "claim_userinfo",
+      required: false,
+      label: "Claim UserInfo",
+      type: "on|off",
+    },
+    {
+      name: "redirect_uri",
+      required: false,
+      label: "Redirect URI",
+      type: "string",
+      placeholder: "https://console-endpoint-url/oauth_callback",
+    },
+    {
+      name: "scopes",
+      required: false,
+      label: "Scopes",
+      type: "string",
+      placeholder: "openid,profile,email",
     },
   ],
   identity_ldap: [

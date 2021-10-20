@@ -191,7 +191,7 @@ func Test_buildConfig(t *testing.T) {
 					},
 				},
 			},
-			want: swag.String("notify_postgres enable=off connection_string="),
+			want: swag.String("notify_postgres enable=\"off\" connection_string=\"\""),
 		},
 		// Test-2: buildConfig() format correctly configuration as "config_name k=v k2=v2 k2=v3" with duplicate keys
 		{
@@ -213,7 +213,7 @@ func Test_buildConfig(t *testing.T) {
 					},
 				},
 			},
-			want: swag.String("notify_postgres enable=off connection_string= connection_string=x"),
+			want: swag.String("notify_postgres enable=\"off\" connection_string=\"\" connection_string=\"x\""),
 		},
 	}
 	for _, tt := range tests {
