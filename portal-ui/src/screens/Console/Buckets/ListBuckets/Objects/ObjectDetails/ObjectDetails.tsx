@@ -356,20 +356,15 @@ const ObjectDetails = ({
     setDeleteTagModalOpen(true);
   };
 
-  const downloadObject = (object: IFileInfo, includeVersion?: boolean) => {
+  const downloadObject = (object: IFileInfo) => {
     if (object.size && parseInt(object.size) > 104857600) {
       // If file is bigger than 100MB we show a notification
       setSnackBarMessage(
         "Download process started, it may take a few moments to complete"
       );
     }
-    download(
-      bucketName,
-      internalPaths,
-      object.version_id,
-      () => {},
-      includeVersion
-    );
+
+    download(bucketName, internalPaths, object.version_id);
   };
 
   const tableActions: ItemActions[] = [
@@ -391,7 +386,7 @@ const ObjectDetails = ({
     {
       type: "download",
       onClick: (item: IFileInfo) => {
-        downloadObject(item, true);
+        downloadObject(item);
       },
       disableButtonFunction: (item: string) => {
         const element = versions.find((elm) => elm.version_id === item);
