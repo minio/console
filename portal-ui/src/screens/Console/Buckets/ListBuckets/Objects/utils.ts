@@ -17,9 +17,7 @@
 export const download = (
   bucketName: string,
   objectPath: string,
-  versionID: any,
-  callBack?: (objIdentifier: string) => void,
-  includeVersionInCallback?: boolean
+  versionID: any
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
