@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { AddIcon } from "../../../../icons";
+import { AddIcon, BucketsIcon, TiersIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
@@ -37,6 +37,7 @@ import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
+import HelpBox from "../../../../common/HelpBox";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -49,6 +50,9 @@ const styles = (theme: Theme) =>
   createStyles({
     ...searchField,
     ...actionsTray,
+    twHeight: {
+      minHeight: 400,
+    },
   });
 
 const BucketReplicationPanel = ({
@@ -235,6 +239,28 @@ const BucketReplicationPanel = ({
             records={replicationRules}
             entityName="Replication Rules"
             idField="id"
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            iconComponent={<BucketsIcon />}
+            help={
+              <Fragment>
+                MinIO supports server-side and client-side replication of
+                objects between source and destination buckets.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/replication/replication-overview.html?ref=con"
+                  target="_blank"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
           />
         </Grid>
       </Grid>
