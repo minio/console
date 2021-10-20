@@ -610,7 +610,7 @@ const BucketSummary = ({
                       <td colSpan={2}></td>
                     ) : (
                       <Fragment>
-                        <td className={classes.titleCol}>Valitidy:</td>
+                        <td className={classes.titleCol}>Validity:</td>
                         <td className={classes.capitalizeFirst}>
                           {retentionConfig && retentionConfig.validity}{" "}
                           {retentionConfig &&

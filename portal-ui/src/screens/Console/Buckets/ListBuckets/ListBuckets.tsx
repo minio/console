@@ -147,6 +147,7 @@ const ListBuckets = ({
   const [filterBuckets, setFilterBuckets] = useState<string>("");
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
+  const [canManageBucket, setCanManageBucket] = useState<boolean>(false);
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
@@ -163,6 +164,10 @@ const ListBuckets = ({
               id: "createBucket",
               action: "s3:CreateBucket",
             },
+            {
+              id: "admin",
+              action: "admin:*",
+            },
           ],
         })
         .then((res: HasPermissionResponse) => {
@@ -173,10 +178,16 @@ const ListBuckets = ({
           const actions = res.permissions ? res.permissions : [];
 
           let canCreate = actions.find((s) => s.id === "createBucket");
+          let canManage = actions.find((s) => s.id === "admin");
           if (canCreate && canCreate.can) {
             setCanCreateBucket(true);
           } else {
             setCanCreateBucket(false);
+          }
+          if (canManage && canManage.can) {
+            setCanManageBucket(true);
+          } else {
+            setCanManageBucket(false);
           }
 
           setLoadingPerms(false);
@@ -408,6 +419,7 @@ const ListBuckets = ({
                   onSelect={selectListBuckets}
                   selected={selectedBuckets.includes(bucket.name)}
                   bulkSelect={bulkSelect}
+                  userCanManage={canManageBucket}
                 />
               );
             })}
