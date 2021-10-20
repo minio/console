@@ -22,7 +22,7 @@ import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import { LifeCycleItem } from "../types";
-import { AddIcon } from "../../../../icons";
+import { AddIcon, TiersIcon } from "../../../../icons";
 import {
   actionsTray,
   searchField,
@@ -34,11 +34,15 @@ import api from "../../../../common/api";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import HelpBox from "../../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
     ...searchField,
     ...actionsTray,
+    twHeight: {
+      minHeight: 400,
+    },
   });
 
 interface IBucketLifecyclePanelProps {
@@ -199,6 +203,30 @@ const BucketLifecyclePanel = ({
             entityName="Lifecycle"
             customEmptyMessage="There are no Lifecycle rules yet"
             idField="id"
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            iconComponent={<TiersIcon />}
+            help={
+              <Fragment>
+                MinIO Object Lifecycle Management allows creating rules for time
+                or date based automatic transition or expiry of objects. For
+                object transition, MinIO automatically moves the object to a
+                configured remote storage tier.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
+                  target="_blank"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
           />
         </Grid>
       </Grid>

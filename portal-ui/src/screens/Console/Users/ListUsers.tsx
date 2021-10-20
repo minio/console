@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
@@ -22,7 +22,7 @@ import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { AddIcon } from "../../../icons";
+import { AddIcon, LambdaIcon, UsersIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,
@@ -38,6 +38,7 @@ import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
 import { decodeFileName } from "../../../common/utils";
+import HelpBox from "../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,6 +71,9 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
+    },
+    twHeight: {
+      minHeight: 600,
     },
     ...actionsTray,
     ...searchField,
@@ -219,67 +223,96 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
         />
       )}
       <PageHeader label={"Users"} />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Users"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(e) => {
-                setFilter(e.target.value);
-              }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<GroupIcon />}
-              disabled={checkedUsers.length <= 0}
-              onClick={() => {
-                if (checkedUsers.length > 0) {
-                  setAddGroupOpen(true);
-                }
-              }}
-            >
-              Add to Group
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setAddScreenOpen(true);
-                setSelectedUser(null);
-              }}
-            >
-              Create User
-            </Button>
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Users"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            onChange={(e) => {
+              setFilter(e.target.value);
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<GroupIcon />}
+            disabled={checkedUsers.length <= 0}
+            onClick={() => {
+              if (checkedUsers.length > 0) {
+                setAddGroupOpen(true);
+              }
+            }}
+          >
+            Add to Group
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setAddScreenOpen(true);
+              setSelectedUser(null);
+            }}
+          >
+            Create User
+          </Button>
+        </Grid>
 
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-              onSelect={selectionChanged}
-              selectedItems={checkedUsers}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Users"
-              idField="accessKey"
-            />
-          </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+            onSelect={selectionChanged}
+            selectedItems={checkedUsers}
+            isLoading={loading}
+            records={filteredRecords}
+            entityName="Users"
+            idField="accessKey"
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            iconComponent={<UsersIcon />}
+            help={
+              <Fragment>
+                A MinIO user consists of a unique access key (username) and
+                corresponding secret key (password). Clients must authenticate
+                their identity by specifying both a valid access key (username)
+                and the corresponding secret key (password) of an existing MinIO
+                user.
+                <br />
+                <br />
+                Each user can have one or more assigned policies that explicitly
+                list the actions and resources to which that user has access.
+                Users can also inherit policies from the groups in which they
+                have membership.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                  target="_blank"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
+          />
         </Grid>
       </Grid>
     </React.Fragment>

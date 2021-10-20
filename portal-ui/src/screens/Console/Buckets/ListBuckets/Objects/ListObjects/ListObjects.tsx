@@ -623,7 +623,7 @@ const ListObjects = ({
       );
     }
 
-    download(bucketName, object.name, object.version_id);
+    download(bucketName, encodeFileName(object.name), object.version_id);
   };
 
   const openPath = (idElement: string) => {

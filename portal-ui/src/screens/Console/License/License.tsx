@@ -369,7 +369,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
               <Grid
                 item
                 xs={12}
-                lg={8}
+                lg={12}
                 className={`${classes.licenseContainer}`}
               >
                 {licenseInfo ? (
@@ -519,7 +519,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   </Fragment>
                 )}
               </Grid>
-              <Grid item xs={12} lg={4} className={`${classes.paper}`}>
+              <Grid item xs={12} lg={12} className={`${classes.paper}`}>
                 {licenseInfo ? (
                   <Fragment>
                     <Typography
@@ -590,28 +590,32 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                       more about the compliance policy.
                     </Typography>
                     <br />
-                    <a
-                      href={`https://min.io/compliance?ref=${
-                        operatorMode ? "op" : "con"
-                      }`}
-                      className={classes.openSourcePolicy}
-                      target="_blank"
-                      rel="nofollow noopener noreferrer"
-                    >
-                      Open Source Policy Compliance
-                    </a>
-                    <br />
-                    <br />
-                    <a
-                      href={`https://min.io/logo?ref=${
-                        operatorMode ? "op" : "con"
-                      }`}
-                      className={classes.openSourcePolicy}
-                      target="_blank"
-                      rel="nofollow noopener noreferrer"
-                    >
-                      Trademark Policy
-                    </a>
+                    <ul>
+                      <li>
+                        <a
+                          href={`https://min.io/compliance?ref=${
+                            operatorMode ? "op" : "con"
+                          }`}
+                          className={classes.openSourcePolicy}
+                          target="_blank"
+                          rel="nofollow noopener noreferrer"
+                        >
+                          Learn more about GNU AGPL v3
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href={`https://min.io/logo?ref=${
+                            operatorMode ? "op" : "con"
+                          }`}
+                          className={classes.openSourcePolicy}
+                          target="_blank"
+                          rel="nofollow noopener noreferrer"
+                        >
+                          MinIO Trademark Compliance
+                        </a>
+                      </li>
+                    </ul>
                   </Fragment>
                 )}
               </Grid>

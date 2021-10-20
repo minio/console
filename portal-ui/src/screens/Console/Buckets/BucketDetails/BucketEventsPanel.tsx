@@ -20,7 +20,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
-import { AddIcon } from "../../../../icons";
+import { AddIcon, LambdaIcon, TiersIcon } from "../../../../icons";
 import { BucketEvent, BucketEventList } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
@@ -33,6 +33,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import DeleteEvent from "./DeleteEvent";
 import AddEvent from "./AddEvent";
+import HelpBox from "../../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -40,6 +41,9 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     actionsTray: {
       ...actionsTray.actionsTray,
+    },
+    twHeight: {
+      minHeight: 400,
     },
   });
 
@@ -159,6 +163,30 @@ const BucketEventsPanel = ({
             records={records}
             entityName="Events"
             idField="id"
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            iconComponent={<LambdaIcon />}
+            help={
+              <Fragment>
+                MinIO bucket notifications allow administrators to send
+                notifications to supported external services on certain object
+                or bucket events. MinIO supports bucket and object-level S3
+                events similar to the Amazon S3 Event Notifications.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                  target="_blank"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
           />
         </Grid>
       </Grid>

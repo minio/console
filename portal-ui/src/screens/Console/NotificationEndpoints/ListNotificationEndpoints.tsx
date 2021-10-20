@@ -29,7 +29,7 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { notificationTransform } from "./utils";
-import { AddIcon } from "../../../icons";
+import { AddIcon, LambdaIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { setErrorSnackMessage } from "../../../actions";
 import {
@@ -43,6 +43,7 @@ import api from "../../../common/api";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import history from "../../../history";
+import HelpBox from "../../../common/HelpBox";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -64,12 +65,8 @@ const styles = (theme: Theme) =>
     iconText: {
       lineHeight: "24px",
     },
-    customConfigurationPage: {
-      height: "calc(100vh - 410px)",
-      scrollbarWidth: "none" as const,
-      "&::-webkit-scrollbar": {
-        display: "none",
-      },
+    twHeight: {
+      minHeight: 400,
     },
     lambdaContainer: {
       padding: "15px 0",
@@ -138,7 +135,7 @@ const ListNotificationEndpoints = ({
 
   return (
     <Fragment>
-      <Grid container>
+      <Grid container className={classes.container}>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Filter"
@@ -179,34 +176,46 @@ const ListNotificationEndpoints = ({
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Grid item xs={12}>
-            <div className={classes.settingsOptionsContainer}>
+          <TableWrapper
+            itemActions={[]}
+            columns={[
+              {
+                label: "Status",
+                elementKey: "status",
+                renderFunction: statusDisplay,
+                width: 150,
+              },
+              { label: "Service", elementKey: "service_name" },
+            ]}
+            isLoading={isLoading}
+            records={filteredRecords}
+            entityName="Notification Endpoints"
+            idField="service_name"
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            iconComponent={<LambdaIcon />}
+            help={
               <Fragment>
-                <Grid item xs={12} className={classes.lambdaContainer}>
-                  <Grid item xs={12}>
-                    <TableWrapper
-                      itemActions={[]}
-                      columns={[
-                        {
-                          label: "Status",
-                          elementKey: "status",
-                          renderFunction: statusDisplay,
-                          width: 150,
-                        },
-                        { label: "Service", elementKey: "service_name" },
-                      ]}
-                      isLoading={isLoading}
-                      records={filteredRecords}
-                      entityName="Notification Endpoints"
-                      idField="service_name"
-                      customPaperHeight={classes.customConfigurationPage}
-                      noBackground
-                    />
-                  </Grid>
-                </Grid>
+                MinIO bucket notifications allow administrators to send
+                notifications to supported external services on certain object
+                or bucket events. MinIO supports bucket and object-level S3
+                events similar to the Amazon S3 Event Notifications.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                  target="_blank"
+                >
+                  documentation
+                </a>
+                .
               </Fragment>
-            </div>
-          </Grid>
+            }
+          />
         </Grid>
       </Grid>
     </Fragment>
