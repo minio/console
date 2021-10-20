@@ -208,7 +208,7 @@ const BucketLifecyclePanel = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
-            iconComponent={TiersIcon}
+            iconComponent={<TiersIcon />}
             help={
               <Fragment>
                 MinIO Object Lifecycle Management allows creating rules for time

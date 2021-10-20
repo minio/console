@@ -286,7 +286,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
         </Grid>
         <Grid item xs={12}>
           <HelpBox
-            iconComponent={UsersIcon}
+            iconComponent={<UsersIcon />}
             help={
               <Fragment>
                 A MinIO user consists of a unique access key (username) and

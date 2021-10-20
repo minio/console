@@ -32,6 +32,9 @@ const styles = (theme: Theme) =>
       textAlign: "center",
       padding: 30,
       fontSize: 64,
+      "& .MuiSvgIcon-root": {
+        fontSize: 64,
+      },
     },
     iconSize: {
       fontSize: 64,
@@ -41,16 +44,16 @@ const styles = (theme: Theme) =>
 
 interface IHelpBox {
   classes: any;
-  iconComponent: React.ComponentType;
+  iconComponent: any;
   help: any;
 }
 
-const HelpBox = ({ classes, iconComponent: Component, help }: IHelpBox) => {
+const HelpBox = ({ classes, iconComponent, help }: IHelpBox) => {
   return (
     <div className={classes.root}>
       <Grid container>
         <Grid xs={2} className={classes.icon}>
-          <Component className={classes.iconSize} />
+          {iconComponent}
         </Grid>
         <Grid xs={10} className={classes.helpText}>
           {help}

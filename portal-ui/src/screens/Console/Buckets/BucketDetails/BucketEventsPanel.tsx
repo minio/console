@@ -168,7 +168,7 @@ const BucketEventsPanel = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
-            iconComponent={LambdaIcon}
+            iconComponent={<LambdaIcon />}
             help={
               <Fragment>
                 MinIO bucket notifications allow administrators to send

@@ -288,7 +288,7 @@ const ListTiersConfiguration = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
-            iconComponent={TiersIcon}
+            iconComponent={<TiersIcon />}
             help={
               <Fragment>
                 Tiers are used by the MinIO Object Lifecycle Management which

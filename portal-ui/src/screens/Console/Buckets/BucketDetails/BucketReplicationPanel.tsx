@@ -244,7 +244,7 @@ const BucketReplicationPanel = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
-            iconComponent={BucketsIcon}
+            iconComponent={<BucketsIcon />}
             help={
               <Fragment>
                 MinIO supports server-side and client-side replication of
