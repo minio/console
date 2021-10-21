@@ -361,10 +361,10 @@ const PolicyDetails = ({
             subTitle={<Fragment>IAM Policy</Fragment>}
             actions={
               <Fragment>
-                <Tooltip title="Delete User">
+                <Tooltip title="Delete Policy">
                   <IconButton
                     color="primary"
-                    aria-label="Delete User"
+                    aria-label="Delete Policy"
                     component="span"
                     onClick={deletePolicy}
                   >
