@@ -313,10 +313,6 @@ const PolicyDetails = ({
     setDeleteOpen(true);
   };
 
-  const confirmDeletePolicy = (policy: string) => {
-    setDeleteOpen(true);
-  };
-
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     history.push(`/policies`);
