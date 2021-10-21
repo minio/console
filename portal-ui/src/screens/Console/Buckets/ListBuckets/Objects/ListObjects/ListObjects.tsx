@@ -684,7 +684,7 @@ const ListObjects = ({
             return true;
           }
         }
-        return false;
+        return item.endsWith("/");
       },
       sendOnlyId: false,
     },
