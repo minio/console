@@ -74,7 +74,7 @@ const DeletePolicy = ({
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete policy <b>{selectedPolicy}</b>?.
+          Are you sure you want to delete policy <b>{selectedPolicy}</b>?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
