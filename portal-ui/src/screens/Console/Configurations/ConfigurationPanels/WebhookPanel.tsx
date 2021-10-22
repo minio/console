@@ -16,12 +16,14 @@
 
 import React, { useState } from "react";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { Button, TextField } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import AddIcon from "@material-ui/icons/Add";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { Button, TextField } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import InputAdornment from "@mui/material/InputAdornment";
+import AddIcon from "@mui/icons-material/Add";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import EditConfiguration from "../../NotificationEndpoints/CustomForms/EditConfiguration";
 import SearchIcon from "../../../../icons/SearchIcon";
@@ -151,6 +153,7 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
                 </InputAdornment>
               ),
             }}
+            variant="standard"
           />
           <Button
             variant="contained"

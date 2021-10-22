@@ -17,14 +17,16 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
-import { Button, CircularProgress } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
+import Grid from "@mui/material/Grid";
+import { Button, CircularProgress } from "@mui/material";
+import Paper from "@mui/material/Paper";
 import { niceBytes } from "../../../../common/utils";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";

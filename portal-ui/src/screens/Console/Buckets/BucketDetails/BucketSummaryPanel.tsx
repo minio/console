@@ -16,12 +16,14 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, CircularProgress } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, CircularProgress } from "@mui/material";
 import get from "lodash/get";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
@@ -47,7 +49,7 @@ import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 import EnableVersioningModal from "./EnableVersioningModal";
-import GavelIcon from "@material-ui/icons/Gavel";
+import GavelIcon from "@mui/icons-material/Gavel";
 import EnableQuota from "./EnableQuota";
 import { setBucketDetailsLoad } from "../actions";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";

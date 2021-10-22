@@ -16,11 +16,13 @@
 
 import React, { useState } from "react";
 import get from "lodash/get";
-import { Grid, InputLabel, Tooltip } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
-import CancelIcon from "@material-ui/icons/Cancel";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Grid, InputLabel, Tooltip } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import { fileProcess } from "./utils";
 import HelpIcon from "../../../../../icons/HelpIcon";
@@ -164,6 +166,7 @@ const FileSelector = ({
                 }}
                 disableRipple={false}
                 disableFocusRipple={false}
+                size="large"
               >
                 <CancelIcon />
               </IconButton>
@@ -183,6 +186,7 @@ const FileSelector = ({
               }}
               disableRipple={false}
               disableFocusRipple={false}
+              size="large"
             >
               <AttachFileIcon />
             </IconButton>

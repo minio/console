@@ -17,10 +17,12 @@
 import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
-import CloseIcon from "@material-ui/icons/Close";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import { snackBarMessage } from "../../../../types";

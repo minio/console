@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { Grid, InputLabel, TextField, Tooltip } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
@@ -55,7 +57,7 @@ const styles = (theme: Theme) =>
       right: 7,
     },
     cssOutlinedInput: {
-      borderColor: "#9C9C9C",
+      borderColor: "#EAEAEA",
       padding: 16,
     },
     rootContainer: {
@@ -63,6 +65,19 @@ const styles = (theme: Theme) =>
         ...fieldBasic.inputLabel,
         fontSize: 13,
         minHeight: 150,
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#07193E",
+        borderWidth: 1,
+      },
+      "& textarea": {
+        color: "#07193E",
+        fontSize: 13,
+        fontWeight: 600,
+        "&:placeholder": {
+          color: "#393939",
+          opacity: 1,
+        },
       },
     },
   });
@@ -119,6 +134,7 @@ const CommentBoxWrapper = ({
             disabled={disabled}
             onChange={onChange}
             multiline
+            rows={5}
             inputProps={inputProps}
             error={error !== ""}
             helperText={error}

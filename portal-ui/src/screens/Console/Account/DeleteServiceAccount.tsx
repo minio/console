@@ -16,7 +16,9 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   Button,
   Dialog,
@@ -25,7 +27,7 @@ import {
   DialogContentText,
   DialogTitle,
   LinearProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";

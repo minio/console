@@ -15,17 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import clsx from "clsx";
-import Grid from "@material-ui/core/Grid";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio, { RadioProps } from "@material-ui/core/Radio";
-import { InputLabel, Tooltip } from "@material-ui/core";
-import {
-  createStyles,
-  Theme,
-  withStyles,
-  makeStyles,
-} from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio, { RadioProps } from "@mui/material/Radio";
+import { InputLabel, Tooltip } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
@@ -55,8 +53,6 @@ const styles = (theme: Theme) =>
     fieldContainer: {
       ...fieldBasic.fieldContainer,
       display: "flex",
-      justifyContent: "space-between",
-      borderBottom: "#9c9c9c 1px solid",
       paddingBottom: 10,
       marginTop: 11,
     },
@@ -71,13 +67,13 @@ const styles = (theme: Theme) =>
       },
       "& .MuiFormControlLabel-label": {
         fontSize: 12,
-        color: "#000",
+        color: "#07193E",
       },
     },
     checkedOption: {
       "& .MuiFormControlLabel-label": {
         fontSize: 12,
-        color: "#000",
+        color: "#07193E",
         fontWeight: 700,
       },
     },

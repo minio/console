@@ -16,11 +16,13 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button } from "@mui/material";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { LifeCycleItem } from "../types";
 import { AddIcon, TiersIcon } from "../../../../icons";
 import {
@@ -221,6 +223,7 @@ const BucketLifecyclePanel = ({
                 <a
                   href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   documentation
                 </a>

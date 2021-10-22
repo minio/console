@@ -16,15 +16,16 @@
 
 import React, { useEffect, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDataSRep } from "./types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import { representationNumber } from "../../../../../common/utils";
@@ -33,8 +34,8 @@ interface ISingleRepWidget {
   classes: any;
   title: string;
   panelItem: IDashboardPanel;
-  timeStart: MaterialUiPickersDate;
-  timeEnd: MaterialUiPickersDate;
+  timeStart: any;
+  timeEnd: any;
   propLoading: boolean;
   displayErrorMessage: any;
   color: string;

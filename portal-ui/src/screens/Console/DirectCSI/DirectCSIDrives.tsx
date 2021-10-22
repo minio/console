@@ -16,16 +16,18 @@
 
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   Button,
   Grid,
   InputAdornment,
   TextField,
   IconButton,
-} from "@material-ui/core";
+} from "@mui/material";
 import get from "lodash/get";
-import GroupIcon from "@material-ui/icons/Group";
+import GroupIcon from "@mui/icons-material/Group";
 import { AddIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
@@ -268,6 +270,7 @@ const DirectCSIMain = ({
             setFilter(e.target.value);
           }}
           disabled={notAvailable}
+          variant="standard"
         />
         <IconButton
           color="primary"
@@ -277,6 +280,7 @@ const DirectCSIMain = ({
             setLoading(true);
           }}
           disabled={notAvailable}
+          size="large"
         >
           <RefreshIcon />
         </IconButton>

@@ -16,11 +16,13 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import { Button } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import { Button } from "@mui/material";
 import { AddIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
@@ -205,6 +207,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
               onChange={(e) => {
                 setFilter(e.target.value);
               }}
+              variant="standard"
             />
             <Button
               variant="contained"

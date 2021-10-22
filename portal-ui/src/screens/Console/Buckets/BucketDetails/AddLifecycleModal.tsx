@@ -17,9 +17,11 @@
 import React, { useState, useEffect, Fragment } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, LinearProgress } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import {
@@ -394,7 +396,7 @@ const AddLifecycleModal = ({
                       id="storage_class"
                       name="storage_class"
                       value={storageClass}
-                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                      onChange={(e: SelectChangeEvent<string>) => {
                         setStorageClass(e.target.value as string);
                       }}
                       options={tiersList}

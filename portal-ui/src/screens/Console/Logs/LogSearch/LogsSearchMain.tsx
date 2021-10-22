@@ -17,10 +17,12 @@
 import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Grid } from "@material-ui/core";
-import { ArrowDropUp } from "@material-ui/icons";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, Grid } from "@mui/material";
+import { ArrowDropUp } from "@mui/icons-material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {
   actionsTray,
   containerForHeader,

@@ -15,22 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../../common/api";
 import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { IDashboardPanel } from "../types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 import { ErrorResponseHandler } from "../../../../../common/types";
 
 interface ISingleValueWidget {
   title: string;
   panelItem: IDashboardPanel;
-  timeStart: MaterialUiPickersDate;
-  timeEnd: MaterialUiPickersDate;
+  timeStart: any;
+  timeEnd: any;
   propLoading: boolean;
   displayErrorMessage: any;
   classes: any;

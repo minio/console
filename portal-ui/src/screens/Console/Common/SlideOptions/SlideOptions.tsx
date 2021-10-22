@@ -16,7 +16,8 @@
 
 import React, { Fragment } from "react";
 import { AutoSizer } from "react-virtualized";
-import { createStyles, withStyles } from "@material-ui/core/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 
 interface ISlideOptions {
   classes: any;

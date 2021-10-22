@@ -20,7 +20,9 @@ import { withRouter } from "react-router-dom";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import clsx from "clsx";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   CircularProgress,
   LinearProgress,
@@ -30,17 +32,17 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-} from "@material-ui/core";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
-import Grid from "@material-ui/core/Grid";
-import Chip from "@material-ui/core/Chip";
-import TextField from "@material-ui/core/TextField";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
+} from "@mui/material";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
+import Grid from "@mui/material/Grid";
+import Chip from "@mui/material/Chip";
+import TextField from "@mui/material/TextField";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import ShareFile from "./ShareFile";
 import {
   actionsTray,
@@ -543,6 +545,7 @@ const ObjectDetails = ({
                           shareObject();
                         }}
                         disabled={actualInfo.is_delete_marker}
+                        size="large"
                       >
                         <ShareIcon />
                       </IconButton>
@@ -567,6 +570,7 @@ const ObjectDetails = ({
                             downloadObject(actualInfo);
                           }}
                           disabled={actualInfo.is_delete_marker}
+                          size="large"
                         >
                           <DownloadIcon />
                         </IconButton>
@@ -581,6 +585,7 @@ const ObjectDetails = ({
                           setDeleteOpen(true);
                         }}
                         disabled={actualInfo.is_delete_marker}
+                        size="large"
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -792,6 +797,7 @@ const ObjectDetails = ({
                                 </InputAdornment>
                               ),
                             }}
+                            variant="standard"
                           />
                         )}
                     </Grid>

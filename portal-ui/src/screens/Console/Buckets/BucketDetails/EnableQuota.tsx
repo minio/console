@@ -16,9 +16,11 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, LinearProgress } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import { factorForDropdown, getBytes, units } from "../../../../common/utils";
 import { BucketQuota } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
@@ -194,9 +196,7 @@ const EnableQuota = ({
                         id="quota_unit"
                         name="quota_unit"
                         value={quotaUnit}
-                        onChange={(
-                          e: React.ChangeEvent<{ value: unknown }>
-                        ) => {
+                        onChange={(e: SelectChangeEvent<string>) => {
                           setQuotaUnit(e.target.value as string);
                         }}
                         options={factorForDropdown()}

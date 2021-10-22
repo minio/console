@@ -16,9 +16,11 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketEncryptionInfo } from "../types";
@@ -130,7 +132,7 @@ const EnableBucketEncryption = ({
           <Grid item xs={12} className={classes.formScrollable}>
             <Grid item xs={12}>
               <SelectWrapper
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                onChange={(e: SelectChangeEvent<string>) => {
                   setEncryptionType(e.target.value as string);
                 }}
                 id="select-encryption-type"

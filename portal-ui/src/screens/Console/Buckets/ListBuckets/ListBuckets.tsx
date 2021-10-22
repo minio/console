@@ -16,12 +16,14 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Box, Button } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Box, Button } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { AddIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
@@ -87,6 +89,8 @@ const styles = (theme: Theme) =>
     },
     theaderSearchLabel: {
       color: theme.palette.grey["400"],
+      fontSize: 14,
+      fontWeight: "bold",
     },
     addBucket: {
       marginRight: 8,

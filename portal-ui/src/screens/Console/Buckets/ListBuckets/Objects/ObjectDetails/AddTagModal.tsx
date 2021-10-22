@@ -17,8 +17,10 @@
 import React, { useState } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import { Button, Grid } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Button, Grid } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { AppState } from "../../../../../../store";

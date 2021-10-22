@@ -21,15 +21,13 @@ import {
   TextField,
   TextFieldProps,
   Tooltip,
-} from "@material-ui/core";
-import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
-import { InputProps as StandardInputProps } from "@material-ui/core/Input";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  withStyles,
-} from "@material-ui/core/styles";
+} from "@mui/material";
+import { OutlinedInputProps } from "@mui/material/OutlinedInput";
+import { InputProps as StandardInputProps } from "@mui/material/Input";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import makeStyles from "@mui/styles/makeStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   fieldBasic,
   inputFieldStyles,
@@ -58,6 +56,7 @@ interface InputBoxProps {
   overlayIcon?: any;
   overlayAction?: () => void;
   extraInputProps?: StandardInputProps["inputProps"];
+  noLabelMinWidth?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -80,8 +79,8 @@ const styles = (theme: Theme) =>
     },
     overlayAction: {
       position: "absolute",
-      right: 0,
-      top: 15,
+      right: 5,
+      top: 6,
       "& svg": {
         maxWidth: 15,
         maxHeight: 15,
@@ -129,6 +128,7 @@ const InputBoxWrapper = ({
   overlayIcon = null,
   extraInputProps = {},
   overlayAction,
+  noLabelMinWidth = false,
   classes,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
@@ -151,7 +151,12 @@ const InputBoxWrapper = ({
         }`}
       >
         {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.inputLabel}>
+          <InputLabel
+            htmlFor={id}
+            className={
+              noLabelMinWidth ? classes.noMinWidthLabel : classes.inputLabel
+            }
+          >
             <span>
               {label}
               {required ? "*" : ""}

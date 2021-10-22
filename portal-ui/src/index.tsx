@@ -20,13 +20,23 @@ import { Provider } from "react-redux";
 import Routes from "./Routes";
 import configureStore from "./store";
 import * as serviceWorker from "./serviceWorker";
-import { ThemeProvider, withStyles } from "@material-ui/core/styles";
+import {
+  ThemeProvider,
+  Theme,
+  StyledEngineProvider,
+} from "@mui/material/styles";
+import withStyles from "@mui/styles/withStyles";
 import "react-virtualized/styles.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import "./index.css";
 import theme from "./theme/main";
+
+declare module "@mui/styles/defaultTheme" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
@@ -63,9 +73,11 @@ const GlobalCss = withStyles({
 ReactDOM.render(
   <Provider store={configureStore()}>
     <GlobalCss />
-    <ThemeProvider theme={theme}>
-      <Routes />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <Routes />
+      </ThemeProvider>
+    </StyledEngineProvider>
   </Provider>,
   document.getElementById("root")
 );

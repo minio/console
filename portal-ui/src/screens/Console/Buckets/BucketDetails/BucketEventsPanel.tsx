@@ -16,11 +16,13 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
-import { AddIcon, LambdaIcon, TiersIcon } from "../../../../icons";
+import Grid from "@mui/material/Grid";
+import { AddIcon, LambdaIcon } from "../../../../icons";
 import { BucketEvent, BucketEventList } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
@@ -181,6 +183,7 @@ const BucketEventsPanel = ({
                 <a
                   href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   documentation
                 </a>

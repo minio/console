@@ -16,18 +16,20 @@
 
 import { ITenant } from "../ListTenants/types";
 import { ICertificateInfo, ITenantSecurityResponse } from "../types";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Chip from "@material-ui/core/Chip";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Chip from "@mui/material/Chip";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { Button, CircularProgress, Typography } from "@material-ui/core";
+import { Button, CircularProgress, Typography } from "@mui/material";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";

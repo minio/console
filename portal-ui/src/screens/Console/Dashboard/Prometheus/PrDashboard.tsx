@@ -16,10 +16,12 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, GridSize } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { GridSize } from "@mui/material";
 import {
   actionsTray,
   widgetContainerCommon,
@@ -29,7 +31,6 @@ import { getWidgetsWithValue, panelsConfiguration } from "./utils";
 import { TabPanel } from "../../../shared/tabs";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
-import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import api from "../../../../common/api";
 
 import TabSelector from "../../Common/TabSelector/TabSelector";

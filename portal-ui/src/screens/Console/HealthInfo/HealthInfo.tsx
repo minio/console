@@ -28,7 +28,9 @@ import {
   DiagStatSuccess,
   DiagStatError,
 } from "./types";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   wsProtocol,
   WSCloseInternalServerErr,
@@ -39,10 +41,10 @@ import {
   actionsTray,
   containerForHeader,
 } from "../Common/FormComponents/common/styleLibrary";
-import { Grid, Button } from "@material-ui/core";
+import { Grid, Button } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { setSnackBarMessage, setServerDiagStat } from "../../../actions";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const styles = (theme: Theme) =>
   createStyles({

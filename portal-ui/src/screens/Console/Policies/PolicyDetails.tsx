@@ -16,16 +16,18 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
   containerForHeader,
   modalBasic,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import { Button, IconButton, LinearProgress, Tooltip } from "@material-ui/core";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import { Button, IconButton, LinearProgress, Tooltip } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -35,11 +37,11 @@ import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import IAMPoliciesIcon from "../../../icons/IAMPoliciesIcon";
 import RefreshIcon from "../../../icons/RefreshIcon";
@@ -382,6 +384,7 @@ const PolicyDetails = ({
                       setLoadingGroups(true);
                       setLoadingPolicy(true);
                     }}
+                    size="large"
                   >
                     <RefreshIcon />
                   </IconButton>
@@ -519,6 +522,7 @@ const PolicyDetails = ({
                         </InputAdornment>
                       ),
                     }}
+                    variant="standard"
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.actionsTray}>
@@ -556,6 +560,7 @@ const PolicyDetails = ({
                         </InputAdornment>
                       ),
                     }}
+                    variant="standard"
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.actionsTray}>

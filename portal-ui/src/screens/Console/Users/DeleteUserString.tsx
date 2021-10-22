@@ -24,7 +24,7 @@ import {
   DialogContentText,
   DialogTitle,
   LinearProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 import { setErrorSnackMessage } from "../../../actions";
 import { UsersList } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";

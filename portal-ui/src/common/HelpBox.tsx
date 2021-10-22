@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Component } from "react";
-import Grid from "@material-ui/core/Grid";
-import { createStyles } from "@material-ui/core";
-import { Theme, withStyles } from "@material-ui/core/styles";
+import React from "react";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 
 const styles = (theme: Theme) =>
   createStyles({

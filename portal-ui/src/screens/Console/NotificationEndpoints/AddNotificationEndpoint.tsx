@@ -17,9 +17,11 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button } from "@mui/material";
 import ConfPostgres from "./CustomForms/ConfPostgres";
 import api from "../../../common/api";
 import { serverNeedsRestart, setErrorSnackMessage } from "../../../actions";

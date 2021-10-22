@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
-import Grid from "@material-ui/core/Grid";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { predefinedList } from "../common/styleLibrary";
 
 interface IPredefinedList {

@@ -25,7 +25,7 @@ import {
   DialogTitle,
   Grid,
   LinearProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 import { setErrorSnackMessage } from "../../../actions";
 import { IDirectCSIFormatResItem, IDirectCSIFormatResult } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";

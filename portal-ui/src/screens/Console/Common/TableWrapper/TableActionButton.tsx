@@ -16,8 +16,9 @@
 import React from "react";
 import isString from "lodash/isString";
 import { Link } from "react-router-dom";
-import { createStyles, withStyles } from "@material-ui/core/styles";
-import { IconButton } from "@material-ui/core";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { IconButton } from "@mui/material";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import DisableIcon from "./TableActionIcons/DisableIcon";

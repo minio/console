@@ -17,18 +17,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
-import {
-  Divider,
-  Drawer,
-  IconButton,
-  Tooltip,
-  withStyles,
-} from "@material-ui/core";
-import { createStyles, Theme } from "@material-ui/core/styles";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
+import { Divider, Drawer, IconButton, Tooltip } from "@mui/material";
+import withStyles from "@mui/styles/withStyles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
 import { AppState } from "../../../store";
 import { setMenuOpen, userLoggedIn } from "../../../actions";
 import { menuGroups } from "./utils";
@@ -61,10 +57,10 @@ import LogsIcon from "../../../icons/LogsIcon";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
-import MenuIcon from "@material-ui/icons/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import clsx from "clsx";
-import { ChevronLeft } from "@material-ui/icons";
+import { ChevronLeft } from "@mui/icons-material";
 
 const drawerWidth = 245;
 
@@ -561,6 +557,7 @@ const Menu = ({
                 setMenuOpen(true);
               }
             }}
+            size="large"
           >
             {sidebarOpen ? <ChevronLeft /> : <MenuIcon />}
           </IconButton>

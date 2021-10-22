@@ -16,19 +16,21 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
-import { Button, IconButton, Tooltip } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage } from "../../../actions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon, LockIcon } from "../../../icons";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -220,6 +222,7 @@ const Account = ({
                   aria-label="Change Password"
                   component="span"
                   onClick={() => setChangePasswordModalOpen(true)}
+                  size="large"
                 >
                   <LockIcon />
                 </IconButton>
@@ -255,6 +258,7 @@ const Account = ({
               onChange={(e) => {
                 setFilter(e.target.value);
               }}
+              variant="standard"
             />
             <Button
               variant="contained"

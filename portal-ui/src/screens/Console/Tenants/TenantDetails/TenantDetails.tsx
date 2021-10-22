@@ -17,10 +17,12 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Box, IconButton, Tab, Tabs, Tooltip } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Box, IconButton, Tab, Tabs, Tooltip } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
 import {
   setTenantDetailsLoad,
@@ -45,9 +47,9 @@ import PodsSummary from "./PodsSummary";
 import VolumesSummary from "./VolumesSummary";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 import { CircleIcon, DeleteIcon } from "../../../../icons";
 import DeleteTenant from "../ListTenants/DeleteTenant";
 import PodDetails from "./pods/PodDetails";
@@ -416,6 +418,7 @@ const TenantDetails = ({
                     onClick={() => {
                       confirmDeleteTenant();
                     }}
+                    size="large"
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -428,6 +431,7 @@ const TenantDetails = ({
                     onClick={() => {
                       editYaml();
                     }}
+                    size="large"
                   >
                     <EditIcon />
                   </IconButton>
@@ -440,6 +444,7 @@ const TenantDetails = ({
                     onClick={() => {
                       setTenantDetailsLoad(true);
                     }}
+                    size="large"
                   >
                     <RefreshIcon />
                   </IconButton>

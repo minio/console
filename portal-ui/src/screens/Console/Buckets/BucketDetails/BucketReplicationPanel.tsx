@@ -16,10 +16,12 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import { AddIcon, BucketsIcon, TiersIcon } from "../../../../icons";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { AddIcon, BucketsIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
@@ -255,6 +257,7 @@ const BucketReplicationPanel = ({
                 <a
                   href="https://docs.min.io/minio/baremetal/replication/replication-overview.html?ref=con"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   documentation
                 </a>

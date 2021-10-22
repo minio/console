@@ -24,13 +24,14 @@ import {
   Paper,
   Popover,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { AutoSizer, Column, InfiniteLoader, Table } from "react-virtualized";
-import { createStyles, withStyles } from "@material-ui/core/styles";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import ViewColumnIcon from "@material-ui/icons/ViewColumn";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import CircularProgress from "@mui/material/CircularProgress";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import TableActionButton from "./TableActionButton";
 import history from "../../../../history";
 import {
@@ -555,6 +556,7 @@ const TableWrapper = ({
           aria-describedby={"columnsSelector"}
           color="primary"
           onClick={openColumnsSelector}
+          size="large"
         >
           <ViewColumnIcon fontSize="inherit" />
         </IconButton>

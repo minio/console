@@ -17,8 +17,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, InputAdornment, TextField } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, InputAdornment, TextField } from "@mui/material";
 import history from "../../../history";
 import {
   actionsTray,
@@ -116,6 +118,7 @@ const StorageVolumes = ({
           onChange={(e) => {
             setFilter(e.target.value);
           }}
+          variant="standard"
         />
       </Grid>
       <Grid item xs={12}>

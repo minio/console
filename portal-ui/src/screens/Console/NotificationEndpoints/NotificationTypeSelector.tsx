@@ -15,8 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import Grid from "@material-ui/core/Grid";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { servicesList } from "./utils";
 import {
   settingsCommon,
@@ -24,8 +26,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../history";
-import { BackSettingsIcon } from "../../../icons";
-import { Link } from "react-router-dom";
 import BackLink from "../../../common/BackLink";
 
 interface INotificationTypeSelector {

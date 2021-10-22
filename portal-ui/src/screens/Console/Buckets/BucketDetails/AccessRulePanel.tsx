@@ -16,8 +16,10 @@
 
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Paper } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, Paper } from "@mui/material";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ISessionResponse } from "../../types";
@@ -28,7 +30,7 @@ import AddAccessRuleModal from "./AddAccessRule";
 import DeleteAccessRuleModal from "./DeleteAccessRule";
 import EditAccessRuleModal from "./EditAccessRule";
 import { AddIcon } from "../../../../icons";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   actionsTray,
   containerForHeader,

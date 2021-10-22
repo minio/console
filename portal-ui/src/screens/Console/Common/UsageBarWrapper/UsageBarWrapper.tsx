@@ -1,8 +1,10 @@
 import React from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { LinearProgress } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { LinearProgress } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IProgressBar {
