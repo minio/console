@@ -70,7 +70,7 @@ const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
       <iframe
         className={classes.iframeStyle}
         title={"metrics"}
-        src={`/api/proxy/${tenantNamespace}/${tenantName}/metrics`}
+        src={`/api/proxy/${tenantNamespace}/${tenantName}/metrics?cp=y`}
         onLoad={() => {
           setLoading(false);
         }}
