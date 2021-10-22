@@ -29,6 +29,7 @@ import { Button, IconButton, LinearProgress, Tooltip } from "@material-ui/core";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import DeletePolicy from "./DeletePolicy";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -199,6 +200,7 @@ const PolicyDetails = ({
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
   const [filterGroups, setFilterGroups] = useState<string>("");
   const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -307,6 +309,15 @@ const PolicyDetails = ({
 
   const validSave = policyName.trim() !== "";
 
+  const deletePolicy = () => {
+    setDeleteOpen(true);
+  };
+
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
+    history.push(`/policies`);
+  };
+
   const userViewAction = (user: any) => {
     history.push(`/users/${user}`);
   };
@@ -322,6 +333,13 @@ const PolicyDetails = ({
 
   return (
     <Fragment>
+      {deleteOpen && (
+        <DeletePolicy
+          deleteOpen={deleteOpen}
+          selectedPolicy={policyName}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
       <PageHeader
         label={
           <Fragment>
@@ -343,18 +361,17 @@ const PolicyDetails = ({
             subTitle={<Fragment>IAM Policy</Fragment>}
             actions={
               <Fragment>
-                <Tooltip title={"Delete"}>
+                <Tooltip title="Delete Policy">
                   <IconButton
                     color="primary"
-                    aria-label="Delete"
+                    aria-label="Delete Policy"
                     component="span"
-                    onClick={() => {
-                      // setDeleteOpen(true);
-                    }}
+                    onClick={deletePolicy}
                   >
                     <TrashIcon />
                   </IconButton>
                 </Tooltip>
+
                 <Tooltip title={"Refresh"}>
                   <IconButton
                     color="primary"
