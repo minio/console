@@ -17,11 +17,13 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import { Policy, PolicyList } from "./types";
 import { AddIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
@@ -192,6 +194,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
                   </InputAdornment>
                 ),
               }}
+              variant="standard"
             />
             <Button
               variant="contained"

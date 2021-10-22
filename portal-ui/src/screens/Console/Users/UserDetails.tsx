@@ -18,8 +18,10 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, Grid, IconButton, Tooltip } from "@mui/material";
 import {
   AddIcon,
   DeleteIcon,
@@ -47,10 +49,10 @@ import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
-import LockIcon from "@material-ui/icons/Lock";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
+import LockIcon from "@mui/icons-material/Lock";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 
 const styles = (theme: Theme) =>
@@ -306,6 +308,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                     aria-label="Delete User"
                     component="span"
                     onClick={deleteUser}
+                    size="large"
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -316,6 +319,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                     aria-label="Change Password"
                     component="span"
                     onClick={changeUserPassword}
+                    size="large"
                   >
                     <LockIcon />
                   </IconButton>

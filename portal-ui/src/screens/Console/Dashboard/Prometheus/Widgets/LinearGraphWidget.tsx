@@ -25,10 +25,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CircularProgress } from "@material-ui/core";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import ZoomOutMapIcon from "@material-ui/icons/ZoomOutMap";
+import { CircularProgress } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { ILinearGraphConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "../types";
@@ -43,8 +44,8 @@ interface ILinearGraphWidget {
   classes: any;
   title: string;
   panelItem: IDashboardPanel;
-  timeStart: MaterialUiPickersDate;
-  timeEnd: MaterialUiPickersDate;
+  timeStart: any;
+  timeEnd: any;
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;

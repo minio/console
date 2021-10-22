@@ -1,24 +1,25 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Typography from "@mui/material/Typography";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
     headerContainer: {
       // position: "absolute",
       width: "100%",
-      minHeight: 77,
+      minHeight: 79,
       display: "flex",
       backgroundColor: "#fff",
-      borderBottom: "2px solid",
-      borderBottomColor: "#e8e8e8",
       left: 0,
+      boxShadow: "rgba(0,0,0,.08) 0 3px 10px",
     },
     label: {
       display: "flex",

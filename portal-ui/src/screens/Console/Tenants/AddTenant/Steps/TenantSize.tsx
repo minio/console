@@ -16,14 +16,16 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   calculateDistribution,
   erasureCodeCalc,
@@ -44,6 +46,7 @@ import { commonFormValidation } from "../../../../../utils/validationFunctions";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { SelectChangeEvent } from "@mui/material";
 
 interface ITenantSizeProps {
   classes: any;
@@ -368,7 +371,7 @@ const TenantSize = ({
               name="size_factor"
               value={sizeFactor}
               disabled={selectedStorageClass === ""}
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+              onChange={(e: SelectChangeEvent<string>) => {
                 updateField("sizeFactor", e.target.value as string);
               }}
               options={k8sfactorForDropdown()}
@@ -399,7 +402,7 @@ const TenantSize = ({
           <SelectWrapper
             id="ec_parity"
             name="ec_parity"
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            onChange={(e: SelectChangeEvent<string>) => {
               updateField("ecParity", e.target.value as string);
             }}
             label="Erasure Code Parity"

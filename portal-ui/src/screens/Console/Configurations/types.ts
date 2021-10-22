@@ -53,3 +53,9 @@ export interface IElementValue {
   key: string;
   value: string;
 }
+
+export interface IElement {
+  configuration_id: string;
+  configuration_label: string;
+  icon?: any;
+}

@@ -15,14 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import {
-  createStyles,
-  Theme,
-  withStyles,
-  makeStyles,
-} from "@material-ui/core/styles";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import makeStyles from "@mui/styles/makeStyles";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { ITabOption } from "./types";
 
 interface ITabSelector {
@@ -57,8 +55,10 @@ const tabSubStyles = makeStyles({
     backgroundColor: "transparent",
     paddingTop: 0,
     paddingBottom: 0,
+    fontSize: 22,
+    textTransform: "uppercase",
+    color: "#D0D0D0",
   },
-  wrapper: { fontSize: 22, textTransform: "uppercase", color: "#D0D0D0" },
   selected: { "& .MuiTab-wrapper": { color: "#07193E", fontWeight: "bold" } },
   indicator: {
     background:
@@ -121,7 +121,6 @@ const TabSelector = ({
               {...tabOptions}
               classes={{
                 root: subStyles.root,
-                wrapper: subStyles.wrapper,
                 selected: subStyles.selected,
               }}
               id={`simple-tab-${index}`}

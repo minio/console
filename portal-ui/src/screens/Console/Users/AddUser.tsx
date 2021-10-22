@@ -16,9 +16,11 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress, Tab, Tabs } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { Button, LinearProgress, Tab, Tabs } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
 import { setModalErrorSnackMessage } from "../../../actions";

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 
 export default function Title(props: React.Props<any>) {
   return (

@@ -15,8 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import {
   actionsTray,
   containerForHeader,
@@ -26,8 +28,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { tierTypes } from "./utils";
-import { BackSettingsIcon } from "../../../../icons";
-import { Link } from "react-router-dom";
 import BackLink from "../../../../common/BackLink";
 
 interface ITypeTiersConfig {
@@ -90,7 +90,7 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
       <Grid container className={classes.mainCont}>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.mainTitle}>
-            <BackLink to="/tiers" label="Pick an object store" />
+            <BackLink to="/tiers" label="Return to Configured Tiers" />
           </Grid>
           <Grid item xs={12}>
             <Grid item xs={12}>

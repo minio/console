@@ -16,8 +16,10 @@
 
 import React, { useState, Fragment } from "react";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import history from "../../../../history";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { configurationElements } from "../utils";
@@ -34,6 +36,7 @@ import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 
 interface IListConfiguration {
   classes: any;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -65,7 +68,7 @@ const initialConfiguration = {
   configuration_label: "",
 };
 
-const ConfigurationsList = ({ classes }: IListConfiguration) => {
+const ConfigurationsList = ({ classes, history }: IListConfiguration) => {
   const [selectedConfiguration, setSelectedConfiguration] =
     useState(initialConfiguration);
   const [currentConfiguration, setCurrentConfiguration] = useState<number>(0);
@@ -129,9 +132,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
                     <Grid item xs={12}>
                       {currentConfiguration === 1 ? (
                         <EditConfiguration
-                          closeModalAndRefresh={() => {
-                            setCurrentConfiguration(0);
-                          }}
+                          history={history}
                           selectedConfiguration={selectedConfiguration}
                         />
                       ) : null}

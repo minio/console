@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { generatePoolName, niceBytes } from "../../../../common/utils";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
 import api from "../../../../common/api";
 import { IAddPoolRequest, ITenant } from "../ListTenants/types";
 import { ErrorResponseHandler, IAffinityModel } from "../../../../common/types";
@@ -195,7 +197,7 @@ const AddPoolModal = ({
           <SelectWrapper
             id="storage_class"
             name="storage_class"
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            onChange={(e: SelectChangeEvent<string>) => {
               setSelectedStorageClass(e.target.value as string);
             }}
             label="Storage Class"

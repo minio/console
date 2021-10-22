@@ -16,8 +16,10 @@
 
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, Tab, Tabs } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, Tab, Tabs } from "@mui/material";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,

@@ -17,7 +17,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
   tenantDetailsStyles,
@@ -25,7 +27,7 @@ import {
 import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress } from "@mui/material";
 
 interface ITenantMetrics {
   classes: any;
@@ -68,7 +70,7 @@ const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
       <iframe
         className={classes.iframeStyle}
         title={"metrics"}
-        src={`/api/proxy/${tenantNamespace}/${tenantName}/metrics`}
+        src={`/api/proxy/${tenantNamespace}/${tenantName}/metrics?cp=y`}
         onLoad={() => {
           setLoading(false);
         }}

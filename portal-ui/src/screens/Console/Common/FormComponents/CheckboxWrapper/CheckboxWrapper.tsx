@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { Checkbox, Grid, InputLabel, Tooltip } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Checkbox, Grid, InputLabel, Tooltip } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   checkboxIcons,
   fieldBasic,
@@ -81,7 +83,7 @@ const CheckboxWrapper = ({
           />
         </div>
         {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.inputLabel}>
+          <InputLabel htmlFor={id} className={classes.noMinWidthLabel}>
             <span>{label}</span>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>

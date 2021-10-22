@@ -16,11 +16,13 @@
 
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress } from "@mui/material";
 import {
   actionsTray,
   containerForHeader,

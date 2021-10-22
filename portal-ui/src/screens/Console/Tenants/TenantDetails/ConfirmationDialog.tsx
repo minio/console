@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
   tenantDetailsStyles,
@@ -12,7 +14,7 @@ import {
   DialogContentText,
   DialogTitle,
   LinearProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 
 interface IConfirmationDialog {
   classes: any;

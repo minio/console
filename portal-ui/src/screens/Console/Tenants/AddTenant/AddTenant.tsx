@@ -17,10 +17,12 @@
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
-import { LinearProgress } from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import { LinearProgress } from "@mui/material";
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   modalBasic,
   settingsCommon,
@@ -39,7 +41,7 @@ import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
-import { ICertificatesItems, IFieldStore, ISecurityContext } from "../types";
+import { ICertificatesItems, IFieldStore } from "../types";
 import { resetAddTenantForm, updateAddField } from "../actions";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";

@@ -15,14 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import {
-  createStyles,
-  Theme,
-  withStyles,
-  makeStyles,
-} from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Pagination from "@material-ui/lab/Pagination";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import makeStyles from "@mui/styles/makeStyles";
+import Grid from "@mui/material/Grid";
+import Pagination from "@mui/material/Pagination";
 
 interface IGeneralUsePaginator {
   classes: any;

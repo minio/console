@@ -22,10 +22,12 @@ import React, {
   useState,
 } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import debounce from "lodash/debounce";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   modalBasic,
   wizardCommon,
@@ -54,7 +56,7 @@ import AddIcon from "../../../../../icons/AddIcon";
 import AddNamespaceModal from "./helpers/AddNamespaceModal";
 import SizePreview from "./SizePreview";
 import TenantSize from "./TenantSize";
-import { Paper } from "@material-ui/core";
+import { Paper, SelectChangeEvent } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -308,7 +310,7 @@ const NameTenant = ({
                 <SelectWrapper
                   id="storage_class"
                   name="storage_class"
-                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                  onChange={(e: SelectChangeEvent<string>) => {
                     updateField(
                       "selectedStorageClass",
                       e.target.value as string

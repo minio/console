@@ -17,18 +17,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
-import {
-  Divider,
-  Drawer,
-  IconButton,
-  Tooltip,
-  withStyles,
-} from "@material-ui/core";
-import { createStyles, Theme } from "@material-ui/core/styles";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
+import { Divider, Drawer, IconButton, Tooltip } from "@mui/material";
+import withStyles from "@mui/styles/withStyles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
 import { AppState } from "../../../store";
 import { setMenuOpen, userLoggedIn } from "../../../actions";
 import { menuGroups } from "./utils";
@@ -61,10 +57,10 @@ import LogsIcon from "../../../icons/LogsIcon";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
-import MenuIcon from "@material-ui/icons/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import clsx from "clsx";
-import { ChevronLeft } from "@material-ui/icons";
+import { ChevronLeft } from "@mui/icons-material";
 
 const drawerWidth = 245;
 
@@ -72,8 +68,10 @@ const styles = (theme: Theme) =>
   createStyles({
     logo: {
       paddingTop: 25,
+      height: 80,
       marginBottom: 30,
       paddingLeft: 45,
+      borderBottom: "#1C3B64 1px solid",
       transition: theme.transitions.create("paddingLeft", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -561,9 +559,10 @@ const Menu = ({
                 setMenuOpen(true);
               }
             }}
+            size="large"
           >
             {sidebarOpen ? <ChevronLeft /> : <MenuIcon />}
-          </IconButton>
+          </IconButton> 
         </div>
         <List className={classes.menuList}>
           {menuGroups.map((groupMember, index) => {
@@ -581,7 +580,7 @@ const Menu = ({
 
             return (
               <React.Fragment key={`menuElem-${index.toString()}`}>
-                <Divider className={classes.menuDivider} />
+                {index !== 0 && <Divider className={classes.menuDivider} />}
                 {filterByGroup.map((page: IMenuItem) => {
                   switch (page.type) {
                     case "item": {

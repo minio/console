@@ -16,14 +16,16 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
   buttonsStyles,
   hrClass,
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { IEvent } from "../../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { niceDays } from "../../../../../common/utils";

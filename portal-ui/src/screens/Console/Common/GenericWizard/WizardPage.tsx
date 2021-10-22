@@ -15,9 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { IWizardButton, IWizardPage } from "./types";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({

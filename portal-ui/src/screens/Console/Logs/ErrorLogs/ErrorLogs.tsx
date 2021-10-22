@@ -15,11 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useState, useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { connect } from "react-redux";
-import { Grid } from "@material-ui/core";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { Grid } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import moment from "moment/moment";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
@@ -341,6 +343,7 @@ const ErrorLogs = ({
                 </InputAdornment>
               ),
             }}
+            variant="standard"
           />
         </Grid>
         <Grid item xs={12}>

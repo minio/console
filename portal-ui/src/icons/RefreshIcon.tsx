@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { SvgIcon } from "@material-ui/core";
+import { SvgIcon } from "@mui/material";
 import { IIcon } from "./props";
 const RefreshIcon = ({ width = 24 }: IIcon) => {
   return (

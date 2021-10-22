@@ -17,8 +17,10 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Grid, List, ListItem, ListItemText } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Grid, List, ListItem, ListItemText } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import ErrorLogs from "./ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./LogSearch/LogsSearchMain";

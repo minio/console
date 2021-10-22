@@ -23,10 +23,12 @@ import React, {
 } from "react";
 import get from "lodash/get";
 import debounce from "lodash/debounce";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import HelpIcon from "@material-ui/icons/Help";
-import { InputLabel, Tooltip } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
+import HelpIcon from "@mui/icons-material/Help";
+import { InputLabel, Tooltip } from "@mui/material";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
 import AddIcon from "../../../../../icons/AddIcon";

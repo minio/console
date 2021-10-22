@@ -16,11 +16,13 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { LinearProgress } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { LinearProgress } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
 import { policySort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
@@ -191,6 +193,7 @@ const PolicySelectors = ({
                 onChange={(e) => {
                   setFilter(e.target.value);
                 }}
+                variant="standard"
               />
             </Grid>
             <Grid item xs={12} className={classes.tableBlock}>

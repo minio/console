@@ -16,19 +16,27 @@
 
 // This object contains variables that will be used across form components.
 
+const inputLabelBase = {
+  fontWeight: 600,
+  marginRight: 10,
+  fontSize: 14,
+  color: "#07193E",
+  textAlign: "left" as const,
+  overflow: "hidden",
+  "& span": {
+    display: "flex",
+    alignItems: "center",
+  },
+  display: "flex",
+};
+
 export const fieldBasic = {
   inputLabel: {
-    fontWeight: 600,
-    marginRight: 10,
-    fontSize: 15,
-    color: "#000",
-    textAlign: "left" as const,
-    overflow: "hidden",
-    "& span": {
-      display: "flex",
-      alignItems: "center",
-    },
-    display: "flex",
+    ...inputLabelBase,
+    minWidth: 160,
+  },
+  noMinWidthLabel: {
+    ...inputLabelBase,
   },
   fieldLabelError: {
     paddingBottom: 22,
@@ -36,7 +44,7 @@ export const fieldBasic = {
   fieldContainer: {
     marginBottom: 20,
     position: "relative" as const,
-    maxWidth: 840,
+    display: "flex" as const,
   },
   tooltipContainer: {
     marginLeft: 5,
@@ -82,7 +90,7 @@ export const modalBasic = {
     padding: "24px 50px",
     overflowY: "auto" as const,
     height: 170,
-    maxWidth: 840,
+    backgroundColor: "#FBFAFA",
   },
   moduleDescription: {
     color: "#848484",
@@ -113,20 +121,21 @@ export const checkboxIcons = {
 };
 
 const radioBasic = {
-  width: 12,
-  height: 12,
+  width: 16,
+  height: 16,
   borderRadius: "100%",
   "input:disabled ~ &": {
-    border: "1px solid #9C9C9C",
+    border: "1px solid #E5E5E5",
   },
+  padding: 1,
 };
 
 export const radioIcons = {
-  radioUnselectedIcon: { ...radioBasic, border: "1px solid #000" },
+  radioUnselectedIcon: { ...radioBasic, border: "2px solid #E5E5E5" },
   radioSelectedIcon: {
     ...radioBasic,
-    border: "1px solid #000",
-    backgroundColor: "#000",
+    border: "2px solid #E5E5E5",
+    backgroundColor: "#072C4F",
   },
 };
 
@@ -246,22 +255,31 @@ export const searchField = {
 
 export const predefinedList = {
   prefinedContainer: {
-    maxWidth: 840,
+    display: "flex",
     width: "100%",
+    alignItems: "center" as const,
+    margin: "15px 0 0",
   },
   predefinedTitle: {
-    fontSize: 16,
+    color: "#07193E",
+    display: "flex" as const,
+    overflow: "hidden" as const,
+    fontSize: 14,
+    maxWidth: 160,
+    textAlign: "left" as const,
     fontWeight: 600,
-    color: "#000",
-    margin: "10px 0",
+    marginRight: 10,
+    flexGrow: 0,
   },
   predefinedList: {
-    backgroundColor: "#eaeaea",
+    backgroundColor: "#fbfafa",
+    border: "#e5e5e5 1px solid",
     padding: "12px 10px",
-    color: "#393939",
+    color: "#696969",
     fontSize: 12,
     fontWeight: 600,
     minHeight: 41,
+    borderRadius: 4,
   },
   innerContent: {
     width: "100%",
@@ -801,20 +819,32 @@ export const tenantDetailsStyles = {
 
 export const inputFieldStyles = {
   root: {
-    borderRadius: 0,
+    borderRadius: 3,
     "&::before": {
       borderColor: "#9c9c9c",
     },
+    "& fieldset": {
+      borderColor: "#e5e5e5",
+    },
+    "&:hover fieldset": {
+      borderColor: "#07193E",
+    },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#07193E",
+      borderWidth: 1,
+    },
   },
   disabled: {
-    "&.MuiInput-underline::before": {
-      borderColor: "#eaeaea",
+    "&.MuiOutlinedInput-root::before": {
+      borderColor: "#e5e5e5",
       borderBottomStyle: "solid" as const,
+      borderRadius: 3,
     },
   },
   input: {
-    padding: "15px 30px 10px 5px",
-    color: "#393939",
+    height: 38,
+    padding: "0 35px 0 15px",
+    color: "#07193E",
     fontSize: 13,
     fontWeight: 600,
     "&:placeholder": {

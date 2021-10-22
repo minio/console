@@ -15,10 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import IconButton from "@material-ui/core/IconButton";
-import Snackbar from "@material-ui/core/Snackbar";
-import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { snackBarCommon } from "../FormComponents/common/styleLibrary";
 import { AppState } from "../../../../store";
 import { snackBarMessage } from "../../../../types";
@@ -203,6 +205,7 @@ const ModalWrapper = ({
             className={classes.closeButton}
             onClick={onClose}
             disableRipple
+            size="large"
           >
             <span className={classes.closeIcon} />
           </IconButton>

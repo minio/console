@@ -16,8 +16,10 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, IconButton, Paper } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
@@ -240,9 +242,7 @@ const Affinity = ({
                       <Grid item xs={5}>
                         {keyOptions.length > 0 && (
                           <SelectWrapper
-                            onChange={(
-                              e: React.ChangeEvent<{ value: unknown }>
-                            ) => {
+                            onChange={(e: SelectChangeEvent<string>) => {
                               const newKey = e.target.value as string;
                               const arrCp: LabelKeyPair[] = Object.assign(
                                 [],
@@ -282,9 +282,7 @@ const Affinity = ({
                       <Grid item xs={5}>
                         {keyOptions.length > 0 && (
                           <SelectWrapper
-                            onChange={(
-                              e: React.ChangeEvent<{ value: unknown }>
-                            ) => {
+                            onChange={(e: SelectChangeEvent<string>) => {
                               const arrCp: LabelKeyPair[] = Object.assign(
                                 [],
                                 keyValuePairs

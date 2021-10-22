@@ -16,13 +16,15 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { LinearProgress } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { LinearProgress } from "@mui/material";
 import get from "lodash/get";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import {
@@ -203,6 +205,7 @@ const UsersSelectors = ({
                   onChange={(e) => {
                     setFilter(e.target.value);
                   }}
+                  variant="standard"
                 />
               </Grid>
               <Grid item xs={12} className={classes.tableBlock}>

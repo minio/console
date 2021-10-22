@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { createStyles, withStyles } from "@material-ui/core/styles";
-import { Grid, LinearProgress } from "@material-ui/core";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, LinearProgress } from "@mui/material";
 import { BucketObject } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
 import { encodeFileName } from "../../../../../../common/utils";

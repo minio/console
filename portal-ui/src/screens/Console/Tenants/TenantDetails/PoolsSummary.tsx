@@ -16,20 +16,22 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, TextField } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { Button, TextField } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { AddIcon } from "../../../../icons";
 import { IPool, ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddPoolModal from "./AddPoolModal";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import InputAdornment from "@mui/material/InputAdornment";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
 import SearchIcon from "../../../../icons/SearchIcon";
@@ -123,6 +125,7 @@ const PoolsSummary = ({
                 </InputAdornment>
               ),
             }}
+            variant="standard"
           />
           <Button
             variant="contained"

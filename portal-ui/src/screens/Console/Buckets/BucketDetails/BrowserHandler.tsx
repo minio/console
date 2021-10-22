@@ -16,9 +16,11 @@
 
 import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { Link } from "react-router-dom";
-import { Grid, IconButton, Tooltip } from "@material-ui/core";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import get from "lodash/get";
 import { AppState } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
@@ -82,6 +84,7 @@ const BrowserHandler = ({
                 aria-label="Configure Bucket"
                 component="span"
                 onClick={openBucketConfiguration}
+                size="large"
               >
                 <SettingsIcon />
               </IconButton>

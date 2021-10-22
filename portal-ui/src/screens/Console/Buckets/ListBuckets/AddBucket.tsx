@@ -15,9 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress, Typography } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import {
+  Button,
+  LinearProgress,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -288,7 +295,7 @@ const AddBucket = ({
               <Typography component="h6" variant="h6">
                 Features
               </Typography>
-              <hr />
+              <br />
               {!distributedSetup && (
                 <Fragment>
                   <small className={classes.error}>
@@ -390,9 +397,7 @@ const AddBucket = ({
                         id="quota_unit"
                         name="quota_unit"
                         value={quotaUnit}
-                        onChange={(
-                          e: React.ChangeEvent<{ value: unknown }>
-                        ) => {
+                        onChange={(e: SelectChangeEvent<string>) => {
                           addBucketQuotaUnit(e.target.value as string);
                         }}
                         options={factorForDropdown()}

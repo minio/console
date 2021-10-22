@@ -23,6 +23,7 @@ import (
 // endpoints definition
 var (
 	configuration               = "/settings"
+	configurationItem           = "/settings/:option"
 	notificationEndpoints       = "/notification-endpoints"
 	notificationEndpointsAddAny = "/notification-endpoints/add/:service"
 	notificationEndpointsAdd    = "/notification-endpoints/add"
@@ -294,6 +295,7 @@ var displayRules = map[string]func() bool{
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:               configurationActionSet,
+	configurationItem:           configurationActionSet,
 	notificationEndpoints:       configurationActionSet,
 	notificationEndpointsAdd:    configurationActionSet,
 	notificationEndpointsAddAny: configurationActionSet,

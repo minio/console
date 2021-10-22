@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  Button,
-  createStyles,
-  Grid,
-  Theme,
-  withStyles,
-} from "@material-ui/core";
+import { Button, Grid, Theme } from "@mui/material";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";

@@ -16,12 +16,14 @@
 
 import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Tooltip } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { SelectChangeEvent, Tooltip } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import Grid from "@mui/material/Grid";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import {
   modalBasic,
   wizardCommon,
@@ -270,7 +272,7 @@ const AddBulkReplicationModal = ({
             id={`assign-bucket-${indexItem}`}
             name={`assign-bucket-${indexItem}`}
             value={relationBuckets[indexItem]}
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            onChange={(e: SelectChangeEvent<string>) => {
               updateItem(indexItem, e.target.value as string);
             }}
             options={optionsForBucketsDrop}
@@ -404,7 +406,7 @@ const AddBulkReplicationModal = ({
                   <SelectWrapper
                     id="replication_mode"
                     name="replication_mode"
-                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    onChange={(e: SelectChangeEvent<string>) => {
                       setReplicationMode(e.target.value as string);
                     }}
                     label="Replication Mode"
@@ -439,9 +441,7 @@ const AddBulkReplicationModal = ({
                           id="bandwidth_unit"
                           name="bandwidth_unit"
                           value={bandwidthUnit}
-                          onChange={(
-                            e: React.ChangeEvent<{ value: unknown }>
-                          ) => {
+                          onChange={(e: SelectChangeEvent<string>) => {
                             setBandwidthUnit(e.target.value as string);
                           }}
                           options={k8sfactorForDropdown()}

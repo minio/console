@@ -15,9 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { InputLabel, Switch, Tooltip, Typography } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { InputLabel, Switch, Tooltip, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { actionsTray, fieldBasic } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
@@ -101,16 +103,13 @@ const styles = (theme: Theme) =>
       },
     },
     divContainer: {
-      borderBottom: "#9c9c9c 1px solid",
       paddingBottom: 14,
       marginBottom: 20,
       maxWidth: 840,
     },
     wrapperContainer: {
       display: "flex",
-      justifyContent: "space-between",
       alignItems: "center",
-      maxWidth: 840,
     },
     indicatorLabel: {
       fontSize: 12,
@@ -121,6 +120,9 @@ const styles = (theme: Theme) =>
     fieldDescription: {
       marginTop: 4,
       color: "#999999",
+    },
+    tooltip: {
+      fontSize: 16,
     },
     ...actionsTray,
     ...fieldBasic,
@@ -142,9 +144,9 @@ const StyledSwitch = withStyles({
       color: "#fff",
     },
     "&$checked + $track": {
-      backgroundColor: "#081C42",
+      backgroundColor: "#4CCB92",
+      border: "#4CCB92 1px solid",
       opacity: 1,
-      height: 15,
     },
     "&:hover": {
       backgroundColor: "#fff",
@@ -153,18 +155,19 @@ const StyledSwitch = withStyles({
   checked: {},
   track: {
     height: 15,
-    backgroundColor: "#9C9C9C",
-    border: "#081C42 1px solid",
+    backgroundColor: "#E2E2E2",
+    border: "#E2E2E2 1px solid",
     opacity: 1,
     padding: 0,
     marginTop: 1.5,
     "&$checked": {
-      backgroundColor: "#081C42",
+      backgroundColor: "#4CCB92",
+      border: "#4CCB92 1px solid",
     },
   },
   thumb: {
-    backgroundColor: "#fff",
-    border: "#081C42 1px solid",
+    backgroundColor: "#FAFAFA",
+    border: "#E2E2E2 1px solid",
     boxShadow: "none",
     width: 18,
     height: 18,

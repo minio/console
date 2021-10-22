@@ -16,13 +16,15 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
-import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
-import GroupIcon from "@material-ui/icons/Group";
+import { Button, Grid, InputAdornment, TextField } from "@mui/material";
+import GroupIcon from "@mui/icons-material/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { AddIcon, LambdaIcon, UsersIcon } from "../../../icons";
+import { AddIcon, UsersIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,
@@ -183,7 +185,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   ];
 
   return (
-    <React.Fragment>
+    <Fragment>
       {addScreenOpen && (
         <AddUser
           open={addScreenOpen}
@@ -241,6 +243,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             onChange={(e) => {
               setFilter(e.target.value);
             }}
+            variant="standard"
           />
           <Button
             variant="contained"
@@ -306,6 +309,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                 <a
                   href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   documentation
                 </a>
@@ -315,7 +319,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

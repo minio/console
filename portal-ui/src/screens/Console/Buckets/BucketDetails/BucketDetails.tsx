@@ -17,8 +17,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import { BucketInfo, HasPermissionResponse } from "../types";
 import {
@@ -42,11 +44,11 @@ import BucketSummaryPanel from "./BucketSummaryPanel";
 import BucketEventsPanel from "./BucketEventsPanel";
 import BucketReplicationPanel from "./BucketReplicationPanel";
 import BucketLifecyclePanel from "./BucketLifecyclePanel";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import { IconButton, Tooltip } from "@material-ui/core";
+import { IconButton, Tooltip } from "@mui/material";
 import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 import AccessRulePanel from "./AccessRulePanel";
@@ -343,6 +345,7 @@ const BucketDetails = ({
                 aria-label="Browse Bucket"
                 component="span"
                 onClick={openBucketBrowser}
+                size="large"
               >
                 <FolderIcon />
               </IconButton>
@@ -377,6 +380,7 @@ const BucketDetails = ({
                     onClick={() => {
                       setDeleteOpen(true);
                     }}
+                    size="large"
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -389,6 +393,7 @@ const BucketDetails = ({
                     onClick={() => {
                       setBucketDetailsLoad(true);
                     }}
+                    size="large"
                   >
                     <RefreshIcon />
                   </IconButton>

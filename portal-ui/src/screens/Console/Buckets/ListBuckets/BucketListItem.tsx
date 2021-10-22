@@ -15,7 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import { Link } from "react-router-dom";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   ArrowRightIcon,
   BucketsIcon,
@@ -34,7 +36,7 @@ import {
   CardHeader,
   Grid,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { niceBytes, prettyNumber } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
@@ -134,6 +136,7 @@ interface IBucketListItem {
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selected: boolean;
   bulkSelect: boolean;
+  userCanManage: boolean;
 }
 
 const BucketListItem = ({
@@ -143,6 +146,7 @@ const BucketListItem = ({
   onSelect,
   selected,
   bulkSelect,
+  userCanManage,
 }: IBucketListItem) => {
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
@@ -241,20 +245,22 @@ const BucketListItem = ({
                   <div style={{ marginBottom: 10 }} />
                 </Box>
               </Grid>
-              <Grid item xs={6} sm={12} md={12}>
-                <Link
-                  to={`/buckets/${bucket.name}/admin`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Button
-                    variant={"outlined"}
-                    endIcon={<SettingsIcon />}
-                    className={classes.manageButton}
+              {userCanManage && (
+                <Grid item xs={6} sm={12} md={12}>
+                  <Link
+                    to={`/buckets/${bucket.name}/admin`}
+                    style={{ textDecoration: "none" }}
                   >
-                    Manage
-                  </Button>
-                </Link>
-              </Grid>
+                    <Button
+                      variant={"outlined"}
+                      endIcon={<SettingsIcon />}
+                      className={classes.manageButton}
+                    >
+                      Manage
+                    </Button>
+                  </Link>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>

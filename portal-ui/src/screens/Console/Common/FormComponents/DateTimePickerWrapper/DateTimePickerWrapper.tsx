@@ -15,12 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import MomentUtils from "@date-io/moment";
-import { Grid, InputLabel, Tooltip } from "@material-ui/core";
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import ScheduleIcon from "@material-ui/icons/Schedule";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import AdapterMoment from "@mui/lab/AdapterMoment";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import InputAdornment from "@mui/material/InputAdornment";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import { OpenListIcon } from "../../../../../icons";
@@ -160,7 +163,7 @@ const DateTimePickerWrapper = ({
   }
 
   const inputItem = (
-    <MuiPickersUtilsProvider utils={MomentUtils}>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       <DateTimePicker
         value={value}
         onChange={onChange}
@@ -169,18 +172,18 @@ const DateTimePickerWrapper = ({
           className: classOverriden,
         }}
         label=""
-        ampm={false}
-        variant={"inline"}
         className={
           forSearchBlock
             ? classes.parentDateOverride
             : classes.dateSelectorFormOverride
         }
-        format="MMMM Do YYYY, h:mm a"
-        id={id}
         disabled={disabled}
+        renderInput={(props) => (
+          <TextField id={id} variant="standard" {...props} disabled />
+        )}
+        ampm={false}
       />
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 
   if (forSearchBlock) {

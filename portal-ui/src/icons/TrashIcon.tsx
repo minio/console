@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@material-ui/core";
+import { SvgIcon, SvgIconProps } from "@mui/material";
 
 const TrashIcon = (props: SvgIconProps) => {
   return (

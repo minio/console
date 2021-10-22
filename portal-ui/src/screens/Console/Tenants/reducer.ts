@@ -43,7 +43,6 @@ import {
   TENANT_DETAILS_SET_CURRENT_TENANT,
   TENANT_DETAILS_SET_TENANT,
   TENANT_DETAILS_SET_TAB,
-  ISecurityContext,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";

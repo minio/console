@@ -16,16 +16,12 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import {
-  Grid,
-  IconButton,
-  Paper,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
-import CasinoIcon from "@material-ui/icons/Casino";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, IconButton, Paper, Tooltip, Typography } from "@mui/material";
+import CasinoIcon from "@mui/icons-material/Casino";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   modalBasic,
   wizardCommon,
@@ -40,7 +36,7 @@ import { clearValidationError, getRandomString } from "../../utils";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@mui/icons-material/Add";
 
 interface IIdentityProviderProps {
   classes: any;

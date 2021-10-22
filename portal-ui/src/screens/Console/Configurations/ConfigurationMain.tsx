@@ -14,44 +14,47 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
+=======
+>>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
+import React from "react";
+import { Route, Router, Switch } from "react-router-dom";
+import history from "../../../history";
+import ConfigurationOptions from "./ConfigurationPanels/ConfigurationOptions";
+import ConfigurationForm from "./ConfigurationPanels/ConfigurationForm";
+import NotFoundPage from "../../NotFoundPage";
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
 import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Grid } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Grid } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
 import { ISessionResponse } from "../types";
+>>>>>>> 3fabfb96... Updated material-ui dependencies to mui 5 & fixed issues with migration (#1119)
+=======
+>>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
+=======
+>>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
 
-interface IConfigurationMain {
-  classes: any;
-  session: ISessionResponse;
-  distributedSetup: boolean;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
-    ...containerForHeader(theme.spacing(4)),
-  });
-
-const ConfigurationMain = ({ classes }: IConfigurationMain) => {
+const ConfigurationMain = () => {
   return (
-    <Fragment>
-      <PageHeader label="Settings" />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <Grid item xs={12}>
-            <ConfigurationsList />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Fragment>
+    <Router history={history}>
+      <Switch>
+        <Route path="/settings" exact component={ConfigurationOptions} />
+        <Route path="/settings/:option" component={ConfigurationForm} />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </Router>
   );
 };
 
-export default withStyles(styles)(ConfigurationMain);
+export default ConfigurationMain;

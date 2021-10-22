@@ -17,10 +17,13 @@
 import React, { useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import CopyToClipboard from "react-copy-to-clipboard";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import LinearProgress from "@mui/material/LinearProgress";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { CopyIcon } from "../../../../../../icons";
 import { IFileInfo } from "./types";
@@ -34,7 +37,6 @@ import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
-import { LinearProgress } from "@material-ui/core";
 import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>

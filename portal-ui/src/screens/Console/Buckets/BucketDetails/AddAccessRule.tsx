@@ -16,9 +16,11 @@
 
 import React, { useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid } from "@mui/material";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import api from "../../../../common/api";

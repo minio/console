@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   FormControl,
   InputLabel,
@@ -22,8 +22,11 @@ import {
   Select,
   InputBase,
   Tooltip,
-} from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+  SelectChangeEvent,
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
@@ -39,9 +42,7 @@ interface SelectProps {
   id: string;
   name: string;
   tooltip?: string;
-  onChange: (
-    e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
-  ) => void;
+  onChange: (e: SelectChangeEvent<string>) => void;
   disabled?: boolean;
   classes: any;
 }
@@ -62,11 +63,12 @@ const SelectStyled = withStyles((theme: Theme) =>
     },
     input: {
       position: "relative",
-      color: "#393939",
+      color: "#07193E",
       fontSize: 13,
       fontWeight: 600,
-      padding: "15px 20px 10px 10px",
-      borderBottom: "1px solid #9c9c9c",
+      padding: "10px 20px 10px 10px",
+      border: "#e5e5e5 1px solid",
+      borderRadius: 4,
       display: "flex",
       alignItems: "center",
       "&:hover": {
