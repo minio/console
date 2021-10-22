@@ -154,12 +154,8 @@ const ListBuckets = ({
 
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
-  // check the permissions for creating bucket
-  useEffect(() => {
-    if (loadingPerms) {
-      api
-        .invoke("POST", `/api/v1/has-permission`, {
-          actions: [
+  // IAM policies that are checked for logged in user 
+  const actions = [
             {
               id: "createBucket",
               action: "s3:CreateBucket",
@@ -168,17 +164,60 @@ const ListBuckets = ({
               id: "admin",
               action: "admin:*",
             },
-          ],
-        })
+            {
+              id: "ResetBucketReplicationStateAction",
+              action: "s3:ResetBucketReplicationState",
+            },
+            {
+              id: "ForceDeleteBucketAction",
+              action: "s3:ForceDeleteBucket",
+            },
+            {
+              id: "DeleteBucketAction",
+              action: "s3:DeleteBucket",
+            },
+            {
+              id: "DeleteBucketPolicyAction",
+              action: "s3:DeleteBucketPolicy",
+            },
+            {
+              id: "PutBucketPolicyAction",
+              action: "s3:PutBucketPolicy",
+            },
+            {
+              id: "PutBucketLifecycleAction",
+              action: "s3:PutLifecycleConfiguration",
+            },
+            {
+              id: "PutBucketVersioningAction",
+              action: "s3:PutBucketVersioning",
+            },
+            {
+              id: "PutBucketEncryptionAction",
+              action: "s3:PutEncryptionConfiguration",
+            },
+          ]
+
+  // check the permissions for creating bucket
+  useEffect(() => {
+    if (loadingPerms) {
+      api
+        .invoke("POST", `/api/v1/has-permission`, {actions})
         .then((res: HasPermissionResponse) => {
           setLoadingPerms(false);
           if (!res.permissions) {
             return;
           }
-          const actions = res.permissions ? res.permissions : [];
+          const permActions = res.permissions ? res.permissions : [];
+          let canManage: PermissionAction | undefined ;
+          let canCreate = permActions.find((s) => s.id === "createBucket");
+          for (let i = 0; i < permActions.length; i++) {
+              if (permActions.find((s) => s.id === actions[i].id)) {
+                canManage = permActions[i];
+              } 
+               if (canManage) break;
+          }
 
-          let canCreate = actions.find((s) => s.id === "createBucket");
-          let canManage = actions.find((s) => s.id === "admin");
           if (canCreate && canCreate.can) {
             setCanCreateBucket(true);
           } else {
@@ -198,6 +237,7 @@ const ListBuckets = ({
         });
     }
   }, [loadingPerms, setErrorSnackMessage]);
+
 
   useEffect(() => {
     if (loading) {
