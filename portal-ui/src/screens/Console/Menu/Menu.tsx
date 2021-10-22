@@ -68,8 +68,10 @@ const styles = (theme: Theme) =>
   createStyles({
     logo: {
       paddingTop: 25,
+      height: 80,
       marginBottom: 30,
       paddingLeft: 45,
+      borderBottom: "#1C3B64 1px solid",
       transition: theme.transitions.create("paddingLeft", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -560,7 +562,7 @@ const Menu = ({
             size="large"
           >
             {sidebarOpen ? <ChevronLeft /> : <MenuIcon />}
-          </IconButton>
+          </IconButton> 
         </div>
         <List className={classes.menuList}>
           {menuGroups.map((groupMember, index) => {
@@ -578,7 +580,7 @@ const Menu = ({
 
             return (
               <React.Fragment key={`menuElem-${index.toString()}`}>
-                <Divider className={classes.menuDivider} />
+                {index !== 0 && <Divider className={classes.menuDivider} />}
                 {filterByGroup.map((page: IMenuItem) => {
                   switch (page.type) {
                     case "item": {

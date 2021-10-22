@@ -17,7 +17,7 @@ const theme = createTheme({
     error: {
       light: "#e03a48",
       main: "#dc1f2e",
-      contrastText: "#ffffff",
+      contrastText: "#fff",
     },
     grey: {
       100: "#f0f0f0",
@@ -31,7 +31,7 @@ const theme = createTheme({
       900: "#333333",
     },
     background: {
-      default: "#FAFAFA",
+      default: "#fff",
     },
   },
   typography: {

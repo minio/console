@@ -15,12 +15,11 @@ const styles = (theme: Theme) =>
     headerContainer: {
       // position: "absolute",
       width: "100%",
-      minHeight: 77,
+      minHeight: 79,
       display: "flex",
       backgroundColor: "#fff",
-      borderBottom: "2px solid",
-      borderBottomColor: "#e8e8e8",
       left: 0,
+      boxShadow: "rgba(0,0,0,.08) 0 3px 10px",
     },
     label: {
       display: "flex",
