@@ -24,7 +24,7 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
-import { Bucket, BucketList, HasPermissionResponse } from "../types";
+import { Bucket, BucketList, HasPermissionResponse, PermissionAction } from "../types";
 import { AddIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
