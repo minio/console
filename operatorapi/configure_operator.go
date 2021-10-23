@@ -70,7 +70,8 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 			AccountAccessKey:   claims.AccountAccessKey,
 		}, nil
 	}
-
+	// Register logout handlers
+	registerLogoutHandlers(api)
 	// Register login handlers
 	registerLoginHandlers(api)
 	registerSessionHandlers(api)

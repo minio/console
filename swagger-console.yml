@@ -108,7 +108,7 @@ paths:
 
   /logout:
     post:
-      summary: Logout from Console.
+      summary: Logout from Operator.
       operationId: Logout
       responses:
         200:
