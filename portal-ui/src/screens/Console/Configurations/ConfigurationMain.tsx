@@ -14,36 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
-=======
->>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
 import React from "react";
 import { Route, Router, Switch } from "react-router-dom";
 import history from "../../../history";
 import ConfigurationOptions from "./ConfigurationPanels/ConfigurationOptions";
 import ConfigurationForm from "./ConfigurationPanels/ConfigurationForm";
 import NotFoundPage from "../../NotFoundPage";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import React, { Fragment } from "react";
-import PageHeader from "../Common/PageHeader/PageHeader";
-import { Grid } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
-import { ISessionResponse } from "../types";
->>>>>>> 3fabfb96... Updated material-ui dependencies to mui 5 & fixed issues with migration (#1119)
-=======
->>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
-=======
->>>>>>> a4de76c3... Restructured settings page to use URL navigation (#1138)
 
 const ConfigurationMain = () => {
   return (
