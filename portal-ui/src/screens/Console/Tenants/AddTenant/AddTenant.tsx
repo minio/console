@@ -36,7 +36,7 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import { ErrorResponseHandler, ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
-import { setModalErrorSnackMessage } from "../../../../actions";
+import { setErrorSnackMessage } from "../../../../actions";
 import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import NameTenant from "./Steps/NameTenant";
@@ -53,7 +53,7 @@ import history from "../../../../history";
 import Images from "./Steps/Images";
 
 interface IAddTenantProps {
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
   resetAddTenantForm: typeof resetAddTenantForm;
   updateAddField: typeof updateAddField;
   fields: IFieldStore;
@@ -81,7 +81,7 @@ const AddTenant = ({
   selectedStorageClass,
   namespace,
   validPages,
-  setModalErrorSnackMessage,
+  setErrorSnackMessage,
   resetAddTenantForm,
 }: IAddTenantProps) => {
   // Modals
@@ -629,7 +629,7 @@ const AddTenant = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
-          setModalErrorSnackMessage(err);
+          setErrorSnackMessage(err);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -752,7 +752,7 @@ const mapState = (state: AppState) => ({
 });
 
 const connector = connect(mapState, {
-  setModalErrorSnackMessage,
+  setErrorSnackMessage,
   updateAddField,
   resetAddTenantForm,
 });
