@@ -15,6 +15,7 @@ require (
 	github.com/go-openapi/validate v0.20.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
+	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0

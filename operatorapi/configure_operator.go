@@ -24,6 +24,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/klauspost/compress/gzhttp"
+
 	"github.com/minio/console/restapi"
 	"github.com/unrolled/secure"
 
@@ -155,7 +157,7 @@ func proxyMiddleware(next http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// handle cookie or authorization header for session
 	next := AuthenticationMiddleware(handler)
-	// serve static files
+	// proxy requests
 	next = proxyMiddleware(next)
 	// serve static files
 	next = restapi.FileServerMiddleware(next)
@@ -166,7 +168,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		AllowedHostsAreRegex:            restapi.GetSecureAllowedHostsAreRegex(),
 		HostsProxyHeaders:               restapi.GetSecureHostsProxyHeaders(),
 		SSLRedirect:                     restapi.GetTLSRedirect() == "on" && len(GlobalPublicCerts) > 0,
-		SSLHost:                         restapi.GetSecureTLSHost(),
+		SSLHost:            s             restapi.GetSecureTLSHost(),
 		STSSeconds:                      restapi.GetSecureSTSSeconds(),
 		STSIncludeSubdomains:            restapi.GetSecureSTSIncludeSubdomains(),
 		STSPreload:                      restapi.GetSecureSTSPreload(),
@@ -185,5 +187,6 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		IsDevelopment:                   false,
 	}
 	secureMiddleware := secure.New(secureOptions)
-	return secureMiddleware.Handler(next)
+	next = secureMiddleware.Handler(next)
+	return gzhttp.GzipHandler(next)
 }

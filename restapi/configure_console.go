@@ -31,6 +31,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/klauspost/compress/gzhttp"
+
 	portal_ui "github.com/minio/console/portal-ui"
 	"github.com/minio/pkg/mimedb"
 
@@ -186,7 +188,9 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		IsDevelopment:                   false,
 	}
 	secureMiddleware := secure.New(secureOptions)
-	return RejectS3Middleware(secureMiddleware.Handler(next))
+	next = secureMiddleware.Handler(next)
+	gnext := gzhttp.GzipHandler(next)
+	return RejectS3Middleware(gnext)
 }
 
 // RejectS3Middleware will reject requests that have AWS S3 specific headers.
@@ -226,6 +230,16 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// Gzip Compression
+type gzipResponseWriter struct {
+	io.Writer
+	http.ResponseWriter
+}
+
+func (w gzipResponseWriter) Write(b []byte) (int, error) {
+	return w.Writer.Write(b)
 }
 
 // FileServerMiddleware serves files from the static folder
