@@ -562,7 +562,7 @@ const Menu = ({
             size="large"
           >
             {sidebarOpen ? <ChevronLeft /> : <MenuIcon />}
-          </IconButton> 
+          </IconButton>
         </div>
         <List className={classes.menuList}>
           {menuGroups.map((groupMember, index) => {
