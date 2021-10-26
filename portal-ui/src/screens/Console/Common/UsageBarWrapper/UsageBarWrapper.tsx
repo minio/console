@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -15,6 +15,7 @@ interface IProgressBar {
   error: string;
   loading: boolean;
   classes: any;
+  labels?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -36,7 +37,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-const BorderLinearProgress = withStyles((theme) => ({
+export const BorderLinearProgress = withStyles((theme) => ({
   root: {
     height: 10,
     borderRadius: 5,
@@ -61,6 +62,7 @@ const UsageBarWrapper = ({
   renderFunction,
   loading,
   error,
+  labels = true,
 }: IProgressBar) => {
   const porcentualValue = (currValue * 100) / maxValue;
 
@@ -71,13 +73,25 @@ const UsageBarWrapper = ({
       ) : (
         <React.Fragment>
           <Grid item xs={12} className={classes.allValue}>
-            {label}{" "}
-            {renderFunction ? renderFunction(maxValue.toString()) : maxValue}
+            {labels && (
+              <Fragment>
+                {label}{" "}
+                {renderFunction
+                  ? renderFunction(maxValue.toString())
+                  : maxValue}
+              </Fragment>
+            )}
           </Grid>
           <BorderLinearProgress variant="determinate" value={porcentualValue} />
           <Grid item xs={12} className={classes.currentUsage}>
-            Used:{" "}
-            {renderFunction ? renderFunction(currValue.toString()) : currValue}
+            {labels && (
+              <Fragment>
+                Used:{" "}
+                {renderFunction
+                  ? renderFunction(currValue.toString())
+                  : currValue}
+              </Fragment>
+            )}
           </Grid>
         </React.Fragment>
       );

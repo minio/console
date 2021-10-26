@@ -136,9 +136,8 @@ const TenantSummary = ({
   const [poolCount, setPoolCount] = useState<number>(0);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
-  const [loadingUsage, setLoadingUsage] = useState<boolean>(true);
-  const [usageError, setUsageError] = useState<string>("");
   const [usage, setUsage] = useState<number>(0);
+  const [tenantCapacity, setTenantCapacity] = useState<number>(0);
   const [updateMinioVersion, setUpdateMinioVersion] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
@@ -154,26 +153,6 @@ const TenantSummary = ({
       : classes.greyState;
   };
 
-  useEffect(() => {
-    if (loadingUsage) {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/usage`
-        )
-        .then((result: ITenantUsage) => {
-          const usage = get(result, "disk_used", "0");
-          setUsage(parseInt(usage));
-          setUsageError("");
-          setLoadingUsage(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setUsageError(err.errorMessage);
-          setUsage(0);
-          setLoadingUsage(false);
-        });
-    }
-  }, [tenantName, tenantNamespace, loadingUsage]);
 
   useEffect(() => {
     if (tenant) {
@@ -302,12 +281,12 @@ const TenantSummary = ({
             ) : (
               <Fragment>
                 <UsageBarWrapper
-                  currValue={usage}
-                  maxValue={tenant ? tenant.total_size : 0}
+                  currValue={tenant?.status?.usage?.raw_usage ?? 0}
+                  maxValue={tenant?.status?.usage?.raw  ?? 1}
                   label={"Storage"}
                   renderFunction={niceBytes}
-                  error={usageError}
-                  loading={loadingUsage}
+                  error={""}
+                  loading={false}
                 />
                 <h4>
                   {tenant && tenant.status && (

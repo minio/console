@@ -30,7 +30,7 @@ const newTheme = createTheme(
         default: "#F4F4F4",
       },
       success: {
-        main: "#32c787",
+        main: "#4ccb92",
       },
       warning: {
         main: "#ffb300",

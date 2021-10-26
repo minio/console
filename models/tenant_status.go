@@ -25,6 +25,7 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -46,17 +47,69 @@ type TenantStatus struct {
 	// health status
 	HealthStatus string `json:"health_status,omitempty"`
 
+	// usage
+	Usage *TenantStatusUsage `json:"usage,omitempty"`
+
 	// write quorum
 	WriteQuorum int32 `json:"write_quorum,omitempty"`
 }
 
 // Validate validates this tenant status
 func (m *TenantStatus) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateUsage(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this tenant status based on context it is used
+func (m *TenantStatus) validateUsage(formats strfmt.Registry) error {
+	if swag.IsZero(m.Usage) { // not required
+		return nil
+	}
+
+	if m.Usage != nil {
+		if err := m.Usage.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("usage")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this tenant status based on the context it is used
 func (m *TenantStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateUsage(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TenantStatus) contextValidateUsage(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Usage != nil {
+		if err := m.Usage.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("usage")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -71,6 +124,52 @@ func (m *TenantStatus) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *TenantStatus) UnmarshalBinary(b []byte) error {
 	var res TenantStatus
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// TenantStatusUsage tenant status usage
+//
+// swagger:model TenantStatusUsage
+type TenantStatusUsage struct {
+
+	// capacity
+	Capacity int64 `json:"capacity,omitempty"`
+
+	// capacity usage
+	CapacityUsage int64 `json:"capacity_usage,omitempty"`
+
+	// raw
+	Raw int64 `json:"raw,omitempty"`
+
+	// raw usage
+	RawUsage int64 `json:"raw_usage,omitempty"`
+}
+
+// Validate validates this tenant status usage
+func (m *TenantStatusUsage) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this tenant status usage based on context it is used
+func (m *TenantStatusUsage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *TenantStatusUsage) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *TenantStatusUsage) UnmarshalBinary(b []byte) error {
+	var res TenantStatusUsage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
