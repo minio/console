@@ -31,7 +31,7 @@ interface IDateRangeSelector {
   setTimeStart: (date: any) => void;
   timeEnd: any;
   setTimeEnd: (date: any) => void;
-  triggerSync: () => void;
+  triggerSync?: () => void;
 }
 
 const styles = (theme: Theme) =>
@@ -97,16 +97,18 @@ const DateRangeSelector = ({
             noInputIcon
           />
         </div>
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          onClick={triggerSync}
-          endIcon={<SyncIcon />}
-          className={classes.syncButton}
-        >
-          Sync
-        </Button>
+        {triggerSync && (
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={triggerSync}
+            endIcon={<SyncIcon />}
+            className={classes.syncButton}
+          >
+            Sync
+          </Button>
+        )}
       </Grid>
     </Fragment>
   );

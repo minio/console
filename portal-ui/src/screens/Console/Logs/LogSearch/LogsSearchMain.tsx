@@ -38,6 +38,9 @@ import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
+import LogSearchFullModal from "./LogSearchFullModal";
+import { LogSearchColumnLabels } from "./utils";
+import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
 
 interface ILogSearchProps {
   classes: any;
@@ -154,6 +157,10 @@ const LogsSearchMain = ({
   ]);
   const [nextPage, setNextPage] = useState<number>(0);
   const [alreadyFetching, setAlreadyFetching] = useState<boolean>(false);
+  const [logSearchExtrasOpen, setLogSearchExtrasOpen] =
+    useState<boolean>(false);
+  const [selectedItem, setSelectedItem] =
+    useState<IReqInfoSearchResults | null>(null);
 
   let recordsResp: any = null;
   const logSearchEnabled = features && features.includes("log-search");
@@ -188,11 +195,10 @@ const LogsSearchMain = ({
         )
         .then((res: ISearchResponse) => {
           const fetchedResults = res.results || [];
-          const newResultSet = [...records, ...fetchedResults];
 
           setLoading(false);
           setAlreadyFetching(false);
-          setRecords(newResultSet);
+          setRecords(fetchedResults);
           setNextPage(nextPage + 1);
 
           if (recordsResp !== null) {
@@ -218,7 +224,6 @@ const LogsSearchMain = ({
     sortOrder,
     timeStart,
     timeEnd,
-    records,
     recordsResp,
     setErrorSnackMessage,
   ]);
@@ -262,27 +267,36 @@ const LogsSearchMain = ({
     });
   };
 
+  const openExtraInformation = (item: IReqInfoSearchResults) => {
+    setSelectedItem(item);
+    setLogSearchExtrasOpen(true);
+  };
+
+  const closeViewExtraInformation = () => {
+    setSelectedItem(null);
+    setLogSearchExtrasOpen(false);
+  };
+
   return (
     <Fragment>
+      {logSearchExtrasOpen && selectedItem !== null && (
+        <LogSearchFullModal
+          logSearchElement={selectedItem}
+          modalOpen={logSearchExtrasOpen}
+          onClose={closeViewExtraInformation}
+        />
+      )}
       <Grid container className={classes.logsSubContainer}>
         <Grid
           item
           xs={12}
           className={`${classes.actionsTray} ${classes.timeContainers}`}
         >
-          <span className={classes.label}>Start Time</span>
-          <DateTimePickerWrapper
-            value={timeStart}
-            onChange={setTimeStart}
-            forSearchBlock
-            id="stTime"
-          />
-          <span className={classes.label}>End Time</span>
-          <DateTimePickerWrapper
-            value={timeEnd}
-            onChange={setTimeEnd}
-            forSearchBlock
-            id="endTime"
+          <DateRangeSelector
+            setTimeEnd={setTimeEnd}
+            setTimeStart={setTimeStart}
+            timeEnd={timeEnd}
+            timeStart={timeStart}
           />
         </Grid>
         <Grid item xs={12} className={`${classes.advancedLabelContainer}`}>
@@ -376,15 +390,28 @@ const LogsSearchMain = ({
         <Grid item xs={12}>
           <TableWrapper
             columns={[
-              { label: "Timestamp", elementKey: "time", enableSort: true },
-              { label: "API Name", elementKey: "api_name" },
-              { label: "Bucket", elementKey: "bucket" },
-              { label: "Object", elementKey: "object" },
-              { label: "Remote Host", elementKey: "remote_host" },
-              { label: "Request ID", elementKey: "request_id" },
-              { label: "User Agent", elementKey: "user_agent" },
               {
-                label: "Response Status",
+                label: LogSearchColumnLabels.time,
+                elementKey: "time",
+                enableSort: true,
+              },
+              { label: LogSearchColumnLabels.api_name, elementKey: "api_name" },
+              { label: LogSearchColumnLabels.bucket, elementKey: "bucket" },
+              { label: LogSearchColumnLabels.object, elementKey: "object" },
+              {
+                label: LogSearchColumnLabels.remote_host,
+                elementKey: "remote_host",
+              },
+              {
+                label: LogSearchColumnLabels.request_id,
+                elementKey: "request_id",
+              },
+              {
+                label: LogSearchColumnLabels.user_agent,
+                elementKey: "user_agent",
+              },
+              {
+                label: LogSearchColumnLabels.response_status,
                 elementKey: "response_status",
                 renderFunction: (element) => (
                   <Fragment>
@@ -396,17 +423,17 @@ const LogsSearchMain = ({
                 renderFullObject: true,
               },
               {
-                label: "Request Content Length",
+                label: LogSearchColumnLabels.request_content_length,
                 elementKey: "request_content_length",
                 renderFunction: niceBytes,
               },
               {
-                label: "Response Content Length",
+                label: LogSearchColumnLabels.response_content_length,
                 elementKey: "response_content_length",
                 renderFunction: niceBytes,
               },
               {
-                label: "Time to Response NS",
+                label: LogSearchColumnLabels.time_to_response_ns,
                 elementKey: "time_to_response_ns",
                 renderFunction: nsToSeconds,
                 contentTextAlign: "right",
@@ -432,6 +459,12 @@ const LogsSearchMain = ({
               recordsCount: 1000000,
               loadMoreRecords: loadMoreRecords,
             }}
+            itemActions={[
+              {
+                type: "view",
+                onClick: openExtraInformation,
+              },
+            ]}
             textSelectable
           />
         </Grid>
