@@ -168,7 +168,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		AllowedHostsAreRegex:            restapi.GetSecureAllowedHostsAreRegex(),
 		HostsProxyHeaders:               restapi.GetSecureHostsProxyHeaders(),
 		SSLRedirect:                     restapi.GetTLSRedirect() == "on" && len(GlobalPublicCerts) > 0,
-		SSLHost:            s             restapi.GetSecureTLSHost(),
+		SSLHost:                         restapi.GetSecureTLSHost(),
 		STSSeconds:                      restapi.GetSecureSTSSeconds(),
 		STSIncludeSubdomains:            restapi.GetSecureSTSIncludeSubdomains(),
 		STSPreload:                      restapi.GetSecureSTSPreload(),
