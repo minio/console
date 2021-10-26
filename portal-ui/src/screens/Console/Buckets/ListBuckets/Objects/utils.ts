@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { BucketObject, RewindObject } from "./ListObjects/types";
+
 export const download = (
   bucketName: string,
   objectPath: string,
@@ -88,4 +90,19 @@ export const extensionPreview = (
   }
 
   return "none";
+};
+
+export const sortListObjects = (fieldSort: string) => {
+  switch (fieldSort) {
+    case "name":
+      return (a: BucketObject | RewindObject, b: BucketObject | RewindObject) =>
+        a.name.localeCompare(b.name);
+    case "last_modified":
+      return (a: BucketObject | RewindObject, b: BucketObject | RewindObject) =>
+        new Date(a.last_modified).getTime() -
+        new Date(b.last_modified).getTime();
+    case "size":
+      return (a: BucketObject | RewindObject, b: BucketObject | RewindObject) =>
+        (a.size || -1) - (b.size || -1);
+  }
 };

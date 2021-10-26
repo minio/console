@@ -57,7 +57,7 @@ import {
   Route,
 } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
-import { download, extensionPreview } from "../utils";
+import { download, extensionPreview, sortListObjects } from "../utils";
 import {
   setErrorSnackMessage,
   setLoadingProgress,
@@ -265,6 +265,10 @@ const ListObjects = ({
     null
   );
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
+  const [sortDirection, setSortDirection] = useState<
+    "ASC" | "DESC" | undefined
+  >("ASC");
+  const [currentSortField, setCurrentSortField] = useState<string>("name");
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -842,17 +846,26 @@ const ListObjects = ({
     return elements;
   };
 
+  const sortChange = (sortData: any) => {
+    const newSortDirection = get(sortData, "sortDirection", "DESC");
+    setCurrentSortField(sortData.sortBy);
+    setSortDirection(newSortDirection);
+    setLoading(true);
+  };
+
   const listModeColumns = [
     {
       label: "Name",
       elementKey: "name",
       renderFunction: displayName,
+      enableSort: true,
     },
     {
       label: "Last Modified",
       elementKey: "last_modified",
       renderFunction: displayParsedDate,
       renderFullObject: true,
+      enableSort: true,
     },
     {
       label: "Size",
@@ -861,6 +874,7 @@ const ListObjects = ({
       renderFullObject: true,
       width: 60,
       contentTextAlign: "right",
+      enableSort: true,
     },
   ];
 
@@ -869,12 +883,14 @@ const ListObjects = ({
       label: "Name",
       elementKey: "name",
       renderFunction: displayName,
+      enableSort: true,
     },
     {
       label: "Object Date",
       elementKey: "last_modified",
       renderFunction: displayParsedDate,
       renderFullObject: true,
+      enableSort: true,
     },
     {
       label: "Size",
@@ -883,6 +899,7 @@ const ListObjects = ({
       renderFullObject: true,
       width: 60,
       contentTextAlign: "right",
+      enableSort: true,
     },
     {
       label: "Deleted",
@@ -895,6 +912,18 @@ const ListObjects = ({
 
   const pageTitle = decodeFileName(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
+
+  const plSelect = rewindEnabled ? rewind : filteredRecords;
+
+  const sortASC = plSelect.sort(sortListObjects(currentSortField));
+
+  let payload = [];
+
+  if (sortDirection === "ASC") {
+    payload = sortASC;
+  } else {
+    payload = sortASC.reverse();
+  }
 
   return (
     <React.Fragment>
@@ -1094,13 +1123,18 @@ const ListObjects = ({
             loadingMessage={loadingMessage}
             entityName="Objects"
             idField="name"
-            records={rewindEnabled ? rewind : filteredRecords}
+            records={payload}
             customPaperHeight={classes.browsePaper}
             selectedItems={selectedObjects}
             onSelect={selectListObjects}
             customEmptyMessage={`This location is empty${
               !rewindEnabled ? ", please try uploading a new file" : ""
             }`}
+            sortConfig={{
+              currentSort: currentSortField,
+              currentDirection: sortDirection,
+              triggerSort: sortChange,
+            }}
           />
         </Grid>
       </Grid>
