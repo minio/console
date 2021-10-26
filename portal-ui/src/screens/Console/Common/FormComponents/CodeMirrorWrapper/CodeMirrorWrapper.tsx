@@ -23,9 +23,10 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic } from "../common/styleLibrary";
-import "./ConsoleCodeMirror.css";
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/material.css";
 
-require("codemirror/mode/javascript/javascript");
+require("codemirror/mode/yaml/yaml");
 
 interface ICodeWrapper {
   value: string;
@@ -47,7 +48,7 @@ const CodeMirrorWrapper = ({
   value,
   label = "",
   tooltip = "",
-  mode = "javascript",
+  mode = "yaml",
   classes,
   onChange = () => {},
   onBeforeChange,
