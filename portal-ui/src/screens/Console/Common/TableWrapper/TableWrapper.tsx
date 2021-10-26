@@ -692,8 +692,9 @@ const TableWrapper = ({
                       {hasSelect && (
                         <Column
                           headerRenderer={() => <Fragment>Select</Fragment>}
-                          dataKey={idField}
+                          dataKey={`select-${idField}`}
                           width={selectWidth}
+                          disableSort
                           cellRenderer={({ rowData }) => {
                             const isSelected = selectedItems
                               ? selectedItems.includes(
