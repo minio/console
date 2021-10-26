@@ -232,16 +232,6 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// Gzip Compression
-type gzipResponseWriter struct {
-	io.Writer
-	http.ResponseWriter
-}
-
-func (w gzipResponseWriter) Write(b []byte) (int, error) {
-	return w.Writer.Write(b)
-}
-
 // FileServerMiddleware serves files from the static folder
 func FileServerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
