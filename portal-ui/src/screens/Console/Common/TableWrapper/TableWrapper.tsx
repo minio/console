@@ -208,9 +208,6 @@ const styles = () =>
       right: 0,
       top: 0,
     },
-    popoverContainer: {
-      position: "relative",
-    },
     popoverContent: {
       maxHeight: 250,
       overflowY: "auto",
@@ -573,7 +570,6 @@ const TableWrapper = ({
             horizontal: "left",
           }}
           onClose={closeColumnSelector}
-          className={classes.popoverContainer}
         >
           <div className={classes.shownColumnsLabel}>Shown Columns</div>
           <div className={classes.popoverContent}>
