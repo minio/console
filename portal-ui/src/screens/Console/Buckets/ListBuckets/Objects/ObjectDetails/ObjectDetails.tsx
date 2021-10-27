@@ -842,6 +842,7 @@ const ObjectDetails = ({
                             entityName="Versions"
                             idField="version_id"
                             records={filteredRecords}
+                            textSelectable
                           />
                         )}
                     </Grid>
