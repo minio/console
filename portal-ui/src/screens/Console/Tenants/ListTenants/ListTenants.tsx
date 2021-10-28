@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import { IconButton } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,18 +28,19 @@ import { niceBytes } from "../../../../common/utils";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import {
   actionsTray,
+  containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { CircleIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import DeleteTenant from "./DeleteTenant";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import TenantListItem from "./TenantListItem";
 
 interface ITenantsList {
   classes: any;
@@ -50,48 +51,61 @@ const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...searchField,
-
-    redState: {
-      color: theme.palette.error.main,
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        float: "left",
-        marginRight: 4,
-      },
+    ...containerForHeader(theme.spacing(4)),
+    addTenant: {
+      marginRight: 8,
     },
-    yellowState: {
-      color: theme.palette.warning.main,
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        float: "left",
-        marginRight: 4,
-      },
+    theaderSearchLabel: {
+      color: theme.palette.grey["400"],
+      fontSize: 14,
+      fontWeight: "bold",
     },
-    greenState: {
-      color: theme.palette.success.main,
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        float: "left",
-        marginRight: 4,
-      },
+    addBucket: {
+      marginRight: 8,
     },
-    greyState: {
-      color: "grey",
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        float: "left",
-        marginRight: 4,
+    theaderSearch: {
+      borderColor: theme.palette.grey["200"],
+      "& .MuiInputBase-input": {
+        paddingTop: 10,
+        paddingBottom: 10,
       },
+      "& .MuiInputBase-root": {
+        "& .MuiInputAdornment-root": {
+          "& .MuiSvgIcon-root": {
+            color: theme.palette.grey["400"],
+            height: 14,
+          },
+        },
+      },
+      actionHeaderItems: {
+        "@media (min-width: 320px)": {
+          marginTop: 8,
+        },
+      },
+      marginRight: 10,
+      marginLeft: 10,
+    },
+    mainActions: {
+      textAlign: "right",
+    },
+    healthStatusIcon: {
+      position: "relative",
+      fontSize: 10,
+      right: -30,
+      height: 10,
+      top: -50,
+    },
+    tenantItem: {
+      border: "1px solid #dedede",
+      marginBottom: 20,
+      paddingLeft: 40,
+      paddingRight: 40,
+      paddingTop: 30,
+      paddingBottom: 30,
     },
   });
 
 const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
@@ -99,33 +113,10 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
   const [createdAccount, setCreatedAccount] =
     useState<NewServiceAccount | null>(null);
 
-  const closeDeleteModalAndRefresh = (reloadData: boolean) => {
-    setDeleteOpen(false);
-
-    if (reloadData) {
-      setIsLoading(true);
-    }
-  };
-
-  const confirmDeleteTenant = (tenant: ITenant) => {
-    setSelectedTenant(tenant);
-    setDeleteOpen(true);
-  };
-
-  const redirectToTenantDetails = (tenant: ITenant) => {
-    history.push(`/namespaces/${tenant.namespace}/tenants/${tenant.name}`);
-    return;
-  };
-
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setCreatedAccount(null);
   };
-
-  const tableActions = [
-    { type: "view", onClick: redirectToTenantDetails },
-    { type: "delete", onClick: confirmDeleteTenant },
-  ];
 
   const filteredRecords = records.filter((b: any) => {
     if (filterTenants === "") {
@@ -155,7 +146,9 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
             }
 
             for (let i = 0; i < resTenants.length; i++) {
-              resTenants[i].capacity = niceBytes(resTenants[i].total_size + "");
+              resTenants[i].total_capacity = niceBytes(
+                resTenants[i].total_size + ""
+              );
             }
 
             setRecords(resTenants);
@@ -174,28 +167,8 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
     setIsLoading(true);
   }, []);
 
-  const healthStatusToClass = (health_status: string) => {
-    switch (health_status) {
-      case "red":
-        return classes.redState;
-      case "yellow":
-        return classes.yellowState;
-      case "green":
-        return classes.greenState;
-      default:
-        return classes.greyState;
-    }
-  };
-
   return (
     <Fragment>
-      {deleteOpen && (
-        <DeleteTenant
-          deleteOpen={deleteOpen}
-          selectedTenant={selectedTenant}
-          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
-        />
-      )}
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={createdAccount}
@@ -206,78 +179,101 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
           entity="Tenant"
         />
       )}
+      <PageHeader
+        label="Tenants"
+        actions={
+          <Fragment>
+            <Grid
+              container
+              direction="row"
+              justifyContent="flex-end"
+              alignItems="center"
+              className={classes.actionHeaderItems}
+            >
+              <Box display={{ xs: "none", sm: "none", md: "block" }}>
+                <Grid item>
+                  <div className={classes.theaderSearchLabel}>
+                    Filter Tenants:
+                  </div>
+                </Grid>
+              </Box>
+              <Box display={{ xs: "block", sm: "block", md: "none" }}>
+                <TextField
+                  className={classes.theaderSearch}
+                  variant={"outlined"}
+                  id="search-resource"
+                  placeholder={"Filter Tenants"}
+                  onChange={(val) => {
+                    setFilterTenants(val.target.value);
+                  }}
+                  inputProps={{
+                    disableUnderline: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              <Box display={{ xs: "none", sm: "none", md: "block" }}>
+                <TextField
+                  className={classes.theaderSearch}
+                  variant={"outlined"}
+                  id="search-resource"
+                  onChange={(val) => {
+                    setFilterTenants(val.target.value);
+                  }}
+                  inputProps={{
+                    disableUnderline: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<AddIcon />}
+                  onClick={() => {
+                    history.push("/tenants/add");
+                  }}
+                  className={classes.addTenant}
+                >
+                  Create Tenant
+                </Button>
+              </Grid>
+            </Grid>
+          </Fragment>
+        }
+      />
       <Grid container>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Tenants"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setFilterTenants(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
-          />
-          <IconButton
-            color="primary"
-            aria-label="Refresh Tenant List"
-            component="span"
-            onClick={() => {
-              setIsLoading(true);
-            }}
-            size="large"
-          >
-            <RefreshIcon />
-          </IconButton>
-          <IconButton
-            color="primary"
-            aria-label="Create Tenant"
-            component="span"
-            onClick={() => {
-              history.push("/tenants/add");
-            }}
-            size="large"
-          >
-            <CreateIcon />
-          </IconButton>
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[
-              {
-                label: "Name",
-                elementKey: "name",
-                renderFullObject: true,
-                renderFunction: (t) => {
-                  return (
-                    <React.Fragment>
-                      <div className={healthStatusToClass(t.health_status)}>
-                        <CircleIcon />
-                      </div>
-                      <div>{t.name}</div>
-                    </React.Fragment>
-                  );
-                },
-              },
-              { label: "Namespace", elementKey: "namespace" },
-              { label: "Capacity", elementKey: "capacity" },
-              { label: "# of Pools", elementKey: "pool_count" },
-              { label: "State", elementKey: "currentState" },
-            ]}
-            isLoading={isLoading}
-            records={filteredRecords}
-            entityName="Tenants"
-            idField="name"
-          />
+        <Grid item xs={12} className={classes.container}>
+          <Grid container>
+            <Grid item xs={12} className={classes.mainActions}>
+              <IconButton
+                color="primary"
+                aria-label="Refresh Tenant List"
+                component="span"
+                onClick={() => {
+                  setIsLoading(true);
+                }}
+                size="large"
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Grid>
+            <Grid item xs={12}>
+              {filteredRecords.map((t) => {
+                return <TenantListItem tenant={t} />;
+              })}
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>

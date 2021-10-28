@@ -526,6 +526,12 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 		DrivesOffline: minTenant.Status.DrivesOffline,
 		DrivesOnline:  minTenant.Status.DrivesOnline,
 		WriteQuorum:   minTenant.Status.WriteQuorum,
+		Usage: &models.TenantStatusUsage{
+			Raw:           minTenant.Status.Usage.RawCapacity,
+			RawUsage:      minTenant.Status.Usage.RawUsage,
+			Capacity:      minTenant.Status.Usage.Capacity,
+			CapacityUsage: minTenant.Status.Usage.Usage,
+		},
 	}
 
 	// get tenant service
@@ -824,16 +830,20 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 		}
 
 		tenants = append(tenants, &models.TenantList{
-			CreationDate:  tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
-			DeletionDate:  deletion,
-			Name:          tenant.ObjectMeta.Name,
-			PoolCount:     int64(len(tenant.Spec.Pools)),
-			InstanceCount: instanceCount,
-			VolumeCount:   volumeCount,
-			CurrentState:  tenant.Status.CurrentState,
-			Namespace:     tenant.ObjectMeta.Namespace,
-			TotalSize:     totalSize,
-			HealthStatus:  string(tenant.Status.HealthStatus),
+			CreationDate:     tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
+			DeletionDate:     deletion,
+			Name:             tenant.ObjectMeta.Name,
+			PoolCount:        int64(len(tenant.Spec.Pools)),
+			InstanceCount:    instanceCount,
+			VolumeCount:      volumeCount,
+			CurrentState:     tenant.Status.CurrentState,
+			Namespace:        tenant.ObjectMeta.Namespace,
+			TotalSize:        totalSize,
+			HealthStatus:     string(tenant.Status.HealthStatus),
+			CapacityRaw:      tenant.Status.Usage.RawCapacity,
+			CapacityRawUsage: tenant.Status.Usage.RawUsage,
+			Capacity:         tenant.Status.Usage.Capacity,
+			CapacityUsage:    tenant.Status.Usage.Usage,
 		})
 	}
 

@@ -67,6 +67,13 @@ const GlobalCss = withStyles({
         borderRadius: 0,
       },
     },
+    hr: {
+      borderTop: 0,
+      borderLeft: 0,
+      borderRight: 0,
+      borderColor: "#999999",
+      backgroundColor: "transparent" as const,
+    },
   },
 })(() => null);
 

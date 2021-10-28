@@ -108,7 +108,7 @@ paths:
 
   /logout:
     post:
-      summary: Logout from Console.
+      summary: Logout from Operator.
       operationId: Logout
       responses:
         200:
@@ -1040,6 +1040,21 @@ definitions:
         format: int32
       health_status:
         type: string
+      usage:
+        type: object
+        properties:
+          raw:
+            type: integer
+            format: int64
+          raw_usage:
+            type: integer
+            format: int64
+          capacity:
+            type: integer
+            format: int64
+          capacity_usage:
+            type: integer
+            format: int64
   tenantSecurityResponse:
     type: object
     properties:
@@ -1173,6 +1188,18 @@ definitions:
         type: string
       health_status:
         type: string
+      capacity_raw:
+        type: integer
+        format: int64
+      capacity_raw_usage:
+        type: integer
+        format: int64
+      capacity:
+        type: integer
+        format: int64
+      capacity_usage:
+        type: integer
+        format: int64
 
   listTenantsResponse:
     type: object

@@ -379,7 +379,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Console.",
+        "summary": "Logout from Operator.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -2895,6 +2895,22 @@ func init() {
     "tenantList": {
       "type": "object",
       "properties": {
+        "capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_raw": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_raw_usage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_usage": {
+          "type": "integer",
+          "format": "int64"
+        },
         "creation_date": {
           "type": "string"
         },
@@ -3006,6 +3022,27 @@ func init() {
         },
         "health_status": {
           "type": "string"
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "capacity": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "capacity_usage": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "raw": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "raw_usage": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
         },
         "write_quorum": {
           "type": "integer",
@@ -3526,7 +3563,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Console.",
+        "summary": "Logout from Operator.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -5203,6 +5240,27 @@ func init() {
         }
       }
     },
+    "TenantStatusUsage": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_usage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "raw": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "raw_usage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "UpdateTenantSecurityRequestCustomCertificates": {
       "type": "object",
       "properties": {
@@ -6599,6 +6657,22 @@ func init() {
     "tenantList": {
       "type": "object",
       "properties": {
+        "capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_raw": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_raw_usage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "capacity_usage": {
+          "type": "integer",
+          "format": "int64"
+        },
         "creation_date": {
           "type": "string"
         },
@@ -6710,6 +6784,27 @@ func init() {
         },
         "health_status": {
           "type": "string"
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "capacity": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "capacity_usage": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "raw": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "raw_usage": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
         },
         "write_quorum": {
           "type": "integer",

@@ -68,12 +68,19 @@ export interface IEndpoints {
   console: string;
 }
 
+export interface ITenantStatusUsage {
+  raw: number;
+  raw_usage: number;
+  capacity: number;
+  capacity_usage: number;
+}
 export interface ITenantStatus {
   write_quorum: string;
   drives_online: string;
   drives_offline: string;
   drives_healing: string;
   health_status: string;
+  usage?: ITenantStatusUsage;
 }
 
 export interface ITenant {
@@ -100,8 +107,12 @@ export interface ITenant {
   idpOidcEnabled: boolean;
   health_status: string;
   status?: ITenantStatus;
+  capacity_raw?: number;
+  capacity_raw_usage?: number;
+  capacity?: number;
+  capacity_usage?: number;
   // computed
-  capacity: string;
+  total_capacity: string;
   subnet_license: LicenseInfo;
   total_instances?: number;
   total_volumes?: number;

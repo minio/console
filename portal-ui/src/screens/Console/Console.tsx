@@ -44,7 +44,6 @@ import Account from "./Account/Account";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ConfigurationMain from "./Configurations/ConfigurationMain";
-import TenantsMain from "./Tenants/TenantsMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import License from "./License/License";
 import Trace from "./Trace/Trace";
@@ -63,6 +62,7 @@ import NotificationTypeSelector from "./NotificationEndpoints/NotificationTypeSe
 import ListTiersConfiguration from "./Configurations/TiersConfiguration/ListTiersConfiguration";
 import TierTypeSelector from "./Configurations/TiersConfiguration/TierTypeSelector";
 import AddTierConfiguration from "./Configurations/TiersConfiguration/AddTierConfiguration";
+import ListTenants from "./Tenants/ListTenants/ListTenants";
 
 const drawerWidth = 245;
 
@@ -321,7 +321,7 @@ const Console = ({
       },
     },
     {
-      component: TenantsMain,
+      component: ListTenants,
       path: "/tenants",
     },
     {

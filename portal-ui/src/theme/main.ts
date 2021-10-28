@@ -14,11 +14,6 @@ const theme = createTheme({
       dark: "#ba000d",
       contrastText: "#000",
     },
-    error: {
-      light: "#e03a48",
-      main: "#dc1f2e",
-      contrastText: "#fff",
-    },
     grey: {
       100: "#f0f0f0",
       200: "#e6e6e6",
@@ -32,6 +27,17 @@ const theme = createTheme({
     },
     background: {
       default: "#fff",
+    },
+    success: {
+      main: "#4ccb92",
+    },
+    warning: {
+      main: "#FFBD62",
+    },
+    error: {
+      light: "#e03a48",
+      main: "#C83B51",
+      contrastText: "#fff",
     },
   },
   typography: {

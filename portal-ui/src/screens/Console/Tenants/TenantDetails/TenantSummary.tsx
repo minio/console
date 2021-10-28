@@ -28,12 +28,10 @@ import Grid from "@mui/material/Grid";
 import { Button, CircularProgress } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { niceBytes } from "../../../../common/utils";
-import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
-import { ErrorResponseHandler } from "../../../../common/types";
 import history from "./../../../../history";
 import { CircleIcon } from "../../../../icons";
 
@@ -50,11 +48,6 @@ interface ITenantsSummary {
   adEnabled: boolean;
   oidcEnabled: boolean;
   loadingTenant: boolean;
-}
-
-interface ITenantUsage {
-  used: string;
-  disk_used: string;
 }
 
 const styles = (theme: Theme) =>
@@ -136,9 +129,6 @@ const TenantSummary = ({
   const [poolCount, setPoolCount] = useState<number>(0);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
-  const [loadingUsage, setLoadingUsage] = useState<boolean>(true);
-  const [usageError, setUsageError] = useState<string>("");
-  const [usage, setUsage] = useState<number>(0);
   const [updateMinioVersion, setUpdateMinioVersion] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
@@ -153,27 +143,6 @@ const TenantSummary = ({
       ? classes.greenState
       : classes.greyState;
   };
-
-  useEffect(() => {
-    if (loadingUsage) {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/usage`
-        )
-        .then((result: ITenantUsage) => {
-          const usage = get(result, "disk_used", "0");
-          setUsage(parseInt(usage));
-          setUsageError("");
-          setLoadingUsage(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setUsageError(err.errorMessage);
-          setUsage(0);
-          setLoadingUsage(false);
-        });
-    }
-  }, [tenantName, tenantNamespace, loadingUsage]);
 
   useEffect(() => {
     if (tenant) {
@@ -302,12 +271,12 @@ const TenantSummary = ({
             ) : (
               <Fragment>
                 <UsageBarWrapper
-                  currValue={usage}
-                  maxValue={tenant ? tenant.total_size : 0}
+                  currValue={tenant?.status?.usage?.raw_usage ?? 0}
+                  maxValue={tenant?.status?.usage?.raw ?? 1}
                   label={"Storage"}
                   renderFunction={niceBytes}
-                  error={usageError}
-                  loading={loadingUsage}
+                  error={""}
+                  loading={false}
                 />
                 <h4>
                   {tenant && tenant.status && (

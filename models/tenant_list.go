@@ -34,6 +34,18 @@ import (
 // swagger:model tenantList
 type TenantList struct {
 
+	// capacity
+	Capacity int64 `json:"capacity,omitempty"`
+
+	// capacity raw
+	CapacityRaw int64 `json:"capacity_raw,omitempty"`
+
+	// capacity raw usage
+	CapacityRawUsage int64 `json:"capacity_raw_usage,omitempty"`
+
+	// capacity usage
+	CapacityUsage int64 `json:"capacity_usage,omitempty"`
+
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
 
