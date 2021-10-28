@@ -32,22 +32,14 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import {
-  AddIcon,
-  ArrowRightIcon,
-  CircleIcon,
-  CreateIcon,
-} from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import DeleteTenant from "./DeleteTenant";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import TenantsIcon from "../../../../icons/TenantsIcon";
 import TenantListItem from "./TenantListItem";
 
 interface ITenantsList {
@@ -114,22 +106,12 @@ const styles = (theme: Theme) =>
   });
 
 const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [createdAccount, setCreatedAccount] =
     useState<NewServiceAccount | null>(null);
-
-  const closeDeleteModalAndRefresh = (reloadData: boolean) => {
-    setDeleteOpen(false);
-
-    if (reloadData) {
-      setIsLoading(true);
-    }
-  };
 
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
@@ -164,7 +146,9 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
             }
 
             for (let i = 0; i < resTenants.length; i++) {
-              resTenants[i].total_capacity = niceBytes(resTenants[i].total_size + "");
+              resTenants[i].total_capacity = niceBytes(
+                resTenants[i].total_size + ""
+              );
             }
 
             setRecords(resTenants);
@@ -185,13 +169,6 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
 
   return (
     <Fragment>
-      {deleteOpen && (
-        <DeleteTenant
-          deleteOpen={deleteOpen}
-          selectedTenant={selectedTenant}
-          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
-        />
-      )}
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={createdAccount}

@@ -25,11 +25,6 @@ import history from "../../../../history";
 import TenantsIcon from "../../../../icons/TenantsIcon";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { niceBytes } from "../../../../common/utils";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
@@ -143,20 +138,21 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   var used: ValueUnit = { value: "n/a", unit: "" };
 
   if (tenant.capacity_raw) {
-    const b = niceBytes(`${tenant.capacity_raw}`,true);
+    const b = niceBytes(`${tenant.capacity_raw}`, true);
     const parts = b.split(" ");
     raw.value = parts[0];
     raw.unit = parts[1];
   }
   if (tenant.capacity) {
-    const b = niceBytes(`${tenant.capacity}`,true);
+    const b = niceBytes(`${tenant.capacity}`, true);
     const parts = b.split(" ");
     capacity.value = parts[0];
     capacity.unit = parts[1];
   }
   if (tenant.capacity_usage) {
-    const usageProportion = tenant.capacity! * tenant.capacity_raw_usage! / tenant.capacity_raw!;
-    const b = niceBytes(`${usageProportion}`,true);
+    const usageProportion =
+      (tenant.capacity! * tenant.capacity_raw_usage!) / tenant.capacity_raw!;
+    const b = niceBytes(`${usageProportion}`, true);
     const parts = b.split(" ");
     used.value = parts[0];
     used.unit = parts[1];
