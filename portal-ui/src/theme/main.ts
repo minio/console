@@ -85,7 +85,7 @@ const theme = createTheme({
             fontWeight: 600,
             color: "#767676",
           },
-          "& .MuiButton-iconSizeMedium > *:first-child": {
+          "& .MuiButton-iconSizeMedium > *:first-of-type": {
             fontSize: 12,
           },
         },

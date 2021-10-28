@@ -40,11 +40,17 @@ type Bucket struct {
 	// access
 	Access *BucketAccess `json:"access,omitempty"`
 
+	// allowed actions
+	AllowedActions []string `json:"allowedActions"`
+
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
 
 	// details
 	Details *BucketDetails `json:"details,omitempty"`
+
+	// manage
+	Manage bool `json:"manage,omitempty"`
 
 	// name
 	// Required: true

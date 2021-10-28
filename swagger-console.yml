@@ -2335,6 +2335,8 @@ definitions:
     required:
       - name
     properties:
+      manage:
+        type: boolean
       name:
         type: string
         minLength: 3
@@ -2381,6 +2383,10 @@ definitions:
                   - hard
       creation_date:
         type: string
+      allowedActions:
+        type: array
+        items:
+          type: string
 
   bucketEncryptionRequest:
     type: object
@@ -3101,6 +3107,10 @@ definitions:
         type: boolean
       distributedMode:
         type: boolean
+      policy:
+        type: object
+        $ref: "#/definitions/iamPolicy"
+
   widgetResult:
     type: object
     properties:
@@ -3847,3 +3857,32 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/rewindItem"
+
+  iamPolicy:
+    type: object
+    properties:
+      version:
+        type: string
+      statement:
+        type: array
+        items:
+          $ref: "#/definitions/iamPolicyStatement"
+
+
+  iamPolicyStatement:
+    type: object
+    properties:
+      effect:
+        type: string
+      action:
+        type: array
+        items:
+          type: string
+      resource:
+        type: array
+        items:
+          type: string
+      condition:
+        type: object
+        additionalProperties:
+          type: object

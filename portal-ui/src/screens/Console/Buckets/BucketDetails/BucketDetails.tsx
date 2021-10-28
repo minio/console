@@ -22,7 +22,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
-import { BucketInfo, HasPermissionResponse } from "../types";
+import { BucketInfo } from "../types";
 import {
   actionsTray,
   buttonsStyles,
@@ -54,6 +54,23 @@ import DeleteBucket from "../ListBuckets/DeleteBucket";
 import AccessRulePanel from "./AccessRulePanel";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import BoxIconButton from "../../Common/BoxIconButton";
+import {
+  ADMIN_GET_POLICY,
+  ADMIN_LIST_USER_POLICIES,
+  ADMIN_LIST_USERS,
+  S3_DELETE_BUCKET,
+  S3_FORCE_DELETE_BUCKET,
+  S3_GET_BUCKET_NOTIFICATIONS,
+  S3_GET_BUCKET_POLICY,
+  S3_GET_LIFECYCLE_CONFIGURATION,
+  S3_GET_REPLICATION_CONFIGURATION,
+  S3_LISTEN_BUCKET_NOTIFICATIONS,
+  S3_PUT_BUCKET_NOTIFICATIONS,
+  S3_PUT_LIFECYCLE_CONFIGURATION,
+  S3_PUT_REPLICATION_CONFIGURATION,
+} from "../../../../types";
+import { displayComponent } from "../../../../utils/permissions";
+import { ISessionResponse } from "../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -162,6 +179,9 @@ const styles = (theme: Theme) =>
       ...actionsTray.actionsTray,
       padding: "15px 0 0",
     },
+    capitalize: {
+      textTransform: "capitalize",
+    },
     ...hrClass,
     ...buttonsStyles,
     ...containerForHeader(theme.spacing(4)),
@@ -195,8 +215,6 @@ const BucketDetails = ({
   bucketInfo,
 }: IBucketDetailsProps) => {
   const [iniLoad, setIniLoad] = useState<boolean>(false);
-  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
-  const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const bucketName = match.params["bucketName"];
 
@@ -241,45 +259,6 @@ const BucketDetails = ({
       setBucketDetailsTab(splitMatch[0]);
     }
   }, [match, bucketName, setBucketDetailsTab, selectedTab]);
-
-  // check the permissions for creating bucket
-  useEffect(() => {
-    if (loadingPerms) {
-      api
-        .invoke("POST", `/api/v1/has-permission`, {
-          actions: [
-            {
-              id: "GetReplicationConfiguration",
-              action: "s3:GetReplicationConfiguration",
-              bucket_name: bucketName,
-            },
-          ],
-        })
-        .then((res: HasPermissionResponse) => {
-          setLoadingPerms(false);
-          if (!res.permissions) {
-            return;
-          }
-          const actions = res.permissions ? res.permissions : [];
-
-          let canGetReplicationVal = actions.find(
-            (s) => s.id === "GetReplicationConfiguration"
-          );
-
-          if (canGetReplicationVal && canGetReplicationVal.can) {
-            setCanGetReplication(true);
-          } else {
-            setCanGetReplication(false);
-          }
-
-          setLoadingPerms(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoadingPerms(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [bucketName, loadingPerms, setErrorSnackMessage]);
 
   const changeRoute = (newTab: string) => {
     let mainRoute = `/buckets/${bucketName}`;
@@ -364,27 +343,38 @@ const BucketDetails = ({
             }
             title={bucketName}
             subTitle={
-              <Fragment>
-                Access:{" "}
-                {bucketInfo &&
-                  bucketInfo?.access[0].toUpperCase() +
-                    bucketInfo?.access.substr(1).toLowerCase()}
-              </Fragment>
+              displayComponent(
+                bucketInfo?.allowedActions,
+                [S3_GET_BUCKET_POLICY],
+                false
+              ) && (
+                <Fragment>
+                  Access:{" "}
+                  <span className={classes.capitalize}>
+                    {bucketInfo?.access.toLowerCase()}
+                  </span>
+                </Fragment>
+              )
             }
             actions={
               <Fragment>
-                <Tooltip title={"Delete"}>
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Delete"
-                    onClick={() => {
-                      setDeleteOpen(true);
-                    }}
-                    size="large"
-                  >
-                    <DeleteIcon />
-                  </BoxIconButton>
-                </Tooltip>
+                {displayComponent(bucketInfo?.allowedActions, [
+                  S3_DELETE_BUCKET,
+                  S3_FORCE_DELETE_BUCKET,
+                ]) && (
+                  <Tooltip title={"Delete"}>
+                    <BoxIconButton
+                      color="primary"
+                      aria-label="Delete"
+                      onClick={() => {
+                        setDeleteOpen(true);
+                      }}
+                      size="large"
+                    >
+                      <DeleteIcon />
+                    </BoxIconButton>
+                  </Tooltip>
+                )}
                 <Tooltip title={"Refresh"}>
                   <BoxIconButton
                     color="primary"
@@ -413,6 +403,12 @@ const BucketDetails = ({
               <ListItemText primary="Summary" />
             </ListItem>
             <ListItem
+              disabled={
+                !displayComponent(bucketInfo?.allowedActions, [
+                  S3_GET_BUCKET_NOTIFICATIONS,
+                  S3_PUT_BUCKET_NOTIFICATIONS,
+                ])
+              }
               button
               selected={selectedTab === "events"}
               onClick={() => {
@@ -423,7 +419,13 @@ const BucketDetails = ({
             </ListItem>
             <ListItem
               button
-              disabled={!canGetReplication}
+              disabled={
+                !distributedSetup ||
+                !displayComponent(bucketInfo?.allowedActions, [
+                  S3_GET_REPLICATION_CONFIGURATION,
+                  S3_PUT_REPLICATION_CONFIGURATION,
+                ])
+              }
               selected={selectedTab === "replication"}
               onClick={() => {
                 changeRoute("replication");
@@ -431,9 +433,15 @@ const BucketDetails = ({
             >
               <ListItemText primary="Replication" />
             </ListItem>
-
             <ListItem
               button
+              disabled={
+                !distributedSetup ||
+                !displayComponent(bucketInfo?.allowedActions, [
+                  S3_GET_LIFECYCLE_CONFIGURATION,
+                  S3_PUT_LIFECYCLE_CONFIGURATION,
+                ])
+              }
               selected={selectedTab === "lifecycle"}
               onClick={() => {
                 changeRoute("lifecycle");
@@ -443,6 +451,13 @@ const BucketDetails = ({
             </ListItem>
             <ListItem
               button
+              disabled={
+                !displayComponent(bucketInfo?.allowedActions, [
+                  ADMIN_GET_POLICY,
+                  ADMIN_LIST_USER_POLICIES,
+                  ADMIN_LIST_USERS,
+                ])
+              }
               selected={selectedTab === "access"}
               onClick={() => {
                 changeRoute("access");
@@ -452,6 +467,11 @@ const BucketDetails = ({
             </ListItem>
             <ListItem
               button
+              disabled={
+                !displayComponent(bucketInfo?.allowedActions, [
+                  S3_GET_BUCKET_POLICY,
+                ])
+              }
               selected={selectedTab === "prefix"}
               onClick={() => {
                 changeRoute("prefix");

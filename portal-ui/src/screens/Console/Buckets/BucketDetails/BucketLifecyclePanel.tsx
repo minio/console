@@ -23,7 +23,7 @@ import { Button } from "@mui/material";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import Grid from "@mui/material/Grid";
-import { LifeCycleItem } from "../types";
+import { BucketInfo, LifeCycleItem } from "../types";
 import { AddIcon, TiersIcon } from "../../../../icons";
 import {
   actionsTray,
@@ -37,6 +37,14 @@ import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
+import { displayComponent } from "../../../../utils/permissions";
+import {
+  ADMIN_LIST_TIERS,
+  S3_GET_LIFECYCLE_CONFIGURATION,
+  S3_GET_REPLICATION_CONFIGURATION,
+  S3_PUT_LIFECYCLE_CONFIGURATION,
+  S3_PUT_REPLICATION_CONFIGURATION,
+} from "../../../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,6 +60,7 @@ interface IBucketLifecyclePanelProps {
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
 }
 
 const BucketLifecyclePanel = ({
@@ -59,6 +68,7 @@ const BucketLifecyclePanel = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
+  bucketInfo,
 }: IBucketLifecyclePanelProps) => {
   const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
@@ -66,6 +76,16 @@ const BucketLifecyclePanel = ({
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
+
+  const displayLifeCycleRules = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_LIFECYCLE_CONFIGURATION,
+  ]);
+
+  const displayAddLifeCycleRules = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_LIFECYCLE_CONFIGURATION, ADMIN_LIST_TIERS],
+    true
+  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -75,18 +95,22 @@ const BucketLifecyclePanel = ({
 
   useEffect(() => {
     if (loadingLifecycle) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/lifecycle`)
-        .then((res: any) => {
-          const records = get(res, "lifecycle", []);
+      if (displayLifeCycleRules) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/lifecycle`)
+          .then((res: any) => {
+            const records = get(res, "lifecycle", []);
 
-          setLifecycleRecords(records || []);
-          setLoadingLifecycle(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          console.error(err);
-          setLoadingLifecycle(false);
-        });
+            setLifecycleRecords(records || []);
+            setLoadingLifecycle(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            console.error(err);
+            setLoadingLifecycle(false);
+          });
+      } else {
+        setLoadingLifecycle(false);
+      }
     }
   }, [loadingLifecycle, setLoadingLifecycle, bucketName]);
 
@@ -184,17 +208,19 @@ const BucketLifecyclePanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <h1 className={classes.sectionTitle}>Lifecycle Rules</h1>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            size="medium"
-            onClick={() => {
-              setAddLifecycleOpen(true);
-            }}
-          >
-            Add Lifecycle Rule
-          </Button>
+          {displayAddLifeCycleRules && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              size="medium"
+              onClick={() => {
+                setAddLifecycleOpen(true);
+              }}
+            >
+              Add Lifecycle Rule
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12}>
           <TableWrapper
@@ -243,6 +269,7 @@ const BucketLifecyclePanel = ({
 const mapState = (state: AppState) => ({
   session: state.console.session,
   loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, {

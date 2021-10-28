@@ -63,7 +63,7 @@ import {
   setLoadingProgress,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import { BucketVersioning } from "../../../types";
+import { BucketInfo, BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import RewindEnable from "./RewindEnable";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -97,6 +97,17 @@ import {
   FileZipIcon,
 } from "../../../../../../icons";
 import ShareFile from "../ObjectDetails/ShareFile";
+import { displayComponent } from "../../../../../../utils/permissions";
+import {
+  S3_DELETE_BUCKET,
+  S3_DELETE_OBJECT,
+  S3_FORCE_DELETE_BUCKET,
+  S3_GET_OBJECT,
+  S3_LIST_BUCKET,
+  S3_PUT_OBJECT,
+} from "../../../../../../types";
+import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
+import { AppState } from "../../../../../../store";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -203,6 +214,10 @@ interface IListObjectsProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
   setFileModeEnabled: typeof setFileModeEnabled;
+  loadingBucket: boolean;
+  setBucketInfo: typeof setBucketInfo;
+  bucketInfo: BucketInfo | null;
+  setBucketDetailsLoad: typeof setBucketDetailsLoad;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -243,6 +258,10 @@ const ListObjects = ({
   setErrorSnackMessage,
   resetRewind,
   setFileModeEnabled,
+  setBucketDetailsLoad,
+  loadingBucket,
+  setBucketInfo,
+  bucketInfo,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -269,11 +288,28 @@ const ListObjects = ({
     "ASC" | "DESC" | undefined
   >("ASC");
   const [currentSortField, setCurrentSortField] = useState<string>("name");
+  const [iniLoad, setIniLoad] = useState<boolean>(false);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
 
   const fileUpload = useRef<HTMLInputElement>(null);
+
+  const displayPutObject = displayComponent(bucketInfo?.allowedActions, [
+    S3_PUT_OBJECT,
+  ]);
+
+  const displayGetObject = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_OBJECT,
+  ]);
+
+  const displayDeleteObject = displayComponent(bucketInfo?.allowedActions, [
+    S3_DELETE_OBJECT,
+  ]);
+
+  const displayListObjects = displayComponent(bucketInfo?.allowedActions, [
+    S3_LIST_BUCKET,
+  ]);
 
   const updateMessage = () => {
     let timeDelta = Date.now() - loadingStartTime;
@@ -296,6 +332,13 @@ const ListObjects = ({
     }
   };
 
+  useEffect(() => {
+    if (!iniLoad) {
+      setBucketDetailsLoad(true);
+      setIniLoad(true);
+    }
+  }, [iniLoad, setBucketDetailsLoad, setIniLoad]);
+
   useInterval(() => {
     // Your custom logic here
     if (loading) {
@@ -304,17 +347,25 @@ const ListObjects = ({
   }, 1000);
 
   useEffect(() => {
-    if (loadingVersioning) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioning) => {
-          setIsVersioned(res.is_versioned);
-          setLoadingVersioning(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingVersioning(false);
-        });
+    if (
+      loadingVersioning &&
+      bucketInfo?.allowedActions &&
+      bucketInfo?.name == bucketName
+    ) {
+      if (displayListObjects) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
+          .then((res: BucketVersioning) => {
+            setIsVersioned(res.is_versioned);
+            setLoadingVersioning(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingVersioning(false);
+          });
+      } else {
+        setLoadingVersioning(false);
+      }
     }
   }, [bucketName, loadingVersioning, setErrorSnackMessage]);
 
@@ -373,121 +424,130 @@ const ListObjects = ({
   }, [internalPaths]);
 
   useEffect(() => {
-    if (loading) {
-      let pathPrefix = "";
-      if (internalPaths) {
-        const decodedPath = decodeFileName(internalPaths);
-        pathPrefix = decodedPath.endsWith("/")
-          ? decodedPath
-          : decodedPath + "/";
-      }
+    if (
+      loading &&
+      bucketInfo?.allowedActions &&
+      bucketInfo?.name == bucketName
+    ) {
+      if (displayListObjects) {
+        let pathPrefix = "";
+        if (internalPaths) {
+          const decodedPath = decodeFileName(internalPaths);
+          pathPrefix = decodedPath.endsWith("/")
+            ? decodedPath
+            : decodedPath + "/";
+        }
 
-      let currentTimestamp = Date.now();
-      setLoadingStartTime(currentTimestamp);
-      setLoadingMessage(defLoading);
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects${
-            pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
-          }`
-        )
-        .then((res: BucketObjectsList) => {
-          const records: BucketObject[] = res.objects || [];
-          const folders: BucketObject[] = [];
-          const files: BucketObject[] = [];
+        let currentTimestamp = Date.now();
+        setLoadingStartTime(currentTimestamp);
+        setLoadingMessage(defLoading);
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/objects${
+              pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+            }`
+          )
+          .then((res: BucketObjectsList) => {
+            const records: BucketObject[] = res.objects || [];
+            const folders: BucketObject[] = [];
+            const files: BucketObject[] = [];
 
-          records.forEach((record) => {
-            // this is a folder
-            if (record.name.endsWith("/")) {
-              folders.push(record);
-            } else {
-              // this is a file
-              files.push(record);
-            }
-          });
-          const recordsInElement = [...folders, ...files];
-          setRecords(recordsInElement);
-          // In case no objects were retrieved, We check if item is a file
-          if (!res.objects && pathPrefix !== "") {
-            if (rewindEnabled) {
-              const rewindParsed = rewindDate.toISOString();
-
-              let pathPrefix = "";
-              if (internalPaths) {
-                const decodedPath = decodeFileName(internalPaths);
-                pathPrefix = decodedPath.endsWith("/")
-                  ? decodedPath
-                  : decodedPath + "/";
+            records.forEach((record) => {
+              // this is a folder
+              if (record.name.endsWith("/")) {
+                folders.push(record);
+              } else {
+                // this is a file
+                files.push(record);
               }
+            });
+            const recordsInElement = [...folders, ...files];
+            setRecords(recordsInElement);
+            // In case no objects were retrieved, We check if item is a file
+            if (!res.objects && pathPrefix !== "") {
+              if (rewindEnabled) {
+                const rewindParsed = rewindDate.toISOString();
 
-              api
-                .invoke(
-                  "GET",
-                  `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-                    pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
-                  }`
-                )
-                .then((res: RewindObjectList) => {
-                  //It is a file since it has elements in the object, setting file flag and waiting for component mount
-                  if (res.objects === null) {
-                    setFileModeEnabled(true);
-                    setLoadingRewind(false);
-                    setLoading(false);
-                  } else {
-                    // It is a folder, we remove loader
-                    setLoadingRewind(false);
-                    setLoading(false);
-                    setFileModeEnabled(false);
-                  }
-                })
-                .catch((err: ErrorResponseHandler) => {
-                  setLoadingRewind(false);
-                  setLoading(false);
-                  setErrorSnackMessage(err);
-                });
-            } else {
-              api
-                .invoke(
-                  "GET",
-                  `/api/v1/buckets/${bucketName}/objects${
-                    internalPaths ? `?prefix=${internalPaths}` : ``
-                  }`
-                )
-                .then((res: BucketObjectsList) => {
-                  //It is a file since it has elements in the object, setting file flag and waiting for component mount
-                  if (!res.objects) {
-                    // It is a folder, we remove loader
-                    setFileModeEnabled(false);
-                    setLoading(false);
-                  } else {
-                    // This is an empty folder.
-                    if (
-                      res.objects.length === 1 &&
-                      res.objects[0].name.endsWith("/")
-                    ) {
-                      setFileModeEnabled(false);
-                    } else {
+                let pathPrefix = "";
+                if (internalPaths) {
+                  const decodedPath = decodeFileName(internalPaths);
+                  pathPrefix = decodedPath.endsWith("/")
+                    ? decodedPath
+                    : decodedPath + "/";
+                }
+
+                api
+                  .invoke(
+                    "GET",
+                    `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
+                      pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+                    }`
+                  )
+                  .then((res: RewindObjectList) => {
+                    //It is a file since it has elements in the object, setting file flag and waiting for component mount
+                    if (res.objects === null) {
                       setFileModeEnabled(true);
+                      setLoadingRewind(false);
+                      setLoading(false);
+                    } else {
+                      // It is a folder, we remove loader
+                      setLoadingRewind(false);
+                      setLoading(false);
+                      setFileModeEnabled(false);
                     }
-
+                  })
+                  .catch((err: ErrorResponseHandler) => {
+                    setLoadingRewind(false);
                     setLoading(false);
-                  }
-                })
-                .catch((err: ErrorResponseHandler) => {
-                  setLoading(false);
-                  setErrorSnackMessage(err);
-                });
+                    setErrorSnackMessage(err);
+                  });
+              } else {
+                api
+                  .invoke(
+                    "GET",
+                    `/api/v1/buckets/${bucketName}/objects${
+                      internalPaths ? `?prefix=${internalPaths}` : ``
+                    }`
+                  )
+                  .then((res: BucketObjectsList) => {
+                    //It is a file since it has elements in the object, setting file flag and waiting for component mount
+                    if (!res.objects) {
+                      // It is a folder, we remove loader
+                      setFileModeEnabled(false);
+                      setLoading(false);
+                    } else {
+                      // This is an empty folder.
+                      if (
+                        res.objects.length === 1 &&
+                        res.objects[0].name.endsWith("/")
+                      ) {
+                        setFileModeEnabled(false);
+                      } else {
+                        setFileModeEnabled(true);
+                      }
+
+                      setLoading(false);
+                    }
+                  })
+                  .catch((err: ErrorResponseHandler) => {
+                    setLoading(false);
+                    setErrorSnackMessage(err);
+                  });
+              }
+            } else {
+              setFileModeEnabled(false);
+              setLoading(false);
             }
-          } else {
-            setFileModeEnabled(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
             setLoading(false);
-          }
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoading(false);
-          setErrorSnackMessage(err);
-        });
+            setErrorSnackMessage(err);
+          });
+      } else {
+        setLoadingRewind(false);
+        setLoading(false);
+      }
     }
   }, [
     loading,
@@ -498,6 +558,29 @@ const ListObjects = ({
     rewindDate,
     internalPaths,
     setFileModeEnabled,
+    bucketInfo,
+  ]);
+
+  // bucket info
+  useEffect(() => {
+    if (loadingBucket) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}`)
+        .then((res: BucketInfo) => {
+          setBucketDetailsLoad(false);
+          setBucketInfo(res);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setBucketDetailsLoad(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [
+    bucketName,
+    loadingBucket,
+    setBucketDetailsLoad,
+    setBucketInfo,
+    setErrorSnackMessage,
   ]);
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
@@ -606,9 +689,9 @@ const ListObjects = ({
     return niceBytes(String(object.size));
   };
 
-  const confirmDeleteObject = (object: string) => {
+  const confirmDeleteObject = (object: BucketObject) => {
     setDeleteOpen(true);
-    setSelectedObject(object);
+    setSelectedObject(object.name);
   };
 
   const displayDeleteFlag = (state: boolean) => {
@@ -688,15 +771,17 @@ const ListObjects = ({
       },
       sendOnlyId: false,
     },
-    {
+  ];
+
+  if (displayDeleteObject) {
+    tableActions.push({
       type: "delete",
       onClick: confirmDeleteObject,
-      sendOnlyId: true,
       disableButtonFunction: () => {
         return rewindEnabled;
       },
-    },
-  ];
+    });
+  }
 
   const displayName = (element: string) => {
     let elementString = element;
@@ -1000,46 +1085,50 @@ const ListObjects = ({
             }
             actions={
               <Fragment>
-                <Tooltip title={"Choose or create a new path"}>
-                  <IconButton
-                    color="primary"
-                    aria-label="Add a new folder"
-                    component="span"
-                    onClick={() => {
-                      setCreateFolderOpen(true);
-                    }}
-                    disabled={rewindEnabled}
-                    size="large"
-                  >
-                    <AddFolderIcon />
-                  </IconButton>
-                </Tooltip>
+                {displayPutObject && (
+                  <Fragment>
+                    <Tooltip title={"Choose or create a new path"}>
+                      <IconButton
+                        color="primary"
+                        aria-label="Add a new folder"
+                        component="span"
+                        onClick={() => {
+                          setCreateFolderOpen(true);
+                        }}
+                        disabled={rewindEnabled}
+                        size="large"
+                      >
+                        <AddFolderIcon />
+                      </IconButton>
+                    </Tooltip>
 
-                <Tooltip title={"Upload file"}>
-                  <IconButton
-                    color="primary"
-                    aria-label="Refresh List"
-                    component="span"
-                    onClick={() => {
-                      if (fileUpload && fileUpload.current) {
-                        fileUpload.current.click();
-                      }
-                    }}
-                    disabled={rewindEnabled}
-                    size="large"
-                  >
-                    <UploadIcon />
-                  </IconButton>
-                </Tooltip>
+                    <Tooltip title={"Upload file"}>
+                      <IconButton
+                        color="primary"
+                        aria-label="Refresh List"
+                        component="span"
+                        onClick={() => {
+                          if (fileUpload && fileUpload.current) {
+                            fileUpload.current.click();
+                          }
+                        }}
+                        disabled={rewindEnabled}
+                        size="large"
+                      >
+                        <UploadIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <input
+                      type="file"
+                      multiple={true}
+                      onChange={(e) => uploadObject(e)}
+                      id="file-input"
+                      style={{ display: "none" }}
+                      ref={fileUpload}
+                    />
+                  </Fragment>
+                )}
 
-                <input
-                  type="file"
-                  multiple={true}
-                  onChange={(e) => uploadObject(e)}
-                  id="file-input"
-                  style={{ display: "none" }}
-                  ref={fileUpload}
-                />
                 <Tooltip title={"Rewind"}>
                   <Badge
                     badgeContent=" "
@@ -1081,42 +1170,47 @@ const ListObjects = ({
           />
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Objects"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setFilterObjects(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
-          />
+          {displayListObjects && (
+            <TextField
+              placeholder="Search Objects"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(val) => {
+                setFilterObjects(val.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              variant="standard"
+            />
+          )}
 
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<DeleteIcon />}
-            onClick={() => {
-              setDeleteMultipleOpen(true);
-            }}
-            disabled={selectedObjects.length === 0}
-          >
-            Delete Selected
-          </Button>
+          {displayDeleteObject && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<DeleteIcon />}
+              onClick={() => {
+                setDeleteMultipleOpen(true);
+              }}
+              disabled={selectedObjects.length === 0}
+            >
+              Delete Selected
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12}>
           <br />
         </Grid>
         <Grid item xs={12}>
           <TableWrapper
+            disabled={!displayListObjects}
             itemActions={tableActions}
             columns={rewindEnabled ? rewindModeColumns : listModeColumns}
             isLoading={rewindEnabled ? loadingRewind : loading}
@@ -1142,12 +1236,14 @@ const ListObjects = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
+const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   routesList: get(objectBrowser, "routesList", []),
   downloadingFiles: get(objectBrowser, "downloadingFiles", []),
   rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
   rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
+  loadingBucket: buckets.bucketDetails.loadingBucket,
+  bucketInfo: buckets.bucketDetails.bucketInfo,
 });
 
 const mapDispatchToProps = {
@@ -1156,6 +1252,8 @@ const mapDispatchToProps = {
   setErrorSnackMessage,
   setFileModeEnabled,
   resetRewind,
+  setBucketDetailsLoad,
+  setBucketInfo,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

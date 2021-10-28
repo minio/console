@@ -25,15 +25,14 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import {
-  AddIcon,
-  BucketsIcon,
-  WatchIcon,
-} from "../../../../icons";
+import { AddIcon, BucketsIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
-import { containerForHeader, linkStyles } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  linkStyles,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import AddBucket from "./AddBucket";
@@ -43,6 +42,7 @@ import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import SearchIcon from "../../../../icons/SearchIcon";
 import HelpBox from "../../../../common/HelpBox";
+import { ISessionResponse } from "../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -136,6 +136,7 @@ interface IListBucketsProps {
   addBucketModalOpen: boolean;
   addBucketReset: typeof addBucketReset;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  session: ISessionResponse;
 }
 
 const ListBuckets = ({
@@ -145,6 +146,7 @@ const ListBuckets = ({
   addBucketModalOpen,
   addBucketReset,
   setErrorSnackMessage,
+  session,
 }: IListBucketsProps) => {
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -328,7 +330,7 @@ const ListBuckets = ({
                   }}
                   inputProps={{
                     disableUnderline: true,
-                    endAdornment: (
+                    endadornment: (
                       <InputAdornment position="end">
                         <SearchIcon />
                       </InputAdornment>
@@ -346,7 +348,7 @@ const ListBuckets = ({
                   }}
                   inputProps={{
                     disableUnderline: true,
-                    endAdornment: (
+                    endadornment: (
                       <InputAdornment position="end">
                         <SearchIcon />
                       </InputAdornment>
@@ -463,6 +465,7 @@ const ListBuckets = ({
 
 const mapState = (state: AppState) => ({
   addBucketModalOpen: state.buckets.open,
+  session: state.console.session,
 });
 
 const connector = connect(mapState, {

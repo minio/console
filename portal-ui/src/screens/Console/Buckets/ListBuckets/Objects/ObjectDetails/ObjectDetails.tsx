@@ -80,6 +80,19 @@ import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
+import { BucketInfo } from "../../../types";
+import { displayComponent } from "../../../../../../utils/permissions";
+import {
+  S3_DELETE_OBJECT,
+  S3_DELETE_OBJECT_TAGGING,
+  S3_GET_OBJECT_LEGAL_HOLD,
+  S3_GET_OBJECT_RETENTION,
+  S3_GET_OBJECT_TAGGING,
+  S3_GET_REPLICATION_CONFIGURATION,
+  S3_PUT_OBJECT_LEGAL_HOLD,
+  S3_PUT_OBJECT_RETENTION,
+  S3_PUT_OBJECT_TAGGING,
+} from "../../../../../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -257,6 +270,8 @@ const ObjectDetails = ({
   const [metadataLoad, setMetadataLoad] = useState<boolean>(true);
   const [metadata, setMetadata] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [loadingBucket, setLoadingBucket] = useState<boolean>(false);
+  const [bucketInfo, setBucketInfo] = useState<any>(null);
 
   const internalPaths = get(match.params, "subpaths", "");
   const internalPathsDecoded = decodeFileName(internalPaths) || "";
@@ -269,6 +284,64 @@ const ObjectDetails = ({
   if (actualInfo) {
     objectNameArray = actualInfo.name.split("/");
   }
+
+  const displayObjectLegalHold = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_OBJECT_LEGAL_HOLD,
+  ]);
+
+  const displayEditObjectLegalHold = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_OBJECT_LEGAL_HOLD],
+    true
+  );
+
+  const displayObjectRetention = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_OBJECT_RETENTION,
+  ]);
+
+  const displayEditObjectRetention = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_OBJECT_RETENTION],
+    true
+  );
+
+  const displayObjectTag = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_OBJECT_TAGGING,
+  ]);
+
+  const displayEditObjectTagging = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_OBJECT_TAGGING],
+    true
+  );
+
+  const displayRemoveObjectTagging = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_DELETE_OBJECT_TAGGING],
+    true
+  );
+
+  const displayDeleteObject = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_DELETE_OBJECT],
+    true
+  );
+
+  // bucket info
+  useEffect(() => {
+    if (!loadingBucket) {
+      setLoadingBucket(true);
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}`)
+        .then((res: BucketInfo) => {
+          setBucketInfo(res);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setLoadingBucket(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [bucketName, loadingBucket, setBucketInfo, setErrorSnackMessage]);
 
   useEffect(() => {
     if (loadObjectData) {
@@ -504,7 +577,6 @@ const ObjectDetails = ({
           actualInfo={actualInfo}
         />
       )}
-
       <Grid container>
         {!actualInfo && (
           <Grid item xs={12}>
@@ -576,19 +648,21 @@ const ObjectDetails = ({
                       </Tooltip>
                     )}
 
-                    <Tooltip title="Delete Object">
-                      <IconButton
-                        color="primary"
-                        aria-label="delete"
-                        onClick={() => {
-                          setDeleteOpen(true);
-                        }}
-                        disabled={actualInfo.is_delete_marker}
-                        size="large"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
+                    {displayDeleteObject && (
+                      <Tooltip title="Delete Object">
+                        <IconButton
+                          color="primary"
+                          aria-label="delete"
+                          onClick={() => {
+                            setDeleteOpen(true);
+                          }}
+                          disabled={actualInfo.is_delete_marker}
+                          size="large"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Fragment>
                 }
               />
@@ -635,109 +709,138 @@ const ObjectDetails = ({
                     <h1 className={classes.sectionTitle}>Details</h1>
                   </div>
                   <br />
-                  <Paper className={classes.paperContainer}>
-                    <Grid container>
-                      <Grid item xs={10}>
-                        <table width={"100%"}>
-                          <tbody>
-                            <tr>
-                              <td className={classes.titleCol}>Legal Hold:</td>
-                              <td className={classes.capitalizeFirst}>
-                                {actualInfo.version_id &&
-                                actualInfo.version_id !== "null" ? (
-                                  <Fragment>
-                                    {actualInfo.legal_hold_status
-                                      ? actualInfo.legal_hold_status.toLowerCase()
-                                      : "Off"}
-                                    <IconButton
-                                      color="primary"
-                                      aria-label="legal-hold"
-                                      size="small"
-                                      className={classes.propertiesIcon}
-                                      onClick={() => {
-                                        setLegalholdOpen(true);
-                                      }}
-                                    >
-                                      <EditIcon />
-                                    </IconButton>
-                                  </Fragment>
-                                ) : (
-                                  "Disabled"
+                  {(displayObjectLegalHold ||
+                    displayObjectRetention ||
+                    displayObjectTag) && (
+                    <Fragment>
+                      <Paper className={classes.paperContainer}>
+                        <Grid container>
+                          <Grid item xs={10}>
+                            <table width={"100%"}>
+                              <tbody>
+                                {displayObjectLegalHold && (
+                                  <tr>
+                                    <td className={classes.titleCol}>
+                                      Legal Hold:
+                                    </td>
+                                    <td className={classes.capitalizeFirst}>
+                                      {actualInfo.version_id &&
+                                      actualInfo.version_id !== "null" ? (
+                                        <Fragment>
+                                          {actualInfo.legal_hold_status
+                                            ? actualInfo.legal_hold_status.toLowerCase()
+                                            : "Off"}
+                                          {displayEditObjectLegalHold && (
+                                            <IconButton
+                                              color="primary"
+                                              aria-label="legal-hold"
+                                              size="small"
+                                              className={classes.propertiesIcon}
+                                              onClick={() => {
+                                                setLegalholdOpen(true);
+                                              }}
+                                            >
+                                              <EditIcon />
+                                            </IconButton>
+                                          )}
+                                        </Fragment>
+                                      ) : (
+                                        "Disabled"
+                                      )}
+                                    </td>
+                                  </tr>
                                 )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className={classes.titleCol}>Retention:</td>
-                              <td className={classes.capitalizeFirst}>
-                                {actualInfo.retention_mode
-                                  ? actualInfo.retention_mode.toLowerCase()
-                                  : "None"}
-                                <IconButton
-                                  color="primary"
-                                  aria-label="retention"
-                                  size="small"
-                                  className={classes.propertiesIcon}
-                                  onClick={() => {
-                                    openRetentionModal();
-                                  }}
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className={classes.titleCol}>Tags:</td>
-                              <td>
-                                {tagKeys &&
-                                  tagKeys.map((tagKey, index) => {
-                                    const tag = get(
-                                      actualInfo,
-                                      `tags.${tagKey}`,
-                                      ""
-                                    );
-                                    if (tag !== "") {
-                                      return (
-                                        <Chip
-                                          key={`chip-${index}`}
-                                          className={classes.tag}
-                                          size="small"
-                                          label={`${tagKey} : ${tag}`}
+                                {displayObjectRetention && (
+                                  <tr>
+                                    <td className={classes.titleCol}>
+                                      Retention:
+                                    </td>
+                                    <td className={classes.capitalizeFirst}>
+                                      {actualInfo.retention_mode
+                                        ? actualInfo.retention_mode.toLowerCase()
+                                        : "None"}
+                                      {displayEditObjectRetention && (
+                                        <IconButton
                                           color="primary"
-                                          deleteIcon={<CloseIcon />}
-                                          onDelete={() => {
-                                            deleteTag(tagKey, tag);
+                                          aria-label="retention"
+                                          size="small"
+                                          className={classes.propertiesIcon}
+                                          onClick={() => {
+                                            openRetentionModal();
+                                          }}
+                                        >
+                                          <EditIcon />
+                                        </IconButton>
+                                      )}
+                                    </td>
+                                  </tr>
+                                )}
+                                {displayObjectTag && (
+                                  <tr>
+                                    <td className={classes.titleCol}>Tags:</td>
+                                    <td>
+                                      {tagKeys &&
+                                        tagKeys.map((tagKey, index) => {
+                                          const tag = get(
+                                            actualInfo,
+                                            `tags.${tagKey}`,
+                                            ""
+                                          );
+                                          if (tag !== "") {
+                                            return displayRemoveObjectTagging ? (
+                                              <Chip
+                                                key={`chip-${index}`}
+                                                className={classes.tag}
+                                                size="small"
+                                                label={`${tagKey} : ${tag}`}
+                                                color="primary"
+                                                deleteIcon={<CloseIcon />}
+                                                onDelete={() => {
+                                                  deleteTag(tagKey, tag);
+                                                }}
+                                              />
+                                            ) : (
+                                              <Chip
+                                                key={`chip-${index}`}
+                                                className={classes.tag}
+                                                size="small"
+                                                label={`${tagKey} : ${tag}`}
+                                                color="primary"
+                                              />
+                                            );
+                                          }
+                                          return null;
+                                        })}
+                                      {displayEditObjectTagging && (
+                                        <Chip
+                                          className={classes.tag}
+                                          icon={<AddIcon />}
+                                          clickable
+                                          size="small"
+                                          label="Add tag"
+                                          color="primary"
+                                          variant="outlined"
+                                          onClick={() => {
+                                            setTagModalOpen(true);
                                           }}
                                         />
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                                <Chip
-                                  className={classes.tag}
-                                  icon={<AddIcon />}
-                                  clickable
-                                  size="small"
-                                  label="Add tag"
-                                  color="primary"
-                                  variant="outlined"
-                                  onClick={() => {
-                                    setTagModalOpen(true);
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                  <br />
-                  <br />
+                                      )}
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </Grid>
+                        </Grid>
+                      </Paper>
+                      <br />
+                    </Fragment>
+                  )}
                   <Paper className={classes.paperContainer}>
                     <Grid item xs={12}>
                       <Grid item xs={12}>
                         <h2>Object Metadata</h2>
-                        <hr className={classes.hr}></hr>
+                        <hr className={classes.hr} />
                       </Grid>
 
                       <Grid item xs={12}>

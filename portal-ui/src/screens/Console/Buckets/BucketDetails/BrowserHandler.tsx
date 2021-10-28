@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -29,6 +29,8 @@ import ObjectDetails from "../ListBuckets/Objects/ObjectDetails/ObjectDetails";
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { SettingsIcon } from "../../../../icons";
+import { BucketInfo } from "../types";
+import { setErrorSnackMessage } from "../../../../actions";
 
 interface IBrowserHandlerProps {
   fileMode: boolean;
@@ -36,6 +38,8 @@ interface IBrowserHandlerProps {
   history: any;
   classes: any;
   setFileModeEnabled: typeof setFileModeEnabled;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
+  bucketInfo: BucketInfo | null;
 }
 
 const styles = (theme: Theme) =>
@@ -53,6 +57,7 @@ const BrowserHandler = ({
   history,
   classes,
   setFileModeEnabled,
+  bucketInfo,
 }: IBrowserHandlerProps) => {
   const bucketName = match.params["bucketName"];
   const internalPaths = get(match.params, "subpaths", "");
@@ -77,19 +82,21 @@ const BrowserHandler = ({
           </Fragment>
         }
         actions={
-          <Fragment>
-            <Tooltip title={"Configure Bucket"}>
-              <IconButton
-                color="primary"
-                aria-label="Configure Bucket"
-                component="span"
-                onClick={openBucketConfiguration}
-                size="large"
-              >
-                <SettingsIcon />
-              </IconButton>
-            </Tooltip>
-          </Fragment>
+          bucketInfo?.manage && (
+            <Fragment>
+              <Tooltip title={"Configure Bucket"}>
+                <IconButton
+                  color="primary"
+                  aria-label="Configure Bucket"
+                  component="span"
+                  onClick={openBucketConfiguration}
+                  size="large"
+                >
+                  <SettingsIcon />
+                </IconButton>
+              </Tooltip>
+            </Fragment>
+          )
         }
       />
       <Grid container className={classes.container}>
@@ -99,13 +106,15 @@ const BrowserHandler = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser }: AppState) => ({
+const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   fileMode: get(objectBrowser, "fileMode", false),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
+  bucketInfo: buckets.bucketDetails.bucketInfo,
 });
 
 const mapDispatchToProps = {
   setFileModeEnabled,
+  setErrorSnackMessage,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

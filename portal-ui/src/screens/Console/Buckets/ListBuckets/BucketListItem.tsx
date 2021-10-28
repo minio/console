@@ -243,20 +243,22 @@ const BucketListItem = ({
                   <div style={{ marginBottom: 10 }} />
                 </Box>
               </Grid>
-              <Grid item xs={6} sm={12} md={12}>
-                <Link
-                  to={`/buckets/${bucket.name}/admin`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Button
-                    variant={"outlined"}
-                    endIcon={<SettingsIcon />}
-                    className={classes.manageButton}
+              {bucket.manage && (
+                <Grid item xs={6} sm={12} md={12}>
+                  <Link
+                    to={`/buckets/${bucket.name}/admin`}
+                    style={{ textDecoration: "none" }}
                   >
-                    Manage
-                  </Button>
-                </Link>
-              </Grid>
+                    <Button
+                      variant={"outlined"}
+                      endIcon={<SettingsIcon />}
+                      className={classes.manageButton}
+                    >
+                      Manage
+                    </Button>
+                  </Link>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>
