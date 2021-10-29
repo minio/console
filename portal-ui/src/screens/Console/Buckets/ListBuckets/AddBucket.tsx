@@ -373,8 +373,8 @@ const AddBucket = ({
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <div className={classes.multiContainer}>
-                    <div className={classes.quotaSizeContainer}>
+                  <Grid container>
+                    <Grid item xs={10}>
                       <InputBoxWrapper
                         type="number"
                         id="quota_size"
@@ -387,20 +387,22 @@ const AddBucket = ({
                         required
                         min="1"
                       />
-                    </div>
-                    <div className={classes.sizeFactorContainer}>
-                      <SelectWrapper
-                        label="&nbsp;"
-                        id="quota_unit"
-                        name="quota_unit"
-                        value={quotaUnit}
-                        onChange={(e: SelectChangeEvent<string>) => {
-                          addBucketQuotaUnit(e.target.value as string);
-                        }}
-                        options={factorForDropdown()}
-                      />
-                    </div>
-                  </div>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <div style={{ width: 100 }}>
+                        <SelectWrapper
+                          label=""
+                          id="quota_unit"
+                          name="quota_unit"
+                          value={quotaUnit}
+                          onChange={(e: SelectChangeEvent<string>) => {
+                            addBucketQuotaUnit(e.target.value as string);
+                          }}
+                          options={factorForDropdown()}
+                        />
+                      </div>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </React.Fragment>
             )}
