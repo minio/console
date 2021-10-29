@@ -214,7 +214,6 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
             setUseConnectionString(e.target.checked);
           }}
           value={"manualString"}
-          indicatorLabels={["On", "Off"]}
         />
       </Grid>
       {useConnectionString ? (

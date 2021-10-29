@@ -321,7 +321,6 @@ const AddBucket = ({
                   "Allows to keep multiple versions of the same object under the same key."
                 }
                 label={"Versioning"}
-                indicatorLabels={["On", "Off"]}
                 disabled={!distributedSetup}
               />
             </Grid>
@@ -339,7 +338,6 @@ const AddBucket = ({
                 description={
                   "Required to support retention and legal hold. Can only be enabled at bucket creation."
                 }
-                indicatorLabels={["On", "Off"]}
               />
             </Grid>
 
@@ -354,7 +352,6 @@ const AddBucket = ({
                 }}
                 label={"Quota"}
                 description={"Limit the amount of data in the bucket."}
-                indicatorLabels={["On", "Off"]}
                 disabled={!distributedSetup}
               />
             </Grid>
@@ -421,7 +418,6 @@ const AddBucket = ({
                   description={
                     "Impose rules to prevent object deletion for a period of time."
                   }
-                  indicatorLabels={["On", "Off"]}
                 />
               </Grid>
             )}

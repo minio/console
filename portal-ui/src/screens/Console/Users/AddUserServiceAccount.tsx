@@ -166,7 +166,6 @@ const AddUserServiceAccount = ({
                 setIsRestrictedByPolicy(event.target.checked);
               }}
               label={"Restrict with policy"}
-              indicatorLabels={["On", "Off"]}
             />
             <FormSwitchWrapper
               value="locking"
@@ -177,7 +176,6 @@ const AddUserServiceAccount = ({
                 setAddCredentials(event.target.checked);
               }}
               label={"Customize Credentials"}
-              indicatorLabels={["On", "Off"]}
             />
           </Grid>
           {isRestrictedByPolicy && (
