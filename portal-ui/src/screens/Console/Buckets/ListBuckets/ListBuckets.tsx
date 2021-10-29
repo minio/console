@@ -25,7 +25,12 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import { AddIcon, TenantsIcon, WatchIcon } from "../../../../icons";
+import {
+  AddIcon,
+  BucketsIcon,
+  TenantsIcon,
+  WatchIcon,
+} from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -425,7 +430,7 @@ const ListBuckets = ({
               >
                 <Grid item xs={8}>
                   <HelpBox
-                    iconComponent={<TenantsIcon />}
+                    iconComponent={<BucketsIcon />}
                     title={"Buckets"}
                     help={
                       <Fragment>
