@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -23,7 +23,7 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Button } from "@mui/material";
-import { AddIcon } from "../../../icons";
+import { AddIcon, GroupsIcon, UsersIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -40,6 +40,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
+import HelpBox from "../../../common/HelpBox";
 
 interface IGroupsProps {
   classes: any;
@@ -78,6 +79,10 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
+    },
+    link: {
+      textDecoration: "underline",
+      color: theme.palette.info.main,
     },
     ...actionsTray,
     ...searchField,
@@ -225,16 +230,81 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
           <Grid item xs={12}>
             <br />
           </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[{ label: "Name", elementKey: "" }]}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Groups"
-              idField=""
-            />
-          </Grid>
+          {records.length > 0 && (
+            <Fragment>
+              <Grid item xs={12}>
+                <TableWrapper
+                  itemActions={tableActions}
+                  columns={[{ label: "Name", elementKey: "" }]}
+                  isLoading={loading}
+                  records={filteredRecords}
+                  entityName="Groups"
+                  idField=""
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <HelpBox
+                  title={"Groups"}
+                  iconComponent={<GroupsIcon />}
+                  help={
+                    <Fragment>
+                      A group can have one attached IAM policy, where all users
+                      with membership in that group inherit that policy. Groups
+                      support more simplified management of user permissions on
+                      the MinIO Tenant.
+                      <br />
+                      <br />
+                      You can learn more at our{" "}
+                      <a
+                        href="https://docs.min.io/minio/k8s/tutorials/group-management.html?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        documentation
+                      </a>
+                      .
+                    </Fragment>
+                  }
+                />
+              </Grid>
+            </Fragment>
+          )}
+          {records.length == 0 && (
+            <Grid
+              container
+              justifyContent={"center"}
+              alignContent={"center"}
+              alignItems={"center"}
+            >
+              <Grid item xs={8}>
+                <HelpBox
+                  title={"Groups"}
+                  iconComponent={<UsersIcon />}
+                  help={
+                    <Fragment>
+                      A group can have one attached IAM policy, where all users
+                      with membership in that group inherit that policy. Groups
+                      support more simplified management of user permissions on
+                      the MinIO Tenant.
+                      <br />
+                      <br />
+                      To get started,{" "}
+                      <a
+                        onClick={() => {
+                          setSelectedGroup(null);
+                          setGroupOpen(true);
+                        }}
+                        className={classes.link}
+                      >
+                        Create a Group
+                      </a>
+                      .
+                    </Fragment>
+                  }
+                />
+              </Grid>
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </React.Fragment>

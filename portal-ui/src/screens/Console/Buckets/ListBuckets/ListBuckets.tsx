@@ -25,7 +25,12 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import { AddIcon, WatchIcon } from "../../../../icons";
+import {
+  AddIcon,
+  BucketsIcon,
+  TenantsIcon,
+  WatchIcon,
+} from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -38,6 +43,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import SearchIcon from "../../../../icons/SearchIcon";
+import HelpBox from "../../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -120,6 +126,10 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
     constrainedContainer: {
       maxWidth: 1180,
+    },
+    link: {
+      textDecoration: "underline",
+      color: theme.palette.info.main,
     },
   });
 
@@ -316,7 +326,7 @@ const ListBuckets = ({
                   className={classes.theaderSearch}
                   variant={"outlined"}
                   id="search-resource"
-                  placeholder={"Search Buckets"}
+                  placeholder={"Filter Buckets"}
                   onChange={(val) => {
                     setFilterBuckets(val.target.value);
                   }}
@@ -411,6 +421,39 @@ const ListBuckets = ({
                 />
               );
             })}
+            {filteredRecords.length == 0 && (
+              <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Grid item xs={8}>
+                  <HelpBox
+                    iconComponent={<BucketsIcon />}
+                    title={"Buckets"}
+                    help={
+                      <Fragment>
+                        MinIO uses buckets to organize objects. A bucket is
+                        similar to a folder or directory in a filesystem, where
+                        each bucket can hold an arbitrary number of objects.
+                        <br />
+                        <br />
+                        To get started,&nbsp;
+                        <a
+                          className={classes.link}
+                          onClick={() => {
+                            addBucketOpen(true);
+                          }}
+                        >
+                          Create a Bucket.
+                        </a>
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>

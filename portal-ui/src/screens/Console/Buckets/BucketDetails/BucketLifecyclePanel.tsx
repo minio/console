@@ -210,6 +210,7 @@ const BucketLifecyclePanel = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
+            title={"Lifecycle Rules"}
             iconComponent={<TiersIcon />}
             help={
               <Fragment>
