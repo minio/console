@@ -16,7 +16,7 @@
 
 import React from "react";
 import { SvgIcon, SvgIconProps } from "@mui/material";
-import { IIcon } from "./props";
+
 const RefreshIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon {...props}>

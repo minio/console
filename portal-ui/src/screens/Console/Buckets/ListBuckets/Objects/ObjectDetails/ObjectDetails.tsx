@@ -68,17 +68,6 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import SetRetention from "./SetRetention";
-import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import DeleteObject from "../ListObjects/DeleteObject";
-import AddTagModal from "./AddTagModal";
-import DeleteTagModal from "./DeleteTagModal";
-import SetLegalHoldModal from "./SetLegalHoldModal";
-import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import EditIcon from "../../../../../../icons/EditIcon";
-import SearchIcon from "../../../../../../icons/SearchIcon";
-import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
-import PreviewFileContent from "../Preview/PreviewFileContent";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 import { BucketInfo } from "../../../types";
 import { displayComponent } from "../../../../../../utils/permissions";
@@ -93,6 +82,18 @@ import {
   S3_PUT_OBJECT_RETENTION,
   S3_PUT_OBJECT_TAGGING,
 } from "../../../../../../types";
+import SetRetention from "./SetRetention";
+import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
+import DeleteObject from "../ListObjects/DeleteObject";
+import AddTagModal from "./AddTagModal";
+import DeleteTagModal from "./DeleteTagModal";
+import SetLegalHoldModal from "./SetLegalHoldModal";
+import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
+import EditIcon from "../../../../../../icons/EditIcon";
+import SearchIcon from "../../../../../../icons/SearchIcon";
+import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
+import PreviewFileContent from "../Preview/PreviewFileContent";
+import RestoreFileVersion from "./RestoreFileVersion";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -272,6 +273,8 @@ const ObjectDetails = ({
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(false);
   const [bucketInfo, setBucketInfo] = useState<any>(null);
+  const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
+  const [restoreVersion, setRestoreVersion] = useState<string>("");
 
   const internalPaths = get(match.params, "subpaths", "");
   const internalPathsDecoded = decodeFileName(internalPaths) || "";
@@ -470,6 +473,14 @@ const ObjectDetails = ({
         return false;
       },
     },
+    {
+      type: "restore",
+      onClick: (item: IFileInfo) => {
+        setRestoreVersion(item.version_id || "");
+        setRestoreVersionOpen(true);
+      },
+      disableButtonFunction: (_: any) => !distributedSetup,
+    },
   ];
 
   const filteredRecords = versions.filter((version) => {
@@ -517,6 +528,16 @@ const ObjectDetails = ({
 
     if (reloadObjectData) {
       setLoadObjectData(true);
+    }
+  };
+
+  const closeRestoreModal = (reloadObjectData: boolean) => {
+    setRestoreVersionOpen(false);
+    setRestoreVersion("");
+
+    if (reloadObjectData) {
+      setLoadObjectData(true);
+      setMetadataLoad(true);
     }
   };
 
@@ -577,6 +598,16 @@ const ObjectDetails = ({
           actualInfo={actualInfo}
         />
       )}
+      {restoreVersionOpen && actualInfo && (
+        <RestoreFileVersion
+          restoreOpen={restoreVersionOpen}
+          bucketName={bucketName}
+          versionID={restoreVersion}
+          objectPath={actualInfo.name}
+          onCloseAndUpdate={closeRestoreModal}
+        />
+      )}
+
       <Grid container>
         {!actualInfo && (
           <Grid item xs={12}>
@@ -911,7 +942,7 @@ const ObjectDetails = ({
                             columns={[
                               {
                                 label: "",
-                                width: 20,
+                                width: 40,
                                 renderFullObject: true,
                                 renderFunction: (r) => {
                                   const versOrd =

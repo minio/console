@@ -290,6 +290,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIPutObjectLegalHoldHandler: user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.PutObjectLegalHold has not yet been implemented")
 		}),
+		UserAPIPutObjectRestoreHandler: user_api.PutObjectRestoreHandlerFunc(func(params user_api.PutObjectRestoreParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.PutObjectRestore has not yet been implemented")
+		}),
 		UserAPIPutObjectRetentionHandler: user_api.PutObjectRetentionHandlerFunc(func(params user_api.PutObjectRetentionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.PutObjectRetention has not yet been implemented")
 		}),
@@ -564,6 +567,8 @@ type ConsoleAPI struct {
 	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
 	// UserAPIPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
 	UserAPIPutObjectLegalHoldHandler user_api.PutObjectLegalHoldHandler
+	// UserAPIPutObjectRestoreHandler sets the operation handler for the put object restore operation
+	UserAPIPutObjectRestoreHandler user_api.PutObjectRestoreHandler
 	// UserAPIPutObjectRetentionHandler sets the operation handler for the put object retention operation
 	UserAPIPutObjectRetentionHandler user_api.PutObjectRetentionHandler
 	// UserAPIPutObjectTagsHandler sets the operation handler for the put object tags operation
@@ -921,6 +926,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIPutObjectLegalHoldHandler == nil {
 		unregistered = append(unregistered, "user_api.PutObjectLegalHoldHandler")
+	}
+	if o.UserAPIPutObjectRestoreHandler == nil {
+		unregistered = append(unregistered, "user_api.PutObjectRestoreHandler")
 	}
 	if o.UserAPIPutObjectRetentionHandler == nil {
 		unregistered = append(unregistered, "user_api.PutObjectRetentionHandler")
@@ -1393,6 +1401,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{bucket_name}/objects/legalhold"] = user_api.NewPutObjectLegalHold(o.context, o.UserAPIPutObjectLegalHoldHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/restore"] = user_api.NewPutObjectRestore(o.context, o.UserAPIPutObjectRestoreHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

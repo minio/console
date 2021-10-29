@@ -74,6 +74,7 @@ type MinioClient interface {
 	getObjectLockConfig(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 	getLifecycleRules(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error)
 	setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error
+	copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
 }
 
 // Interface implementation
@@ -193,6 +194,10 @@ func (c minioClient) getLifecycleRules(ctx context.Context, bucketName string) (
 
 func (c minioClient) setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
 	return c.client.SetBucketLifecycle(ctx, bucketName, config)
+}
+
+func (c minioClient) copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error) {
+	return c.client.CopyObject(ctx, dst, src)
 }
 
 // MCClient interface with all functions to be implemented

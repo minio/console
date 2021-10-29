@@ -1295,6 +1295,46 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/restore": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Restore Object to a selected version",
+        "operationId": "PutObjectRestore",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/retention": {
       "put": {
         "tags": [
@@ -6941,6 +6981,46 @@ func init() {
             "schema": {
               "$ref": "#/definitions/putObjectLegalHoldRequest"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/restore": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Restore Object to a selected version",
+        "operationId": "PutObjectRestore",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {

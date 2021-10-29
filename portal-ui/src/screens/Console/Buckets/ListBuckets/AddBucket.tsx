@@ -308,6 +308,7 @@ const AddBucket = ({
                     <a
                       href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
                       target="_blank"
+                      rel="noreferrer"
                     >
                       Distributed Mode
                     </a>{" "}

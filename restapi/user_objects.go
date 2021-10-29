@@ -178,6 +178,13 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewPutObjectTagsOK()
 	})
+	//Restore file version
+	api.UserAPIPutObjectRestoreHandler = user_api.PutObjectRestoreHandlerFunc(func(params user_api.PutObjectRestoreParams, session *models.Principal) middleware.Responder {
+		if err := getPutObjectRestoreResponse(session, params); err != nil {
+			return user_api.NewPutObjectRestoreDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewPutObjectRestoreOK()
+	})
 }
 
 // getListObjectsResponse returns a list of objects
@@ -760,6 +767,63 @@ func putObjectTags(ctx context.Context, client MinioClient, bucketName, prefix, 
 		return err
 	}
 	return client.putObjectTagging(ctx, bucketName, prefix, otags, opt)
+}
+
+// Restore Object Version
+func getPutObjectRestoreResponse(session *models.Principal, params user_api.PutObjectRestoreParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	var prefix string
+	if params.Prefix != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+		if err != nil {
+			return prepareError(err)
+		}
+		prefix = string(decodedPrefix)
+	}
+
+	err = restoreObject(ctx, minioClient, params.BucketName, prefix, params.VersionID)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, versionID string) error {
+	// Select required version
+	srcOpts := minio.CopySrcOptions{
+		Bucket:    bucketName,
+		Object:    prefix,
+		VersionID: versionID,
+	}
+
+	// Destination object, same as current bucket
+	replaceMetadata := make(map[string]string)
+	replaceMetadata["copy-source"] = versionID
+
+	dstOpts := minio.CopyDestOptions{
+		Bucket:       bucketName,
+		Object:       prefix,
+		UserMetadata: replaceMetadata,
+	}
+
+	// Copy object call
+	_, err := client.copyObject(ctx, dstOpts, srcOpts)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // newClientURL returns an abstracted URL for filesystems and object storage.
