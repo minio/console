@@ -142,7 +142,6 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           name="checkedB"
           onChange={switcherChangeEvt}
           value={"dnsString"}
-          indicatorLabels={["On", "Off"]}
         />
       </Grid>
       {useDsnString ? (
