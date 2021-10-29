@@ -154,7 +154,6 @@ const EnableQuota = ({
                   setQuotaEnabled(event.target.checked);
                 }}
                 label={"Quota"}
-                indicatorLabels={["On", "Off"]}
               />
             </Grid>
             {quotaEnabled && (

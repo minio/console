@@ -439,7 +439,6 @@ const AddLifecycleModal = ({
                     setExpiredObjectDM(event.target.checked);
                   }}
                   label={"Expired Object Delete Marker"}
-                  indicatorLabels={["On", "Off"]}
                 />
               </Grid>
             </Grid>

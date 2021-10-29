@@ -22,6 +22,7 @@ import { InputLabel, Switch, Tooltip, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { actionsTray, fieldBasic } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
+import clsx from "clsx";
 
 interface IFormSwitch {
   label?: string;
@@ -34,10 +35,8 @@ interface IFormSwitch {
   tooltip?: string;
   description?: string;
   index?: number;
-  indicatorLabels?: string[];
   checked: boolean;
   switchOnly?: boolean;
-  containerClass?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -103,18 +102,16 @@ const styles = (theme: Theme) =>
       },
     },
     divContainer: {
-      paddingBottom: 14,
       marginBottom: 20,
       maxWidth: 840,
     },
-    wrapperContainer: {
-      display: "flex",
-      alignItems: "center",
+    indicatorLabelOn: {
+      fontWeight: "bold",
+      color: "#081C42 !important",
     },
     indicatorLabel: {
       fontSize: 12,
-      fontWeight: 600,
-      color: "#081C42",
+      color: "#E2E2E2",
       margin: "0 8px 0 10px",
     },
     fieldDescription: {
@@ -128,53 +125,47 @@ const styles = (theme: Theme) =>
     ...fieldBasic,
   });
 
-const StyledSwitch = withStyles({
+const StyledSwitch = withStyles((theme) => ({
   root: {
-    alignItems: "flex-start",
-    height: 18,
-    padding: "0 12px",
-    display: "flex",
-    position: "relative",
+    width: 50,
+    height: 24,
+    padding: 0,
+    margin: 0,
   },
   switchBase: {
-    color: "#fff",
-    padding: 0,
-    top: "initial",
+    padding: 1,
     "&$checked": {
-      color: "#fff",
+      transform: "translateX(24px)",
+      color: theme.palette.common.white,
+      "& + $track": {
+        backgroundColor: "#4CCB92",
+        boxShadow: "inset 0px 1px 4px rgba(0,0,0,0.1)",
+        opacity: 1,
+        border: "none",
+      },
     },
-    "&$checked + $track": {
-      backgroundColor: "#4CCB92",
-      border: "#4CCB92 1px solid",
-      opacity: 1,
-    },
-    "&:hover": {
-      backgroundColor: "#fff",
-    },
-  },
-  checked: {},
-  track: {
-    height: 15,
-    backgroundColor: "#E2E2E2",
-    border: "#E2E2E2 1px solid",
-    opacity: 1,
-    padding: 0,
-    marginTop: 1.5,
-    "&$checked": {
-      backgroundColor: "#4CCB92",
-      border: "#4CCB92 1px solid",
+    "&$focusVisible $thumb": {
+      color: "#4CCB92",
+      border: "6px solid #fff",
     },
   },
   thumb: {
+    width: 22,
+    height: 22,
     backgroundColor: "#FAFAFA",
-    border: "#E2E2E2 1px solid",
-    boxShadow: "none",
-    width: 18,
-    height: 18,
-    padding: 0,
-    marginLeft: 10,
+    border: "2px solid #FFFFFF",
+    marginLeft: 1,
   },
-})(Switch);
+  track: {
+    borderRadius: 24 / 2,
+    backgroundColor: "#E2E2E2",
+    boxShadow: "inset 0px 1px 4px rgba(0,0,0,0.1)",
+    opacity: 1,
+    transition: theme.transitions.create(["background-color", "border"]),
+  },
+  checked: {},
+  focusVisible: {},
+}))(Switch);
 
 const FormSwitchWrapper = ({
   label = "",
@@ -187,31 +178,40 @@ const FormSwitchWrapper = ({
   switchOnly = false,
   tooltip = "",
   description = "",
-  indicatorLabels = [],
-  containerClass = "",
   classes,
 }: IFormSwitch) => {
   const switchComponent = (
     <React.Fragment>
-      <div className={`${classes.switchContainer} ${containerClass}`}>
-        <StyledSwitch
-          checked={checked}
-          onChange={onChange}
-          color="primary"
-          name={name}
-          inputProps={{ "aria-label": "primary checkbox" }}
-          disabled={disabled}
-          disableRipple
-          disableFocusRipple
-          disableTouchRipple
-          value={value}
-        />
-        {indicatorLabels.length === 2 && (
-          <span className={classes.indicatorLabel}>
-            {checked ? indicatorLabels[0] : indicatorLabels[1]}
-          </span>
-        )}
-      </div>
+      {!switchOnly && (
+        <span
+          className={clsx(classes.indicatorLabel, {
+            [classes.indicatorLabelOn]: !checked,
+          })}
+        >
+          OFF
+        </span>
+      )}
+      <StyledSwitch
+        checked={checked}
+        onChange={onChange}
+        color="primary"
+        name={name}
+        inputProps={{ "aria-label": "primary checkbox" }}
+        disabled={disabled}
+        disableRipple
+        disableFocusRipple
+        disableTouchRipple
+        value={value}
+      />
+      {!switchOnly && (
+        <span
+          className={clsx(classes.indicatorLabel, {
+            [classes.indicatorLabelOn]: checked,
+          })}
+        >
+          ON
+        </span>
+      )}
     </React.Fragment>
   );
 
@@ -221,30 +221,34 @@ const FormSwitchWrapper = ({
 
   return (
     <div className={classes.divContainer}>
-      <Grid item xs={12} className={classes.wrapperContainer}>
-        {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.inputLabel}>
-            <span>{label}</span>
-            {tooltip !== "" && (
-              <div className={classes.tooltipContainer}>
-                <Tooltip title={tooltip} placement="top-start">
-                  <div>
-                    <HelpIcon className={classes.tooltip} />
-                  </div>
-                </Tooltip>
-              </div>
-            )}
-          </InputLabel>
-        )}
-        {switchComponent}
-      </Grid>
-      {description !== "" && (
-        <Grid item xs={10}>
-          <Typography component="p" className={classes.fieldDescription}>
-            {description}
-          </Typography>
+      <Grid container alignItems={"center"}>
+        <Grid item xs>
+          {label !== "" && (
+            <InputLabel htmlFor={id} className={classes.inputLabel}>
+              <span>{label}</span>
+              {tooltip !== "" && (
+                <div className={classes.tooltipContainer}>
+                  <Tooltip title={tooltip} placement="top-start">
+                    <div>
+                      <HelpIcon className={classes.tooltip} />
+                    </div>
+                  </Tooltip>
+                </div>
+              )}
+            </InputLabel>
+          )}
         </Grid>
-      )}
+        <Grid item xs textAlign={"right"}>
+          {switchComponent}
+        </Grid>
+        {description !== "" && (
+          <Grid item xs={12}>
+            <Typography component="p" className={classes.fieldDescription}>
+              {description}
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
     </div>
   );
 };
