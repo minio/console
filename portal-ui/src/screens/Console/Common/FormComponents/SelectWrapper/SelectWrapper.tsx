@@ -56,17 +56,19 @@ const styles = (theme: Theme) =>
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
+      height: 38,
       lineHeight: 1,
       "label + &": {
         marginTop: theme.spacing(3),
       },
     },
     input: {
+      height: 38,
       position: "relative",
       color: "#07193E",
       fontSize: 13,
       fontWeight: 600,
-      padding: "10px 20px 10px 10px",
+      padding: "8px 20px 10px 10px",
       border: "#e5e5e5 1px solid",
       borderRadius: 4,
       display: "flex",
