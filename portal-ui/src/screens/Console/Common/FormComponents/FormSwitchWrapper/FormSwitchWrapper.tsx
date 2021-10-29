@@ -130,7 +130,7 @@ const StyledSwitch = withStyles((theme) => ({
     width: 50,
     height: 24,
     padding: 0,
-    margin: theme.spacing(1),
+    margin: 0,
   },
   switchBase: {
     padding: 1,
@@ -221,7 +221,7 @@ const FormSwitchWrapper = ({
 
   return (
     <div className={classes.divContainer}>
-      <Grid container>
+      <Grid container alignItems={"center"}>
         <Grid item xs>
           {label !== "" && (
             <InputLabel htmlFor={id} className={classes.inputLabel}>
