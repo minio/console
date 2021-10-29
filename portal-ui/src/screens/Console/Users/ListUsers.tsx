@@ -80,6 +80,10 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
+    link: {
+      textDecoration: "underline",
+      color: theme.palette.info.main,
+    },
   });
 
 interface IUsersProps {
@@ -274,50 +278,98 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-            onSelect={selectionChanged}
-            selectedItems={checkedUsers}
-            isLoading={loading}
-            records={filteredRecords}
-            entityName="Users"
-            idField="accessKey"
-            customPaperHeight={classes.twHeight}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <HelpBox
-            iconComponent={<UsersIcon />}
-            help={
-              <Fragment>
-                A MinIO user consists of a unique access key (username) and
-                corresponding secret key (password). Clients must authenticate
-                their identity by specifying both a valid access key (username)
-                and the corresponding secret key (password) of an existing MinIO
-                user.
-                <br />
-                <br />
-                Each user can have one or more assigned policies that explicitly
-                list the actions and resources to which that user has access.
-                Users can also inherit policies from the groups in which they
-                have membership.
-                <br />
-                <br />
-                You can learn more at our{" "}
-                <a
-                  href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  documentation
-                </a>
-                .
-              </Fragment>
-            }
-          />
-        </Grid>
+        {records.length > 0 && (
+          <Fragment>
+            <Grid item xs={12}>
+              <TableWrapper
+                itemActions={tableActions}
+                columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+                onSelect={selectionChanged}
+                selectedItems={checkedUsers}
+                isLoading={loading}
+                records={filteredRecords}
+                entityName="Users"
+                idField="accessKey"
+                customPaperHeight={classes.twHeight}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <HelpBox
+                title={"Users"}
+                iconComponent={<UsersIcon />}
+                help={
+                  <Fragment>
+                    A MinIO user consists of a unique access key (username) and
+                    corresponding secret key (password). Clients must
+                    authenticate their identity by specifying both a valid
+                    access key (username) and the corresponding secret key
+                    (password) of an existing MinIO user.
+                    <br />
+                    <br />
+                    Each user can have one or more assigned policies that
+                    explicitly list the actions and resources to which that user
+                    has access. Users can also inherit policies from the groups
+                    in which they have membership.
+                    <br />
+                    <br />
+                    You can learn more at our{" "}
+                    <a
+                      href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      documentation
+                    </a>
+                    .
+                  </Fragment>
+                }
+              />
+            </Grid>
+          </Fragment>
+        )}
+        {records.length == 0 && (
+          <Grid
+            container
+            justifyContent={"center"}
+            alignContent={"center"}
+            alignItems={"center"}
+          >
+            <Grid item xs={8}>
+              <HelpBox
+                title={"Users"}
+                iconComponent={<UsersIcon />}
+                help={
+                  <Fragment>
+                    A MinIO user consists of a unique access key (username) and
+                    corresponding secret key (password). Clients must
+                    authenticate their identity by specifying both a valid
+                    access key (username) and the corresponding secret key
+                    (password) of an existing MinIO user.
+                    <br />
+                    <br />
+                    Each user can have one or more assigned policies that
+                    explicitly list the actions and resources to which that user
+                    has access. Users can also inherit policies from the groups
+                    in which they have membership.
+                    <br />
+                    <br />
+                    To get started,{" "}
+                    <a
+                      onClick={() => {
+                        setAddScreenOpen(true);
+                        setSelectedUser(null);
+                      }}
+                      className={classes.link}
+                    >
+                      Create a User
+                    </a>
+                    .
+                  </Fragment>
+                }
+              />
+            </Grid>
+          </Grid>
+        )}
       </Grid>
     </Fragment>
   );

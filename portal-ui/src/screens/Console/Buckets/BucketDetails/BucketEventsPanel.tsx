@@ -170,6 +170,7 @@ const BucketEventsPanel = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
+            title={"Lambda Notifications"}
             iconComponent={<LambdaIcon />}
             help={
               <Fragment>

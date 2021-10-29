@@ -246,6 +246,7 @@ const BucketReplicationPanel = ({
         </Grid>
         <Grid item xs={12}>
           <HelpBox
+            title={"Replication"}
             iconComponent={<BucketsIcon />}
             help={
               <Fragment>

@@ -25,38 +25,47 @@ const styles = (theme: Theme) =>
     root: {
       border: "1px solid rgb(234, 237, 238)",
       borderRadius: 5,
+      paddingTop: 10,
+      paddingLeft: 40,
+      paddingRight: 40,
+      paddingBottom: 40,
       marginTop: 10,
       marginBottom: 10,
       backgroundColor: "#fbfafa",
     },
     icon: {
-      textAlign: "center",
-      padding: 30,
-      fontSize: 64,
+      fontSize: 16,
+      fontWeight: "bold",
+      marginBottom: 20,
       "& .MuiSvgIcon-root": {
-        fontSize: 64,
+        fontSize: 44,
+        marginRight: 15,
       },
     },
     iconSize: {
       fontSize: 64,
     },
-    helpText: { padding: 30, paddingLeft: 0, fontSize: 16 },
+    helpText: {
+      fontSize: 16,
+    },
   });
 
 interface IHelpBox {
   classes: any;
   iconComponent: any;
+  title: string;
   help: any;
 }
 
-const HelpBox = ({ classes, iconComponent, help }: IHelpBox) => {
+const HelpBox = ({ classes, iconComponent, title, help }: IHelpBox) => {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid xs={2} className={classes.icon}>
+        <Grid xs={12} className={classes.icon}>
           {iconComponent}
+          {title}
         </Grid>
-        <Grid xs={10} className={classes.helpText}>
+        <Grid xs={12} className={classes.helpText}>
           {help}
         </Grid>
       </Grid>

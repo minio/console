@@ -32,7 +32,7 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { AddIcon } from "../../../../icons";
+import { AddIcon, TenantsIcon } from "../../../../icons";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
@@ -41,6 +41,7 @@ import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import TenantListItem from "./TenantListItem";
+import HelpBox from "../../../../common/HelpBox";
 
 interface ITenantsList {
   classes: any;
@@ -102,6 +103,10 @@ const styles = (theme: Theme) =>
       paddingRight: 40,
       paddingTop: 30,
       paddingBottom: 30,
+    },
+    link: {
+      textDecoration: "underline",
+      color: theme.palette.info.main,
     },
   });
 
@@ -272,6 +277,40 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
               {filteredRecords.map((t) => {
                 return <TenantListItem tenant={t} />;
               })}
+              {filteredRecords.length == 0 && (
+                <Grid
+                  container
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Grid item xs={8}>
+                    <HelpBox
+                      iconComponent={<TenantsIcon />}
+                      title={"Tenants"}
+                      help={
+                        <Fragment>
+                          Tenant is the logical structure to represent a MinIO
+                          deployment. A tenant can have different size and
+                          configurations from other tenants, even a different
+                          storage class.
+                          <br />
+                          <br />
+                          To get started,&nbsp;
+                          <a
+                            className={classes.link}
+                            onClick={() => {
+                              history.push("/tenants/add");
+                            }}
+                          >
+                            Create a Tenant.
+                          </a>
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>
