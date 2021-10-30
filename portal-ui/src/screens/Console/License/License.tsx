@@ -37,6 +37,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import ActivationModal from "./ActivationModal";
 import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
+import { TenantsIcon } from "../../../icons";
 
 const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
@@ -47,8 +48,37 @@ const connector = connect(mapState, null);
 const styles = (theme: Theme) =>
   createStyles({
     pageTitle: {
-      fontSize: 18,
+      backgroundColor: "rgb(250,250,252)",
+      marginTop: 40,
+      border: "1px solid #EAEDEE",
+      padding: 25,
+      fontSize: 16,
+      fontWeight: "bold",
+      "& ul": {
+        listStyleType: "square",
+        // listStyleType: "none",
+        "& li": {
+          float: "left",
+          fontSize: 14,
+          marginRight: 40,
+        },
+        "& li::before": {
+          color: "red",
+          content: "•",
+        },
+      },
+    },
+    licDet: {
+      fontSize: 11,
+      color: "#5E5E5E",
+    },
+    linkMore: {
+      marginTop: 10,
       marginBottom: 20,
+    },
+    chooseFlavorText: {
+      color: "#000000",
+      fontSize: 14,
     },
     paper: {
       padding: "20px 52px 20px 28px",
@@ -59,10 +89,9 @@ const styles = (theme: Theme) =>
       flexWrap: "wrap",
       flexDirection: "row",
       padding: "30px 30px 0px 30px",
-      background: "#032F51",
-      boxShadow: "0px 3px 7px #00000014",
+      border: "1px solid #EAEDEE",
       "& h2": {
-        color: "#FFF",
+        // color: "#FFF",
         flexDirection: "row",
       },
       "& a": {
@@ -70,13 +99,17 @@ const styles = (theme: Theme) =>
         flexDirection: "row",
       },
       "& h3": {
-        color: "#FFFFFF",
+        // color: "#FFFFFF",
         marginBottom: "30px",
         fontWeight: "bold",
       },
       "& h6": {
-        color: "#FFFFFF !important",
+        // color: "#FFFFFF !important",
       },
+    },
+    link: {
+      textDecoration: "underline !important",
+      color: theme.palette.info.main,
     },
     tableContainer: {
       marginLeft: 28,
@@ -85,13 +118,10 @@ const styles = (theme: Theme) =>
       textAlign: "center",
       paddingBottom: 12,
       borderRadius: "3px 3px 0 0",
-      marginLeft: 8,
       maxWidth: "calc(25% - 8px)",
     },
     detailsContainerBorder: {
-      border: "1px solid #e2e2e2",
-      borderBottom: 0,
-      borderRadius: "4px 4px 0px 0px",
+      borderLeft: "1px solid #e2e2e2",
     },
     detailsContainerBorderHighlighted: {
       border: "1px solid #B5B5B5",
@@ -102,6 +132,11 @@ const styles = (theme: Theme) =>
       fontWeight: 700,
       marginBottom: 26,
       paddingTop: 18,
+    },
+    currPlan: {
+      color: "white",
+      backgroundColor: "#4CCB92",
+      padding: 4,
     },
     activePlanHeader: {
       fontWeight: 700,
@@ -133,33 +168,35 @@ const styles = (theme: Theme) =>
     detailsCapacityMin: {
       fontSize: 10,
     },
+
     itemContainer: {
       height: 36,
+      "& .item:last-child": {
+        borderRight: "1px solid #e5e5e5",
+      },
     },
     itemContainerDetail: {
       height: 48,
     },
     item: {
       height: "100%",
-      borderLeft: "1px solid #e2e2e2",
-      borderRight: "1px solid #e2e2e2",
+      borderLeft: "1px solid #e5e5e5",
       textAlign: "center",
       fontSize: 10,
       fontWeight: 700,
       display: "flex",
       alignItems: "center",
       alignContent: "center",
-      marginLeft: 8,
       maxWidth: "calc(25% - 8px)",
       borderTop: "1px solid #e5e5e5",
     },
+
     itemFirst: {
       borderLeft: 0,
       borderRight: 0,
     },
     itemHighlighted: {
-      borderLeft: "1px solid #B5B5B5",
-      borderRight: "1px solid #B5B5B5",
+      borderLeft: "1px solid #e5e5e5",
     },
     field: {
       textAlign: "left",
@@ -167,9 +204,8 @@ const styles = (theme: Theme) =>
       fontSize: 12,
     },
     checkIcon: {
-      height: 12,
-      color:
-        "transparent linear-gradient(90deg, #073052 0%, #081c42 100%) 0% 0% no-repeat padding-box",
+      fontSize: 15,
+      color: "#385973",
     },
     buttonContainer: {
       paddingTop: 8,
@@ -177,17 +213,13 @@ const styles = (theme: Theme) =>
       height: "100%",
       display: "flex",
       justifyContent: "center",
-      borderRadius: "0 0 3px 3px",
-      border: "1px solid #e2e2e2",
-      borderTop: 0,
-      marginLeft: 8,
+      borderLeft: "1px solid #e2e2e2",
       maxWidth: "calc(25% - 8px)",
     },
     buttonContainerBlank: {
       border: 0,
     },
     buttonContainerHighlighted: {
-      border: "1px solid #B5B5B5",
       borderTop: 0,
     },
     button: {
@@ -259,8 +291,13 @@ const styles = (theme: Theme) =>
       },
     },
     planItemsPadding: {
-      padding: "23px 0px",
+      border: "1px solid #EAEDEE",
+      borderTop: 0,
       maxWidth: 1180,
+    },
+    planItemsBorder: {
+      height: 7,
+      backgroundColor: "#07193E",
     },
     subnetSubTitle: {
       fontSize: 12,
@@ -277,13 +314,23 @@ const styles = (theme: Theme) =>
     clickableBlock: {
       cursor: "pointer",
     },
-    agplFlavorText: {
-      color: "white",
-    },
-    chooseFlavorText: {
-      color: "#777777",
-    },
+
     ...containerForHeader(theme.spacing(4)),
+    mainContainer: {
+      border: "1px solid #EAEDEE",
+      padding: 40,
+      margin: 40,
+    },
+    icon: {
+      color: theme.palette.primary.main,
+      fontSize: 16,
+      fontWeight: "bold",
+      marginBottom: 20,
+      "& .MuiSvgIcon-root": {
+        fontSize: 44,
+        marginRight: 15,
+      },
+    },
   });
 
 interface ILicenseProps {
@@ -365,269 +412,297 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
     <Fragment>
       <Fragment>
         <PageHeader label="License" />
-        <Grid container className={classes.container}>
-          <Grid item xs={12}>
-            <Grid container>
-              <Grid
-                item
-                xs={12}
-                lg={12}
-                className={`${classes.licenseContainer}`}
-              >
-                {licenseInfo ? (
-                  <Fragment>
-                    <Grid container className={classes.licenseInfo}>
-                      <Grid item xs={6}>
-                        <Typography
-                          variant="button"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoTitle}
-                        >
-                          License
-                        </Typography>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoValue}
-                        >
-                          Commercial License
-                        </Typography>
-                        <Typography
-                          variant="button"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoTitle}
-                        >
-                          Organization
-                        </Typography>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoValue}
-                        >
-                          {licenseInfo.organization}
-                        </Typography>
-                        <Typography
-                          variant="button"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoTitle}
-                        >
-                          Registered Capacity
-                        </Typography>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoValue}
-                        >
-                          {niceBytes(
-                            (licenseInfo.storage_capacity * 1099511627776) // 1 Terabyte = 1099511627776 Bytes
-                              .toString(10)
-                          )}
-                        </Typography>
-                        <Typography
-                          variant="button"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoTitle}
-                        >
-                          Expiry Date
-                        </Typography>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoValue}
-                        >
-                          <Moment format="YYYY-MM-DD">
-                            {licenseInfo.expires_at}
-                          </Moment>
-                        </Typography>
+        <div className={clsx(classes.container, classes.mainContainer)}>
+          <Grid container>
+            <Grid xs={12} className={classes.icon}>
+              <TenantsIcon />
+              GNU Affero General Public License
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container>
+                <Grid
+                  item
+                  xs={12}
+                  lg={12}
+                  className={`${classes.licenseContainer}`}
+                >
+                  {licenseInfo ? (
+                    <Fragment>
+                      <Grid container className={classes.licenseInfo}>
+                        <Grid item xs={6}>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            License
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            Commercial License
+                          </Typography>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            Organization
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            {licenseInfo.organization}
+                          </Typography>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            Registered Capacity
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            {niceBytes(
+                              (licenseInfo.storage_capacity * 1099511627776) // 1 Terabyte = 1099511627776 Bytes
+                                .toString(10)
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            Expiry Date
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            <Moment format="YYYY-MM-DD">
+                              {licenseInfo.expires_at}
+                            </Moment>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            Subscription Plan
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            {licenseInfo.plan}
+                          </Typography>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            Requester
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            {licenseInfo.email}
+                          </Typography>
+                        </Grid>
+                        <img
+                          className={classes.verifiedIcon}
+                          src={"/verified.svg"}
+                          alt="verified"
+                        />
                       </Grid>
-                      <Grid item xs={6}>
-                        <Typography
-                          variant="button"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoTitle}
-                        >
-                          Subscription Plan
-                        </Typography>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoValue}
-                        >
-                          {licenseInfo.plan}
-                        </Typography>
-                        <Typography
-                          variant="button"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoTitle}
-                        >
-                          Requester
-                        </Typography>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                          className={classes.licenseInfoValue}
-                        >
-                          {licenseInfo.email}
-                        </Typography>
-                      </Grid>
-                      <img
-                        className={classes.verifiedIcon}
-                        src={"/verified.svg"}
-                        alt="verified"
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <LicenseModal
+                        open={licenseModal}
+                        closeModal={() => setLicenseModal(false)}
                       />
-                    </Grid>
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <LicenseModal
-                      open={licenseModal}
-                      closeModal={() => setLicenseModal(false)}
-                    />
-                    <Grid container>
-                      <img src="/agpl.svg" height={40} alt="agpl" />
-                    </Grid>
-                    <Grid container>
-                      <Typography component="h2" variant="h6">
-                        GNU Affero General Public License
-                      </Typography>
-                    </Grid>
-                    <Grid container className={classes.licenseDescription}>
-                      <div
-                        onClick={() => setLicenseModal(true)}
-                        className={classes.clickableBlock}
-                      >
-                        <Typography component="h3">Version 3</Typography>
-                        <Typography className={classes.agplFlavorText}>
+                      <Grid container justifyContent={"space-between"}>
+                        <Grid item>
+                          <img src="/agpl-logo.svg" height={40} alt="agpl" />{" "}
+                        </Grid>
+                        <Grid item className={classes.licDet}>
+                          <b>Version 3.</b> 19 November 2007{" "}
+                        </Grid>
+                      </Grid>
+
+                      <Grid container>
+                        <Typography>
                           The GNU Affero General Public License is a free,
                           copyleft license for software and other kinds of
                           works, specifically designed to ensure cooperation
                           with the Community in the case of network server
                           software.
                         </Typography>
-                      </div>
-                    </Grid>
-                  </Fragment>
-                )}
-              </Grid>
-              <Grid item xs={12} lg={12} className={`${classes.paper}`}>
-                {licenseInfo ? (
-                  <Fragment>
-                    <Typography
-                      component="h2"
-                      variant="h6"
-                      className={classes.pageTitle}
-                    >
-                      Login to MinIO SUBNET !
-                    </Typography>
-                    <Typography
-                      component="h6"
-                      className={classes.subnetSubTitle}
-                    >
-                      It combines a commercial license with a support experience
-                      unlike any other.
-                    </Typography>
-                    <br />
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.button}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://subnet.min.io/support/?ref=${
-                        operatorMode ? "op" : "con"
-                      }`}
-                    >
-                      Login to SUBNET
-                    </Button>
-                    {operatorMode && (
-                      <Fragment>
-                        {" "}
                         <br />
-                        <br />
-                        <button
-                          className={classes.subnetRefreshLicenseLink}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            refreshLicense();
-                          }}
-                        >
-                          Refresh Licence
-                        </button>
-                        {loadingRefreshLicense && (
-                          <CircularProgress
-                            size={16}
-                            className={classes.loadingLoginStrategy}
-                          />
-                        )}
-                      </Fragment>
-                    )}
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <Typography
-                      component="h2"
-                      variant="h6"
-                      className={classes.pageTitle}
-                    >
-                      Choosing between GNU AGPL v3 and Commercial License
-                    </Typography>
-                    <Typography className={classes.chooseFlavorText}>
-                      If you are building proprietary applications, you may want
-                      to choose the commercial license included as part of the
-                      Standard and Enterprise subscription plans. Applications
-                      must otherwise comply with all the GNU AGPLv3 License &
-                      Trademark obligations. Follow the links below to learn
-                      more about the compliance policy.
-                    </Typography>
-                    <br />
-                    <ul>
-                      <li>
-                        <a
-                          href={`https://min.io/compliance?ref=${
-                            operatorMode ? "op" : "con"
-                          }`}
-                          className={classes.openSourcePolicy}
-                          target="_blank"
-                          rel="nofollow noopener noreferrer"
-                        >
-                          Learn more about GNU AGPL v3
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href={`https://min.io/logo?ref=${
-                            operatorMode ? "op" : "con"
-                          }`}
-                          className={classes.openSourcePolicy}
-                          target="_blank"
-                          rel="nofollow noopener noreferrer"
-                        >
-                          MinIO Trademark Compliance
-                        </a>
-                      </li>
-                    </ul>
-                  </Fragment>
-                )}
+                        <Typography>
+                          The licenses for most software and other practical
+                          works are designed to take away your freedom to share
+                          and change the works. By contrast, our General Public
+                          Licenses are intended to guarantee your freedom to
+                          share and change all versions of a program--to make
+                          sure it remains free software for all its users.
+                        </Typography>
+                        <div className={classes.linkMore}>
+                          <a
+                            className={clsx(classes.link)}
+                            onClick={() => setLicenseModal(true)}
+                          >
+                            Read more
+                          </a>
+                        </div>
+                      </Grid>
+                    </Fragment>
+                  )}
+                </Grid>
+                <Grid item xs={12} lg={12}>
+                  {licenseInfo ? (
+                    <Fragment>
+                      <Typography
+                        component="h2"
+                        variant="h6"
+                        className={classes.pageTitle}
+                      >
+                        Login to MinIO SUBNET !
+                      </Typography>
+                      <Typography
+                        component="h6"
+                        className={classes.subnetSubTitle}
+                      >
+                        It combines a commercial license with a support
+                        experience unlike any other.
+                      </Typography>
+                      <br />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={`https://subnet.min.io/support/?ref=${
+                          operatorMode ? "op" : "con"
+                        }`}
+                      >
+                        Login to SUBNET
+                      </Button>
+                      {operatorMode && (
+                        <Fragment>
+                          {" "}
+                          <br />
+                          <br />
+                          <button
+                            className={classes.subnetRefreshLicenseLink}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              refreshLicense();
+                            }}
+                          >
+                            Refresh Licence
+                          </button>
+                          {loadingRefreshLicense && (
+                            <CircularProgress
+                              size={16}
+                              className={classes.loadingLoginStrategy}
+                            />
+                          )}
+                        </Fragment>
+                      )}
+                    </Fragment>
+                  ) : (
+                    <div className={classes.pageTitle}>
+                      <Typography component="h2" variant="h6">
+                        Choosing between GNU AGPL v3 and Commercial License
+                      </Typography>
+                      <br />
+                      <Typography className={classes.chooseFlavorText}>
+                        If you are building proprietary applications, you may
+                        want to choose the commercial license included as part
+                        of the Standard and Enterprise subscription plans.
+                        Applications must otherwise comply with all the GNU
+                        AGPLv3 License & Trademark obligations. Follow the links
+                        below to learn more about the compliance policy.
+                      </Typography>
+                      <ul>
+                        <li>
+                          <a
+                            href={`https://min.io/compliance?ref=${
+                              operatorMode ? "op" : "con"
+                            }`}
+                            className={classes.openSourcePolicy}
+                            target="_blank"
+                            rel="nofollow noopener noreferrer"
+                          >
+                            Learn more about GNU AGPL v3
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            href={`https://min.io/logo?ref=${
+                              operatorMode ? "op" : "con"
+                            }`}
+                            className={classes.openSourcePolicy}
+                            target="_blank"
+                            rel="nofollow noopener noreferrer"
+                          >
+                            MinIO Trademark Compliance
+                          </a>
+                        </li>
+                      </ul>
+                      <div style={{ clear: "both" }} />
+                    </div>
+                  )}
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} className={clsx(classes.planItemsPadding)}>
-            <Paper
-              className={classes.paper}
-              style={{ borderRadius: "0px 0px 3px 3px" }}
-            >
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <b>Pricing</b>
+            </Grid>
+            <Grid item xs={12}>
+              The MinIO Subscription Network provides exclusive benefits across
+              licensing, operations and support. See the pricing table below for
+              more information.
+            </Grid>
+
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <div className={classes.planItemsBorder} />
+            </Grid>
+            <Grid item xs={12} className={clsx(classes.planItemsPadding)}>
               <Grid container>
                 {operatorMode ? (
                   <ActivationModal
@@ -652,30 +727,25 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           xs={3}
                           className={clsx(
                             classes.detailsContainer,
-                            classes.detailsContainerBorder,
-                            {
-                              [classes.detailsContainerBorderHighlighted]:
-                                details.title !== "Community",
-                            },
-                            currentPlan ? classes.currentPlanBG : ""
+                            classes.detailsContainerBorder
                           )}
                         >
                           <Grid
                             item
                             xs={12}
-                            className={
-                              currentPlan
-                                ? classes.activePlanHeader
-                                : classes.planHeader
-                            }
-                          >
-                            {currentPlan ? "Current Plan" : "\u00A0"}
-                          </Grid>
+                            className={classes.planHeader}
+                          ></Grid>
                           <Grid item xs={12} className={classes.detailsTitle}>
                             {details.title}
                           </Grid>
                           <Grid item xs={12} className={classes.detailsPrice}>
-                            {details.price}
+                            {currentPlan ? (
+                              <span className={classes.currPlan}>
+                                CURRENT PLAN
+                              </span>
+                            ) : (
+                              details.price
+                            )}
                           </Grid>
                           <Grid
                             item
@@ -715,10 +785,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           container
                           item
                           xs={3}
-                          className={clsx(
-                            classes.item,
-                            currentPlanID === 0 ? classes.currentPlanBG : ""
-                          )}
+                          className={clsx(classes.item)}
                         >
                           <Grid item xs={12}>
                             {item.community === "N/A" ? (
@@ -726,7 +793,19 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             ) : item.community === "Yes" ? (
                               <CheckCircleIcon className={classes.checkIcon} />
                             ) : (
-                              item.community
+                              <Fragment>
+                                {item.communityLink !== undefined &&
+                                item.communityLink ? (
+                                  <a
+                                    className={classes.link}
+                                    onClick={() => setLicenseModal(true)}
+                                  >
+                                    {item.community}
+                                  </a>
+                                ) : (
+                                  item.community
+                                )}
+                              </Fragment>
                             )}
                           </Grid>
                           {item.communityDetail !== undefined && (
@@ -754,6 +833,11 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               item.standard
                             )}
                           </Grid>
+                          {item.standardDetail !== undefined && (
+                            <Grid item xs={12}>
+                              {item.standardDetail}
+                            </Grid>
+                          )}
                         </Grid>
                         <Grid
                           container
@@ -774,6 +858,11 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               item.enterprise
                             )}
                           </Grid>
+                          {item.enterpriseDetail !== undefined && (
+                            <Grid item xs={12}>
+                              {item.enterpriseDetail}
+                            </Grid>
+                          )}
                         </Grid>
                       </Grid>
                     );
@@ -795,27 +884,20 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           item
                           xs={3}
                           style={{ textAlign: "center" }}
-                          className={clsx(
-                            classes.buttonContainer,
-                            currentPlanID === index
-                              ? classes.currentPlanBG
-                              : "",
-                            {
-                              [classes.buttonContainerHighlighted]:
-                                button.text === "Subscribe",
-                            }
-                          )}
+                          className={clsx(classes.buttonContainer, {
+                            [classes.buttonContainerHighlighted]:
+                              button.text === "Subscribe",
+                          })}
                         >
                           <Grid item xs={12}>
                             <Button
-                              variant="contained"
+                              variant={
+                                button.text === "Join Slack"
+                                  ? "outlined"
+                                  : "contained"
+                              }
                               color="primary"
-                              className={clsx(
-                                classes.button,
-                                currentPlanID === index
-                                  ? classes.currentPlanButton
-                                  : ""
-                              )}
+                              className={clsx(classes.button)}
                               target="_blank"
                               rel="noopener noreferrer"
                               href="#"
@@ -864,9 +946,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   </Grid>
                 </Grid>
               </Grid>
-            </Paper>
+            </Grid>
           </Grid>
-        </Grid>
+        </div>
       </Fragment>
     </Fragment>
   );

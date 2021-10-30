@@ -37,6 +37,7 @@ interface IFormSwitch {
   index?: number;
   checked: boolean;
   switchOnly?: boolean;
+  indicatorLabels?: string[];
 }
 
 const styles = (theme: Theme) =>
@@ -179,6 +180,7 @@ const FormSwitchWrapper = ({
   tooltip = "",
   description = "",
   classes,
+  indicatorLabels,
 }: IFormSwitch) => {
   const switchComponent = (
     <React.Fragment>
@@ -188,7 +190,9 @@ const FormSwitchWrapper = ({
             [classes.indicatorLabelOn]: !checked,
           })}
         >
-          OFF
+          {indicatorLabels && indicatorLabels.length > 1
+            ? indicatorLabels[1]
+            : "OFF"}
         </span>
       )}
       <StyledSwitch
@@ -209,7 +213,7 @@ const FormSwitchWrapper = ({
             [classes.indicatorLabelOn]: checked,
           })}
         >
-          ON
+          {indicatorLabels ? indicatorLabels[0] : "ON"}
         </span>
       )}
     </React.Fragment>
