@@ -53,6 +53,7 @@ import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 import AccessRulePanel from "./AccessRulePanel";
 import RefreshIcon from "../../../../icons/RefreshIcon";
+import BoxIconButton from "../../Common/BoxIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -373,30 +374,28 @@ const BucketDetails = ({
             actions={
               <Fragment>
                 <Tooltip title={"Delete"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Delete"
-                    component="span"
                     onClick={() => {
                       setDeleteOpen(true);
                     }}
                     size="large"
                   >
                     <DeleteIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
                 <Tooltip title={"Refresh"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Refresh List"
-                    component="span"
                     onClick={() => {
                       setBucketDetailsLoad(true);
                     }}
                     size="large"
                   >
                     <RefreshIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
               </Fragment>
             }

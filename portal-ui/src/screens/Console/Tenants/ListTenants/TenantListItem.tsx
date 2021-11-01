@@ -107,6 +107,10 @@ const styles = (theme: Theme) =>
       fontSize: 12,
       color: "#5E5E5E",
     },
+    manageButton: {
+      marginRight: 8,
+      textTransform: "initial",
+    },
   });
 
 interface ITenantListItem {
@@ -162,7 +166,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
     <Fragment>
       <div className={classes.tenantItem}>
         <Grid container>
-          <Grid item xs={10}>
+          <Grid item xs={8}>
             <div className={classes.title}>{tenant.name}</div>
             <div>
               <span className={classes.titleSubKey}>Namespace:</span>
@@ -175,7 +179,20 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
               </span>
             </div>
           </Grid>
-          <Grid item xs={2} textAlign={"end"}>
+          <Grid item xs={4} textAlign={"end"}>
+            <Button
+              size={"small"}
+              color={"primary"}
+              variant="outlined"
+              className={classes.manageButton}
+              onClick={() => {
+                history.push(
+                  `/namespaces/${tenant.namespace}/tenants/${tenant.name}/hop`
+                );
+              }}
+            >
+              Manage
+            </Button>
             <Button
               endIcon={<ArrowRightIcon />}
               variant="contained"

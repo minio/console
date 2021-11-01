@@ -86,7 +86,7 @@ const styles = (theme: Theme) =>
         maxHeight: 15,
       },
       "&.withLabel": {
-        top: 27,
+        top: 5,
       },
     },
   });

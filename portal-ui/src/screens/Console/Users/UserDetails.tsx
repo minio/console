@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid, IconButton, Tooltip } from "@mui/material";
+import { Button, Grid, Tooltip } from "@mui/material";
 import {
   AddIcon,
   DeleteIcon,
@@ -54,6 +54,7 @@ import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import LockIcon from "@mui/icons-material/Lock";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
+import BoxIconButton from "../Common/BoxIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -303,26 +304,24 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   {enabled ? "Disable" : "Enable"}
                 </Button>
                 <Tooltip title="Delete User">
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Delete User"
-                    component="span"
                     onClick={deleteUser}
                     size="large"
                   >
                     <DeleteIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
                 <Tooltip title="Change Password">
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Change Password"
-                    component="span"
                     onClick={changeUserPassword}
                     size="large"
                   >
                     <LockIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
               </Fragment>
             }
