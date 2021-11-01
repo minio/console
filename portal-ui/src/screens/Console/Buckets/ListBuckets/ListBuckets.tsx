@@ -38,6 +38,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import SearchIcon from "../../../../icons/SearchIcon";
+import { useParams } from "react-router";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -211,12 +212,22 @@ const ListBuckets = ({
           const permActions = res.permissions ? res.permissions : [];
           let canManage: PermissionAction | undefined ;
           let canCreate = permActions.find((s) => s.id === "createBucket");
-          for (let i = 0; i < permActions.length; i++) {
-              if (permActions.find((s) => s.id === actions[i].id)) {
-                canManage = permActions[i];
-              } 
-               if (canManage) break;
+
+          if (permActions.length == 1 && canCreate){
+            canManage = {id: "CreateBucketAction",
+                         can: false}
+          } else 
+          if (permActions.find((s) => s.id === "admin:*")){
+            canManage = {id: "admin",
+                         can: true}
+          } else {
+              for (let i = 0; i < permActions.length; i++) {
+                if (permActions.find((s) => s.id === actions[i].id)) {
+                  canManage = permActions[i];
+                  } 
+                if (canManage) break;
           }
+        }
 
           if (canCreate && canCreate.can) {
             setCanCreateBucket(true);
