@@ -197,7 +197,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	if params.Recursive != nil {
 		recursive = *params.Recursive
 	}
-	if isErasureBackend() && params.WithVersions != nil {
+	if params.WithVersions != nil {
 		withVersions = *params.WithVersions
 	}
 	if params.WithMetadata != nil {
@@ -230,7 +230,16 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 // listBucketObjects gets an array of objects in a bucket
 func listBucketObjects(ctx context.Context, client MinioClient, bucketName string, prefix string, recursive, withVersions bool, withMetadata bool) ([]*models.BucketObject, error) {
 	var objects []*models.BucketObject
-	for lsObj := range client.listObjects(ctx, bucketName, minio.ListObjectsOptions{Prefix: prefix, Recursive: recursive, WithVersions: withVersions, WithMetadata: withMetadata}) {
+	opts := minio.ListObjectsOptions{
+		Prefix:       prefix,
+		Recursive:    recursive,
+		WithVersions: withVersions,
+		WithMetadata: withMetadata,
+	}
+	if withMetadata {
+		opts.MaxKeys = 1
+	}
+	for lsObj := range client.listObjects(ctx, bucketName, opts) {
 		if lsObj.Err != nil {
 			return nil, lsObj.Err
 		}
