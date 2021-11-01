@@ -37,3 +37,5 @@ public.crt
 *.code-workspace
 *~
 .eslintcache
+
+cmd/console/logs.log

@@ -42,7 +42,6 @@ import Menu from "./Menu/Menu";
 import api from "../../common/api";
 import Account from "./Account/Account";
 import Users from "./Users/Users";
-import Groups from "./Groups/Groups";
 import ConfigurationMain from "./Configurations/ConfigurationMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import License from "./License/License";
@@ -63,6 +62,7 @@ import ListTiersConfiguration from "./Configurations/TiersConfiguration/ListTier
 import TierTypeSelector from "./Configurations/TiersConfiguration/TierTypeSelector";
 import AddTierConfiguration from "./Configurations/TiersConfiguration/AddTierConfiguration";
 import ListTenants from "./Tenants/ListTenants/ListTenants";
+import GroupsContainer from "./Groups/GroupsContainer";
 
 const drawerWidth = 245;
 
@@ -254,8 +254,20 @@ const Console = ({
       path: "/users",
     },
     {
-      component: Groups,
+      component: GroupsContainer,
       path: "/groups",
+    },
+    {
+      component: GroupsContainer,
+      path: "/groups/new",
+    },
+    {
+      component: GroupsContainer,
+      path: "/groups/edit/:groupName",
+    },
+    {
+      component: GroupsContainer,
+      path: "/groups/set-policies/:groupName",
     },
     {
       component: Policies,

@@ -61,11 +61,11 @@ const HelpBox = ({ classes, iconComponent, title, help }: IHelpBox) => {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid xs={12} className={classes.icon}>
+        <Grid item xs={12} className={classes.icon}>
           {iconComponent}
           {title}
         </Grid>
-        <Grid xs={12} className={classes.helpText}>
+        <Grid item xs={12} className={classes.helpText}>
           {help}
         </Grid>
       </Grid>

@@ -33,6 +33,9 @@ var (
 	users                       = "/users"
 	usersDetail                 = "/users/:userName+"
 	groups                      = "/groups"
+	newGroup                    = "/groups/new"
+	editGroup                   = "/groups/edit/:groupName"
+	setGroupPolicies            = "/groups/set-policies/:groupName"
 	iamPolicies                 = "/policies"
 	policiesDetail              = "/policies/*"
 	dashboard                   = "/dashboard"
@@ -305,6 +308,9 @@ var endpointRules = map[string]ConfigurationActionSet{
 	users:                       usersActionSet,
 	usersDetail:                 usersActionSet,
 	groups:                      groupsActionSet,
+	newGroup:                    groupsActionSet,
+	editGroup:                   groupsActionSet,
+	setGroupPolicies:            groupsActionSet,
 	iamPolicies:                 iamPoliciesActionSet,
 	policiesDetail:              iamPoliciesActionSet,
 	dashboard:                   dashboardActionSet,

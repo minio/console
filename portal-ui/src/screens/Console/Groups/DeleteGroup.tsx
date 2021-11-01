@@ -83,7 +83,7 @@ const DeleteGroup = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Delete User</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Group</DialogTitle>
         <DialogContent>
           {isDeleting && <LinearProgress />}
           <DialogContentText id="alert-dialog-description">
@@ -91,10 +91,11 @@ const DeleteGroup = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeNoAction} color="primary" disabled={isDeleting}>
+          <Button onClick={closeNoAction} color="primary" disabled={isDeleting} variant="outlined">
             Cancel
           </Button>
           <Button
+            variant="outlined"
             onClick={() => {
               setDeleteLoading(true);
             }}
