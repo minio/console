@@ -211,7 +211,6 @@ const Console = ({
         serverNeedsRestart(false);
       })
       .catch((err: ErrorResponseHandler) => {
-        serverIsLoading(false);
         if (err.errorMessage === "Error 502") {
           serverNeedsRestart(false);
         }
