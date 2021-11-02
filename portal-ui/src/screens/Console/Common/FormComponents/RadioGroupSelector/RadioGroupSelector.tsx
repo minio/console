@@ -50,12 +50,6 @@ const styles = (theme: Theme) =>
     ...fieldBasic,
     ...tooltipHelper,
     radioBoxContainer: {},
-    fieldContainer: {
-      ...fieldBasic.fieldContainer,
-      display: "flex",
-      paddingBottom: 10,
-      marginTop: 11,
-    },
     optionLabel: {
       "&.Mui-disabled": {
         "& .MuiFormControlLabel-label": {
@@ -116,8 +110,8 @@ export const RadioGroupSelector = ({
   displayInColumn = false,
 }: RadioGroupProps) => {
   return (
-    <React.Fragment>
-      <Grid item xs={12} className={classes.fieldContainer}>
+    <Grid container alignItems={"center"}>
+      <Grid item xs>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
           <span>{label}</span>
           {tooltip !== "" && (
@@ -130,35 +124,35 @@ export const RadioGroupSelector = ({
             </div>
           )}
         </InputLabel>
-
-        <div className={classes.radioBoxContainer}>
-          <RadioGroup
-            aria-label={id}
-            id={id}
-            name={name}
-            value={currentSelection}
-            onChange={onChange}
-            row={!displayInColumn}
-          >
-            {selectorOptions.map((selectorOption) => {
-              return (
-                <FormControlLabel
-                  key={`rd-${name}-${selectorOption.value}`}
-                  value={selectorOption.value}
-                  control={<RadioButton />}
-                  label={selectorOption.label}
-                  disabled={disableOptions}
-                  className={clsx(classes.optionLabel, {
-                    [classes.checkedOption]:
-                      selectorOption.value === currentSelection,
-                  })}
-                />
-              );
-            })}
-          </RadioGroup>
-        </div>
       </Grid>
-    </React.Fragment>
+      <Grid item xs>
+        <RadioGroup
+          aria-label={id}
+          id={id}
+          name={name}
+          value={currentSelection}
+          onChange={onChange}
+          row={!displayInColumn}
+          style={{ display: "block", textAlign: "right" }}
+        >
+          {selectorOptions.map((selectorOption) => {
+            return (
+              <FormControlLabel
+                key={`rd-${name}-${selectorOption.value}`}
+                value={selectorOption.value}
+                control={<RadioButton />}
+                label={selectorOption.label}
+                disabled={disableOptions}
+                className={clsx(classes.optionLabel, {
+                  [classes.checkedOption]:
+                    selectorOption.value === currentSelection,
+                })}
+              />
+            );
+          })}
+        </RadioGroup>
+      </Grid>
+    </Grid>
   );
 };
 

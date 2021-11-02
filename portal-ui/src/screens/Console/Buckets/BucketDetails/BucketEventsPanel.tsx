@@ -168,31 +168,33 @@ const BucketEventsPanel = ({
             customPaperHeight={classes.twHeight}
           />
         </Grid>
-        <Grid item xs={12}>
-          <HelpBox
-            title={"Lambda Notifications"}
-            iconComponent={<LambdaIcon />}
-            help={
-              <Fragment>
-                MinIO bucket notifications allow administrators to send
-                notifications to supported external services on certain object
-                or bucket events. MinIO supports bucket and object-level S3
-                events similar to the Amazon S3 Event Notifications.
-                <br />
-                <br />
-                You can learn more at our{" "}
-                <a
-                  href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  documentation
-                </a>
-                .
-              </Fragment>
-            }
-          />
-        </Grid>
+        {!loadingEvents && (
+          <Grid item xs={12}>
+            <HelpBox
+              title={"Lambda Notifications"}
+              iconComponent={<LambdaIcon />}
+              help={
+                <Fragment>
+                  MinIO bucket notifications allow administrators to send
+                  notifications to supported external services on certain object
+                  or bucket events. MinIO supports bucket and object-level S3
+                  events similar to the Amazon S3 Event Notifications.
+                  <br />
+                  <br />
+                  You can learn more at our{" "}
+                  <a
+                    href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    documentation
+                  </a>
+                  .
+                </Fragment>
+              }
+            />
+          </Grid>
+        )}
       </Grid>
     </Fragment>
   );

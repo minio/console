@@ -96,9 +96,6 @@ func setBucketQuota(ctx context.Context, ac *AdminClient, bucket *string, bucket
 }
 
 func getBucketQuotaResponse(session *models.Principal, params user_api.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
-	if !isErasureBackend() {
-		return &models.BucketQuota{}, nil
-	}
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {

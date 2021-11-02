@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import {
   Button,
@@ -74,6 +74,9 @@ const styles = (theme: Theme) =>
     },
     error: {
       color: "#b53b4b",
+      border: "1px solid #b53b4b",
+      padding: 8,
+      borderRadius: 3,
     },
     ...modalBasic,
   });
@@ -298,10 +301,18 @@ const AddBucket = ({
               <br />
               {!distributedSetup && (
                 <Fragment>
-                  <small className={classes.error}>
-                    Some these features are disabled as server is running in
-                    non-erasure coded mode.
-                  </small>
+                  <div className={classes.error}>
+                    These features are unavailable in a single-disk setup.
+                    <br />
+                    Please deploy a server in{" "}
+                    <a
+                      href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
+                      target="_blank"
+                    >
+                      Distributed Mode
+                    </a>{" "}
+                    to use these features.
+                  </div>
                   <br />
                   <br />
                 </Fragment>
