@@ -34,8 +34,8 @@ import {
   BucketReplication,
   BucketVersioning,
 } from "../types";
-import { niceBytes } from "../../../../common/utils";
-import { BucketList } from "../../Watch/types";
+import { encodeFileName, niceBytes } from "../../../../common/utils";
+import { Bucket, BucketList } from "../../Watch/types";
 import {
   buttonsStyles,
   hrClass,
@@ -68,7 +68,13 @@ import {
   S3_PUT_BUCKET_VERSIONING,
   S3_PUT_OBJECT_RETENTION,
 } from "../../../../types";
+
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import Chip from "@mui/material/Chip";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import AddBucketTagModal from "./AddBucketTagModal";
+import DeleteBucketTagModal from "./DeleteBucketTagModal";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -117,6 +123,10 @@ const styles = (theme: Theme) =>
     titleCol: {
       width: "25%",
     },
+    tag: {
+      textTransform: "none",
+      marginRight: "5px",
+    },
     ...hrClass,
     ...buttonsStyles,
   });
@@ -139,6 +149,7 @@ const BucketSummary = ({
   const [replicationRules, setReplicationRules] = useState<boolean>(false);
   const [loadingObjectLocking, setLoadingLocking] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
+  const [loadingTags, setLoadingTags] = useState<boolean>(true);
   const [bucketLoading, setBucketLoading] = useState<boolean>(true);
   const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
@@ -160,6 +171,11 @@ const BucketSummary = ({
     useState<boolean>(false);
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
+  const [tags, setTags] = useState<any>(null);
+  const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
+  const [tagKeys, setTagKeys] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
+  const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
 
@@ -347,6 +363,7 @@ const BucketSummary = ({
           const bucketInfo = resBuckets.find(
             (bucket) => bucket.name === bucketName
           );
+
           const size = get(bucketInfo, "size", "0");
 
           setLoadingSize(false);
@@ -358,6 +375,32 @@ const BucketSummary = ({
         });
     }
   }, [loadingSize, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingTags) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}`)
+        .then((res: Bucket) => {
+          if (res != null && res?.details != null) {
+            setTags(res?.details?.tags);
+            setTagKeys(Object.keys(res?.details?.tags));
+          }
+          setLoadingTags(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setLoadingTags(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [
+    loadingTags,
+    setErrorSnackMessage,
+    bucketName,
+    setTags,
+    tags,
+    setTagKeys,
+    tagKeys,
+  ]);
 
   useEffect(() => {
     if (loadingReplication && distributedSetup) {
@@ -396,6 +439,7 @@ const BucketSummary = ({
     setBucketDetailsLoad(true);
     setBucketLoading(true);
     setLoadingSize(true);
+    setLoadingTags(true);
     setLoadingVersioning(true);
     setLoadingEncryption(true);
     setLoadingRetention(true);
@@ -434,6 +478,13 @@ const BucketSummary = ({
     }
   };
 
+  const closeAddTagModal = (refresh: boolean) => {
+    setTagModalOpen(false);
+    if (refresh) {
+      loadAllBucketData();
+    }
+  };
+
   const cap = (str: string) => {
     if (!str) {
       return null;
@@ -441,6 +492,20 @@ const BucketSummary = ({
     return str[0].toUpperCase() + str.slice(1);
   };
 
+  const deleteTag = (tagKey: string, tagLabel: string) => {
+    setSelectedTag([tagKey, tagLabel]);
+    setDeleteTagModalOpen(true);
+  };
+
+  const closeDeleteTagModal = (refresh: boolean) => {
+    setDeleteTagModalOpen(false);
+
+    if (refresh) {
+      loadAllBucketData();
+    }
+  };
+
+  // @ts-ignore
   return (
     <Fragment>
       {enableEncryptionScreenOpen && (
@@ -482,6 +547,23 @@ const BucketSummary = ({
           modalOpen={enableVersioningOpen}
           selectedBucket={bucketName}
           versioningCurrentState={isVersioned}
+        />
+      )}
+      {tagModalOpen && (
+        <AddBucketTagModal
+          modalOpen={tagModalOpen}
+          currentTags={tags}
+          bucketName={bucketName}
+          onCloseAndUpdate={closeAddTagModal}
+        />
+      )}
+      {deleteTagModalOpen && (
+        <DeleteBucketTagModal
+          deleteOpen={deleteTagModalOpen}
+          currentTags={tags}
+          bucketName={bucketName}
+          onCloseAndUpdate={closeDeleteTagModal}
+          selectedTag={selectedTag}
         />
       )}
       <Grid container>
@@ -564,6 +646,43 @@ const BucketSummary = ({
                     </td>
                   </tr>
                 )}
+                <tr>
+                  <td className={classes.titleCol}>Tags:</td>
+                  <td>
+                    {tagKeys &&
+                      tagKeys.map((tagKey: any, index: any) => {
+                        const tag = get(tags, `${tagKey}`, "");
+                        if (tag !== "") {
+                          return (
+                            <Chip
+                              key={`chip-${index}`}
+                              className={classes.tag}
+                              size="small"
+                              label={`${tagKey} : ${tag}`}
+                              color="primary"
+                              deleteIcon={<CloseIcon />}
+                              onDelete={() => {
+                                deleteTag(tagKey, tag);
+                              }}
+                            />
+                          );
+                        }
+                        return null;
+                      })}
+                    <Chip
+                      className={classes.tag}
+                      icon={<AddIcon />}
+                      clickable
+                      size="small"
+                      label="Add tag"
+                      color="primary"
+                      variant="outlined"
+                      onClick={() => {
+                        setTagModalOpen(true);
+                      }}
+                    />
+                  </td>
+                </tr>
               </tbody>
             </table>
           </Grid>

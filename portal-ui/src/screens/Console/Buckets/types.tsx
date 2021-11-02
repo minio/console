@@ -27,11 +27,16 @@ export interface Bucket {
   rw_access?: RwAccess;
   allowedActions?: string[];
   manage: boolean;
+  details?: Details;
 }
 
 export interface BucketEncryptionInfo {
   algorithm: string;
   kmsMasterKeyID: string;
+}
+
+export interface Details {
+  tags: object;
 }
 
 export interface BucketInfo {

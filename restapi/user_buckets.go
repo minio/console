@@ -30,6 +30,7 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
+	"github.com/minio/minio-go/v7/pkg/tags"
 
 	"errors"
 
@@ -82,6 +83,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewBucketSetPolicyDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewBucketSetPolicyOK().WithPayload(bucketSetPolicyResp)
+	})
+	// set bucket tags
+	api.UserAPIPutBucketTagsHandler = user_api.PutBucketTagsHandlerFunc(func(params user_api.PutBucketTagsParams, session *models.Principal) middleware.Responder {
+		err := getPutBucketTagsResponse(session, params.BucketName, params.Body)
+		if err != nil {
+			return user_api.NewPutBucketTagsDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewPutBucketTagsOK()
 	})
 	// get bucket versioning
 	api.UserAPIGetBucketVersioningHandler = user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
@@ -521,6 +530,32 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 	return bucket, nil
 }
 
+// putBucketTags sets tags for a bucket
+func getPutBucketTagsResponse(session *models.Principal, bucketName string, req *models.PutBucketTagsRequest) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	newTagSet, err := tags.NewTags(req.Tags, true)
+	if err != nil {
+		return prepareError(err)
+	}
+
+	err = minioClient.SetBucketTagging(ctx, bucketName, newTagSet)
+
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
 // removeBucket deletes a bucket
 func removeBucket(client MinioClient, bucketName string) error {
 	return client.removeBucket(context.Background(), bucketName)
@@ -606,14 +641,28 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 	if bucketAccess == models.BucketAccessPRIVATE && policyStr != "" {
 		bucketAccess = models.BucketAccessCUSTOM
 	}
-
-	bucket := &models.Bucket{
-		Name:           &bucketName,
-		Access:         &bucketAccess,
-		CreationDate:   "", // to be implemented
-		Size:           0,  // to be implemented
-		AllowedActions: bucketActionsArray,
-		Manage:         bucketAdminRole,
+	bucketTags, err := client.GetBucketTagging(ctx, bucketName)
+	var bucket *models.Bucket
+	if err == nil && bucketTags != nil {
+		bucket = &models.Bucket{
+			Name:           &bucketName,
+			Access:         &bucketAccess,
+			CreationDate:   "", // to be implemented
+			Size:           0,  // to be implemented
+			AllowedActions: bucketActionsArray,
+			Manage:         bucketAdminRole,
+			Details:        &models.BucketDetails{Tags: bucketTags.ToMap()},
+		}
+	} else {
+		bucket = &models.Bucket{
+			Name:           &bucketName,
+			Access:         &bucketAccess,
+			CreationDate:   "", // to be implemented
+			Size:           0,  // to be implemented
+			AllowedActions: bucketActionsArray,
+			Manage:         bucketAdminRole,
+			Details:        &models.BucketDetails{},
+		}
 	}
 	return bucket, nil
 }

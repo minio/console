@@ -75,6 +75,9 @@ type MinioClient interface {
 	getLifecycleRules(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error)
 	setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error
 	copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
+	GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error)
+	SetBucketTagging(ctx context.Context, bucketName string, tags *tags.Tags) error
+	RemoveBucketTagging(ctx context.Context, bucketName string) error
 }
 
 // Interface implementation
@@ -83,6 +86,18 @@ type MinioClient interface {
 // from minIO api.
 type minioClient struct {
 	client *minio.Client
+}
+
+func (c minioClient) GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error) {
+	return c.client.GetBucketTagging(ctx, bucketName)
+}
+
+func (c minioClient) SetBucketTagging(ctx context.Context, bucketName string, tags *tags.Tags) error {
+	return c.client.SetBucketTagging(ctx, bucketName, tags)
+}
+
+func (c minioClient) RemoveBucketTagging(ctx context.Context, bucketName string) error {
+	return c.client.RemoveBucketTagging(ctx, bucketName)
 }
 
 // implements minio.ListBuckets(ctx)

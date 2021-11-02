@@ -1729,6 +1729,42 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/tags": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Bucket's tags",
+        "operationId": "PutBucketTags",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putBucketTagsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -4886,6 +4922,16 @@ func init() {
         }
       }
     },
+    "putBucketTagsRequest": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "putObjectLegalHoldRequest": {
       "type": "object",
       "required": [
@@ -7374,6 +7420,42 @@ func init() {
             "schema": {
               "$ref": "#/definitions/rewindResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/tags": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Bucket's tags",
+        "operationId": "PutBucketTags",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putBucketTagsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -10658,6 +10740,16 @@ func init() {
         "validity": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "putBucketTagsRequest": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },

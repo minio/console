@@ -31,6 +31,7 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
+	"github.com/minio/minio-go/v7/pkg/tags"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,6 +49,8 @@ var minioGetBucketObjectLockConfigMock func(ctx context.Context, bucketName stri
 var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 var minioSetVersioningMock func(ctx context.Context, state string) *probe.Error
 var minioCopyObjectMock func(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
+var minioSetBucketTaggingMock func(ctx context.Context, bucketName string, tags *tags.Tags) error
+var minioRemoveBucketTaggingMock func(ctx context.Context, bucketName string) error
 
 // Define a mock struct of minio Client interface implementation
 type minioClientMock struct {
@@ -114,6 +117,25 @@ var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
 // mock function of dataUsageInfo() needed for list bucket's usage
 func (ac adminClientMock) AccountInfo(ctx context.Context) (madmin.AccountInfo, error) {
 	return minioAccountInfoMock(ctx)
+}
+
+func (mc minioClientMock) GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error) {
+	return minioGetBucketTaggingMock(ctx, bucketName)
+}
+
+func (mc minioClientMock) SetBucketTagging(ctx context.Context, bucketName string, tags *tags.Tags) error {
+	return minioSetBucketTaggingMock(ctx, bucketName, tags)
+}
+
+func (mc minioClientMock) RemoveBucketTagging(ctx context.Context, bucketName string) error {
+	return minioRemoveBucketTaggingMock(ctx, bucketName)
+}
+
+func minioGetBucketTaggingMock(ctx context.Context, bucketName string) (*tags.Tags, error) {
+	fmt.Println(ctx)
+	fmt.Println(bucketName)
+	retval, _ := tags.NewTags(map[string]string{}, true)
+	return retval, nil
 }
 
 func TestListBucket(t *testing.T) {
