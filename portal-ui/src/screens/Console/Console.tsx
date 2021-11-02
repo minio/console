@@ -213,6 +213,9 @@ const Console = ({
         serverNeedsRestart(false);
       })
       .catch((err: ErrorResponseHandler) => {
+        if (err.errorMessage === "Error 502") {
+          serverNeedsRestart(false);
+        }
         serverIsLoading(false);
         console.log("failure restarting service");
         console.log(err);
