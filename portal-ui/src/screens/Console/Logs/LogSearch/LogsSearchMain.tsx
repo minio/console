@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -40,6 +40,8 @@ import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/F
 import LogSearchFullModal from "./LogSearchFullModal";
 import { LogSearchColumnLabels } from "./utils";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import BackLink from "../../../../common/BackLink";
 
 interface ILogSearchProps {
   classes: any;
@@ -285,187 +287,199 @@ const LogsSearchMain = ({
           onClose={closeViewExtraInformation}
         />
       )}
-      <Grid container className={classes.logsSubContainer}>
-        <Grid
-          item
-          xs={12}
-          className={`${classes.actionsTray} ${classes.timeContainers}`}
-        >
-          <DateRangeSelector
-            setTimeEnd={setTimeEnd}
-            setTimeStart={setTimeStart}
-            timeEnd={timeEnd}
-            timeStart={timeStart}
-          />
+
+      <PageHeader label="Audit Logs" />
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <BackLink to="/tools" label="Return to Tools" />
         </Grid>
-        <Grid item xs={12} className={`${classes.advancedLabelContainer}`}>
-          <div
-            className={`${classes.blockCollapsed} ${
-              filterOpen ? classes.filterOpen : ""
-            }`}
+        <Grid container className={classes.logsSubContainer}>
+          <Grid
+            item
+            xs={12}
+            className={`${classes.actionsTray} ${classes.timeContainers}`}
           >
-            <div className={classes.innerContainer}>
-              <div className={classes.noticeLabel}>
-                Enable your preferred options to get filtered records.
-                <br />
-                You can use '*' to match any character, '.' to signify a single
-                character or '\' to scape an special character (E.g. mybucket-*)
-              </div>
-              <div className={classes.filtersContainer}>
-                <FilterInputWrapper
-                  onChange={setBucket}
-                  value={bucket}
-                  label={"Bucket"}
-                  id="bucket"
-                  name="bucket"
-                />
-                <FilterInputWrapper
-                  onChange={setApiName}
-                  value={apiName}
-                  label={"API Name"}
-                  id="api_name"
-                  name="api_name"
-                />
-                <FilterInputWrapper
-                  onChange={setUserAgent}
-                  value={userAgent}
-                  label={"User Agent"}
-                  id="user_agent"
-                  name="user_agent"
-                />
-              </div>
-              <div className={classes.filtersContainer}>
-                <FilterInputWrapper
-                  onChange={setObject}
-                  value={object}
-                  label={"Object"}
-                  id="object"
-                  name="object"
-                />
-                <FilterInputWrapper
-                  onChange={setRequestID}
-                  value={requestID}
-                  label={"Request ID"}
-                  id="request_id"
-                  name="request_id"
-                />
-                <FilterInputWrapper
-                  onChange={setResponseStatus}
-                  value={responseStatus}
-                  label={"Response Status"}
-                  id="response_status"
-                  name="response_status"
-                />
+            <DateRangeSelector
+              setTimeEnd={setTimeEnd}
+              setTimeStart={setTimeStart}
+              timeEnd={timeEnd}
+              timeStart={timeStart}
+            />
+          </Grid>
+          <Grid item xs={12} className={`${classes.advancedLabelContainer}`}>
+            <div
+              className={`${classes.blockCollapsed} ${
+                filterOpen ? classes.filterOpen : ""
+              }`}
+            >
+              <div className={classes.innerContainer}>
+                <div className={classes.noticeLabel}>
+                  Enable your preferred options to get filtered records.
+                  <br />
+                  You can use '*' to match any character, '.' to signify a
+                  single character or '\' to scape an special character (E.g.
+                  mybucket-*)
+                </div>
+                <div className={classes.filtersContainer}>
+                  <FilterInputWrapper
+                    onChange={setBucket}
+                    value={bucket}
+                    label={"Bucket"}
+                    id="bucket"
+                    name="bucket"
+                  />
+                  <FilterInputWrapper
+                    onChange={setApiName}
+                    value={apiName}
+                    label={"API Name"}
+                    id="api_name"
+                    name="api_name"
+                  />
+                  <FilterInputWrapper
+                    onChange={setUserAgent}
+                    value={userAgent}
+                    label={"User Agent"}
+                    id="user_agent"
+                    name="user_agent"
+                  />
+                </div>
+                <div className={classes.filtersContainer}>
+                  <FilterInputWrapper
+                    onChange={setObject}
+                    value={object}
+                    label={"Object"}
+                    id="object"
+                    name="object"
+                  />
+                  <FilterInputWrapper
+                    onChange={setRequestID}
+                    value={requestID}
+                    label={"Request ID"}
+                    id="request_id"
+                    name="request_id"
+                  />
+                  <FilterInputWrapper
+                    onChange={setResponseStatus}
+                    value={responseStatus}
+                    label={"Response Status"}
+                    id="response_status"
+                    name="response_status"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          className={`${classes.actionsTray} ${classes.endLineAction}`}
-        >
-          <div>
-            <button
-              type="button"
-              className={`${classes.advancedLabel} overrideMargin`}
-              onClick={() => {
-                setFilterOpen(!filterOpen);
-              }}
-            >
-              Advanced Filters{" "}
-              {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
-            </button>
-          </div>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={triggerLoad}
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            className={`${classes.actionsTray} ${classes.endLineAction}`}
           >
-            Get Information
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            columns={[
-              {
-                label: LogSearchColumnLabels.time,
-                elementKey: "time",
-                enableSort: true,
-              },
-              { label: LogSearchColumnLabels.api_name, elementKey: "api_name" },
-              { label: LogSearchColumnLabels.bucket, elementKey: "bucket" },
-              { label: LogSearchColumnLabels.object, elementKey: "object" },
-              {
-                label: LogSearchColumnLabels.remote_host,
-                elementKey: "remote_host",
-              },
-              {
-                label: LogSearchColumnLabels.request_id,
-                elementKey: "request_id",
-              },
-              {
-                label: LogSearchColumnLabels.user_agent,
-                elementKey: "user_agent",
-              },
-              {
-                label: LogSearchColumnLabels.response_status,
-                elementKey: "response_status",
-                renderFunction: (element) => (
-                  <Fragment>
-                    <span>
-                      {element.response_status_code} ({element.response_status})
-                    </span>
-                  </Fragment>
-                ),
-                renderFullObject: true,
-              },
-              {
-                label: LogSearchColumnLabels.request_content_length,
-                elementKey: "request_content_length",
-                renderFunction: niceBytes,
-              },
-              {
-                label: LogSearchColumnLabels.response_content_length,
-                elementKey: "response_content_length",
-                renderFunction: niceBytes,
-              },
-              {
-                label: LogSearchColumnLabels.time_to_response_ns,
-                elementKey: "time_to_response_ns",
-                renderFunction: nsToSeconds,
-                contentTextAlign: "right",
-              },
-            ]}
-            isLoading={loading}
-            records={records}
-            entityName="Logs"
-            customEmptyMessage={"There is no information with this criteria"}
-            idField="request_id"
-            columnsSelector
-            columnsShown={columnsShown}
-            onColumnChange={selectColumn}
-            customPaperHeight={
-              filterOpen ? classes.tableFOpen : classes.tableFClosed
-            }
-            sortConfig={{
-              currentSort: "time",
-              currentDirection: sortOrder,
-              triggerSort: sortChange,
-            }}
-            infiniteScrollConfig={{
-              recordsCount: 1000000,
-              loadMoreRecords: loadMoreRecords,
-            }}
-            itemActions={[
-              {
-                type: "view",
-                onClick: openExtraInformation,
-              },
-            ]}
-            textSelectable
-          />
+            <div>
+              <button
+                type="button"
+                className={`${classes.advancedLabel} overrideMargin`}
+                onClick={() => {
+                  setFilterOpen(!filterOpen);
+                }}
+              >
+                Advanced Filters{" "}
+                {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
+              </button>
+            </div>
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={triggerLoad}
+            >
+              Get Information
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              columns={[
+                {
+                  label: LogSearchColumnLabels.time,
+                  elementKey: "time",
+                  enableSort: true,
+                },
+                {
+                  label: LogSearchColumnLabels.api_name,
+                  elementKey: "api_name",
+                },
+                { label: LogSearchColumnLabels.bucket, elementKey: "bucket" },
+                { label: LogSearchColumnLabels.object, elementKey: "object" },
+                {
+                  label: LogSearchColumnLabels.remote_host,
+                  elementKey: "remote_host",
+                },
+                {
+                  label: LogSearchColumnLabels.request_id,
+                  elementKey: "request_id",
+                },
+                {
+                  label: LogSearchColumnLabels.user_agent,
+                  elementKey: "user_agent",
+                },
+                {
+                  label: LogSearchColumnLabels.response_status,
+                  elementKey: "response_status",
+                  renderFunction: (element) => (
+                    <Fragment>
+                      <span>
+                        {element.response_status_code} (
+                        {element.response_status})
+                      </span>
+                    </Fragment>
+                  ),
+                  renderFullObject: true,
+                },
+                {
+                  label: LogSearchColumnLabels.request_content_length,
+                  elementKey: "request_content_length",
+                  renderFunction: niceBytes,
+                },
+                {
+                  label: LogSearchColumnLabels.response_content_length,
+                  elementKey: "response_content_length",
+                  renderFunction: niceBytes,
+                },
+                {
+                  label: LogSearchColumnLabels.time_to_response_ns,
+                  elementKey: "time_to_response_ns",
+                  renderFunction: nsToSeconds,
+                  contentTextAlign: "right",
+                },
+              ]}
+              isLoading={loading}
+              records={records}
+              entityName="Logs"
+              customEmptyMessage={"There is no information with this criteria"}
+              idField="request_id"
+              columnsSelector
+              columnsShown={columnsShown}
+              onColumnChange={selectColumn}
+              customPaperHeight={
+                filterOpen ? classes.tableFOpen : classes.tableFClosed
+              }
+              sortConfig={{
+                currentSort: "time",
+                currentDirection: sortOrder,
+                triggerSort: sortChange,
+              }}
+              infiniteScrollConfig={{
+                recordsCount: 1000000,
+                loadMoreRecords: loadMoreRecords,
+              }}
+              itemActions={[
+                {
+                  type: "view",
+                  onClick: openExtraInformation,
+                },
+              ]}
+              textSelectable
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>

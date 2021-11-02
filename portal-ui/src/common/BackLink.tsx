@@ -27,6 +27,10 @@ const styles = (theme: Theme) =>
     link: {
       textDecoration: "none",
       color: theme.palette.primary.main,
+      fontSize: 18,
+      fontWeight: 600,
+      marginBottom: 10,
+      marginTop: 10,
     },
   });
 

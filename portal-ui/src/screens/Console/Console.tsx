@@ -47,7 +47,6 @@ import ConfigurationMain from "./Configurations/ConfigurationMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import License from "./License/License";
 import Trace from "./Trace/Trace";
-import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
@@ -63,6 +62,9 @@ import ListTiersConfiguration from "./Configurations/TiersConfiguration/ListTier
 import TierTypeSelector from "./Configurations/TiersConfiguration/TierTypeSelector";
 import AddTierConfiguration from "./Configurations/TiersConfiguration/AddTierConfiguration";
 import ListTenants from "./Tenants/ListTenants/ListTenants";
+import Tools from "./Tools/Tools";
+import ErrorLogs from "./Logs/ErrorLogs/ErrorLogs";
+import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
 
 const drawerWidth = 245;
 
@@ -243,7 +245,7 @@ const Console = ({
     },
     {
       component: Watch,
-      path: "/watch",
+      path: "/tools/watch",
     },
     {
       component: Users,
@@ -267,19 +269,27 @@ const Console = ({
     },
     {
       component: Heal,
-      path: "/heal",
+      path: "/tools/heal",
     },
     {
       component: Trace,
-      path: "/trace",
-    },
-    {
-      component: LogsMain,
-      path: "/logs",
+      path: "/tools/trace",
     },
     {
       component: HealthInfo,
-      path: "/health-info",
+      path: "/tools/diagnostics",
+    },
+    {
+      component: ErrorLogs,
+      path: "/tools/logs",
+    },
+    {
+      component: LogsSearchMain,
+      path: "/tools/audit-logs",
+    },
+    {
+      component: Tools,
+      path: "/tools",
     },
     {
       component: ConfigurationMain,
