@@ -22,10 +22,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
-	"github.com/minio/madmin-go"
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
@@ -202,10 +200,6 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 }
 
 func getBucketReplicationResponse(session *models.Principal, bucketName string) (*models.BucketReplicationResponse, error) {
-	if !isErasureBackend() {
-		return &models.BucketReplicationResponse{}, nil
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -256,12 +250,6 @@ func getBucketReplicationResponse(session *models.Principal, bucketName string) 
 }
 
 func getBucketVersionedResponse(session *models.Principal, bucketName string) (*models.BucketVersioningResponse, error) {
-	if !isErasureBackend() {
-		return &models.BucketVersioningResponse{
-			IsVersioned: false,
-		}, nil
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -288,23 +276,12 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	return bucketVResponse, nil
 }
 
-var serverBackendType madmin.BackendType
-var serverBackendOnce sync.Once
-
-func isErasureBackend() bool {
-	return serverBackendType == madmin.Erasure
-}
-
 // getAccountInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
 func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
 	info, err := client.AccountInfo(ctx)
 	if err != nil {
 		return []*models.Bucket{}, err
 	}
-
-	serverBackendOnce.Do(func() {
-		serverBackendType = info.Server.Type
-	})
 
 	var bucketInfos []*models.Bucket
 	for _, bucket := range info.Buckets {
