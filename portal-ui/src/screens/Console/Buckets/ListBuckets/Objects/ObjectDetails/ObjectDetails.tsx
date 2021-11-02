@@ -254,7 +254,7 @@ const ObjectDetails = ({
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [metadataLoad, setMetadataLoad] = useState<boolean>(false);
+  const [metadataLoad, setMetadataLoad] = useState<boolean>(true);
   const [metadata, setMetadata] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
@@ -292,7 +292,6 @@ const ObjectDetails = ({
           }
 
           setLoadObjectData(false);
-          setMetadataLoad(true);
         })
         .catch((error: ErrorResponseHandler) => {
           setErrorSnackMessage(error);
