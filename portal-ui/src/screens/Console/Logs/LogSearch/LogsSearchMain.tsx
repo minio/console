@@ -37,7 +37,6 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
-import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import LogSearchFullModal from "./LogSearchFullModal";
 import { LogSearchColumnLabels } from "./utils";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";

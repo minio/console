@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import { Button } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import { AddIcon, GroupsIcon, UsersIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
@@ -30,6 +30,7 @@ import { stringSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
   containerForHeader,
+  linkStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -80,10 +81,7 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    link: {
-      textDecoration: "underline",
-      color: theme.palette.info.main,
-    },
+    ...linkStyles(theme.palette.info.main),
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -230,80 +228,85 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
           <Grid item xs={12}>
             <br />
           </Grid>
-          {records.length > 0 && (
+          {loading && <LinearProgress />}
+          {!loading && (
             <Fragment>
-              <Grid item xs={12}>
-                <TableWrapper
-                  itemActions={tableActions}
-                  columns={[{ label: "Name", elementKey: "" }]}
-                  isLoading={loading}
-                  records={filteredRecords}
-                  entityName="Groups"
-                  idField=""
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <HelpBox
-                  title={"Groups"}
-                  iconComponent={<GroupsIcon />}
-                  help={
-                    <Fragment>
-                      A group can have one attached IAM policy, where all users
-                      with membership in that group inherit that policy. Groups
-                      support more simplified management of user permissions on
-                      the MinIO Tenant.
-                      <br />
-                      <br />
-                      You can learn more at our{" "}
-                      <a
-                        href="https://docs.min.io/minio/k8s/tutorials/group-management.html?ref=con"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        documentation
-                      </a>
-                      .
-                    </Fragment>
-                  }
-                />
-              </Grid>
+              {records.length > 0 && (
+                <Fragment>
+                  <Grid item xs={12}>
+                    <TableWrapper
+                      itemActions={tableActions}
+                      columns={[{ label: "Name", elementKey: "" }]}
+                      isLoading={loading}
+                      records={filteredRecords}
+                      entityName="Groups"
+                      idField=""
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <HelpBox
+                      title={"Groups"}
+                      iconComponent={<GroupsIcon />}
+                      help={
+                        <Fragment>
+                          A group can have one attached IAM policy, where all
+                          users with membership in that group inherit that
+                          policy. Groups support more simplified management of
+                          user permissions on the MinIO Tenant.
+                          <br />
+                          <br />
+                          You can learn more at our{" "}
+                          <a
+                            href="https://docs.min.io/minio/k8s/tutorials/group-management.html?ref=con"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            documentation
+                          </a>
+                          .
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
+                </Fragment>
+              )}
+              {records.length === 0 && (
+                <Grid
+                  container
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Grid item xs={8}>
+                    <HelpBox
+                      title={"Groups"}
+                      iconComponent={<UsersIcon />}
+                      help={
+                        <Fragment>
+                          A group can have one attached IAM policy, where all
+                          users with membership in that group inherit that
+                          policy. Groups support more simplified management of
+                          user permissions on the MinIO Tenant.
+                          <br />
+                          <br />
+                          To get started,{" "}
+                          <button
+                            onClick={() => {
+                              setSelectedGroup(null);
+                              setGroupOpen(true);
+                            }}
+                            className={classes.link}
+                          >
+                            Create a Group
+                          </button>
+                          .
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              )}
             </Fragment>
-          )}
-          {records.length == 0 && (
-            <Grid
-              container
-              justifyContent={"center"}
-              alignContent={"center"}
-              alignItems={"center"}
-            >
-              <Grid item xs={8}>
-                <HelpBox
-                  title={"Groups"}
-                  iconComponent={<UsersIcon />}
-                  help={
-                    <Fragment>
-                      A group can have one attached IAM policy, where all users
-                      with membership in that group inherit that policy. Groups
-                      support more simplified management of user permissions on
-                      the MinIO Tenant.
-                      <br />
-                      <br />
-                      To get started,{" "}
-                      <a
-                        onClick={() => {
-                          setSelectedGroup(null);
-                          setGroupOpen(true);
-                        }}
-                        className={classes.link}
-                      >
-                        Create a Group
-                      </a>
-                      .
-                    </Fragment>
-                  }
-                />
-              </Grid>
-            </Grid>
           )}
         </Grid>
       </Grid>

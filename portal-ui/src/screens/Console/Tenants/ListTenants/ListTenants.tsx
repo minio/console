@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, Button, IconButton, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,6 +29,7 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import {
   actionsTray,
   containerForHeader,
+  linkStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -104,10 +105,7 @@ const styles = (theme: Theme) =>
       paddingTop: 30,
       paddingBottom: 30,
     },
-    link: {
-      textDecoration: "underline",
-      color: theme.palette.info.main,
-    },
+    ...linkStyles(theme.palette.info.main),
   });
 
 const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
@@ -273,43 +271,49 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
                 <RefreshIcon />
               </IconButton>
             </Grid>
+
             <Grid item xs={12}>
-              {filteredRecords.map((t) => {
-                return <TenantListItem tenant={t} />;
-              })}
-              {filteredRecords.length == 0 && (
-                <Grid
-                  container
-                  justifyContent={"center"}
-                  alignContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Grid item xs={8}>
-                    <HelpBox
-                      iconComponent={<TenantsIcon />}
-                      title={"Tenants"}
-                      help={
-                        <Fragment>
-                          Tenant is the logical structure to represent a MinIO
-                          deployment. A tenant can have different size and
-                          configurations from other tenants, even a different
-                          storage class.
-                          <br />
-                          <br />
-                          To get started,&nbsp;
-                          <a
-                            className={classes.link}
-                            onClick={() => {
-                              history.push("/tenants/add");
-                            }}
-                          >
-                            Create a Tenant.
-                          </a>
-                        </Fragment>
-                      }
-                    />
-                  </Grid>
-                </Grid>
+              {isLoading && <LinearProgress />}
+              {!isLoading && (
+                <Fragment>
+                  {filteredRecords.map((t) => {
+                    return <TenantListItem tenant={t} />;
+                  })}
+                  {filteredRecords.length === 0 && (
+                    <Grid
+                      container
+                      justifyContent={"center"}
+                      alignContent={"center"}
+                      alignItems={"center"}
+                    >
+                      <Grid item xs={8}>
+                        <HelpBox
+                          iconComponent={<TenantsIcon />}
+                          title={"Tenants"}
+                          help={
+                            <Fragment>
+                              Tenant is the logical structure to represent a
+                              MinIO deployment. A tenant can have different size
+                              and configurations from other tenants, even a
+                              different storage class.
+                              <br />
+                              <br />
+                              To get started,&nbsp;
+                              <button
+                                className={classes.link}
+                                onClick={() => {
+                                  history.push("/tenants/add");
+                                }}
+                              >
+                                Create a Tenant.
+                              </button>
+                            </Fragment>
+                          }
+                        />
+                      </Grid>
+                    </Grid>
+                  )}
+                </Fragment>
               )}
             </Grid>
           </Grid>

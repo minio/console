@@ -20,13 +20,14 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IconButton, TextField } from "@mui/material";
+import { IconButton, LinearProgress, TextField } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import {
   actionsTray,
   containerForHeader,
+  linkStyles,
   searchField,
   settingsCommon,
   typesSelection,
@@ -76,10 +77,7 @@ const styles = (theme: Theme) =>
       ...settingsCommon.customTitle,
       marginTop: 0,
     },
-    link: {
-      textDecoration: "underline",
-      color: theme.palette.info.main,
-    },
+    ...linkStyles(theme.palette.info.main),
   });
 
 const ListTiersConfiguration = ({
@@ -235,121 +233,126 @@ const ListTiersConfiguration = ({
         <Grid item xs={12}>
           <br />
         </Grid>
-        {records.length > 0 && (
+        {isLoading && <LinearProgress />}
+        {!isLoading && (
           <Fragment>
-            <Grid item xs={12}>
-              <TableWrapper
-                itemActions={[
-                  {
-                    type: "edit",
-                    onClick: (tierData: ITierElement) => {
-                      setSelectedTier(tierData);
-                      setUpdateCredentialsOpen(true);
-                    },
-                  },
-                ]}
-                columns={[
-                  {
-                    label: "Tier Name",
-                    elementKey: "type",
-                    renderFunction: renderTierName,
-                    renderFullObject: true,
-                  },
-                  {
-                    label: "Type",
-                    elementKey: "type",
-                    width: 150,
-                  },
-                  {
-                    label: "Endpoint",
-                    elementKey: "type",
-                    renderFunction: renderTierEndpoint,
-                    renderFullObject: true,
-                  },
-                  {
-                    label: "Bucket",
-                    elementKey: "type",
-                    renderFunction: renderTierBucket,
-                    renderFullObject: true,
-                  },
-                  {
-                    label: "Prefix",
-                    elementKey: "type",
-                    renderFunction: renderTierPrefix,
-                    renderFullObject: true,
-                  },
-                  {
-                    label: "Region",
-                    elementKey: "type",
-                    renderFunction: renderTierRegion,
-                    renderFullObject: true,
-                  },
-                ]}
-                isLoading={isLoading}
-                records={filteredRecords}
-                entityName="Tiers"
-                idField="service_name"
-                customPaperHeight={classes.customConfigurationPage}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <HelpBox
-                title={"Learn more about TIERS"}
-                iconComponent={<TiersIcon />}
-                help={
-                  <Fragment>
-                    Tiers are used by the MinIO Object Lifecycle Management
-                    which allows creating rules for time or date based automatic
-                    transition or expiry of objects. For object transition,
-                    MinIO automatically moves the object to a configured remote
-                    storage tier.
-                    <br />
-                    <br />
-                    You can learn more at our{" "}
-                    <a
-                      href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      documentation
-                    </a>
-                    .
-                  </Fragment>
-                }
-              />
-            </Grid>
+            {records.length > 0 && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <TableWrapper
+                    itemActions={[
+                      {
+                        type: "edit",
+                        onClick: (tierData: ITierElement) => {
+                          setSelectedTier(tierData);
+                          setUpdateCredentialsOpen(true);
+                        },
+                      },
+                    ]}
+                    columns={[
+                      {
+                        label: "Tier Name",
+                        elementKey: "type",
+                        renderFunction: renderTierName,
+                        renderFullObject: true,
+                      },
+                      {
+                        label: "Type",
+                        elementKey: "type",
+                        width: 150,
+                      },
+                      {
+                        label: "Endpoint",
+                        elementKey: "type",
+                        renderFunction: renderTierEndpoint,
+                        renderFullObject: true,
+                      },
+                      {
+                        label: "Bucket",
+                        elementKey: "type",
+                        renderFunction: renderTierBucket,
+                        renderFullObject: true,
+                      },
+                      {
+                        label: "Prefix",
+                        elementKey: "type",
+                        renderFunction: renderTierPrefix,
+                        renderFullObject: true,
+                      },
+                      {
+                        label: "Region",
+                        elementKey: "type",
+                        renderFunction: renderTierRegion,
+                        renderFullObject: true,
+                      },
+                    ]}
+                    isLoading={isLoading}
+                    records={filteredRecords}
+                    entityName="Tiers"
+                    idField="service_name"
+                    customPaperHeight={classes.customConfigurationPage}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <HelpBox
+                    title={"Learn more about TIERS"}
+                    iconComponent={<TiersIcon />}
+                    help={
+                      <Fragment>
+                        Tiers are used by the MinIO Object Lifecycle Management
+                        which allows creating rules for time or date based
+                        automatic transition or expiry of objects. For object
+                        transition, MinIO automatically moves the object to a
+                        configured remote storage tier.
+                        <br />
+                        <br />
+                        You can learn more at our{" "}
+                        <a
+                          href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          documentation
+                        </a>
+                        .
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Fragment>
+            )}
+            {records.length === 0 && (
+              <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Grid item xs={8}>
+                  <HelpBox
+                    title={"Tiers"}
+                    iconComponent={<TiersIcon />}
+                    help={
+                      <Fragment>
+                        Tiers are used by the MinIO Object Lifecycle Management
+                        which allows creating rules for time or date based
+                        automatic transition or expiry of objects. For object
+                        transition, MinIO automatically moves the object to a
+                        configured remote storage tier.
+                        <br />
+                        <br />
+                        To get started,{" "}
+                        <button onClick={addTier} className={classes.link}>
+                          Add Tier
+                        </button>
+                        .
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Fragment>
-        )}
-        {records.length == 0 && (
-          <Grid
-            container
-            justifyContent={"center"}
-            alignContent={"center"}
-            alignItems={"center"}
-          >
-            <Grid item xs={8}>
-              <HelpBox
-                title={"Tiers"}
-                iconComponent={<TiersIcon />}
-                help={
-                  <Fragment>
-                    Tiers are used by the MinIO Object Lifecycle Management
-                    which allows creating rules for time or date based automatic
-                    transition or expiry of objects. For object transition,
-                    MinIO automatically moves the object to a configured remote
-                    storage tier.
-                    <br />
-                    <br />
-                    To get started,{" "}
-                    <a onClick={addTier} className={classes.link}>
-                      Add Tier
-                    </a>
-                    .
-                  </Fragment>
-                }
-              />
-            </Grid>
-          </Grid>
         )}
       </Grid>
     </Fragment>
