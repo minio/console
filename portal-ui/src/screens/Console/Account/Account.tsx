@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -22,13 +22,12 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Button, IconButton, Tooltip } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage } from "../../../actions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { AddIcon, LockIcon } from "../../../icons";
+import { AccountIcon, AddIcon, LockIcon } from "../../../icons";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -42,6 +41,7 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SearchIcon from "../../../icons/SearchIcon";
+import HelpBox from "../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -74,6 +74,9 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
+    },
+    twHeight: {
+      minHeight: 600,
     },
     imageIcon: {
       height: "100%",
@@ -212,7 +215,7 @@ const Account = ({
         closeModal={() => setChangePasswordModalOpen(false)}
       />
       <PageHeader
-        label="Account"
+        label="Service Accounts"
         actions={
           <React.Fragment>
             {changePassword && (
@@ -231,60 +234,79 @@ const Account = ({
           </React.Fragment>
         }
       />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12}>
-            <Typography variant="h5" component="h5">
-              Service Accounts
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Service Accounts"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(e) => {
-                setFilter(e.target.value);
-              }}
-              variant="standard"
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setAddScreenOpen(true);
-                setSelectedServiceAccount(null);
-              }}
-            >
-              Create service account
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              isLoading={loading}
-              records={filteredRecords}
-              entityName={"Service Accounts"}
-              idField={""}
-              columns={[{ label: "Service Account", elementKey: "" }]}
-              itemActions={tableActions}
-            />
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Service Accounts"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            onChange={(e) => {
+              setFilter(e.target.value);
+            }}
+            variant="standard"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setAddScreenOpen(true);
+              setSelectedServiceAccount(null);
+            }}
+          >
+            Create service account
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <TableWrapper
+            isLoading={loading}
+            records={filteredRecords}
+            entityName={"Service Accounts"}
+            idField={""}
+            columns={[{ label: "Service Account", elementKey: "" }]}
+            itemActions={tableActions}
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            title={"Learn more about SERVICE ACCOUNTS"}
+            iconComponent={<AccountIcon />}
+            help={
+              <Fragment>
+                MinIO service accounts are child identities of an authenticated
+                MinIO user, including externally managed identities. Each
+                service account inherits its privileges based on the policies
+                attached to it’s parent user or those groups in which the parent
+                user has membership. Service accounts also support an optional
+                inline policy which further restricts access to a subset of
+                actions and resources available to the parent user.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/security/minio-identity-management/user-management.html?ref=con#service-accounts"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
+          />
         </Grid>
       </Grid>
     </React.Fragment>

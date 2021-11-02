@@ -14,7 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ServiceAccountsList {
-  service_accounts: string[];
-  total: number;
-}
+import React from "react";
+import { Route, Router, Switch } from "react-router-dom";
+import history from "../../../history";
+import NotFoundPage from "../../NotFoundPage";
+import ToolsList from "./ToolsPanel/ToolsList";
+
+const Tools = () => {
+  return (
+    <Router history={history}>
+      <Switch>
+        <Route path="/tools" exact component={ToolsList} />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </Router>
+  );
+};
+
+export default Tools;
