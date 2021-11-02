@@ -13,38 +13,39 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ICloseEvent,
   IMessageEvent,
   w3cwebsocket as W3CWebSocket,
-  ICloseEvent,
 } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { healthInfoMessageReceived, healthInfoResetMessage } from "./actions";
 import {
-  HealthInfoMessage,
+  DiagStatError,
   DiagStatInProgress,
   DiagStatSuccess,
-  DiagStatError,
+  HealthInfoMessage,
 } from "./types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
-  wsProtocol,
+  WSCloseAbnormalClosure,
   WSCloseInternalServerErr,
   WSClosePolicyViolation,
-  WSCloseAbnormalClosure,
+  wsProtocol,
 } from "../../../utils/wsUtils";
 import {
   actionsTray,
   containerForHeader,
 } from "../Common/FormComponents/common/styleLibrary";
-import { Grid, Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { setSnackBarMessage, setServerDiagStat } from "../../../actions";
+import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
 import CircularProgress from "@mui/material/CircularProgress";
+import BackLink from "../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -65,6 +66,12 @@ const styles = (theme: Theme) =>
     buttons: {
       justifyContent: "flex-start",
       gap: 20,
+    },
+    boxy: {
+      border: "#E5E5E5 1px solid",
+      borderRadius: 2,
+      padding: 40,
+      backgroundColor: "#fff",
     },
     ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
@@ -200,8 +207,11 @@ const HealthInfo = ({
     <React.Fragment>
       <PageHeader label="Diagnostic" />
 
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <BackLink to="/tools" label="Return to Tools" />
+        </Grid>
+        <Grid item xs={12} className={classes.boxy}>
           <Grid container className={classes.buttons}>
             <Grid key="start-diag" item>
               <Button

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,10 +30,13 @@ import { timeFromDate } from "../../../../common/utils";
 import { wsProtocol } from "../../../../utils/wsUtils";
 import {
   actionsTray,
+  containerForHeader,
   logsCommon,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import SearchIcon from "../../../../icons/SearchIcon";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import BackLink from "../../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,6 +71,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...logsCommon,
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface ILogs {
@@ -325,32 +329,40 @@ const ErrorLogs = ({
 
   return (
     <Fragment>
-      <Grid container className={classes.logsSubContainer}>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Highlight Line"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setHighlight(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
-          />
+      <PageHeader label="Logs" />
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <BackLink to="/tools" label="Return to Tools" />
         </Grid>
         <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <div className={classes.logList}>{renderLines}</div>
+          <Grid container className={classes.logsSubContainer}>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Highlight Line"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                onChange={(val) => {
+                  setHighlight(val.target.value);
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <div className={classes.logList}>{renderLines}</div>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>

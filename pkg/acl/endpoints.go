@@ -67,11 +67,13 @@ var (
 	remoteBuckets               = "/remote-buckets"
 	replication                 = "/replication"
 	license                     = "/license"
-	watch                       = "/watch"
-	heal                        = "/heal"
-	trace                       = "/trace"
-	logs                        = "/logs"
-	healthInfo                  = "/health-info"
+	watch                       = "/tools/watch"
+	heal                        = "/tools/heal"
+	trace                       = "/tools/trace"
+	tools                       = "/tools"
+	logs                        = "/tools/logs"
+	auditLogs                   = "/tools/audit-logs"
+	healthInfo                  = "/tools/diagnostics"
 )
 
 type ConfigurationActionSet struct {
@@ -261,6 +263,16 @@ var logsActionSet = ConfigurationActionSet{
 	),
 }
 
+// toolsActionSet contains the list of admin actions required for this endpoint to work
+var toolsActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.ConsoleLogAdminAction,
+	),
+}
+
 // traceActionSet contains the list of admin actions required for this endpoint to work
 var traceActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(
@@ -327,6 +339,8 @@ var endpointRules = map[string]ConfigurationActionSet{
 	heal:                        healActionSet,
 	trace:                       traceActionSet,
 	logs:                        logsActionSet,
+	auditLogs:                   logsActionSet,
+	tools:                       toolsActionSet,
 	healthInfo:                  healthInfoActionSet,
 }
 

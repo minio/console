@@ -24,6 +24,7 @@ import { IElement } from "../../Configurations/types";
 interface ISettingsCard {
   classes: any;
   configuration: IElement;
+  prefix?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -55,10 +56,14 @@ const styles = (theme: Theme) =>
     },
   });
 
-const SettingsCard = ({ classes, configuration }: ISettingsCard) => {
+const SettingsCard = ({
+  classes,
+  configuration,
+  prefix = "settings",
+}: ISettingsCard) => {
   return (
     <Link
-      to={`/settings/${configuration.configuration_id}`}
+      to={`/${prefix}/${configuration.configuration_id}`}
       className={classes.configurationLink}
     >
       {configuration.icon}
