@@ -27,7 +27,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { Button, IconButton, LinearProgress, Tooltip } from "@mui/material";
+import { Button, LinearProgress, Tooltip } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -47,6 +47,7 @@ import IAMPoliciesIcon from "../../../icons/IAMPoliciesIcon";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import TrashIcon from "../../../icons/TrashIcon";
+import BoxIconButton from "../Common/BoxIconButton";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -364,21 +365,19 @@ const PolicyDetails = ({
             actions={
               <Fragment>
                 <Tooltip title="Delete Policy">
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Delete Policy"
-                    component="span"
                     onClick={deletePolicy}
                   >
                     <TrashIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
 
                 <Tooltip title={"Refresh"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Refresh List"
-                    component="span"
                     onClick={() => {
                       setLoadingUsers(true);
                       setLoadingGroups(true);
@@ -387,7 +386,7 @@ const PolicyDetails = ({
                     size="large"
                   >
                     <RefreshIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
               </Fragment>
             }

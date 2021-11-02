@@ -36,7 +36,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import ActivationModal from "./ActivationModal";
 import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
-import { TenantsIcon } from "../../../icons";
+import { LicenseIcon } from "../../../icons";
 
 const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
@@ -416,7 +416,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
         <div className={clsx(classes.container, classes.mainContainer)}>
           <Grid container>
             <Grid xs={12} className={classes.icon}>
-              <TenantsIcon />
+              <LicenseIcon />
               GNU Affero General Public License
             </Grid>
             <Grid item xs={12}>
