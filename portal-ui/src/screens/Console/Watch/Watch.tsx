@@ -14,7 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import { Button, Grid, TextField, InputBase } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputBase,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -22,10 +30,9 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../store";
 import { watchMessageReceived, watchResetMessages } from "./actions";
-import { EventInfo, BucketList, Bucket } from "./types";
+import { Bucket, BucketList, EventInfo } from "./types";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
-import { FormControl, MenuItem, Select } from "@mui/material";
 import {
   actionsTray,
   containerForHeader,
@@ -35,6 +42,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
+import BackLink from "../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -183,8 +191,11 @@ const Watch = ({
   return (
     <React.Fragment>
       <PageHeader label="Watch" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <BackLink to="/tools" label="Return to Tools" />
+        </Grid>
+        <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
             <FormControl variant="outlined">
               <Select

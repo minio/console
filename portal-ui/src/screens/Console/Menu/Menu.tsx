@@ -36,7 +36,7 @@ import {
   IAMPoliciesIcon,
   LambdaIcon,
   TiersIcon,
-  TraceIcon,
+  ToolsIcon,
   UsersIcon,
   VersionIcon,
 } from "../../../icons";
@@ -45,15 +45,12 @@ import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
 import HealIcon from "../../../icons/HealIcon";
-import WatchIcon from "../../../icons/WatchIcon";
 import OperatorLogo from "../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../icons/ConsoleLogo";
 import history from "../../../history";
 import api from "../../../common/api";
 import AccountIcon from "../../../icons/AccountIcon";
-import DiagnosticsIcon from "../../../icons/DiagnosticsIcon";
 import DocumentationIcon from "../../../icons/DocumentationIcon";
-import LogsIcon from "../../../icons/LogsIcon";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
@@ -383,28 +380,12 @@ const Menu = ({
       icon: <TiersIcon />,
     },
     {
-      group: "Tools",
+      group: "common",
       type: "item",
       component: NavLink,
-      to: "/logs",
-      name: "Logs",
-      icon: <LogsIcon />,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/watch",
-      name: "Watch",
-      icon: <WatchIcon />,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/trace",
-      name: "Trace",
-      icon: <TraceIcon />,
+      to: "/tools",
+      name: "Tools",
+      icon: <ToolsIcon />,
     },
     {
       group: "Tools",
@@ -414,14 +395,6 @@ const Menu = ({
       name: "Heal",
       icon: <HealIcon />,
       fsHidden: distributedSetup,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/health-info",
-      name: "Diagnostic",
-      icon: <DiagnosticsIcon />,
     },
 
     {

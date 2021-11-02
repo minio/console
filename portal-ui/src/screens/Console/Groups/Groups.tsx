@@ -73,6 +73,9 @@ const styles = (theme: Theme) =>
       whiteSpace: "normal",
       wordWrap: "break-word",
     },
+    twHeight: {
+      minHeight: 600,
+    },
     minTableHeader: {
       color: "#393939",
       "& tr": {
@@ -241,6 +244,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                       records={filteredRecords}
                       entityName="Groups"
                       idField=""
+                      customPaperHeight={classes.twHeight}
                     />
                   </Grid>
                   <Grid item xs={12}>

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -25,7 +25,7 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Policy, PolicyList } from "./types";
-import { AddIcon } from "../../../icons";
+import { AddIcon, IAMPoliciesIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
@@ -40,6 +40,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import history from "../../../history";
 import SearchIcon from "../../../icons/SearchIcon";
+import HelpBox from "../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,6 +68,9 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
+    },
+    twHeight: {
+      minHeight: 600,
     },
     ...actionsTray,
     ...searchField,
@@ -175,52 +179,84 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
         />
       )}
       <PageHeader label="IAM Policies" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Policies"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setFilterPolicies(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              variant="standard"
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setAddScreenOpen(true);
-                setPolicyEdit(null);
-              }}
-            >
-              Create Policy
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Policies"
-              idField="name"
-            />
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Policies"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setFilterPolicies(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            variant="standard"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setAddScreenOpen(true);
+              setPolicyEdit(null);
+            }}
+          >
+            Create Policy
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={[{ label: "Name", elementKey: "name" }]}
+            isLoading={loading}
+            records={filteredRecords}
+            entityName="Policies"
+            idField="name"
+            customPaperHeight={classes.twHeight}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            title={"Learn more about IAM POLICIES"}
+            iconComponent={<IAMPoliciesIcon />}
+            help={
+              <Fragment>
+                MinIO uses Policy-Based Access Control (PBAC) to define the
+                authorized actions and resources to which an authenticated user
+                has access. Each policy describes one or more actions and
+                conditions that outline the permissions of a user or group of
+                users.
+                <br />
+                <br />
+                MinIO PBAC is built for compatibility with AWS IAM policy
+                syntax, structure, and behavior. The MinIO documentation makes a
+                best-effort to cover IAM-specific behavior and functionality.
+                Consider deferring to the IAM documentation for more complete
+                documentation on AWS IAM-specific topics.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/security/minio-identity-management/policy-based-access-control.html?ref=con"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
+          />
         </Grid>
       </Grid>
     </React.Fragment>

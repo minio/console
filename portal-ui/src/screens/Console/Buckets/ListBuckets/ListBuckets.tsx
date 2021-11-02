@@ -25,15 +25,14 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import {
-  AddIcon,
-  BucketsIcon,
-  WatchIcon,
-} from "../../../../icons";
+import { AddIcon, BucketsIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
-import { containerForHeader, linkStyles } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  linkStyles,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import AddBucket from "./AddBucket";
