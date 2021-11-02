@@ -965,3 +965,13 @@ export const commonDashboardInfocard = {
     },
   },
 };
+
+export const linkStyles = (color: string) => ({
+  link: {
+    textDecoration: "underline",
+    color,
+    backgroundColor: "transparent",
+    border: 0,
+    cursor: "pointer",
+  },
+});

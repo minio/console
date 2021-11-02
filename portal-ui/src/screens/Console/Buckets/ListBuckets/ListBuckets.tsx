@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -28,13 +28,12 @@ import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import {
   AddIcon,
   BucketsIcon,
-  TenantsIcon,
   WatchIcon,
 } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import { containerForHeader, linkStyles } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import AddBucket from "./AddBucket";
@@ -127,10 +126,7 @@ const styles = (theme: Theme) =>
     constrainedContainer: {
       maxWidth: 1180,
     },
-    link: {
-      textDecoration: "underline",
-      color: theme.palette.info.main,
-    },
+    ...linkStyles(theme.palette.info.main),
   });
 
 interface IListBucketsProps {
@@ -408,53 +404,57 @@ const ListBuckets = ({
           <Grid item xs={12}>
             <br />
           </Grid>
-          <Grid item xs={12}>
-            {filteredRecords.map((bucket, index) => {
-              return (
-                <BucketListItem
-                  bucket={bucket}
-                  key={`bucketListItem-${index.toString()}`}
-                  onDelete={confirmDeleteBucket}
-                  onSelect={selectListBuckets}
-                  selected={selectedBuckets.includes(bucket.name)}
-                  bulkSelect={bulkSelect}
-                />
-              );
-            })}
-            {filteredRecords.length == 0 && (
-              <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
-                <Grid item xs={8}>
-                  <HelpBox
-                    iconComponent={<BucketsIcon />}
-                    title={"Buckets"}
-                    help={
-                      <Fragment>
-                        MinIO uses buckets to organize objects. A bucket is
-                        similar to a folder or directory in a filesystem, where
-                        each bucket can hold an arbitrary number of objects.
-                        <br />
-                        <br />
-                        To get started,&nbsp;
-                        <a
-                          className={classes.link}
-                          onClick={() => {
-                            addBucketOpen(true);
-                          }}
-                        >
-                          Create a Bucket.
-                        </a>
-                      </Fragment>
-                    }
+          {loading && <LinearProgress />}
+          {!loading && (
+            <Grid item xs={12}>
+              {filteredRecords.map((bucket, index) => {
+                return (
+                  <BucketListItem
+                    bucket={bucket}
+                    key={`bucketListItem-${index.toString()}`}
+                    onDelete={confirmDeleteBucket}
+                    onSelect={selectListBuckets}
+                    selected={selectedBuckets.includes(bucket.name)}
+                    bulkSelect={bulkSelect}
                   />
+                );
+              })}
+              {filteredRecords.length === 0 && (
+                <Grid
+                  container
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Grid item xs={8}>
+                    <HelpBox
+                      iconComponent={<BucketsIcon />}
+                      title={"Buckets"}
+                      help={
+                        <Fragment>
+                          MinIO uses buckets to organize objects. A bucket is
+                          similar to a folder or directory in a filesystem,
+                          where each bucket can hold an arbitrary number of
+                          objects.
+                          <br />
+                          <br />
+                          To get started,&nbsp;
+                          <button
+                            className={classes.link}
+                            onClick={() => {
+                              addBucketOpen(true);
+                            }}
+                          >
+                            Create a Bucket.
+                          </button>
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            )}
-          </Grid>
+              )}
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </Fragment>

@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IconButton, TextField } from "@mui/material";
+import { IconButton, LinearProgress, TextField } from "@mui/material";
 import { red } from "@mui/material/colors";
 import Grid from "@mui/material/Grid";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -37,6 +37,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
   containerForHeader,
+  linkStyles,
   searchField,
   settingsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
@@ -73,10 +74,7 @@ const styles = (theme: Theme) =>
     lambdaContainer: {
       padding: "15px 0",
     },
-    link: {
-      textDecoration: "underline",
-      color: theme.palette.info.main,
-    },
+    ...linkStyles(theme.palette.info.main),
   });
 
 const ListNotificationEndpoints = ({
@@ -186,90 +184,95 @@ const ListNotificationEndpoints = ({
         <Grid item xs={12}>
           <br />
         </Grid>
-        {records.length > 0 && (
+        {isLoading && <LinearProgress />}
+        {!isLoading && (
           <Fragment>
-            <Grid item xs={12}>
-              <TableWrapper
-                itemActions={[]}
-                columns={[
-                  {
-                    label: "Status",
-                    elementKey: "status",
-                    renderFunction: statusDisplay,
-                    width: 150,
-                  },
-                  { label: "Service", elementKey: "service_name" },
-                ]}
-                isLoading={isLoading}
-                records={filteredRecords}
-                entityName="Notification Endpoints"
-                idField="service_name"
-                customPaperHeight={classes.twHeight}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <HelpBox
-                title={"Notification Endpoints"}
-                iconComponent={<LambdaIcon />}
-                help={
-                  <Fragment>
-                    MinIO bucket notifications allow administrators to send
-                    notifications to supported external services on certain
-                    object or bucket events. MinIO supports bucket and
-                    object-level S3 events similar to the Amazon S3 Event
-                    Notifications.
-                    <br />
-                    <br />
-                    You can learn more at our{" "}
-                    <a
-                      href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      documentation
-                    </a>
-                    .
-                  </Fragment>
-                }
-              />
-            </Grid>
+            {records.length > 0 && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <TableWrapper
+                    itemActions={[]}
+                    columns={[
+                      {
+                        label: "Status",
+                        elementKey: "status",
+                        renderFunction: statusDisplay,
+                        width: 150,
+                      },
+                      { label: "Service", elementKey: "service_name" },
+                    ]}
+                    isLoading={isLoading}
+                    records={filteredRecords}
+                    entityName="Notification Endpoints"
+                    idField="service_name"
+                    customPaperHeight={classes.twHeight}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <HelpBox
+                    title={"Notification Endpoints"}
+                    iconComponent={<LambdaIcon />}
+                    help={
+                      <Fragment>
+                        MinIO bucket notifications allow administrators to send
+                        notifications to supported external services on certain
+                        object or bucket events. MinIO supports bucket and
+                        object-level S3 events similar to the Amazon S3 Event
+                        Notifications.
+                        <br />
+                        <br />
+                        You can learn more at our{" "}
+                        <a
+                          href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          documentation
+                        </a>
+                        .
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Fragment>
+            )}
+            {records.length === 0 && (
+              <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Grid item xs={8}>
+                  <HelpBox
+                    title={"Notification Targets"}
+                    iconComponent={<LambdaIcon />}
+                    help={
+                      <Fragment>
+                        MinIO bucket notifications allow administrators to send
+                        notifications to supported external services on certain
+                        object or bucket events. MinIO supports bucket and
+                        object-level S3 events similar to the Amazon S3 Event
+                        Notifications.
+                        <br />
+                        <br />
+                        To get started,{" "}
+                        <button
+                          onClick={() => {
+                            history.push("/notification-endpoints/add");
+                          }}
+                          className={classes.link}
+                        >
+                          Add a Notification Target
+                        </button>
+                        .
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Fragment>
-        )}
-        {records.length == 0 && (
-          <Grid
-            container
-            justifyContent={"center"}
-            alignContent={"center"}
-            alignItems={"center"}
-          >
-            <Grid item xs={8}>
-              <HelpBox
-                title={"Notification Targets"}
-                iconComponent={<LambdaIcon />}
-                help={
-                  <Fragment>
-                    MinIO bucket notifications allow administrators to send
-                    notifications to supported external services on certain
-                    object or bucket events. MinIO supports bucket and
-                    object-level S3 events similar to the Amazon S3 Event
-                    Notifications.
-                    <br />
-                    <br />
-                    To get started,{" "}
-                    <a
-                      onClick={() => {
-                        history.push("/notification-endpoints/add");
-                      }}
-                      className={classes.link}
-                    >
-                      Add a Notification Target
-                    </a>
-                    .
-                  </Fragment>
-                }
-              />
-            </Grid>
-          </Grid>
         )}
       </Grid>
     </Fragment>

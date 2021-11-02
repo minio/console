@@ -14,13 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
-import { Button, Grid, InputAdornment, TextField } from "@mui/material";
+import {
+  Button,
+  Grid,
+  InputAdornment,
+  LinearProgress,
+  TextField,
+} from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
@@ -28,6 +34,7 @@ import { AddIcon, UsersIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,
+  linkStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../actions";
@@ -80,10 +87,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
-    link: {
-      textDecoration: "underline",
-      color: theme.palette.info.main,
-    },
+    ...linkStyles(theme.palette.info.main),
   });
 
 interface IUsersProps {
@@ -94,7 +98,7 @@ interface IUsersProps {
 
 const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   const [records, setRecords] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -103,31 +107,15 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
-  const fetchRecords = useCallback(() => {
-    setLoading(true);
-    api
-      .invoke("GET", `/api/v1/users`)
-      .then((res: UsersList) => {
-        const users = res.users === null ? [] : res.users;
-
-        setLoading(false);
-        setRecords(users.sort(usersSort));
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setLoading(false);
-        setErrorSnackMessage(err);
-      });
-  }, [setLoading, setRecords, setErrorSnackMessage]);
-
   const closeAddModalAndRefresh = () => {
     setAddScreenOpen(false);
-    fetchRecords();
+    setLoading(true);
   };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
-      fetchRecords();
+      setLoading(true);
     }
   };
 
@@ -139,8 +127,21 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   };
 
   useEffect(() => {
-    fetchRecords();
-  }, [fetchRecords]);
+    if (loading) {
+      api
+        .invoke("GET", `/api/v1/users`)
+        .then((res: UsersList) => {
+          const users = res.users === null ? [] : res.users;
+
+          setLoading(false);
+          setRecords(users.sort(usersSort));
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setLoading(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loading, setErrorSnackMessage]);
 
   const filteredRecords = records.filter((elementItem) =>
     elementItem.accessKey.includes(filter)
@@ -206,7 +207,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
           selectedGroup={null}
           closeModalAndRefresh={() => {
             setPolicyOpen(false);
-            fetchRecords();
+            setLoading(true);
           }}
         />
       )}
@@ -278,97 +279,102 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        {records.length > 0 && (
+        {loading && <LinearProgress />}
+        {!loading && (
           <Fragment>
-            <Grid item xs={12}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-                onSelect={selectionChanged}
-                selectedItems={checkedUsers}
-                isLoading={loading}
-                records={filteredRecords}
-                entityName="Users"
-                idField="accessKey"
-                customPaperHeight={classes.twHeight}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <HelpBox
-                title={"Users"}
-                iconComponent={<UsersIcon />}
-                help={
-                  <Fragment>
-                    A MinIO user consists of a unique access key (username) and
-                    corresponding secret key (password). Clients must
-                    authenticate their identity by specifying both a valid
-                    access key (username) and the corresponding secret key
-                    (password) of an existing MinIO user.
-                    <br />
-                    <br />
-                    Each user can have one or more assigned policies that
-                    explicitly list the actions and resources to which that user
-                    has access. Users can also inherit policies from the groups
-                    in which they have membership.
-                    <br />
-                    <br />
-                    You can learn more at our{" "}
-                    <a
-                      href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      documentation
-                    </a>
-                    .
-                  </Fragment>
-                }
-              />
-            </Grid>
+            {records.length > 0 && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <TableWrapper
+                    itemActions={tableActions}
+                    columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+                    onSelect={selectionChanged}
+                    selectedItems={checkedUsers}
+                    isLoading={loading}
+                    records={filteredRecords}
+                    entityName="Users"
+                    idField="accessKey"
+                    customPaperHeight={classes.twHeight}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <HelpBox
+                    title={"Users"}
+                    iconComponent={<UsersIcon />}
+                    help={
+                      <Fragment>
+                        A MinIO user consists of a unique access key (username)
+                        and corresponding secret key (password). Clients must
+                        authenticate their identity by specifying both a valid
+                        access key (username) and the corresponding secret key
+                        (password) of an existing MinIO user.
+                        <br />
+                        <br />
+                        Each user can have one or more assigned policies that
+                        explicitly list the actions and resources to which that
+                        user has access. Users can also inherit policies from
+                        the groups in which they have membership.
+                        <br />
+                        <br />
+                        You can learn more at our{" "}
+                        <a
+                          href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          documentation
+                        </a>
+                        .
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Fragment>
+            )}
+            {records.length === 0 && (
+              <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Grid item xs={8}>
+                  <HelpBox
+                    title={"Users"}
+                    iconComponent={<UsersIcon />}
+                    help={
+                      <Fragment>
+                        A MinIO user consists of a unique access key (username)
+                        and corresponding secret key (password). Clients must
+                        authenticate their identity by specifying both a valid
+                        access key (username) and the corresponding secret key
+                        (password) of an existing MinIO user.
+                        <br />
+                        <br />
+                        Each user can have one or more assigned policies that
+                        explicitly list the actions and resources to which that
+                        user has access. Users can also inherit policies from
+                        the groups in which they have membership.
+                        <br />
+                        <br />
+                        To get started,{" "}
+                        <button
+                          onClick={() => {
+                            setAddScreenOpen(true);
+                            setSelectedUser(null);
+                          }}
+                          className={classes.link}
+                        >
+                          Create a User
+                        </button>
+                        .
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Fragment>
-        )}
-        {records.length == 0 && (
-          <Grid
-            container
-            justifyContent={"center"}
-            alignContent={"center"}
-            alignItems={"center"}
-          >
-            <Grid item xs={8}>
-              <HelpBox
-                title={"Users"}
-                iconComponent={<UsersIcon />}
-                help={
-                  <Fragment>
-                    A MinIO user consists of a unique access key (username) and
-                    corresponding secret key (password). Clients must
-                    authenticate their identity by specifying both a valid
-                    access key (username) and the corresponding secret key
-                    (password) of an existing MinIO user.
-                    <br />
-                    <br />
-                    Each user can have one or more assigned policies that
-                    explicitly list the actions and resources to which that user
-                    has access. Users can also inherit policies from the groups
-                    in which they have membership.
-                    <br />
-                    <br />
-                    To get started,{" "}
-                    <a
-                      onClick={() => {
-                        setAddScreenOpen(true);
-                        setSelectedUser(null);
-                      }}
-                      className={classes.link}
-                    >
-                      Create a User
-                    </a>
-                    .
-                  </Fragment>
-                }
-              />
-            </Grid>
-          </Grid>
         )}
       </Grid>
     </Fragment>
