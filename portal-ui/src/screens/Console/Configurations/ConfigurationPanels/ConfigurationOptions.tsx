@@ -28,6 +28,8 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import SettingsCard from "../../Common/SettingsCard/SettingsCard";
+import HelpBox from "../../../../common/HelpBox";
+import { SettingsIcon } from "../../../../icons";
 
 interface IConfigurationOptions {
   classes: any;
@@ -90,6 +92,29 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
               ))}
             </div>
           </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <HelpBox
+            title={"Learn more about SETTINGS"}
+            iconComponent={<SettingsIcon />}
+            help={
+              <Fragment>
+                MinIO supports a variety of configurations ranging from
+                encryption, compression, region, notifications, etc.
+                <br />
+                <br />
+                You can learn more at our{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/reference/minio-cli/minio-mc-admin/mc-admin.config.html?ref=con#id4"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  documentation
+                </a>
+                .
+              </Fragment>
+            }
+          />
         </Grid>
       </Grid>
     </Fragment>
