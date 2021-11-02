@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -22,7 +22,6 @@ import withStyles from "@mui/styles/withStyles";
 import { CircularProgress, LinearProgress } from "@mui/material";
 import clsx from "clsx";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Moment from "react-moment";
 import Typography from "@mui/material/Typography";
@@ -32,7 +31,7 @@ import { AppState } from "../../../store";
 import { niceBytes } from "../../../common/utils";
 import { ErrorResponseHandler } from "../../../common/types";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import { planDetails, planItems, planButtons } from "./utils";
+import { planButtons, planDetails, planItems } from "./utils";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import ActivationModal from "./ActivationModal";
 import LicenseModal from "./LicenseModal";
@@ -259,10 +258,12 @@ const styles = (theme: Theme) =>
       width: "100%",
       height: "100%",
     },
-    licenseInfo: { color: "#FFFFFF", position: "relative" },
+    licenseInfo: {
+      position: "relative",
+    },
     licenseInfoTitle: {
       textTransform: "none",
-      color: "#BFBFBF",
+      color: "#999999",
       fontSize: 11,
     },
     licenseInfoValue: {
@@ -300,7 +301,7 @@ const styles = (theme: Theme) =>
       backgroundColor: "#07193E",
     },
     subnetSubTitle: {
-      fontSize: 12,
+      fontSize: 14,
     },
     verifiedIcon: {
       width: 96,
@@ -587,16 +588,12 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 </Grid>
                 <Grid item xs={12} lg={12}>
                   {licenseInfo ? (
-                    <Fragment>
-                      <Typography
-                        component="h2"
-                        variant="h6"
-                        className={classes.pageTitle}
-                      >
+                    <div className={classes.pageTitle}>
+                      <Typography component="h2" variant="h6">
                         Login to MinIO SUBNET !
                       </Typography>
                       <Typography
-                        component="h6"
+                        component="p"
                         className={classes.subnetSubTitle}
                       >
                         It combines a commercial license with a support
@@ -637,7 +634,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           )}
                         </Fragment>
                       )}
-                    </Fragment>
+                    </div>
                   ) : (
                     <div className={classes.pageTitle}>
                       <Typography component="h2" variant="h6">
