@@ -14,18 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import {
-  Button,
-  Grid,
-  InputAdornment,
-  TextField,
-  IconButton,
-} from "@mui/material";
+import { Button, Grid, InputAdornment, TextField } from "@mui/material";
 import get from "lodash/get";
 import GroupIcon from "@mui/icons-material/Group";
 import { AddIcon } from "../../../icons";
@@ -49,6 +43,7 @@ import FormatDrives from "./FormatDrives";
 import FormatErrorsResult from "./FormatErrorsResult";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
+import BoxIconButton from "../Common/BoxIconButton";
 
 interface IDirectCSIMain {
   classes: any;
@@ -272,10 +267,9 @@ const DirectCSIMain = ({
           disabled={notAvailable}
           variant="standard"
         />
-        <IconButton
+        <BoxIconButton
           color="primary"
           aria-label="Refresh Tenant List"
-          component="span"
           onClick={() => {
             setLoading(true);
           }}
@@ -283,7 +277,7 @@ const DirectCSIMain = ({
           size="large"
         >
           <RefreshIcon />
-        </IconButton>
+        </BoxIconButton>
         <Button
           variant="contained"
           color="primary"

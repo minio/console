@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -47,6 +47,7 @@ import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import history from "../../../history";
 import HelpBox from "../../../common/HelpBox";
+import BoxIconButton from "../Common/BoxIconButton";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -159,17 +160,16 @@ const ListNotificationEndpoints = ({
             }}
             variant="standard"
           />
-          <IconButton
+          <BoxIconButton
             color="primary"
             aria-label="Refresh List"
-            component="span"
             onClick={() => {
               setIsLoading(true);
             }}
             size="large"
           >
             <RefreshIcon />
-          </IconButton>
+          </BoxIconButton>
           <Button
             variant="contained"
             color="primary"

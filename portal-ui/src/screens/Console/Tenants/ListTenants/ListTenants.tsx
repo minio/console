@@ -43,6 +43,7 @@ import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import TenantListItem from "./TenantListItem";
 import HelpBox from "../../../../common/HelpBox";
+import BoxIconButton from "../../Common/BoxIconButton";
 
 interface ITenantsList {
   classes: any;
@@ -89,6 +90,7 @@ const styles = (theme: Theme) =>
     },
     mainActions: {
       textAlign: "right",
+      marginBottom: 8,
     },
     healthStatusIcon: {
       position: "relative",
@@ -259,17 +261,16 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
         <Grid item xs={12} className={classes.container}>
           <Grid container>
             <Grid item xs={12} className={classes.mainActions}>
-              <IconButton
+              <BoxIconButton
                 color="primary"
                 aria-label="Refresh Tenant List"
-                component="span"
                 onClick={() => {
                   setIsLoading(true);
                 }}
                 size="large"
               >
                 <RefreshIcon />
-              </IconButton>
+              </BoxIconButton>
             </Grid>
 
             <Grid item xs={12}>

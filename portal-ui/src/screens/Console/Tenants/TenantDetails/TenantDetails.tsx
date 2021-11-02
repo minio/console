@@ -20,7 +20,7 @@ import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, IconButton, Tab, Tabs, Tooltip } from "@mui/material";
+import { Box, Tab, Tabs, Tooltip } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
@@ -58,6 +58,7 @@ import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import TenantsIcon from "../../../../icons/TenantsIcon";
+import BoxIconButton from "../../Common/BoxIconButton";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -409,47 +410,43 @@ const TenantDetails = ({
               </Fragment>
             }
             actions={
-              <Fragment>
+              <div>
                 <Tooltip title={"Delete"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Delete"
-                    component="span"
                     onClick={() => {
                       confirmDeleteTenant();
                     }}
                     size="large"
                   >
                     <DeleteIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
                 <Tooltip title={"Edit YAML"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Edit YAML"
-                    component="span"
                     onClick={() => {
                       editYaml();
                     }}
                     size="large"
                   >
                     <EditIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
                 <Tooltip title={"Refresh"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Refresh List"
-                    component="span"
                     onClick={() => {
                       setTenantDetailsLoad(true);
                     }}
-                    size="large"
                   >
                     <RefreshIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
-              </Fragment>
+              </div>
             }
           />
         </Grid>

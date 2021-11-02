@@ -15,12 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { SvgIcon } from "@mui/material";
+import { SvgIcon, SvgIconProps } from "@mui/material";
 import { IIcon } from "./props";
 
-const DeleteIcon = ({ width = 24 }: IIcon) => {
+const DeleteIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
+    <SvgIcon {...props}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.836 12.646">
         <path
           data-name="Trazado 359"
