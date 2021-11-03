@@ -83,8 +83,6 @@ const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
                 }  ${
                   totalDrives != 2 && activeDisks === totalDrives / 2 + 1 && classes.yellowState
                 }  ${
-                  totalDrives === 2 && activeDisks === 2  && classes.greenState
-                }  ${
                   activeDisks === totalDrives && classes.greenState}`}
               >
                 <CircleIcon />
