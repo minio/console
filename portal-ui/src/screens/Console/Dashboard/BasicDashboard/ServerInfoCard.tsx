@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -25,18 +24,15 @@ import { Card, CardHeader } from "@mui/material";
 import { CircleIcon, VersionIcon } from "../../../../icons";
 import get from "lodash/get";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
-
 const styles = (theme: Theme) =>
   createStyles({
     ...commonDashboardInfocard,
   });
-
 interface ICardProps {
   classes: any;
   server: ServerInfo;
   index: number;
 }
-
 const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
   const serverStatusToClass = (health_status: string) => {
     switch (health_status) {
@@ -48,12 +44,9 @@ const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
         return classes.greyState;
     }
   };
-
   const networkKeys = Object.keys(get(server, "network", {}));
-
   const networkTotal = networkKeys.length;
   const totalDrives = server.drives ? server.drives.length : 0;
-
   const activeNetwork = networkKeys.reduce((acc: number, currValue: string) => {
     const item = server.network[currValue];
     if (item === "online") {
@@ -61,11 +54,9 @@ const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
     }
     return acc;
   }, 0);
-
   const activeDisks = server.drives
     ? server.drives.filter((element) => element.state === "ok").length
     : 0;
-
   return (
     <Card className={classes.cardContainer}>
       <CardHeader
@@ -89,9 +80,10 @@ const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
               <span
                 className={`${classes.innerState} ${
                   activeDisks <= totalDrives / 2 && classes.redState
-                } ${
-                  activeDisks === totalDrives / 2 + 1 && classes.yellowState
-                } ${activeDisks === totalDrives && classes.greenState}`}
+                }  ${
+                  totalDrives != 2 && activeDisks === totalDrives / 2 + 1 && classes.yellowState
+                }  ${
+                  activeDisks === totalDrives && classes.greenState}`}
               >
                 <CircleIcon />
               </span>
@@ -122,5 +114,4 @@ const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
     </Card>
   );
 };
-
 export default withStyles(styles)(ServerInfoCard);
