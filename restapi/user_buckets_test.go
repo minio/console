@@ -47,6 +47,7 @@ var minioSetObjectLockConfigMock func(ctx context.Context, bucketName string, mo
 var minioGetBucketObjectLockConfigMock func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 var minioSetVersioningMock func(ctx context.Context, state string) *probe.Error
+var minioCopyObjectMock func(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
 
 // Define a mock struct of minio Client interface implementation
 type minioClientMock struct {
@@ -98,6 +99,10 @@ func (mc minioClientMock) getBucketObjectLockConfig(ctx context.Context, bucketN
 }
 func (mc minioClientMock) getObjectLockConfig(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return minioGetObjectLockConfigMock(ctx, bucketName)
+}
+
+func (mc minioClientMock) copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error) {
+	return minioCopyObjectMock(ctx, dst, src)
 }
 
 func (c s3ClientMock) setVersioning(ctx context.Context, state string) *probe.Error {

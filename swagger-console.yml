@@ -613,6 +613,33 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/restore:
+    put:
+      summary: Restore Object to a selected version
+      operationId: PutObjectRestore
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy

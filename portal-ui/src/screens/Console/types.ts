@@ -31,5 +31,5 @@ export interface ISessionResponse {
   features: string[];
   operator: boolean;
   distributedMode: boolean;
-  policy: ISessionPolicy,
+  policy: ISessionPolicy;
 }

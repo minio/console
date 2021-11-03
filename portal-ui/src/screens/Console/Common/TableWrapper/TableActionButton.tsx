@@ -25,7 +25,12 @@ import DisableIcon from "./TableActionIcons/DisableIcon";
 import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
 import EditIcon from "../../../../icons/EditIcon";
 import TrashIcon from "../../../../icons/TrashIcon";
-import { IAMPoliciesIcon, PreviewIcon, ShareIcon } from "../../../../icons";
+import {
+  IAMPoliciesIcon,
+  PreviewIcon,
+  ShareIcon,
+  HistoryIcon,
+} from "../../../../icons";
 import DownloadIcon from "../../../../icons/DownloadIcon";
 
 const styles = () =>
@@ -78,6 +83,8 @@ const defineIcon = (type: string, selected: boolean) => {
       return <FormatDriveIcon active={selected} />;
     case "preview":
       return <PreviewIcon />;
+    case "restore":
+      return <HistoryIcon />;
   }
 
   return null;

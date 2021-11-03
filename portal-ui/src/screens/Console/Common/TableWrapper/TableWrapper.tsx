@@ -483,7 +483,7 @@ const elementActions = (
 // Function to calculate the options column width according elements inside
 const calculateOptionsSize = (containerWidth: number, totalOptions: number) => {
   const minContainerSize = 80;
-  const sizeOptions = totalOptions * 45;
+  const sizeOptions = totalOptions * 45 + 15;
 
   if (sizeOptions < minContainerSize) {
     return minContainerSize;
