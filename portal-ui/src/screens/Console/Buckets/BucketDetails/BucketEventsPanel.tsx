@@ -23,7 +23,7 @@ import { Button } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { AddIcon, LambdaIcon } from "../../../../icons";
-import { BucketEvent, BucketEventList } from "../types";
+import { BucketEvent, BucketEventList, BucketInfo } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import {
@@ -36,6 +36,12 @@ import api from "../../../../common/api";
 import DeleteEvent from "./DeleteEvent";
 import AddEvent from "./AddEvent";
 import HelpBox from "../../../../common/HelpBox";
+import { displayComponent } from "../../../../utils/permissions";
+import {
+  ADMIN_SERVER_INFO,
+  S3_GET_BUCKET_NOTIFICATIONS,
+  S3_PUT_BUCKET_NOTIFICATIONS,
+} from "../../../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,6 +60,7 @@ interface IBucketEventsProps {
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
 }
 
 const BucketEventsPanel = ({
@@ -61,6 +68,7 @@ const BucketEventsPanel = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
+  bucketInfo,
 }: IBucketEventsProps) => {
   const [addEventScreenOpen, setAddEventScreenOpen] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
@@ -70,6 +78,16 @@ const BucketEventsPanel = ({
 
   const bucketName = match.params["bucketName"];
 
+  const displayEvents = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_BUCKET_NOTIFICATIONS,
+  ]);
+
+  const displaySubscribeToEvents = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_BUCKET_NOTIFICATIONS, ADMIN_SERVER_INFO],
+    true
+  );
+
   useEffect(() => {
     if (loadingBucket) {
       setLoadingEvents(true);
@@ -78,17 +96,21 @@ const BucketEventsPanel = ({
 
   useEffect(() => {
     if (loadingEvents) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
-        .then((res: BucketEventList) => {
-          const events = get(res, "events", []);
-          setLoadingEvents(false);
-          setRecords(events || []);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoadingEvents(false);
-          setErrorSnackMessage(err);
-        });
+      if (displayEvents) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
+          .then((res: BucketEventList) => {
+            const events = get(res, "events", []);
+            setLoadingEvents(false);
+            setRecords(events || []);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setLoadingEvents(false);
+            setErrorSnackMessage(err);
+          });
+      } else {
+        setLoadingEvents(false);
+      }
     }
   }, [loadingEvents, setErrorSnackMessage, bucketName]);
 
@@ -136,20 +158,23 @@ const BucketEventsPanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <h1 className={classes.sectionTitle}>Events</h1>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            size="medium"
-            onClick={() => {
-              setAddEventScreenOpen(true);
-            }}
-          >
-            Subscribe to Event
-          </Button>
+          {displaySubscribeToEvents && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              size="medium"
+              onClick={() => {
+                setAddEventScreenOpen(true);
+              }}
+            >
+              Subscribe to Event
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12}>
           <TableWrapper
+            disabled={!displayEvents}
             itemActions={tableActions}
             columns={[
               { label: "SQS", elementKey: "arn" },
@@ -203,6 +228,7 @@ const BucketEventsPanel = ({
 const mapState = (state: AppState) => ({
   session: state.console.session,
   loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, {

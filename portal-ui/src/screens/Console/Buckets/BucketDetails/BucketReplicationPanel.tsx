@@ -28,6 +28,7 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import {
+  BucketInfo,
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
@@ -40,12 +41,21 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
 import HelpBox from "../../../../common/HelpBox";
+import { displayComponent } from "../../../../utils/permissions";
+import {
+  ADMIN_SERVER_INFO,
+  S3_GET_BUCKET_NOTIFICATIONS,
+  S3_GET_REPLICATION_CONFIGURATION,
+  S3_PUT_BUCKET_NOTIFICATIONS,
+  S3_PUT_REPLICATION_CONFIGURATION,
+} from "../../../../types";
 
 interface IBucketReplicationProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
 }
 
 const styles = (theme: Theme) =>
@@ -62,19 +72,28 @@ const BucketReplicationPanel = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
+  bucketInfo,
 }: IBucketReplicationProps) => {
-  const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
-  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [deleteReplicationModal, setDeleteReplicationModal] =
     useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
+
+  const displayReplicationRules = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_REPLICATION_CONFIGURATION,
+  ]);
+
+  const displayAddReplicationRules = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_REPLICATION_CONFIGURATION],
+    true
+  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -83,61 +102,22 @@ const BucketReplicationPanel = ({
   }, [loadingBucket, setLoadingReplication]);
 
   useEffect(() => {
-    if (loadingPerms) {
-      api
-        .invoke("POST", `/api/v1/has-permission`, {
-          actions: [
-            {
-              id: "PutReplicationConfiguration",
-              action: "s3:PutReplicationConfiguration",
-              bucket_name: bucketName,
-            },
-            {
-              id: "GetReplicationConfiguration",
-              action: "s3:GetReplicationConfiguration",
-              bucket_name: bucketName,
-            },
-          ],
-        })
-        .then((res: HasPermissionResponse) => {
-          setLoadingPerms(false);
-          if (!res.permissions) {
-            return;
-          }
-          const actions = res.permissions ? res.permissions : [];
-
-          let userCanPutReplication = actions.find(
-            (s) => s.id === "PutReplicationConfiguration"
-          );
-
-          if (userCanPutReplication && userCanPutReplication.can) {
-            setCanPutReplication(true);
-          } else {
-            setCanPutReplication(false);
-          }
-
-          setLoadingPerms(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoadingPerms(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [bucketName, loadingPerms, setErrorSnackMessage]);
-
-  useEffect(() => {
     if (loadingReplication) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
-        .then((res: BucketReplication) => {
-          const r = res.rules ? res.rules : [];
-          setReplicationRules(r);
-          setLoadingReplication(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingReplication(false);
-        });
+      if (displayReplicationRules) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
+          .then((res: BucketReplication) => {
+            const r = res.rules ? res.rules : [];
+            setReplicationRules(r);
+            setLoadingReplication(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingReplication(false);
+          });
+      } else {
+        setLoadingReplication(false);
+      }
     }
   }, [loadingReplication, setErrorSnackMessage, bucketName]);
 
@@ -200,21 +180,23 @@ const BucketReplicationPanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <h1 className={classes.sectionTitle}>Replication</h1>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!canPutReplication}
-            startIcon={<AddIcon />}
-            size="medium"
-            onClick={() => {
-              setOpenReplicationOpen(true);
-            }}
-          >
-            Add Replication Rule
-          </Button>
+          {displayAddReplicationRules && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              size="medium"
+              onClick={() => {
+                setOpenReplicationOpen(true);
+              }}
+            >
+              Add Replication Rule
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12}>
           <TableWrapper
+            disabled={!displayReplicationRules}
             itemActions={replicationTableActions}
             columns={[
               {
@@ -275,6 +257,7 @@ const BucketReplicationPanel = ({
 const mapState = (state: AppState) => ({
   session: state.console.session,
   loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, {

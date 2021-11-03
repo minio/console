@@ -32,12 +32,21 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import history from "../../../../history";
+import { BucketInfo } from "../types";
+import { displayComponent } from "../../../../utils/permissions";
+import {
+  ADMIN_GET_POLICY,
+  ADMIN_LIST_GROUPS,
+  ADMIN_LIST_USER_POLICIES,
+  ADMIN_LIST_USERS,
+} from "../../../../types";
 
 const styles = (theme: Theme) => createStyles({});
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
   loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, { setErrorSnackMessage });
@@ -55,6 +64,7 @@ interface IAccessDetailsProps {
   classes: any;
   match: any;
   loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
 }
 
 const AccessDetails = ({
@@ -63,6 +73,7 @@ const AccessDetails = ({
   setErrorSnackMessage,
   session,
   loadingBucket,
+  bucketInfo,
 }: IAccessDetailsProps) => {
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
@@ -72,7 +83,15 @@ const AccessDetails = ({
 
   const bucketName = match.params["bucketName"];
 
-  const usersEnabled = session.pages?.indexOf("/users") > -1;
+  const displayPoliciesList = displayComponent(bucketInfo?.allowedActions, [
+    ADMIN_LIST_USER_POLICIES,
+  ]);
+
+  const displayUsersList = displayComponent(
+    bucketInfo?.allowedActions,
+    [ADMIN_GET_POLICY, ADMIN_LIST_USERS, ADMIN_LIST_GROUPS],
+    true
+  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -100,32 +119,41 @@ const AccessDetails = ({
   ];
 
   useEffect(() => {
-    if (loadingUsers && usersEnabled) {
-      api
-        .invoke("GET", `/api/v1/bucket-users/${bucketName}`)
-        .then((res: any) => {
-          setBucketUsers(res);
-          setLoadingUsers(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingUsers(false);
-        });
+    if (loadingUsers) {
+      if (displayUsersList) {
+        api
+          .invoke("GET", `/api/v1/bucket-users/${bucketName}`)
+          .then((res: any) => {
+            setBucketUsers(res);
+            setLoadingUsers(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingUsers(false);
+          });
+      } else {
+        setLoadingUsers(false);
+      }
     }
-  }, [loadingUsers, setErrorSnackMessage, bucketName, usersEnabled]);
+  }, [loadingUsers, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
     if (loadingPolicies) {
-      api
-        .invoke("GET", `/api/v1/bucket-policy/${bucketName}`)
-        .then((res: any) => {
-          setBucketPolicy(res.policies);
-          setLoadingPolicies(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingPolicies(false);
-        });
+      console.log("displayPoliciesList", displayPoliciesList);
+      if (displayPoliciesList) {
+        api
+          .invoke("GET", `/api/v1/bucket-policy/${bucketName}`)
+          .then((res: any) => {
+            setBucketPolicy(res.policies);
+            setLoadingPolicies(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingPolicies(false);
+          });
+      } else {
+        setLoadingPolicies(false);
+      }
     }
   }, [loadingPolicies, setErrorSnackMessage, bucketName]);
 
@@ -144,11 +172,12 @@ const AccessDetails = ({
         scrollButtons="auto"
       >
         <Tab label="Policies" {...a11yProps(0)} />
-        {usersEnabled && <Tab label="Users" {...a11yProps(1)} />}
+        {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
       </Tabs>
       <Paper>
         <TabPanel index={0} value={curTab}>
           <TableWrapper
+            disabled={!displayPoliciesList}
             noBackground={true}
             itemActions={PolicyActions}
             columns={[{ label: "Name", elementKey: "name" }]}
@@ -158,7 +187,7 @@ const AccessDetails = ({
             idField="name"
           />
         </TabPanel>
-        {usersEnabled && (
+        {displayUsersList && (
           <TabPanel index={1} value={curTab}>
             <TableWrapper
               noBackground={true}

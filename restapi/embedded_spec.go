@@ -2372,7 +2372,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Console.",
+        "summary": "Logout from Operator.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -3620,6 +3620,12 @@ func init() {
         "access": {
           "$ref": "#/definitions/bucketAccess"
         },
+        "allowedActions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "creation_date": {
           "type": "string"
         },
@@ -3661,6 +3667,9 @@ func init() {
               "type": "boolean"
             }
           }
+        },
+        "manage": {
+          "type": "boolean"
         },
         "name": {
           "type": "string",
@@ -4145,6 +4154,46 @@ func init() {
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
+    },
+    "iamPolicy": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamPolicyStatement"
+          }
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "iamPolicyStatement": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "effect": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "license": {
       "type": "object",
@@ -5114,6 +5163,10 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "policy": {
+          "type": "object",
+          "$ref": "#/definitions/iamPolicy"
         },
         "status": {
           "type": "string",
@@ -7980,7 +8033,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Console.",
+        "summary": "Logout from Operator.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -9348,6 +9401,12 @@ func init() {
         "access": {
           "$ref": "#/definitions/bucketAccess"
         },
+        "allowedActions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "creation_date": {
           "type": "string"
         },
@@ -9389,6 +9448,9 @@ func init() {
               "type": "boolean"
             }
           }
+        },
+        "manage": {
+          "type": "boolean"
         },
         "name": {
           "type": "string",
@@ -9873,6 +9935,46 @@ func init() {
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
+    },
+    "iamPolicy": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamPolicyStatement"
+          }
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "iamPolicyStatement": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "effect": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "license": {
       "type": "object",
@@ -10842,6 +10944,10 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "policy": {
+          "type": "object",
+          "$ref": "#/definitions/iamPolicy"
         },
         "status": {
           "type": "string",

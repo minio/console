@@ -28,6 +28,10 @@ const initialState: ConsoleState = {
     pages: [],
     features: [],
     distributedMode: false,
+    policy: {
+      version: "",
+      statement: [],
+    },
   },
 };
 

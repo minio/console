@@ -116,12 +116,35 @@ func TestListBucket(t *testing.T) {
 	adminClient := adminClientMock{}
 	ctx := context.Background()
 	// Test-1 : getaAcountUsageInfo() Get response from minio client with two buckets
+	infoPolicy := `
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+				"admin:*"
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		},
+		{
+			"Action": [
+				"s3:*"
+			],
+			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:s3:::*"
+			],
+			"Sid": ""
+		}
+	]
+}`
 	mockBucketList := madmin.AccountInfo{
 		AccountName: "test",
 		Buckets: []madmin.BucketAccessInfo{
 			{Name: "bucket-1", Created: time.Now(), Size: 1024},
 			{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
 		},
+		Policy: []byte(infoPolicy),
 	}
 	// mock function response from listBucketsWithContext(ctx)
 	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
@@ -206,6 +229,8 @@ func TestBucketInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
 	minClient := minioClientMock{}
+	ctx := context.Background()
+	adminClient := adminClientMock{}
 	function := "getBucketInfo()"
 
 	// Test-1: getBucketInfo() get a bucket with PRIVATE access
@@ -221,7 +246,42 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	bucketInfo, err := getBucketInfo(minClient, bucketToSet)
+	infoPolicy := `
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+				"admin:*"
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		},
+		{
+			"Action": [
+				"s3:*"
+			],
+			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:s3:::*"
+			],
+			"Sid": ""
+		}
+	]
+}`
+	mockBucketList := madmin.AccountInfo{
+		AccountName: "test",
+		Buckets: []madmin.BucketAccessInfo{
+			{Name: "bucket-1", Created: time.Now(), Size: 1024},
+			{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
+		},
+		Policy: []byte(infoPolicy),
+	}
+	// mock function response from listBucketsWithContext(ctx)
+	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+		return mockBucketList, nil
+	}
+
+	bucketInfo, err := getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -243,7 +303,7 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	bucketInfo, err = getBucketInfo(minClient, bucketToSet)
+	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -265,7 +325,7 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	bucketInfo, err = getBucketInfo(minClient, bucketToSet)
+	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -286,27 +346,13 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	_, err = getBucketInfo(minClient, bucketToSet)
+	_, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if assert.Error(err) {
 		assert.Equal("invalid character 'p' looking for beginning of value", err.Error())
 	}
 
 	// Test-4: getBucketInfo() handle GetBucketPolicy error correctly
-	mockPolicy = ""
-	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
-		return "", errors.New("error")
-	}
-	bucketToSet = "csbucket"
-	outputExpected = &models.Bucket{
-		Name:         swag.String(bucketToSet),
-		Access:       models.NewBucketAccess(models.BucketAccessCUSTOM),
-		CreationDate: "", // to be implemented
-		Size:         0,  // to be implemented
-	}
-	_, err = getBucketInfo(minClient, bucketToSet)
-	if assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
+	// Test removed since we can tolerate this scenario now
 }
 
 func TestSetBucketAccess(t *testing.T) {

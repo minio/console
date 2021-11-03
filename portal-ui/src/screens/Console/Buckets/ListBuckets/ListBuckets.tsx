@@ -42,6 +42,7 @@ import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import SearchIcon from "../../../../icons/SearchIcon";
 import HelpBox from "../../../../common/HelpBox";
+import { ISessionResponse } from "../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -135,6 +136,7 @@ interface IListBucketsProps {
   addBucketModalOpen: boolean;
   addBucketReset: typeof addBucketReset;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  session: ISessionResponse;
 }
 
 const ListBuckets = ({
@@ -144,6 +146,7 @@ const ListBuckets = ({
   addBucketModalOpen,
   addBucketReset,
   setErrorSnackMessage,
+  session,
 }: IListBucketsProps) => {
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -327,7 +330,7 @@ const ListBuckets = ({
                   }}
                   inputProps={{
                     disableUnderline: true,
-                    endAdornment: (
+                    endadornment: (
                       <InputAdornment position="end">
                         <SearchIcon />
                       </InputAdornment>
@@ -345,7 +348,7 @@ const ListBuckets = ({
                   }}
                   inputProps={{
                     disableUnderline: true,
-                    endAdornment: (
+                    endadornment: (
                       <InputAdornment position="end">
                         <SearchIcon />
                       </InputAdornment>
@@ -462,6 +465,7 @@ const ListBuckets = ({
 
 const mapState = (state: AppState) => ({
   addBucketModalOpen: state.buckets.open,
+  session: state.console.session,
 });
 
 const connector = connect(mapState, {

@@ -53,6 +53,21 @@ import GavelIcon from "@mui/icons-material/Gavel";
 import EnableQuota from "./EnableQuota";
 import { setBucketDetailsLoad } from "../actions";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
+import { displayComponent } from "../../../../utils/permissions";
+import {
+  ADMIN_GET_BUCKET_QUOTA,
+  ADMIN_SET_BUCKET_QUOTA,
+  S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
+  S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION,
+  S3_GET_BUCKET_POLICY,
+  S3_GET_BUCKET_VERSIONING,
+  S3_GET_OBJECT_RETENTION,
+  S3_GET_REPLICATION_CONFIGURATION,
+  S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
+  S3_PUT_BUCKET_POLICY,
+  S3_PUT_BUCKET_VERSIONING,
+  S3_PUT_OBJECT_RETENTION,
+} from "../../../../types";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -153,6 +168,62 @@ const BucketSummary = ({
     accessPolicy = bucketInfo.access;
   }
 
+  const displayGetBucketPolicy = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_BUCKET_POLICY,
+  ]);
+
+  const displayPutBucketPolicy = displayComponent(bucketInfo?.allowedActions, [
+    S3_PUT_BUCKET_POLICY,
+  ]);
+
+  const displayGetReplicationConfiguration = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_GET_REPLICATION_CONFIGURATION]
+  );
+
+  const displayGetBucketObjectLockConfiguration = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION]
+  );
+
+  const displayGetBucketEncryptionConfiguration = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_GET_BUCKET_ENCRYPTION_CONFIGURATION]
+  );
+
+  const displayPutBucketEncryptionConfiguration = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION]
+  );
+
+  const displayGetBucketVersioning = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_GET_BUCKET_VERSIONING]
+  );
+
+  const displayPutBucketVersioning = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_BUCKET_VERSIONING]
+  );
+
+  const displayGetBucketQuota = displayComponent(bucketInfo?.allowedActions, [
+    ADMIN_GET_BUCKET_QUOTA,
+  ]);
+
+  const displaySetBucketQuota = displayComponent(bucketInfo?.allowedActions, [
+    ADMIN_SET_BUCKET_QUOTA,
+  ]);
+
+  const displayGetObjectRetention = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_GET_OBJECT_RETENTION]
+  );
+
+  const displayPutObjectRetention = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_PUT_OBJECT_RETENTION]
+  );
+
   useEffect(() => {
     if (loadingBucket) {
       setBucketLoading(true);
@@ -163,25 +234,31 @@ const BucketSummary = ({
 
   useEffect(() => {
     if (loadingEncryption) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
-        .then((res: BucketEncryptionInfo) => {
-          if (res.algorithm) {
-            setEncryptionEnabled(true);
-            setEncryptionCfg(res);
-          }
-          setLoadingEncryption(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          if (
-            err.errorMessage ===
-            "The server side encryption configuration was not found"
-          ) {
-            setEncryptionEnabled(false);
-            setEncryptionCfg(null);
-          }
-          setLoadingEncryption(false);
-        });
+      if (displayGetBucketEncryptionConfiguration) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
+          .then((res: BucketEncryptionInfo) => {
+            if (res.algorithm) {
+              setEncryptionEnabled(true);
+              setEncryptionCfg(res);
+            }
+            setLoadingEncryption(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            if (
+              err.errorMessage ===
+              "The server side encryption configuration was not found"
+            ) {
+              setEncryptionEnabled(false);
+              setEncryptionCfg(null);
+            }
+            setLoadingEncryption(false);
+          });
+      } else {
+        setEncryptionEnabled(false);
+        setEncryptionCfg(null);
+        setLoadingEncryption(false);
+      }
     }
   }, [loadingEncryption, bucketName]);
 
@@ -202,22 +279,27 @@ const BucketSummary = ({
 
   useEffect(() => {
     if (loadingQuota && distributedSetup) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
-        .then((res: BucketQuota) => {
-          setQuota(res);
-          if (res.quota) {
-            setQuotaEnabled(true);
-          } else {
+      if (displayGetBucketQuota) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
+          .then((res: BucketQuota) => {
+            setQuota(res);
+            if (res.quota) {
+              setQuotaEnabled(true);
+            } else {
+              setQuotaEnabled(false);
+            }
+            setLoadingQuota(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
             setQuotaEnabled(false);
-          }
-          setLoadingQuota(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setQuotaEnabled(false);
-          setLoadingQuota(false);
-        });
+            setLoadingQuota(false);
+          });
+      } else {
+        setQuotaEnabled(false);
+        setLoadingQuota(false);
+      }
     }
   }, [
     loadingQuota,
@@ -229,16 +311,20 @@ const BucketSummary = ({
 
   useEffect(() => {
     if (loadingVersioning && distributedSetup) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-        .then((res: BucketObjectLocking) => {
-          setHasObjectLocking(res.object_locking_enabled);
-          setLoadingLocking(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingLocking(false);
-        });
+      if (displayGetBucketObjectLockConfiguration) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
+          .then((res: BucketObjectLocking) => {
+            setHasObjectLocking(res.object_locking_enabled);
+            setLoadingLocking(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingLocking(false);
+          });
+      } else {
+        setLoadingLocking(false);
+      }
     }
   }, [
     loadingObjectLocking,
@@ -405,64 +491,76 @@ const BucketSummary = ({
           <Grid item xs={8}>
             <table width={"100%"}>
               <tbody>
-                <tr>
-                  <td className={classes.titleCol}>Access Policy:</td>
-                  <td className={classes.capitalizeFirst}>
-                    <Button
-                      color="primary"
-                      className={classes.anchorButton}
-                      onClick={() => {
-                        setAccessPolicyScreenOpen(true);
-                      }}
-                    >
-                      {bucketLoading ? (
+                {displayGetBucketPolicy && (
+                  <tr>
+                    <td className={classes.titleCol}>Access Policy:</td>
+                    <td className={classes.capitalizeFirst}>
+                      <Button
+                        disabled={!displayPutBucketPolicy}
+                        color="primary"
+                        className={classes.anchorButton}
+                        onClick={() => {
+                          setAccessPolicyScreenOpen(true);
+                        }}
+                      >
+                        {bucketLoading ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          accessPolicy.toLowerCase()
+                        )}
+                      </Button>
+                    </td>
+                  </tr>
+                )}
+                {distributedSetup && (
+                  <Fragment>
+                    {displayGetReplicationConfiguration && (
+                      <tr>
+                        <td className={classes.titleCol}>Replication:</td>
+                        <td className={classes.doubleElement}>
+                          <span>
+                            {replicationRules ? "Enabled" : "Disabled"}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                    {displayGetBucketObjectLockConfiguration && (
+                      <tr>
+                        <td className={classes.titleCol}>Object Locking:</td>
+                        <td>{!hasObjectLocking ? "Disabled" : "Enabled"}</td>
+                      </tr>
+                    )}
+                  </Fragment>
+                )}
+                {displayGetBucketEncryptionConfiguration && (
+                  <tr>
+                    <td className={classes.titleCol}>Encryption:</td>
+                    <td>
+                      {loadingEncryption ? (
                         <CircularProgress
                           color="primary"
                           size={16}
                           variant="indeterminate"
                         />
                       ) : (
-                        accessPolicy.toLowerCase()
+                        <Button
+                          disabled={!displayPutBucketEncryptionConfiguration}
+                          color="primary"
+                          className={classes.anchorButton}
+                          onClick={() => {
+                            setEnableEncryptionScreenOpen(true);
+                          }}
+                        >
+                          {encryptionEnabled ? "Enabled" : "Disabled"}
+                        </Button>
                       )}
-                    </Button>
-                  </td>
-                </tr>
-                {distributedSetup && (
-                  <Fragment>
-                    <tr>
-                      <td className={classes.titleCol}>Replication:</td>
-                      <td className={classes.doubleElement}>
-                        <span>{replicationRules ? "Enabled" : "Disabled"}</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes.titleCol}>Object Locking:</td>
-                      <td>{!hasObjectLocking ? "Disabled" : "Enabled"}</td>
-                    </tr>
-                  </Fragment>
+                    </td>
+                  </tr>
                 )}
-                <tr>
-                  <td className={classes.titleCol}>Encryption:</td>
-                  <td>
-                    {loadingEncryption ? (
-                      <CircularProgress
-                        color="primary"
-                        size={16}
-                        variant="indeterminate"
-                      />
-                    ) : (
-                      <Button
-                        color="primary"
-                        className={classes.anchorButton}
-                        onClick={() => {
-                          setEnableEncryptionScreenOpen(true);
-                        }}
-                      >
-                        {encryptionEnabled ? "Enabled" : "Disabled"}
-                      </Button>
-                    )}
-                  </td>
-                </tr>
               </tbody>
             </table>
           </Grid>
@@ -485,7 +583,7 @@ const BucketSummary = ({
       </Paper>
       <br />
       <br />
-      {distributedSetup && (
+      {distributedSetup && displayGetBucketVersioning && (
         <Fragment>
           <Paper className={classes.paperContainer} elevation={1}>
             <Grid container>
@@ -506,6 +604,7 @@ const BucketSummary = ({
                         ) : (
                           <Fragment>
                             <Button
+                              disabled={!displayPutBucketVersioning}
                               color="primary"
                               className={classes.anchorButton}
                               onClick={setBucketVersioning}
@@ -515,26 +614,31 @@ const BucketSummary = ({
                           </Fragment>
                         )}
                       </td>
-                      <td className={classes.titleCol}>Quota:</td>
-                      <td>
-                        {loadingQuota ? (
-                          <CircularProgress
-                            color="primary"
-                            size={16}
-                            variant="indeterminate"
-                          />
-                        ) : (
-                          <Fragment>
-                            <Button
-                              color="primary"
-                              className={classes.anchorButton}
-                              onClick={setBucketQuota}
-                            >
-                              {quotaEnabled ? "Enabled" : "Disabled"}
-                            </Button>
-                          </Fragment>
-                        )}
-                      </td>
+                      {displayGetBucketQuota && (
+                        <Fragment>
+                          <td className={classes.titleCol}>Quota:</td>
+                          <td>
+                            {loadingQuota ? (
+                              <CircularProgress
+                                color="primary"
+                                size={16}
+                                variant="indeterminate"
+                              />
+                            ) : (
+                              <Fragment>
+                                <Button
+                                  disabled={!displaySetBucketQuota}
+                                  color="primary"
+                                  className={classes.anchorButton}
+                                  onClick={setBucketQuota}
+                                >
+                                  {quotaEnabled ? "Enabled" : "Disabled"}
+                                </Button>
+                              </Fragment>
+                            )}
+                          </td>
+                        </Fragment>
+                      )}
                     </tr>
                   </tbody>
                 </table>
@@ -563,7 +667,7 @@ const BucketSummary = ({
         </Fragment>
       )}
 
-      {hasObjectLocking && (
+      {hasObjectLocking && displayGetObjectRetention && (
         <Paper className={classes.paperContainer}>
           <Grid container>
             <Grid item xs={12}>
@@ -583,6 +687,7 @@ const BucketSummary = ({
                       ) : (
                         <Fragment>
                           <Button
+                            disabled={!displayPutObjectRetention}
                             color="primary"
                             className={classes.anchorButton}
                             onClick={() => {

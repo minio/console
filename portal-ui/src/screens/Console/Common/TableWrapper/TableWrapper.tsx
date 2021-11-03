@@ -101,6 +101,7 @@ interface TableWrapperProps {
   autoScrollToBottom?: boolean;
   infiniteScrollConfig?: IInfiniteScrollConfig;
   sortConfig?: ISortConfig;
+  disabled?: boolean;
 }
 
 const borderColor = "#9c9c9c80";
@@ -141,6 +142,10 @@ const styles = () =>
     noBackground: {
       backgroundColor: "transparent",
       border: 0,
+    },
+    disabled: {
+      backgroundColor: "#fbfafa",
+      color: "#cccccc",
     },
     defaultPaperHeight: {
       height: "calc(100vh - 205px)",
@@ -514,6 +519,7 @@ const TableWrapper = ({
   infiniteScrollConfig,
   sortConfig,
   autoScrollToBottom = false,
+  disabled = false,
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -597,9 +603,9 @@ const TableWrapper = ({
   return (
     <Grid item xs={12}>
       <Paper
-        className={`${classes.paper} ${
-          noBackground ? classes.noBackground : ""
-        } ${
+        className={`${classes.paper} ${noBackground ? classes.noBackground : ""}
+        ${disabled ? classes.disabled : ""} 
+        ${
           customPaperHeight !== ""
             ? customPaperHeight
             : classes.defaultPaperHeight

@@ -14,10 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+export interface ISessionPolicyStatement {
+  action: string[];
+  condition: any;
+  effect: string;
+  resource: string[];
+}
+export interface ISessionPolicy {
+  version: string;
+  statement: ISessionPolicyStatement[];
+}
+
 export interface ISessionResponse {
   status: string;
   pages: string[];
   features: string[];
   operator: boolean;
   distributedMode: boolean;
+  policy: ISessionPolicy,
 }

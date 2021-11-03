@@ -37,6 +37,9 @@ import {
   objectBrowserCommon,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { BucketInfo } from "../types";
+import { displayComponent } from "../../../../utils/permissions";
+import { S3_GET_BUCKET_POLICY, S3_PUT_BUCKET_POLICY } from "../../../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -109,6 +112,7 @@ const styles = (theme: Theme) =>
 const mapState = (state: AppState) => ({
   session: state.console.session,
   loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, { setErrorSnackMessage });
@@ -119,6 +123,7 @@ interface IAccessRuleProps {
   classes: any;
   match: any;
   loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
 }
 
 const AccessRule = ({
@@ -126,6 +131,7 @@ const AccessRule = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
+  bucketInfo,
 }: IAccessRuleProps) => {
   const [loadingAccessRules, setLoadingAccessRules] = useState<boolean>(true);
   const [accessRules, setAccessRules] = useState([]);
@@ -138,6 +144,16 @@ const AccessRule = ({
   const [initialAccess, setInitialAccess] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
+
+  const displayAccessRules = displayComponent(bucketInfo?.allowedActions, [
+    S3_GET_BUCKET_POLICY,
+  ]);
+
+  const displayAddAccessRules = displayComponent(
+    bucketInfo?.allowedActions,
+    [S3_GET_BUCKET_POLICY, S3_PUT_BUCKET_POLICY],
+    true
+  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -165,16 +181,20 @@ const AccessRule = ({
 
   useEffect(() => {
     if (loadingAccessRules) {
-      api
-        .invoke("GET", `/api/v1/bucket/${bucketName}/access-rules`)
-        .then((res: any) => {
-          setAccessRules(res.accessRules);
-          setLoadingAccessRules(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingAccessRules(false);
-        });
+      if (displayAccessRules) {
+        api
+          .invoke("GET", `/api/v1/bucket/${bucketName}/access-rules`)
+          .then((res: any) => {
+            setAccessRules(res.accessRules);
+            setLoadingAccessRules(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingAccessRules(false);
+          });
+      } else {
+        setLoadingAccessRules(false);
+      }
     }
   }, [loadingAccessRules, setErrorSnackMessage, bucketName]);
 
@@ -221,24 +241,27 @@ const AccessRule = ({
       )}
       <Grid item xs={12} className={classes.actionsTray}>
         <h1 className={classes.sectionTitle}>Access Rules</h1>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          component="label"
-          onClick={() => {
-            setAddAccessRuleOpen(true);
-          }}
-          className={classes.listButton}
-        >
-          Add Access Rule
-        </Button>
+        {displayAddAccessRules && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            component="label"
+            onClick={() => {
+              setAddAccessRuleOpen(true);
+            }}
+            className={classes.listButton}
+          >
+            Add Access Rule
+          </Button>
+        )}
       </Grid>
       <Grid item xs={12}>
         <br />
       </Grid>
       <Paper>
         <TableWrapper
+          disabled={!displayAccessRules}
           noBackground={true}
           itemActions={AccessRuleActions}
           columns={[

@@ -53,7 +53,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...widgetContainerCommon,
     syncButton: {
-      "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-child": {
+      "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-of-type": {
         fontSize: 18,
       },
     },
