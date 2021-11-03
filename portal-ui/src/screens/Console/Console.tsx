@@ -29,7 +29,7 @@ import {
   serverIsLoading,
   serverNeedsRestart,
   setMenuOpen,
-  setSnackBarMessage,
+  setSnackBarMessage
 } from "../../actions";
 import { ISessionResponse } from "./types";
 import { snackBarMessage } from "../../types";
@@ -65,6 +65,7 @@ import ListTenants from "./Tenants/ListTenants/ListTenants";
 import Tools from "./Tools/Tools";
 import ErrorLogs from "./Logs/ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
+import GroupsDetails from "./Groups/GroupsDetails";
 
 const drawerWidth = 245;
 
@@ -74,44 +75,44 @@ const styles = (theme: Theme) =>
       display: "flex",
       "& .MuiPaper-root.MuiSnackbarContent-root": {
         borderRadius: "0px 0px 5px 5px",
-        boxShadow: "none",
-      },
+        boxShadow: "none"
+      }
     },
     toolbar: {
       background: theme.palette.background.default,
       color: "black",
-      paddingRight: 24, // keep right padding when drawer closed
+      paddingRight: 24 // keep right padding when drawer closed
     },
     toolbarIcon: {
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-end",
       padding: "0 8px",
-      ...theme.mixins.toolbar,
+      ...theme.mixins.toolbar
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
+        duration: theme.transitions.duration.leavingScreen
+      })
     },
     appBarShift: {
       marginLeft: drawerWidth,
       width: `calc(100% - ${drawerWidth}px)`,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
+        duration: theme.transitions.duration.enteringScreen
+      })
     },
     menuButton: {
-      marginRight: 36,
+      marginRight: 36
     },
     menuButtonHidden: {
-      display: "none",
+      display: "none"
     },
     title: {
-      flexGrow: 1,
+      flexGrow: 1
     },
     drawerPaper: {
       position: "relative",
@@ -119,44 +120,44 @@ const styles = (theme: Theme) =>
       width: drawerWidth,
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
+        duration: theme.transitions.duration.enteringScreen
       }),
       overflowX: "hidden",
       background:
         "transparent linear-gradient(90deg, #073052 0%, #081C42 100%) 0% 0% no-repeat padding-box",
-      boxShadow: "0px 3px 7px #00000014",
+      boxShadow: "0px 3px 7px #00000014"
     },
     drawerPaperClose: {
       overflowX: "hidden",
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
+        duration: theme.transitions.duration.leavingScreen
       }),
       width: theme.spacing(7),
       [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9),
-      },
+        width: theme.spacing(9)
+      }
     },
     content: {
       flexGrow: 1,
       height: "100vh",
       overflow: "auto",
-      position: "relative",
+      position: "relative"
     },
     container: {
       paddingBottom: theme.spacing(4),
       margin: 0,
       width: "100%",
-      maxWidth: "initial",
+      maxWidth: "initial"
     },
     paper: {
       padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column",
+      flexDirection: "column"
     },
     fixedHeight: {
-      minHeight: 240,
+      minHeight: 240
     },
     warningBar: {
       background: theme.palette.primary.main,
@@ -164,13 +165,13 @@ const styles = (theme: Theme) =>
       heigh: "60px",
       widht: "100%",
       lineHeight: "60px",
-      textAlign: "center",
+      textAlign: "center"
     },
     progress: {
       height: "3px",
-      backgroundColor: "#eaeaea",
+      backgroundColor: "#eaeaea"
     },
-    ...snackBarCommon,
+    ...snackBarCommon
   });
 
 interface IConsoleProps {
@@ -189,17 +190,17 @@ interface IConsoleProps {
 }
 
 const Console = ({
-  classes,
-  open,
-  needsRestart,
-  isServerLoading,
-  serverNeedsRestart,
-  serverIsLoading,
-  session,
-  loadingProgress,
-  snackBarMessage,
-  setSnackBarMessage,
-}: IConsoleProps) => {
+                   classes,
+                   open,
+                   needsRestart,
+                   isServerLoading,
+                   serverNeedsRestart,
+                   serverIsLoading,
+                   session,
+                   loadingProgress,
+                   snackBarMessage,
+                   setSnackBarMessage
+                 }: IConsoleProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const restartServer = () => {
@@ -232,171 +233,175 @@ const Console = ({
   const routes = [
     {
       component: Dashboard,
-      path: "/dashboard",
+      path: "/dashboard"
     },
     {
       component: Metrics,
-      path: "/metrics",
+      path: "/metrics"
     },
     {
       component: Buckets,
-      path: "/buckets",
+      path: "/buckets"
     },
     {
       component: Buckets,
-      path: "/buckets/*",
+      path: "/buckets/*"
     },
     {
       component: Watch,
-      path: "/tools/watch",
+      path: "/tools/watch"
     },
     {
       component: Users,
-      path: "/users/:userName+",
+      path: "/users/:userName+"
     },
     {
       component: Users,
-      path: "/users",
+      path: "/users"
     },
     {
       component: Groups,
-      path: "/groups",
+      path: "/groups"
+    },
+    {
+      component: GroupsDetails,
+      path: "/groups/:groupName+"
     },
     {
       component: Policies,
-      path: "/policies/*",
+      path: "/policies/*"
     },
     {
       component: Policies,
-      path: "/policies",
+      path: "/policies"
     },
     {
       component: Heal,
-      path: "/tools/heal",
+      path: "/tools/heal"
     },
     {
       component: Trace,
-      path: "/tools/trace",
+      path: "/tools/trace"
     },
     {
       component: HealthInfo,
-      path: "/tools/diagnostics",
+      path: "/tools/diagnostics"
     },
     {
       component: ErrorLogs,
-      path: "/tools/logs",
+      path: "/tools/logs"
     },
     {
       component: LogsSearchMain,
-      path: "/tools/audit-logs",
+      path: "/tools/audit-logs"
     },
     {
       component: Tools,
-      path: "/tools",
+      path: "/tools"
     },
     {
       component: ConfigurationMain,
-      path: "/settings",
+      path: "/settings"
     },
     {
       component: ConfigurationMain,
-      path: "/settings/:option",
+      path: "/settings/:option"
     },
     {
       component: AddNotificationEndpoint,
-      path: "/notification-endpoints/add/:service",
+      path: "/notification-endpoints/add/:service"
     },
     {
       component: NotificationTypeSelector,
-      path: "/notification-endpoints/add",
+      path: "/notification-endpoints/add"
     },
     {
       component: NotificationEndpoints,
-      path: "/notification-endpoints",
+      path: "/notification-endpoints"
     },
     {
       component: AddTierConfiguration,
-      path: "/tiers/add/:service",
+      path: "/tiers/add/:service"
     },
     {
       component: TierTypeSelector,
-      path: "/tiers/add",
+      path: "/tiers/add"
     },
     {
       component: ListTiersConfiguration,
-      path: "/tiers",
+      path: "/tiers"
     },
     {
       component: Account,
       path: "/account",
       props: {
-        changePassword: session.pages.includes("/account/change-password"),
-      },
+        changePassword: session.pages.includes("/account/change-password")
+      }
     },
     {
       component: ListTenants,
-      path: "/tenants",
+      path: "/tenants"
     },
     {
       component: AddTenant,
-      path: "/tenants/add",
+      path: "/tenants/add"
     },
     {
       component: Storage,
-      path: "/storage",
+      path: "/storage"
     },
     {
       component: Storage,
-      path: "/storage/volumes",
+      path: "/storage/volumes"
     },
     {
       component: Storage,
-      path: "/storage/drives",
+      path: "/storage/drives"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName"
     },
     {
       component: Hop,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/hop"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/summary",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/summary"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/metrics",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pools"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/license",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/license"
     },
     {
       component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/security",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/security"
     },
     {
       component: License,
-      path: "/license",
-    },
+      path: "/license"
+    }
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
 
@@ -481,7 +486,7 @@ const Console = ({
                     snackBarMessage.type === "error"
                       ? classes.errorSnackBar
                       : ""
-                  }`,
+                  }`
                 }}
               />
             </div>
@@ -515,14 +520,14 @@ const mapState = (state: AppState) => ({
   isServerLoading: state.system.serverIsLoading,
   session: state.console.session,
   loadingProgress: state.system.loadingProgress,
-  snackBarMessage: state.system.snackBar,
+  snackBarMessage: state.system.snackBar
 });
 
 const connector = connect(mapState, {
   setMenuOpen,
   serverNeedsRestart,
   serverIsLoading,
-  setSnackBarMessage,
+  setSnackBarMessage
 });
 
 export default withStyles(styles)(connector(Console));
