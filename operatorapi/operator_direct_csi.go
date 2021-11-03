@@ -30,9 +30,14 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	directv1beta1apis "github.com/minio/direct-csi/pkg/apis/direct.csi.min.io/v1beta1"
+	directv1beta2apis "github.com/minio/direct-csi/pkg/apis/direct.csi.min.io/v1beta2"
 	directv1beta1 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1beta1"
+	directv1beta2 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1beta2"
 	"github.com/minio/direct-csi/pkg/sys"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/restmapper"
 )
 
 const XFS = "xfs"
@@ -61,8 +66,33 @@ func registerDirectCSIHandlers(api *operations.OperatorAPI) {
 	})
 }
 
+// GetGroupKindVersions gets group/version/kind of given versions.
+func getGroupKindVersions(discoveryClient *discovery.DiscoveryClient, group, kind string, versions ...string) (*schema.GroupVersionKind, error) {
+	// discoveryClient := GetDiscoveryClient()
+	apiGroupResources, err := restmapper.GetAPIGroupResources(discoveryClient)
+	if err != nil {
+		return nil, err
+	}
+	restMapper := restmapper.NewDiscoveryRESTMapper(apiGroupResources)
+	gk := schema.GroupKind{
+		Group: group,
+		Kind:  kind,
+	}
+	mapper, err := restMapper.RESTMapping(gk, versions...)
+	if err != nil {
+		return nil, err
+	}
+
+	gvk := &schema.GroupVersionKind{
+		Group:   mapper.Resource.Group,
+		Version: mapper.Resource.Version,
+		Kind:    mapper.Resource.Resource,
+	}
+	return gvk, nil
+}
+
 // getDirectCSIVolumesList returns direct-csi drives
-func getDirectCSIDriveList(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface) (*models.GetDirectCSIDriveListResponse, error) {
+func getDirectCSIDriveList(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface) (*models.GetDirectCSIDriveListResponse, error) {
 	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -108,13 +138,13 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1beta1.DirectV1
 		dr := func(val string) string {
 			dr := driveName(val)
 			for _, c := range d.Status.Conditions {
-				if c.Type == string(directv1beta1apis.DirectCSIDriveConditionInitialized) {
+				if c.Type == string(directv1beta2apis.DirectCSIDriveConditionInitialized) {
 					if c.Status != metav1.ConditionTrue {
 						msg = c.Message
 						continue
 					}
 				}
-				if c.Type == string(directv1beta1apis.DirectCSIDriveConditionOwned) {
+				if c.Type == string(directv1beta2apis.DirectCSIDriveConditionOwned) {
 					if c.Status != metav1.ConditionTrue {
 						msg = c.Message
 						continue
@@ -149,12 +179,12 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1beta1.DirectV1
 
 func getDirectCSIDrivesListResponse(session *models.Principal) (*models.GetDirectCSIDriveListResponse, *models.Error) {
 	ctx := context.Background()
-	client, err := cluster.DirectCSIClient(session.STSSessionToken)
+	client, err := cluster.DirectCSIClientSet(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
-	drives, err := getDirectCSIDriveList(ctx, client.DirectV1beta1())
+	drives, err := getDirectCSIDriveList(ctx, client.DirectV1beta2())
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -162,7 +192,7 @@ func getDirectCSIDrivesListResponse(session *models.Principal) (*models.GetDirec
 }
 
 // getDirectCSIVolumesList returns direct-csi volumes
-func getDirectCSIVolumesList(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface) (*models.GetDirectCSIVolumeListResponse, error) {
+func getDirectCSIVolumesList(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface) (*models.GetDirectCSIVolumeListResponse, error) {
 	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -203,19 +233,19 @@ func getDirectCSIVolumesList(ctx context.Context, clientset directv1beta1.Direct
 
 func getDirectCSIVolumesListResponse(session *models.Principal) (*models.GetDirectCSIVolumeListResponse, *models.Error) {
 	ctx := context.Background()
-	client, err := cluster.DirectCSIClient(session.STSSessionToken)
+	client, err := cluster.DirectCSIClientSet(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
-	volumes, err := getDirectCSIVolumesList(ctx, client.DirectV1beta1())
+	volumes, err := getDirectCSIVolumesList(ctx, client.DirectV1beta2())
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	return volumes, nil
 }
 
-func formatDrives(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
+func formatDrivesv1beta1(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
 	if len(drives) == 0 {
 		return nil, errors.New("at least one drive needs to be set")
 	}
@@ -267,17 +297,16 @@ func formatDrives(ctx context.Context, clientset directv1beta1.DirectV1beta1Inte
 				continue
 			}
 
-			if !force {
-				if driveItem.Status.DriveStatus == directv1beta1apis.DriveStatusReady {
-					base.Error = "Drive already owned and managed. Use force to overwrite"
-					errors = append(errors, base)
-					continue
-				}
-				if driveItem.Status.Filesystem != "" && !force {
-					base.Error = "Drive already has a fs. Use force to overwrite"
-					errors = append(errors, base)
-					continue
-				}
+			if driveItem.Status.DriveStatus == directv1beta1apis.DriveStatusReady {
+				base.Error = "Drive already owned and managed"
+				errors = append(errors, base)
+				continue
+			}
+
+			if driveItem.Status.Filesystem != "" && !force {
+				base.Error = "Drive already has a fs. Use force to overwrite"
+				errors = append(errors, base)
+				continue
 			}
 
 			// Validation passes, we request format
@@ -302,16 +331,128 @@ func formatDrives(ctx context.Context, clientset directv1beta1.DirectV1beta1Inte
 	return returnErrors, nil
 }
 
+func formatDrivesv1beta2(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
+	if len(drives) == 0 {
+		return nil, errors.New("at least one drive needs to be set")
+	}
+
+	driveList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	driveName := func(val string) string {
+		dr := strings.ReplaceAll(val, sys.DirectCSIDevRoot+"/", "")
+		dr = strings.ReplaceAll(dr, sys.HostDevRoot+"/", "")
+		return strings.ReplaceAll(dr, "-part-", "")
+	}
+
+	drivesArray := map[string]string{}
+
+	for _, driveFromAPI := range drives {
+		drivesArray[driveFromAPI] = driveFromAPI
+	}
+
+	if len(driveList.Items) == 0 {
+		return nil, errors.New("no resources found globally")
+	}
+
+	var errors []*models.CsiFormatErrorResponse
+
+	for _, driveItem := range driveList.Items {
+		drName := "/dev/" + driveName(driveItem.Status.Path)
+		driveName := driveItem.Status.NodeName + ":" + drName
+
+		base := &models.CsiFormatErrorResponse{
+			Node:  driveItem.Status.NodeName,
+			Drive: drName,
+			Error: "",
+		}
+
+		// Element is requested to be formatted
+		if _, ok := drivesArray[driveName]; ok {
+			if driveItem.Status.DriveStatus == directv1beta2apis.DriveStatusUnavailable {
+				base.Error = "Status is unavailable"
+				errors = append(errors, base)
+				continue
+			}
+
+			if driveItem.Status.DriveStatus == directv1beta2apis.DriveStatusInUse {
+				base.Error = "Drive in use. Cannot be formatted"
+				errors = append(errors, base)
+				continue
+			}
+
+			if driveItem.Status.DriveStatus == directv1beta2apis.DriveStatusReady {
+				base.Error = "Drive already owned and managed"
+				errors = append(errors, base)
+				continue
+			}
+
+			if driveItem.Status.Filesystem != "" && !force {
+				base.Error = "Drive already has a fs. Use force to overwrite"
+				errors = append(errors, base)
+				continue
+			}
+
+			// Validation passes, we request format
+			driveItem.Spec.DirectCSIOwned = true
+			driveItem.Spec.RequestedFormat = &directv1beta2apis.RequestedFormat{
+				Filesystem: XFS,
+				Force:      force,
+			}
+
+			_, err := clientset.DirectCSIDrives().Update(ctx, &driveItem, metav1.UpdateOptions{})
+			if err != nil {
+				base.Error = err.Error()
+				errors = append(errors, base)
+			}
+		}
+	}
+
+	returnErrors := &models.FormatDirectCSIDrivesResponse{
+		FormatIssuesList: errors,
+	}
+
+	return returnErrors, nil
+}
+
 func formatVolumesResponse(session *models.Principal, params operator_api.DirectCSIFormatDriveParams) (*models.FormatDirectCSIDrivesResponse, *models.Error) {
 	ctx := context.Background()
-	client, err := cluster.DirectCSIClient(session.STSSessionToken)
+	clientset, err := cluster.DirectCSIClientSet(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
-	formatResult, errFormat := formatDrives(ctx, client.DirectV1beta1(), params.Body.Drives, *params.Body.Force)
-	if errFormat != nil {
-		return nil, prepareError(errFormat)
+	gvk, err := getGroupKindVersions(clientset.DiscoveryClient, "directcsidrives.direct.csi.min.io", "DirectCSIDrive", "v1beta2", "v1beta1")
+	if err != nil {
+		return nil, prepareError(err)
 	}
-	return formatResult, nil
+
+	version := gvk.Version
+
+	switch version {
+	case "v1beta2":
+		client, err := cluster.DirectCSIClientV1beta2(session.STSSessionToken)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		formatResult, errFormat := formatDrivesv1beta2(ctx, client, params.Body.Drives, *params.Body.Force)
+		if errFormat != nil {
+			return nil, prepareError(errFormat)
+		}
+		return formatResult, nil
+	case "v1beta1":
+		client, err := cluster.DirectCSIClientV1beta1(session.STSSessionToken)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		formatResult, errFormat := formatDrivesv1beta1(ctx, client, params.Body.Drives, *params.Body.Force)
+		if errFormat != nil {
+			return nil, prepareError(errFormat)
+		}
+		return formatResult, nil
+	default:
+		return nil, prepareError(errors.New("unsupported direct-csi version"))
+	}
 }

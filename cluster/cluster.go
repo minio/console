@@ -18,6 +18,8 @@ package cluster
 
 import (
 	direct "github.com/minio/direct-csi/pkg/clientset"
+	directcsiv1beta1 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1beta1"
+	directcsiv1beta2 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1beta2"
 	operator "github.com/minio/operator/pkg/client/clientset/versioned"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -65,7 +67,15 @@ func K8sClient(token string) (*kubernetes.Clientset, error) {
 	return kubernetes.NewForConfig(GetK8sConfig(token))
 }
 
-// DirectCSIClient returns Direct CSI client using GetK8sConfig for its config
-func DirectCSIClient(token string) (*direct.Clientset, error) {
+// DirectCSIClientSet returns Direct CSI client using GetK8sConfig for its config
+func DirectCSIClientSet(token string) (*direct.Clientset, error) {
 	return direct.NewForConfig(GetK8sConfig(token))
+}
+
+func DirectCSIClientV1beta1(token string) (*directcsiv1beta1.DirectV1beta1Client, error) {
+	return directcsiv1beta1.NewForConfig(GetK8sConfig(token))
+}
+
+func DirectCSIClientV1beta2(token string) (*directcsiv1beta2.DirectV1beta2Client, error) {
+	return directcsiv1beta2.NewForConfig(GetK8sConfig(token))
 }

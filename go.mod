@@ -17,7 +17,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/klauspost/compress v1.13.6
 	github.com/minio/cli v1.22.0
-	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
+	github.com/minio/direct-csi v1.4.3
 	github.com/minio/kes v0.11.0
 	github.com/minio/madmin-go v1.1.10
 	github.com/minio/mc v0.0.0-20211027024940-7866f97ef502
