@@ -31,7 +31,7 @@ import {
   actionsTray,
   containerForHeader,
   linkStyles,
-  searchField,
+  searchField
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
@@ -42,6 +42,7 @@ import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
+import history from "../../../history";
 
 interface IGroupsProps {
   classes: any;
@@ -52,42 +53,42 @@ interface IGroupsProps {
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3),
+      marginTop: theme.spacing(3)
     },
     paper: {
       // padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column",
+      flexDirection: "column"
     },
     addSideBar: {
       width: "320px",
-      padding: "20px",
+      padding: "20px"
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
+      paddingRight: theme.spacing(0)
     },
     wrapCell: {
       maxWidth: "200px",
       whiteSpace: "normal",
-      wordWrap: "break-word",
+      wordWrap: "break-word"
     },
     twHeight: {
-      minHeight: 600,
+      minHeight: 600
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold",
-        },
-      },
+          fontWeight: "bold"
+        }
+      }
     },
     ...linkStyles(theme.palette.info.main),
     ...actionsTray,
     ...searchField,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader(theme.spacing(4))
   });
 
 const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
@@ -147,8 +148,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
   );
 
   const viewAction = (group: any) => {
-    setGroupOpen(true);
-    setSelectedGroup(group);
+    history.push(`/groups/${group}`);
   };
 
   const deleteAction = (group: any) => {
@@ -156,15 +156,9 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
     setSelectedGroup(group);
   };
 
-  const setPolicyAction = (selectionElement: any): void => {
-    setPolicyOpen(true);
-    setSelectedGroup(selectionElement);
-  };
-
   const tableActions = [
     { type: "view", onClick: viewAction },
-    { type: "description", onClick: setPolicyAction },
-    { type: "delete", onClick: deleteAction },
+    { type: "delete", onClick: deleteAction }
   ];
 
   return (
@@ -208,7 +202,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
+                )
               }}
               onChange={(e) => {
                 setFilter(e.target.value);
@@ -319,7 +313,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
 };
 
 const mapDispatchToProps = {
-  setErrorSnackMessage,
+  setErrorSnackMessage
 };
 
 const connector = connect(null, mapDispatchToProps);
