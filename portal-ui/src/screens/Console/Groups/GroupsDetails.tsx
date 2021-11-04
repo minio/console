@@ -28,6 +28,7 @@ import SetPolicy from "../Policies/SetPolicy";
 import AddGroupMember from "./AddGroupMember";
 import { ErrorResponseHandler } from "../../../common/types";
 import DeleteGroup from "./DeleteGroup";
+import PanelTitle from "../Common/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -219,7 +220,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           <Grid item xs={12}>
             <TabPanel index={0} value={currentTab}>
               <div className={classes.actionsTray}>
-                <h1 className={classes.sectionTitle}>Members</h1>
+                <PanelTitle>Members</PanelTitle>
                 <Button
                   variant="contained"
                   color="primary"
@@ -232,7 +233,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   {memberActionText}
                 </Button>
               </div>
-              <br />
+
               <TableWrapper
                 //itemActions={tableActions}
                 columns={[{ label: "Access Key", elementKey: "" }]}
@@ -247,7 +248,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             </TabPanel>
             <TabPanel index={1} value={currentTab}>
               <div className={classes.actionsTray}>
-                <h1 className={classes.sectionTitle}>Policies</h1>
+                <PanelTitle>Policies</PanelTitle>
                 <Button
                   variant="contained"
                   color="primary"
@@ -260,7 +261,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   Set Policies
                 </Button>
               </div>
-              <br />
+
               <TableWrapper
                 itemActions={[
                   {

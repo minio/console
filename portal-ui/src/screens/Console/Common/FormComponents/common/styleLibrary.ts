@@ -201,7 +201,7 @@ export const actionsTray = {
     justifyContent: "space-between" as const,
     "& button": {
       flexGrow: 0,
-      marginLeft: 15,
+      marginLeft: 8,
     },
   },
   filterContainer: {
@@ -222,9 +222,9 @@ export const actionsTray = {
 export const searchField = {
   searchField: {
     flexGrow: 1,
-    height: 40,
+    height: 38,
     background: "#FFFFFF",
-    borderRadius: 5,
+    borderRadius: 3,
     border: "#EAEDEE 1px solid",
     display: "flex",
     justifyContent: "center",

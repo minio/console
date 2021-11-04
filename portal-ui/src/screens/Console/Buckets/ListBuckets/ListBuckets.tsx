@@ -19,10 +19,8 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { AddIcon, BucketsIcon, WatchIcon } from "../../../../icons";
@@ -32,6 +30,7 @@ import { setErrorSnackMessage } from "../../../../actions";
 import {
   containerForHeader,
   linkStyles,
+  searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -40,9 +39,13 @@ import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
-import SearchIcon from "../../../../icons/SearchIcon";
 import HelpBox from "../../../../common/HelpBox";
 import { ISessionResponse } from "../../types";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "../../../../icons/SearchIcon";
+import BoxIconButton from "../../Common/BoxIconButton";
+import RefreshIcon from "../../../../icons/RefreshIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -78,13 +81,14 @@ const styles = (theme: Theme) =>
         borderColor: theme.palette.grey["300"],
         color: theme.palette.grey["300"],
         textTransform: "capitalize",
-        marginRight: 6,
+        marginLeft: 8,
       },
       "& .MuiButton-contained": {
         color: "white",
       },
     },
     bulkSelect: {
+      marginLeft: 8,
       "&:hover": {
         backgroundColor: theme.palette.primary.main,
       },
@@ -98,7 +102,7 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
     },
     addBucket: {
-      marginRight: 8,
+      marginLeft: 8,
     },
     theaderSearch: {
       borderColor: theme.palette.grey["200"],
@@ -123,6 +127,7 @@ const styles = (theme: Theme) =>
       marginLeft: 10,
     },
     ...containerForHeader(theme.spacing(4)),
+    ...searchField,
     constrainedContainer: {
       maxWidth: 1180,
     },
@@ -301,163 +306,154 @@ const ListBuckets = ({
           closeModalAndRefresh={closeBulkReplicationModal}
         />
       )}
-      <PageHeader
-        label={"Buckets"}
-        actions={
-          <Fragment>
-            <Grid
-              container
-              direction="row"
-              justifyContent="flex-end"
-              alignItems="center"
-              className={classes.actionHeaderItems}
-            >
-              <Box display={{ xs: "none", sm: "none", md: "block" }}>
-                <Grid item>
-                  <div className={classes.theaderSearchLabel}>
-                    Search Buckets:
-                  </div>
-                </Grid>
-              </Box>
-              <Box display={{ xs: "block", sm: "block", md: "none" }}>
-                <TextField
-                  className={classes.theaderSearch}
-                  variant={"outlined"}
-                  id="search-resource"
-                  placeholder={"Filter Buckets"}
-                  onChange={(val) => {
-                    setFilterBuckets(val.target.value);
-                  }}
-                  inputProps={{
-                    disableUnderline: true,
-                    endadornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-              <Box display={{ xs: "none", sm: "none", md: "block" }}>
-                <TextField
-                  className={classes.theaderSearch}
-                  variant={"outlined"}
-                  id="search-resource"
-                  onChange={(val) => {
-                    setFilterBuckets(val.target.value);
-                  }}
-                  inputProps={{
-                    disableUnderline: true,
-                    endadornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
+      <PageHeader label={"Buckets"} />
+      <Grid container className={classes.container}>
+        <Grid item xs={12} className={classes.buttonTray}>
+          <Grid container>
+            <Grid item xs={12} sm>
+              <TextField
+                placeholder="Filter Buckets"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => {
+                  setFilterBuckets(e.target.value);
+                }}
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12} sm={"auto"}>
+              <Button
+                variant={bulkSelect ? "contained" : "outlined"}
+                onClick={() => {
+                  setBulkSelect(!bulkSelect);
+                }}
+                endIcon={<WatchIcon />}
+                size={"small"}
+                className={classes.bulkSelect}
+              >
+                Bulk Select
+              </Button>
+
+              <Button
+                variant="outlined"
+                endIcon={<FileCopyIcon />}
+                onClick={() => {
+                  setReplicationModalOpen(true);
+                }}
+                disabled={selectedBuckets.length === 0}
+                size={"small"}
+              >
+                Set Replication
+              </Button>
+              <BoxIconButton
+                color="primary"
+                aria-label="Refresh List"
+                onClick={() => {
+                  setLoading(true);
+                }}
+                size="large"
+              >
+                <RefreshIcon />
+              </BoxIconButton>
               {canCreateBucket && (
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    endIcon={<AddIcon />}
-                    onClick={() => {
-                      addBucketOpen(true);
-                    }}
-                    className={classes.addBucket}
-                  >
-                    Create Bucket
-                  </Button>
-                </Grid>
-              )}
-            </Grid>
-          </Fragment>
-        }
-      />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.buttonTray}>
-            <Button
-              variant={bulkSelect ? "contained" : "outlined"}
-              onClick={() => {
-                setBulkSelect(!bulkSelect);
-              }}
-              endIcon={<WatchIcon />}
-              size={"small"}
-              className={classes.bulkSelect}
-            >
-              Bulk Select
-            </Button>
-
-            <Button
-              variant="outlined"
-              endIcon={<FileCopyIcon />}
-              onClick={() => {
-                setReplicationModalOpen(true);
-              }}
-              disabled={selectedBuckets.length === 0}
-              size={"small"}
-            >
-              Set Replication
-            </Button>
-          </Grid>
-
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          {loading && <LinearProgress />}
-          {!loading && (
-            <Grid item xs={12}>
-              {filteredRecords.map((bucket, index) => {
-                return (
-                  <BucketListItem
-                    bucket={bucket}
-                    key={`bucketListItem-${index.toString()}`}
-                    onDelete={confirmDeleteBucket}
-                    onSelect={selectListBuckets}
-                    selected={selectedBuckets.includes(bucket.name)}
-                    bulkSelect={bulkSelect}
-                  />
-                );
-              })}
-              {filteredRecords.length === 0 && (
-                <Grid
-                  container
-                  justifyContent={"center"}
-                  alignContent={"center"}
-                  alignItems={"center"}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<AddIcon />}
+                  onClick={() => {
+                    addBucketOpen(true);
+                  }}
+                  className={classes.addBucket}
                 >
-                  <Grid item xs={8}>
-                    <HelpBox
-                      iconComponent={<BucketsIcon />}
-                      title={"Buckets"}
-                      help={
-                        <Fragment>
-                          MinIO uses buckets to organize objects. A bucket is
-                          similar to a folder or directory in a filesystem,
-                          where each bucket can hold an arbitrary number of
-                          objects.
-                          <br />
-                          <br />
-                          To get started,&nbsp;
-                          <button
-                            className={classes.link}
-                            onClick={() => {
-                              addBucketOpen(true);
-                            }}
-                          >
-                            Create a Bucket.
-                          </button>
-                        </Fragment>
-                      }
-                    />
-                  </Grid>
-                </Grid>
+                  Create Bucket
+                </Button>
               )}
             </Grid>
-          )}
+          </Grid>
         </Grid>
+
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        {loading && <LinearProgress />}
+        {!loading && (
+          <Grid item xs={12}>
+            {filteredRecords.map((bucket, index) => {
+              return (
+                <BucketListItem
+                  bucket={bucket}
+                  key={`bucketListItem-${index.toString()}`}
+                  onDelete={confirmDeleteBucket}
+                  onSelect={selectListBuckets}
+                  selected={selectedBuckets.includes(bucket.name)}
+                  bulkSelect={bulkSelect}
+                />
+              );
+            })}
+            {filteredRecords.length === 0 && filterBuckets !== "" && (
+              <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Grid item xs={8}>
+                  <HelpBox
+                    iconComponent={<BucketsIcon />}
+                    title={"No Results"}
+                    help={
+                      <Fragment>
+                        No buckets match the filtering condition
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            )}
+            {filteredRecords.length === 0 && filterBuckets === "" && (
+              <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Grid item xs={8}>
+                  <HelpBox
+                    iconComponent={<BucketsIcon />}
+                    title={"Buckets"}
+                    help={
+                      <Fragment>
+                        MinIO uses buckets to organize objects. A bucket is
+                        similar to a folder or directory in a filesystem, where
+                        each bucket can hold an arbitrary number of objects.
+                        <br />
+                        <br />
+                        To get started,&nbsp;
+                        <button
+                          className={classes.link}
+                          onClick={() => {
+                            addBucketOpen(true);
+                          }}
+                        >
+                          Create a Bucket.
+                        </button>
+                      </Fragment>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            )}
+          </Grid>
+        )}
       </Grid>
     </Fragment>
   );

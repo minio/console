@@ -35,6 +35,7 @@ import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon } from "../../../icons";
 import Button from "@mui/material/Button";
+import PanelTitle from "../Common/PanelTitle";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -162,7 +163,7 @@ const UserServiceAccountsPanel = ({
         />
       )}
       <div className={classes.actionsTray}>
-        <h1 className={classes.sectionTitle}>Service Accounts</h1>
+        <PanelTitle>Service Accounts</PanelTitle>
         <Button
           variant="contained"
           color="primary"
@@ -177,7 +178,6 @@ const UserServiceAccountsPanel = ({
           Create service account
         </Button>
       </div>
-      <br />
       <TableWrapper
         isLoading={loading}
         records={records}

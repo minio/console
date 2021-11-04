@@ -41,10 +41,9 @@ import { displayComponent } from "../../../../utils/permissions";
 import {
   ADMIN_LIST_TIERS,
   S3_GET_LIFECYCLE_CONFIGURATION,
-  S3_GET_REPLICATION_CONFIGURATION,
   S3_PUT_LIFECYCLE_CONFIGURATION,
-  S3_PUT_REPLICATION_CONFIGURATION,
 } from "../../../../types";
+import PanelTitle from "../../Common/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -207,7 +206,7 @@ const BucketLifecyclePanel = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 className={classes.sectionTitle}>Lifecycle Rules</h1>
+          <PanelTitle>Lifecycle Rules</PanelTitle>
           {displayAddLifeCycleRules && (
             <Button
               variant="contained"

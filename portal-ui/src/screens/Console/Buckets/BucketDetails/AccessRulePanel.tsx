@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -40,6 +40,7 @@ import {
 import { BucketInfo } from "../types";
 import { displayComponent } from "../../../../utils/permissions";
 import { S3_GET_BUCKET_POLICY, S3_PUT_BUCKET_POLICY } from "../../../../types";
+import PanelTitle from "../../Common/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -240,7 +241,7 @@ const AccessRule = ({
         />
       )}
       <Grid item xs={12} className={classes.actionsTray}>
-        <h1 className={classes.sectionTitle}>Access Rules</h1>
+        <PanelTitle>Access Rules</PanelTitle>
         {displayAddAccessRules && (
           <Button
             variant="contained"
@@ -255,9 +256,6 @@ const AccessRule = ({
             Add Access Rule
           </Button>
         )}
-      </Grid>
-      <Grid item xs={12}>
-        <br />
       </Grid>
       <Paper>
         <TableWrapper

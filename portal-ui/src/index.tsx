@@ -21,9 +21,9 @@ import Routes from "./Routes";
 import configureStore from "./store";
 import * as serviceWorker from "./serviceWorker";
 import {
-  ThemeProvider,
-  Theme,
   StyledEngineProvider,
+  Theme,
+  ThemeProvider,
 } from "@mui/material/styles";
 import withStyles from "@mui/styles/withStyles";
 import "react-virtualized/styles.css";
@@ -42,10 +42,13 @@ const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
   "@global": {
     // You should target [class*="MuiButton-root"] instead if you nest themes.
+    ".MuiButton-root": {
+      height: 38,
+    },
     ".MuiButton-contained": {
       fontSize: "14px",
       textTransform: "capitalize",
-      padding: "16px 25px 16px 25px",
+      padding: "15px 25px 15px 25px",
       borderRadius: 3,
     },
     ".MuiButton-sizeSmall": {

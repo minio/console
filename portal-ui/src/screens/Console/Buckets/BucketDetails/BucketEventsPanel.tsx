@@ -42,6 +42,7 @@ import {
   S3_GET_BUCKET_NOTIFICATIONS,
   S3_PUT_BUCKET_NOTIFICATIONS,
 } from "../../../../types";
+import PanelTitle from "../../Common/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -157,7 +158,7 @@ const BucketEventsPanel = ({
 
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 className={classes.sectionTitle}>Events</h1>
+          <PanelTitle>Events</PanelTitle>
           {displaySubscribeToEvents && (
             <Button
               variant="contained"
