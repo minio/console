@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: console
-          image: miniodev/console:dev
+          image: minio/console:v0.12.1
           imagePullPolicy: "IfNotPresent"
           env:
             - name: CONSOLE_MINIO_SERVER
