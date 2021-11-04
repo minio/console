@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   Bar,
   BarChart,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-  Cell,
 } from "recharts";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -39,6 +39,7 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import { openZoomPage } from "../../actions";
+import { useTheme } from "@mui/styles";
 
 interface IBarChartWidget {
   classes: any;
@@ -153,6 +154,9 @@ const BarChartWidget = ({
     });
   }
 
+  const theme = useTheme();
+  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+
   return (
     <div className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
@@ -194,6 +198,7 @@ const BarChartWidget = ({
                 tickLine={false}
                 axisLine={false}
                 width={150}
+                hide={!biggerThanMd}
               />
               {barChartConfiguration.map((bar) => (
                 <Bar
