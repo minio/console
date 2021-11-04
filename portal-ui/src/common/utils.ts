@@ -21,17 +21,7 @@ import { IPool } from "../screens/Console/Tenants/ListTenants/types";
 const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
 
-export const units = [
-  "B",
-  "KiB",
-  "MiB",
-  "GiB",
-  "TiB",
-  "PiB",
-  "EiB",
-  "ZiB",
-  "YiB",
-];
+export const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
 export const k8sCalcUnits = ["B", ...k8sUnits];
 

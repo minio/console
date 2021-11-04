@@ -18,7 +18,7 @@ export const planDetails = [
   {
     id: 0,
     title: "Community",
-    price: "FREE",
+    price: "N/A",
     capacityMax: "Open Source",
   },
   {
@@ -98,14 +98,14 @@ export const planItems = [
     id: 6,
     field: "Annual Architecture Review",
     community: "N/A",
-    standard: "Yes",
+    standard: "N/A",
     enterprise: "Yes",
   },
   {
     id: 7,
     field: "Annual Performance Review",
     community: "N/A",
-    standard: "Yes",
+    standard: "N/A",
     enterprise: "Yes",
   },
   {
