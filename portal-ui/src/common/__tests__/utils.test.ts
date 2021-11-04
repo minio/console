@@ -22,15 +22,15 @@ import {
 } from "../utils";
 
 test("A variety of formatting results", () => {
-  expect(niceBytes("1024")).toBe("1.0 KiB");
-  expect(niceBytes("1048576")).toBe("1.0 MiB");
-  expect(niceBytes("1073741824")).toBe("1.0 GiB");
+  expect(niceBytes("1024")).toBe("1.0 KB");
+  expect(niceBytes("1048576")).toBe("1.0 MB");
+  expect(niceBytes("1073741824")).toBe("1.0 GB");
 });
 
 test("From value and unit to a number of bytes", () => {
-  expect(getBytes("1", "KiB")).toBe("1024");
-  expect(getBytes("1", "MiB")).toBe("1048576");
-  expect(getBytes("1", "GiB")).toBe("1073741824");
+  expect(getBytes("1", "KB")).toBe("1024");
+  expect(getBytes("1", "MB")).toBe("1048576");
+  expect(getBytes("1", "GB")).toBe("1073741824");
 });
 
 test("From value and unit to a number of bytes for kubernetes", () => {
