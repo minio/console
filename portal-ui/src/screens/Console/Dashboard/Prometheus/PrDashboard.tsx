@@ -104,7 +104,7 @@ const PrDashboard = ({
         let perc = Math.floor(12 / totalPanelsContained);
 
         if (!biggerThanMd && totalPanelsContained >= 4) {
-          perc = perc * 2;
+          perc = 6;
         } else if (!biggerThanMd && totalPanelsContained >= 3) {
           perc = 12;
         }
@@ -133,7 +133,7 @@ const PrDashboard = ({
                   className={classes.widgetPanelDelimiter}
                   item
                   xs={12}
-                  sm={12}
+                  sm={perc as GridSize}
                   md={perc as GridSize}
                   lg={perc as GridSize}
                 >
@@ -242,11 +242,18 @@ const PrDashboard = ({
 
   const summaryPanels = [
     [66, 44, 500, 501],
-    [50, 502],
     [80, 81, 1],
     [68, 52],
     [63, 70],
   ];
+
+  if (biggerThanMd) {
+    summaryPanels.splice(1, 0, [50, 502]);
+  } else {
+    summaryPanels.splice(1, 0, [50]);
+    summaryPanels.splice(1, 0, [502]);
+  }
+
   const resourcesPanels = [
     [76, 77],
     [11, 8],
