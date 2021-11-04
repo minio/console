@@ -3,8 +3,15 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import { Link, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { actionsTray, containerForHeader, searchField } from "../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage, setModalErrorSnackMessage } from "../../../actions";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
+import {
+  setErrorSnackMessage,
+  setModalErrorSnackMessage,
+} from "../../../actions";
 import { connect } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid, IconButton, Tooltip } from "@mui/material";
@@ -22,17 +29,16 @@ import AddGroupMember from "./AddGroupMember";
 import { ErrorResponseHandler } from "../../../common/types";
 import DeleteGroup from "./DeleteGroup";
 
-
 const styles = (theme: Theme) =>
   createStyles({
     breadcrumLink: {
       textDecoration: "none",
-      color: "black"
+      color: "black",
     },
     ...actionsTray,
     ...searchField,
     actionsTray: { ...actionsTray.actionsTray },
-    ...containerForHeader(theme.spacing(4))
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IGroupDetailsProps {
@@ -42,24 +48,22 @@ interface IGroupDetailsProps {
 }
 
 type TabItemsProps = {
-  activeTab: number,
-  onTabChange: (tab: number) => void
-}
+  activeTab: number;
+  onTabChange: (tab: number) => void;
+};
 
 type DetailsHeaderProps = {
-  classes: any
-}
+  classes: any;
+};
 
 type GroupInfo = {
-  members?: any[]
-  name?: string
-  policy?: string
-  status?: string
-}
-
+  members?: any[];
+  name?: string;
+  policy?: string;
+  status?: string;
+};
 
 const TabItems = ({ activeTab, onTabChange }: TabItemsProps) => {
-
   return (
     <List component="nav" dense={true}>
       <ListItem
@@ -80,11 +84,9 @@ const TabItems = ({ activeTab, onTabChange }: TabItemsProps) => {
       >
         <ListItemText primary="Policies" />
       </ListItem>
-
     </List>
   );
 };
-
 
 export const formatPolicy = (policy: string = ""): string[] => {
   if (policy.length <= 0) return [];
@@ -94,7 +96,6 @@ export const formatPolicy = (policy: string = ""): string[] => {
 export const getPoliciesAsString = (policies: string[]): string => {
   return policies.join(", ");
 };
-
 
 const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
   return (
@@ -111,9 +112,7 @@ const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
   );
 };
 
-
 const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
-
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [groupDetails, setGroupDetails] = useState<GroupInfo>({});
 
@@ -122,15 +121,9 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
-  const {
-    groupName = ""
-  } = useParams<Record<string, string>>();
+  const { groupName = "" } = useParams<Record<string, string>>();
 
-  const {
-    members = [],
-    policy = "",
-    status: groupEnabled
-  } = groupDetails;
+  const { members = [], policy = "", status: groupEnabled } = groupDetails;
 
   useEffect(() => {
     if (groupName) {
@@ -148,18 +141,18 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
       .invoke("GET", `/api/v1/group?name=${encodeURI(groupName)}`)
       .then((res: any) => {
         setGroupDetails(res);
-      }).catch(() => {
-      setGroupDetails({});
-    });
-  };
+      })
+      .catch(() => {
+        setGroupDetails({});
+      });
+  }
 
   function toggleGroupStatus(nextStatus: boolean) {
-
     return api
       .invoke("PUT", `/api/v1/group?name=${encodeURI(groupName)}`, {
         group: groupName,
         members: members,
-        status: nextStatus ? "enabled" : "disabled"
+        status: nextStatus ? "enabled" : "disabled",
       })
       .then((res) => {
         fetchGroupInfo();
@@ -170,7 +163,6 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   }
 
   return (
-
     <React.Fragment>
       <GroupDetailsHeader classes={classes} />
       <Grid container className={classes.container}>
@@ -183,7 +175,9 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             }
             title={groupName}
             subTitle={
-              <Fragment>Status: {isGroupEnabled ? "Enabled" : "Disabled"}</Fragment>
+              <Fragment>
+                Status: {isGroupEnabled ? "Enabled" : "Disabled"}
+              </Fragment>
             }
             actions={
               <Fragment>
@@ -214,9 +208,12 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         </Grid>
 
         <Grid item xs={2}>
-          <TabItems activeTab={currentTab} onTabChange={(num) => {
-            setCurrentTab(num);
-          }} />
+          <TabItems
+            activeTab={currentTab}
+            onTabChange={(num) => {
+              setCurrentTab(num);
+            }}
+          />
         </Grid>
         <Grid item xs={10}>
           <Grid item xs={12}>
@@ -270,8 +267,8 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                     type: "view",
                     onClick: (policy) => {
                       history.push(`/policies/${policy}`);
-                    }
-                  }
+                    },
+                  },
                 ]}
                 columns={[{ label: "Policy", elementKey: "" }]}
                 isLoading={false}
@@ -297,12 +294,10 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         />
       ) : null}
 
-      {usersOpen ?
+      {usersOpen ? (
         <AddGroupMember
           selectedGroup={groupName}
-          onSaveClick={() => {
-
-          }}
+          onSaveClick={() => {}}
           title={memberActionText}
           groupStatus={groupEnabled}
           classes={classes}
@@ -311,7 +306,9 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           onClose={() => {
             setUsersOpen(false);
             fetchGroupInfo();
-          }} /> : null}
+          }}
+        />
+      ) : null}
 
       {deleteOpen && (
         <DeleteGroup
@@ -328,12 +325,10 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
       {/*Modals*/}
     </React.Fragment>
   );
-
 };
 
-
 const mapDispatchToProps = {
-  setErrorSnackMessage
+  setErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);
