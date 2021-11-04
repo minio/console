@@ -29,6 +29,9 @@ export class API {
       .catch((err) => {
         // if we get unauthorized, kick out the user
         if (err.status === 401) {
+          if (window.location.pathname !== "/") {
+            localStorage.setItem("redirect-path", window.location.pathname);
+          }
           clearSession();
           // Refresh the whole page to ensure cache is clear
           // and we dont end on an infinite loop
