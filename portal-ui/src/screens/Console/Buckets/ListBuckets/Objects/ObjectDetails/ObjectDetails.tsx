@@ -481,10 +481,7 @@ const ObjectDetails = ({
       },
       disableButtonFunction: (item: string) => {
         const element = versions.find((elm) => elm.version_id === item);
-        if (element && element.is_delete_marker) {
-          return true;
-        }
-        return false;
+        return (element && element.is_delete_marker)
       },
     },
   ];
