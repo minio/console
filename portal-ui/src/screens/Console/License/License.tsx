@@ -479,26 +479,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           >
                             {niceBytes(
                               (licenseInfo.storage_capacity * 1099511627776) // 1 Terabyte = 1099511627776 Bytes
-                                .toString(10)
+                                .toString(10),
+                              false
                             )}
-                          </Typography>
-                          <Typography
-                            variant="button"
-                            display="block"
-                            gutterBottom
-                            className={classes.licenseInfoTitle}
-                          >
-                            Expiry Date
-                          </Typography>
-                          <Typography
-                            variant="overline"
-                            display="block"
-                            gutterBottom
-                            className={classes.licenseInfoValue}
-                          >
-                            <Moment format="YYYY-MM-DD">
-                              {licenseInfo.expires_at}
-                            </Moment>
                           </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -524,7 +507,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             gutterBottom
                             className={classes.licenseInfoTitle}
                           >
-                            Requester
+                            Requestor
                           </Typography>
                           <Typography
                             variant="overline"
@@ -533,6 +516,27 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             className={classes.licenseInfoValue}
                           >
                             {licenseInfo.email}
+                          </Typography>
+                          <Typography
+                            variant="button"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoTitle}
+                          >
+                            Expiry Date
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                            className={classes.licenseInfoValue}
+                          >
+                            <Moment format="YYYY-MM-DD">
+                              {licenseInfo.expires_at
+                                .split(" ")
+                                .slice(0, 1)
+                                .join(" ")}
+                            </Moment>
                           </Typography>
                         </Grid>
                         <img
@@ -624,7 +628,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               refreshLicense();
                             }}
                           >
-                            Refresh Licence
+                            Refresh License
                           </button>
                           {loadingRefreshLicense && (
                             <CircularProgress

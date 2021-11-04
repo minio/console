@@ -197,7 +197,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                Requester
+                Requestor
               </Typography>
               <Typography
                 variant="overline"
