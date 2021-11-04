@@ -8,7 +8,7 @@ RUN yarn install
 
 COPY ./portal-ui .
 
-RUN yarn install && make build-static
+RUN make build-static
 
 USER node
 

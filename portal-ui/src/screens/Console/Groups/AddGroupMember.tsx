@@ -14,36 +14,34 @@ import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 
 type UserPickerModalProps = {
-  classes?: any,
-  title?: string
-  preSelectedUsers?: string[]
-  selectedGroup?: string,
-  open: boolean,
-  onClose: () => void,
-  onSaveClick: () => void,
-  groupStatus?: string,
-}
-
+  classes?: any;
+  title?: string;
+  preSelectedUsers?: string[];
+  selectedGroup?: string;
+  open: boolean;
+  onClose: () => void;
+  onSaveClick: () => void;
+  groupStatus?: string;
+};
 
 const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       textAlign: "right",
-      marginTop: "1rem"
+      marginTop: "1rem",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 const AddGroupMember = ({
-                          classes,
-                          title = "",
-                          groupStatus = "enabled",
-                          preSelectedUsers = [],
-                          selectedGroup = "",
-                          open,
-                          onClose
-                        }: UserPickerModalProps) => {
-
+  classes,
+  title = "",
+  groupStatus = "enabled",
+  preSelectedUsers = [],
+  selectedGroup = "",
+  open,
+  onClose,
+}: UserPickerModalProps) => {
   const [selectedUsers, setSelectedUsers] = useState(preSelectedUsers);
 
   function addMembersToGroup() {
@@ -51,8 +49,7 @@ const AddGroupMember = ({
       .invoke("PUT", `/api/v1/group?name=${encodeURI(selectedGroup)}`, {
         group: selectedGroup,
         members: selectedUsers,
-        status: groupStatus
-
+        status: groupStatus,
       })
       .then((res) => {
         onClose();
@@ -64,16 +61,8 @@ const AddGroupMember = ({
   }
 
   return (
-    <ModalWrapper
-      modalOpen={open}
-      onClose={onClose}
-      title={title}
-    >
-
-      <PredefinedList
-        label={`Selected Group`}
-        content={selectedGroup}
-      />
+    <ModalWrapper modalOpen={open} onClose={onClose} title={title}>
+      <PredefinedList label={`Selected Group`} content={selectedGroup} />
 
       <br />
       <UsersSelectors
@@ -83,7 +72,6 @@ const AddGroupMember = ({
       />
 
       <Grid item xs={12} className={classes.buttonContainer}>
-
         <button
           type="button"
           color="primary"
@@ -106,15 +94,12 @@ const AddGroupMember = ({
           Save
         </Button>
       </Grid>
-
     </ModalWrapper>
   );
-
 };
 
-
 const mapDispatchToProps = {
-  setModalErrorSnackMessage
+  setModalErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);
