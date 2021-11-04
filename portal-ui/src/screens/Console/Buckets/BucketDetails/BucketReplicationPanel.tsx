@@ -32,7 +32,6 @@ import {
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
-  HasPermissionResponse,
 } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState } from "../../../../store";
@@ -43,12 +42,10 @@ import DeleteReplicationRule from "./DeleteReplicationRule";
 import HelpBox from "../../../../common/HelpBox";
 import { displayComponent } from "../../../../utils/permissions";
 import {
-  ADMIN_SERVER_INFO,
-  S3_GET_BUCKET_NOTIFICATIONS,
   S3_GET_REPLICATION_CONFIGURATION,
-  S3_PUT_BUCKET_NOTIFICATIONS,
   S3_PUT_REPLICATION_CONFIGURATION,
 } from "../../../../types";
+import PanelTitle from "../../Common/PanelTitle";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -179,7 +176,7 @@ const BucketReplicationPanel = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 className={classes.sectionTitle}>Replication</h1>
+          <PanelTitle>Replication</PanelTitle>
           {displayAddReplicationRules && (
             <Button
               variant="contained"

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -40,6 +40,7 @@ import {
   ADMIN_LIST_USER_POLICIES,
   ADMIN_LIST_USERS,
 } from "../../../../types";
+import PanelTitle from "../../Common/PanelTitle";
 
 const styles = (theme: Theme) => createStyles({});
 
@@ -159,7 +160,7 @@ const AccessDetails = ({
 
   return (
     <Fragment>
-      <h1 className={classes.sectionTitle}>Access Audit</h1>
+      <PanelTitle>Access Audit</PanelTitle>
       <Tabs
         value={curTab}
         onChange={(e: React.ChangeEvent<{}>, newValue: number) => {

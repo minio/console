@@ -251,7 +251,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             variant="standard"
           />
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             startIcon={<GroupIcon />}
             disabled={checkedUsers.length <= 0}

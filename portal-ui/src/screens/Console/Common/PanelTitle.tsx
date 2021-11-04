@@ -18,39 +18,23 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IconButton, IconButtonProps } from "@mui/material";
+import { IconButtonProps } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      padding: 8,
-      marginLeft: 8,
-      borderWidth: 1,
-      borderColor: theme.palette.primary.main,
-      borderStyle: "solid",
-      borderRadius: 3,
-      "& .MuiSvgIcon-root": {
-        fontSize: 20,
-      },
-      "& .MuiTouchRipple-root span": {
-        backgroundColor: theme.palette.primary.main,
-        borderRadius: 3,
-        opacity: 0.3,
-      },
+      padding: 0,
+      margin: 0,
     },
   });
 
-interface IBoxIconButton extends IconButtonProps {
+interface IPanelTitle extends IconButtonProps {
   classes: any;
   children: any;
 }
 
-const BoxIconButton = ({ classes, children, ...rest }: IBoxIconButton) => {
-  return (
-    <IconButton {...rest} className={classes.root}>
-      {children}
-    </IconButton>
-  );
+const PanelTitle = ({ classes, children }: IPanelTitle) => {
+  return <h1 className={classes.root}>{children}</h1>;
 };
 
-export default withStyles(styles)(BoxIconButton);
+export default withStyles(styles)(PanelTitle);

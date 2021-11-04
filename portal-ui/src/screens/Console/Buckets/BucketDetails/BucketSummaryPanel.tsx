@@ -68,6 +68,7 @@ import {
   S3_PUT_BUCKET_VERSIONING,
   S3_PUT_OBJECT_RETENTION,
 } from "../../../../types";
+import PanelTitle from "../../Common/PanelTitle";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -483,7 +484,7 @@ const BucketSummary = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 className={classes.sectionTitle}>Summary</h1>
+          <PanelTitle>Summary</PanelTitle>
         </Grid>
       </Grid>
       <Paper className={classes.paperContainer}>

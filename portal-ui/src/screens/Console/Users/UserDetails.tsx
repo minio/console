@@ -55,6 +55,7 @@ import List from "@mui/material/List";
 import LockIcon from "@mui/icons-material/Lock";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import BoxIconButton from "../Common/BoxIconButton";
+import PanelTitle from "../Common/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -362,7 +363,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           <Grid item xs={12}>
             <TabPanel index={0} value={curTab}>
               <div className={classes.actionsTray}>
-                <h1 className={classes.sectionTitle}>Groups</h1>
+                <PanelTitle>Groups</PanelTitle>
                 <Button
                   variant="contained"
                   color="primary"
@@ -375,7 +376,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   Add to Groups
                 </Button>
               </div>
-              <br />
               <TableWrapper
                 // itemActions={userTableActions}
                 columns={[{ label: "Name", elementKey: "group" }]}
@@ -394,7 +394,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             </TabPanel>
             <TabPanel index={2} value={curTab}>
               <div className={classes.actionsTray}>
-                <h1 className={classes.sectionTitle}>Policies</h1>
+                <PanelTitle>Policies</PanelTitle>
                 <Button
                   variant="contained"
                   color="primary"
@@ -407,7 +407,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   Assign Policies
                 </Button>
               </div>
-              <br />
               <TableWrapper
                 itemActions={[
                   {
