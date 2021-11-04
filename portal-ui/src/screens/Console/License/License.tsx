@@ -507,7 +507,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             gutterBottom
                             className={classes.licenseInfoTitle}
                           >
-                            Requester
+                            Requestor
                           </Typography>
                           <Typography
                             variant="overline"
