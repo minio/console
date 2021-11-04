@@ -18,7 +18,7 @@ export const planDetails = [
   {
     id: 0,
     title: "Community",
-    price: "FREE",
+    price: "N/A",
     capacityMax: "Open Source",
   },
   {
