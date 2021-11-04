@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { GridSize } from "@mui/material";
+import { GridSize, useMediaQuery } from "@mui/material";
 import {
   actionsTray,
   widgetContainerCommon,
@@ -39,6 +39,7 @@ import { componentToUse } from "./widgetUtils";
 import ZoomWidget from "./ZoomWidget";
 import { AppState } from "../../../../store";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
+import { useTheme } from "@mui/styles";
 
 interface IPrDashboard {
   classes: any;
@@ -92,12 +93,21 @@ const PrDashboard = ({
     useState<IDashboardPanel[]>(panelsConfiguration);
   const [curTab, setCurTab] = useState<number>(0);
 
+  const theme = useTheme();
+  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+
   const panels = useCallback(
     (tabName: string, filterPanels?: number[][] | null) => {
       return filterPanels?.map((panelLine, indexLine) => {
         const totalPanelsContained = panelLine.length;
 
         let perc = Math.floor(12 / totalPanelsContained);
+
+        if (!biggerThanMd && totalPanelsContained >= 4) {
+          perc = 6;
+        } else if (!biggerThanMd && totalPanelsContained >= 3) {
+          perc = 12;
+        }
 
         if (perc < 1) {
           perc = 1;
@@ -122,9 +132,9 @@ const PrDashboard = ({
                   key={`widget-${panelInline}-${indexPanel}`}
                   className={classes.widgetPanelDelimiter}
                   item
-                  xs={7}
-                  sm={8}
-                  md={6}
+                  xs={12}
+                  sm={perc as GridSize}
+                  md={perc as GridSize}
                   lg={perc as GridSize}
                 >
                   <Grid item xs={12}>
@@ -177,6 +187,7 @@ const PrDashboard = ({
       classes.dashboardRow,
       classes.widgetPanelDelimiter,
       panelInformation,
+      biggerThanMd,
     ]
   );
 
@@ -231,11 +242,18 @@ const PrDashboard = ({
 
   const summaryPanels = [
     [66, 44, 500, 501],
-    [50, 502],
     [80, 81, 1],
     [68, 52],
     [63, 70],
   ];
+
+  if (biggerThanMd) {
+    summaryPanels.splice(1, 0, [50, 502]);
+  } else {
+    summaryPanels.splice(1, 0, [50]);
+    summaryPanels.splice(1, 0, [502]);
+  }
+
   const resourcesPanels = [
     [76, 77],
     [11, 8],

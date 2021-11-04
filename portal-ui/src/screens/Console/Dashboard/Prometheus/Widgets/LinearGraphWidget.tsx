@@ -25,7 +25,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -39,6 +39,7 @@ import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import LineChartTooltip from "./tooltips/LineChartTooltip";
 import { openZoomPage } from "../../actions";
+import { useTheme } from "@mui/styles";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -183,6 +184,9 @@ const LinearGraphWidget = ({
     return <circle cx={cx} cy={cy} r={3} strokeWidth={0} fill="#07264A" />;
   };
 
+  const theme = useTheme();
+  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+
   return (
     <div className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
@@ -305,24 +309,26 @@ const LinearGraphWidget = ({
                     <br />
                   </Fragment>
                 )}
-                <div className={classes.legendChart}>
-                  {linearConfiguration.map((section, index) => {
-                    return (
-                      <div
-                        className={classes.singleLegendContainer}
-                        key={`legend-${section.keyLabel}-${index.toString()}`}
-                      >
+                {biggerThanMd && (
+                  <div className={classes.legendChart}>
+                    {linearConfiguration.map((section, index) => {
+                      return (
                         <div
-                          className={classes.colorContainer}
-                          style={{ backgroundColor: section.lineColor }}
-                        />
-                        <div className={classes.legendLabel}>
-                          {section.keyLabel}
+                          className={classes.singleLegendContainer}
+                          key={`legend-${section.keyLabel}-${index.toString()}`}
+                        >
+                          <div
+                            className={classes.colorContainer}
+                            style={{ backgroundColor: section.lineColor }}
+                          />
+                          <div className={classes.legendLabel}>
+                            {section.keyLabel}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </Fragment>
             )}
           </React.Fragment>
