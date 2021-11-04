@@ -479,7 +479,10 @@ const ObjectDetails = ({
         setRestoreVersion(item.version_id || "");
         setRestoreVersionOpen(true);
       },
-      disableButtonFunction: (_: any) => !distributedSetup,
+      disableButtonFunction: (item: string) => {
+        const element = versions.find((elm) => elm.version_id === item);
+        return (element && element.is_delete_marker)
+      },
     },
   ];
 
