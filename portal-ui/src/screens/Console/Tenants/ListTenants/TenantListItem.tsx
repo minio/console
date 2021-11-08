@@ -28,6 +28,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { niceBytes } from "../../../../common/utils";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
+import { tenantIsOnline } from "./utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -184,6 +185,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
               size={"small"}
               color={"primary"}
               variant="outlined"
+              disabled={!tenantIsOnline(tenant)}
               className={classes.manageButton}
               onClick={() => {
                 history.push(
