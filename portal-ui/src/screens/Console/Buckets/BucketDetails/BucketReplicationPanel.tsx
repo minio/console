@@ -181,7 +181,7 @@ const BucketReplicationPanel = ({
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              endIcon={<AddIcon />}
               size="medium"
               onClick={() => {
                 setOpenReplicationOpen(true);

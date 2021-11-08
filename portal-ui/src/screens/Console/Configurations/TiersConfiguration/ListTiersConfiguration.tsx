@@ -224,10 +224,10 @@ const ListTiersConfiguration = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={addTier}
           >
-            Add a Tier
+            Add Tier
           </Button>
         </Grid>
         <Grid item xs={12}>

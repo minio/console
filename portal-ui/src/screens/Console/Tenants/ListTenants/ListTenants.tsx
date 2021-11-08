@@ -300,14 +300,14 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
                               <br />
                               <br />
                               To get started,&nbsp;
-                              <button
+                              <a
                                 className={classes.link}
                                 onClick={() => {
                                   history.push("/tenants/add");
                                 }}
                               >
                                 Create a Tenant.
-                              </button>
+                              </a>
                             </Fragment>
                           }
                         />

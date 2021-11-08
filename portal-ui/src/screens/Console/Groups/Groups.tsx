@@ -212,7 +212,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              endIcon={<AddIcon />}
               onClick={() => {
                 setSelectedGroup(null);
                 setGroupOpen(true);

@@ -253,7 +253,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
           <Button
             variant="outlined"
             color="primary"
-            startIcon={<GroupIcon />}
+            endIcon={<GroupIcon />}
             disabled={checkedUsers.length <= 0}
             onClick={() => {
               if (checkedUsers.length > 0) {
@@ -266,7 +266,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={() => {
               setAddScreenOpen(true);
               setSelectedUser(null);

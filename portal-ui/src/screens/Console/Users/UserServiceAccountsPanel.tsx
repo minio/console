@@ -167,7 +167,7 @@ const UserServiceAccountsPanel = ({
         <Button
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
+          endIcon={<AddIcon />}
           onClick={() => {
             setAddScreenOpen(true);
             setAddScreenOpen(true);

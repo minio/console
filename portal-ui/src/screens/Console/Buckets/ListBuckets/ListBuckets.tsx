@@ -438,14 +438,15 @@ const ListBuckets = ({
                         <br />
                         <br />
                         To get started,&nbsp;
-                        <button
+                        <a
                           className={classes.link}
                           onClick={() => {
                             addBucketOpen(true);
                           }}
                         >
                           Create a Bucket.
-                        </button>
+                        </a>
+                        refresh
                       </Fragment>
                     }
                   />

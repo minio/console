@@ -224,7 +224,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<UsersIcon />}
+                  endIcon={<UsersIcon />}
                   size="medium"
                   onClick={() => {
                     setUsersOpen(true);
@@ -252,7 +252,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<IAMPoliciesIcon />}
+                  endIcon={<IAMPoliciesIcon />}
                   size="medium"
                   onClick={() => {
                     setPolicyOpen(true);

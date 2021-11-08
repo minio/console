@@ -202,7 +202,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={() => {
               setAddScreenOpen(true);
               setPolicyEdit(null);

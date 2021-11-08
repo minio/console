@@ -257,7 +257,7 @@ const Account = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={() => {
               setAddScreenOpen(true);
               setSelectedServiceAccount(null);

@@ -246,7 +246,7 @@ const AccessRule = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             component="label"
             onClick={() => {
               setAddAccessRuleOpen(true);

@@ -173,7 +173,7 @@ const ListNotificationEndpoints = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={() => {
               history.push("/notification-endpoints/add");
             }}

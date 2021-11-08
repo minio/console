@@ -77,7 +77,6 @@ import {
   S3_GET_OBJECT_LEGAL_HOLD,
   S3_GET_OBJECT_RETENTION,
   S3_GET_OBJECT_TAGGING,
-  S3_GET_REPLICATION_CONFIGURATION,
   S3_PUT_OBJECT_LEGAL_HOLD,
   S3_PUT_OBJECT_RETENTION,
   S3_PUT_OBJECT_TAGGING,
@@ -94,6 +93,7 @@ import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
+import BoxIconButton from "../../../../Common/BoxIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -643,7 +643,7 @@ const ObjectDetails = ({
                 actions={
                   <Fragment>
                     <Tooltip title="Share">
-                      <IconButton
+                      <BoxIconButton
                         color="primary"
                         aria-label="share"
                         onClick={() => {
@@ -653,7 +653,7 @@ const ObjectDetails = ({
                         size="large"
                       >
                         <ShareIcon />
-                      </IconButton>
+                      </BoxIconButton>
                     </Tooltip>
 
                     {downloadingFiles.includes(
@@ -668,7 +668,7 @@ const ObjectDetails = ({
                       </div>
                     ) : (
                       <Tooltip title="Download">
-                        <IconButton
+                        <BoxIconButton
                           color="primary"
                           aria-label="download"
                           onClick={() => {
@@ -678,13 +678,13 @@ const ObjectDetails = ({
                           size="large"
                         >
                           <DownloadIcon />
-                        </IconButton>
+                        </BoxIconButton>
                       </Tooltip>
                     )}
 
                     {displayDeleteObject && (
                       <Tooltip title="Delete Object">
-                        <IconButton
+                        <BoxIconButton
                           color="primary"
                           aria-label="delete"
                           onClick={() => {
@@ -694,7 +694,7 @@ const ObjectDetails = ({
                           size="large"
                         >
                           <DeleteIcon />
-                        </IconButton>
+                        </BoxIconButton>
                       </Tooltip>
                     )}
                   </Fragment>

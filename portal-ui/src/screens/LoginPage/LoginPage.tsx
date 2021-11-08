@@ -423,7 +423,7 @@ const Login = ({
                   onClick={() => {
                     fetchConfiguration();
                   }}
-                  startIcon={<RefreshIcon />}
+                  endIcon={<RefreshIcon />}
                   color={"primary"}
                   className={classes.retryButton}
                 >
