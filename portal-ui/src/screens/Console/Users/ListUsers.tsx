@@ -34,7 +34,6 @@ import { AddIcon, UsersIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,
-  linkStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../actions";
@@ -48,6 +47,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
 import { decodeFileName } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
+import AButton from "../Common/AButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -87,7 +87,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
-    ...linkStyles(theme.palette.info.main),
   });
 
 interface IUsersProps {
@@ -358,15 +357,14 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                         <br />
                         <br />
                         To get started,{" "}
-                        <button
+                        <AButton
                           onClick={() => {
                             setAddScreenOpen(true);
                             setSelectedUser(null);
                           }}
-                          className={classes.link}
                         >
                           Create a User
-                        </button>
+                        </AButton>
                         .
                       </Fragment>
                     }
