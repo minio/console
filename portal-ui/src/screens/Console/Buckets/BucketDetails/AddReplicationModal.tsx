@@ -81,7 +81,6 @@ const AddReplicationModal = ({
   const [useTLS, setUseTLS] = useState<boolean>(true);
   const [repDeleteMarker, setRepDeleteMarker] = useState<boolean>(true);
   const [repDelete, setRepDelete] = useState<boolean>(true);
-  const [repMetadata, setRepMetadata] = useState<boolean>(true);
   const [tags, setTags] = useState<string>("");
   const [replicationMode, setReplicationMode] = useState<string>("async");
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
@@ -116,7 +115,6 @@ const AddReplicationModal = ({
       tags: tags,
       replicateDeleteMarkers: repDeleteMarker,
       replicateDeletes: repDelete,
-      replicateMetadata: repMetadata,
     };
 
     api
@@ -365,20 +363,6 @@ const AddReplicationModal = ({
                 description={"Replicate versioned deletes"}
               />
             </Grid>
-            {/*TODO: This will be enabled later on when we update the dependency on mc*/}
-            {/*<Grid item xs={12}>*/}
-            {/*  <FormSwitchWrapper*/}
-            {/*    checked={repMetadata}*/}
-            {/*    id="repMetadata"*/}
-            {/*    name="repMeta"*/}
-            {/*    label="Replicate Metadata"*/}
-            {/*    onChange={(e) => {*/}
-            {/*      setRepMetadata(e.target.checked);*/}
-            {/*    }}*/}
-            {/*    value={repMetadata}*/}
-            {/*    description={"Replicate object metadata"}*/}
-            {/*  />*/}
-            {/*</Grid>*/}
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button

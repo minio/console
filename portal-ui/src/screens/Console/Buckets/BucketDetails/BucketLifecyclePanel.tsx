@@ -111,7 +111,12 @@ const BucketLifecyclePanel = ({
         setLoadingLifecycle(false);
       }
     }
-  }, [loadingLifecycle, setLoadingLifecycle, bucketName]);
+  }, [
+    loadingLifecycle,
+    setLoadingLifecycle,
+    bucketName,
+    displayLifeCycleRules,
+  ]);
 
   const closeEditLCAndRefresh = (refresh: boolean) => {
     setEditLifecycleOpen(false);
