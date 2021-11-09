@@ -23,6 +23,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	xjwt "github.com/minio/console/pkg/auth/token"
 )
 
 // Do not use:
@@ -106,12 +108,13 @@ func FileExists(filename string) bool {
 }
 
 func NewSessionCookieForConsole(token string) http.Cookie {
+	sessionDuration := xjwt.GetConsoleSTSDuration()
 	return http.Cookie{
 		Path:     "/",
 		Name:     "token",
 		Value:    token,
-		MaxAge:   int(SessionDuration.Seconds()), // 45 minutes
-		Expires:  time.Now().Add(SessionDuration),
+		MaxAge:   int(sessionDuration.Seconds()), // default 1 hr
+		Expires:  time.Now().Add(sessionDuration),
 		HttpOnly: true,
 		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
 		// should not leak any cookie if we access the site using HTTP

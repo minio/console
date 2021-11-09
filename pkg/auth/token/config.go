@@ -17,17 +17,25 @@
 package token
 
 import (
-	"strconv"
+	"time"
 
 	"github.com/minio/console/pkg/auth/utils"
 	"github.com/minio/pkg/env"
 )
 
-// ConsoleSTSDurationSeconds returns the default session duration for the STS requested tokens.
-func GetConsoleSTSDurationInSeconds() int {
-	duration, err := strconv.Atoi(env.Get(ConsoleSTSDurationSeconds, "3600"))
+// GetConsoleSTSDuration returns the default session duration for the STS requested tokens (defaults to 1h)
+func GetConsoleSTSDuration() time.Duration {
+	durationSeconds := env.Get(ConsoleSTSDurationSeconds, "")
+	if durationSeconds != "" {
+		duration, err := time.ParseDuration(durationSeconds + "s")
+		if err != nil {
+			duration = 1 * time.Hour
+		}
+		return duration
+	}
+	duration, err := time.ParseDuration(env.Get(ConsoleSTSDuration, "1h"))
 	if err != nil {
-		duration = 3600
+		duration = 1 * time.Hour
 	}
 	return duration
 }
