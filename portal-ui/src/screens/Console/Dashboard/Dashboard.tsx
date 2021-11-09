@@ -31,6 +31,7 @@ import { Usage } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 
+
 interface IDashboardSimple {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
@@ -88,6 +89,7 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
           )}
         </Fragment>
       )}
+      
     </Fragment>
   );
 };
