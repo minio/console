@@ -346,7 +346,7 @@ const ListObjects = ({
     if (
       loadingVersioning &&
       bucketInfo?.allowedActions &&
-      bucketInfo?.name == bucketName
+      bucketInfo?.name === bucketName
     ) {
       if (displayListObjects) {
         api
@@ -423,7 +423,7 @@ const ListObjects = ({
     if (
       loading &&
       bucketInfo?.allowedActions &&
-      bucketInfo?.name == bucketName
+      bucketInfo?.name === bucketName
     ) {
       if (displayListObjects) {
         let pathPrefix = "";

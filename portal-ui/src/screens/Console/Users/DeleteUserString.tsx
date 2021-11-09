@@ -50,7 +50,7 @@ const DeleteUserString = ({
     if (deleteLoading) {
       return;
     }
-    if (userName == null) {
+    if (userName === null) {
       return;
     }
     setDeleteLoading(true);

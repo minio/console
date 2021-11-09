@@ -137,7 +137,7 @@ const PodsSummary = ({
             label: "Restarts",
             elementKey: "restarts",
             renderFunction: (input) => {
-              return input != null ? input : 0;
+              return input !== null ? input : 0;
             },
           },
           { label: "Node", elementKey: "node" },

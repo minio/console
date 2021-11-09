@@ -197,7 +197,12 @@ const AccessRule = ({
         setLoadingAccessRules(false);
       }
     }
-  }, [loadingAccessRules, setErrorSnackMessage, bucketName]);
+  }, [
+    loadingAccessRules,
+    setErrorSnackMessage,
+    displayAccessRules,
+    bucketName,
+  ]);
 
   const closeAddAccessRuleModal = () => {
     setAddAccessRuleOpen(false);

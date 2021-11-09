@@ -24,15 +24,18 @@ import { Card, CardHeader } from "@mui/material";
 import { CircleIcon, VersionIcon } from "../../../../icons";
 import get from "lodash/get";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
+
 const styles = (theme: Theme) =>
   createStyles({
     ...commonDashboardInfocard,
   });
+
 interface ICardProps {
   classes: any;
   server: ServerInfo;
   index: number;
 }
+
 const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
   const serverStatusToClass = (health_status: string) => {
     switch (health_status) {
@@ -81,7 +84,7 @@ const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
                 className={`${classes.innerState} ${
                   activeDisks <= totalDrives / 2 && classes.redState
                 }  ${
-                  totalDrives != 2 &&
+                  totalDrives !== 2 &&
                   activeDisks === totalDrives / 2 + 1 &&
                   classes.yellowState
                 }  ${activeDisks === totalDrives && classes.greenState}`}

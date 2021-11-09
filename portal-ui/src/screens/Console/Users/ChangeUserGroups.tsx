@@ -83,7 +83,7 @@ const ChangeUserGroups = ({
   }, [selectedUser, setModalErrorSnackMessage]);
 
   useEffect(() => {
-    if (selectedUser == null) {
+    if (selectedUser === null) {
       setAccessKey("");
       setSecretKey("");
       setSelectedGroups([]);

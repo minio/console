@@ -43,7 +43,7 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
             let targetPath = "/";
             if (
               localStorage.getItem("redirect-path") &&
-              localStorage.getItem("redirect-path") != ""
+              localStorage.getItem("redirect-path") !== ""
             ) {
               targetPath = `${localStorage.getItem("redirect-path")}`;
               localStorage.setItem("redirect-path", "");
