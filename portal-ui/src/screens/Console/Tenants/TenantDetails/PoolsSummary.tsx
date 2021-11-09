@@ -130,7 +130,7 @@ const PoolsSummary = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={() => {
               setAddPool(true);
             }}

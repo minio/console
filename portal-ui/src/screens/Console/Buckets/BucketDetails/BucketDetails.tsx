@@ -64,13 +64,11 @@ import {
   S3_GET_BUCKET_POLICY,
   S3_GET_LIFECYCLE_CONFIGURATION,
   S3_GET_REPLICATION_CONFIGURATION,
-  S3_LISTEN_BUCKET_NOTIFICATIONS,
   S3_PUT_BUCKET_NOTIFICATIONS,
   S3_PUT_LIFECYCLE_CONFIGURATION,
   S3_PUT_REPLICATION_CONFIGURATION,
 } from "../../../../types";
 import { displayComponent } from "../../../../utils/permissions";
-import { ISessionResponse } from "../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -383,6 +381,7 @@ const BucketDetails = ({
                       setBucketDetailsLoad(true);
                     }}
                     size="large"
+                    variant={"contained"}
                   >
                     <RefreshIcon />
                   </BoxIconButton>

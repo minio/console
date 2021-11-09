@@ -29,7 +29,6 @@ import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   containerForHeader,
-  linkStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -46,6 +45,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "../../../../icons/SearchIcon";
 import BoxIconButton from "../../Common/BoxIconButton";
 import RefreshIcon from "../../../../icons/RefreshIcon";
+import AButton from "../../Common/AButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -131,7 +131,6 @@ const styles = (theme: Theme) =>
     constrainedContainer: {
       maxWidth: 1180,
     },
-    ...linkStyles(theme.palette.info.main),
   });
 
 interface IListBucketsProps {
@@ -438,14 +437,14 @@ const ListBuckets = ({
                         <br />
                         <br />
                         To get started,&nbsp;
-                        <button
-                          className={classes.link}
+                        <AButton
                           onClick={() => {
                             addBucketOpen(true);
                           }}
                         >
                           Create a Bucket.
-                        </button>
+                        </AButton>
+                        refresh
                       </Fragment>
                     }
                   />

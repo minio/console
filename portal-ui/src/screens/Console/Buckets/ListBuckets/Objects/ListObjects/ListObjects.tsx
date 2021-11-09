@@ -45,17 +45,14 @@ import {
   objectBrowserCommon,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { Badge, Button, IconButton, Tooltip, Typography } from "@mui/material";
+import { Badge, Button, Tooltip, Typography } from "@mui/material";
 import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
   resetRewind,
   setFileModeEnabled,
 } from "../../../../ObjectBrowser/actions";
-import {
-  ObjectBrowserReducer,
-  Route,
-} from "../../../../ObjectBrowser/reducers";
+import { Route } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
 import { download, extensionPreview, sortListObjects } from "../utils";
 import {
@@ -99,15 +96,14 @@ import {
 import ShareFile from "../ObjectDetails/ShareFile";
 import { displayComponent } from "../../../../../../utils/permissions";
 import {
-  S3_DELETE_BUCKET,
   S3_DELETE_OBJECT,
-  S3_FORCE_DELETE_BUCKET,
   S3_GET_OBJECT,
   S3_LIST_BUCKET,
   S3_PUT_OBJECT,
 } from "../../../../../../types";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
+import BoxIconButton from "../../../../Common/BoxIconButton";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -1088,10 +1084,9 @@ const ListObjects = ({
                 {displayPutObject && (
                   <Fragment>
                     <Tooltip title={"Choose or create a new path"}>
-                      <IconButton
+                      <BoxIconButton
                         color="primary"
                         aria-label="Add a new folder"
-                        component="span"
                         onClick={() => {
                           setCreateFolderOpen(true);
                         }}
@@ -1099,14 +1094,13 @@ const ListObjects = ({
                         size="large"
                       >
                         <AddFolderIcon />
-                      </IconButton>
+                      </BoxIconButton>
                     </Tooltip>
 
                     <Tooltip title={"Upload file"}>
-                      <IconButton
+                      <BoxIconButton
                         color="primary"
                         aria-label="Refresh List"
-                        component="span"
                         onClick={() => {
                           if (fileUpload && fileUpload.current) {
                             fileUpload.current.click();
@@ -1116,7 +1110,7 @@ const ListObjects = ({
                         size="large"
                       >
                         <UploadIcon />
-                      </IconButton>
+                      </BoxIconButton>
                     </Tooltip>
                     <input
                       type="file"
@@ -1137,10 +1131,9 @@ const ListObjects = ({
                     invisible={!rewindEnabled}
                     className={classes.badgeOverlap}
                   >
-                    <IconButton
+                    <BoxIconButton
                       color="primary"
                       aria-label="Rewind"
-                      component="span"
                       onClick={() => {
                         setRewindSelect(true);
                       }}
@@ -1148,22 +1141,22 @@ const ListObjects = ({
                       size="large"
                     >
                       <HistoryIcon />
-                    </IconButton>
+                    </BoxIconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title={"Refresh list"}>
-                  <IconButton
+                  <BoxIconButton
                     color="primary"
                     aria-label="Refresh List"
-                    component="span"
                     onClick={() => {
                       setLoading(true);
                     }}
                     disabled={rewindEnabled}
                     size="large"
+                    variant={"contained"}
                   >
                     <RefreshIcon />
-                  </IconButton>
+                  </BoxIconButton>
                 </Tooltip>
               </Fragment>
             }
@@ -1195,7 +1188,7 @@ const ListObjects = ({
             <Button
               variant="contained"
               color="primary"
-              startIcon={<DeleteIcon />}
+              endIcon={<DeleteIcon />}
               onClick={() => {
                 setDeleteMultipleOpen(true);
               }}

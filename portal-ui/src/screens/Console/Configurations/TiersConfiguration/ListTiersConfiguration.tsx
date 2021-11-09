@@ -27,7 +27,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import {
   actionsTray,
   containerForHeader,
-  linkStyles,
   searchField,
   settingsCommon,
   typesSelection,
@@ -45,6 +44,7 @@ import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
 import BoxIconButton from "../../Common/BoxIconButton";
+import AButton from "../../Common/AButton";
 
 interface IListTiersConfig {
   classes: any;
@@ -78,7 +78,6 @@ const styles = (theme: Theme) =>
       ...settingsCommon.customTitle,
       marginTop: 0,
     },
-    ...linkStyles(theme.palette.info.main),
   });
 
 const ListTiersConfiguration = ({
@@ -224,10 +223,10 @@ const ListTiersConfiguration = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={addTier}
           >
-            Add a Tier
+            Add Tier
           </Button>
         </Grid>
         <Grid item xs={12}>
@@ -342,10 +341,7 @@ const ListTiersConfiguration = ({
                         <br />
                         <br />
                         To get started,{" "}
-                        <button onClick={addTier} className={classes.link}>
-                          Add Tier
-                        </button>
-                        .
+                        <AButton onClick={addTier}>Add A Tier</AButton>.
                       </Fragment>
                     }
                   />

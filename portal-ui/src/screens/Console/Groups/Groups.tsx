@@ -30,7 +30,6 @@ import { stringSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
   containerForHeader,
-  linkStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -43,6 +42,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import history from "../../../history";
+import AButton from "../Common/AButton";
 
 interface IGroupsProps {
   classes: any;
@@ -85,7 +85,6 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    ...linkStyles(theme.palette.info.main),
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -212,7 +211,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              endIcon={<AddIcon />}
               onClick={() => {
                 setSelectedGroup(null);
                 setGroupOpen(true);
@@ -288,15 +287,14 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                           <br />
                           <br />
                           To get started,{" "}
-                          <button
+                          <AButton
                             onClick={() => {
                               setSelectedGroup(null);
                               setGroupOpen(true);
                             }}
-                            className={classes.link}
                           >
                             Create a Group
-                          </button>
+                          </AButton>
                           .
                         </Fragment>
                       }

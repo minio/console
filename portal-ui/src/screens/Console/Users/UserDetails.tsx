@@ -367,7 +367,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<AddIcon />}
+                  endIcon={<AddIcon />}
                   size="medium"
                   onClick={() => {
                     setAddGroupOpen(true);
@@ -398,7 +398,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<IAMPoliciesIcon />}
+                  endIcon={<IAMPoliciesIcon />}
                   size="medium"
                   onClick={() => {
                     setPolicyOpen(true);

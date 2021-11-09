@@ -29,7 +29,6 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import {
   actionsTray,
   containerForHeader,
-  linkStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -44,6 +43,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import TenantListItem from "./TenantListItem";
 import HelpBox from "../../../../common/HelpBox";
 import BoxIconButton from "../../Common/BoxIconButton";
+import AButton from "../../Common/AButton";
 
 interface ITenantsList {
   classes: any;
@@ -107,7 +107,6 @@ const styles = (theme: Theme) =>
       paddingTop: 30,
       paddingBottom: 30,
     },
-    ...linkStyles(theme.palette.info.main),
   });
 
 const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
@@ -300,14 +299,13 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
                               <br />
                               <br />
                               To get started,&nbsp;
-                              <button
-                                className={classes.link}
+                              <AButton
                                 onClick={() => {
                                   history.push("/tenants/add");
                                 }}
                               >
                                 Create a Tenant.
-                              </button>
+                              </AButton>
                             </Fragment>
                           }
                         />

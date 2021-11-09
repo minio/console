@@ -281,7 +281,7 @@ const DirectCSIMain = ({
         <Button
           variant="contained"
           color="primary"
-          startIcon={<GroupIcon />}
+          endIcon={<GroupIcon />}
           disabled={checkedDrives.length <= 0 || notAvailable}
           onClick={formatSelectedDrives}
         >
@@ -290,7 +290,7 @@ const DirectCSIMain = ({
         <Button
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
+          endIcon={<AddIcon />}
           onClick={formatAllDrives}
           disabled={notAvailable}
         >

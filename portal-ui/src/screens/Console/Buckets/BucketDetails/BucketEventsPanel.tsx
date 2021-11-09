@@ -163,7 +163,7 @@ const BucketEventsPanel = ({
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              endIcon={<AddIcon />}
               size="medium"
               onClick={() => {
                 setAddEventScreenOpen(true);

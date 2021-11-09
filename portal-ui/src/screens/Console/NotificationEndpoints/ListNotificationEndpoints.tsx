@@ -37,7 +37,6 @@ import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
   containerForHeader,
-  linkStyles,
   searchField,
   settingsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
@@ -48,6 +47,7 @@ import SearchIcon from "../../../icons/SearchIcon";
 import history from "../../../history";
 import HelpBox from "../../../common/HelpBox";
 import BoxIconButton from "../Common/BoxIconButton";
+import AButton from "../Common/AButton";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -75,7 +75,6 @@ const styles = (theme: Theme) =>
     lambdaContainer: {
       padding: "15px 0",
     },
-    ...linkStyles(theme.palette.info.main),
   });
 
 const ListNotificationEndpoints = ({
@@ -173,7 +172,7 @@ const ListNotificationEndpoints = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            endIcon={<AddIcon />}
             onClick={() => {
               history.push("/notification-endpoints/add");
             }}
@@ -257,14 +256,13 @@ const ListNotificationEndpoints = ({
                         <br />
                         <br />
                         To get started,{" "}
-                        <button
+                        <AButton
                           onClick={() => {
                             history.push("/notification-endpoints/add");
                           }}
-                          className={classes.link}
                         >
                           Add a Notification Target
-                        </button>
+                        </AButton>
                         .
                       </Fragment>
                     }

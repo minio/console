@@ -19,6 +19,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IconButton, IconButtonProps } from "@mui/material";
+import clsx from "clsx";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,7 +27,8 @@ const styles = (theme: Theme) =>
       padding: 8,
       marginLeft: 8,
       borderWidth: 1,
-      borderColor: theme.palette.primary.main,
+      borderColor: "#696969",
+      color: "#696969",
       borderStyle: "solid",
       borderRadius: 3,
       "& .MuiSvgIcon-root": {
@@ -37,17 +39,46 @@ const styles = (theme: Theme) =>
         borderRadius: 3,
         opacity: 0.3,
       },
+      "&:disabled": {
+        color: "#EBEBEB",
+        borderColor: "#EBEBEB",
+      },
+    },
+    contained: {
+      borderColor: theme.palette.primary.main,
+      background: theme.palette.primary.main,
+      color: "white",
+      "& .MuiTouchRipple-root span": {
+        backgroundColor: theme.palette.primary.dark,
+        borderRadius: 3,
+        opacity: 0.3,
+      },
+      "&:hover": {
+        backgroundColor: theme.palette.primary.light,
+        color: "#FFF",
+      },
     },
   });
 
 interface IBoxIconButton extends IconButtonProps {
   classes: any;
   children: any;
+  variant?: "outlined" | "contained";
 }
 
-const BoxIconButton = ({ classes, children, ...rest }: IBoxIconButton) => {
+const BoxIconButton = ({
+  classes,
+  children,
+  variant = "outlined",
+  ...rest
+}: IBoxIconButton) => {
   return (
-    <IconButton {...rest} className={classes.root}>
+    <IconButton
+      {...rest}
+      className={clsx(classes.root, {
+        [classes.contained]: variant == "contained",
+      })}
+    >
       {children}
     </IconButton>
   );
