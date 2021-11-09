@@ -746,7 +746,7 @@ const ListObjects = ({
             return true;
           }
         }
-        return item.endsWith("/");
+        return false;
       },
       sendOnlyId: false,
     },

@@ -17,6 +17,8 @@
 package restapi
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"encoding/base64"
 	"fmt"
@@ -96,40 +98,51 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 				prefixPath = string(decodedPrefix)
 			}
 			prefixElements := strings.Split(prefixPath, "/")
+			isFolder := false
 			if len(prefixElements) > 0 {
-				filename = prefixElements[len(prefixElements)-1]
+				if prefixElements[len(prefixElements)-1] == "" {
+					filename = prefixElements[len(prefixElements)-2]
+					isFolder = true
+				} else {
+					filename = prefixElements[len(prefixElements)-1]
+				}
 			}
 			if isPreview {
 				rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
 				rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
 				rw.Header().Set("X-XSS-Protection", "1")
 
+			} else if isFolder {
+				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", filename))
+				rw.Header().Set("Content-Type", "application/zip")
 			} else {
 				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 				rw.Header().Set("Content-Type", "application/octet-stream")
 			}
 
 			// indicate object size & content type
-			stat, err := resp.(*minio.Object).Stat()
-			if err != nil {
-				log.Println(err)
-			} else {
-				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+			if !isFolder {
+				stat, err := resp.(*minio.Object).Stat()
+				if err != nil {
+					log.Println(err)
+				} else {
+					rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
 
-				contentType := stat.ContentType
+					contentType := stat.ContentType
 
-				if isPreview {
-					// In case content type was uploaded as octet-stream, we double verify content type
-					if stat.ContentType == "application/octet-stream" {
-						contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+					if isPreview {
+						// In case content type was uploaded as octet-stream, we double verify content type
+						if stat.ContentType == "application/octet-stream" {
+							contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+						}
 					}
-				}
 
-				rw.Header().Set("Content-Type", contentType)
+					rw.Header().Set("Content-Type", contentType)
+				}
 			}
 
 			// Copy the stream
-			_, err = io.Copy(rw, resp)
+			_, err := io.Copy(rw, resp)
 			if err != nil {
 				log.Println(err)
 			}
@@ -312,6 +325,45 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			return nil, prepareError(err)
 		}
 		prefix = string(decodedPrefix)
+	}
+	isFolder := false
+	folders := strings.Split(prefix, "/")
+	if folders[len(folders)-1] == "" {
+		isFolder = true
+	}
+	if isFolder {
+		mClient, err := newMinioClient(session)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		minioClient := minioClient{client: mClient}
+		objects, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, true, false, false)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		w := new(bytes.Buffer)
+		zipw := zip.NewWriter(w)
+		var folder string
+		if len(folders) > 1 {
+			folder = folders[len(folders)-2]
+		}
+		for i := 0; i < len(objects); i++ {
+			name := folder + objects[i].Name[len(prefix)-1:]
+			object, err := mClient.GetObject(ctx, params.BucketName, objects[i].Name, minio.GetObjectOptions{})
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			f, err := zipw.Create(name)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(object)
+			f.Write(buf.Bytes())
+		}
+		zipw.Close()
+		zipfile := io.NopCloser(bytes.NewReader(w.Bytes()))
+		return zipfile, nil
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
