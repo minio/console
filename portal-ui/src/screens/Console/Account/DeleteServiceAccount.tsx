@@ -79,7 +79,7 @@ const DeleteServiceAccount = ({
   ]);
 
   const removeRecord = () => {
-    if (selectedServiceAccount == null) {
+    if (selectedServiceAccount === null) {
       return;
     }
 

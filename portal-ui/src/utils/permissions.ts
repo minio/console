@@ -14,12 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  ADMIN_ALL_ACTIONS,
-  S3_ALL_ACTIONS,
-  S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION,
-  S3_PUT_OBJECT_TAGGING,
-} from "../types";
+import { ADMIN_ALL_ACTIONS, S3_ALL_ACTIONS } from "../types";
 
 // displayComponent receives a list of user permissions to perform on a specific resource, then compares those permissions against
 // a list of required permissions and return true or false depending of the level of required access (match all permissions,
@@ -44,6 +39,6 @@ export const displayComponent = (
     );
   });
   return matchAll
-    ? permissions.length == requiredPermissions.length
+    ? permissions.length === requiredPermissions.length
     : permissions.length > 0;
 };

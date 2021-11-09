@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -184,7 +184,7 @@ const UsersSelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
-          {records != null && records.length > 0 ? (
+          {records !== null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
                 <span className={classes.actionsTitle}>

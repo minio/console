@@ -49,7 +49,7 @@ const DeleteUser = ({
     if (deleteLoading) {
       return;
     }
-    if (selectedUser == null) {
+    if (selectedUser === null) {
       return;
     }
     setDeleteLoading(true);

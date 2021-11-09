@@ -76,7 +76,7 @@ const BoxIconButton = ({
     <IconButton
       {...rest}
       className={clsx(classes.root, {
-        [classes.contained]: variant == "contained",
+        [classes.contained]: variant === "contained",
       })}
     >
       {children}
