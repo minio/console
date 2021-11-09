@@ -34,6 +34,7 @@ import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
 import history from "./../../../../history";
 import { CircleIcon } from "../../../../icons";
+import { tenantIsOnline } from "../ListTenants/utils";
 
 interface ITenantsSummary {
   classes: any;
@@ -328,6 +329,7 @@ const TenantSummary = ({
                       `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
                     );
                   }}
+                  disabled={!tenant || !tenantIsOnline(tenant)}
                 >
                   Manage Tenant
                 </Button>
