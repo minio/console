@@ -179,7 +179,7 @@ const GroupsSelectors = ({
     <React.Fragment>
       <Grid item xs={12}>
         {loading && <LinearProgress />}
-        {records != null && records.length > 0 ? (
+        {records !== null && records.length > 0 ? (
           <React.Fragment>
             <Grid item xs={12} className={classes.actionsTray}>
               <span className={classes.actionsTitle}>Assign Groups</span>

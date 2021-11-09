@@ -52,7 +52,7 @@ const DeleteEvent = ({
     if (deleteLoading) {
       return;
     }
-    if (bucketEvent == null) {
+    if (bucketEvent === null) {
       return;
     }
 

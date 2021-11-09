@@ -178,7 +178,7 @@ const PieChartWidget = ({
                       <Cell
                         key={`cellOuter-${index}`}
                         fill={
-                          typeof outerColors[index] == "undefined"
+                          typeof outerColors[index] === "undefined"
                             ? "#393939"
                             : outerColors[index]
                         }
@@ -219,7 +219,7 @@ const PieChartWidget = ({
                         <Cell
                           key={`cell-${index}`}
                           fill={
-                            typeof innerColors[index] == "undefined"
+                            typeof innerColors[index] === "undefined"
                               ? "#393939"
                               : innerColors[index]
                           }

@@ -85,7 +85,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   };
 
   const makeServerArray = (usage: Usage | null) => {
-    if (usage != null) {
+    if (usage !== null) {
       return usage.servers.sort(function (a, b) {
         var nameA = a.endpoint.toLowerCase();
         var nameB = b.endpoint.toLowerCase();
