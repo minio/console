@@ -112,9 +112,9 @@ const EditConfiguration = ({
           `/api/v1/configs/${selectedConfiguration.configuration_id}`,
           payload
         )
-        .then(() => {
+        .then((res) => {
           setSaving(false);
-          serverNeedsRestart(true);
+          serverNeedsRestart(res.restart);
 
           history.push("/settings");
         })
