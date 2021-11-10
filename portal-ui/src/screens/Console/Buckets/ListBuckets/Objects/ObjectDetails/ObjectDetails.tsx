@@ -94,6 +94,7 @@ import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
 import BoxIconButton from "../../../../Common/BoxIconButton";
+import { RecoverIcon } from "../../../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -446,6 +447,7 @@ const ObjectDetails = ({
 
   const tableActions: ItemActions[] = [
     {
+      label: "Share",
       type: "share",
       onClick: (item: any) => {
         setObjectToShare(item);
@@ -461,6 +463,7 @@ const ObjectDetails = ({
       },
     },
     {
+      label: "Download",
       type: "download",
       onClick: (item: IFileInfo) => {
         downloadObject(item);
@@ -474,7 +477,8 @@ const ObjectDetails = ({
       },
     },
     {
-      type: "restore",
+      label: "Restore",
+      type: <RecoverIcon />,
       onClick: (item: IFileInfo) => {
         setRestoreVersion(item.version_id || "");
         setRestoreVersionOpen(true);
