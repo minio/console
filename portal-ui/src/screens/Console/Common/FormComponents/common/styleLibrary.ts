@@ -115,6 +115,7 @@ export const checkboxIcons = {
   unCheckedIcon: {
     ...checkBoxBasic,
     border: "1px solid #c3c3c3",
+    boxShadow: "inset 0px 1px 3px rgba(0,0,0,0.1)",
   },
   checkedIcon: {
     ...checkBoxBasic,
