@@ -31,6 +31,7 @@ const styles = (theme: Theme) =>
       cursor: "pointer",
       fontSize: "inherit",
       color: theme.palette.info.main,
+      fontFamily: "Lato, sans-serif",
     },
   });
 
