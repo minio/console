@@ -28,7 +28,7 @@ import CommonCard from "../CommonCard";
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import GeneralUsePaginator from "../../Common/GeneralUsePaginator/GeneralUsePaginator";
 import { widgetContainerCommon } from "../../Common/FormComponents/common/styleLibrary";
-import { TenantsIcon } from "../../../../icons";
+import { PrometheusIcon } from "../../../../icons";
 import HelpBox from "../../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
@@ -249,7 +249,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
               >
        <Grid item xs={8}>
           <HelpBox
-           iconComponent={<TenantsIcon />}
+           iconComponent={<PrometheusIcon />}
            title={"Monitoring"}
            help={
              <Fragment>
