@@ -67,12 +67,22 @@ export const getLimitSizes = (resourceQuotas: IQuotas) => {
 };
 
 export const tenantIsOnline = (tenant: ITenant): boolean => {
-  var isOnline = true;
   if (tenant.currentState === "") {
     return false;
   }
-  if (tenant.health_status !== "green" && tenant.health_status !== "yellow") {
+  if (
+    !tenant.status &&
+    tenant.health_status !== "green" &&
+    tenant.health_status !== "yellow"
+  ) {
     return false;
   }
-  return isOnline;
+  if (
+    tenant.status &&
+    tenant.status.health_status !== "green" &&
+    tenant.status.health_status !== "yellow"
+  ) {
+    return false;
+  }
+  return true;
 };
