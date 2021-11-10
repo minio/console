@@ -326,7 +326,7 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				AccessKey:       accessKey,
 				SecretKey:       secretKey,
 				Location:        location,
-				DurationSeconds: int(xjwt.GetConsoleSTSDuration()),
+				DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
 				Client:      GetConsoleHTTPClient(),
