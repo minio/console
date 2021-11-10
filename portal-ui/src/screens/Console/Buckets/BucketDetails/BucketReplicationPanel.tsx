@@ -116,7 +116,12 @@ const BucketReplicationPanel = ({
         setLoadingReplication(false);
       }
     }
-  }, [loadingReplication, setErrorSnackMessage, bucketName]);
+  }, [
+    loadingReplication,
+    setErrorSnackMessage,
+    bucketName,
+    displayReplicationRules,
+  ]);
 
   const closeAddReplication = () => {
     setOpenReplicationOpen(false);

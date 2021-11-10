@@ -261,7 +261,7 @@ const BucketSummary = ({
         setLoadingEncryption(false);
       }
     }
-  }, [loadingEncryption, bucketName]);
+  }, [loadingEncryption, bucketName, displayGetBucketEncryptionConfiguration]);
 
   useEffect(() => {
     if (loadingVersioning && distributedSetup) {
@@ -308,6 +308,7 @@ const BucketSummary = ({
     setErrorSnackMessage,
     bucketName,
     distributedSetup,
+    displayGetBucketQuota,
   ]);
 
   useEffect(() => {
@@ -333,6 +334,7 @@ const BucketSummary = ({
     bucketName,
     loadingVersioning,
     distributedSetup,
+    displayGetBucketObjectLockConfiguration,
   ]);
 
   useEffect(() => {

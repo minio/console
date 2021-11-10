@@ -78,4 +78,5 @@ var BucketAdminRole = iampolicy.NewActionSet(
 	iampolicy.ReplicateTagsAction,
 	iampolicy.GetObjectVersionForReplicationAction,
 	iampolicy.AllActions,
+	iampolicy.AllAdminActions,
 )
