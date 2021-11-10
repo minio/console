@@ -63,6 +63,11 @@ swagger-operator:
 assets:
 	@(cd portal-ui; yarn install; make build-static; yarn prettier --write . --loglevel warn;  cd ..)
 
+test-integration:
+	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4} && sleep 5)
+	@(GO111MODULE=on go test -race -v github.com/minio/console/integration/...)
+	@(docker stop minio)
+
 test:
 	@(GO111MODULE=on go test -race -v github.com/minio/console/restapi/...)
 

@@ -8,14 +8,21 @@ on:
     branches:
       - master
 
+# This ensures that previous jobs for the PR are canceled when the PR is
+# updated.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  minio-test:
     name: Integration Tests with Latest Distributed MinIO
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        go-version: [1.16.x]
-        os: [ubuntu-latest]
+        go-version: [1.16.x, 1.17.x]
+
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -27,13 +34,5 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-          CGO_ENABLED: 0
         run: |
-          wget -O /tmp/minio https://dl.minio.io/server/minio/release/linux-amd64/minio
-          chmod +x /tmp/minio
-          mkdir -p /tmp/certs-dir
-          /tmp/minio server --quiet -S /tmp/certs-dir /tmp/fs{1...4} &
-          go test github.com/minio/console/integration/...
+          make test-integration
