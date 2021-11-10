@@ -85,17 +85,6 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
 	userAdminClient := AdminClient{Client: mAdminClient}
-	// Policy used by the current user
-	accountInfo, err := userAdminClient.AccountInfo(ctx)
-	if err != nil {
-		return nil, prepareError(err)
-	}
-
-	var sessionPolicy *models.IamPolicy
-	err = json.Unmarshal(accountInfo.Policy, &sessionPolicy)
-	if err != nil {
-		return nil, prepareError(err)
-	}
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	policy, err := getAccountPolicy(ctx, userAdminClient)
@@ -110,7 +99,15 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	if policy != nil {
 		actions = acl.GetActionsStringFromPolicy(policy)
 	}
-
+	rawPolicy, err := json.Marshal(policy)
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+	}
+	var sessionPolicy *models.IamPolicy
+	err = json.Unmarshal(rawPolicy, &sessionPolicy)
+	if err != nil {
+		return nil, prepareError(err)
+	}
 	sessionResp := &models.SessionResponse{
 		Pages:           acl.GetAuthorizedEndpoints(actions),
 		Features:        getListOfEnabledFeatures(),

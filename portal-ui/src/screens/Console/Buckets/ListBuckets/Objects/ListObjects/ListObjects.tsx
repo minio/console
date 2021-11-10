@@ -97,7 +97,6 @@ import ShareFile from "../ObjectDetails/ShareFile";
 import { displayComponent } from "../../../../../../utils/permissions";
 import {
   S3_DELETE_OBJECT,
-  S3_GET_OBJECT,
   S3_LIST_BUCKET,
   S3_PUT_OBJECT,
 } from "../../../../../../types";
@@ -295,10 +294,6 @@ const ListObjects = ({
     S3_PUT_OBJECT,
   ]);
 
-  const displayGetObject = displayComponent(bucketInfo?.allowedActions, [
-    S3_GET_OBJECT,
-  ]);
-
   const displayDeleteObject = displayComponent(bucketInfo?.allowedActions, [
     S3_DELETE_OBJECT,
   ]);
@@ -363,7 +358,14 @@ const ListObjects = ({
         setLoadingVersioning(false);
       }
     }
-  }, [bucketName, loadingVersioning, setErrorSnackMessage]);
+  }, [
+    bucketName,
+    loadingVersioning,
+    setErrorSnackMessage,
+    bucketInfo?.allowedActions,
+    bucketInfo?.name,
+    displayListObjects,
+  ]);
 
   // Rewind
   useEffect(() => {
@@ -555,6 +557,7 @@ const ListObjects = ({
     internalPaths,
     setFileModeEnabled,
     bucketInfo,
+    displayListObjects,
   ]);
 
   // bucket info

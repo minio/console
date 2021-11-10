@@ -113,7 +113,7 @@ const BucketEventsPanel = ({
         setLoadingEvents(false);
       }
     }
-  }, [loadingEvents, setErrorSnackMessage, bucketName]);
+  }, [loadingEvents, setErrorSnackMessage, bucketName, displayEvents]);
 
   const eventsDisplay = (events: string[]) => {
     return <Fragment>{events.join(", ")}</Fragment>;

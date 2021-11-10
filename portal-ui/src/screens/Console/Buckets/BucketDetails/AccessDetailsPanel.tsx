@@ -136,7 +136,7 @@ const AccessDetails = ({
         setLoadingUsers(false);
       }
     }
-  }, [loadingUsers, setErrorSnackMessage, bucketName]);
+  }, [loadingUsers, setErrorSnackMessage, bucketName, displayUsersList]);
 
   useEffect(() => {
     if (loadingPolicies) {
@@ -156,7 +156,7 @@ const AccessDetails = ({
         setLoadingPolicies(false);
       }
     }
-  }, [loadingPolicies, setErrorSnackMessage, bucketName]);
+  }, [loadingPolicies, setErrorSnackMessage, bucketName, displayPoliciesList]);
 
   return (
     <Fragment>

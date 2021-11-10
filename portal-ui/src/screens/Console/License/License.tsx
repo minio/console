@@ -110,6 +110,15 @@ const styles = (theme: Theme) =>
       textDecoration: "underline !important",
       color: theme.palette.info.main,
     },
+    linkButton: {
+      fontFamily: '"Lato", sans-serif',
+      fontWeight: "normal",
+      textTransform: "none",
+      fontSize: "inherit",
+      height: 0,
+      padding: 0,
+      margin: 0,
+    },
     tableContainer: {
       marginLeft: 28,
     },
@@ -579,12 +588,15 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           sure it remains free software for all its users.
                         </Typography>
                         <div className={classes.linkMore}>
-                          <a
-                            className={clsx(classes.link)}
+                          <Button
+                            variant="text"
+                            color="primary"
+                            size="small"
+                            className={clsx(classes.link, classes.linkButton)}
                             onClick={() => setLicenseModal(true)}
                           >
                             Read more
-                          </a>
+                          </Button>
                         </div>
                       </Grid>
                     </Fragment>
@@ -797,12 +809,18 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               <Fragment>
                                 {item.communityLink !== undefined &&
                                 item.communityLink ? (
-                                  <a
-                                    className={classes.link}
+                                  <Button
+                                    variant="text"
+                                    color="primary"
+                                    size="small"
+                                    className={clsx(
+                                      classes.link,
+                                      classes.linkButton
+                                    )}
                                     onClick={() => setLicenseModal(true)}
                                   >
                                     {item.community}
-                                  </a>
+                                  </Button>
                                 ) : (
                                   item.community
                                 )}

@@ -551,7 +551,6 @@ func getPolicyActionSetForBucket(bucketName string, statement []minioIAMPolicy.S
 	bucketNameARN := fmt.Sprintf("arn:aws:s3:::%s/*", bucketName)
 	for _, st := range statement {
 		if st.Effect == "Allow" {
-
 			if len(st.Resources.ToSlice()) == 0 {
 				mergedActions := append(bucketActions.ToSlice(), st.Actions.ToSlice()...)
 				bucketActions = minioIAMPolicy.NewActionSet(mergedActions...)
