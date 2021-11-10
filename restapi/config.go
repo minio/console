@@ -23,7 +23,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 
@@ -46,9 +45,6 @@ var (
 
 	// TLSRedirect console tls redirect rule
 	TLSRedirect = "on"
-
-	// SessionDuration cookie validity duration
-	SessionDuration = 45 * time.Minute
 )
 
 func getMinIOServer() string {
