@@ -35,6 +35,7 @@ import { AppState } from "../../../../store";
 import history from "./../../../../history";
 import { CircleIcon } from "../../../../icons";
 import { tenantIsOnline } from "../ListTenants/utils";
+import AButton from "../../Common/AButton";
 
 interface ITenantsSummary {
   classes: any;
@@ -108,7 +109,9 @@ const styles = (theme: Theme) =>
         marginBottom: 2,
       },
     },
-
+    linkedSection: {
+      color: theme.palette.info.main,
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -200,6 +203,7 @@ const TenantSummary = ({
                       href={tenant?.endpoints?.minio}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className={classes.linkedSection}
                     >
                       {tenant?.endpoints?.minio}
                     </a>
@@ -231,6 +235,7 @@ const TenantSummary = ({
                       href={tenant?.endpoints?.console}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className={classes.linkedSection}
                     >
                       {tenant?.endpoints?.console}
                     </a>
@@ -242,15 +247,13 @@ const TenantSummary = ({
                 <div>
                   <b>MinIO:</b>
                   <i>
-                    <Button
-                      color="primary"
-                      className={classes.anchorButton}
+                    <AButton
                       onClick={() => {
                         setUpdateMinioVersion(true);
                       }}
                     >
                       {tenant ? tenant.image : ""}
-                    </Button>
+                    </AButton>
                   </i>
                   <div />
                 </div>
