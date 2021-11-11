@@ -22,9 +22,26 @@ import (
 	directcsiv1beta2 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1beta2"
 	operator "github.com/minio/operator/pkg/client/clientset/versioned"
 	"k8s.io/client-go/kubernetes"
+	runtime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	certutil "k8s.io/client-go/util/cert"
+	kubernetesscheme "k8s.io/client-go/kubernetes/scheme"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	schema "k8s.io/apimachinery/pkg/runtime/schema"
 )
+
+var localSchemeBuilder = runtime.SchemeBuilder{
+	kubernetesscheme.AddToScheme,
+	directcsiv1beta1.AddToScheme,
+	directcsiv1beta2.AddToScheme,
+}
+
+var AddToScheme = localSchemeBuilder.AddToScheme
+var Scheme = AddToScheme(runtime.NewScheme())
+func init() {
+	v1.AddToGroupVersion(Scheme, schema.GroupVersion{Version: "v1"})
+	utilruntime.Must(AddToScheme(Scheme))
+}
 
 // getTLSClientConfig will return the right TLS configuration for the K8S client based on the configured TLS certificate
 func getTLSClientConfig() rest.TLSClientConfig {
@@ -79,3 +96,45 @@ func DirectCSIClientV1beta1(token string) (*directcsiv1beta1.DirectV1beta1Client
 func DirectCSIClientV1beta2(token string) (*directcsiv1beta2.DirectV1beta2Client, error) {
 	return directcsiv1beta2.NewForConfig(GetK8sConfig(token))
 }
+
+
+// package utils
+
+// import (
+// 	directcsi "github.com/minio/direct-csi/pkg/apis/direct.csi.min.io/v1beta2"
+// 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+// 	runtime "k8s.io/apimachinery/pkg/runtime"
+// 	schema "k8s.io/apimachinery/pkg/runtime/schema"
+// 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
+// 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+// 	kubernetesscheme "k8s.io/client-go/kubernetes/scheme"
+// )
+
+// var Scheme = runtime.NewScheme()
+// var Codecs = serializer.NewCodecFactory(Scheme)
+// var ParameterCodec = runtime.NewParameterCodec(Scheme)
+// var localSchemeBuilder = runtime.SchemeBuilder{
+// 	kubernetesscheme.AddToScheme,
+// 	directcsi.AddToScheme,
+// }
+
+// // AddToScheme adds all types of this clientset into the given scheme. This allows composition
+// // of clientsets, like in:
+// //
+// //   import (
+// //     "k8s.io/client-go/kubernetes"
+// //     clientsetscheme "k8s.io/client-go/kubernetes/scheme"
+// //     aggregatorclientsetscheme "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset/scheme"
+// //   )
+// //
+// //   kclientset, _ := kubernetes.NewForConfig(c)
+// //   _ = aggregatorclientsetscheme.AddToScheme(clientsetscheme.Scheme)
+// //
+// // After this, RawExtensions in Kubernetes types will serialize kube-aggregator types
+// // correctly.
+// var AddToScheme = localSchemeBuilder.AddToScheme
+
+// func init() {
+// 	v1.AddToGroupVersion(Scheme, schema.GroupVersion{Version: "v1"})
+// 	utilruntime.Must(AddToScheme(Scheme))
+// }

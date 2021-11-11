@@ -92,13 +92,8 @@ func getGroupKindVersions(discoveryClient *discovery.DiscoveryClient, group, kin
 }
 
 // getDirectCSIVolumesList returns direct-csi drives
-func getDirectCSIDriveList(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface) (*models.GetDirectCSIDriveListResponse, error) {
+func getDirectCSIDriveListv1beta2(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface) (*models.GetDirectCSIDriveListResponse, error) {
 	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return nil, err
-	}
-
-	volList, err := clientset.DirectCSIVolumes().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -128,29 +123,105 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1beta2.DirectV1
 		return strings.Compare(string(d1.Status.DriveStatus), string(d2.Status.DriveStatus)) < 0
 	})
 	for _, d := range drivesSorted {
-		var volumes int64
-		for _, v := range volList.Items {
-			if v.Status.Drive == d.Name {
-				volumes++
-			}
+		volumes := len(d.Finalizers)
+		if volumes > 0 {
+			volumes--
 		}
 		msg := ""
-		dr := func(val string) string {
-			dr := driveName(val)
-			for _, c := range d.Status.Conditions {
-				if c.Type == string(directv1beta2apis.DirectCSIDriveConditionInitialized) {
-					if c.Status != metav1.ConditionTrue {
-						msg = c.Message
-						continue
-					}
-				}
-				if c.Type == string(directv1beta2apis.DirectCSIDriveConditionOwned) {
-					if c.Status != metav1.ConditionTrue {
-						msg = c.Message
-						continue
-					}
+		for _, c := range d.Status.Conditions {
+			if c.Type == string(directv1beta2apis.DirectCSIDriveConditionInitialized) {
+				if c.Status != metav1.ConditionTrue {
+					msg = c.Message
+					continue
 				}
 			}
+			if c.Type == string(directv1beta2apis.DirectCSIDriveConditionOwned) {
+				if c.Status != metav1.ConditionTrue {
+					msg = c.Message
+					continue
+				}
+			}
+		}
+		dr := func(val string) string {
+			dr := driveName(val)
+			return strings.ReplaceAll("/dev/"+dr, sys.DirectCSIPartitionInfix, "")
+		}(d.Status.Path)
+		drStatus := d.Status.DriveStatus
+		if msg != "" {
+			drStatus = drStatus + "*"
+			msg = strings.ReplaceAll(msg, d.Name, "")
+			msg = strings.ReplaceAll(msg, sys.GetDirectCSIPath(d.Status.FilesystemUUID), dr)
+			msg = strings.ReplaceAll(msg, sys.DirectCSIPartitionInfix, "")
+			msg = strings.Split(msg, "\n")[0]
+		}
+		driveInfo := &models.DirectCSIDriveInfo{
+			Drive:     dr,
+			Capacity:  d.Status.TotalCapacity,
+			Allocated: d.Status.AllocatedCapacity,
+			Node:      d.Status.NodeName,
+			Status:    string(drStatus),
+			Message:   msg,
+			Volumes:   int64(volumes),
+		}
+		res.Drives = append(res.Drives, driveInfo)
+	}
+
+	return res, nil
+}
+
+// getDirectCSIVolumesList returns direct-csi drives
+func getDirectCSIDriveListv1beta1(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface) (*models.GetDirectCSIDriveListResponse, error) {
+	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	res := &models.GetDirectCSIDriveListResponse{}
+
+	// implementation same as direct-csi `drives ls` command
+	driveName := func(val string) string {
+		dr := strings.ReplaceAll(val, sys.DirectCSIDevRoot+"/", "")
+		dr = strings.ReplaceAll(dr, sys.HostDevRoot+"/", "")
+		return strings.ReplaceAll(dr, sys.DirectCSIPartitionInfix, "")
+	}
+	drivesSorted := drivesList.Items
+	// sort by nodename, path and status
+	sort.Slice(drivesSorted, func(i, j int) bool {
+		d1 := drivesSorted[i]
+		d2 := drivesSorted[j]
+
+		if v := strings.Compare(d1.Status.NodeName, d2.Status.NodeName); v != 0 {
+			return v < 0
+		}
+
+		if v := strings.Compare(d1.Status.Path, d2.Status.Path); v != 0 {
+			return v < 0
+		}
+
+		return strings.Compare(string(d1.Status.DriveStatus), string(d2.Status.DriveStatus)) < 0
+	})
+	for _, d := range drivesSorted {
+		volumes := len(d.Finalizers)
+		if volumes > 0 {
+			volumes--
+		}
+		msg := ""
+		for _, c := range d.Status.Conditions {
+			if c.Type == string(directv1beta2apis.DirectCSIDriveConditionInitialized) {
+				if c.Status != metav1.ConditionTrue {
+					msg = c.Message
+					continue
+				}
+			}
+			if c.Type == string(directv1beta2apis.DirectCSIDriveConditionOwned) {
+				if c.Status != metav1.ConditionTrue {
+					msg = c.Message
+					continue
+				}
+			}
+		}
+		dr := func(val string) string {
+			dr := driveName(val)
 			return strings.ReplaceAll("/dev/"+dr, sys.DirectCSIPartitionInfix, "")
 		}(d.Status.Path)
 		drStatus := d.Status.DriveStatus
@@ -161,7 +232,6 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1beta2.DirectV1
 			msg = strings.ReplaceAll(msg, sys.DirectCSIPartitionInfix, "")
 			msg = strings.Split(msg, "\n")[0]
 		}
-
 		driveInfo := &models.DirectCSIDriveInfo{
 			Drive:     dr,
 			Capacity:  d.Status.TotalCapacity,
@@ -169,7 +239,7 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1beta2.DirectV1
 			Node:      d.Status.NodeName,
 			Status:    string(drStatus),
 			Message:   msg,
-			Volumes:   volumes,
+			Volumes:   int64(volumes),
 		}
 		res.Drives = append(res.Drives, driveInfo)
 	}
@@ -179,20 +249,85 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1beta2.DirectV1
 
 func getDirectCSIDrivesListResponse(session *models.Principal) (*models.GetDirectCSIDriveListResponse, *models.Error) {
 	ctx := context.Background()
-	client, err := cluster.DirectCSIClientSet(session.STSSessionToken)
+	clientset, err := cluster.DirectCSIClientSet(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
-	drives, err := getDirectCSIDriveList(ctx, client.DirectV1beta2())
+	gvk, err := getGroupKindVersions(clientset.DiscoveryClient, "direct.csi.min.io", "DirectCSIDrive", "v1beta2", "v1beta1")
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	return drives, nil
+
+	version := gvk.Version
+
+	switch version {
+	case "v1beta2":
+		client, err := cluster.DirectCSIClientV1beta2(session.STSSessionToken)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		drives, err := getDirectCSIDriveListv1beta2(ctx, client)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		return drives, nil
+	case "v1beta1":
+		client, err := cluster.DirectCSIClientV1beta1(session.STSSessionToken)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		drives, err := getDirectCSIDriveListv1beta1(ctx, client)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		return drives, nil
+	default:
+		return nil, prepareError(errors.New("unsupported direct-csi version"))
+	}
 }
 
 // getDirectCSIVolumesList returns direct-csi volumes
-func getDirectCSIVolumesList(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface) (*models.GetDirectCSIVolumeListResponse, error) {
+func getDirectCSIVolumesListv1beta2(ctx context.Context, clientset directv1beta2.DirectV1beta2Interface) (*models.GetDirectCSIVolumeListResponse, error) {
+	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	volList, err := clientset.DirectCSIVolumes().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	// implementation same as direct-csi `volumes ls` command
+	drivePaths := map[string]string{}
+	driveName := func(val string) string {
+		dr := strings.ReplaceAll(val, sys.DirectCSIDevRoot+"/", "")
+		return strings.ReplaceAll(dr, sys.HostDevRoot+"/", "")
+	}
+
+	for _, d := range drivesList.Items {
+		drivePaths[d.Name] = driveName(d.Status.Path)
+	}
+	var volumes []*models.DirectCSIVolumeInfo
+	for _, v := range volList.Items {
+		vol := &models.DirectCSIVolumeInfo{
+			Volume:   v.Name,
+			Capacity: v.Status.TotalCapacity,
+			Drive:    driveName(drivePaths[v.Status.Drive]),
+			Node:     v.Status.NodeName,
+		}
+
+		volumes = append(volumes, vol)
+	}
+
+	res := &models.GetDirectCSIVolumeListResponse{
+		Volumes: volumes,
+	}
+	return res, nil
+}
+
+func getDirectCSIVolumesListv1beta1(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface) (*models.GetDirectCSIVolumeListResponse, error) {
 	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -233,16 +368,42 @@ func getDirectCSIVolumesList(ctx context.Context, clientset directv1beta2.Direct
 
 func getDirectCSIVolumesListResponse(session *models.Principal) (*models.GetDirectCSIVolumeListResponse, *models.Error) {
 	ctx := context.Background()
-	client, err := cluster.DirectCSIClientSet(session.STSSessionToken)
+	clientset, err := cluster.DirectCSIClientSet(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
-	volumes, err := getDirectCSIVolumesList(ctx, client.DirectV1beta2())
+	gvk, err := getGroupKindVersions(clientset.DiscoveryClient, "direct.csi.min.io", "DirectCSIVolume", "v1beta2", "v1beta1")
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	return volumes, nil
+
+	version := gvk.Version
+
+	switch version {
+	case "v1beta2":
+		client, err := cluster.DirectCSIClientV1beta2(session.STSSessionToken)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		volumes, err := getDirectCSIVolumesListv1beta2(ctx, client)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		return volumes, nil
+	case "v1beta1":
+		client, err := cluster.DirectCSIClientV1beta1(session.STSSessionToken)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		volumes, err := getDirectCSIVolumesListv1beta1(ctx, client)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		return volumes, nil
+	default:
+		return nil, prepareError(errors.New("unsupported direct-csi version"))
+	}
 }
 
 func formatDrivesv1beta1(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
@@ -424,7 +585,7 @@ func formatVolumesResponse(session *models.Principal, params operator_api.Direct
 		return nil, prepareError(err)
 	}
 
-	gvk, err := getGroupKindVersions(clientset.DiscoveryClient, "directcsidrives.direct.csi.min.io", "DirectCSIDrive", "v1beta2", "v1beta1")
+	gvk, err := getGroupKindVersions(clientset.DiscoveryClient, "direct.csi.min.io", "DirectCSIDrive", "v1beta2", "v1beta1")
 	if err != nil {
 		return nil, prepareError(err)
 	}
