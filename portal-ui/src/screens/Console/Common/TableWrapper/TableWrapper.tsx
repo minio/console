@@ -43,7 +43,8 @@ import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 //Interfaces for table Items
 
 export interface ItemActions {
-  type: string;
+  label?: string;
+  type: string | any;
   to?: string;
   sendOnlyId?: boolean;
   disableButtonFunction?: (itemValue: any) => boolean;
@@ -466,6 +467,7 @@ const elementActions = (
 
     return (
       <TableActionButton
+        label={action.label}
         type={action.type}
         onClick={action.onClick}
         to={action.to}

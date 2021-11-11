@@ -103,4 +103,5 @@ export { default as LambdaIcon } from "./LambdaIcon";
 export { default as TiersIcon } from "./TiersIcon";
 export { default as OpenListIcon } from "./OpenListIcon";
 export { default as ToolsIcon } from "./ToolsIcon";
+export { default as RecoverIcon } from "./RecoverIcon";
 export { default as PrometheusIcon } from "./PrometheusIcon";
