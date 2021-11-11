@@ -41,7 +41,7 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := NewSessionCookieForConsole(changePasswordResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginCreated().WithPayload(changePasswordResponse).WriteResponse(w, p)
+			user_api.NewLoginNoContent().WriteResponse(w, p)
 		})
 	})
 	// Checks if user can perform an action

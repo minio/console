@@ -181,7 +181,8 @@ type User struct {
 	Username          string                 `json:"username"`
 }
 
-// VerifyIdentity will contact the configured IDP and validate the user identity based on the authorization code
+// VerifyIdentity will contact the configured IDP to the user identity based on the authorization code and state
+// if the user is valid, then it will contact MinIO to get valid sts credentials based on the identity provided by the IDP
 func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
 	if err := validateOauth2State(state); err != nil {
@@ -230,6 +231,23 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 		GetWebIDTokenExpiry: getWebTokenExpiry,
 	})
 	return sts, nil
+}
+
+// VerifyIdentityForOperator will contact the configured IDP and validate the user identity based on the authorization code and state
+func (client *Provider) VerifyIdentityForOperator(ctx context.Context, code, state string) (*xoauth2.Token, error) {
+	// verify the provided state is valid (prevents CSRF attacks)
+	if err := validateOauth2State(state); err != nil {
+		return nil, err
+	}
+	customCtx := context.WithValue(ctx, oauth2.HTTPClient, client.provHTTPClient)
+	oauth2Token, err := client.oauth2Config.Exchange(customCtx, code)
+	if err != nil {
+		return nil, err
+	}
+	if !oauth2Token.Valid() {
+		return nil, errors.New("invalid token")
+	}
+	return oauth2Token, nil
 }
 
 // validateOauth2State validates the provided state was originated using the same

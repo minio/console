@@ -30,48 +30,28 @@ import (
 	"github.com/minio/console/models"
 )
 
-// LoginOauth2AuthCreatedCode is the HTTP code returned for type LoginOauth2AuthCreated
-const LoginOauth2AuthCreatedCode int = 201
+// LoginOauth2AuthNoContentCode is the HTTP code returned for type LoginOauth2AuthNoContent
+const LoginOauth2AuthNoContentCode int = 204
 
-/*LoginOauth2AuthCreated A successful login.
+/*LoginOauth2AuthNoContent A successful login.
 
-swagger:response loginOauth2AuthCreated
+swagger:response loginOauth2AuthNoContent
 */
-type LoginOauth2AuthCreated struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.LoginResponse `json:"body,omitempty"`
+type LoginOauth2AuthNoContent struct {
 }
 
-// NewLoginOauth2AuthCreated creates LoginOauth2AuthCreated with default headers values
-func NewLoginOauth2AuthCreated() *LoginOauth2AuthCreated {
+// NewLoginOauth2AuthNoContent creates LoginOauth2AuthNoContent with default headers values
+func NewLoginOauth2AuthNoContent() *LoginOauth2AuthNoContent {
 
-	return &LoginOauth2AuthCreated{}
-}
-
-// WithPayload adds the payload to the login oauth2 auth created response
-func (o *LoginOauth2AuthCreated) WithPayload(payload *models.LoginResponse) *LoginOauth2AuthCreated {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the login oauth2 auth created response
-func (o *LoginOauth2AuthCreated) SetPayload(payload *models.LoginResponse) {
-	o.Payload = payload
+	return &LoginOauth2AuthNoContent{}
 }
 
 // WriteResponse to the client
-func (o *LoginOauth2AuthCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LoginOauth2AuthNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(201)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(204)
 }
 
 /*LoginOauth2AuthDefault Generic error response.

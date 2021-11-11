@@ -48,10 +48,8 @@ paths:
           schema:
             $ref: "#/definitions/loginRequest"
       responses:
-        201:
+        204:
           description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -60,29 +58,6 @@ paths:
       security: []
       tags:
         - UserAPI
-  /login/operator:
-    post:
-      summary: Login to Operator Console.
-      operationId: LoginOperator
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/loginOperatorRequest"
-      responses:
-        201:
-          description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      security: []
-      tags:
-        - UserAPI
-
   /login/oauth2/auth:
     post:
       summary: Identity Provider oauth2 callback endpoint.
@@ -94,10 +69,8 @@ paths:
           schema:
             $ref: "#/definitions/loginOauth2AuthRequest"
       responses:
-        201:
+        204:
           description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -147,10 +120,8 @@ paths:
           schema:
             $ref: "#/definitions/accountChangePasswordRequest"
       responses:
-        201:
+        204:
           description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -3044,13 +3015,6 @@ definitions:
       state:
         type: string
       code:
-        type: string
-  loginOperatorRequest:
-    type: object
-    required:
-      - jwt
-    properties:
-      jwt:
         type: string
   loginRequest:
     type: object

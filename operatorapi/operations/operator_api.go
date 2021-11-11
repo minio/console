@@ -123,9 +123,6 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIListTenantsHandler: operator_api.ListTenantsHandlerFunc(func(params operator_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListTenants has not yet been implemented")
 		}),
-		UserAPILoginHandler: user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.Login has not yet been implemented")
-		}),
 		UserAPILoginDetailHandler: user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.LoginDetail has not yet been implemented")
 		}),
@@ -269,8 +266,6 @@ type OperatorAPI struct {
 	OperatorAPIListPVCsForTenantHandler operator_api.ListPVCsForTenantHandler
 	// OperatorAPIListTenantsHandler sets the operation handler for the list tenants operation
 	OperatorAPIListTenantsHandler operator_api.ListTenantsHandler
-	// UserAPILoginHandler sets the operation handler for the login operation
-	UserAPILoginHandler user_api.LoginHandler
 	// UserAPILoginDetailHandler sets the operation handler for the login detail operation
 	UserAPILoginDetailHandler user_api.LoginDetailHandler
 	// UserAPILoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
@@ -447,9 +442,6 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIListTenantsHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListTenantsHandler")
-	}
-	if o.UserAPILoginHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginHandler")
 	}
 	if o.UserAPILoginDetailHandler == nil {
 		unregistered = append(unregistered, "user_api.LoginDetailHandler")
@@ -683,10 +675,6 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants"] = operator_api.NewListTenants(o.context, o.OperatorAPIListTenantsHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/login"] = user_api.NewLogin(o.context, o.UserAPILoginHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
