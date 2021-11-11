@@ -242,39 +242,44 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
         </Grid>
       </Grid>
       <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
-       <Grid item xs={8}>
+        container
+        justifyContent={"center"}
+        alignContent={"center"}
+        alignItems={"center"}
+      >
+        <Grid item xs={8}>
           <HelpBox
-           iconComponent={<PrometheusIcon />}
-           title={"Monitoring"}
-           help={
-             <Fragment>
-              The MinIO Dashboard is displaying basic metrics only due to missing the{" "} 
-              <a
-                  href="https://docs.min.io/minio/baremetal/console/minio-console.html#configuration"
+            iconComponent={<PrometheusIcon />}
+            title={"Monitoring"}
+            help={
+              <Fragment>
+                The MinIO Dashboard is displaying basic metrics only due to
+                missing the{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con#configuration"
                   target="_blank"
                   rel="noreferrer"
-              >necessary settings
-              </a>                
-              {" "}for displaying extended metrics.              
+                >
+                  necessary settings
+                </a>{" "}
+                for displaying extended metrics.
                 <br />
                 <br />
-                See <a
-                  href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html#minio-metrics-collect-using-prometheus"
+                See{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html?ref=con#minio-metrics-collect-using-prometheus"
                   target="_blank"
                   rel="noreferrer"
-                >Collect MinIO Metrics Using Prometheus
-                </a> 
-                {" "}for a complete tutorial on scraping and visualizing MinIO metrics with Prometheus.                              
+                >
+                  Collect MinIO Metrics Using Prometheus
+                </a>{" "}
+                for a complete tutorial on scraping and visualizing MinIO
+                metrics with Prometheus.
               </Fragment>
-               }
-            />
+            }
+          />
         </Grid>
-        </Grid>
+      </Grid>
     </Fragment>
   );
 };

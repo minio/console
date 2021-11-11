@@ -20,8 +20,8 @@ import (
 	"context"
 
 	"github.com/minio/console/pkg/auth/idp/oauth2"
-
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	xoauth2 "golang.org/x/oauth2"
 )
 
 // IdentityProviderI interface with all functions to be implemented
@@ -29,6 +29,7 @@ import (
 // that are used within this project.
 type IdentityProviderI interface {
 	VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error)
+	VerifyIdentityForOperator(ctx context.Context, code, state string) (*xoauth2.Token, error)
 	GenerateLoginURL() string
 }
 
@@ -43,6 +44,11 @@ type IdentityProvider struct {
 // VerifyIdentity will verify the user identity against the idp using the authorization code flow
 func (c IdentityProvider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	return c.Client.VerifyIdentity(ctx, code, state)
+}
+
+// VerifyIdentityForOperator will verify the user identity against the idp using the authorization code flow
+func (c IdentityProvider) VerifyIdentityForOperator(ctx context.Context, code, state string) (*xoauth2.Token, error) {
+	return c.Client.VerifyIdentityForOperator(ctx, code, state)
 }
 
 // GenerateLoginURL returns a new URL used by the user to login against the idp

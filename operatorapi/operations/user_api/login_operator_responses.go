@@ -30,48 +30,28 @@ import (
 	"github.com/minio/console/models"
 )
 
-// LoginOperatorCreatedCode is the HTTP code returned for type LoginOperatorCreated
-const LoginOperatorCreatedCode int = 201
+// LoginOperatorNoContentCode is the HTTP code returned for type LoginOperatorNoContent
+const LoginOperatorNoContentCode int = 204
 
-/*LoginOperatorCreated A successful login.
+/*LoginOperatorNoContent A successful login.
 
-swagger:response loginOperatorCreated
+swagger:response loginOperatorNoContent
 */
-type LoginOperatorCreated struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.LoginResponse `json:"body,omitempty"`
+type LoginOperatorNoContent struct {
 }
 
-// NewLoginOperatorCreated creates LoginOperatorCreated with default headers values
-func NewLoginOperatorCreated() *LoginOperatorCreated {
+// NewLoginOperatorNoContent creates LoginOperatorNoContent with default headers values
+func NewLoginOperatorNoContent() *LoginOperatorNoContent {
 
-	return &LoginOperatorCreated{}
-}
-
-// WithPayload adds the payload to the login operator created response
-func (o *LoginOperatorCreated) WithPayload(payload *models.LoginResponse) *LoginOperatorCreated {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the login operator created response
-func (o *LoginOperatorCreated) SetPayload(payload *models.LoginResponse) {
-	o.Payload = payload
+	return &LoginOperatorNoContent{}
 }
 
 // WriteResponse to the client
-func (o *LoginOperatorCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LoginOperatorNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(201)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(204)
 }
 
 /*LoginOperatorDefault Generic error response.

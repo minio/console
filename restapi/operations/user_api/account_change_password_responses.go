@@ -30,48 +30,28 @@ import (
 	"github.com/minio/console/models"
 )
 
-// AccountChangePasswordCreatedCode is the HTTP code returned for type AccountChangePasswordCreated
-const AccountChangePasswordCreatedCode int = 201
+// AccountChangePasswordNoContentCode is the HTTP code returned for type AccountChangePasswordNoContent
+const AccountChangePasswordNoContentCode int = 204
 
-/*AccountChangePasswordCreated A successful login.
+/*AccountChangePasswordNoContent A successful login.
 
-swagger:response accountChangePasswordCreated
+swagger:response accountChangePasswordNoContent
 */
-type AccountChangePasswordCreated struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.LoginResponse `json:"body,omitempty"`
+type AccountChangePasswordNoContent struct {
 }
 
-// NewAccountChangePasswordCreated creates AccountChangePasswordCreated with default headers values
-func NewAccountChangePasswordCreated() *AccountChangePasswordCreated {
+// NewAccountChangePasswordNoContent creates AccountChangePasswordNoContent with default headers values
+func NewAccountChangePasswordNoContent() *AccountChangePasswordNoContent {
 
-	return &AccountChangePasswordCreated{}
-}
-
-// WithPayload adds the payload to the account change password created response
-func (o *AccountChangePasswordCreated) WithPayload(payload *models.LoginResponse) *AccountChangePasswordCreated {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the account change password created response
-func (o *AccountChangePasswordCreated) SetPayload(payload *models.LoginResponse) {
-	o.Payload = payload
+	return &AccountChangePasswordNoContent{}
 }
 
 // WriteResponse to the client
-func (o *AccountChangePasswordCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *AccountChangePasswordNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(201)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(204)
 }
 
 /*AccountChangePasswordDefault Generic error response.

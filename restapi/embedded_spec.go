@@ -70,11 +70,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -2332,11 +2329,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -2366,45 +2360,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/login/operator": {
-      "post": {
-        "security": [],
-        "tags": [
-          "UserAPI"
-        ],
-        "summary": "Login to Operator Console.",
-        "operationId": "LoginOperator",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/loginOperatorRequest"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -2420,7 +2377,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Operator.",
+        "summary": "Logout from Console.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -4490,17 +4447,6 @@ func init() {
         }
       }
     },
-    "loginOperatorRequest": {
-      "type": "object",
-      "required": [
-        "jwt"
-      ],
-      "properties": {
-        "jwt": {
-          "type": "string"
-        }
-      }
-    },
     "loginRequest": {
       "type": "object",
       "required": [
@@ -5779,11 +5725,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -8041,11 +7984,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -8075,45 +8015,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/login/operator": {
-      "post": {
-        "security": [],
-        "tags": [
-          "UserAPI"
-        ],
-        "summary": "Login to Operator Console.",
-        "operationId": "LoginOperator",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/loginOperatorRequest"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -8129,7 +8032,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Operator.",
+        "summary": "Logout from Console.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -10315,17 +10218,6 @@ func init() {
           "type": "string"
         },
         "state": {
-          "type": "string"
-        }
-      }
-    },
-    "loginOperatorRequest": {
-      "type": "object",
-      "required": [
-        "jwt"
-      ],
-      "properties": {
-        "jwt": {
           "type": "string"
         }
       }

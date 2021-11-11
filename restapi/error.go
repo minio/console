@@ -14,6 +14,7 @@ var (
 	// ErrorGeneric is a generic error message
 	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
+	errForbidden               = errors.New("403 Forbidden")
 	errorGenericInvalidSession = errors.New("invalid session")
 	// ErrorGenericNotFound Generic error for not found
 	ErrorGenericNotFound = errors.New("not found")
@@ -54,6 +55,9 @@ func prepareError(err ...error) *models.Error {
 		frame := getFrame(2)
 		fileParts := strings.Split(frame.File, "/")
 		LogError("original error -> (%s:%d: %v)", fileParts[len(fileParts)-1], frame.Line, err[0])
+		if err[0].Error() == errForbidden.Error() {
+			errorCode = 403
+		}
 		if err[0] == ErrorGenericNotFound {
 			errorCode = 404
 			errorMessage = ErrorGenericNotFound.Error()

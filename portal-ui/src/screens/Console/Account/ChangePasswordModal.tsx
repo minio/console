@@ -92,7 +92,7 @@ const ChangePassword = ({
 
     api
       .invoke("POST", "/api/v1/account/change-password", request)
-      .then((res) => {
+      .then(() => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");

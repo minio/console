@@ -22,6 +22,8 @@ import (
 	"reflect"
 	"testing"
 
+	xoauth2 "golang.org/x/oauth2"
+
 	"github.com/minio/madmin-go"
 
 	iampolicy "github.com/minio/pkg/iam/policy"
@@ -78,10 +80,15 @@ func TestLogin(t *testing.T) {
 type IdentityProviderMock struct{}
 
 var idpVerifyIdentityMock func(ctx context.Context, code, state string) (*credentials.Credentials, error)
+var idpVerifyIdentityForOperatorMock func(ctx context.Context, code, state string) (*xoauth2.Token, error)
 var idpGenerateLoginURLMock func() string
 
 func (ac IdentityProviderMock) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	return idpVerifyIdentityMock(ctx, code, state)
+}
+
+func (ac IdentityProviderMock) VerifyIdentityForOperator(ctx context.Context, code, state string) (*xoauth2.Token, error) {
+	return idpVerifyIdentityForOperatorMock(ctx, code, state)
 }
 
 func (ac IdentityProviderMock) GenerateLoginURL() string {

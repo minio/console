@@ -123,16 +123,17 @@ func TestMain(m *testing.M) {
 	}
 
 	if response != nil {
-		bodyBytes, _ := ioutil.ReadAll(response.Body)
-
-		loginResponse := models.LoginResponse{}
-		err = json.Unmarshal(bodyBytes, &loginResponse)
-		if err != nil {
-			log.Println(err)
+		for _, cookie := range response.Cookies() {
+			if cookie.Name == "token" {
+				token = cookie.Value
+				break
+			}
 		}
+	}
 
-		token = loginResponse.SessionID
-
+	if token == "" {
+		log.Println("authentication token not found in cookies response")
+		return
 	}
 
 	code := m.Run()
