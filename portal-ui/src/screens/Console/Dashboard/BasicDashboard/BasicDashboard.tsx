@@ -28,6 +28,8 @@ import CommonCard from "../CommonCard";
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import GeneralUsePaginator from "../../Common/GeneralUsePaginator/GeneralUsePaginator";
 import { widgetContainerCommon } from "../../Common/FormComponents/common/styleLibrary";
+import { PrometheusIcon } from "../../../../icons";
+import HelpBox from "../../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -239,6 +241,40 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
           </TabPanel>
         </Grid>
       </Grid>
+      <Grid
+                container
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+       <Grid item xs={8}>
+          <HelpBox
+           iconComponent={<PrometheusIcon />}
+           title={"Monitoring"}
+           help={
+             <Fragment>
+              The MinIO Dashboard is displaying basic metrics only due to missing the{" "} 
+              <a
+                  href="https://docs.min.io/minio/baremetal/console/minio-console.html#configuration"
+                  target="_blank"
+                  rel="noreferrer"
+              >necessary settings
+              </a>                
+              {" "}for displaying extended metrics.              
+                <br />
+                <br />
+                See <a
+                  href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html#minio-metrics-collect-using-prometheus"
+                  target="_blank"
+                  rel="noreferrer"
+                >Collect MinIO Metrics Using Prometheus
+                </a> 
+                {" "}for a complete tutorial on scraping and visualizing MinIO metrics with Prometheus.                              
+              </Fragment>
+               }
+            />
+        </Grid>
+        </Grid>
     </Fragment>
   );
 };
