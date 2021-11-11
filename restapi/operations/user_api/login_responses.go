@@ -30,48 +30,28 @@ import (
 	"github.com/minio/console/models"
 )
 
-// LoginCreatedCode is the HTTP code returned for type LoginCreated
-const LoginCreatedCode int = 201
+// LoginNoContentCode is the HTTP code returned for type LoginNoContent
+const LoginNoContentCode int = 204
 
-/*LoginCreated A successful login.
+/*LoginNoContent A successful login.
 
-swagger:response loginCreated
+swagger:response loginNoContent
 */
-type LoginCreated struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.LoginResponse `json:"body,omitempty"`
+type LoginNoContent struct {
 }
 
-// NewLoginCreated creates LoginCreated with default headers values
-func NewLoginCreated() *LoginCreated {
+// NewLoginNoContent creates LoginNoContent with default headers values
+func NewLoginNoContent() *LoginNoContent {
 
-	return &LoginCreated{}
-}
-
-// WithPayload adds the payload to the login created response
-func (o *LoginCreated) WithPayload(payload *models.LoginResponse) *LoginCreated {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the login created response
-func (o *LoginCreated) SetPayload(payload *models.LoginResponse) {
-	o.Payload = payload
+	return &LoginNoContent{}
 }
 
 // WriteResponse to the client
-func (o *LoginCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LoginNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(201)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(204)
 }
 
 /*LoginDefault Generic error response.

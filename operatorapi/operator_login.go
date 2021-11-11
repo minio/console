@@ -17,7 +17,11 @@
 package operatorapi
 
 import (
+	"context"
 	"net/http"
+	"time"
+
+	xoauth2 "golang.org/x/oauth2"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
@@ -33,7 +37,7 @@ import (
 )
 
 func registerLoginHandlers(api *operations.OperatorAPI) {
-	// get login strategy
+	// GET login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 		loginDetails, err := getLoginDetailsResponse()
 		if err != nil {
@@ -41,31 +45,7 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 		}
 		return user_api.NewLoginDetailOK().WithPayload(loginDetails)
 	})
-	// post login
-	api.UserAPILoginHandler = user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
-		loginResponse, err := getLoginResponse(params.Body)
-		if err != nil {
-			return user_api.NewLoginDefault(int(err.Code)).WithPayload(err)
-		}
-		// Custom response writer to set the session cookies
-		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
-			http.SetCookie(w, &cookie)
-			user_api.NewLoginCreated().WithPayload(loginResponse).WriteResponse(w, p)
-		})
-	})
-	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse()
-		if err != nil {
-			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
-		}
-		// Custom response writer to set the session cookies
-		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
-			http.SetCookie(w, &cookie)
-			user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse).WriteResponse(w, p)
-		})
-	})
+	// POST login using k8s service account token
 	api.UserAPILoginOperatorHandler = user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
 		loginResponse, err := getLoginOperatorResponse(params.Body)
 		if err != nil {
@@ -75,7 +55,20 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginOperatorCreated().WithPayload(loginResponse).WriteResponse(w, p)
+			user_api.NewLoginOperatorNoContent().WriteResponse(w, p)
+		})
+	})
+	// POST login using external IDP
+	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
+		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
+		if err != nil {
+			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
+		}
+		// Custom response writer to set the session cookies
+		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
+			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
+			user_api.NewLoginOauth2AuthNoContent().WriteResponse(w, p)
 		})
 	})
 }
@@ -95,36 +88,6 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 		return nil, errInvalidCredentials
 	}
 	return &token, nil
-}
-
-// getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
-func getConsoleCredentials(accessKey, secretKey string) (*restapi.ConsoleCredentials, error) {
-	creds, err := newConsoleCredentials(secretKey)
-	if err != nil {
-		return nil, err
-	}
-	return &restapi.ConsoleCredentials{
-		ConsoleCredentials: creds,
-		AccountAccessKey:   accessKey,
-	}, nil
-}
-
-// getLoginResponse performs login() and serializes it to the handler's output
-func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
-	// prepare console credentials
-	consolCreds, err := getConsoleCredentials(*lr.AccessKey, *lr.SecretKey)
-	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
-	}
-	sessionID, err := login(consolCreds)
-	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
-	}
-	// serialize output
-	loginResponse := &models.LoginResponse{
-		SessionID: *sessionID,
-	}
-	return loginResponse, nil
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
@@ -151,22 +114,48 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	return loginDetails, nil
 }
 
-func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
+// verifyUserAgainstIDP will verify user identity against the configured IDP and return MinIO credentials
+func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, code, state string) (*xoauth2.Token, error) {
+	oauth2Token, err := provider.VerifyIdentityForOperator(ctx, code, state)
+	if err != nil {
+		return nil, err
+	}
+	return oauth2Token, nil
+}
 
-	creds, err := newConsoleCredentials(getK8sSAToken())
-	if err != nil {
-		return nil, prepareError(err)
+func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	if oauth2.IsIDPEnabled() {
+		// initialize new oauth2 client
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, restapi.GetConsoleHTTPClient())
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		// initialize new identity provider
+		identityProvider := auth.IdentityProvider{Client: oauth2Client}
+		// Validate user against IDP
+		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		// If we pass here that means the IDP correctly authenticate the user with the operator resource
+		// we proceed to use the service account token configured in the operator-console pod
+		creds, err := newConsoleCredentials(getK8sSAToken())
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		token, err := login(restapi.ConsoleCredentials{ConsoleCredentials: creds})
+		if err != nil {
+			return nil, prepareError(errInvalidCredentials, nil, err)
+		}
+		// serialize output
+		loginResponse := &models.LoginResponse{
+			SessionID: *token,
+		}
+		return loginResponse, nil
 	}
-	consoleCredentials := restapi.ConsoleCredentials{ConsoleCredentials: creds}
-	token, err := login(consoleCredentials)
-	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
-	}
-	// serialize output
-	loginResponse := &models.LoginResponse{
-		SessionID: *token,
-	}
-	return loginResponse, nil
+	return nil, prepareError(errorGeneric)
 }
 
 func newConsoleCredentials(secretKey string) (*credentials.Credentials, error) {

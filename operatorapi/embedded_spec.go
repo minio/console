@@ -272,38 +272,6 @@ func init() {
             }
           }
         }
-      },
-      "post": {
-        "security": [],
-        "tags": [
-          "UserAPI"
-        ],
-        "summary": "Login to Console",
-        "operationId": "Login",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/loginRequest"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
       }
     },
     "/login/oauth2/auth": {
@@ -325,11 +293,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -359,11 +324,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -2215,14 +2177,6 @@ func init() {
         }
       }
     },
-    "loginResponse": {
-      "type": "object",
-      "properties": {
-        "sessionId": {
-          "type": "string"
-        }
-      }
-    },
     "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
@@ -3456,38 +3410,6 @@ func init() {
             }
           }
         }
-      },
-      "post": {
-        "security": [],
-        "tags": [
-          "UserAPI"
-        ],
-        "summary": "Login to Console",
-        "operationId": "Login",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/loginRequest"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
       }
     },
     "/login/oauth2/auth": {
@@ -3509,11 +3431,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -3543,11 +3462,8 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful login.",
-            "schema": {
-              "$ref": "#/definitions/loginResponse"
-            }
+          "204": {
+            "description": "A successful login."
           },
           "default": {
             "description": "Generic error response.",
@@ -6108,14 +6024,6 @@ func init() {
           "type": "string"
         },
         "secretKey": {
-          "type": "string"
-        }
-      }
-    },
-    "loginResponse": {
-      "type": "object",
-      "properties": {
-        "sessionId": {
           "type": "string"
         }
       }

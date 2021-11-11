@@ -38,28 +38,6 @@ paths:
       security: [ ]
       tags:
         - UserAPI
-    post:
-      summary: Login to Console
-      operationId: Login
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/loginRequest"
-      responses:
-        201:
-          description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      # Exclude this API from the authentication requirement
-      security: [ ]
-      tags:
-        - UserAPI
   /login/operator:
     post:
       summary: Login to Operator Console.
@@ -71,10 +49,8 @@ paths:
           schema:
             $ref: "#/definitions/loginOperatorRequest"
       responses:
-        201:
+        204:
           description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -94,10 +70,8 @@ paths:
           schema:
             $ref: "#/definitions/loginOauth2AuthRequest"
       responses:
-        201:
+        204:
           description: A successful login.
-          schema:
-            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -983,11 +957,6 @@ definitions:
       accessKey:
         type: string
       secretKey:
-        type: string
-  loginResponse:
-    type: object
-    properties:
-      sessionId:
         type: string
   loginOauth2AuthRequest:
     type: object

@@ -36,7 +36,7 @@ import (
 )
 
 func registerLoginHandlers(api *operations.ConsoleAPI) {
-	// get login strategy
+	// GET login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 		loginDetails, err := getLoginDetailsResponse()
 		if err != nil {
@@ -44,7 +44,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewLoginDetailOK().WithPayload(loginDetails)
 	})
-	// post login
+	// POST login using user credentials
 	api.UserAPILoginHandler = user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
 		loginResponse, err := getLoginResponse(params.Body)
 		if err != nil {
@@ -54,9 +54,10 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginCreated().WithPayload(loginResponse).WriteResponse(w, p)
+			user_api.NewLoginNoContent().WriteResponse(w, p)
 		})
 	})
+	// POST login using external IDP
 	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
 		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
 		if err != nil {
@@ -66,19 +67,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse).WriteResponse(w, p)
-		})
-	})
-	api.UserAPILoginOperatorHandler = user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
-		loginResponse, err := getLoginOperatorResponse(params.Body)
-		if err != nil {
-			return user_api.NewLoginOperatorDefault(int(err.Code)).WithPayload(err)
-		}
-		// Custom response writer to set the session cookies
-		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
-			http.SetCookie(w, &cookie)
-			user_api.NewLoginOperatorCreated().WithPayload(loginResponse).WriteResponse(w, p)
+			user_api.NewLoginOauth2AuthNoContent().WriteResponse(w, p)
 		})
 	})
 }
@@ -189,7 +178,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		// Validate user against IDP
 		userCredentials, err := verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, prepareError(err)
 		}
 		// initialize admin client
 		// login user against console and generate session token
@@ -198,7 +187,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			AccountAccessKey:   "",
 		})
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, prepareError(err)
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
@@ -207,22 +196,4 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		return loginResponse, nil
 	}
 	return nil, prepareError(ErrorGeneric)
-}
-
-// getLoginOperatorResponse validate the provided service account token against k8s api
-func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, *models.Error) {
-	creds, err := NewConsoleCredentials("", *lmr.Jwt, "")
-	if err != nil {
-		return nil, prepareError(err)
-	}
-	consoleCreds := ConsoleCredentials{ConsoleCredentials: creds}
-	token, err := login(consoleCreds)
-	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
-	}
-	// serialize output
-	loginResponse := &models.LoginResponse{
-		SessionID: *token,
-	}
-	return loginResponse, nil
 }
