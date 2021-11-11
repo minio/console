@@ -13,24 +13,19 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
+import React, { Component } from "react";
 import isString from "lodash/isString";
 import { Link } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import DisableIcon from "./TableActionIcons/DisableIcon";
 import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
 import EditIcon from "../../../../icons/EditIcon";
 import TrashIcon from "../../../../icons/TrashIcon";
-import {
-  IAMPoliciesIcon,
-  PreviewIcon,
-  ShareIcon,
-  HistoryIcon,
-} from "../../../../icons";
+import { IAMPoliciesIcon, PreviewIcon, ShareIcon } from "../../../../icons";
 import DownloadIcon from "../../../../icons/DownloadIcon";
 
 const styles = () =>
@@ -48,7 +43,8 @@ const styles = () =>
   });
 
 interface IActionButton {
-  type: string;
+  label?: string;
+  type: string | Component;
   onClick?: (id: string) => any;
   to?: string;
   valueToSend: any;
@@ -83,8 +79,6 @@ const defineIcon = (type: string, selected: boolean) => {
       return <FormatDriveIcon active={selected} />;
     case "preview":
       return <PreviewIcon />;
-    case "restore":
-      return <HistoryIcon />;
   }
 
   return null;
@@ -100,13 +94,17 @@ const TableActionButton = ({
   sendOnlyId = false,
   disabled = false,
   classes,
+  label,
 }: IActionButton) => {
   const valueClick = sendOnlyId ? valueToSend[idField] : valueToSend;
 
-  const buttonElement = (
+  const icon = typeof type === "string" ? defineIcon(type, selected) : type;
+  let buttonElement = (
     <IconButton
-      aria-label={type}
+      aria-label={typeof type === "string" ? type : ""}
       size={"small"}
+      className={`${classes.spacing} ${disabled ? classes.buttonDisabled : ""}`}
+      disabled={disabled}
       onClick={
         onClick
           ? (e) => {
@@ -119,12 +117,14 @@ const TableActionButton = ({
             }
           : () => null
       }
-      className={`${classes.spacing} ${disabled ? classes.buttonDisabled : ""}`}
-      disabled={disabled}
     >
-      {defineIcon(type, selected)}
+      {icon}
     </IconButton>
   );
+
+  if (label && label !== "") {
+    buttonElement = <Tooltip title={label}>{buttonElement}</Tooltip>;
+  }
 
   if (onClick) {
     return buttonElement;
