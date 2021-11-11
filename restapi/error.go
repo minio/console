@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"errors"
+	"github.com/minio/minio-go/v7"
 	"runtime"
 	"strings"
 
@@ -170,6 +171,11 @@ func prepareError(err ...error) *models.Error {
 		if err[0].Error() == errRemoteInvalidCredentials.Error() {
 			errorCode = 403
 			errorMessage = err[0].Error()
+		}
+		// account change password
+		if minio.ToErrorResponse(err[0]).Code == "BucketAlreadyOwnedByYou" {
+			errorCode = 400
+			errorMessage = "Bucket already exists"
 		}
 	}
 	return &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err[0].Error())}

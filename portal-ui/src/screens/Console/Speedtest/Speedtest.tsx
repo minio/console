@@ -42,12 +42,6 @@ interface ISpeedtest {
 
 const styles = (theme: Theme) =>
   createStyles({
-    boxy: {
-      border: "#E5E5E5 1px solid",
-      borderRadius: 2,
-      padding: 40,
-      backgroundColor: "#fff",
-    },
     advancedConfiguration: {
       color: "#2781B0",
       fontSize: 10,

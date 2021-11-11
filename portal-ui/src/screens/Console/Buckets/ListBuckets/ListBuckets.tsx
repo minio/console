@@ -25,7 +25,6 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { AddIcon, BucketsIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
-import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   containerForHeader,
@@ -33,7 +32,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
@@ -136,9 +134,6 @@ const styles = (theme: Theme) =>
 interface IListBucketsProps {
   classes: any;
   history: any;
-  addBucketOpen: typeof addBucketOpen;
-  addBucketModalOpen: boolean;
-  addBucketReset: typeof addBucketReset;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   session: ISessionResponse;
 }
@@ -146,9 +141,6 @@ interface IListBucketsProps {
 const ListBuckets = ({
   classes,
   history,
-  addBucketOpen,
-  addBucketModalOpen,
-  addBucketReset,
   setErrorSnackMessage,
   session,
 }: IListBucketsProps) => {
@@ -219,16 +211,6 @@ const ListBuckets = ({
     }
   }, [loading, setErrorSnackMessage]);
 
-  const closeAddModalAndRefresh = (refresh: boolean) => {
-    addBucketOpen(false);
-    addBucketReset();
-
-    if (refresh) {
-      setLoading(true);
-      setSelectedBuckets([]);
-    }
-  };
-
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
@@ -283,12 +265,6 @@ const ListBuckets = ({
 
   return (
     <Fragment>
-      {addBucketModalOpen && (
-        <AddBucket
-          open={addBucketModalOpen}
-          closeModalAndRefresh={closeAddModalAndRefresh}
-        />
-      )}
       {deleteOpen && (
         <DeleteBucket
           deleteOpen={deleteOpen}
@@ -369,7 +345,7 @@ const ListBuckets = ({
                   color="primary"
                   endIcon={<AddIcon />}
                   onClick={() => {
-                    addBucketOpen(true);
+                    history.push("/add-bucket");
                   }}
                   className={classes.addBucket}
                 >
@@ -439,7 +415,7 @@ const ListBuckets = ({
                         To get started,&nbsp;
                         <AButton
                           onClick={() => {
-                            addBucketOpen(true);
+                            history.push("/add-bucket");
                           }}
                         >
                           Create a Bucket.
@@ -459,13 +435,10 @@ const ListBuckets = ({
 };
 
 const mapState = (state: AppState) => ({
-  addBucketModalOpen: state.buckets.open,
   session: state.console.session,
 });
 
 const connector = connect(mapState, {
-  addBucketOpen,
-  addBucketReset,
   setErrorSnackMessage,
 });
 

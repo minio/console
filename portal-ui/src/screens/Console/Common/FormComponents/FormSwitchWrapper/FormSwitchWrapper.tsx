@@ -104,7 +104,6 @@ const styles = (theme: Theme) =>
     },
     divContainer: {
       marginBottom: 20,
-      maxWidth: 840,
     },
     indicatorLabelOn: {
       fontWeight: "bold",
@@ -227,31 +226,36 @@ const FormSwitchWrapper = ({
     <div className={classes.divContainer}>
       <Grid container alignItems={"center"}>
         <Grid item xs>
-          {label !== "" && (
-            <InputLabel htmlFor={id} className={classes.inputLabel}>
-              <span>{label}</span>
-              {tooltip !== "" && (
-                <div className={classes.tooltipContainer}>
-                  <Tooltip title={tooltip} placement="top-start">
-                    <div>
-                      <HelpIcon className={classes.tooltip} />
+          <Grid container>
+            <Grid item xs={12} sm={4} md={3}>
+              {label !== "" && (
+                <InputLabel htmlFor={id} className={classes.inputLabel}>
+                  <span>{label}</span>
+                  {tooltip !== "" && (
+                    <div className={classes.tooltipContainer}>
+                      <Tooltip title={tooltip} placement="top-start">
+                        <div>
+                          <HelpIcon className={classes.tooltip} />
+                        </div>
+                      </Tooltip>
                     </div>
-                  </Tooltip>
-                </div>
+                  )}
+                </InputLabel>
               )}
-            </InputLabel>
-          )}
+            </Grid>
+            <Grid item xs={12} sm textAlign={"left"}>
+              {description !== "" && (
+                <Typography component="p" className={classes.fieldDescription}>
+                  {description}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs textAlign={"right"}>
+
+        <Grid item xs={12} sm={2} textAlign={"right"}>
           {switchComponent}
         </Grid>
-        {description !== "" && (
-          <Grid item xs={12}>
-            <Typography component="p" className={classes.fieldDescription}>
-              {description}
-            </Typography>
-          </Grid>
-        )}
       </Grid>
     </div>
   );
