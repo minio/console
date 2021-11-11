@@ -255,7 +255,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
              <Fragment>
               The MinIO Dashboard is displaying basic metrics only due to missing the{" "} 
               <a
-                  href="https://docs.min.io/minio/baremetal/console/minio-console.html#configuration"
+                  href="https://docs.min.io/minio/baremetal/console/minio-console.html#configuration?ref=con"
                   target="_blank"
                   rel="noreferrer"
               >necessary settings
@@ -264,7 +264,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 <br />
                 <br />
                 See <a
-                  href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html#minio-metrics-collect-using-prometheus"
+                  href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html#minio-metrics-collect-using-prometheus?ref=con"
                   target="_blank"
                   rel="noreferrer"
                 >Collect MinIO Metrics Using Prometheus
