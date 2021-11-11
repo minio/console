@@ -44,7 +44,7 @@ import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 export interface ItemActions {
   label?: string;
-  type: string;
+  type: string | any;
   to?: string;
   sendOnlyId?: boolean;
   disableButtonFunction?: (itemValue: any) => boolean;
