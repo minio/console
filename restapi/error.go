@@ -173,7 +173,7 @@ func prepareError(err ...error) *models.Error {
 			errorCode = 403
 			errorMessage = err[0].Error()
 		}
-		// account change password
+		// bucket already exists
 		if minio.ToErrorResponse(err[0]).Code == "BucketAlreadyOwnedByYou" {
 			errorCode = 400
 			errorMessage = "Bucket already exists"
