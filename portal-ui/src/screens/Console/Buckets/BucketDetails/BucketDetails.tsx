@@ -356,32 +356,30 @@ const BucketDetails = ({
                   S3_DELETE_BUCKET,
                   S3_FORCE_DELETE_BUCKET,
                 ]) && (
-                  <Tooltip title={"Delete"}>
-                    <BoxIconButton
-                      color="primary"
-                      aria-label="Delete"
-                      onClick={() => {
-                        setDeleteOpen(true);
-                      }}
-                      size="large"
-                    >
-                      <DeleteIcon />
-                    </BoxIconButton>
-                  </Tooltip>
-                )}
-                <Tooltip title={"Refresh"}>
                   <BoxIconButton
+                    tooltip={"Delete"}
                     color="primary"
-                    aria-label="Refresh List"
+                    aria-label="Delete"
                     onClick={() => {
-                      setBucketDetailsLoad(true);
+                      setDeleteOpen(true);
                     }}
                     size="large"
-                    variant={"contained"}
                   >
-                    <RefreshIcon />
+                    <DeleteIcon />
                   </BoxIconButton>
-                </Tooltip>
+                )}
+                <BoxIconButton
+                  tooltip={"Refresh"}
+                  color="primary"
+                  aria-label="Refresh List"
+                  onClick={() => {
+                    setBucketDetailsLoad(true);
+                  }}
+                  size="large"
+                  variant={"contained"}
+                >
+                  <RefreshIcon />
+                </BoxIconButton>
               </Fragment>
             }
           />

@@ -21,7 +21,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { AddIcon, BucketsIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
@@ -44,6 +43,7 @@ import SearchIcon from "../../../../icons/SearchIcon";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
+import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -306,32 +306,32 @@ const ListBuckets = ({
               />
             </Grid>
             <Grid item xs={12} sm={"auto"}>
-              <Button
+              <BoxIconButton
                 variant={bulkSelect ? "contained" : "outlined"}
+                tooltip={"Select Multiple"}
                 onClick={() => {
                   setBulkSelect(!bulkSelect);
                 }}
-                endIcon={<WatchIcon />}
                 size={"small"}
                 className={classes.bulkSelect}
               >
-                Bulk Select
-              </Button>
-
-              <Button
+                <WatchIcon />
+              </BoxIconButton>
+              <BoxIconButton
                 variant="outlined"
-                endIcon={<FileCopyIcon />}
+                tooltip={"Set Replication"}
                 onClick={() => {
                   setReplicationModalOpen(true);
                 }}
                 disabled={selectedBuckets.length === 0}
                 size={"small"}
               >
-                Set Replication
-              </Button>
+                <MultipleBucketsIcon />
+              </BoxIconButton>
               <BoxIconButton
                 color="primary"
-                aria-label="Refresh List"
+                aria-label="Refresh"
+                tooltip={"Refresh"}
                 onClick={() => {
                   setLoading(true);
                 }}

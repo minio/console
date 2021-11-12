@@ -18,7 +18,7 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IconButton, IconButtonProps } from "@mui/material";
+import { IconButton, IconButtonProps, Tooltip } from "@mui/material";
 import clsx from "clsx";
 
 const styles = (theme: Theme) =>
@@ -64,15 +64,17 @@ interface IBoxIconButton extends IconButtonProps {
   classes: any;
   children: any;
   variant?: "outlined" | "contained";
+  tooltip?: string;
 }
 
 const BoxIconButton = ({
   classes,
   children,
   variant = "outlined",
+  tooltip,
   ...rest
 }: IBoxIconButton) => {
-  return (
+  const button = (
     <IconButton
       {...rest}
       className={clsx(classes.root, {
@@ -82,6 +84,16 @@ const BoxIconButton = ({
       {children}
     </IconButton>
   );
+
+  if (tooltip && tooltip !== "") {
+    return (
+      <Tooltip title={tooltip}>
+        <span>{button}</span>
+      </Tooltip>
+    );
+  }
+
+  return button;
 };
 
 export default withStyles(styles)(BoxIconButton);

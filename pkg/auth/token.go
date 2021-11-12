@@ -54,7 +54,7 @@ var derivedKey = func() []byte {
 	return pbkdf2.Key([]byte(token.GetPBKDFPassphrase()), []byte(token.GetPBKDFSalt()), 4096, 32, sha1.New)
 }
 
-// IsSessionTokenValid returns true or false depending if the provided session token is valid or not
+// IsSessionTokenValid returns true or false depending upon the provided session if the token is valid or not
 func IsSessionTokenValid(token string) bool {
 	_, err := SessionTokenAuthenticate(token)
 	return err == nil
