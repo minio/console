@@ -155,7 +155,7 @@ const ModalWrapper = ({
           paper: classes.customDialogSize,
         },
       }
-    : { maxWidth: "md" as const, fullWidth: true };
+    : { maxWidth: "lg" as const, fullWidth: true };
 
   let message = "";
 
