@@ -208,6 +208,153 @@ func TestAddBucket(t *testing.T) {
 	}
 }
 
+func TestGetBucket(t *testing.T) {
+	assert := assert.New(t)
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	requestDataAdd := map[string]interface{}{
+		"name":       "test3",
+		"versioning": false,
+		"locking":    false,
+	}
+
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	// put bucket
+	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// get bucket
+	request, err = http.NewRequest("GET", "http://localhost:9090/api/v1/buckets/test3", nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err = client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if response != nil {
+		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
+	}
+}
+
+func TestSetBucketTags(t *testing.T) {
+	assert := assert.New(t)
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	requestDataAdd := map[string]interface{}{
+		"name":       "test4",
+		"versioning": false,
+		"locking":    false,
+	}
+
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	// put bucket
+	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
+	request.Close = true
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	requestDataTags := map[string]interface{}{
+		"tags": map[string]interface{}{
+			"test": "TAG",
+		},
+	}
+
+	requestTagsJSON, _ := json.Marshal(requestDataTags)
+
+	requestTagsBody := bytes.NewBuffer(requestTagsJSON)
+
+	request, err = http.NewRequest(http.MethodPut, "http://localhost:9090/api/v1/buckets/test4/tags", requestTagsBody)
+	request.Close = true
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err = client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// get bucket
+	request, err = http.NewRequest("GET", "http://localhost:9090/api/v1/buckets/test4", nil)
+	request.Close = true
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err = client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	bodyBytes, _ := ioutil.ReadAll(response.Body)
+
+	bucket := models.Bucket{}
+	err = json.Unmarshal(bodyBytes, &bucket)
+	if err != nil {
+		log.Println(err)
+	}
+
+	assert.Equal("TAG", bucket.Details.Tags["test"], "Failed to add tag")
+}
+
 func TestBucketVersioning(t *testing.T) {
 	assert := assert.New(t)
 

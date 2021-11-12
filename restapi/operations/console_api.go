@@ -284,6 +284,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
 		}),
+		UserAPIPutBucketTagsHandler: user_api.PutBucketTagsHandlerFunc(func(params user_api.PutBucketTagsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.PutBucketTags has not yet been implemented")
+		}),
 		UserAPIPutObjectLegalHoldHandler: user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.PutObjectLegalHold has not yet been implemented")
 		}),
@@ -560,6 +563,8 @@ type ConsoleAPI struct {
 	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
 	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
 	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
+	// UserAPIPutBucketTagsHandler sets the operation handler for the put bucket tags operation
+	UserAPIPutBucketTagsHandler user_api.PutBucketTagsHandler
 	// UserAPIPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
 	UserAPIPutObjectLegalHoldHandler user_api.PutObjectLegalHoldHandler
 	// UserAPIPutObjectRestoreHandler sets the operation handler for the put object restore operation
@@ -915,6 +920,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIProfilingStopHandler == nil {
 		unregistered = append(unregistered, "admin_api.ProfilingStopHandler")
+	}
+	if o.UserAPIPutBucketTagsHandler == nil {
+		unregistered = append(unregistered, "user_api.PutBucketTagsHandler")
 	}
 	if o.UserAPIPutObjectLegalHoldHandler == nil {
 		unregistered = append(unregistered, "user_api.PutObjectLegalHoldHandler")
@@ -1385,6 +1393,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/tags"] = user_api.NewPutBucketTags(o.context, o.UserAPIPutBucketTagsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

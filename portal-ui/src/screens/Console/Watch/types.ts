@@ -27,7 +27,12 @@ export interface EventInfo {
 }
 
 export interface Bucket {
+  details: Details;
   name: string;
+}
+
+export interface Details {
+  tags: object;
 }
 
 export interface BucketList {
