@@ -5,6 +5,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/minio/minio-go/v7"
+
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go"
@@ -170,6 +172,11 @@ func prepareError(err ...error) *models.Error {
 		if err[0].Error() == errRemoteInvalidCredentials.Error() {
 			errorCode = 403
 			errorMessage = err[0].Error()
+		}
+		// bucket already exists
+		if minio.ToErrorResponse(err[0]).Code == "BucketAlreadyOwnedByYou" {
+			errorCode = 400
+			errorMessage = "Bucket already exists"
 		}
 	}
 	return &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err[0].Error())}

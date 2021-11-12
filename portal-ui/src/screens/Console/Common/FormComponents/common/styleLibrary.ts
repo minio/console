@@ -184,6 +184,12 @@ export const containerForHeader = (bottomSpacing: any) => ({
   topSpacer: {
     height: "8px",
   },
+  boxy: {
+    border: "#E5E5E5 1px solid",
+    borderRadius: 2,
+    padding: 40,
+    backgroundColor: "#fff",
+  },
 });
 
 export const actionsTray = {

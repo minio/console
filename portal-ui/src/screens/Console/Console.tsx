@@ -241,6 +241,10 @@ const Console = ({
     },
     {
       component: Buckets,
+      path: "/add-bucket",
+    },
+    {
+      component: Buckets,
       path: "/buckets",
     },
     {

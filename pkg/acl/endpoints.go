@@ -39,6 +39,7 @@ var (
 	dashboard                   = "/dashboard"
 	metrics                     = "/metrics"
 	profiling                   = "/profiling"
+	addBucket                   = "/add-bucket"
 	buckets                     = "/buckets"
 	bucketsGeneral              = "/buckets/*"
 	bucketsAdmin                = "/buckets/:bucketName/admin/*"
@@ -335,6 +336,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	dashboard:                   dashboardActionSet,
 	metrics:                     dashboardActionSet,
 	profiling:                   profilingActionSet,
+	addBucket:                   bucketsActionSet,
 	buckets:                     bucketsActionSet,
 	bucketsGeneral:              bucketsActionSet,
 	bucketsAdmin:                bucketsActionSet,
