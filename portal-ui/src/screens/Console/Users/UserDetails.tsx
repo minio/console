@@ -54,8 +54,8 @@ import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import LockIcon from "@mui/icons-material/Lock";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import BoxIconButton from "../Common/BoxIconButton";
-import PanelTitle from "../Common/PanelTitle";
+import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({

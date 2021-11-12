@@ -47,7 +47,7 @@ import IAMPoliciesIcon from "../../../icons/IAMPoliciesIcon";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import TrashIcon from "../../../icons/TrashIcon";
-import BoxIconButton from "../Common/BoxIconButton";
+import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 
 interface IPolicyDetailsProps {
   classes: any;

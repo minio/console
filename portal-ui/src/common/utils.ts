@@ -24,6 +24,7 @@ const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
 export const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
 export const k8sCalcUnits = ["B", ...k8sUnits];
+export const timeUnits = ["ms", "s", "m", "h", "d", "w", "M", "Q", "y"];
 
 export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
   let n = parseInt(x, 10) || 0;

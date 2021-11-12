@@ -55,6 +55,7 @@ interface InputBoxProps {
   max?: string;
   overlayIcon?: any;
   overlayAction?: () => void;
+  overlayObject?: any;
   extraInputProps?: StandardInputProps["inputProps"];
   noLabelMinWidth?: boolean;
 }
@@ -126,6 +127,7 @@ const InputBoxWrapper = ({
   min,
   max,
   overlayIcon = null,
+  overlayObject = null,
   extraInputProps = {},
   overlayAction,
   noLabelMinWidth = false,
@@ -212,6 +214,15 @@ const InputBoxWrapper = ({
             >
               {overlayIcon}
             </IconButton>
+          </div>
+        )}
+        {overlayObject && (
+          <div
+            className={`${classes.overlayAction} ${
+              label !== "" ? "withLabel" : ""
+            }`}
+          >
+            {overlayObject}
           </div>
         )}
       </Grid>

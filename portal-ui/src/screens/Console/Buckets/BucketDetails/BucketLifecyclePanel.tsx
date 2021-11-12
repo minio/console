@@ -43,7 +43,7 @@ import {
   S3_GET_LIFECYCLE_CONFIGURATION,
   S3_PUT_LIFECYCLE_CONFIGURATION,
 } from "../../../../types";
-import PanelTitle from "../../Common/PanelTitle";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({

@@ -42,7 +42,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import history from "../../../history";
-import AButton from "../Common/AButton";
+import AButton from "../Common/AButton/AButton";
 
 interface IGroupsProps {
   classes: any;

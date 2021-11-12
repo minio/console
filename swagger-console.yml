@@ -1981,6 +1981,12 @@ paths:
     get:
       summary: Returns information about the deployment
       operationId: AdminInfo
+      parameters:
+        - name: defaultOnly
+          in: query
+          required: false
+          type: boolean
+          default: false
       responses:
         200:
           description: A successful response.

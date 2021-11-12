@@ -23,6 +23,7 @@ import {
   TraceIcon,
   WatchIcon,
 } from "../../../icons";
+import SpeedtestIcon from "../../../icons/SpeedtestIcon";
 
 export const configurationElements: IElement[] = [
   {
@@ -54,5 +55,10 @@ export const configurationElements: IElement[] = [
     icon: <DiagnosticsIcon />,
     configuration_id: "diagnostics",
     configuration_label: "Diagnostics",
+  },
+  {
+    icon: <SpeedtestIcon />,
+    configuration_id: "speedtest",
+    configuration_label: "Speedtest",
   },
 ];

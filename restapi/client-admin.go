@@ -112,6 +112,8 @@ type MinioAdmin interface {
 	addTier(ctx context.Context, tier *madmin.TierConfig) error
 	// Edit Tier Credentials
 	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
+	// Speedtest
+	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
 }
 
 // Interface implementation
@@ -451,4 +453,8 @@ func GetConsoleHTTPClient() *http.Client {
 		httpClient = PrepareConsoleHTTPClient(false)
 	}
 	return httpClient
+}
+
+func (ac AdminClient) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
+	return ac.Client.Speedtest(ctx, opts)
 }

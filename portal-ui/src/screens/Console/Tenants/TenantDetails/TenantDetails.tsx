@@ -58,7 +58,7 @@ import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import TenantsIcon from "../../../../icons/TenantsIcon";
-import BoxIconButton from "../../Common/BoxIconButton";
+import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 
 interface ITenantDetailsProps {
   classes: any;

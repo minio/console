@@ -51,3 +51,7 @@ func (ac adminClientMock) addRemoteBucket(ctx context.Context, bucket string, ta
 func (ac adminClientMock) changePassword(ctx context.Context, accessKey, secretKey string) error {
 	return minioChangePasswordMock(ctx, accessKey, secretKey)
 }
+
+func (ac adminClientMock) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
+	return nil, nil
+}

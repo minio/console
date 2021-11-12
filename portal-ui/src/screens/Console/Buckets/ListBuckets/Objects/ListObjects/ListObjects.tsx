@@ -102,7 +102,7 @@ import {
 } from "../../../../../../types";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
-import BoxIconButton from "../../../../Common/BoxIconButton";
+import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",

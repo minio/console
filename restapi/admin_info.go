@@ -40,7 +40,7 @@ import (
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	// return usage stats
 	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, session *models.Principal) middleware.Responder {
-		infoResp, err := getAdminInfoResponse(session)
+		infoResp, err := getAdminInfoResponse(session, params)
 		if err != nil {
 			return admin_api.NewAdminInfoDefault(int(err.Code)).WithPayload(err)
 		}
@@ -824,8 +824,13 @@ type LabelResults struct {
 }
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
-	prometheusURL := getPrometheusURL()
+func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
+	prometheusURL := ""
+
+	if !*params.DefaultOnly {
+		prometheusURL = getPrometheusURL()
+	}
+
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)

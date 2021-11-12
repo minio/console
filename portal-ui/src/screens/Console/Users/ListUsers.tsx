@@ -47,7 +47,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchIcon from "../../../icons/SearchIcon";
 import { decodeFileName } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
-import AButton from "../Common/AButton";
+import AButton from "../Common/AButton/AButton";
 
 const styles = (theme: Theme) =>
   createStyles({

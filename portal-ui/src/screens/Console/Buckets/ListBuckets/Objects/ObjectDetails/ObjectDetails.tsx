@@ -93,7 +93,7 @@ import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
-import BoxIconButton from "../../../../Common/BoxIconButton";
+import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import { RecoverIcon } from "../../../../../../icons";
 
 const styles = (theme: Theme) =>

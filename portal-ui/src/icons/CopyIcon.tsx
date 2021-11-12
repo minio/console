@@ -20,16 +20,15 @@ import { SvgIcon } from "@mui/material";
 const CopyIcon = () => {
   return (
     <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-        <title>ic_h_copy-new_sl</title>
-        <g id="Layer_2" data-name="Layer 2">
-          <g id="Layer_1-2" data-name="Layer 1">
-            <path
-              className="cls-1"
-              d="M0,0V16H16V0ZM11.886,9.048H9.048v2.838h-2.1V9.048H4.114v-2.1H6.952V4.114h2.1V6.952h2.838Z"
-            />
-          </g>
-        </g>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13.677 13.677">
+        <path
+          d="M41.764,15.9H34.3a1.4,1.4,0,0,0-1.4,1.4v7.46a1.4,1.4,0,0,0,1.4,1.4h7.46a1.4,1.4,0,0,0,1.4-1.4V17.3A1.4,1.4,0,0,0,41.764,15.9Zm.2,8.864a.2.2,0,0,1-.2.2H34.3a.2.2,0,0,1-.2-.2V17.3a.2.2,0,0,1,.2-.2h7.46a.2.2,0,0,1,.2.2Z"
+          transform="translate(-29.491 -15.9)"
+        />
+        <path
+          d="M17.3,34.1h.441a.6.6,0,1,0,0-1.2H17.3a1.4,1.4,0,0,0-1.4,1.4v7.46a1.4,1.4,0,0,0,1.4,1.4h7.46a1.4,1.4,0,0,0,1.4-1.4v-.481a.6.6,0,0,0-1.2,0v.481a.2.2,0,0,1-.2.2H17.3a.2.2,0,0,1-.2-.2V34.3A.2.2,0,0,1,17.3,34.1Z"
+          transform="translate(-15.9 -29.491)"
+        />
       </svg>
     </SvgIcon>
   );

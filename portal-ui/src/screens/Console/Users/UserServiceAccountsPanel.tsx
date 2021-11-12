@@ -35,7 +35,7 @@ import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon } from "../../../icons";
 import Button from "@mui/material/Button";
-import PanelTitle from "../Common/PanelTitle";
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 interface IUserServiceAccountsProps {
   classes: any;

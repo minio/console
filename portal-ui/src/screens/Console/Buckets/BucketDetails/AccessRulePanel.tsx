@@ -40,7 +40,7 @@ import {
 import { BucketInfo } from "../types";
 import { displayComponent } from "../../../../utils/permissions";
 import { S3_GET_BUCKET_POLICY, S3_PUT_BUCKET_POLICY } from "../../../../types";
-import PanelTitle from "../../Common/PanelTitle";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
