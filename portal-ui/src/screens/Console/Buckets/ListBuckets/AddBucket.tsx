@@ -27,6 +27,7 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { factorForDropdown, getBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
+import history from "../../../../history";
 import { connect } from "react-redux";
 import {
   addBucketEnableObjectLocking,
@@ -193,6 +194,9 @@ const AddBucket = ({
       .invoke("POST", "/api/v1/buckets", request)
       .then((res) => {
         setAddLoading(false);
+        const newBucketName = `${bucketName}`;
+        resetForm();
+        history.push(`/buckets/${newBucketName}/browse`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
