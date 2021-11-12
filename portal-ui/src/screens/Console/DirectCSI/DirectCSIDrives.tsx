@@ -299,9 +299,6 @@ const DirectCSIMain = ({
       </Grid>
 
       <Grid item xs={12}>
-        <br />
-      </Grid>
-      <Grid item xs={12}>
         {notAvailable && !loading ? (
           <div className={classes.notAvailableNotice}>
             To manage locally attached drives you need to install direct-csi,

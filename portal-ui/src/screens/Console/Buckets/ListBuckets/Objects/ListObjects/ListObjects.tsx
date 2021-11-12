@@ -102,6 +102,7 @@ import {
 } from "../../../../../../types";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
+import PageLayout from "../../../../Common/Layout/PageLayout";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 
 const commonIcon = {
@@ -1063,7 +1064,7 @@ const ListObjects = ({
         />
       )}
 
-      <Grid container>
+      <PageLayout>
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -1227,7 +1228,7 @@ const ListObjects = ({
             }}
           />
         </Grid>
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };

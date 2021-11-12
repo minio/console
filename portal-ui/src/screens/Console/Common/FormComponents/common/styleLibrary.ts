@@ -177,8 +177,9 @@ export const containerForHeader = (bottomSpacing: any) => ({
     },
   },
   sectionTitle: {
-    padding: "0px",
-    margin: "0px",
+    margin: 0,
+    marginBottom: ".8rem",
+    fontSize: "1.3rem",
   },
   topSpacer: {
     height: "8px",
@@ -221,6 +222,7 @@ export const actionsTray = {
   actionsTray: {
     display: "flex" as const,
     justifyContent: "space-between" as const,
+    marginBottom: "1rem",
     "& button": {
       flexGrow: 0,
       marginLeft: 8,
@@ -985,6 +987,12 @@ export const commonDashboardInfocard = {
       height: 10,
       marginTop: -5,
     },
+  },
+};
+
+export const pageContentStyles = {
+  contentSpacer: {
+    padding: "2rem",
   },
 };
 

@@ -20,7 +20,7 @@ import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Tab, Tabs, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
@@ -33,6 +33,7 @@ import {
 import { ITenant } from "../ListTenants/types";
 import {
   containerForHeader,
+  pageContentStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AppState } from "../../../../store";
@@ -47,9 +48,6 @@ import PodsSummary from "./PodsSummary";
 import VolumesSummary from "./VolumesSummary";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import { CircleIcon, DeleteIcon } from "../../../../icons";
 import DeleteTenant from "../ListTenants/DeleteTenant";
 import PodDetails from "./pods/PodDetails";
@@ -58,6 +56,9 @@ import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import TenantsIcon from "../../../../icons/TenantsIcon";
+import PageLayout from "../../Common/Layout/PageLayout";
+import BackLink from "../../../../common/BackLink";
+import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 
 interface ITenantDetailsProps {
@@ -80,6 +81,15 @@ interface ITenantDetailsProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
+    pageContainer: {
+      border: "1px solid #EAEAEA",
+      width: "100%",
+      height: "100%",
+    },
+    contentSpacer: {
+      ...pageContentStyles.contentSpacer,
+      minHeight: 400,
+    },
     redState: {
       color: theme.palette.error.main,
       "& .MuiSvgIcon-root": {
@@ -210,25 +220,19 @@ const TenantDetails = ({
     setErrorSnackMessage,
   ]);
 
-  useEffect(() => {
-    const path = get(match, "path", "/");
-    const splitSections = path.split("/");
-    const section = splitSections[splitSections.length - 1];
+  const path = get(match, "path", "/");
+  const splitSections = path.split("/");
 
-    switch (section) {
-      case "pools":
-      case "pods":
-      case ":podName":
-      case "volumes":
-      case "metrics":
-      case "license":
-      case "security":
-        setTenantTab(section);
-        break;
-      default:
-        setTenantTab("summary");
-    }
-  }, [match, setTenantTab]);
+  let highlightedTab = splitSections[splitSections.length - 1] || "summary";
+  if (highlightedTab === ":podName" || highlightedTab === "pods") {
+    // It has SUB Route
+    highlightedTab = "pods";
+  }
+  const [activeTab, setActiveTab] = useState(highlightedTab);
+
+  useEffect(() => {
+    setActiveTab(highlightedTab);
+  }, [highlightedTab]);
 
   const editYaml = () => {
     setYamlScreenOpen(true);
@@ -239,11 +243,8 @@ const TenantDetails = ({
     setTenantDetailsLoad(true);
   };
 
-  const changeRoute = (newValue: string) => {
-    setTenantTab(newValue);
-    history.push(
-      `/namespaces/${tenantNamespace}/tenants/${tenantName}/${newValue}`
-    );
+  const getRoutePath = (newValue: string) => {
+    return `/namespaces/${tenantNamespace}/tenants/${tenantName}/${newValue}`;
   };
 
   const confirmDeleteTenant = () => {
@@ -268,94 +269,6 @@ const TenantDetails = ({
       ? classes.greenState
       : classes.greyState;
   };
-
-  interface ListMenuItem {
-    label: string;
-    value: string;
-    onclick: (val: string) => void;
-    selected: () => boolean;
-  }
-
-  const menu: ListMenuItem[] = [
-    {
-      label: "Summary",
-      value: "summary",
-      onclick: (val) => {
-        changeRoute(val);
-      },
-      selected: () => {
-        return currentTab === "summary";
-      },
-    },
-    {
-      label: "Metrics",
-      value: "metrics",
-      onclick: (val) => {
-        changeRoute("metrics");
-      },
-      selected: () => {
-        return currentTab === "metrics";
-      },
-    },
-    {
-      label: "Security",
-      value: "security",
-      onclick: (val) => {
-        changeRoute("security");
-      },
-      selected: () => {
-        return currentTab === "security";
-      },
-    },
-    {
-      label: "Pools",
-      value: "pools",
-      onclick: (val) => {
-        changeRoute("pools");
-      },
-      selected: () => {
-        return currentTab === "pools";
-      },
-    },
-    {
-      label: "Pods",
-      value: "pods",
-      onclick: (val) => {
-        changeRoute("pods");
-      },
-      selected: () => {
-        return currentTab === "pods" || currentTab === ":podName";
-      },
-    },
-    {
-      label: "Volumes",
-      value: "volumes",
-      onclick: (val) => {
-        changeRoute("volumes");
-      },
-      selected: () => {
-        return currentTab === "volumes";
-      },
-    },
-    {
-      label: "License",
-      value: "license",
-      onclick: (val) => {
-        changeRoute("license");
-      },
-      selected: () => {
-        return currentTab === "license";
-      },
-    },
-  ];
-
-  let value = menu[0].value;
-  for (const mli of menu) {
-    if (mli.selected()) {
-      value = mli.value;
-      break;
-    }
-  }
 
   return (
     <Fragment>
@@ -383,7 +296,8 @@ const TenantDetails = ({
           </Fragment>
         }
       />
-      <Grid container className={classes.container}>
+      <BackLink to={"/tenants"} label={"Return to Tenants"} />
+      <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -450,94 +364,118 @@ const TenantDetails = ({
             }
           />
         </Grid>
-        <Grid item xs={12} sm={12} md={2}>
-          <Box display={{ xs: "none", sm: "none", md: "block" }}>
-            <List component="nav" dense={true}>
-              {menu.map((mli) => {
-                return (
-                  <ListItem
-                    button
-                    selected={mli.selected()}
-                    onClick={() => {
-                      mli.onclick(mli.value);
-                    }}
-                  >
-                    <ListItemText primary={mli.label} />
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Box>
-          <Box display={{ xs: "block", sm: "block", md: "none" }}>
-            <Tabs
-              value={value}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="scrollable"
-              scrollButtons="auto"
-              aria-label="scrollable auto tabs example"
-            >
-              {menu.map((mli) => {
-                return (
-                  <Tab
-                    label={mli.label}
-                    value={mli.value}
-                    onClick={() => {
-                      mli.onclick(mli.value);
-                    }}
+
+        <VerticalTabs
+          selectedTab={activeTab}
+          isRouteTabs
+          routes={
+            <div className={classes.contentSpacer}>
+              <Router history={history}>
+                <Switch>
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/summary"
+                    component={TenantSummary}
                   />
-                );
-              })}
-            </Tabs>
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={12} md={10}>
-          <Router history={history}>
-            <Switch>
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/summary"
-                component={TenantSummary}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
-                component={TenantMetrics}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/security"
-                component={TenantSecurity}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/pools"
-                component={PoolsSummary}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
-                component={PodDetails}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/pods"
-                component={PodsSummary}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
-                component={VolumesSummary}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName/license"
-                component={TenantLicense}
-              />
-              <Route
-                path="/namespaces/:tenantNamespace/tenants/:tenantName"
-                component={() => (
-                  <Redirect
-                    to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/summary`}
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
+                    component={TenantMetrics}
                   />
-                )}
-              />
-            </Switch>
-          </Router>
-        </Grid>
-      </Grid>
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/security"
+                    component={TenantSecurity}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pools"
+                    component={PoolsSummary}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
+                    component={PodDetails}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pods"
+                    component={PodsSummary}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
+                    component={VolumesSummary}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/license"
+                    component={TenantLicense}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName"
+                    component={() => (
+                      <Redirect
+                        to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/summary`}
+                      />
+                    )}
+                  />
+                </Switch>
+              </Router>
+            </div>
+          }
+        >
+          {{
+            tabConfig: {
+              label: "Summary",
+              value: "summary",
+              component: Link,
+              to: getRoutePath("summary"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Metrics",
+              value: "metrics",
+              component: Link,
+              to: getRoutePath("metrics"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Security",
+              value: "security",
+              component: Link,
+              to: getRoutePath("security"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Pools",
+              value: "pools",
+              component: Link,
+              to: getRoutePath("pools"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Pods",
+              value: "pods",
+              component: Link,
+              to: getRoutePath("pods"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Volumes",
+              value: "volumes",
+              component: Link,
+              to: getRoutePath("volumes"),
+            },
+          }}
+
+          {{
+            tabConfig: {
+              label: "License",
+              value: "license",
+              component: Link,
+              to: getRoutePath("license"),
+            },
+          }}
+        </VerticalTabs>
+      </PageLayout>
     </Fragment>
   );
 };
