@@ -36,7 +36,7 @@ const styles = () =>
         height: 500,
       },
       "&.text": {
-        height: 500,
+        height: 700,
       },
       "&.audio": {
         height: 150,

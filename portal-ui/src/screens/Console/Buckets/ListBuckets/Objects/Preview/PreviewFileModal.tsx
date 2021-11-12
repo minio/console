@@ -38,6 +38,7 @@ const PreviewFileModal = ({
         modalOpen={open}
         title={`Preview - ${object?.name}`}
         onClose={onClosePreview}
+        wideLimit={false}
       >
         <PreviewFileContent bucketName={bucketName} object={object} />
       </ModalWrapper>
