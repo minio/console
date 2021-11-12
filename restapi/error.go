@@ -2,9 +2,10 @@ package restapi
 
 import (
 	"errors"
-	"github.com/minio/minio-go/v7"
 	"runtime"
 	"strings"
+
+	"github.com/minio/minio-go/v7"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
