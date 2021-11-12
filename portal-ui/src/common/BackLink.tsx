@@ -19,18 +19,27 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
 import { BackSettingsIcon } from "../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
     link: {
+      display: "flex",
+      alignItems: "center",
       textDecoration: "none",
-      color: theme.palette.primary.main,
-      fontSize: 18,
-      fontWeight: 600,
-      marginBottom: 10,
-      marginTop: 10,
+      maxWidth: "250px",
+      padding: "2rem 2rem 0rem 2rem",
+      color: theme.palette.primary.light,
+      fontSize: ".8rem",
+      "&:hover": {
+        textDecoration: "underline",
+      },
+    },
+    icon: {
+      marginRight: ".3rem",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 
@@ -43,12 +52,10 @@ interface IBackLink {
 const BackLink = ({ to, label, classes }: IBackLink) => {
   return (
     <Link to={to} className={classes.link}>
-      <Grid container spacing={1}>
-        <Grid item>
-          <BackSettingsIcon />
-        </Grid>
-        <Grid item>{label}</Grid>
-      </Grid>
+      <div className={classes.icon}>
+        <BackSettingsIcon />
+      </div>
+      <div>{label}</div>
     </Link>
   );
 };

@@ -34,7 +34,7 @@ import {
   BucketReplication,
   BucketVersioning,
 } from "../types";
-import { encodeFileName, niceBytes } from "../../../../common/utils";
+import { niceBytes } from "../../../../common/utils";
 import { Bucket, BucketList } from "../../Watch/types";
 import {
   buttonsStyles,

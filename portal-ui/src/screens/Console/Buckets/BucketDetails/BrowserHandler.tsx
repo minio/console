@@ -99,9 +99,7 @@ const BrowserHandler = ({
           )
         }
       />
-      <Grid container className={classes.container}>
-        {fileMode ? <ObjectDetails /> : <ListObjects />}
-      </Grid>
+      <Grid>{fileMode ? <ObjectDetails /> : <ListObjects />}</Grid>
     </Fragment>
   );
 };

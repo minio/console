@@ -48,6 +48,7 @@ import SearchIcon from "../../../icons/SearchIcon";
 import { decodeFileName } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -80,9 +81,6 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
-    },
-    twHeight: {
-      minHeight: 600,
     },
     ...actionsTray,
     ...searchField,
@@ -229,7 +227,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
         />
       )}
       <PageHeader label={"Users"} />
-      <Grid container className={classes.container}>
+      <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Search Users"
@@ -293,7 +291,6 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                     records={filteredRecords}
                     entityName="Users"
                     idField="accessKey"
-                    customPaperHeight={classes.twHeight}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -374,7 +371,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             )}
           </Fragment>
         )}
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

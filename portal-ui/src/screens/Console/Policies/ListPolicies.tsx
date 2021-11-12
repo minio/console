@@ -41,6 +41,7 @@ import api from "../../../common/api";
 import history from "../../../history";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,10 +53,9 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       flexDirection: "column",
     },
-
     addSideBar: {
-      width: "320px",
-      padding: "20px",
+      width: 320,
+      padding: 20,
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -179,7 +179,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
         />
       )}
       <PageHeader label="IAM Policies" />
-      <Grid container className={classes.container}>
+      <PageLayout className={classes.pageContainer}>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Search Policies"
@@ -222,7 +222,6 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             records={filteredRecords}
             entityName="Policies"
             idField="name"
-            customPaperHeight={classes.twHeight}
           />
         </Grid>
         <Grid item xs={12}>
@@ -258,7 +257,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             }
           />
         </Grid>
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };
