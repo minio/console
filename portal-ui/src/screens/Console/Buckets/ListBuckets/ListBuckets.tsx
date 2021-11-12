@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import { AddIcon, BucketsIcon, WatchIcon } from "../../../../icons";
+import { AddIcon, BucketsIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
@@ -44,6 +44,7 @@ import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
 import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
+import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -315,7 +316,7 @@ const ListBuckets = ({
                 size={"small"}
                 className={classes.bulkSelect}
               >
-                <WatchIcon />
+                <SelectMultipleIcon />
               </BoxIconButton>
               <BoxIconButton
                 variant="outlined"
