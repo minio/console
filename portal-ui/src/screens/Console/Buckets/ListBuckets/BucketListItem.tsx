@@ -14,42 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   ArrowRightIcon,
   BucketsIcon,
-  CalendarIcon,
-  LockIcon,
   ReportedUsageIcon,
   SettingsIcon,
   TotalObjectsIcon,
 } from "../../../../icons";
 import { Bucket } from "../types";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { niceBytes, prettyNumber } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import { Link } from "react-router-dom";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
       marginBottom: 30,
-      border: 0,
-      borderRadius: 10,
+      padding: 20,
       color: theme.palette.primary.main,
-      boxShadow: "0px 0px 15px #00000029",
+      border: "#E5E5E5 1px solid",
+      borderRadius: 2,
       "& .MuiSvgIcon-root": {
-        height: 13,
+        height: 14,
+        width: 14,
+        marginRight: 4,
+      },
+      "& .MuiTypography-body2": {
+        fontSize: 14,
       },
       "& .MuiCardHeader-content": {
         wordWrap: "break-word",
@@ -90,7 +85,7 @@ const styles = (theme: Theme) =>
     viewButton: {
       width: 111,
       color: "white",
-      backgroundColor: "#C83B51",
+      marginLeft: 8,
       fontSize: 12,
       fontWeight: "normal",
       boxShadow: "unset",
@@ -115,17 +110,28 @@ const styles = (theme: Theme) =>
       marginBottom: 4,
     },
     metricLabel: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "bold",
     },
     metricText: {
-      fontSize: 50,
+      fontSize: 24,
       fontWeight: "bold",
-      marginBottom: 10,
     },
     unit: {
       fontSize: 12,
       fontWeight: "normal",
+    },
+    bucketName: {
+      padding: 0,
+      margin: 0,
+      fontSize: 22,
+    },
+    bucketIcon: {
+      "& .MuiSvgIcon-root": {
+        height: 48,
+        width: 48,
+        fontSize: 48,
+      },
     },
   });
 
@@ -165,105 +171,106 @@ const BucketListItem = ({
   };
 
   return (
-    <Card className={classes.root}>
-      <CardHeader
-        disableTypography={true}
-        title={
-          <Typography variant={"body1"}>
-            {bulkSelect && (
-              <div
-                className={classes.checkBoxElement}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <CheckboxWrapper
-                  checked={selected}
-                  id={`select-${bucket.name}`}
-                  label={""}
-                  name={`select-${bucket.name}`}
-                  onChange={onCheckboxClick}
-                  value={bucket.name}
-                />
-              </div>
-            )}
-
-            <BucketsIcon />
-            {bucket.name}
-          </Typography>
-        }
-      />
-      <CardContent>
-        <Grid container>
-          <Grid item xs={12} sm={8} md={10}>
+    <Grid container className={classes.root} spacing={1}>
+      <Grid item xs={12}>
+        <Grid container justifyContent={"space-between"}>
+          <Grid item xs={12} sm={8}>
             <Grid container>
-              <Grid item xs={12} md={6}>
-                <Typography variant="body2">
-                  <CalendarIcon /> Created: <b>{bucket.creation_date}</b>
-                </Typography>
-                <Typography variant="body2">
-                  <LockIcon /> Access: <b> {accessToStr(bucket)}</b>
-                </Typography>
+              <Grid item xs={12}>
+                {bulkSelect && (
+                  <div
+                    className={classes.checkBoxElement}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <CheckboxWrapper
+                      checked={selected}
+                      id={`select-${bucket.name}`}
+                      label={""}
+                      name={`select-${bucket.name}`}
+                      onChange={onCheckboxClick}
+                      value={bucket.name}
+                    />
+                  </div>
+                )}
+                <h1 className={classes.bucketName}>{bucket.name}</h1>
               </Grid>
-              <Grid item xs={6} md={3}>
-                <Typography variant="body1" className={classes.metricLabel}>
-                  <ReportedUsageIcon /> USAGE
-                </Typography>
-                <div className={classes.metricText}>
-                  {usageScalar}
-                  <span className={classes.unit}>{usageUnit}</span>
-                </div>
-              </Grid>
-              <Grid item xs={6} md={3}>
-                <Typography variant="body1" className={classes.metricLabel}>
-                  <TotalObjectsIcon /> OBJECTS
-                </Typography>
-                <div className={classes.metricText}>
-                  {bucket.objects ? prettyNumber(bucket.objects) : 0}
-                </div>
+              <Grid item xs={12}>
+                <Grid container>
+                  <Grid item xs={12} sm>
+                    <Typography variant="body2">
+                      Created: <b>{bucket.creation_date}</b>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm>
+                    <Typography variant="body2">
+                      Access: <b> {accessToStr(bucket)}</b>
+                    </Typography>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={4} md={2} className={classes.buttonTray}>
-            <Grid container>
-              <Grid item xs={6} sm={12} md={12}>
-                <Link
-                  to={`/buckets/${bucket.name}/browse`}
-                  style={{ textDecoration: "none" }}
+          <Grid item xs={12} sm={4} textAlign={"right"}>
+            {bucket.manage && (
+              <Link
+                to={`/buckets/${bucket.name}/admin`}
+                style={{ textDecoration: "none" }}
+              >
+                <Button
+                  variant={"outlined"}
+                  endIcon={<SettingsIcon />}
+                  className={classes.manageButton}
                 >
-                  <Button
-                    variant="contained"
-                    endIcon={<ArrowRightIcon />}
-                    className={classes.viewButton}
-                  >
-                    Browse
-                  </Button>
-                </Link>
-                <Box display={{ xs: "none", sm: "block" }}>
-                  <div style={{ marginBottom: 10 }} />
-                </Box>
-              </Grid>
-              {bucket.manage && (
-                <Grid item xs={6} sm={12} md={12}>
-                  <Link
-                    to={`/buckets/${bucket.name}/admin`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Button
-                      variant={"outlined"}
-                      endIcon={<SettingsIcon />}
-                      className={classes.manageButton}
-                    >
-                      Manage
-                    </Button>
-                  </Link>
-                </Grid>
-              )}
-            </Grid>
+                  Manage
+                </Button>
+              </Link>
+            )}
+            <Link
+              to={`/buckets/${bucket.name}/browse`}
+              style={{ textDecoration: "none" }}
+            >
+              <Button
+                variant="contained"
+                endIcon={<ArrowRightIcon />}
+                className={classes.viewButton}
+              >
+                Browse
+              </Button>
+            </Link>
+            <Box display={{ xs: "none", sm: "block" }}>
+              <div style={{ marginBottom: 10 }} />
+            </Box>
           </Grid>
         </Grid>
-      </CardContent>
-    </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <hr />
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container justifyContent={"flex-start"} spacing={4}>
+          <Grid item className={classes.bucketIcon}>
+            <BucketsIcon />
+          </Grid>
+          <Grid item textAlign={"left"}>
+            <ReportedUsageIcon />
+            <span className={classes.metricLabel}>Usage</span>
+            <div className={classes.metricText}>
+              {usageScalar}
+              <span className={classes.unit}>{usageUnit}</span>
+            </div>
+          </Grid>
+          <Grid item textAlign={"left"}>
+            <TotalObjectsIcon />
+            <span className={classes.metricLabel}>Objects</span>
+            <div className={classes.metricText}>
+              {bucket.objects ? prettyNumber(bucket.objects) : 0}
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

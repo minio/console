@@ -20,7 +20,6 @@ import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Tooltip } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
@@ -325,41 +324,38 @@ const TenantDetails = ({
             }
             actions={
               <div>
-                <Tooltip title={"Delete"}>
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Delete"
-                    onClick={() => {
-                      confirmDeleteTenant();
-                    }}
-                    size="large"
-                  >
-                    <DeleteIcon />
-                  </BoxIconButton>
-                </Tooltip>
-                <Tooltip title={"Edit YAML"}>
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Edit YAML"
-                    onClick={() => {
-                      editYaml();
-                    }}
-                    size="large"
-                  >
-                    <EditIcon />
-                  </BoxIconButton>
-                </Tooltip>
-                <Tooltip title={"Refresh"}>
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Refresh List"
-                    onClick={() => {
-                      setTenantDetailsLoad(true);
-                    }}
-                  >
-                    <RefreshIcon />
-                  </BoxIconButton>
-                </Tooltip>
+                <BoxIconButton
+                  tooltip={"Delete"}
+                  color="primary"
+                  aria-label="Delete"
+                  onClick={() => {
+                    confirmDeleteTenant();
+                  }}
+                  size="large"
+                >
+                  <DeleteIcon />
+                </BoxIconButton>
+                <BoxIconButton
+                  tooltip={"Edit YAML"}
+                  color="primary"
+                  aria-label="Edit YAML"
+                  onClick={() => {
+                    editYaml();
+                  }}
+                  size="large"
+                >
+                  <EditIcon />
+                </BoxIconButton>
+                <BoxIconButton
+                  tooltip={"Refresh"}
+                  color="primary"
+                  aria-label="Refresh List"
+                  onClick={() => {
+                    setTenantDetailsLoad(true);
+                  }}
+                >
+                  <RefreshIcon />
+                </BoxIconButton>
               </div>
             }
           />
