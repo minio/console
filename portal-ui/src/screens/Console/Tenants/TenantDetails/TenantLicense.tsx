@@ -99,7 +99,6 @@ const TenantLicense = ({
 
   return (
     <Fragment>
-      <div className={classes.topSpacer} />
       <h1 className={classes.sectionTitle}>License</h1>
       {loadingTenant ? (
         <div className={classes.loaderAlign}>

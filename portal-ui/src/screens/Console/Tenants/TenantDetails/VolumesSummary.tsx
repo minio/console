@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
       color: "black",
     },
     tableWrapper: {
-      height: "calc(100vh - 267px)",
+      height: "450px",
     },
     ...actionsTray,
     ...searchField,

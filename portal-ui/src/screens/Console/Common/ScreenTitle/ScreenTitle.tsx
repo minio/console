@@ -32,17 +32,36 @@ interface IScreenTitle {
 const styles = (theme: Theme) =>
   createStyles({
     headerBarIcon: {
-      float: "left",
-      paddingTop: 10,
-      marginRight: 12,
+      marginRight: ".7rem",
       color: theme.palette.primary.main,
       "& .MuiSvgIcon-root": {
-        width: 44,
-        height: 44,
+        width: "100%",
+        height: "100%",
       },
     },
     headerBarSubheader: {
       color: "grey",
+    },
+    screenTitle: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "1rem",
+      borderBottom: "1px solid #EAEAEA",
+    },
+    titleColumn: {
+      height: "auto",
+      justifyContent: "center",
+      display: "flex",
+      flexFlow: "column",
+      alignItems: "flex-start",
+      "& h1": {
+        fontSize: "1.4rem",
+      },
+    },
+    leftItems: {
+      display: "flex",
+      alignItems: "center",
     },
   });
 
@@ -55,16 +74,16 @@ const ScreenTitle = ({
 }: IScreenTitle) => {
   return (
     <Grid container>
-      <Grid item xs={12} style={{ paddingTop: 8 }}>
-        <div className={classes.headerBarIcon}>{icon}</div>
-        <div style={{ float: "left" }}>
-          <h1 style={{ margin: 0 }}>{title}</h1>
-          <span className={classes.headerBarSubheader}>{subTitle}</span>
+      <Grid item xs={12} className={classes.screenTitle}>
+        <div className={classes.leftItems}>
+          {icon ? <div className={classes.headerBarIcon}>{icon}</div> : null}
+          <div className={classes.titleColumn}>
+            <h1 style={{ margin: 0 }}>{title}</h1>
+            <span className={classes.headerBarSubheader}>{subTitle}</span>
+          </div>
         </div>
-        <div style={{ float: "right", paddingTop: 12 }}>{actions}</div>
-      </Grid>
-      <Grid item xs={12}>
-        <hr style={{ border: 0, borderTop: "1px solid #EAEAEA" }} />
+
+        <div>{actions}</div>
       </Grid>
     </Grid>
   );

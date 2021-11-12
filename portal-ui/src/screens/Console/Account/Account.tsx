@@ -42,6 +42,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -74,9 +75,6 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
-    },
-    twHeight: {
-      minHeight: 600,
     },
     imageIcon: {
       height: "100%",
@@ -234,7 +232,7 @@ const Account = ({
           </React.Fragment>
         }
       />
-      <Grid container className={classes.container}>
+      <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Search Service Accounts"
@@ -277,7 +275,6 @@ const Account = ({
             idField={""}
             columns={[{ label: "Service Account", elementKey: "" }]}
             itemActions={tableActions}
-            customPaperHeight={classes.twHeight}
           />
         </Grid>
         <Grid item xs={12}>
@@ -308,7 +305,7 @@ const Account = ({
             }
           />
         </Grid>
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };

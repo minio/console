@@ -169,7 +169,6 @@ const TenantSummary = ({
           namespace={tenantNamespace}
         />
       )}
-      <div className={classes.topSpacer} />
       <h1 className={classes.sectionTitle}>Summary</h1>
       <Paper className={classes.paperContainer}>
         <Grid container>

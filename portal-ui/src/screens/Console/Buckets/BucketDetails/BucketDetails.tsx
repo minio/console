@@ -28,6 +28,7 @@ import {
   buttonsStyles,
   containerForHeader,
   hrClass,
+  pageContentStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -44,9 +45,6 @@ import BucketSummaryPanel from "./BucketSummaryPanel";
 import BucketEventsPanel from "./BucketEventsPanel";
 import BucketReplicationPanel from "./BucketReplicationPanel";
 import BucketLifecyclePanel from "./BucketLifecyclePanel";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { IconButton, Tooltip } from "@mui/material";
 import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
@@ -69,6 +67,9 @@ import {
   S3_PUT_REPLICATION_CONFIGURATION,
 } from "../../../../types";
 import { displayComponent } from "../../../../utils/permissions";
+import PageLayout from "../../Common/Layout/PageLayout";
+import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
+import BackLink from "../../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -80,6 +81,11 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       flexDirection: "column",
     },
+    pageContainer: {
+      border: "1px solid #EAEAEA",
+      height: "100%",
+    },
+    ...pageContentStyles,
     addSideBar: {
       width: "320px",
       padding: "20px",
@@ -216,6 +222,15 @@ const BucketDetails = ({
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const bucketName = match.params["bucketName"];
 
+  let selTab = match?.params["0"];
+  selTab = selTab ? selTab : "summary";
+
+  const [activeTab, setActiveTab] = useState(selTab);
+
+  useEffect(() => {
+    setActiveTab(selTab);
+  }, [selTab]);
+
   useEffect(() => {
     if (!iniLoad) {
       setBucketDetailsLoad(true);
@@ -244,45 +259,25 @@ const BucketDetails = ({
     setErrorSnackMessage,
   ]);
 
-  useEffect(() => {
-    let matchURL = match.params ? match.params["0"] : "browse";
+  let topLevelRoute = `/buckets/${bucketName}`;
+  const defaultRoute = "/admin/summary";
 
-    if (!matchURL) {
-      matchURL = "";
+  const manageBucketRoutes: Record<string, any> = {
+    events: "/admin/events",
+    replication: "/admin/replication",
+    lifecycle: "/admin/lifecycle",
+    access: "/admin/access",
+    prefix: "/admin/prefix",
+  };
+
+  const getRoutePath = (routeKey: string) => {
+    let path = manageBucketRoutes[routeKey];
+    if (!path) {
+      path = `${topLevelRoute}${defaultRoute}`;
+    } else {
+      path = `${topLevelRoute}${path}`;
     }
-
-    const splitMatch = matchURL.split("/");
-
-    if (selectedTab !== splitMatch[0]) {
-      setBucketDetailsTab(splitMatch[0]);
-    }
-  }, [match, bucketName, setBucketDetailsTab, selectedTab]);
-
-  const changeRoute = (newTab: string) => {
-    let mainRoute = `/buckets/${bucketName}`;
-
-    switch (newTab) {
-      case "events":
-        mainRoute += "/admin/events";
-        break;
-      case "replication":
-        mainRoute += "/admin/replication";
-        break;
-      case "lifecycle":
-        mainRoute += "/admin/lifecycle";
-        break;
-      case "access":
-        mainRoute += "/admin/access";
-        break;
-      case "prefix":
-        mainRoute += "/admin/prefix";
-        break;
-      default:
-        mainRoute += "/admin/summary";
-    }
-
-    setBucketDetailsTab(newTab);
-    history.push(mainRoute);
+    return path;
   };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
@@ -331,7 +326,8 @@ const BucketDetails = ({
           </Fragment>
         }
       />
-      <Grid container className={classes.container}>
+      <BackLink to={"/buckets"} label={"Back to Buckets"} />
+      <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -390,138 +386,133 @@ const BucketDetails = ({
             }
           />
         </Grid>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={selectedTab === "summary"}
-              onClick={() => {
-                changeRoute("summary");
-              }}
-            >
-              <ListItemText primary="Summary" />
-            </ListItem>
-            <ListItem
-              disabled={
-                !displayComponent(bucketInfo?.allowedActions, [
-                  S3_GET_BUCKET_NOTIFICATIONS,
-                  S3_PUT_BUCKET_NOTIFICATIONS,
-                ])
-              }
-              button
-              selected={selectedTab === "events"}
-              onClick={() => {
-                changeRoute("events");
-              }}
-            >
-              <ListItemText primary="Events" />
-            </ListItem>
-            <ListItem
-              button
-              disabled={
+        <VerticalTabs
+          selectedTab={activeTab}
+          isRouteTabs
+          routes={
+            <div className={classes.contentSpacer}>
+              <Router history={history}>
+                <Switch>
+                  <Route
+                    exact
+                    path="/buckets/:bucketName/admin/summary"
+                    component={BucketSummaryPanel}
+                  />
+                  <Route
+                    exact
+                    path="/buckets/:bucketName/admin/events"
+                    component={BucketEventsPanel}
+                  />
+                  {distributedSetup && (
+                    <Route
+                      exact
+                      path="/buckets/:bucketName/admin/replication"
+                      component={BucketReplicationPanel}
+                    />
+                  )}
+                  {distributedSetup && (
+                    <Route
+                      exact
+                      path="/buckets/:bucketName/admin/lifecycle"
+                      component={BucketLifecyclePanel}
+                    />
+                  )}
+
+                  <Route
+                    exact
+                    path="/buckets/:bucketName/admin/access"
+                    component={AccessDetailsPanel}
+                  />
+                  <Route
+                    exact
+                    path="/buckets/:bucketName/admin/prefix"
+                    component={AccessRulePanel}
+                  />
+                  <Route
+                    path="/buckets/:bucketName"
+                    component={() => (
+                      <Redirect to={`/buckets/${bucketName}/admin/summary`} />
+                    )}
+                  />
+                </Switch>
+              </Router>
+            </div>
+          }
+        >
+          {{
+            tabConfig: {
+              label: "Summary",
+              value: "summary",
+              component: Link,
+              to: getRoutePath("summary"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Events",
+              value: "events",
+              component: Link,
+              disabled: !displayComponent(bucketInfo?.allowedActions, [
+                S3_GET_BUCKET_NOTIFICATIONS,
+                S3_PUT_BUCKET_NOTIFICATIONS,
+              ]),
+              to: getRoutePath("events"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Replication",
+              value: "replication",
+              component: Link,
+              disabled:
                 !distributedSetup ||
                 !displayComponent(bucketInfo?.allowedActions, [
                   S3_GET_REPLICATION_CONFIGURATION,
                   S3_PUT_REPLICATION_CONFIGURATION,
-                ])
-              }
-              selected={selectedTab === "replication"}
-              onClick={() => {
-                changeRoute("replication");
-              }}
-            >
-              <ListItemText primary="Replication" />
-            </ListItem>
-            <ListItem
-              button
-              disabled={
+                ]),
+              to: getRoutePath("replication"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Lifecycle",
+              value: "lifecycle",
+              component: Link,
+              disabled:
                 !distributedSetup ||
                 !displayComponent(bucketInfo?.allowedActions, [
                   S3_GET_LIFECYCLE_CONFIGURATION,
                   S3_PUT_LIFECYCLE_CONFIGURATION,
-                ])
-              }
-              selected={selectedTab === "lifecycle"}
-              onClick={() => {
-                changeRoute("lifecycle");
-              }}
-            >
-              <ListItemText primary="Lifecycle" />
-            </ListItem>
-            <ListItem
-              button
-              disabled={
-                !displayComponent(bucketInfo?.allowedActions, [
-                  ADMIN_GET_POLICY,
-                  ADMIN_LIST_USER_POLICIES,
-                  ADMIN_LIST_USERS,
-                ])
-              }
-              selected={selectedTab === "access"}
-              onClick={() => {
-                changeRoute("access");
-              }}
-            >
-              <ListItemText primary="Access Audit" />
-            </ListItem>
-            <ListItem
-              button
-              disabled={
-                !displayComponent(bucketInfo?.allowedActions, [
-                  S3_GET_BUCKET_POLICY,
-                ])
-              }
-              selected={selectedTab === "prefix"}
-              onClick={() => {
-                changeRoute("prefix");
-              }}
-            >
-              <ListItemText primary="Access Rules" />
-            </ListItem>
-          </List>
-        </Grid>
-        <Grid item xs={10}>
-          <Router history={history}>
-            <Switch>
-              <Route
-                path="/buckets/:bucketName/admin/summary"
-                component={BucketSummaryPanel}
-              />
-              <Route
-                path="/buckets/:bucketName/admin/events"
-                component={BucketEventsPanel}
-              />
-              {distributedSetup && (
-                <Route
-                  path="/buckets/:bucketName/admin/replication"
-                  component={BucketReplicationPanel}
-                />
-              )}
-              {distributedSetup && (
-                <Route
-                  path="/buckets/:bucketName/admin/lifecycle"
-                  component={BucketLifecyclePanel}
-                />
-              )}
-
-              <Route
-                path="/buckets/:bucketName/admin/access"
-                component={AccessDetailsPanel}
-              />
-              <Route
-                path="/buckets/:bucketName/admin/prefix"
-                component={AccessRulePanel}
-              />
-              <Route
-                path="/buckets/:bucketName"
-                component={() => (
-                  <Redirect to={`/buckets/${bucketName}/admin/summary`} />
-                )}
-              />
-            </Switch>
-          </Router>
-        </Grid>
-      </Grid>
+                ]),
+              to: getRoutePath("lifecycle"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Access Audit",
+              value: "access",
+              component: Link,
+              disabled: !displayComponent(bucketInfo?.allowedActions, [
+                ADMIN_GET_POLICY,
+                ADMIN_LIST_USER_POLICIES,
+                ADMIN_LIST_USERS,
+              ]),
+              to: getRoutePath("access"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Access Rules",
+              value: "prefix",
+              component: Link,
+              disabled: !displayComponent(bucketInfo?.allowedActions, [
+                S3_GET_BUCKET_POLICY,
+              ]),
+              to: getRoutePath("prefix"),
+            },
+          }}
+        </VerticalTabs>
+      </PageLayout>
     </Fragment>
   );
 };

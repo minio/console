@@ -39,7 +39,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
-import { TabPanel } from "../../shared/tabs";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -49,16 +48,29 @@ import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import List from "@mui/material/List";
 import LockIcon from "@mui/icons-material/Lock";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import PageLayout from "../Common/Layout/PageLayout";
+import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import BackLink from "../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
+    pageContainer: {
+      border: "1px solid #EAEAEA",
+    },
+    statusLabel: {
+      fontSize: ".8rem",
+      marginRight: ".5rem",
+    },
+    statusValue: {
+      fontWeight: "bold",
+      fontSize: ".9rem",
+      marginRight: ".5rem",
+    },
     seeMore: {
       marginTop: theme.spacing(3),
     },
@@ -126,7 +138,6 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
-    actionsTray: { ...actionsTray.actionsTray },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -141,7 +152,6 @@ interface IGroupItem {
 }
 
 const UserDetails = ({ classes, match }: IUserDetailsProps) => {
-  const [curTab, setCurTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
@@ -281,7 +291,8 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           closeModal={() => setChangeUserPasswordModalOpen(false)}
         />
       )}
-      <Grid container className={classes.container}>
+      <BackLink label={"Return to Users"} to={"/users"} />
+      <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -290,20 +301,25 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
               </Fragment>
             }
             title={userName}
-            subTitle={
-              <Fragment>Status: {enabled ? "Enabled" : "Disabled"}</Fragment>
-            }
             actions={
               <Fragment>
-                <Button
-                  onClick={() => {
+                <span className={classes.statusLabel}>User Status:</span>
+                <span className={classes.statusValue}>
+                  {enabled ? "Enabled" : "Disabled"}
+                </span>
+                <FormSwitchWrapper
+                  indicatorLabels={["Enabled", "Disabled"]}
+                  checked={enabled}
+                  value={"group_enabled"}
+                  id="group-status"
+                  name="group-status"
+                  onChange={() => {
                     setEnabled(!enabled);
                     saveRecord(!enabled);
                   }}
-                  color={"primary"}
-                >
-                  {enabled ? "Disable" : "Enable"}
-                </Button>
+                  switchOnly
+                />
+
                 <Tooltip title="Delete User">
                   <BoxIconButton
                     color="primary"
@@ -328,104 +344,93 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             }
           />
         </Grid>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={curTab === 0}
-              onClick={() => {
-                setCurTab(0);
-              }}
-            >
-              <ListItemText primary="Groups" />
-            </ListItem>
-            <ListItem
-              button
-              selected={curTab === 1}
-              onClick={() => {
-                setCurTab(1);
-              }}
-            >
-              <ListItemText primary="Service Accounts" />
-            </ListItem>
-            <ListItem
-              button
-              selected={curTab === 2}
-              onClick={() => {
-                setCurTab(2);
-              }}
-            >
-              <ListItemText primary="Policies" />
-            </ListItem>
-          </List>
+
+        <Grid item xs={12}>
+          <VerticalTabs>
+            {{
+              tabConfig: {
+                label: "Groups",
+              },
+              content: (
+                <React.Fragment>
+                  <div className={classes.actionsTray}>
+                    <PanelTitle>Groups</PanelTitle>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      endIcon={<AddIcon />}
+                      size="medium"
+                      onClick={() => {
+                        setAddGroupOpen(true);
+                      }}
+                    >
+                      Add to Groups
+                    </Button>
+                  </div>
+                  <TableWrapper
+                    // itemActions={userTableActions}
+                    columns={[{ label: "Name", elementKey: "group" }]}
+                    isLoading={loading}
+                    records={currentGroups}
+                    entityName="Groups"
+                    idField="group"
+                  />
+                </React.Fragment>
+              ),
+            }}
+            {{
+              tabConfig: {
+                label: "Service Accounts",
+              },
+              content: (
+                <UserServiceAccountsPanel
+                  user={userName}
+                  classes={classes}
+                  hasPolicy={hasPolicy}
+                />
+              ),
+            }}
+            {{
+              tabConfig: {
+                label: "Policies",
+              },
+              content: (
+                <React.Fragment>
+                  <div className={classes.actionsTray}>
+                    <PanelTitle>Policies</PanelTitle>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      endIcon={<IAMPoliciesIcon />}
+                      size="medium"
+                      onClick={() => {
+                        setPolicyOpen(true);
+                      }}
+                    >
+                      Assign Policies
+                    </Button>
+                  </div>
+                  <TableWrapper
+                    itemActions={[
+                      {
+                        type: "view",
+                        onClick: (policy: IPolicyItem) => {
+                          history.push(`/policies/${policy.policy}`);
+                        },
+                      },
+                    ]}
+                    columns={[{ label: "Name", elementKey: "policy" }]}
+                    isLoading={loading}
+                    records={currentPolicies}
+                    entityName="Policies"
+                    idField="policy"
+                  />
+                </React.Fragment>
+              ),
+            }}
+          </VerticalTabs>
         </Grid>
-        <Grid item xs={10}>
-          <Grid item xs={12}>
-            <TabPanel index={0} value={curTab}>
-              <div className={classes.actionsTray}>
-                <PanelTitle>Groups</PanelTitle>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  endIcon={<AddIcon />}
-                  size="medium"
-                  onClick={() => {
-                    setAddGroupOpen(true);
-                  }}
-                >
-                  Add to Groups
-                </Button>
-              </div>
-              <TableWrapper
-                // itemActions={userTableActions}
-                columns={[{ label: "Name", elementKey: "group" }]}
-                isLoading={loading}
-                records={currentGroups}
-                entityName="Groups"
-                idField="group"
-              />
-            </TabPanel>
-            <TabPanel index={1} value={curTab}>
-              <UserServiceAccountsPanel
-                user={userName}
-                classes={classes}
-                hasPolicy={hasPolicy}
-              />
-            </TabPanel>
-            <TabPanel index={2} value={curTab}>
-              <div className={classes.actionsTray}>
-                <PanelTitle>Policies</PanelTitle>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  endIcon={<IAMPoliciesIcon />}
-                  size="medium"
-                  onClick={() => {
-                    setPolicyOpen(true);
-                  }}
-                >
-                  Assign Policies
-                </Button>
-              </div>
-              <TableWrapper
-                itemActions={[
-                  {
-                    type: "view",
-                    onClick: (policy: IPolicyItem) => {
-                      history.push(`/policies/${policy.policy}`);
-                    },
-                  },
-                ]}
-                columns={[{ label: "Name", elementKey: "policy" }]}
-                isLoading={loading}
-                records={currentPolicies}
-                entityName="Policies"
-                idField="policy"
-              />
-            </TabPanel>
-          </Grid>
-        </Grid>
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };

@@ -26,16 +26,12 @@ import withStyles from "@mui/styles/withStyles";
 import {
   CircularProgress,
   LinearProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableRow,
   Tooltip,
 } from "@mui/material";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
@@ -53,7 +49,6 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { FileInfoResponse, IFileInfo } from "./types";
 import { download, extensionPreview } from "../utils";
-import { TabPanel } from "../../../../../shared/tabs";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
 import ShareIcon from "../../../../../../icons/ShareIcon";
@@ -93,6 +88,8 @@ import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
+import PageLayout from "../../../../Common/Layout/PageLayout";
+import VerticalTabs from "../../../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import { RecoverIcon } from "../../../../../../icons";
 
@@ -100,6 +97,10 @@ const styles = (theme: Theme) =>
   createStyles({
     currentItemContainer: {
       marginBottom: 8,
+    },
+    pageContainer: {
+      border: "1px solid #EAEAEA",
+      height: "100%",
     },
     objectPathContainer: {
       marginBottom: 26,
@@ -271,7 +272,6 @@ const ObjectDetails = ({
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [metadataLoad, setMetadataLoad] = useState<boolean>(true);
   const [metadata, setMetadata] = useState<any>({});
-  const [selectedTab, setSelectedTab] = useState<number>(0);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(false);
   const [bucketInfo, setBucketInfo] = useState<any>(null);
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
@@ -615,7 +615,7 @@ const ObjectDetails = ({
         />
       )}
 
-      <Grid container>
+      <PageLayout className={classes.pageContainer}>
         {!actualInfo && (
           <Grid item xs={12}>
             <LinearProgress />
@@ -705,176 +705,135 @@ const ObjectDetails = ({
                 }
               />
             </Grid>
-            <Grid item xs={2}>
-              <List component="nav" dense={true}>
-                <ListItem
-                  button
-                  selected={selectedTab === 0}
-                  onClick={() => {
-                    setSelectedTab(0);
-                  }}
-                >
-                  <ListItemText primary="Details" />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedTab === 1}
-                  onClick={() => {
-                    setSelectedTab(1);
-                  }}
-                  disabled={
-                    !(actualInfo.version_id && actualInfo.version_id !== "null")
-                  }
-                >
-                  <ListItemText primary="Versions" />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedTab === 2}
-                  onClick={() => {
-                    setSelectedTab(2);
-                  }}
-                  disabled={extensionPreview(currentItem) === "none"}
-                >
-                  <ListItemText primary="Preview" />
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={10}>
-              <Grid item xs={12}>
-                <TabPanel index={0} value={selectedTab}>
-                  <div className={classes.actionsTray}>
-                    <h1 className={classes.sectionTitle}>Details</h1>
-                  </div>
-                  <br />
-                  {(displayObjectLegalHold ||
-                    displayObjectRetention ||
-                    displayObjectTag) && (
-                    <Fragment>
-                      <Paper className={classes.paperContainer}>
-                        <Grid container>
-                          <Grid item xs={10}>
-                            <table width={"100%"}>
-                              <tbody>
-                                {displayObjectLegalHold && (
-                                  <tr>
-                                    <td className={classes.titleCol}>
-                                      Legal Hold:
-                                    </td>
-                                    <td className={classes.capitalizeFirst}>
-                                      {actualInfo.version_id &&
-                                      actualInfo.version_id !== "null" ? (
-                                        <Fragment>
-                                          {actualInfo.legal_hold_status
-                                            ? actualInfo.legal_hold_status.toLowerCase()
-                                            : "Off"}
-                                          {displayEditObjectLegalHold && (
-                                            <IconButton
-                                              color="primary"
-                                              aria-label="legal-hold"
-                                              size="small"
-                                              className={classes.propertiesIcon}
-                                              onClick={() => {
-                                                setLegalholdOpen(true);
-                                              }}
-                                            >
-                                              <EditIcon />
-                                            </IconButton>
-                                          )}
-                                        </Fragment>
-                                      ) : (
-                                        "Disabled"
-                                      )}
-                                    </td>
-                                  </tr>
-                                )}
-                                {displayObjectRetention && (
-                                  <tr>
-                                    <td className={classes.titleCol}>
-                                      Retention:
-                                    </td>
-                                    <td className={classes.capitalizeFirst}>
-                                      {actualInfo.retention_mode
-                                        ? actualInfo.retention_mode.toLowerCase()
-                                        : "None"}
-                                      {displayEditObjectRetention && (
+            <VerticalTabs>
+              {{
+                tabConfig: {
+                  label: "Details",
+                },
+                content: (
+                  <React.Fragment>
+                    <div className={classes.actionsTray}>
+                      <h1 className={classes.sectionTitle}>Details</h1>
+                    </div>
+                    <br />
+                    {(displayObjectLegalHold ||
+                      displayObjectRetention ||
+                      displayObjectTag) && (
+                      <Grid item xs={12}>
+                        <table width={"100%"}>
+                          <tbody>
+                            {displayObjectLegalHold && (
+                              <tr>
+                                <td className={classes.titleCol}>
+                                  Legal Hold:
+                                </td>
+                                <td className={classes.capitalizeFirst}>
+                                  {actualInfo.version_id &&
+                                  actualInfo.version_id !== "null" ? (
+                                    <Fragment>
+                                      {actualInfo.legal_hold_status
+                                        ? actualInfo.legal_hold_status.toLowerCase()
+                                        : "Off"}
+                                      {displayEditObjectLegalHold && (
                                         <IconButton
                                           color="primary"
-                                          aria-label="retention"
+                                          aria-label="legal-hold"
                                           size="small"
                                           className={classes.propertiesIcon}
                                           onClick={() => {
-                                            openRetentionModal();
+                                            setLegalholdOpen(true);
                                           }}
                                         >
                                           <EditIcon />
                                         </IconButton>
                                       )}
-                                    </td>
-                                  </tr>
-                                )}
-                                {displayObjectTag && (
-                                  <tr>
-                                    <td className={classes.titleCol}>Tags:</td>
-                                    <td>
-                                      {tagKeys &&
-                                        tagKeys.map((tagKey, index) => {
-                                          const tag = get(
-                                            actualInfo,
-                                            `tags.${tagKey}`,
-                                            ""
-                                          );
-                                          if (tag !== "") {
-                                            return displayRemoveObjectTagging ? (
-                                              <Chip
-                                                key={`chip-${index}`}
-                                                className={classes.tag}
-                                                size="small"
-                                                label={`${tagKey} : ${tag}`}
-                                                color="primary"
-                                                deleteIcon={<CloseIcon />}
-                                                onDelete={() => {
-                                                  deleteTag(tagKey, tag);
-                                                }}
-                                              />
-                                            ) : (
-                                              <Chip
-                                                key={`chip-${index}`}
-                                                className={classes.tag}
-                                                size="small"
-                                                label={`${tagKey} : ${tag}`}
-                                                color="primary"
-                                              />
-                                            );
-                                          }
-                                          return null;
-                                        })}
-                                      {displayEditObjectTagging && (
-                                        <Chip
-                                          className={classes.tag}
-                                          icon={<AddIcon />}
-                                          clickable
-                                          size="small"
-                                          label="Add tag"
-                                          color="primary"
-                                          variant="outlined"
-                                          onClick={() => {
-                                            setTagModalOpen(true);
-                                          }}
-                                        />
-                                      )}
-                                    </td>
-                                  </tr>
-                                )}
-                              </tbody>
-                            </table>
-                          </Grid>
-                        </Grid>
-                      </Paper>
-                      <br />
-                    </Fragment>
-                  )}
-                  <Paper className={classes.paperContainer}>
+                                    </Fragment>
+                                  ) : (
+                                    "Disabled"
+                                  )}
+                                </td>
+                              </tr>
+                            )}
+                            {displayObjectRetention && (
+                              <tr>
+                                <td className={classes.titleCol}>Retention:</td>
+                                <td className={classes.capitalizeFirst}>
+                                  {actualInfo.retention_mode
+                                    ? actualInfo.retention_mode.toLowerCase()
+                                    : "None"}
+                                  {displayEditObjectRetention && (
+                                    <IconButton
+                                      color="primary"
+                                      aria-label="retention"
+                                      size="small"
+                                      className={classes.propertiesIcon}
+                                      onClick={() => {
+                                        openRetentionModal();
+                                      }}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  )}
+                                </td>
+                              </tr>
+                            )}
+                            {displayObjectTag && (
+                              <tr>
+                                <td className={classes.titleCol}>Tags:</td>
+                                <td>
+                                  {tagKeys &&
+                                    tagKeys.map((tagKey, index) => {
+                                      const tag = get(
+                                        actualInfo,
+                                        `tags.${tagKey}`,
+                                        ""
+                                      );
+                                      if (tag !== "") {
+                                        return displayRemoveObjectTagging ? (
+                                          <Chip
+                                            key={`chip-${index}`}
+                                            className={classes.tag}
+                                            size="small"
+                                            label={`${tagKey} : ${tag}`}
+                                            color="primary"
+                                            deleteIcon={<CloseIcon />}
+                                            onDelete={() => {
+                                              deleteTag(tagKey, tag);
+                                            }}
+                                          />
+                                        ) : (
+                                          <Chip
+                                            key={`chip-${index}`}
+                                            className={classes.tag}
+                                            size="small"
+                                            label={`${tagKey} : ${tag}`}
+                                            color="primary"
+                                          />
+                                        );
+                                      }
+                                      return null;
+                                    })}
+                                  {displayEditObjectTagging && (
+                                    <Chip
+                                      className={classes.tag}
+                                      icon={<AddIcon />}
+                                      clickable
+                                      size="small"
+                                      label="Add tag"
+                                      color="primary"
+                                      variant="outlined"
+                                      onClick={() => {
+                                        setTagModalOpen(true);
+                                      }}
+                                    />
+                                  )}
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </Grid>
+                    )}
                     <Grid item xs={12}>
                       <Grid item xs={12}>
                         <h2>Object Metadata</h2>
@@ -907,9 +866,17 @@ const ObjectDetails = ({
                         </Table>
                       </Grid>
                     </Grid>
-                  </Paper>
-                </TabPanel>
-                <TabPanel index={1} value={selectedTab}>
+                  </React.Fragment>
+                ),
+              }}
+              {{
+                tabConfig: {
+                  label: "Versions",
+                  disabled: !(
+                    actualInfo.version_id && actualInfo.version_id !== "null"
+                  ),
+                },
+                content: (
                   <Fragment>
                     <div className={classes.actionsTray}>
                       <h1 className={classes.sectionTitle}>Versions</h1>
@@ -987,27 +954,35 @@ const ObjectDetails = ({
                         )}
                     </Grid>
                   </Fragment>
-                </TabPanel>
-                <TabPanel index={2} value={selectedTab}>
-                  {selectedTab === 2 && actualInfo && (
-                    <PreviewFileContent
-                      bucketName={bucketName}
-                      object={{
-                        name: actualInfo.name,
-                        version_id: actualInfo.version_id || "null",
-                        size: parseInt(actualInfo.size || "0"),
-                        content_type: "",
-                        last_modified: new Date(actualInfo.last_modified),
-                      }}
-                      isFullscreen
-                    />
-                  )}
-                </TabPanel>
-              </Grid>
-            </Grid>
+                ),
+              }}
+              {{
+                tabConfig: {
+                  label: "Preview",
+                  disabled: extensionPreview(currentItem) === "none",
+                },
+                content: (
+                  <React.Fragment>
+                    {actualInfo && (
+                      <PreviewFileContent
+                        bucketName={bucketName}
+                        object={{
+                          name: actualInfo.name,
+                          version_id: actualInfo.version_id || "null",
+                          size: parseInt(actualInfo.size || "0"),
+                          content_type: "",
+                          last_modified: new Date(actualInfo.last_modified),
+                        }}
+                        isFullscreen
+                      />
+                    )}
+                  </React.Fragment>
+                ),
+              }}
+            </VerticalTabs>
           </Fragment>
         )}
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };

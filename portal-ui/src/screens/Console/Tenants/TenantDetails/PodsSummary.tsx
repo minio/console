@@ -125,7 +125,6 @@ const PodsSummary = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <div className={classes.topSpacer} />
       <h1 className={classes.sectionTitle}>Pods</h1>
       <TableWrapper
         columns={[

@@ -18,18 +18,19 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid, ListItem, ListItemText } from "@mui/material";
-import { Route, Router, Switch, Redirect } from "react-router-dom";
+import { Route, Router, Switch, Redirect, Link } from "react-router-dom";
 import {
   actionsTray,
   containerForHeader,
+  pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import history from "../../../history";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import StoragePVCs from "./StoragePVCs";
 import DirectCSIDrives from "../DirectCSI/DirectCSIDrives";
-import List from "@mui/material/List";
+import PageLayout from "../Common/Layout/PageLayout";
+import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 
 interface IStorageProps {
   classes: any;
@@ -44,6 +45,11 @@ const styles = (theme: Theme) =>
       color: "#000",
       marginTop: 4,
     },
+    pageContainer: {
+      border: "1px solid #EAEAEA",
+      height: "100%",
+    },
+    ...pageContentStyles,
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -52,53 +58,52 @@ const styles = (theme: Theme) =>
 const routes = ["/storage/volumes", "/storage/drives"];
 
 const Storage = ({ classes, match }: IStorageProps) => {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
+  let selTab = match?.path;
+  selTab = selTab ? selTab : routes[0];
+
+  const [activeTab, setActiveTab] = useState(selTab);
 
   useEffect(() => {
-    const index = routes.findIndex((route) => route === match.path);
-    setSelectedTab(index);
-  }, [match]);
-
-  const routeChange = (newValue: number) => {
-    history.push(routes[newValue]);
-  };
+    setActiveTab(selTab);
+  }, [selTab]);
 
   return (
     <Fragment>
       <PageHeader label={"Storage"} />
-      <Grid container className={classes.container}>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={selectedTab === 0}
-              onClick={() => {
-                routeChange(0);
-              }}
-            >
-              <ListItemText primary="Volumes" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedTab === 1}
-              onClick={() => {
-                routeChange(1);
-              }}
-            >
-              <ListItemText primary="Drives" />
-            </ListItem>
-          </List>
-        </Grid>
-        <Grid item xs={10}>
-          <Router history={history}>
-            <Switch>
-              <Route path={routes[0]} component={StoragePVCs} />
-              <Route path={routes[1]} component={DirectCSIDrives} />
-              <Route render={() => <Redirect to="/storage/volumes" />} />
-            </Switch>
-          </Router>
-        </Grid>
-      </Grid>
+      <PageLayout className={classes.pageContainer}>
+        <VerticalTabs
+          selectedTab={activeTab}
+          isRouteTabs
+          routes={
+            <div className={classes.contentSpacer}>
+              <Router history={history}>
+                <Switch>
+                  <Route exact path={routes[0]} component={StoragePVCs} />
+                  <Route exact path={routes[1]} component={DirectCSIDrives} />
+                  <Route render={() => <Redirect to={routes[0]} />} />
+                </Switch>
+              </Router>
+            </div>
+          }
+        >
+          {{
+            tabConfig: {
+              label: "Volumes",
+              value: routes[0],
+              component: Link,
+              to: routes[0],
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Drives",
+              value: routes[1],
+              component: Link,
+              to: routes[1],
+            },
+          }}
+        </VerticalTabs>
+      </PageLayout>
     </Fragment>
   );
 };

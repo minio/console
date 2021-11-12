@@ -65,7 +65,6 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <div className={classes.topSpacer} />
         <h1 className={classes.sectionTitle}>
           <Link
             to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/pods`}

@@ -16,9 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Paper } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -41,8 +38,6 @@ import {
   ADMIN_LIST_USERS,
 } from "../../../../types";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
-
-const styles = (theme: Theme) => createStyles({});
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -206,4 +201,4 @@ const AccessDetails = ({
   );
 };
 
-export default withStyles(styles)(connector(AccessDetails));
+export default connector(AccessDetails);
