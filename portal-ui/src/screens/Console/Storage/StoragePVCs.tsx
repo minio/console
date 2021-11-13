@@ -100,7 +100,7 @@ const StorageVolumes = ({
 
   return (
     <Fragment>
-      <h1 className={classes.sectionTitle}>Volumes</h1>
+      <h1 className={classes.sectionTitle}>Persistent Volumes Claims</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
           placeholder="Search Volumes (PVCs)"
