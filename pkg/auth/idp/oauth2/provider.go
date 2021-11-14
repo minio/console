@@ -119,11 +119,33 @@ var derivedKey = func() []byte {
 	return pbkdf2.Key([]byte(getPassphraseForIDPHmac()), []byte(getSaltForIDPHmac()), 4096, 32, sha1.New)
 }
 
+const (
+	schemeHTTP  = "http"
+	schemeHTTPS = "https"
+)
+
+func getLoginCallbackURL(r *http.Request) string {
+	scheme := getSourceScheme(r)
+	if scheme == "" {
+		if r.TLS != nil {
+			scheme = schemeHTTPS
+		} else {
+			scheme = schemeHTTP
+		}
+	}
+
+	redirectURL := scheme + "://" + r.Host + "/oauth_callback"
+	_, err := url.Parse(redirectURL)
+	if err != nil {
+		panic(err)
+	}
+	return redirectURL
+}
+
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
 // it returns a *Provider object that contains the necessary configuration to initiate an
 // oauth2 authentication flow
-func NewOauth2ProviderClient(scopes []string, httpClient *http.Client) (*Provider, error) {
-
+func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.Client) (*Provider, error) {
 	ddoc, err := parseDiscoveryDoc(GetIDPURL(), httpClient)
 	if err != nil {
 		return nil, err
@@ -134,6 +156,13 @@ func NewOauth2ProviderClient(scopes []string, httpClient *http.Client) (*Provide
 		scopes = strings.Split(getIDPScopes(), ",")
 	}
 
+	redirectURL := GetIDPCallbackURL()
+	if GetIDPCallbackURLDynamic() {
+		// dynamic redirect if set, will generate redirect URLs
+		// dynamically based on incoming requests.
+		redirectURL = getLoginCallbackURL(r)
+	}
+
 	// add "openid" scope always.
 	scopes = append(scopes, "openid")
 
@@ -141,7 +170,7 @@ func NewOauth2ProviderClient(scopes []string, httpClient *http.Client) (*Provide
 	client.oauth2Config = &xoauth2.Config{
 		ClientID:     GetIDPClientID(),
 		ClientSecret: GetIDPSecret(),
-		RedirectURL:  GetIDPCallbackURL(),
+		RedirectURL:  redirectURL,
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  ddoc.AuthEndpoint,
 			TokenURL: ddoc.TokenEndpoint,
