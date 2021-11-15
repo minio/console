@@ -21,7 +21,10 @@ import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  serviceAccountStyles,
+} from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -33,26 +36,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 
 const styles = (theme: Theme) =>
   createStyles({
-    jsonPolicyEditor: {
-      minHeight: 400,
-      width: "100%",
-    },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    infoDetails: {
-      color: "#393939",
-      fontSize: 12,
-      fontStyle: "italic",
-      marginBottom: "8px",
-    },
-    containerScrollable: {
-      maxHeight: "calc(100vh - 300px)" as const,
-      overflowY: "auto" as const,
-    },
-    codeMirrorContainer: {
-      marginBottom: 20,
-    },
+    ...serviceAccountStyles,
     ...modalBasic,
   });
 
@@ -157,72 +141,82 @@ const AddServiceAccount = ({
             </div>
           </Grid>
           <Grid item xs={12}>
-            <FormSwitchWrapper
-              value="locking"
-              id="locking"
-              name="locking"
-              checked={isRestrictedByPolicy}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setIsRestrictedByPolicy(event.target.checked);
-              }}
-              label={"Restrict with policy"}
-            />
-            <FormSwitchWrapper
-              value="locking"
-              id="locking"
-              name="locking"
-              checked={addCredentials}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setAddCredentials(event.target.checked);
-              }}
-              label={"Customize Credentials"}
-            />
-          </Grid>
-          {isRestrictedByPolicy && (
-            <Grid item xs={12} className={classes.codeMirrorContainer}>
-              <CodeMirrorWrapper
-                value={policyDefinition}
-                onBeforeChange={(editor, data, value) => {
-                  setPolicyDefinition(value);
-                }}
-              />
-            </Grid>
-          )}
-          {addCredentials && (
             <Grid item xs={12}>
-              <InputBoxWrapper
-                value={accessKey}
-                label={"Access Key"}
-                id={"accessKey"}
-                name={"accessKey"}
-                placeholder={"Enter Access Key"}
-                onChange={(e) => {
-                  setAccessKey(e.target.value);
+              <FormSwitchWrapper
+                value="locking"
+                classes={classes}
+                id="locking"
+                name="locking"
+                checked={addCredentials}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setAddCredentials(event.target.checked);
                 }}
+                label={"Customize Credentials"}
               />
-              <InputBoxWrapper
-                value={secretKey}
-                label={"Secret Key"}
-                id={"secretKey"}
-                name={"secretKey"}
-                placeholder={"Enter Secret Key"}
-                onChange={(e) => {
-                  setSecretKey(e.target.value);
-                }}
-              />
+              {addCredentials && (
+                <Grid item xs={12}>
+                  <div className={classes.stackedInputs}>
+                    <InputBoxWrapper
+                      value={accessKey}
+                      label={"Access Key"}
+                      id={"accessKey"}
+                      name={"accessKey"}
+                      placeholder={"Enter Access Key"}
+                      onChange={(e) => {
+                        setAccessKey(e.target.value);
+                      }}
+                    />
+                    <InputBoxWrapper
+                      value={secretKey}
+                      label={"Secret Key"}
+                      id={"secretKey"}
+                      name={"secretKey"}
+                      placeholder={"Enter Secret Key"}
+                      onChange={(e) => {
+                        setSecretKey(e.target.value);
+                      }}
+                    />
+                  </div>
+                </Grid>
+              )}
             </Grid>
-          )}
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                value="locking"
+                id="locking"
+                name="locking"
+                classes={classes}
+                checked={isRestrictedByPolicy}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setIsRestrictedByPolicy(event.target.checked);
+                }}
+                label={"Restrict with policy"}
+              />
+              {isRestrictedByPolicy && (
+                <Grid item xs={12} className={classes.codeMirrorContainer}>
+                  <CodeMirrorWrapper
+                    label={"Policy "}
+                    value={policyDefinition}
+                    onBeforeChange={(editor, data, value) => {
+                      setPolicyDefinition(value);
+                    }}
+                  />
+                </Grid>
+              )}
+            </Grid>
+          </Grid>
         </Grid>
         <Grid container>
           <Grid item xs={12} className={classes.buttonContainer}>
-            <button
+            <Button
               type="button"
               color="primary"
-              className={classes.clearButton}
+              variant="outlined"
+              className={classes.buttonSpacer}
               onClick={resetForm}
             >
               Clear
-            </button>
+            </Button>
             <Button
               type="submit"
               variant="contained"

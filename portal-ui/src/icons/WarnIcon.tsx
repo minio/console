@@ -14,19 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package oauth2
+import * as React from "react";
 
-// Environment constants for console IDP/SSO configuration
-const (
-	ConsoleMinIOServer           = "CONSOLE_MINIO_SERVER"
-	ConsoleIDPURL                = "CONSOLE_IDP_URL"
-	ConsoleIDPClientID           = "CONSOLE_IDP_CLIENT_ID"
-	ConsoleIDPSecret             = "CONSOLE_IDP_SECRET"
-	ConsoleIDPCallbackURL        = "CONSOLE_IDP_CALLBACK"
-	ConsoleIDPCallbackURLDynamic = "CONSOLE_IDP_CALLBACK_DYNAMIC"
-	ConsoleIDPHmacPassphrase     = "CONSOLE_IDP_HMAC_PASSPHRASE"
-	ConsoleIDPHmacSalt           = "CONSOLE_IDP_HMAC_SALT"
-	ConsoleIDPScopes             = "CONSOLE_IDP_SCOPES"
-	ConsoleIDPUserInfo           = "CONSOLE_IDP_USERINFO"
-	ConsoleIDPTokenExpiration    = "CONSOLE_IDP_TOKEN_EXPIRATION"
-)
+const WarnIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+      <circle
+        cx="8"
+        cy="8"
+        r="7"
+        fill="none"
+        stroke="#e04006"
+        stroke-width="2"
+      />
+      <path fill="none" stroke="#e04006" stroke-width="2" d="M8 4v6m0 1v2" />
+    </svg>
+  );
+};
+
+export default WarnIcon;
