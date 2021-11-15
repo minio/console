@@ -21,21 +21,51 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { NewServiceAccount } from "./types";
 import { Button } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import Grid from "@mui/material/Grid";
+import CredentialItem from "./CredentialItem";
+import NewAccountIcon from "../../../../icons/NewAccountIcon";
+import WarnIcon from "../../../../icons/WarnIcon";
+import { DownloadIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
     warningBlock: {
       color: "red",
+      fontSize: ".85rem",
+      margin: ".5rem 0 .5rem 0",
+      display: "flex",
+      alignItems: "center",
+      "& svg ": {
+        marginRight: ".3rem",
+      },
+    },
+    credentialTitle: {
+      padding: ".8rem 0 0 0",
+      fontWeight: 600,
+      fontSize: ".9rem",
     },
     buttonContainer: {
       textAlign: "right",
+      marginTop: "1rem",
     },
     credentialsPanel: {
       overflowY: "auto",
       maxHeight: 350,
+    },
+    promptTitle: {
+      display: "flex",
+      alignItems: "center",
+    },
+    buttonSpacer: {
+      marginRight: ".9rem",
+    },
+    promptIcon: {
+      marginRight: ".1rem",
+      display: "flex",
+      alignItems: "center",
+      height: "2rem",
+      width: "2rem",
     },
   });
 
@@ -83,115 +113,125 @@ const CredentialsPrompt = ({
       onClose={() => {
         closeModal();
       }}
-      title={`New ${entity} Created`}
+      title={
+        <div className={classes.promptTitle}>
+          <div className={classes.promptIcon}>
+            <NewAccountIcon />
+          </div>{" "}
+          <div>New {entity} Created</div>
+        </div>
+      }
     >
-      <React.Fragment>
-        <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            A new {entity} has been created with the following details:
-            {!idp && consoleCreds && (
-              <React.Fragment>
-                <Grid item xs={12} className={classes.credentialsPanel}>
-                  <strong>Console Credentials</strong>
-                  {Array.isArray(consoleCreds) &&
-                    consoleCreds.map((credentialsPair, index) => {
-                      return (
-                        <ul key={`creds-item-${index.toString()}`}>
-                          <li>
-                            <b>Access Key:</b> {credentialsPair.accessKey}
-                          </li>
-                          <li>
-                            <b>Secret Key:</b> {credentialsPair.secretKey}
-                          </li>
-                        </ul>
-                      );
-                    })}
-                  {!Array.isArray(consoleCreds) && (
-                    <ul>
-                      <li>
-                        <b>Access Key:</b> {consoleCreds.accessKey}
-                      </li>
-                      <li>
-                        <b>Secret Key:</b> {consoleCreds.secretKey}
-                      </li>
-                    </ul>
-                  )}
-                </Grid>
-              </React.Fragment>
-            )}
-            {idp ? (
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.warningBlock}
-              >
-                Please Login via the configured external identity provider.
-              </Typography>
-            ) : (
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.warningBlock}
-              >
+      <Grid container>
+        <Grid item xs={12} className={classes.formScrollable}>
+          A new {entity} has been created with the following details:
+          {!idp && consoleCreds && (
+            <React.Fragment>
+              <Grid item xs={12} className={classes.credentialsPanel}>
+                <div className={classes.credentialTitle}>
+                  Console Credentials
+                </div>
+                {Array.isArray(consoleCreds) &&
+                  consoleCreds.map((credentialsPair, index) => {
+                    return (
+                      <>
+                        <CredentialItem
+                          label="Access Key"
+                          value={credentialsPair.accessKey}
+                        />
+                        <CredentialItem
+                          label="Secret Key"
+                          value={credentialsPair.secretKey}
+                        />
+                      </>
+                    );
+                  })}
+                {!Array.isArray(consoleCreds) && (
+                  <>
+                    <CredentialItem
+                      label="Access Key"
+                      value={consoleCreds.accessKey}
+                    />
+                    <CredentialItem
+                      label="Secret Key"
+                      value={consoleCreds.secretKey}
+                    />
+                  </>
+                )}
+              </Grid>
+            </React.Fragment>
+          )}
+          {idp ? (
+            <div className={classes.warningBlock}>
+              Please Login via the configured external identity provider.
+            </div>
+          ) : (
+            <div className={classes.warningBlock}>
+              <WarnIcon />
+              <span>
                 Write these down, as this is the only time the secret will be
                 displayed.
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            {!idp && (
-              <Button
-                onClick={() => {
-                  let consoleExtras = {};
+              </span>
+            </div>
+          )}
+        </Grid>
+        <Grid item xs={12} className={classes.buttonContainer}>
+          <Button
+            variant="outlined"
+            className={classes.buttonSpacer}
+            onClick={() => {
+              closeModal();
+            }}
+            color="primary"
+          >
+            Done
+          </Button>
 
-                  if (consoleCreds) {
-                    if (!Array.isArray(consoleCreds)) {
-                      consoleExtras = {
-                        console: [
-                          {
-                            access_key: consoleCreds.accessKey,
-                            secret_key: consoleCreds.secretKey,
-                          },
-                        ],
-                      };
-                    } else {
-                      const cCreds = consoleCreds.map((itemMap) => {
-                        return {
-                          access_key: itemMap.accessKey,
-                          secret_key: itemMap.secretKey,
-                        };
-                      });
-
-                      consoleExtras = {
-                        console: [...cCreds],
-                      };
-                    }
-                  }
-
-                  download(
-                    "credentials.json",
-                    JSON.stringify({
-                      ...consoleExtras,
-                    })
-                  );
-                }}
-                color="primary"
-              >
-                Download
-              </Button>
-            )}
+          {!idp && (
             <Button
               onClick={() => {
-                closeModal();
+                let consoleExtras = {};
+
+                if (consoleCreds) {
+                  if (!Array.isArray(consoleCreds)) {
+                    consoleExtras = {
+                      console: [
+                        {
+                          access_key: consoleCreds.accessKey,
+                          secret_key: consoleCreds.secretKey,
+                        },
+                      ],
+                    };
+                  } else {
+                    const cCreds = consoleCreds.map((itemMap) => {
+                      return {
+                        access_key: itemMap.accessKey,
+                        secret_key: itemMap.secretKey,
+                      };
+                    });
+
+                    consoleExtras = {
+                      console: [...cCreds],
+                    };
+                  }
+                }
+
+                download(
+                  "credentials.json",
+                  JSON.stringify({
+                    ...consoleExtras,
+                  })
+                );
               }}
-              color="secondary"
-              autoFocus
+              endIcon={<DownloadIcon />}
+              variant="contained"
+              color="primary"
             >
-              Done
+              Download
             </Button>
-          </Grid>
+          )}
         </Grid>
-      </React.Fragment>
+      </Grid>
     </ModalWrapper>
   );
 };
