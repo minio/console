@@ -21,9 +21,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/minio/pkg/bucket/policy/condition"
 	"strings"
 	"time"
+
+	"github.com/minio/pkg/bucket/policy/condition"
 
 	"github.com/minio/console/pkg/acl"
 
