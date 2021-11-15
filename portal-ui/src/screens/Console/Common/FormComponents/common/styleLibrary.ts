@@ -667,11 +667,14 @@ export const snackBarCommon = {
     color: "#fff",
   },
   snackBarExternal: {
-    top: "-17px",
-    position: "absolute" as const,
-    minWidth: "348px",
+    top: -1,
+    height: 33,
+    position: "fixed" as const,
+    minWidth: 348,
     whiteSpace: "nowrap" as const,
-    height: "33px",
+    left: 0,
+    width: "100%",
+    justifyContent: "center" as const,
   },
   snackDiv: {
     top: "17px",
@@ -684,7 +687,9 @@ export const snackBarCommon = {
     minWidth: "348px",
     whiteSpace: "nowrap" as const,
     height: "33px",
-    maxWidth: "calc(100% - 140px)",
+    width: "100%",
+    justifyContent: "center",
+    left: 0,
   },
 };
 
