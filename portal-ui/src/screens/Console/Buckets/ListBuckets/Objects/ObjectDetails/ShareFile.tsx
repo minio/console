@@ -43,6 +43,7 @@ const styles = (theme: Theme) =>
   createStyles({
     copyButtonContainer: {
       paddingLeft: 16,
+      paddingTop: 18,
     },
     modalContent: {
       paddingBottom: 53,
@@ -140,7 +141,7 @@ const ShareFile = ({
       const slDate = new Date(`${selectedDate}`);
       const currDate = new Date();
 
-      const diffDate = slDate.getTime() - currDate.getTime();
+      const diffDate = Math.ceil((slDate.getTime() - currDate.getTime()) / 1000);
 
       if (diffDate > 0) {
         api
@@ -149,7 +150,7 @@ const ShareFile = ({
             `/api/v1/buckets/${bucketName}/objects/share?prefix=${encodeFileName(
               dataObject.name
             )}&version_id=${versionID}${
-              selectedDate !== "" ? `&expires=${diffDate}ms` : ""
+              selectedDate !== "" ? `&expires=${diffDate}s` : ""
             }`
           )
           .then((res: string) => {
