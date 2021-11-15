@@ -20,6 +20,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net/url"
+	"path"
 	"strings"
 	"time"
 
@@ -377,21 +379,21 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
 func newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
-	endpoint := getMinIOServer()
-
-	if strings.TrimSpace(bucketName) != "" {
-		endpoint += fmt.Sprintf("/%s", bucketName)
-	}
-
-	if strings.TrimSpace(prefix) != "" {
-		endpoint += fmt.Sprintf("/%s", prefix)
-	}
-
 	if claims == nil {
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
-
-	s3Config := newS3Config(endpoint, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
+	endpoint := getMinIOServer()
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, fmt.Errorf("the provided endpoint is invalid")
+	}
+	if strings.TrimSpace(bucketName) != "" {
+		u.Path = path.Join(u.Path, bucketName)
+	}
+	if strings.TrimSpace(prefix) != "" {
+		u.Path = path.Join(u.Path, prefix)
+	}
+	s3Config := newS3Config(u.String(), claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
@@ -400,7 +402,6 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 	if !ok {
 		return nil, fmt.Errorf("the provided url doesn't point to a S3 server")
 	}
-
 	return s3Client, nil
 }
 
