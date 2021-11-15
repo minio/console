@@ -1011,3 +1011,51 @@ export const linkStyles = (color: string) => ({
     cursor: "pointer",
   },
 });
+
+export const serviceAccountStyles: any = {
+  jsonPolicyEditor: {
+    minHeight: 400,
+    width: "100%",
+  },
+  buttonContainer: {
+    textAlign: "right",
+  },
+  infoDetails: {
+    color: "#393939",
+    fontSize: 12,
+    fontStyle: "italic",
+    marginBottom: "8px",
+  },
+  containerScrollable: {
+    maxHeight: "calc(100vh - 200px)" as const,
+    overflowY: "auto" as const,
+  },
+  codeMirrorContainer: {
+    marginBottom: 20,
+    paddingLeft: 15,
+    "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
+      border: "1px solid #EAEAEA",
+    },
+    "& label": {
+      marginBottom: ".5rem",
+    },
+    "& label + div": {
+      display: "none",
+    },
+  },
+  stackedInputs: {
+    display: "flex",
+    gap: 15,
+    paddingBottom: "1rem",
+    paddingLeft: "1rem",
+    flexFlow: "column",
+  },
+  buttonSpacer: {
+    marginRight: "1rem",
+  },
+  switchContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+};

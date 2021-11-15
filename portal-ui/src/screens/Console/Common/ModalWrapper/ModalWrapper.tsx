@@ -31,7 +31,7 @@ interface IModalProps {
   classes: any;
   onClose: () => void;
   modalOpen: boolean;
-  title: string;
+  title: string | React.ReactNode;
   children: any;
   wideLimit?: boolean;
   modalSnackMessage?: snackBarMessage;
@@ -56,8 +56,8 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     closeButton: {
-      width: 45,
-      height: 45,
+      height: 16,
+      width: 16,
       padding: 0,
       backgroundColor: "initial",
       "&:hover": {
@@ -79,30 +79,28 @@ const styles = (theme: Theme) =>
       "&::before": {
         ...baseCloseLine,
         transform: "rotate(45deg)",
+        height: 12,
       },
       "&::after": {
         ...baseCloseLine,
         transform: "rotate(-45deg)",
+        height: 12,
       },
       "&:hover::before, &:hover::after": {
         borderColor: "#9C9C9C",
       },
-      width: 24,
-      height: 24,
       display: "block",
       position: "relative",
+      height: 12,
+      width: 12,
     },
     titleClass: {
       padding: "0px 50px 12px",
-      "& h2": {
-        fontWeight: 600,
-        color: "#000",
-        fontSize: 22,
-        width: "100%",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
-        textOverflow: "ellipsis",
-      },
+      fontSize: "1.2rem",
+      fontWeight: 600,
+      overflow: "hidden",
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
     },
     modalContent: {
       padding: "0 50px",

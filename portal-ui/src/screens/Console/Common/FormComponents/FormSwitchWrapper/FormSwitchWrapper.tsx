@@ -253,7 +253,13 @@ const FormSwitchWrapper = ({
           </Grid>
         </Grid>
 
-        <Grid item xs={12} sm={2} textAlign={"right"}>
+        <Grid
+          item
+          xs={12}
+          sm={2}
+          textAlign={"right"}
+          className={classes.switchContainer}
+        >
           {switchComponent}
         </Grid>
       </Grid>
