@@ -55,6 +55,7 @@ export { default as DocumentationIcon } from "./DocumentationIcon";
 export { default as TrashIcon } from "./TrashIcon";
 export { default as DownloadIcon } from "./DownloadIcon";
 export { default as AllBucketsIcon } from "./AllBucketsIcon";
+export { default as SelectMultipleIcon } from "./SelectMultipleIcon";
 export { default as GroupsIcon } from "./GroupsIcon";
 export { default as TenantsIcon } from "./TenantsIcon";
 export { default as UploadFile } from "./UploadFile";

@@ -27,7 +27,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress, Tooltip } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -373,30 +373,27 @@ const PolicyDetails = ({
             subTitle={<Fragment>IAM Policy</Fragment>}
             actions={
               <Fragment>
-                <Tooltip title="Delete Policy">
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Delete Policy"
-                    onClick={deletePolicy}
-                  >
-                    <TrashIcon />
-                  </BoxIconButton>
-                </Tooltip>
-
-                <Tooltip title={"Refresh"}>
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Refresh List"
-                    onClick={() => {
-                      setLoadingUsers(true);
-                      setLoadingGroups(true);
-                      setLoadingPolicy(true);
-                    }}
-                    size="large"
-                  >
-                    <RefreshIcon />
-                  </BoxIconButton>
-                </Tooltip>
+                <BoxIconButton
+                  tooltip={"Delete Policy"}
+                  color="primary"
+                  aria-label="Delete Policy"
+                  onClick={deletePolicy}
+                >
+                  <TrashIcon />
+                </BoxIconButton>
+                <BoxIconButton
+                  tooltip={"Refresh"}
+                  color="primary"
+                  aria-label="Refresh List"
+                  onClick={() => {
+                    setLoadingUsers(true);
+                    setLoadingGroups(true);
+                    setLoadingPolicy(true);
+                  }}
+                  size="large"
+                >
+                  <RefreshIcon />
+                </BoxIconButton>
               </Fragment>
             }
           />

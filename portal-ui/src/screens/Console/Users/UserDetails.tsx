@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid, Tooltip } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import {
   AddIcon,
   DeleteIcon,
@@ -319,27 +319,24 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   }}
                   switchOnly
                 />
-
-                <Tooltip title="Delete User">
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Delete User"
-                    onClick={deleteUser}
-                    size="large"
-                  >
-                    <DeleteIcon />
-                  </BoxIconButton>
-                </Tooltip>
-                <Tooltip title="Change Password">
-                  <BoxIconButton
-                    color="primary"
-                    aria-label="Change Password"
-                    onClick={changeUserPassword}
-                    size="large"
-                  >
-                    <LockIcon />
-                  </BoxIconButton>
-                </Tooltip>
+                <BoxIconButton
+                  tooltip={"Delete User"}
+                  color="primary"
+                  aria-label="Delete User"
+                  onClick={deleteUser}
+                  size="large"
+                >
+                  <DeleteIcon />
+                </BoxIconButton>
+                <BoxIconButton
+                  tooltip={"Change Password"}
+                  color="primary"
+                  aria-label="Change Password"
+                  onClick={changeUserPassword}
+                  size="large"
+                >
+                  <LockIcon />
+                </BoxIconButton>
               </Fragment>
             }
           />

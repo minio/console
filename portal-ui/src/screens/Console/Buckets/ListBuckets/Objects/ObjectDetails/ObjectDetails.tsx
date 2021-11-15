@@ -30,7 +30,6 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  Tooltip,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
@@ -646,19 +645,18 @@ const ObjectDetails = ({
                 }
                 actions={
                   <Fragment>
-                    <Tooltip title="Share">
-                      <BoxIconButton
-                        color="primary"
-                        aria-label="share"
-                        onClick={() => {
-                          shareObject();
-                        }}
-                        disabled={actualInfo.is_delete_marker}
-                        size="large"
-                      >
-                        <ShareIcon />
-                      </BoxIconButton>
-                    </Tooltip>
+                    <BoxIconButton
+                      tooltip={"Share"}
+                      color="primary"
+                      aria-label="share"
+                      onClick={() => {
+                        shareObject();
+                      }}
+                      disabled={actualInfo.is_delete_marker}
+                      size="large"
+                    >
+                      <ShareIcon />
+                    </BoxIconButton>
 
                     {downloadingFiles.includes(
                       `${bucketName}/${actualInfo.name}`
@@ -671,35 +669,32 @@ const ObjectDetails = ({
                         />
                       </div>
                     ) : (
-                      <Tooltip title="Download">
-                        <BoxIconButton
-                          color="primary"
-                          aria-label="download"
-                          onClick={() => {
-                            downloadObject(actualInfo);
-                          }}
-                          disabled={actualInfo.is_delete_marker}
-                          size="large"
-                        >
-                          <DownloadIcon />
-                        </BoxIconButton>
-                      </Tooltip>
+                      <BoxIconButton
+                        tooltip={"Download"}
+                        color="primary"
+                        aria-label="download"
+                        onClick={() => {
+                          downloadObject(actualInfo);
+                        }}
+                        disabled={actualInfo.is_delete_marker}
+                        size="large"
+                      >
+                        <DownloadIcon />
+                      </BoxIconButton>
                     )}
-
                     {displayDeleteObject && (
-                      <Tooltip title="Delete Object">
-                        <BoxIconButton
-                          color="primary"
-                          aria-label="delete"
-                          onClick={() => {
-                            setDeleteOpen(true);
-                          }}
-                          disabled={actualInfo.is_delete_marker}
-                          size="large"
-                        >
-                          <DeleteIcon />
-                        </BoxIconButton>
-                      </Tooltip>
+                      <BoxIconButton
+                        tooltip={"Delete Object"}
+                        color="primary"
+                        aria-label="delete"
+                        onClick={() => {
+                          setDeleteOpen(true);
+                        }}
+                        disabled={actualInfo.is_delete_marker}
+                        size="large"
+                      >
+                        <DeleteIcon />
+                      </BoxIconButton>
                     )}
                   </Fragment>
                 }

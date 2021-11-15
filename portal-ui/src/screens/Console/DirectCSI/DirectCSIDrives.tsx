@@ -19,10 +19,10 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid, InputAdornment, TextField } from "@mui/material";
+import { Grid, InputAdornment, TextField } from "@mui/material";
 import get from "lodash/get";
 import GroupIcon from "@mui/icons-material/Group";
-import { AddIcon } from "../../../icons";
+import { AddIcon, StorageIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
@@ -44,6 +44,8 @@ import FormatErrorsResult from "./FormatErrorsResult";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
+import HelpBox from "../../../common/HelpBox";
+import BoxButton from "../Common/BoxButton/BoxButton";
 
 interface IDirectCSIMain {
   classes: any;
@@ -83,7 +85,7 @@ const styles = (theme: Theme) =>
     },
     linkItem: {
       display: "default",
-      color: "#072F51",
+      color: theme.palette.info.main,
       textDecoration: "none",
       "&:hover": {
         textDecoration: "underline",
@@ -246,7 +248,7 @@ const DirectCSIMain = ({
           }}
         />
       )}
-      <h1 className={classes.sectionTitle}>Drives</h1>
+      <h1 className={classes.sectionTitle}>Local Drives</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
           placeholder="Search Drives"
@@ -278,42 +280,50 @@ const DirectCSIMain = ({
         >
           <RefreshIcon />
         </BoxIconButton>
-        <Button
+        <BoxButton
           variant="contained"
           color="primary"
-          endIcon={<GroupIcon />}
           disabled={checkedDrives.length <= 0 || notAvailable}
           onClick={formatSelectedDrives}
+          label={"Format Selected Drives"}
         >
-          Format Selected Drives
-        </Button>
-        <Button
+          <GroupIcon />
+        </BoxButton>
+        <BoxButton
           variant="contained"
           color="primary"
-          endIcon={<AddIcon />}
+          label={"Format All Drives"}
           onClick={formatAllDrives}
           disabled={notAvailable}
         >
-          Format All Drives
-        </Button>
+          <AddIcon />
+        </BoxButton>
       </Grid>
 
       <Grid item xs={12}>
         {notAvailable && !loading ? (
-          <div className={classes.notAvailableNotice}>
-            To manage locally attached drives you need to install direct-csi,
-            for more information
-            <br />
-            please follow this
-            <a
-              href="https://github.com/minio/direct-csi"
-              rel="noreferrer"
-              target="_blank"
-              className={classes.linkItem}
-            >
-              Link
-            </a>
-          </div>
+          <HelpBox
+            title={"Leverage locally attached drives"}
+            iconComponent={<StorageIcon />}
+            help={
+              <Fragment>
+                We can automatically provision persistent volumes (PVs) on top
+                locally attached drives on your Kubernetes nodes by leveraging
+                Direct-CSI.
+                <br />
+                <br />
+                For more information{" "}
+                <a
+                  href="https://github.com/minio/direct-csi"
+                  rel="noreferrer"
+                  target="_blank"
+                  className={classes.linkItem}
+                >
+                  Visit Direct-CSI Documentation
+                </a>
+              </Fragment>
+            }
+          />
         ) : (
           <TableWrapper
             itemActions={tableActions}

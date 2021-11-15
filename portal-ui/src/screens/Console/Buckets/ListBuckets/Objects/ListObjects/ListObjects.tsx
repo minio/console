@@ -45,7 +45,7 @@ import {
   objectBrowserCommon,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { Badge, Button, Tooltip, Typography } from "@mui/material";
+import { Badge, Button, Typography } from "@mui/material";
 import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
@@ -1087,35 +1087,32 @@ const ListObjects = ({
               <Fragment>
                 {displayPutObject && (
                   <Fragment>
-                    <Tooltip title={"Choose or create a new path"}>
-                      <BoxIconButton
-                        color="primary"
-                        aria-label="Add a new folder"
-                        onClick={() => {
-                          setCreateFolderOpen(true);
-                        }}
-                        disabled={rewindEnabled}
-                        size="large"
-                      >
-                        <AddFolderIcon />
-                      </BoxIconButton>
-                    </Tooltip>
-
-                    <Tooltip title={"Upload file"}>
-                      <BoxIconButton
-                        color="primary"
-                        aria-label="Refresh List"
-                        onClick={() => {
-                          if (fileUpload && fileUpload.current) {
-                            fileUpload.current.click();
-                          }
-                        }}
-                        disabled={rewindEnabled}
-                        size="large"
-                      >
-                        <UploadIcon />
-                      </BoxIconButton>
-                    </Tooltip>
+                    <BoxIconButton
+                      tooltip={"Choose or create a new path"}
+                      color="primary"
+                      aria-label="Add a new folder"
+                      onClick={() => {
+                        setCreateFolderOpen(true);
+                      }}
+                      disabled={rewindEnabled}
+                      size="large"
+                    >
+                      <AddFolderIcon />
+                    </BoxIconButton>
+                    <BoxIconButton
+                      tooltip={"Upload file"}
+                      color="primary"
+                      aria-label="Refresh List"
+                      onClick={() => {
+                        if (fileUpload && fileUpload.current) {
+                          fileUpload.current.click();
+                        }
+                      }}
+                      disabled={rewindEnabled}
+                      size="large"
+                    >
+                      <UploadIcon />
+                    </BoxIconButton>
                     <input
                       type="file"
                       multiple={true}
@@ -1126,42 +1123,39 @@ const ListObjects = ({
                     />
                   </Fragment>
                 )}
-
-                <Tooltip title={"Rewind"}>
-                  <Badge
-                    badgeContent=" "
-                    color="secondary"
-                    variant="dot"
-                    invisible={!rewindEnabled}
-                    className={classes.badgeOverlap}
-                  >
-                    <BoxIconButton
-                      color="primary"
-                      aria-label="Rewind"
-                      onClick={() => {
-                        setRewindSelect(true);
-                      }}
-                      disabled={!isVersioned}
-                      size="large"
-                    >
-                      <HistoryIcon />
-                    </BoxIconButton>
-                  </Badge>
-                </Tooltip>
-                <Tooltip title={"Refresh list"}>
+                <Badge
+                  badgeContent=" "
+                  color="secondary"
+                  variant="dot"
+                  invisible={!rewindEnabled}
+                  className={classes.badgeOverlap}
+                >
                   <BoxIconButton
+                    tooltip={"Rewind"}
                     color="primary"
-                    aria-label="Refresh List"
+                    aria-label="Rewind"
                     onClick={() => {
-                      setLoading(true);
+                      setRewindSelect(true);
                     }}
-                    disabled={rewindEnabled}
+                    disabled={!isVersioned}
                     size="large"
-                    variant={"contained"}
                   >
-                    <RefreshIcon />
+                    <HistoryIcon />
                   </BoxIconButton>
-                </Tooltip>
+                </Badge>
+                <BoxIconButton
+                  tooltip={"Refresh list"}
+                  color="primary"
+                  aria-label="Refresh List"
+                  onClick={() => {
+                    setLoading(true);
+                  }}
+                  disabled={rewindEnabled}
+                  size="large"
+                  variant={"contained"}
+                >
+                  <RefreshIcon />
+                </BoxIconButton>
               </Fragment>
             }
           />
