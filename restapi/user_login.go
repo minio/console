@@ -38,7 +38,7 @@ import (
 func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// GET login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
-		loginDetails, err := getLoginDetailsResponse()
+		loginDetails, err := getLoginDetailsResponse(params.HTTPRequest)
 		if err != nil {
 			return user_api.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
@@ -59,7 +59,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 	// POST login using external IDP
 	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
+		loginResponse, err := getLoginOauth2AuthResponse(params.HTTPRequest, params.Body)
 		if err != nil {
 			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
@@ -131,14 +131,14 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
+func getLoginDetailsResponse(r *http.Request) (*models.LoginDetails, *models.Error) {
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 
 	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, GetConsoleHTTPClient())
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, GetConsoleHTTPClient())
 		if err != nil {
 			return nil, prepareError(err, errOauth2Provider)
 		}
@@ -164,12 +164,12 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 	return userCredentials, nil
 }
 
-func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
+func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	if oauth2.IsIDPEnabled() {
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, GetConsoleHTTPClient())
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, GetConsoleHTTPClient())
 		if err != nil {
 			return nil, prepareError(err)
 		}
