@@ -69,10 +69,26 @@ func TestListPolicies(t *testing.T) {
 	adminClient := adminClientMock{}
 	// mock function response from listPolicies()
 	minioListPoliciesMock = func() (map[string]*iampolicy.Policy, error) {
+
+		var readonly iampolicy.Policy
+		var readwrite iampolicy.Policy
+		var diagnostis iampolicy.Policy
+
+		for _, p := range iampolicy.DefaultPolicies {
+			switch p.Name {
+			case "readonly":
+				readonly = p.Definition
+			case "readwrite":
+				readwrite = p.Definition
+			case "diagnostics":
+				diagnostis = p.Definition
+			}
+		}
+
 		return map[string]*iampolicy.Policy{
-			"readonly":    &iampolicy.ReadOnly,
-			"readwrite":   &iampolicy.ReadWrite,
-			"diagnostics": &iampolicy.AdminDiagnostics,
+			"readonly":    &readonly,
+			"readwrite":   &readwrite,
+			"diagnostics": &diagnostis,
 		}, nil
 	}
 	// Test-1 : listPolicies() Get response from minio client with three Canned Policies and return the same number on listPolicies()

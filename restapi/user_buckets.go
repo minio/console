@@ -24,6 +24,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/pkg/bucket/policy/condition"
+
 	"github.com/minio/console/pkg/acl"
 
 	"github.com/minio/mc/cmd"
@@ -287,8 +289,8 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	return bucketVResponse, nil
 }
 
-// getAccountInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
-func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
+// getAccountBuckets fetches a list of all buckets allowed to that particular client from MinIO Servers
+func getAccountBuckets(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
 	info, err := client.AccountInfo(ctx)
 	if err != nil {
 		return []*models.Bucket{}, err
@@ -374,7 +376,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	buckets, err := getAccountInfo(ctx, adminClient)
+	buckets, err := getAccountBuckets(ctx, adminClient)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -523,7 +525,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 		return nil, prepareError(err)
 	}
 	// get updated bucket details and return it
-	bucket, err := getBucketInfo(ctx, minioClient, adminClient, bucketName)
+	bucket, err := getBucketInfo(ctx, minioClient, adminClient, bucketName, session.AccountAccessKey)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -581,37 +583,22 @@ func getDeleteBucketResponse(session *models.Principal, params user_api.DeleteBu
 	return nil
 }
 
-func getPolicyActionSetForBucket(bucketName string, statement []minioIAMPolicy.Statement) minioIAMPolicy.ActionSet {
-	bucketActions := minioIAMPolicy.ActionSet{}
-	bucketNameARN := fmt.Sprintf("arn:aws:s3:::%s/*", bucketName)
-	for _, st := range statement {
-		if st.Effect == "Allow" {
-			if len(st.Resources.ToSlice()) == 0 {
-				mergedActions := append(bucketActions.ToSlice(), st.Actions.ToSlice()...)
-				bucketActions = minioIAMPolicy.NewActionSet(mergedActions...)
-			} else {
-				for _, resource := range st.Resources.ToSlice() {
-					resourceName := resource.String()
-					if resourceName == bucketNameARN || resourceName == "arn:aws:s3:::*" {
-						mergedActions := append(bucketActions.ToSlice(), st.Actions.ToSlice()...)
-						bucketActions = minioIAMPolicy.NewActionSet(mergedActions...)
-					}
-				}
-			}
-		}
-	}
-	return bucketActions
-}
-
 // getBucketInfo return bucket information including name, policy access, size and creation date
-func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdmin, bucketName string) (*models.Bucket, error) {
+func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdmin, bucketName string, accountName string) (*models.Bucket, error) {
+	// Get Account Policy
 	policyInfo, err := getAccountPolicy(ctx, adminClient)
 	if err != nil {
 		return nil, err
 	}
+
 	var bucketAdminRole bool
 	// Retrieve list of allowed bucketActionsArray on the bucket
-	bucketActions := getPolicyActionSetForBucket(bucketName, policyInfo.Statements)
+	// TODO: Add all the possible variables
+	conditionValues := map[string][]string{
+		condition.AWSUsername.Name(): {accountName},
+	}
+
+	bucketActions := policyInfo.IsAllowedActions(bucketName, "", conditionValues)
 	// Check if one of these bucketActionsArray belongs to administrative bucketActionsArray
 	bucketAdminRoleActions := bucketActions.Intersection(acl.BucketAdminRole)
 	bucketAdminRole = len(bucketAdminRoleActions) > 0
@@ -671,7 +658,6 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfoParams) (*models.Bucket, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
-
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -688,7 +674,7 @@ func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfo
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	bucket, err := getBucketInfo(ctx, minioClient, adminClient, params.Name)
+	bucket, err := getBucketInfo(ctx, minioClient, adminClient, params.Name, session.AccountAccessKey)
 	if err != nil {
 		return nil, prepareError(err)
 	}
