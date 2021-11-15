@@ -45,15 +45,19 @@ func GetIDPSecret() string {
 	return env.Get(ConsoleIDPSecret, "")
 }
 
-// Public endpoint used by the identity oidcProvider when redirecting the user after identity verification
+// Public endpoint used by the identity oidcProvider when redirecting
+// the user after identity verification
 func GetIDPCallbackURL() string {
 	return env.Get(ConsoleIDPCallbackURL, "")
 }
 
+func GetIDPCallbackURLDynamic() bool {
+	return env.Get(ConsoleIDPCallbackURLDynamic, "") == "on"
+}
+
 func IsIDPEnabled() bool {
 	return GetIDPURL() != "" &&
-		GetIDPClientID() != "" &&
-		GetIDPCallbackURL() != ""
+		GetIDPClientID() != ""
 }
 
 var defaultPassphraseForIDPHmac = utils.RandomCharString(64)
