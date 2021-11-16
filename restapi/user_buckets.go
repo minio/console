@@ -290,43 +290,25 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 }
 
 // getAccountBuckets fetches a list of all buckets allowed to that particular client from MinIO Servers
-func getAccountBuckets(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
+func getAccountBuckets(ctx context.Context, client MinioAdmin, accessKey string) ([]*models.Bucket, error) {
 	info, err := client.AccountInfo(ctx)
 	if err != nil {
 		return []*models.Bucket{}, err
 	}
-
 	policyInfo, err := getAccountPolicy(ctx, client)
 	if err != nil {
 		return nil, err
 	}
-
-	bucketsPolicies := map[string]minioIAMPolicy.ActionSet{}
-	for _, statement := range policyInfo.Statements {
-		if statement.Effect == "Allow" {
-			for _, resource := range statement.Resources.ToSlice() {
-				resourceName := resource.String()
-				if actions, ok := bucketsPolicies[resourceName]; ok {
-					mergedActions := append(actions.ToSlice(), statement.Actions.ToSlice()...)
-					bucketsPolicies[resourceName] = minioIAMPolicy.NewActionSet(mergedActions...)
-				} else {
-					bucketsPolicies[resourceName] = statement.Actions
-				}
-			}
-		}
-	}
 	var bucketInfos []*models.Bucket
 	for _, bucket := range info.Buckets {
 		var bucketAdminRole bool
-		bucketNameARN := fmt.Sprintf("arn:aws:s3:::%s/*", bucket.Name)
-		// match bucket name against policy that allows admin actions
-		if bucketPolicyActions, ok := bucketsPolicies[bucketNameARN]; ok {
-			bucketAdminRoleActions := bucketPolicyActions.Intersection(acl.BucketAdminRole)
-			bucketAdminRole = len(bucketAdminRoleActions) > 0
-		} else if bucketPolicyActions, ok := bucketsPolicies["arn:aws:s3:::*"]; ok {
-			bucketAdminRoleActions := bucketPolicyActions.Intersection(acl.BucketAdminRole)
-			bucketAdminRole = len(bucketAdminRoleActions) > 0
+		conditionValues := map[string][]string{
+			condition.AWSUsername.Name(): {accessKey},
 		}
+		bucketActions := policyInfo.IsAllowedActions(bucket.Name, "", conditionValues)
+		bucketAdminRoleActions := bucketActions.Intersection(acl.BucketAdminRole)
+		bucketAdminRole = len(bucketAdminRoleActions) > 0
+
 		bucketElem := &models.Bucket{
 			CreationDate: bucket.Created.Format(time.RFC3339),
 			Details: &models.BucketDetails{
@@ -376,7 +358,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	buckets, err := getAccountBuckets(ctx, adminClient)
+	buckets, err := getAccountBuckets(ctx, adminClient, session.AccountAccessKey)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -486,7 +468,7 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 
 	bucketAccessPolicy := policy.BucketAccessPolicy{Version: minioIAMPolicy.DefaultVersion}
 	bucketAccessPolicy.Statements = policy.SetPolicy(bucketAccessPolicy.Statements,
-		policy.BucketPolicy(bucketPolicy), bucketName, "")
+		bucketPolicy, bucketName, "")
 	// implemented like minio/mc/ s3Client.SetAccess()
 	if len(bucketAccessPolicy.Statements) == 0 {
 		return client.setBucketPolicyWithContext(ctx, bucketName, "")
