@@ -141,7 +141,9 @@ const ShareFile = ({
       const slDate = new Date(`${selectedDate}`);
       const currDate = new Date();
 
-      const diffDate = Math.ceil((slDate.getTime() - currDate.getTime()) / 1000);
+      const diffDate = Math.ceil(
+        (slDate.getTime() - currDate.getTime()) / 1000
+      );
 
       if (diffDate > 0) {
         api
