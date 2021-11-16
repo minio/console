@@ -18,12 +18,15 @@ import React from "react";
 import { styled } from "@mui/material/styles";
 import LinearProgress, {
   linearProgressClasses,
+  LinearProgressProps,
 } from "@mui/material/LinearProgress";
+import Box from "@mui/material/Box";
 
 interface IProgressBarWrapper {
   value: number;
   ready: boolean;
   indeterminate?: boolean;
+  withLabel?: boolean;
 }
 
 const BorderLinearProgress = styled(LinearProgress)(() => ({
@@ -37,18 +40,35 @@ const BorderLinearProgress = styled(LinearProgress)(() => ({
   },
 }));
 
+function LinearProgressWithLabel(props: LinearProgressProps) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <BorderLinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35, fontSize: 14 }} className={"value"}>
+        {`${Math.round(props.value || 0)}%`}
+      </Box>
+    </Box>
+  );
+}
+
 const ProgressBarWrapper = ({
   value,
   ready,
   indeterminate,
+  withLabel,
 }: IProgressBarWrapper) => {
-  return (
-    <BorderLinearProgress
-      variant={indeterminate && !ready ? "indeterminate" : "determinate"}
-      value={ready ? 100 : value}
-      color={ready ? "success" : "primary"}
-    />
-  );
+  const propsComponent: LinearProgressProps = {
+    variant: indeterminate && !ready ? "indeterminate" : "determinate",
+    value: ready ? 100 : value,
+    color: ready ? "success" : "primary",
+  };
+  if (withLabel) {
+    return <LinearProgressWithLabel {...propsComponent} />;
+  }
+
+  return <BorderLinearProgress {...propsComponent} />;
 };
 
 export default ProgressBarWrapper;
