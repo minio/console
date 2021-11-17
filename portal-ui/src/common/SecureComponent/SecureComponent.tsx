@@ -58,7 +58,6 @@ const SecureComponent = ({
   resource,
 }: ISecureComponentProps) => {
   const permissionGranted = hasPermission(resource, scopes, matchAll);
-  // console.log("permissionGranted", permissionGranted);
   if (!permissionGranted && !errorProps) return <RenderError />;
   if (!permissionGranted && errorProps) {
     return cloneElement(children, { ...errorProps });
