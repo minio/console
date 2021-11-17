@@ -3661,12 +3661,6 @@ func init() {
         "access": {
           "$ref": "#/definitions/bucketAccess"
         },
-        "allowedActions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "creation_date": {
           "type": "string"
         },
@@ -3708,9 +3702,6 @@ func init() {
               "type": "boolean"
             }
           }
-        },
-        "manage": {
-          "type": "boolean"
         },
         "name": {
           "type": "string",
@@ -5204,9 +5195,14 @@ func init() {
             "type": "string"
           }
         },
-        "policy": {
+        "permissions": {
           "type": "object",
-          "$ref": "#/definitions/iamPolicy"
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
         "status": {
           "type": "string",
@@ -9482,12 +9478,6 @@ func init() {
         "access": {
           "$ref": "#/definitions/bucketAccess"
         },
-        "allowedActions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "creation_date": {
           "type": "string"
         },
@@ -9529,9 +9519,6 @@ func init() {
               "type": "boolean"
             }
           }
-        },
-        "manage": {
-          "type": "boolean"
         },
         "name": {
           "type": "string",
@@ -11025,9 +11012,14 @@ func init() {
             "type": "string"
           }
         },
-        "policy": {
+        "permissions": {
           "type": "object",
-          "$ref": "#/definitions/iamPolicy"
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
         "status": {
           "type": "string",

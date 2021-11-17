@@ -458,7 +458,7 @@ func listExternalBucketsResponse(params user_api.ListExternalBucketsParams) (*mo
 	// create a minioClient interface implementation
 	// defining the client to be used
 	remoteClient := AdminClient{Client: remoteAdmin}
-	buckets, err := getAccountBuckets(ctx, remoteClient, *params.Body.AccessKey)
+	buckets, err := getAccountBuckets(ctx, remoteClient)
 	if err != nil {
 		return nil, prepareError(err)
 	}

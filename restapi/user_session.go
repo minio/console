@@ -23,6 +23,10 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/minio/pkg/bucket/policy/condition"
+
+	minioIAMPolicy "github.com/minio/pkg/iam/policy"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
@@ -91,13 +95,81 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	if err != nil {
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
-	// by default every user starts with an empty array of available actions
+	// by default every user starts with an empty array of available val
 	// therefore we would have access only to pages that doesn't require any privilege
 	// ie: service-account page
 	var actions []string
-	// if a policy is assigned to this user we parse the actions from there
+	// if a policy is assigned to this user we parse the val from there
 	if policy != nil {
 		actions = acl.GetActionsStringFromPolicy(policy)
+	}
+
+	// This actions will be global, meaning has to be attached to all resources
+	conditionValues := map[string][]string{
+		condition.AWSUsername.Name(): {session.AccountAccessKey},
+	}
+	defaultActions := policy.IsAllowedActions("", "", conditionValues)
+	consoleResourceName := "console-ui"
+	permissions := map[string]minioIAMPolicy.ActionSet{
+		consoleResourceName: defaultActions,
+	}
+	deniedActions := map[string]minioIAMPolicy.ActionSet{}
+	for _, statement := range policy.Statements {
+		for _, resource := range statement.Resources.ToSlice() {
+			resourceName := resource.String()
+			statementActions := statement.Actions.ToSlice()
+			if statement.Effect == "Allow" {
+				// check if val are denied before adding them to the map
+				var allowedActions []minioIAMPolicy.Action
+				if dActions, ok := deniedActions[resourceName]; ok {
+					for _, action := range statementActions {
+						if len(dActions.Intersection(minioIAMPolicy.NewActionSet(action))) == 0 {
+							// It's ok to allow this action
+							allowedActions = append(allowedActions, action)
+						}
+					}
+				} else {
+					allowedActions = statementActions
+				}
+
+				// Add validated actions
+				if resourceActions, ok := permissions[resourceName]; ok {
+					mergedActions := append(resourceActions.ToSlice(), allowedActions...)
+					permissions[resourceName] = minioIAMPolicy.NewActionSet(mergedActions...)
+				} else {
+					mergedActions := append(defaultActions.ToSlice(), allowedActions...)
+					permissions[resourceName] = minioIAMPolicy.NewActionSet(mergedActions...)
+				}
+			} else {
+				// Add new banned actions to the map
+				if resourceActions, ok := deniedActions[resourceName]; ok {
+					mergedActions := append(resourceActions.ToSlice(), statementActions...)
+					deniedActions[resourceName] = minioIAMPolicy.NewActionSet(mergedActions...)
+				} else {
+					deniedActions[resourceName] = statement.Actions
+				}
+				// Remove existing val from key if necessary
+				if currentResourceActions, ok := permissions[resourceName]; ok {
+					var newAllowedActions []minioIAMPolicy.Action
+					for _, action := range currentResourceActions.ToSlice() {
+						if len(deniedActions[resourceName].Intersection(minioIAMPolicy.NewActionSet(action))) == 0 {
+							// It's ok to allow this action
+							newAllowedActions = append(newAllowedActions, action)
+						}
+					}
+					permissions[resourceName] = minioIAMPolicy.NewActionSet(newAllowedActions...)
+				}
+			}
+		}
+	}
+	resourcePermissions := map[string][]string{}
+	for key, val := range permissions {
+		var resourceActions []string
+		for _, action := range val.ToSlice() {
+			resourceActions = append(resourceActions, string(action))
+		}
+		resourcePermissions[key] = resourceActions
+
 	}
 	rawPolicy, err := json.Marshal(policy)
 	if err != nil {
@@ -114,7 +186,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
 		DistributedMode: isErasureMode(),
-		Policy:          sessionPolicy,
+		Permissions:     resourcePermissions,
 	}
 	return sessionResp, nil
 }
