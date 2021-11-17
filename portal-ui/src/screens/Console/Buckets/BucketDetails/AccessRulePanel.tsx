@@ -152,6 +152,14 @@ const AccessRule = ({
     IAM_SCOPES.S3_GET_BUCKET_POLICY,
   ]);
 
+  const deleteAccessRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
+  ]);
+
+  const editAccessRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+  ]);
+
   useEffect(() => {
     if (loadingBucket) {
       setLoadingAccessRules(true);
@@ -161,6 +169,7 @@ const AccessRule = ({
   const AccessRuleActions = [
     {
       type: "delete",
+      disableButtonFunction: () => !deleteAccessRules,
       onClick: (accessRule: any) => {
         setDeleteAccessRuleOpen(true);
         setAccessRuleToDelete(accessRule.prefix);
@@ -168,6 +177,7 @@ const AccessRule = ({
     },
     {
       type: "view",
+      disableButtonFunction: () => !editAccessRules,
       onClick: (accessRule: any) => {
         setAccessRuleToEdit(accessRule.prefix);
         setInitialAccess(accessRule.access);
