@@ -104,7 +104,7 @@ const styles = (theme: Theme) =>
     },
     capitalizeFirst: {
       textTransform: "capitalize",
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
       },

@@ -14,11 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
-const EgressIcon = () => {
+import React, { SVGProps } from "react";
+
+const EgressIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon viewBox="0 0 18.344 17.009">
+    <svg
+      viewBox="0 0 18.344 17.009"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+    >
       <defs>
         <linearGradient
           id="a"
@@ -64,7 +70,7 @@ const EgressIcon = () => {
           transform="translate(9.871 5.307)"
         />
       </g>
-    </SvgIcon>
+    </svg>
   );
 };
 

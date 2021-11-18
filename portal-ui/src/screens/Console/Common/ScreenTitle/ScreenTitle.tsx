@@ -34,9 +34,9 @@ const styles = (theme: Theme) =>
     headerBarIcon: {
       marginRight: ".7rem",
       color: theme.palette.primary.main,
-      "& .MuiSvgIcon-root": {
-        width: "100%",
-        height: "100%",
+      "& .min-icon": {
+        width: 44,
+        height: 44,
       },
     },
     headerBarSubheader: {

@@ -41,6 +41,16 @@ declare module "@mui/styles/defaultTheme" {
 const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
   "@global": {
+    ".min-icon": {
+      // height: 26,
+      width: 26,
+    },
+    ".MuiButton-endIcon": {
+      "& .min-icon": {
+        // height: 26,
+        width: 16,
+      },
+    },
     // You should target [class*="MuiButton-root"] instead if you nest themes.
     ".MuiButton-root": {
       height: 38,

@@ -14,19 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
-const MirroringIcon = () => {
+import React, { SVGProps } from "react";
+
+const MirroringIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-        <g transform="translate(61 439)">
-          <rect width="1.5" height="10" transform="translate(-56.75 -439)" />
-          <path d="M6.5,10V0h.572L10,10Z" transform="translate(-61 -439)" />
-          <path d="M3.5,10V0H2.928L0,10Z" transform="translate(-61 -439)" />
-        </g>
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 10 10"
+    >
+      <g transform="translate(61 439)">
+        <rect width="1.5" height="10" transform="translate(-56.75 -439)" />
+        <path d="M6.5,10V0h.572L10,10Z" transform="translate(-61 -439)" />
+        <path d="M3.5,10V0H2.928L0,10Z" transform="translate(-61 -439)" />
+      </g>
+    </svg>
   );
 };
 

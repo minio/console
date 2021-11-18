@@ -57,7 +57,7 @@ const styles = (theme: Theme) =>
     ...tenantDetailsStyles,
     redState: {
       color: theme.palette.error.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         marginRight: 4,
@@ -65,7 +65,7 @@ const styles = (theme: Theme) =>
     },
     yellowState: {
       color: theme.palette.warning.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         marginRight: 4,
@@ -73,7 +73,7 @@ const styles = (theme: Theme) =>
     },
     greenState: {
       color: theme.palette.success.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         marginRight: 4,
@@ -81,7 +81,7 @@ const styles = (theme: Theme) =>
     },
     greyState: {
       color: "grey",
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         marginRight: 4,

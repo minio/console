@@ -15,10 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
+import { SVGProps } from "react";
 
-const WarnIcon = () => {
+const WarnIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <circle
         cx="8"
         cy="8"

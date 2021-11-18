@@ -67,6 +67,7 @@ import ErrorLogs from "./Logs/ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
 import GroupsDetails from "./Groups/GroupsDetails";
 import Speedtest from "./Speedtest/Speedtest";
+import IconsScreen from "./Common/IconsScreen";
 
 const drawerWidth = 245;
 
@@ -512,6 +513,9 @@ const Console = ({
                     )}
                   />
                 ))}
+                <Route key={"/icons"} exact path={"/icons"}>
+                  <IconsScreen />
+                </Route>
                 {allowedRoutes.length > 0 ? (
                   <Redirect to={allowedRoutes[0].path} />
                 ) : null}

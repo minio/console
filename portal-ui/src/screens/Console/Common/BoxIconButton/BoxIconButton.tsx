@@ -31,8 +31,9 @@ const styles = (theme: Theme) =>
       color: "#696969",
       borderStyle: "solid",
       borderRadius: 3,
-      "& .MuiSvgIcon-root": {
-        fontSize: 20,
+      "& .min-icon": {
+        // height: 20,
+        width: 20,
       },
       "& .MuiTouchRipple-root span": {
         backgroundColor: theme.palette.primary.main,

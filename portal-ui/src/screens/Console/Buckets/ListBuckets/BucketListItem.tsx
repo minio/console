@@ -43,7 +43,7 @@ const styles = (theme: Theme) =>
       color: theme.palette.primary.main,
       border: "#E5E5E5 1px solid",
       borderRadius: 2,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         height: 14,
         width: 14,
         marginRight: 4,
@@ -62,7 +62,7 @@ const styles = (theme: Theme) =>
         "& .MuiTypography-root": {
           fontSize: 19,
           fontWeight: "bold",
-          "& .MuiSvgIcon-root": {
+          "& .min-icon": {
             position: "relative",
             top: 4,
             marginRight: 4,
@@ -104,7 +104,7 @@ const styles = (theme: Theme) =>
       fontSize: 12,
       fontWeight: "normal",
       "& .MuiButton-endIcon": {
-        "& .MuiSvgIcon-root": {
+        "& .min-icon": {
           fontSize: 18,
         },
       },
@@ -114,9 +114,17 @@ const styles = (theme: Theme) =>
       marginTop: 10,
       marginBottom: 4,
     },
+    metric: {
+      "& .min-icon": {
+        color: "#000000",
+        width: 13,
+        marginRight: 5,
+      },
+    },
     metricLabel: {
       fontSize: 14,
       fontWeight: "bold",
+      color: "#000000",
     },
     metricText: {
       fontSize: 24,
@@ -132,10 +140,9 @@ const styles = (theme: Theme) =>
       fontSize: 22,
     },
     bucketIcon: {
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         height: 48,
         width: 48,
-        fontSize: 48,
       },
     },
   });
@@ -261,7 +268,7 @@ const BucketListItem = ({
           <Grid item className={classes.bucketIcon}>
             <BucketsIcon />
           </Grid>
-          <Grid item textAlign={"left"}>
+          <Grid item textAlign={"left"} className={classes.metric}>
             <ReportedUsageIcon />
             <span className={classes.metricLabel}>Usage</span>
             <div className={classes.metricText}>
@@ -269,7 +276,7 @@ const BucketListItem = ({
               <span className={classes.unit}>{usageUnit}</span>
             </div>
           </Grid>
-          <Grid item textAlign={"left"}>
+          <Grid item textAlign={"left"} className={classes.metric}>
             <TotalObjectsIcon />
             <span className={classes.metricLabel}>Objects</span>
             <div className={classes.metricText}>

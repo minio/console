@@ -15,52 +15,56 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import { SVGProps } from "react";
 
-const DocumentationIcon = (props: SvgIconProps) => {
+const DocumentationIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-        <defs>
-          <clipPath id="prefix__a">
-            <path d="M0 0h256v256H0z" />
-          </clipPath>
-        </defs>
-        <g clipPath="url(#prefix__a)">
-          <g transform="translate(0 41)">
-            <rect
-              data-name="Rect\xE1ngulo 801"
-              width={117.064}
-              height={25.116}
-              rx={0.908}
-              transform="translate(93.838)"
-            />
-            <rect
-              data-name="Rect\xE1ngulo 821"
-              width={117.064}
-              height={25.116}
-              rx={0.908}
-              transform="translate(93.838 105)"
-            />
-            <rect
-              data-name="Rect\xE1ngulo 822"
-              width={117.064}
-              height={25.116}
-              rx={0.908}
-              transform="translate(93.838 53)"
-            />
-            <path
-              data-name="Trazado 357"
-              d="M143.734 189.393H24.57V36.448a8.842 8.842 0 00-8.648-8.961H8.633A8.844 8.844 0 000 36.448V206.04a8.844 8.844 0 008.633 8.961h135.1a8.847 8.847 0 008.648-8.961v-7.685a8.847 8.847 0 00-8.647-8.962z"
-            />
-          </g>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+    >
+      <defs>
+        <clipPath id="prefix__a">
+          <path d="M0 0h256v256H0z" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#prefix__a)">
+        <g transform="translate(0 41)">
+          <rect
+            data-name="Rect\xE1ngulo 801"
+            width={117.064}
+            height={25.116}
+            rx={0.908}
+            transform="translate(93.838)"
+          />
+          <rect
+            data-name="Rect\xE1ngulo 821"
+            width={117.064}
+            height={25.116}
+            rx={0.908}
+            transform="translate(93.838 105)"
+          />
+          <rect
+            data-name="Rect\xE1ngulo 822"
+            width={117.064}
+            height={25.116}
+            rx={0.908}
+            transform="translate(93.838 53)"
+          />
           <path
-            data-name="Rect\xE1ngulo 818"
-            d="M66 20v170h170V20H66M61 0h180a15 15 0 0115 15v180a15 15 0 01-15 15H61a15 15 0 01-15-15V15A15 15 0 0161 0z"
+            data-name="Trazado 357"
+            d="M143.734 189.393H24.57V36.448a8.842 8.842 0 00-8.648-8.961H8.633A8.844 8.844 0 000 36.448V206.04a8.844 8.844 0 008.633 8.961h135.1a8.847 8.847 0 008.648-8.961v-7.685a8.847 8.847 0 00-8.647-8.962z"
           />
         </g>
-      </svg>
-    </SvgIcon>
+        <path
+          data-name="Rect\xE1ngulo 818"
+          d="M66 20v170h170V20H66M61 0h180a15 15 0 0115 15v180a15 15 0 01-15 15H61a15 15 0 01-15-15V15A15 15 0 0161 0z"
+        />
+      </g>
+    </svg>
   );
 };
 

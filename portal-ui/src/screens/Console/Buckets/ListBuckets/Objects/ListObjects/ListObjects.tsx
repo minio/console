@@ -63,7 +63,7 @@ import {
 import { BucketInfo, BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import RewindEnable from "./RewindEnable";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 import PreviewFileModal from "../Preview/PreviewFileModal";
 import { baseUrl } from "../../../../../../history";
@@ -76,7 +76,13 @@ import FolderIcon from "../../../../../../icons/FolderIcon";
 import RefreshIcon from "../../../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import UploadIcon from "../../../../../../icons/UploadIcon";
+import ShareFile from "../ObjectDetails/ShareFile";
+import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
+import { AppState } from "../../../../../../store";
+import PageLayout from "../../../../Common/Layout/PageLayout";
+import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import {
+  DeleteIcon,
   FileBookIcon,
   FileCodeIcon,
   FileConfigIcon,
@@ -93,12 +99,7 @@ import {
   FileXlsIcon,
   FileZipIcon,
 } from "../../../../../../icons";
-import ShareFile from "../ObjectDetails/ShareFile";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
-import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
-import { AppState } from "../../../../../../store";
-import PageLayout from "../../../../Common/Layout/PageLayout";
-import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import SecureComponent, {
   hasPermission,
 } from "../../../../../../common/SecureComponent/SecureComponent";
@@ -142,7 +143,7 @@ const styles = (theme: Theme) =>
     fileName: {
       display: "flex",
       alignItems: "center",
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         marginRight: 4,

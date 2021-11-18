@@ -22,16 +22,22 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid } from "@mui/material";
-import { AddIcon, IAMPoliciesIcon, TrashIcon, UsersIcon } from "../../../icons";
+import {
+  AddIcon,
+  IAMPoliciesIcon,
+  LockIcon,
+  TrashIcon,
+  UsersIcon,
+} from "../../../icons";
 import {
   setErrorSnackMessage,
   setModalErrorSnackMessage,
 } from "../../../actions";
 import {
-  tableStyles,
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -44,7 +50,6 @@ import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
-import LockIcon from "@mui/icons-material/Lock";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";

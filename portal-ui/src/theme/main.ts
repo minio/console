@@ -77,7 +77,7 @@ const theme = createTheme({
           fontSize: 14,
           fontWeight: 600,
           boxShadow: "none",
-          "& .MuiSvgIcon-root": {
+          "& .min-icon": {
             maxHeight: 18,
           },
           "&.MuiButton-contained.Mui-disabled": {

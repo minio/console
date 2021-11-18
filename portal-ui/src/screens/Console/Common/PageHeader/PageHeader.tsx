@@ -39,7 +39,9 @@ const styles = (theme: Theme) =>
     logo: {
       marginLeft: 34,
       fill: theme.palette.primary.main,
-      width: 120,
+      "& .min-icon": {
+        width: 120,
+      },
     },
   });
 
