@@ -37,13 +37,11 @@ import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
-import { displayComponent } from "../../../../utils/permissions";
-import {
-  ADMIN_LIST_TIERS,
-  S3_GET_LIFECYCLE_CONFIGURATION,
-  S3_PUT_LIFECYCLE_CONFIGURATION,
-} from "../../../../types";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import SecureComponent, {
+  hasPermission,
+} from "../../../../common/SecureComponent/SecureComponent";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,15 +74,9 @@ const BucketLifecyclePanel = ({
 
   const bucketName = match.params["bucketName"];
 
-  const displayLifeCycleRules = displayComponent(bucketInfo?.allowedActions, [
-    S3_GET_LIFECYCLE_CONFIGURATION,
+  const displayLifeCycleRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
   ]);
-
-  const displayAddLifeCycleRules = displayComponent(
-    bucketInfo?.allowedActions,
-    [S3_PUT_LIFECYCLE_CONFIGURATION, ADMIN_LIST_TIERS],
-    true
-  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -212,7 +204,14 @@ const BucketLifecyclePanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Lifecycle Rules</PanelTitle>
-          {displayAddLifeCycleRules && (
+          <SecureComponent
+            scopes={[
+              IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+              IAM_SCOPES.ADMIN_LIST_TIERS,
+            ]}
+            resource={bucketName}
+            matchAll
+          >
             <Button
               variant="contained"
               color="primary"
@@ -224,19 +223,25 @@ const BucketLifecyclePanel = ({
             >
               Add Lifecycle Rule
             </Button>
-          )}
+          </SecureComponent>
         </Grid>
         <Grid item xs={12}>
-          <TableWrapper
-            itemActions={[]}
-            columns={lifecycleColumns}
-            isLoading={loadingLifecycle}
-            records={lifecycleRecords}
-            entityName="Lifecycle"
-            customEmptyMessage="There are no Lifecycle rules yet"
-            idField="id"
-            customPaperHeight={classes.twHeight}
-          />
+          <SecureComponent
+            scopes={[IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION]}
+            resource={bucketName}
+            errorProps={{ disabled: true }}
+          >
+            <TableWrapper
+              itemActions={[]}
+              columns={lifecycleColumns}
+              isLoading={loadingLifecycle}
+              records={lifecycleRecords}
+              entityName="Lifecycle"
+              customEmptyMessage="There are no Lifecycle rules yet"
+              idField="id"
+              customPaperHeight={classes.twHeight}
+            />
+          </SecureComponent>
         </Grid>
         {!loadingLifecycle && (
           <Grid item xs={12}>

@@ -30,14 +30,11 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import history from "../../../../history";
 import { BucketInfo } from "../types";
-import { displayComponent } from "../../../../utils/permissions";
-import {
-  ADMIN_GET_POLICY,
-  ADMIN_LIST_GROUPS,
-  ADMIN_LIST_USER_POLICIES,
-  ADMIN_LIST_USERS,
-} from "../../../../types";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import SecureComponent, {
+  hasPermission,
+} from "../../../../common/SecureComponent/SecureComponent";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -79,13 +76,17 @@ const AccessDetails = ({
 
   const bucketName = match.params["bucketName"];
 
-  const displayPoliciesList = displayComponent(bucketInfo?.allowedActions, [
-    ADMIN_LIST_USER_POLICIES,
+  const displayPoliciesList = hasPermission(bucketName, [
+    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
   ]);
 
-  const displayUsersList = displayComponent(
-    bucketInfo?.allowedActions,
-    [ADMIN_GET_POLICY, ADMIN_LIST_USERS, ADMIN_LIST_GROUPS],
+  const displayUsersList = hasPermission(
+    bucketName,
+    [
+      IAM_SCOPES.ADMIN_GET_POLICY,
+      IAM_SCOPES.ADMIN_LIST_USERS,
+      IAM_SCOPES.ADMIN_LIST_GROUPS,
+    ],
     true
   );
 
@@ -135,7 +136,6 @@ const AccessDetails = ({
 
   useEffect(() => {
     if (loadingPolicies) {
-      console.log("displayPoliciesList", displayPoliciesList);
       if (displayPoliciesList) {
         api
           .invoke("GET", `/api/v1/bucket-policy/${bucketName}`)
@@ -167,24 +167,37 @@ const AccessDetails = ({
         variant="scrollable"
         scrollButtons="auto"
       >
-        <Tab label="Policies" {...a11yProps(0)} />
+        {displayPoliciesList && <Tab label="Policies" {...a11yProps(0)} />}
         {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
       </Tabs>
       <Paper>
         <TabPanel index={0} value={curTab}>
-          <TableWrapper
-            disabled={!displayPoliciesList}
-            noBackground={true}
-            itemActions={PolicyActions}
-            columns={[{ label: "Name", elementKey: "name" }]}
-            isLoading={loadingPolicies}
-            records={bucketPolicy}
-            entityName="Policies"
-            idField="name"
-          />
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
+            resource={bucketName}
+          >
+            <TableWrapper
+              noBackground={true}
+              itemActions={PolicyActions}
+              columns={[{ label: "Name", elementKey: "name" }]}
+              isLoading={loadingPolicies}
+              records={bucketPolicy}
+              entityName="Policies"
+              idField="name"
+            />
+          </SecureComponent>
         </TabPanel>
-        {displayUsersList && (
-          <TabPanel index={1} value={curTab}>
+
+        <TabPanel index={1} value={curTab}>
+          <SecureComponent
+            scopes={[
+              IAM_SCOPES.ADMIN_GET_POLICY,
+              IAM_SCOPES.ADMIN_LIST_USERS,
+              IAM_SCOPES.ADMIN_LIST_GROUPS,
+            ]}
+            resource={bucketName}
+            matchAll
+          >
             <TableWrapper
               noBackground={true}
               itemActions={userTableActions}
@@ -194,8 +207,8 @@ const AccessDetails = ({
               entityName="Users"
               idField="accessKey"
             />
-          </TabPanel>
-        )}
+          </SecureComponent>
+        </TabPanel>
       </Paper>
     </Fragment>
   );

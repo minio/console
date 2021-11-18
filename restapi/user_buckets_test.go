@@ -180,7 +180,7 @@ func TestListBucket(t *testing.T) {
 	// get list buckets response this response should have Name, CreationDate, Size and Access
 	// as part of of each bucket
 	function := "getaAcountUsageInfo()"
-	bucketList, err := getAccountBuckets(ctx, adminClient, "")
+	bucketList, err := getAccountBuckets(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -197,7 +197,7 @@ func TestListBucket(t *testing.T) {
 	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
 		return madmin.AccountInfo{}, errors.New("error")
 	}
-	_, err = getAccountBuckets(ctx, adminClient, "")
+	_, err = getAccountBuckets(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
@@ -257,7 +257,6 @@ func TestBucketInfo(t *testing.T) {
 	// mock minIO client
 	minClient := minioClientMock{}
 	ctx := context.Background()
-	adminClient := adminClientMock{}
 	function := "getBucketInfo()"
 
 	// Test-1: getBucketInfo() get a bucket with PRIVATE access
@@ -308,7 +307,7 @@ func TestBucketInfo(t *testing.T) {
 		return mockBucketList, nil
 	}
 
-	bucketInfo, err := getBucketInfo(ctx, minClient, adminClient, bucketToSet, "user1")
+	bucketInfo, err := getBucketInfo(ctx, minClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -330,7 +329,7 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet, "bucket1")
+	bucketInfo, err = getBucketInfo(ctx, minClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -352,7 +351,7 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet, "bucket1")
+	bucketInfo, err = getBucketInfo(ctx, minClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -373,7 +372,7 @@ func TestBucketInfo(t *testing.T) {
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
-	_, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet, "bucket1")
+	_, err = getBucketInfo(ctx, minClient, bucketToSet)
 	if assert.Error(err) {
 		assert.Equal("invalid character 'p' looking for beginning of value", err.Error())
 	}

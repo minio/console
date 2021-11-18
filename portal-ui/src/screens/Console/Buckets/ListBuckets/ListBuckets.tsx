@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { Bucket, BucketList, HasPermissionResponse } from "../types";
+import { Bucket, BucketList } from "../types";
 import { AddIcon, BucketsIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -45,6 +45,11 @@ import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
 import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
 import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
+import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -150,48 +155,11 @@ const ListBuckets = ({
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterBuckets, setFilterBuckets] = useState<string>("");
-  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
-  const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
 
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
-
-  // check the permissions for creating bucket
-  useEffect(() => {
-    if (loadingPerms) {
-      api
-        .invoke("POST", `/api/v1/has-permission`, {
-          actions: [
-            {
-              id: "createBucket",
-              action: "s3:CreateBucket",
-            },
-          ],
-        })
-        .then((res: HasPermissionResponse) => {
-          setLoadingPerms(false);
-          if (!res.permissions) {
-            return;
-          }
-          const actions = res.permissions ? res.permissions : [];
-
-          let canCreate = actions.find((s) => s.id === "createBucket");
-          if (canCreate && canCreate.can) {
-            setCanCreateBucket(true);
-          } else {
-            setCanCreateBucket(false);
-          }
-
-          setLoadingPerms(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoadingPerms(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [loadingPerms, setErrorSnackMessage]);
 
   useEffect(() => {
     if (loading) {
@@ -340,7 +308,10 @@ const ListBuckets = ({
               >
                 <RefreshIcon />
               </BoxIconButton>
-              {canCreateBucket && (
+              <SecureComponent
+                scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
+                resource={CONSOLE_UI_RESOURCE}
+              >
                 <Button
                   variant="contained"
                   color="primary"
@@ -352,7 +323,7 @@ const ListBuckets = ({
                 >
                   Create Bucket
                 </Button>
-              )}
+              </SecureComponent>
             </Grid>
           </Grid>
         </Grid>
