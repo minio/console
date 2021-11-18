@@ -40,12 +40,11 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
 import HelpBox from "../../../../common/HelpBox";
-import { displayComponent } from "../../../../utils/permissions";
-import {
-  S3_GET_REPLICATION_CONFIGURATION,
-  S3_PUT_REPLICATION_CONFIGURATION,
-} from "../../../../types";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import SecureComponent, {
+  hasPermission,
+} from "../../../../common/SecureComponent/SecureComponent";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -82,15 +81,9 @@ const BucketReplicationPanel = ({
 
   const bucketName = match.params["bucketName"];
 
-  const displayReplicationRules = displayComponent(bucketInfo?.allowedActions, [
-    S3_GET_REPLICATION_CONFIGURATION,
+  const displayReplicationRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
   ]);
-
-  const displayAddReplicationRules = displayComponent(
-    bucketInfo?.allowedActions,
-    [S3_PUT_REPLICATION_CONFIGURATION],
-    true
-  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -182,7 +175,11 @@ const BucketReplicationPanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Replication</PanelTitle>
-          {displayAddReplicationRules && (
+          <SecureComponent
+            scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+            resource={bucketName}
+            matchAll
+          >
             <Button
               variant="contained"
               color="primary"
@@ -194,39 +191,44 @@ const BucketReplicationPanel = ({
             >
               Add Replication Rule
             </Button>
-          )}
+          </SecureComponent>
         </Grid>
         <Grid item xs={12}>
-          <TableWrapper
-            disabled={!displayReplicationRules}
-            itemActions={replicationTableActions}
-            columns={[
-              {
-                label: "Priority",
-                elementKey: "priority",
-              },
-              {
-                label: "Destination",
-                elementKey: "destination",
-                renderFunction: ruleDestDisplay,
-              },
-              {
-                label: "Prefix",
-                elementKey: "prefix",
-              },
-              {
-                label: "Tags",
-                elementKey: "tags",
-                renderFunction: tagDisplay,
-              },
-              { label: "Status", elementKey: "status" },
-            ]}
-            isLoading={loadingReplication}
-            records={replicationRules}
-            entityName="Replication Rules"
-            idField="id"
-            customPaperHeight={classes.twHeight}
-          />
+          <SecureComponent
+            scopes={[IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION]}
+            resource={bucketName}
+            errorProps={{ disabled: true }}
+          >
+            <TableWrapper
+              itemActions={replicationTableActions}
+              columns={[
+                {
+                  label: "Priority",
+                  elementKey: "priority",
+                },
+                {
+                  label: "Destination",
+                  elementKey: "destination",
+                  renderFunction: ruleDestDisplay,
+                },
+                {
+                  label: "Prefix",
+                  elementKey: "prefix",
+                },
+                {
+                  label: "Tags",
+                  elementKey: "tags",
+                  renderFunction: tagDisplay,
+                },
+                { label: "Status", elementKey: "status" },
+              ]}
+              isLoading={loadingReplication}
+              records={replicationRules}
+              entityName="Replication Rules"
+              idField="id"
+              customPaperHeight={classes.twHeight}
+            />
+          </SecureComponent>
         </Grid>
         <Grid item xs={12}>
           <HelpBox

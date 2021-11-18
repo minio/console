@@ -36,13 +36,11 @@ import api from "../../../../common/api";
 import DeleteEvent from "./DeleteEvent";
 import AddEvent from "./AddEvent";
 import HelpBox from "../../../../common/HelpBox";
-import { displayComponent } from "../../../../utils/permissions";
-import {
-  ADMIN_SERVER_INFO,
-  S3_GET_BUCKET_NOTIFICATIONS,
-  S3_PUT_BUCKET_NOTIFICATIONS,
-} from "../../../../types";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import SecureComponent, {
+  hasPermission,
+} from "../../../../common/SecureComponent/SecureComponent";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,15 +74,9 @@ const BucketEventsPanel = ({
 
   const bucketName = match.params["bucketName"];
 
-  const displayEvents = displayComponent(bucketInfo?.allowedActions, [
-    S3_GET_BUCKET_NOTIFICATIONS,
+  const displayEvents = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
   ]);
-
-  const displaySubscribeToEvents = displayComponent(
-    bucketInfo?.allowedActions,
-    [S3_PUT_BUCKET_NOTIFICATIONS, ADMIN_SERVER_INFO],
-    true
-  );
 
   useEffect(() => {
     if (loadingBucket) {
@@ -156,7 +148,14 @@ const BucketEventsPanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Events</PanelTitle>
-          {displaySubscribeToEvents && (
+          <SecureComponent
+            scopes={[
+              IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+              IAM_SCOPES.ADMIN_SERVER_INFO,
+            ]}
+            resource={bucketName}
+            matchAll
+          >
             <Button
               variant="contained"
               color="primary"
@@ -168,28 +167,33 @@ const BucketEventsPanel = ({
             >
               Subscribe to Event
             </Button>
-          )}
+          </SecureComponent>
         </Grid>
         <Grid item xs={12}>
-          <TableWrapper
-            disabled={!displayEvents}
-            itemActions={tableActions}
-            columns={[
-              { label: "SQS", elementKey: "arn" },
-              {
-                label: "Events",
-                elementKey: "events",
-                renderFunction: eventsDisplay,
-              },
-              { label: "Prefix", elementKey: "prefix" },
-              { label: "Suffix", elementKey: "suffix" },
-            ]}
-            isLoading={loadingEvents}
-            records={records}
-            entityName="Events"
-            idField="id"
-            customPaperHeight={classes.twHeight}
-          />
+          <SecureComponent
+            scopes={[IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS]}
+            resource={bucketName}
+            errorProps={{ disabled: true }}
+          >
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "SQS", elementKey: "arn" },
+                {
+                  label: "Events",
+                  elementKey: "events",
+                  renderFunction: eventsDisplay,
+                },
+                { label: "Prefix", elementKey: "prefix" },
+                { label: "Suffix", elementKey: "suffix" },
+              ]}
+              isLoading={loadingEvents}
+              records={records}
+              entityName="Events"
+              idField="id"
+              customPaperHeight={classes.twHeight}
+            />
+          </SecureComponent>
         </Grid>
         {!loadingEvents && (
           <Grid item xs={12}>

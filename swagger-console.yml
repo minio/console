@@ -2363,8 +2363,6 @@ definitions:
     required:
       - name
     properties:
-      manage:
-        type: boolean
       name:
         type: string
         minLength: 3
@@ -2411,10 +2409,6 @@ definitions:
                   - hard
       creation_date:
         type: string
-      allowedActions:
-        type: array
-        items:
-          type: string
 
   bucketEncryptionRequest:
     type: object
@@ -3128,9 +3122,12 @@ definitions:
         type: boolean
       distributedMode:
         type: boolean
-      policy:
+      permissions:
         type: object
-        $ref: "#/definitions/iamPolicy"
+        additionalProperties:
+          type: array
+          items:
+            type: string
 
   widgetResult:
     type: object

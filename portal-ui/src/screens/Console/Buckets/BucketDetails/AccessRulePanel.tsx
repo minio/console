@@ -38,9 +38,11 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketInfo } from "../types";
-import { displayComponent } from "../../../../utils/permissions";
-import { S3_GET_BUCKET_POLICY, S3_PUT_BUCKET_POLICY } from "../../../../types";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import SecureComponent, {
+  hasPermission,
+} from "../../../../common/SecureComponent/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -146,15 +148,17 @@ const AccessRule = ({
 
   const bucketName = match.params["bucketName"];
 
-  const displayAccessRules = displayComponent(bucketInfo?.allowedActions, [
-    S3_GET_BUCKET_POLICY,
+  const displayAccessRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_BUCKET_POLICY,
   ]);
 
-  const displayAddAccessRules = displayComponent(
-    bucketInfo?.allowedActions,
-    [S3_GET_BUCKET_POLICY, S3_PUT_BUCKET_POLICY],
-    true
-  );
+  const deleteAccessRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
+  ]);
+
+  const editAccessRules = hasPermission(bucketName, [
+    IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+  ]);
 
   useEffect(() => {
     if (loadingBucket) {
@@ -165,6 +169,7 @@ const AccessRule = ({
   const AccessRuleActions = [
     {
       type: "delete",
+      disableButtonFunction: () => !deleteAccessRules,
       onClick: (accessRule: any) => {
         setDeleteAccessRuleOpen(true);
         setAccessRuleToDelete(accessRule.prefix);
@@ -172,6 +177,7 @@ const AccessRule = ({
     },
     {
       type: "view",
+      disableButtonFunction: () => !editAccessRules,
       onClick: (accessRule: any) => {
         setAccessRuleToEdit(accessRule.prefix);
         setInitialAccess(accessRule.access);
@@ -247,7 +253,14 @@ const AccessRule = ({
       )}
       <Grid item xs={12} className={classes.actionsTray}>
         <PanelTitle>Access Rules</PanelTitle>
-        {displayAddAccessRules && (
+        <SecureComponent
+          scopes={[
+            IAM_SCOPES.S3_GET_BUCKET_POLICY,
+            IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+          ]}
+          resource={bucketName}
+          matchAll
+        >
           <Button
             variant="contained"
             color="primary"
@@ -260,22 +273,27 @@ const AccessRule = ({
           >
             Add Access Rule
           </Button>
-        )}
+        </SecureComponent>
       </Grid>
       <Paper>
-        <TableWrapper
-          disabled={!displayAccessRules}
-          noBackground={true}
-          itemActions={AccessRuleActions}
-          columns={[
-            { label: "Prefix", elementKey: "prefix" },
-            { label: "Access", elementKey: "access" },
-          ]}
-          isLoading={loadingAccessRules}
-          records={accessRules}
-          entityName="Access Rules"
-          idField="prefix"
-        />
+        <SecureComponent
+          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+          resource={bucketName}
+          errorProps={{ disabled: true }}
+        >
+          <TableWrapper
+            noBackground={true}
+            itemActions={AccessRuleActions}
+            columns={[
+              { label: "Prefix", elementKey: "prefix" },
+              { label: "Access", elementKey: "access" },
+            ]}
+            isLoading={loadingAccessRules}
+            records={accessRules}
+            entityName="Access Rules"
+            idField="prefix"
+          />
+        </SecureComponent>
       </Paper>
     </Fragment>
   );

@@ -25,7 +25,6 @@ export interface Bucket {
   size?: number;
   objects?: number;
   rw_access?: RwAccess;
-  allowedActions?: string[];
   manage: boolean;
   details?: Details;
 }
@@ -42,8 +41,6 @@ export interface Details {
 export interface BucketInfo {
   name: string;
   access: string;
-  allowedActions?: string[];
-  manage?: boolean;
 }
 
 export interface BucketList {

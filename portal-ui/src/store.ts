@@ -52,6 +52,11 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export type AppState = ReturnType<typeof globalReducer>;
 
+export const store = createStore(
+  globalReducer,
+  composeEnhancers(applyMiddleware(thunk))
+);
+
 export default function configureStore() {
-  return createStore(globalReducer, composeEnhancers(applyMiddleware(thunk)));
+  return store;
 }

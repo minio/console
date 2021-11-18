@@ -29,6 +29,11 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import { niceBytes, prettyNumber } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import { Link } from "react-router-dom";
+import {
+  IAM_PERMISSIONS,
+  IAM_ROLES,
+} from "../../../../common/SecureComponent/permissions";
+import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -213,7 +218,10 @@ const BucketListItem = ({
             </Grid>
           </Grid>
           <Grid item xs={12} sm={4} textAlign={"right"}>
-            {bucket.manage && (
+            <SecureComponent
+              scopes={IAM_PERMISSIONS[IAM_ROLES.admin]}
+              resource={bucket.name}
+            >
               <Link
                 to={`/buckets/${bucket.name}/admin`}
                 style={{ textDecoration: "none" }}
@@ -226,7 +234,7 @@ const BucketListItem = ({
                   Manage
                 </Button>
               </Link>
-            )}
+            </SecureComponent>
             <Link
               to={`/buckets/${bucket.name}/browse`}
               style={{ textDecoration: "none" }}

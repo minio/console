@@ -533,12 +533,21 @@ const TableWrapper = ({
   const clickAction = (rowItem: any) => {
     if (findView) {
       const valueClick = findView.sendOnlyId ? rowItem[idField] : rowItem;
-      if (findView.to) {
+
+      let disabled = false;
+
+      if (findView.disableButtonFunction) {
+        if (findView.disableButtonFunction(valueClick)) {
+          disabled = true;
+        }
+      }
+
+      if (findView.to && !disabled) {
         history.push(`${findView.to}/${valueClick}`);
         return;
       }
 
-      if (findView.onClick) {
+      if (findView.onClick && !disabled) {
         findView.onClick(valueClick);
       }
     }
