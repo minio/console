@@ -28,8 +28,6 @@ import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AccountIcon, AddIcon, LockIcon } from "../../../icons";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -37,12 +35,13 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
-import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
+import SearchBox from "../Common/SearchBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,6 +83,12 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
+    searchField: {
+      ...searchField.searchField,
+      marginRight: "auto",
+      maxWidth: 380,
+    },
+    ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -234,24 +239,12 @@ const Account = ({
       />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Service Accounts"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-            variant="standard"
+          <SearchBox
+            placeholder={"Search Groups"}
+            onChange={setFilter}
+            classes={classes}
           />
+
           <Button
             variant="contained"
             color="primary"
@@ -267,7 +260,7 @@ const Account = ({
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.tableBlock}>
           <TableWrapper
             isLoading={loading}
             records={filteredRecords}

@@ -21,7 +21,11 @@ import { Button, LinearProgress, Tab, Tabs } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalBasic,
+  spacingUtils,
+} from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -32,6 +36,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import PolicySelectors from "../Policies/PolicySelectors";
+import { TabPanel } from "../../shared/tabs";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,7 +48,13 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right",
+      marginTop: ".9rem",
     },
+    tabsHeader: {
+      marginBottom: "1rem",
+    },
+    ...formFieldStyles,
+    ...spacingUtils,
     ...modalBasic,
   });
 
@@ -202,17 +213,19 @@ const AddUser = ({
           }}
         >
           <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              <InputBoxWrapper
-                id="accesskey-input"
-                name="accesskey-input"
-                label="Access Key"
-                value={accessKey}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setAccessKey(e.target.value);
-                }}
-                disabled={selectedUser !== null}
-              />
+            <Grid item xs={12}>
+              <div className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="accesskey-input"
+                  name="accesskey-input"
+                  label="Access Key"
+                  value={accessKey}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setAccessKey(e.target.value);
+                  }}
+                  disabled={selectedUser !== null}
+                />
+              </div>
 
               {selectedUser !== null ? (
                 <PredefinedList
@@ -220,20 +233,23 @@ const AddUser = ({
                   content={currentGroups.join(", ")}
                 />
               ) : (
-                <InputBoxWrapper
-                  id="standard-multiline-static"
-                  name="standard-multiline-static"
-                  label="Secret Key"
-                  type="password"
-                  value={secretKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setSecretKey(e.target.value);
-                  }}
-                  autoComplete="current-password"
-                />
+                <div className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="standard-multiline-static"
+                    name="standard-multiline-static"
+                    label="Secret Key"
+                    type="password"
+                    value={secretKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSecretKey(e.target.value);
+                    }}
+                    autoComplete="current-password"
+                  />
+                </div>
               )}
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.tabsHeader}>
                 <Tabs
+                  value={currenTab}
                   onChange={(e, nv) => {
                     setCurrenTab(nv);
                   }}
@@ -242,15 +258,15 @@ const AddUser = ({
                   <Tab label="Groups" />
                 </Tabs>
               </Grid>
-              {currenTab === 0 && (
+              <TabPanel value={currenTab} index={0}>
                 <Grid item xs={12}>
                   <PolicySelectors
                     selectedPolicy={selectedPolicies}
                     setSelectedPolicy={setSelectedPolicies}
                   />
                 </Grid>
-              )}
-              {currenTab === 1 && (
+              </TabPanel>
+              <TabPanel value={currenTab} index={1}>
                 <Grid item xs={12}>
                   <GroupsSelectors
                     selectedGroups={selectedGroups}
@@ -259,19 +275,25 @@ const AddUser = ({
                     }}
                   />
                 </Grid>
+              </TabPanel>
+
+              {addLoading && (
+                <Grid item xs={12}>
+                  <LinearProgress />
+                </Grid>
               )}
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
-              <button
+              <Button
                 type="button"
+                variant="outlined"
                 color="primary"
-                className={classes.clearButton}
-                onClick={() => {
-                  resetForm();
-                }}
+                className={classes.spacerRight}
+                onClick={resetForm}
               >
                 Clear
-              </button>
+              </Button>
+
               <Button
                 type="submit"
                 variant="contained"
@@ -281,11 +303,6 @@ const AddUser = ({
                 Save
               </Button>
             </Grid>
-            {addLoading && (
-              <Grid item xs={12}>
-                <LinearProgress />
-              </Grid>
-            )}
           </Grid>
         </form>
       </React.Fragment>

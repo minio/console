@@ -229,6 +229,7 @@ export const actionsTray = {
     display: "flex" as const,
     justifyContent: "space-between" as const,
     marginBottom: "1rem",
+    alignItems: "center",
     "& button": {
       flexGrow: 0,
       marginLeft: 8,
@@ -269,7 +270,7 @@ export const searchField = {
       fontWeight: 700,
       color: "#000",
       "&::placeholder": {
-        color: "#393939",
+        color: "#a6a5a5",
         opacity: 1,
       },
     },
@@ -279,6 +280,9 @@ export const searchField = {
     "& .MuiSvgIcon-root": {
       width: 16,
       height: 16,
+    },
+    "&:focus-within": {
+      borderColor: "rgba(0, 0, 0, 0.87)",
     },
   },
 };
@@ -291,13 +295,12 @@ export const predefinedList = {
     margin: "15px 0 0",
   },
   predefinedTitle: {
-    color: "#07193E",
+    color: "rgba(0, 0, 0, 0.87)",
     display: "flex" as const,
     overflow: "hidden" as const,
     fontSize: 14,
     maxWidth: 160,
     textAlign: "left" as const,
-    fontWeight: 600,
     marginRight: 10,
     flexGrow: 0,
   },
@@ -1062,5 +1065,78 @@ export const serviceAccountStyles: any = {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
+  },
+};
+
+export const tableStyles: any = {
+  tableBlock: {
+    "& .ReactVirtualized__Table__headerRow.rowLine, .ReactVirtualized__Table__row.rowLine":
+      {
+        borderBottom: "1px solid #EAEAEA",
+      },
+
+    "& .rowLine:hover:not(.ReactVirtualized__Table__headerRow)": {
+      backgroundColor: "#F8F8F8",
+    },
+    "& .ReactVirtualized__Table__row.rowLine": {
+      fontSize: ".8rem",
+    },
+    "& .optionsAlignment ": {
+      textAlign: "right",
+
+      "& .MuiButtonBase-root": {
+        backgroundColor: "#F8F8F8",
+      },
+
+      "&:hover": {
+        backgroundColor: "#E2E2E2",
+      },
+    },
+  },
+};
+
+export const spacingUtils: any = {
+  spacerRight: {
+    marginRight: ".9rem",
+  },
+  spacerLeft: {
+    marginLeft: ".9rem",
+  },
+};
+
+export const formFieldStyles = {
+  formFieldRow: {
+    marginBottom: ".8rem",
+    "& .MuiInputLabel-root": {
+      fontWeight: "normal",
+    },
+  },
+};
+
+export const deleteDialogStyles = {
+  root: {
+    "& .MuiPaper-root": {
+      padding: "1rem 2rem 2rem 1rem",
+    },
+  },
+  title: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  titleText: {
+    fontSize: "1rem",
+    fontWeight: 600,
+  },
+  closeContainer: {
+    "& .MuiIconButton-root": {
+      top: -20,
+      left: 30,
+      position: "relative",
+    },
+    "& .MuiSvgIcon-root": {
+      height: 16,
+      width: 16,
+    },
   },
 };

@@ -31,9 +31,13 @@ import {
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
+import { deleteDialogStyles } from "../Common/FormComponents/common/styleLibrary";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...deleteDialogStyles,
     wrapText: {
       maxWidth: "200px",
       whiteSpace: "normal",
@@ -89,13 +93,30 @@ const DeleteServiceAccount = ({
   return (
     <Dialog
       open={deleteOpen}
+      classes={classes}
+      className={classes.root}
       onClose={() => {
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete ServiceAccount</DialogTitle>
+      <DialogTitle id="alert-dialog-title" className={classes.title}>
+        <div className={classes.titleText}>Delete ServiceAccount</div>
+        <div className={classes.closeContainer}>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={() => {
+              closeDeleteModalAndRefresh(true);
+            }}
+            disableRipple
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
@@ -105,6 +126,8 @@ const DeleteServiceAccount = ({
       </DialogContent>
       <DialogActions>
         <Button
+          type="button"
+          variant="outlined"
           onClick={() => {
             closeDeleteModalAndRefresh(false);
           }}
@@ -113,7 +136,10 @@ const DeleteServiceAccount = ({
         >
           Cancel
         </Button>
+
         <Button
+          type="button"
+          variant="outlined"
           onClick={removeRecord}
           color="secondary"
           autoFocus

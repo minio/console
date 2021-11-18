@@ -28,12 +28,24 @@ import {
 import api from "../../../common/api";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { deleteDialogStyles } from "../Common/FormComponents/common/styleLibrary";
+
+const styles = (theme: Theme) =>
+  createStyles({
+    ...deleteDialogStyles,
+  });
 
 interface IDeleteGroup {
   selectedGroup: string;
   deleteOpen: boolean;
   closeDeleteModalAndRefresh: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  classes: any;
 }
 
 const DeleteGroup = ({
@@ -41,6 +53,7 @@ const DeleteGroup = ({
   deleteOpen,
   closeDeleteModalAndRefresh,
   setErrorSnackMessage,
+  classes,
 }: IDeleteGroup) => {
   const [isDeleting, setDeleteLoading] = useState<boolean>(false);
 
@@ -76,36 +89,58 @@ const DeleteGroup = ({
   };
 
   return (
-    <React.Fragment>
-      <Dialog
-        open={deleteOpen}
-        onClose={closeNoAction}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Delete User</DialogTitle>
-        <DialogContent>
-          {isDeleting && <LinearProgress />}
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete group <b>{selectedGroup}</b>?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeNoAction} color="primary" disabled={isDeleting}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              setDeleteLoading(true);
-            }}
-            color="secondary"
-            autoFocus
+    <Dialog
+      open={deleteOpen}
+      onClose={closeNoAction}
+      classes={classes}
+      className={classes.root}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title" className={classes.title}>
+        <div className={classes.titleText}>Delete Group</div>
+        <div className={classes.closeContainer}>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={closeNoAction}
+            disableRipple
+            size="small"
           >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </React.Fragment>
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
+      <DialogContent>
+        {isDeleting && <LinearProgress />}
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to delete group <br />
+          <b>{selectedGroup}</b>?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          type="button"
+          variant="outlined"
+          onClick={closeNoAction}
+          color="primary"
+          disabled={isDeleting}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          variant="outlined"
+          onClick={() => {
+            setDeleteLoading(true);
+          }}
+          color="secondary"
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
@@ -115,4 +150,4 @@ const mapDispatchToProps = {
 
 const connector = connect(null, mapDispatchToProps);
 
-export default connector(DeleteGroup);
+export default withStyles(styles)(connector(DeleteGroup));

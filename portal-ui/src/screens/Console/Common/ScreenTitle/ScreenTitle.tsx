@@ -63,6 +63,10 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
+    rightItems: {
+      display: "flex",
+      alignItems: "center",
+    },
   });
 
 const ScreenTitle = ({
@@ -83,7 +87,7 @@ const ScreenTitle = ({
           </div>
         </div>
 
-        <div>{actions}</div>
+        <div className={classes.rightItems}>{actions}</div>
       </Grid>
     </Grid>
   );

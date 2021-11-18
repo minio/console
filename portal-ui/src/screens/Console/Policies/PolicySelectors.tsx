@@ -21,19 +21,18 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
 import { policySort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
   selectorsCommon,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { PolicyList } from "./types";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SearchIcon from "../../../icons/SearchIcon";
+import SearchBox from "../Common/SearchBox";
 
 interface ISelectPolicyProps {
   classes: any;
@@ -44,65 +43,26 @@ interface ISelectPolicyProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-      paddingTop: 15,
-      boxShadow: "none",
-    },
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
     noFound: {
       textAlign: "center",
       padding: "10px 0",
     },
-    tableContainer: {
-      maxHeight: 200,
+    filterBox: {
+      flex: 1,
     },
-    stickyHeader: {
-      backgroundColor: "#fff",
+    searchField: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: ".9rem",
     },
-    actionsTitle: {
+    fieldLabel: {
       fontWeight: 600,
-      color: "#000",
-      fontSize: 16,
-      alignSelf: "center",
+      width: 160,
+      marginRight: 10,
     },
     tableBlock: {
-      marginTop: 15,
-    },
-    filterField: {
-      width: 375,
-      fontWeight: 600,
-      "& .input": {
-        "&::placeholder": {
-          fontWeight: 600,
-          color: "#000",
-        },
-      },
+      ...tableStyles.tableBlock,
     },
     ...actionsTray,
     ...selectorsCommon,
@@ -176,25 +136,17 @@ const PolicySelectors = ({
         {loading && <LinearProgress />}
         {records.length > 0 ? (
           <React.Fragment>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <span className={classes.actionsTitle}>Assign Policies</span>
-              <TextField
-                placeholder="Filter by Policy"
-                className={classes.filterField}
-                id="search-resource"
-                label=""
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(e) => {
-                  setFilter(e.target.value);
-                }}
-                variant="standard"
-              />
+            <Grid item xs={12} className={classes.searchField}>
+              <span className={classes.fieldLabel}>Assign Policies</span>
+
+              <div className={classes.filterBox}>
+                <SearchBox
+                  placeholder="Filter by Policy"
+                  onChange={(value) => {
+                    setFilter(value);
+                  }}
+                />
+              </div>
             </Grid>
             <Grid item xs={12} className={classes.tableBlock}>
               <TableWrapper

@@ -22,17 +22,13 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid } from "@mui/material";
-import {
-  AddIcon,
-  DeleteIcon,
-  IAMPoliciesIcon,
-  UsersIcon,
-} from "../../../icons";
+import { AddIcon, IAMPoliciesIcon, TrashIcon, UsersIcon } from "../../../icons";
 import {
   setErrorSnackMessage,
   setModalErrorSnackMessage,
 } from "../../../actions";
 import {
+  tableStyles,
   actionsTray,
   containerForHeader,
   searchField,
@@ -138,6 +134,7 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
+    ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -319,15 +316,16 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   }}
                   switchOnly
                 />
+
                 <BoxIconButton
-                  tooltip={"Delete User"}
                   color="primary"
                   aria-label="Delete User"
                   onClick={deleteUser}
                   size="large"
                 >
-                  <DeleteIcon />
+                  <TrashIcon />
                 </BoxIconButton>
+
                 <BoxIconButton
                   tooltip={"Change Password"}
                   color="primary"
@@ -364,14 +362,16 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                       Add to Groups
                     </Button>
                   </div>
-                  <TableWrapper
-                    // itemActions={userTableActions}
-                    columns={[{ label: "Name", elementKey: "group" }]}
-                    isLoading={loading}
-                    records={currentGroups}
-                    entityName="Groups"
-                    idField="group"
-                  />
+                  <div className={classes.tableBlock}>
+                    <TableWrapper
+                      // itemActions={userTableActions}
+                      columns={[{ label: "Name", elementKey: "group" }]}
+                      isLoading={loading}
+                      records={currentGroups}
+                      entityName="Groups"
+                      idField="group"
+                    />
+                  </div>
                 </React.Fragment>
               ),
             }}
@@ -407,21 +407,23 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                       Assign Policies
                     </Button>
                   </div>
-                  <TableWrapper
-                    itemActions={[
-                      {
-                        type: "view",
-                        onClick: (policy: IPolicyItem) => {
-                          history.push(`/policies/${policy.policy}`);
+                  <div className={classes.tableBlock}>
+                    <TableWrapper
+                      itemActions={[
+                        {
+                          type: "view",
+                          onClick: (policy: IPolicyItem) => {
+                            history.push(`/policies/${policy.policy}`);
+                          },
                         },
-                      },
-                    ]}
-                    columns={[{ label: "Name", elementKey: "policy" }]}
-                    isLoading={loading}
-                    records={currentPolicies}
-                    entityName="Policies"
-                    idField="policy"
-                  />
+                      ]}
+                      columns={[{ label: "Name", elementKey: "policy" }]}
+                      isLoading={loading}
+                      records={currentPolicies}
+                      entityName="Policies"
+                      idField="policy"
+                    />
+                  </div>
                 </React.Fragment>
               ),
             }}

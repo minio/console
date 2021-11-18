@@ -22,6 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -51,6 +52,7 @@ const styles = (theme: Theme) =>
     actionsTray: {
       ...actionsTray.actionsTray,
     },
+    ...tableStyles,
   });
 
 const UserServiceAccountsPanel = ({
@@ -178,14 +180,16 @@ const UserServiceAccountsPanel = ({
           Create service account
         </Button>
       </div>
-      <TableWrapper
-        isLoading={loading}
-        records={records}
-        entityName={"Service Accounts"}
-        idField={""}
-        columns={[{ label: "Service Account", elementKey: "" }]}
-        itemActions={tableActions}
-      />
+      <div className={classes.tableBlock}>
+        <TableWrapper
+          isLoading={loading}
+          records={records}
+          entityName={"Service Accounts"}
+          idField={""}
+          columns={[{ label: "Service Account", elementKey: "" }]}
+          itemActions={tableActions}
+        />
+      </div>
     </React.Fragment>
   );
 };

@@ -29,15 +29,28 @@ import api from "../../../common/api";
 import { User, UsersList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import { deleteDialogStyles } from "../Common/FormComponents/common/styleLibrary";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import withStyles from "@mui/styles/withStyles";
+
+const styles = (theme: Theme) =>
+  createStyles({
+    ...deleteDialogStyles,
+  });
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedUser: User | null;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  classes: any;
 }
 
 const DeleteUser = ({
+  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedUser,
@@ -81,18 +94,39 @@ const DeleteUser = ({
       onClose={() => {
         closeDeleteModalAndRefresh(false);
       }}
+      classes={classes}
+      className={classes.root}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete User</DialogTitle>
+      <DialogTitle id="alert-dialog-title" className={classes.title}>
+        <div className={classes.titleText}>Delete User</div>
+        <div className={classes.closeContainer}>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={() => {
+              closeDeleteModalAndRefresh(true);
+            }}
+            disableRipple
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
+
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete user <b>{selectedUser.accessKey}</b>?
+          Are you sure you want to delete user <br />
+          <b>{selectedUser.accessKey}</b>?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
+          type="button"
+          variant="outlined"
           onClick={() => {
             closeDeleteModalAndRefresh(false);
           }}
@@ -101,10 +135,13 @@ const DeleteUser = ({
         >
           Cancel
         </Button>
+
         <Button
           onClick={() => {
             removeRecord();
           }}
+          type="button"
+          variant="outlined"
           color="secondary"
           autoFocus
         >
@@ -121,4 +158,4 @@ const mapDispatchToProps = {
 
 const connector = connect(null, mapDispatchToProps);
 
-export default connector(DeleteUser);
+export default withStyles(styles)(connector(DeleteUser));

@@ -7,6 +7,8 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  spacingUtils,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import {
   setErrorSnackMessage,
@@ -14,9 +16,9 @@ import {
 } from "../../../actions";
 import { connect } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid, IconButton, Tooltip } from "@mui/material";
+import { Button, Grid, Tooltip } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import { DeleteIcon, IAMPoliciesIcon, UsersIcon } from "../../../icons";
+import { IAMPoliciesIcon, TrashIcon, UsersIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import history from "../../../history";
 import api from "../../../common/api";
@@ -29,6 +31,8 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import PageLayout from "../Common/Layout/PageLayout";
 import BackLink from "../../../common/BackLink";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
+import SearchBox from "../Common/SearchBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,15 +46,40 @@ const styles = (theme: Theme) =>
     },
     statusLabel: {
       fontSize: ".8rem",
-      marginRight: ".5rem",
+      marginRight: ".7rem",
     },
     statusValue: {
       fontWeight: "bold",
       fontSize: ".9rem",
-      marginRight: ".5rem",
+      marginRight: ".7rem",
     },
-    ...actionsTray,
-    ...searchField,
+    searchField: {
+      ...searchField.searchField,
+      maxWidth: 280,
+    },
+    ...tableStyles,
+    ...spacingUtils,
+    actionsTray: {
+      ...actionsTray.actionsTray,
+
+      alignItems: "center",
+      "& h1": {
+        flex: 1,
+      },
+      "& button": {
+        marginLeft: ".8rem",
+      },
+      "@media (max-width: 900px)": {
+        justifyContent: "flex-end",
+        "& h1": {
+          display: "none",
+        },
+        "& button": {
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+        },
+      },
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -102,10 +131,17 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
   const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [memberFilter, setMemberFilter] = useState<string>("");
+
+  //const [policyFilter, setPolicyFilter] = useState<string>("");
 
   const { groupName = "" } = useParams<Record<string, string>>();
 
   const { members = [], policy = "", status: groupEnabled } = groupDetails;
+
+  const filteredMembers = members.filter((elementItem) =>
+    elementItem.includes(memberFilter)
+  );
 
   useEffect(() => {
     if (groupName) {
@@ -149,6 +185,13 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
     <React.Fragment>
       <div className={classes.actionsTray}>
         <PanelTitle>Members</PanelTitle>
+        <SearchBox
+          placeholder={"Search members"}
+          onChange={(searchText) => {
+            setMemberFilter(searchText);
+          }}
+          classes={classes}
+        />
         <Button
           variant="contained"
           color="primary"
@@ -162,14 +205,16 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         </Button>
       </div>
 
-      <TableWrapper
-        columns={[{ label: "Access Key", elementKey: "" }]}
-        selectedItems={[]}
-        isLoading={false}
-        records={members}
-        entityName="Users"
-        idField=""
-      />
+      <div className={classes.tableBlock}>
+        <TableWrapper
+          columns={[{ label: "Access Key", elementKey: "" }]}
+          selectedItems={[]}
+          isLoading={false}
+          records={filteredMembers}
+          entityName="Users"
+          idField=""
+        />
+      </div>
     </React.Fragment>
   );
 
@@ -189,22 +234,23 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           Set Policies
         </Button>
       </div>
-
-      <TableWrapper
-        itemActions={[
-          {
-            type: "view",
-            onClick: (policy) => {
-              history.push(`/policies/${policy}`);
+      <div className={classes.tableBlock}>
+        <TableWrapper
+          itemActions={[
+            {
+              type: "view",
+              onClick: (policy) => {
+                history.push(`/policies/${policy}`);
+              },
             },
-          },
-        ]}
-        columns={[{ label: "Policy", elementKey: "" }]}
-        isLoading={false}
-        records={groupPolicies}
-        entityName="Policies"
-        idField=""
-      />
+          ]}
+          columns={[{ label: "Policy", elementKey: "" }]}
+          isLoading={false}
+          records={groupPolicies}
+          entityName="Policies"
+          idField=""
+        />
+      </div>
     </React.Fragment>
   );
   return (
@@ -239,18 +285,19 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   }}
                   switchOnly
                 />
-                <Tooltip title="Delete User">
-                  <IconButton
-                    color="primary"
-                    aria-label="Delete User"
-                    component="span"
-                    onClick={() => {
-                      setDeleteOpen(true);
-                    }}
-                    size="large"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                <Tooltip title="Delete Group">
+                  <div className={classes.spacerLeft}>
+                    <BoxIconButton
+                      color="primary"
+                      aria-label="Delete Group"
+                      onClick={() => {
+                        setDeleteOpen(true);
+                      }}
+                      size="large"
+                    >
+                      <TrashIcon />
+                    </BoxIconButton>
+                  </div>
                 </Tooltip>
               </Fragment>
             }

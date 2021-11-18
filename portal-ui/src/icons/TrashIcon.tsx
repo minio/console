@@ -15,29 +15,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
 
-const TrashIcon = (props: SvgIconProps) => {
+const TrashIcon = () => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-        <defs>
-          <clipPath id="prefix__a">
-            <path d="M0 0h256v256H0z" />
-          </clipPath>
-        </defs>
-        <g clipPath="url(#prefix__a)">
-          <path
-            data-name="Trazado 359"
-            d="M222.078 14.266h-50.793V6.25a6.248 6.248 0 00-6.25-6.25H91.93a6.248 6.248 0 00-6.25 6.25v8.016H34.887a6.28 6.28 0 00-6.277 6.277v15.982a6.278 6.278 0 006.277 6.275h187.191a6.278 6.278 0 006.277-6.275V20.543a6.28 6.28 0 00-6.277-6.277z"
-          />
-          <path
-            data-name="Trazado 360"
-            d="M42.876 227.97a28.933 28.933 0 0028.844 28.848h113.516a28.934 28.934 0 0028.848-28.848V57.07H42.876z"
-          />
-        </g>
-      </svg>
-    </SvgIcon>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="11.889"
+      height="14"
+      viewBox="0 0 11.889 14"
+    >
+      <g id="trash-icn" transform="translate(0.5 -0.5)">
+        <path
+          id="Trazado_359"
+          data-name="Trazado 359"
+          d="M-2211.453-1226.222h-2.769v-.437a.341.341,0,0,0-.341-.341h-3.985a.34.34,0,0,0-.341.341v.437h-2.769a.343.343,0,0,0-.342.342v.871a.342.342,0,0,0,.342.342h10.2a.342.342,0,0,0,.342-.342v-.871A.342.342,0,0,0-2211.453-1226.222Z"
+          transform="translate(2222 1228)"
+          fill="none"
+          stroke="#5e5e5e"
+          stroke-width="1"
+        />
+        <path
+          id="Trazado_360"
+          data-name="Trazado 360"
+          d="M-2221-1213.684a1.577,1.577,0,0,0,1.572,1.573h6.188a1.577,1.577,0,0,0,1.573-1.573V-1223H-2221Z"
+          transform="translate(2221.778 1226.111)"
+          fill="none"
+          stroke="#5e5e5e"
+          stroke-width="1"
+        />
+      </g>
+    </svg>
   );
 };
 

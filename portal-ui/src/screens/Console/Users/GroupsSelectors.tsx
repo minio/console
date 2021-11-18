@@ -22,20 +22,19 @@ import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
 
 import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 import {
   actionsTray,
   selectorsCommon,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SearchIcon from "../../../icons/SearchIcon";
+import SearchBox from "../Common/SearchBox";
 
 interface IGroupsProps {
   classes: any;
@@ -46,46 +45,9 @@ interface IGroupsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-      paddingTop: 15,
-      boxShadow: "none",
-    },
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
     noFound: {
       textAlign: "center",
       padding: "10px 0",
-    },
-    tableContainer: {
-      maxHeight: 200,
-    },
-    stickyHeader: {
-      backgroundColor: "#fff",
     },
     actionsTitle: {
       fontWeight: 600,
@@ -93,19 +55,11 @@ const styles = (theme: Theme) =>
       fontSize: 16,
       alignSelf: "center",
     },
-    tableBlock: {
-      marginTop: 15,
+    searchBox: {
+      flex: 1,
+      marginLeft: "2rem",
     },
-    filterField: {
-      width: 375,
-      fontWeight: 600,
-      "& .input": {
-        "&::placeholder": {
-          fontWeight: 600,
-          color: "#000",
-        },
-      },
-    },
+    ...tableStyles,
     ...actionsTray,
     ...selectorsCommon,
   });
@@ -182,24 +136,15 @@ const GroupsSelectors = ({
         {records !== null && records.length > 0 ? (
           <React.Fragment>
             <Grid item xs={12} className={classes.actionsTray}>
-              <span className={classes.actionsTitle}>Assign Groups</span>
-              <TextField
-                placeholder="Filter by Group"
-                className={classes.filterField}
-                id="search-resource"
-                label=""
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(e) => {
-                  setFilter(e.target.value);
-                }}
-                variant="standard"
-              />
+              <label className={classes.actionsTitle}>Assign Groups</label>
+
+              <div className={classes.searchBox}>
+                <SearchBox
+                  placeholder="Filter Groups"
+                  adornmentPosition="end"
+                  onChange={setFilter}
+                />
+              </div>
             </Grid>
             <Grid item xs={12} className={classes.tableBlock}>
               <TableWrapper
