@@ -58,6 +58,7 @@ const styles = (theme: Theme) =>
     ...modalBasic,
     buttonContainer: {
       textAlign: "right",
+      marginTop: ".9rem",
     },
   });
 

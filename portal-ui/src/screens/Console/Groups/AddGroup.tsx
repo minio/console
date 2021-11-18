@@ -21,7 +21,11 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalBasic,
+  spacingUtils,
+} from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
@@ -56,6 +60,8 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    ...formFieldStyles,
+    ...spacingUtils,
     ...modalBasic,
   });
 
@@ -193,19 +199,17 @@ const AddGroup = ({
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
             {selectedGroup === null ? (
-              <React.Fragment>
-                <Grid item xs={12}>
-                  <InputBoxWrapper
-                    id="group-name"
-                    name="group-name"
-                    label="Group Name"
-                    value={groupName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setGroupName(e.target.value);
-                    }}
-                  />
-                </Grid>
-              </React.Fragment>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="group-name"
+                  name="group-name"
+                  label="Group Name"
+                  value={groupName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setGroupName(e.target.value);
+                  }}
+                />
+              </Grid>
             ) : (
               <React.Fragment>
                 <PredefinedList label={"Group Name"} content={selectedGroup} />
@@ -213,6 +217,7 @@ const AddGroup = ({
             )}
             <Grid item xs={12}>
               <UsersSelectors
+                classes={classes}
                 selectedUsers={selectedUsers}
                 setSelectedUsers={setSelectedUsers}
                 editMode={selectedGroup !== null}
@@ -220,14 +225,16 @@ const AddGroup = ({
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
-            <button
+            <Button
               type="button"
+              variant="outlined"
               color="primary"
-              className={classes.clearButton}
+              className={classes.spacerRight}
               onClick={resetForm}
             >
               Clear
-            </button>
+            </Button>
+
             <Button
               type="submit"
               variant="contained"

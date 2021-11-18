@@ -22,7 +22,11 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  spacingUtils,
+  tableStyles,
+} from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -43,8 +47,17 @@ interface ISetPolicyProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
+    ...spacingUtils,
+    tableBlock: {
+      ...tableStyles.tableBlock,
+      marginTop: 15,
+    },
     buttonContainer: {
       textAlign: "right",
+      marginTop: ".9rem",
+    },
+    predefinedTitle: {
+      fontWeight: "normal",
     },
   });
 
@@ -137,32 +150,34 @@ const SetPolicy = ({
     >
       <Grid item xs={12}>
         <PredefinedList
+          classes={classes}
           label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}
           content={selectedGroup !== null ? selectedGroup : userName}
         />
       </Grid>
       <Grid item xs={12}>
         <PredefinedList
+          classes={classes}
           label={"Current Policy"}
           content={actualPolicy.join(", ")}
         />
       </Grid>
-      <PolicySelectors
-        selectedPolicy={selectedPolicy}
-        setSelectedPolicy={setSelectedPolicy}
-      />
-      <Grid item xs={12}>
-        <br />
-      </Grid>
+      <div className={classes.tableBlock}>
+        <PolicySelectors
+          selectedPolicy={selectedPolicy}
+          setSelectedPolicy={setSelectedPolicy}
+        />
+      </div>
       <Grid item xs={12} className={classes.buttonContainer}>
-        <button
+        <Button
           type="button"
+          variant="outlined"
           color="primary"
-          className={classes.clearButton}
+          className={classes.spacerRight}
           onClick={resetSelection}
         >
           Reset
-        </button>
+        </Button>
         <Button
           type="button"
           variant="contained"

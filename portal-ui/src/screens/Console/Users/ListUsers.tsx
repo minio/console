@@ -20,13 +20,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
-import {
-  Button,
-  Grid,
-  InputAdornment,
-  LinearProgress,
-  TextField,
-} from "@mui/material";
+import { Button, Grid, LinearProgress } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
@@ -35,6 +29,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -44,11 +39,11 @@ import AddToGroup from "./BulkAddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import SearchIcon from "../../../icons/SearchIcon";
 import { decodeFileName } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
+import SearchBox from "../Common/SearchBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,6 +79,12 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
+    searchField: {
+      ...searchField.searchField,
+      marginRight: "auto",
+      maxWidth: 380,
+    },
+    ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -229,23 +230,10 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
       <PageHeader label={"Users"} />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Users"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-            variant="standard"
+          <SearchBox
+            placeholder={"Search Groups"}
+            onChange={setFilter}
+            classes={classes}
           />
           <Button
             variant="outlined"
@@ -281,7 +269,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
           <Fragment>
             {records.length > 0 && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.tableBlock}>
                   <TableWrapper
                     itemActions={tableActions}
                     columns={[{ label: "Access Key", elementKey: "accessKey" }]}

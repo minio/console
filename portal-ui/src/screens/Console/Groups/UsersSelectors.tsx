@@ -23,19 +23,18 @@ import { LinearProgress } from "@mui/material";
 import get from "lodash/get";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
   selectorsCommon,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SearchIcon from "../../../icons/SearchIcon";
+import SearchBox from "../Common/SearchBox";
 
 interface IGroupsProps {
   classes: any;
@@ -54,60 +53,30 @@ const styles = (theme: Theme) =>
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
-      paddingTop: 15,
+      // paddingTop: 15,
       boxShadow: "none",
+      border: 0,
     },
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
+
+    tableBlock: {
+      ...tableStyles.tableBlock,
     },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
+    searchBox: {
+      flex: 1,
     },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
+    ...actionsTray,
+    actionsTitle: {
+      fontSize: 14,
+      alignSelf: "center",
+      minWidth: 160,
+      marginRight: 10,
     },
     noFound: {
       textAlign: "center",
-      padding: "10px 0",
+      padding: theme.spacing(3),
+      border: "1px solid #EAEAEA",
+      fontSize: ".9rem",
     },
-    tableContainer: {
-      maxHeight: 200,
-    },
-    stickyHeader: {
-      backgroundColor: "#fff",
-    },
-    actionsTitle: {
-      fontWeight: 600,
-      color: "#000",
-      fontSize: 16,
-      alignSelf: "center",
-    },
-    tableBlock: {
-      marginTop: 15,
-    },
-    filterField: {
-      width: 375,
-      fontWeight: 600,
-      "& .input": {
-        "&::placeholder": {
-          fontWeight: 600,
-          color: "#000",
-        },
-      },
-    },
-    ...actionsTray,
     ...selectorsCommon,
   });
 
@@ -187,26 +156,16 @@ const UsersSelectors = ({
           {records !== null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
-                <span className={classes.actionsTitle}>
+                <label className={classes.actionsTitle}>
                   {editMode ? "Edit Members" : "Assign Users"}
-                </span>
-                <TextField
-                  placeholder="Filter Users"
-                  className={classes.filterField}
-                  id="search-resource"
-                  label=""
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={(e) => {
-                    setFilter(e.target.value);
-                  }}
-                  variant="standard"
-                />
+                </label>
+                <div className={classes.searchBox}>
+                  <SearchBox
+                    placeholder="Filter Users"
+                    adornmentPosition="end"
+                    onChange={setFilter}
+                  />
+                </div>
               </Grid>
               <Grid item xs={12} className={classes.tableBlock}>
                 <TableWrapper
@@ -222,7 +181,7 @@ const UsersSelectors = ({
               </Grid>
             </React.Fragment>
           ) : (
-            <div className={classes.noFound}>No Users Available</div>
+            <div className={classes.noFound}>No Users to display</div>
           )}
         </Paper>
       </Grid>

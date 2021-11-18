@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
     root: {
       padding: 0,
       margin: 0,
-      fontSize: "1.2rem",
+      fontSize: ".9rem",
     },
   });
 

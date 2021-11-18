@@ -21,7 +21,10 @@ import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  spacingUtils,
+} from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
@@ -39,6 +42,7 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    ...spacingUtils,
     ...modalBasic,
   });
 
@@ -163,26 +167,25 @@ const ChangeUserGroups = ({
         >
           <Grid container>
             <Grid item xs={12} className={classes.formScrollable}>
-              <Grid item xs={12}>
-                <GroupsSelectors
-                  selectedGroups={selectedGroups}
-                  setSelectedGroups={(elements: string[]) => {
-                    setSelectedGroups(elements);
-                  }}
-                />
-              </Grid>
+              <GroupsSelectors
+                classes={classes}
+                selectedGroups={selectedGroups}
+                setSelectedGroups={(elements: string[]) => {
+                  setSelectedGroups(elements);
+                }}
+              />
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
-              <button
+              <Button
                 type="button"
+                variant="outlined"
                 color="primary"
-                className={classes.clearButton}
-                onClick={() => {
-                  resetForm();
-                }}
+                className={classes.spacerRight}
+                onClick={resetForm}
               >
                 Clear
-              </button>
+              </Button>
+
               <Button
                 type="submit"
                 variant="contained"

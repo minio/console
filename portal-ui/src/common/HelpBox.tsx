@@ -33,13 +33,15 @@ const styles = (theme: Theme) =>
       marginBottom: 10,
       backgroundColor: "#fbfafa",
     },
-    icon: {
+    leftItems: {
       fontSize: 16,
       fontWeight: "bold",
       marginBottom: 20,
+      display: "flex",
+      alignItems: "center",
       "& .MuiSvgIcon-root": {
-        fontSize: 44,
-        marginRight: 15,
+        fontSize: "2.5rem",
+        marginRight: ".8rem",
       },
     },
     iconSize: {
@@ -61,7 +63,7 @@ const HelpBox = ({ classes, iconComponent, title, help }: IHelpBox) => {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid item xs={12} className={classes.icon}>
+        <Grid item xs={12} className={classes.leftItems}>
           {iconComponent}
           {title}
         </Grid>

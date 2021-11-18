@@ -10,7 +10,10 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalBasic,
+} from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 
 type UserPickerModalProps = {
@@ -30,6 +33,11 @@ const styles = (theme: Theme) =>
       textAlign: "right",
       marginTop: "1rem",
     },
+    predefinedTitle: {
+      color: "rgba(0,0,0,.87)",
+      fontWeight: "normal",
+    },
+    ...formFieldStyles,
     ...modalBasic,
   });
 
@@ -62,9 +70,13 @@ const AddGroupMember = ({
 
   return (
     <ModalWrapper modalOpen={open} onClose={onClose} title={title}>
-      <PredefinedList label={`Selected Group`} content={selectedGroup} />
-
-      <br />
+      <div className={classes.formFieldRow}>
+        <PredefinedList
+          classes={classes}
+          label={`Selected Group`}
+          content={selectedGroup}
+        />
+      </div>
       <UsersSelectors
         selectedUsers={selectedUsers}
         setSelectedUsers={setSelectedUsers}
@@ -72,16 +84,17 @@ const AddGroupMember = ({
       />
 
       <Grid item xs={12} className={classes.buttonContainer}>
-        <button
+        <Button
           type="button"
+          variant="outlined"
           color="primary"
-          className={classes.clearButton}
+          className={classes.spacerRight}
           onClick={() => {
             setSelectedUsers(preSelectedUsers);
           }}
         >
-          Clear
-        </button>
+          Reset
+        </Button>
 
         <Button
           type="button"

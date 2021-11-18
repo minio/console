@@ -20,8 +20,6 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import { Button, LinearProgress } from "@mui/material";
 import { AddIcon, GroupsIcon, UsersIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
@@ -31,6 +29,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
@@ -39,11 +38,11 @@ import DeleteGroup from "./DeleteGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import history from "../../../history";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
+import SearchBox from "../Common/SearchBox";
 
 interface IGroupsProps {
   classes: any;
@@ -53,45 +52,19 @@ interface IGroupsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
     pageContainer: {
       border: "1px solid #EAEAEA",
       width: "100%",
     },
-    paper: {
-      // padding: theme.spacing(2),
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    twHeight: {
-      minHeight: 600,
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
+    tableBlock: {
+      ...tableStyles.tableBlock,
+      marginTop: 15,
     },
     ...actionsTray,
-    ...searchField,
+    searchField: {
+      ...searchField.searchField,
+      maxWidth: 380,
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -195,23 +168,10 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
 
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Groups"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-            variant="standard"
+          <SearchBox
+            placeholder={"Search Groups"}
+            onChange={setFilter}
+            classes={classes}
           />
           <Button
             variant="contained"
@@ -226,15 +186,12 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
           </Button>
         </Grid>
 
-        <Grid item xs={12}>
-          <br />
-        </Grid>
         {loading && <LinearProgress />}
         {!loading && (
           <Fragment>
             {records.length > 0 && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.tableBlock}>
                   <TableWrapper
                     itemActions={tableActions}
                     columns={[{ label: "Name", elementKey: "" }]}
