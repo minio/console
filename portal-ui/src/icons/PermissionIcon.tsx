@@ -14,23 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
-const PermissionIcon = () => {
+import React, { SVGProps } from "react";
+
+const PermissionIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 16">
-        <title>ic_permissions</title>
-        <g id="Layer_2" data-name="Layer 2">
-          <g id="Layer_1-2" data-name="Layer 1">
-            <polygon
-              className="cls-1"
-              points="14 16 7.035 12.13 0 16 0 0 14 0 14 16"
-            />
-          </g>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 14 16"
+    >
+      <title>ic_permissions</title>
+      <g id="Layer_2" data-name="Layer 2">
+        <g id="Layer_1-2" data-name="Layer 1">
+          <polygon
+            className="cls-1"
+            points="14 16 7.035 12.13 0 16 0 0 14 0 14 16"
+          />
         </g>
-      </svg>
-    </SvgIcon>
+      </g>
+    </svg>
   );
 };
 

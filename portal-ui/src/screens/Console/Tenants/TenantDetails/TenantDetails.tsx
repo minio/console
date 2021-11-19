@@ -91,28 +91,28 @@ const styles = (theme: Theme) =>
     },
     redState: {
       color: theme.palette.error.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
       },
     },
     yellowState: {
       color: theme.palette.warning.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
       },
     },
     greenState: {
       color: theme.palette.success.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
       },
     },
     greyState: {
       color: "grey",
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
       },
@@ -122,7 +122,7 @@ const styles = (theme: Theme) =>
       fontSize: 10,
       left: 26,
       height: 10,
-      bottom: 16,
+      top: 4,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -301,7 +301,6 @@ const TenantDetails = ({
           <ScreenTitle
             icon={
               <Fragment>
-                <TenantsIcon width={40} />
                 <div className={classes.healthStatusIcon}>
                   {tenantInfo && tenantInfo.status && (
                     <span
@@ -313,6 +312,7 @@ const TenantDetails = ({
                     </span>
                   )}
                 </div>
+                <TenantsIcon />
               </Fragment>
             }
             title={match.params["tenantName"]}

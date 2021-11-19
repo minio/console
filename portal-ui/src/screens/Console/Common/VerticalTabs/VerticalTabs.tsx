@@ -1,10 +1,9 @@
 import React from "react";
 import { Box, Tab, TabProps } from "@mui/material";
-import { TabPanel, TabContext, TabList } from "@mui/lab";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import withStyles from "@mui/styles/withStyles";
-import { Theme } from "@mui/material/styles";
+import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export type TabItemProps = {
@@ -40,7 +39,7 @@ const styles = (theme: Theme) =>
           alignItems: "center",
           justifyContent: "flex-start",
           borderBottom: "1px solid #EAEAEA",
-          "& .MuiSvgIcon-root": {
+          "& .min-icon": {
             marginRight: ".3rem",
             marginBottom: 0,
             height: ".8rem",

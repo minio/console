@@ -943,6 +943,11 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		},
 	}
 
+	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
 	// Enable/Disable console object browser for MinIO tenant (default is on)
 	enabledConsole := "on"
 	if tenantReq.EnableConsole != nil && !*tenantReq.EnableConsole {
@@ -951,11 +956,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	tenantConfigurationENV["MINIO_BROWSER"] = enabledConsole
 	tenantConfigurationENV["MINIO_ROOT_USER"] = accessKey
 	tenantConfigurationENV["MINIO_ROOT_PASSWORD"] = secretKey
-
-	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
-	if err != nil {
-		return nil, prepareError(err)
-	}
 
 	// delete secrets created if an error occurred during tenant creation,
 	defer func() {

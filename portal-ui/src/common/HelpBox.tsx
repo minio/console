@@ -39,8 +39,8 @@ const styles = (theme: Theme) =>
       marginBottom: 20,
       display: "flex",
       alignItems: "center",
-      "& .MuiSvgIcon-root": {
-        fontSize: "2.5rem",
+      "& .min-icon": {
+        width: "2.5rem",
         marginRight: ".8rem",
       },
     },

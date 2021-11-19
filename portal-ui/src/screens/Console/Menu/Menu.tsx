@@ -109,7 +109,7 @@ const styles = (theme: Theme) =>
         backgroundBlendMode: "multiply",
         background:
           "transparent linear-gradient(90deg, rgba(0, 0, 0, 0.14) 0%, #00000000 100%) 0% 0% no-repeat padding-box",
-        "& .MuiSvgIcon-root": {
+        "& .min-icon": {
           color: "white",
         },
         "& .MuiTypography-root": {
@@ -117,10 +117,10 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
-      "& .MuiSvgIcon-root": {
-        fontSize: 16,
-        color: "rgba(255, 255, 255, 0.8)",
-        maxWidth: 16,
+      "& .min-icon": {
+        width: 16,
+        height: 16,
+        fill: "rgba(255, 255, 255, 0.8)",
       },
       "& .MuiListItemIcon-root": {
         minWidth: 36,
@@ -263,7 +263,11 @@ const styles = (theme: Theme) =>
     },
     logoIconClosed: {
       color: "white",
-      marginLeft: 11,
+      "& .min-icon": {
+        marginLeft: 11,
+        width: 24,
+        fill: "rgba(255, 255, 255, 0.8)",
+      },
     },
   });
 
@@ -577,7 +581,9 @@ const Menu = ({
                         >
                           {page.icon && (
                             <Tooltip title={page.name}>
-                              <ListItemIcon>{page.icon}</ListItemIcon>
+                              <div>
+                                <ListItemIcon>{page.icon}</ListItemIcon>
+                              </div>
                             </Tooltip>
                           )}
                           {page.name && <ListItemText primary={page.name} />}

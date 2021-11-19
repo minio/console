@@ -14,12 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
+import React, { SVGProps } from "react";
 
-const AllBucketsIcon = () => {
+const AllBucketsIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon viewBox="0 0 15.834 17.375">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 15.834 17.375"
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+    >
       <defs>
         <linearGradient
           id="a"
@@ -67,7 +72,7 @@ const AllBucketsIcon = () => {
           />
         </g>
       </g>
-    </SvgIcon>
+    </svg>
   );
 };
 

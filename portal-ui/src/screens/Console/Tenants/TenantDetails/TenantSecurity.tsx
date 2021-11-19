@@ -342,7 +342,7 @@ const TenantSecurity = ({
                   const checked = targetD.checked;
                   setEnableAutoCert(checked);
                 }}
-                label={"Manage Inter-Node Certificates Automatically"}
+                label={"TLS"}
                 description={
                   "The internode certificates will be generated and managed by MinIO Operator"
                 }

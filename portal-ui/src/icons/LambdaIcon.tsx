@@ -15,18 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import { SVGProps } from "react";
 
-const LambdaIcon = (props: SvgIconProps) => {
+const LambdaIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 227.615 256">
-        <path
-          data-name="Trazado 442"
-          d="M35.802 0a15.363 15.363 0 000 30.727c23.352 0 32.017 14.872 40.928 34.353l1.475 3.134c1.229 2.643 3.872 8.542 7.436 16.408L1.757 233.094a15.363 15.363 0 0026.729 15.118l72.823-128.623c19.481 44 44 99.494 44.431 100.415a58.2 58.2 0 0071.046 33.37 15.376 15.376 0 00-9.1-29.375 27.531 27.531 0 01-33.861-16.593c-2.458-5.531-59.856-135.751-67.6-152.282l-1.352-2.95C96.948 35.336 80.786 0 35.802 0z"
-        />
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 227.615 256"
+    >
+      <path
+        data-name="Trazado 442"
+        d="M35.802 0a15.363 15.363 0 000 30.727c23.352 0 32.017 14.872 40.928 34.353l1.475 3.134c1.229 2.643 3.872 8.542 7.436 16.408L1.757 233.094a15.363 15.363 0 0026.729 15.118l72.823-128.623c19.481 44 44 99.494 44.431 100.415a58.2 58.2 0 0071.046 33.37 15.376 15.376 0 00-9.1-29.375 27.531 27.531 0 01-33.861-16.593c-2.458-5.531-59.856-135.751-67.6-152.282l-1.352-2.95C96.948 35.336 80.786 0 35.802 0z"
+      />
+    </svg>
   );
 };
 

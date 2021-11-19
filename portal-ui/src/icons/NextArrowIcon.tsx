@@ -15,18 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import { SVGProps } from "react";
 
-const NextArrowIcon = (props: SvgIconProps) => {
+const NextArrowIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.621 7.62">
-        <path
-          d="M2.821,11.646a.989.989,0,0,0,1.979,0V3.378L5.92,4.5a.99.99,0,0,0,1.4-1.4L4.515.3A.989.989,0,0,0,3.1.3L.3,3.1A.989.989,0,0,0,1.7,4.5L2.821,3.378v8.268Z"
-          transform="translate(12.621) rotate(90)"
-        />
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 -2.4905 12.621 12.621"
+    >
+      <path
+        d="M2.821,11.646a.989.989,0,0,0,1.979,0V3.378L5.92,4.5a.99.99,0,0,0,1.4-1.4L4.515.3A.989.989,0,0,0,3.1.3L.3,3.1A.989.989,0,0,0,1.7,4.5L2.821,3.378v8.268Z"
+        transform="translate(12.621) rotate(90)"
+      />
+    </svg>
   );
 };
 

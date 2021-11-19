@@ -44,8 +44,9 @@ const styles = (theme: Theme) =>
           },
         },
       },
-      "& .MuiButtonBase-root .MuiSvgIcon-root": {
-        fontSize: ".8rem",
+      "& .MuiButtonBase-root .min-icon": {
+        width: ".8rem",
+        height: ".8rem",
       },
     },
     inputLabel: {

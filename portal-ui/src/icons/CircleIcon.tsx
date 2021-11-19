@@ -15,15 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import { SVGProps } from "react";
 
-const circleIcon = (props: SvgIconProps) => {
+const circleIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-        <circle data-name="circle-icn" cx={128} cy={128} r={128} />
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+    >
+      <circle data-name="circle-icn" cx={128} cy={128} r={128} />
+    </svg>
   );
 };
 

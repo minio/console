@@ -277,7 +277,7 @@ export const searchField = {
     "&:hover": {
       borderColor: "#000",
     },
-    "& .MuiSvgIcon-root": {
+    "& .min-icon": {
       width: 16,
       height: 16,
     },
@@ -929,7 +929,7 @@ export const commonDashboardInfocard = {
     "& strong": {
       marginRight: 4,
     },
-    "& .MuiSvgIcon-root": {
+    "& .min-icon": {
       width: 20,
       height: 20,
     },
@@ -958,7 +958,7 @@ export const commonDashboardInfocard = {
     height: 10,
     bottom: 2,
     marginRight: 10,
-    "& .MuiSvgIcon-root": {
+    "& .min-icon": {
       width: 5,
       height: 5,
     },
@@ -968,7 +968,7 @@ export const commonDashboardInfocard = {
     display: "flex" as const,
     alignItems: "center" as const,
     marginTop: -3,
-    "& .MuiSvgIcon-root": {
+    "& .min-icon": {
       marginTop: 5,
       width: 10,
       height: 10,
@@ -996,7 +996,7 @@ export const commonDashboardInfocard = {
     alignItems: "center" as const,
     lineHeight: 1,
     fontWeight: "bold" as const,
-    "& .MuiSvgIcon-root": {
+    "& .min-icon": {
       width: 10,
       height: 10,
       marginTop: -5,
@@ -1091,6 +1091,10 @@ export const tableStyles: any = {
       "&:hover": {
         backgroundColor: "#E2E2E2",
       },
+      "& .min-icon": {
+        width: 13,
+        margin: 3,
+      },
     },
   },
 };
@@ -1134,7 +1138,7 @@ export const deleteDialogStyles = {
       left: 30,
       position: "relative",
     },
-    "& .MuiSvgIcon-root": {
+    "& .min-icon": {
       height: 16,
       width: 16,
     },
