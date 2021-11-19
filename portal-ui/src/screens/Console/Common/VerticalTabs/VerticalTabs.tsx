@@ -24,6 +24,7 @@ const styles = (theme: Theme) =>
     tabsContainer: {
       display: "flex",
       height: "100%",
+      width: "100%",
     },
     tabsHeaderContainer: {
       width: "300px",
@@ -39,11 +40,9 @@ const styles = (theme: Theme) =>
           alignItems: "center",
           justifyContent: "flex-start",
           borderBottom: "1px solid #EAEAEA",
-          "& .min-icon": {
-            marginRight: ".3rem",
+          "& .MuiSvgIcon-root": {
+            marginRight: 8,
             marginBottom: 0,
-            height: ".8rem",
-            width: ".8rem",
           },
           "&.Mui-selected": {
             background: "#E5E5E5",

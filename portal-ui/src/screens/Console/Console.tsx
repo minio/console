@@ -43,7 +43,6 @@ import api from "../../common/api";
 import Account from "./Account/Account";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
-import ConfigurationMain from "./Configurations/ConfigurationMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import License from "./License/License";
 import Trace from "./Trace/Trace";
@@ -68,6 +67,7 @@ import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
 import GroupsDetails from "./Groups/GroupsDetails";
 import Speedtest from "./Speedtest/Speedtest";
 import IconsScreen from "./Common/IconsScreen";
+import ConfigurationOptions from "./Configurations/ConfigurationPanels/ConfigurationOptions";
 
 const drawerWidth = 245;
 
@@ -309,11 +309,11 @@ const Console = ({
       path: "/tools",
     },
     {
-      component: ConfigurationMain,
+      component: ConfigurationOptions,
       path: "/settings",
     },
     {
-      component: ConfigurationMain,
+      component: ConfigurationOptions,
       path: "/settings/:option",
     },
     {
