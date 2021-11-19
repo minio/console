@@ -68,6 +68,7 @@ interface IAddNotificationEndpointProps {
   selectedConfiguration: IConfigurationElement;
   classes: any;
   history: any;
+  className?: string;
 }
 
 const EditConfiguration = ({
@@ -76,6 +77,7 @@ const EditConfiguration = ({
   setErrorSnackMessage,
   classes,
   history,
+  className = "",
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
@@ -147,7 +149,7 @@ const EditConfiguration = ({
 
   return (
     <Fragment>
-      <form noValidate onSubmit={submitForm}>
+      <form noValidate onSubmit={submitForm} className={className}>
         <Grid item xs={12} className={classes.settingsFormContainer}>
           {loadingConfig && (
             <Grid item xs={12}>

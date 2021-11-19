@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -28,8 +28,6 @@ import {
   searchField,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import BackLink from "../../../../common/BackLink";
-import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface IListConfiguration {
   classes: any;
@@ -65,36 +63,27 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ConfigurationsList = ({
-  classes,
-  match,
-  history,
-}: IListConfiguration) => {
-  const configurationName = get(match, "params.option", "");
+const ConfigurationsList = ({ match, history }: IListConfiguration) => {
+  const activeConfRoute = get(match, "url", "");
 
-  const findConfiguration = configurationElements.find(
-    (element) => element.configuration_id === configurationName
+  const configName = activeConfRoute.substring(
+    activeConfRoute.lastIndexOf("/") + 1
   );
 
+  const validActiveConfig = configurationElements.find(
+    (element) => element.configuration_id === configName
+  );
+  const containerClassName = `${configName}`;
   return (
-    <Fragment>
-      <PageHeader
-        label={`${findConfiguration?.configuration_label} Settings`}
-      />
-      <Grid container className={classes.container}>
-        <Grid item xs={12} className={classes.mainTitle}>
-          <BackLink to="/settings" label="Return to Settings" />
-        </Grid>
-        <Grid item xs={12}>
-          {findConfiguration && (
-            <EditConfiguration
-              selectedConfiguration={findConfiguration}
-              history={history}
-            />
-          )}
-        </Grid>
-      </Grid>
-    </Fragment>
+    <Grid item xs={12}>
+      {validActiveConfig && (
+        <EditConfiguration
+          className={`${containerClassName}`}
+          selectedConfiguration={validActiveConfig}
+          history={history}
+        />
+      )}
+    </Grid>
   );
 };
 
