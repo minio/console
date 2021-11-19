@@ -199,11 +199,18 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
 
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-          <SearchBox
-            placeholder={"Search Groups"}
-            onChange={setFilter}
-            classes={classes}
-          />
+          <SecureComponent
+            resource={CONSOLE_UI_RESOURCE}
+            scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
+            errorProps={{ disabled: true }}
+          >
+            <SearchBox
+              placeholder={"Search Groups"}
+              onChange={setFilter}
+              classes={classes}
+            />
+          </SecureComponent>
+
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[
@@ -231,14 +238,20 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             {records.length > 0 && (
               <Fragment>
                 <Grid item xs={12} className={classes.tableBlock}>
-                  <TableWrapper
-                    itemActions={tableActions}
-                    columns={[{ label: "Name", elementKey: "" }]}
-                    isLoading={loading}
-                    records={filteredRecords}
-                    entityName="Groups"
-                    idField=""
-                  />
+                  <SecureComponent
+                    resource={CONSOLE_UI_RESOURCE}
+                    scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
+                    errorProps={{ disabled: true }}
+                  >
+                    <TableWrapper
+                      itemActions={tableActions}
+                      columns={[{ label: "Name", elementKey: "" }]}
+                      isLoading={loading}
+                      records={filteredRecords}
+                      entityName="Groups"
+                      idField=""
+                    />
+                  </SecureComponent>
                 </Grid>
                 <Grid item xs={12}>
                   <HelpBox
@@ -285,7 +298,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                         Groups support more simplified management of user
                         permissions on the MinIO Tenant.
                         <SecureComponent
-                          resource="console-ui"
+                          resource={CONSOLE_UI_RESOURCE}
                           scopes={[
                             IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
                             IAM_SCOPES.ADMIN_LIST_USERS,
