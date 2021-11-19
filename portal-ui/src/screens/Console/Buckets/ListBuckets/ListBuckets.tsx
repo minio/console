@@ -382,17 +382,21 @@ const ListBuckets = ({
                         MinIO uses buckets to organize objects. A bucket is
                         similar to a folder or directory in a filesystem, where
                         each bucket can hold an arbitrary number of objects.
-                        <br />
-                        <br />
-                        To get started,&nbsp;
-                        <AButton
-                          onClick={() => {
-                            history.push("/add-bucket");
-                          }}
+                        <SecureComponent
+                          scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
+                          resource={CONSOLE_UI_RESOURCE}
                         >
-                          Create a Bucket.
-                        </AButton>
-                        refresh
+                          <br />
+                          <br />
+                          To get started,&nbsp;
+                          <AButton
+                            onClick={() => {
+                              history.push("/add-bucket");
+                            }}
+                          >
+                            Create a Bucket.
+                          </AButton>
+                        </SecureComponent>
                       </Fragment>
                     }
                   />
