@@ -89,6 +89,12 @@ func getSpeedtestOptionsFromReq(req *http.Request) (*madmin.SpeedtestOpts, error
 
 	optionsSet.Concurrency = concurrent
 
+	autotune := queryPairs.Get("autotune")
+
+	if autotune == "true" {
+		optionsSet.Autotune = true
+	}
+
 	return &optionsSet, nil
 }
 

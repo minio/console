@@ -39,6 +39,8 @@ import { cleanMetrics } from "./utils";
 interface ISTResults {
   classes: any;
   results: SpeedTestResponse[];
+  start: boolean;
+  autotune: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -175,11 +177,8 @@ const styles = (theme: Theme) =>
     serverIcon: {
       width: 55,
     },
-    serverUnit: {
-      width: 70,
-    },
     serverValue: {
-      width: 70,
+      width: 140,
     },
     serverHost: {
       maxWidth: 540,
@@ -194,9 +193,15 @@ const styles = (theme: Theme) =>
     objectGeneral: {
       marginTop: 15,
     },
+    initialResults: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#000",
+      textAlign: "center",
+    },
   });
 
-const STResults = ({ classes, results }: ISTResults) => {
+const STResults = ({ classes, results, start, autotune }: ISTResults) => {
   const [jsonView, setJsonView] = useState<boolean>(false);
 
   const finalRes = results[results.length - 1];
@@ -300,218 +305,238 @@ const STResults = ({ classes, results }: ISTResults) => {
   };
 
   const finalResJSON = finalRes ? JSON.stringify(finalRes, null, 4) : "";
+  const clnMetrics = cleanMetrics(results);
 
   return (
     <Fragment>
-      <Grid container className={classes.objectGeneral}>
-        <Grid item xs={12} md={6} lg={4}>
-          <ObjectGeneral
-            title={
-              <Fragment>
-                <DownloadStatIcon />
-                &nbsp; GET
-              </Fragment>
-            }
-            throughput={getThroughput}
-            objects={getObjects}
-          />
+      {clnMetrics.length <= 1 && (
+        <Grid container>
+          <Grid item xs={12} className={classes.initialResults}>
+            Please wait while we get {autotune? "the initial" : "the system"} results...
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <ObjectGeneral
-            title={
-              <Fragment>
-                <UploadStatIcon />
-                &nbsp; PUT
-              </Fragment>
-            }
-            throughput={putThroughput}
-            objects={putObjects}
-          />
-        </Grid>
-        <Grid item xs={12} md={12} lg={4}>
-          <ResponsiveContainer width="99%">
-            <AreaChart data={cleanMetrics(results)}>
-              <defs>
-                <linearGradient id="colorPut" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2781B0" stopOpacity={0.9} />
-                  <stop offset="95%" stopColor="#fff" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorGet" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#4CCB92" stopOpacity={0.9} />
-                  <stop offset="95%" stopColor="#fff" stopOpacity={0} />
-                </linearGradient>
-              </defs>
+      )}
+      {clnMetrics.length > 1 && (
+        <Fragment>
+          <Grid container className={classes.objectGeneral}>
+            <Grid item xs={12} md={6} lg={4}>
+              <ObjectGeneral
+                title={
+                  <Fragment>
+                    <DownloadStatIcon />
+                    &nbsp; GET
+                  </Fragment>
+                }
+                throughput={getThroughput}
+                objects={getObjects}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <ObjectGeneral
+                title={
+                  <Fragment>
+                    <UploadStatIcon />
+                    &nbsp; PUT
+                  </Fragment>
+                }
+                throughput={putThroughput}
+                objects={putObjects}
+              />
+            </Grid>
+            <Grid item xs={12} md={12} lg={4}>
+              <ResponsiveContainer width="99%">
+                <AreaChart data={clnMetrics}>
+                  <defs>
+                    <linearGradient id="colorPut" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#2781B0" stopOpacity={0.9} />
+                      <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorGet" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#4CCB92" stopOpacity={0.9} />
+                      <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
 
-              <CartesianGrid
-                strokeDasharray={"0 0"}
-                strokeWidth={1}
-                strokeOpacity={0.5}
-                stroke={"#F1F1F1"}
-                vertical={false}
-              />
+                  <CartesianGrid
+                    strokeDasharray={"0 0"}
+                    strokeWidth={1}
+                    strokeOpacity={0.5}
+                    stroke={"#F1F1F1"}
+                    vertical={false}
+                  />
 
-              <Area
-                type="monotone"
-                dataKey={"get"}
-                stroke={"#4CCB92"}
-                fill={"url(#colorGet)"}
-                fillOpacity={0.3}
-                strokeWidth={2}
-                dot={false}
-              />
-              <Area
-                type="monotone"
-                dataKey={"put"}
-                stroke={"#2781B0"}
-                fill={"url(#colorPut)"}
-                fillOpacity={0.3}
-                strokeWidth={2}
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Grid>
-      </Grid>
-      <br />
-      <Grid container>
-        <Grid item xs={12} md={6} className={classes.descriptorLabel}>
-          {jsonView ? "JSON Results:" : "Detailed Results:"}
-        </Grid>
-        <Grid item xs={12} md={6} className={classes.actionButtons}>
-          <BoxIconButton
-            aria-label="Download"
-            onClick={downloadResults}
-            size="large"
-          >
-            <DownloadIcon />
-          </BoxIconButton>
-          &nbsp;
-          <BoxIconButton
-            aria-label="Download"
-            onClick={toggleJSONView}
-            size="large"
-          >
-            <JSONIcon />
-          </BoxIconButton>
-        </Grid>
-      </Grid>
-      <Grid container className={classes.resultsContainer}>
-        {jsonView ? (
-          <Fragment>
-            <CodeMirrorWrapper
-              value={finalResJSON}
-              readOnly
-              onBeforeChange={() => {}}
-            />
-          </Fragment>
-        ) : (
-          <Fragment>
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={1}
-              lg={1}
-              className={classes.resultsIcon}
-              alignItems={"flex-end"}
-            >
-              <ComputerLineIcon width={45} />
+                  <Area
+                    type="monotone"
+                    dataKey={"get"}
+                    stroke={"#4CCB92"}
+                    fill={"url(#colorGet)"}
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey={"put"}
+                    stroke={"#2781B0"}
+                    fill={"url(#colorPut)"}
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              lg={2}
-              className={classes.detailedItem}
-            >
-              Nodes:&nbsp;<strong>{finalRes.servers}</strong>
+          </Grid>
+          <br />
+          <Grid container>
+            <Grid item xs={12} md={6} className={classes.descriptorLabel}>
+              {start ? (
+                <Fragment>
+                  Preliminar Results:
+                </Fragment>
+              ) : (
+                <Fragment>
+                  {jsonView ? "JSON Results:" : "Detailed Results:"}
+                </Fragment>
+              )}
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              lg={2}
-              className={classes.detailedItem}
-            >
-              Drives:&nbsp;<strong>{finalRes.disks}</strong>
+            <Grid item xs={12} md={6} className={classes.actionButtons}>
+              {!start && (
+                <Fragment>
+                  <BoxIconButton
+                    aria-label="Download"
+                    onClick={downloadResults}
+                    size="large"
+                  >
+                    <DownloadIcon />
+                  </BoxIconButton>
+                  &nbsp;
+                  <BoxIconButton
+                    aria-label="Download"
+                    onClick={toggleJSONView}
+                    size="large"
+                  >
+                    <JSONIcon />
+                  </BoxIconButton>
+                </Fragment>
+              )}
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              lg={2}
-              className={classes.detailedItem}
-            >
-              Concurrent:&nbsp;<strong>{finalRes.concurrent}</strong>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              lg={5}
-              className={classes.detailedVersion}
-            >
-              <span className={classes.versionIcon}>
-                <VersionIcon />
-              </span>{" "}
-              MinIO VERSION&nbsp;<strong>{finalRes.version}</strong>
-            </Grid>
-            <Grid item xs={12} className={classes.tableOverflow}>
-              <table
-                className={classes.serversTable}
-                cellSpacing={0}
-                cellPadding={0}
-              >
-                <thead>
-                  <tr>
-                    <th colSpan={2}>Servers</th>
-                    <th colSpan={2}>GET</th>
-                    <th colSpan={2}>PUT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {statJoin.map((stats, index) => (
-                    <tr key={`storage-${index.toString()}`}>
-                      <td className={classes.serverIcon}>
-                        <StorageIcon />
-                      </td>
-                      <td className={classes.serverHost}>{stats.host}</td>
-                      {stats.getError && stats.getError !== "" ? (
-                        <td colSpan={2}>{stats.getError}</td>
-                      ) : (
-                        <Fragment>
-                          <td className={classes.serverValue}>
-                            {prettyNumber(parseFloat(stats.getValue))}
+          </Grid>
+          <Grid container className={classes.resultsContainer}>
+            {jsonView ? (
+              <Fragment>
+                <CodeMirrorWrapper
+                  value={finalResJSON}
+                  readOnly
+                  onBeforeChange={() => {}}
+                />
+              </Fragment>
+            ) : (
+              <Fragment>
+                <Grid
+                  item
+                  xs={12}
+                  sm={12}
+                  md={1}
+                  lg={1}
+                  className={classes.resultsIcon}
+                  alignItems={"flex-end"}
+                >
+                  <ComputerLineIcon width={45} />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
+                  lg={2}
+                  className={classes.detailedItem}
+                >
+                  Nodes:&nbsp;<strong>{finalRes.servers}</strong>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
+                  lg={2}
+                  className={classes.detailedItem}
+                >
+                  Drives:&nbsp;<strong>{finalRes.disks}</strong>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
+                  lg={2}
+                  className={classes.detailedItem}
+                >
+                  Concurrent:&nbsp;<strong>{finalRes.concurrent}</strong>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={5}
+                  className={classes.detailedVersion}
+                >
+                  <span className={classes.versionIcon}>
+                    <VersionIcon />
+                  </span>{" "}
+                  MinIO VERSION&nbsp;<strong>{finalRes.version}</strong>
+                </Grid>
+                <Grid item xs={12} className={classes.tableOverflow}>
+                  <table
+                    className={classes.serversTable}
+                    cellSpacing={0}
+                    cellPadding={0}
+                  >
+                    <thead>
+                      <tr>
+                        <th colSpan={2}>Servers</th>
+                        <th>GET</th>
+                        <th>PUT</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {statJoin.map((stats, index) => (
+                        <tr key={`storage-${index.toString()}`}>
+                          <td className={classes.serverIcon}>
+                            <StorageIcon />
                           </td>
-                          <td className={classes.serverUnit}>
-                            {stats.getUnit}/s.
-                          </td>
-                        </Fragment>
-                      )}
-                      {stats.putError && stats.putError !== "" ? (
-                        <td colSpan={2}>{stats.putError}</td>
-                      ) : (
-                        <Fragment>
-                          <td className={classes.serverValue}>
-                            {prettyNumber(parseFloat(stats.putValue))}
-                          </td>
-                          <td className={classes.serverUnit}>
-                            {stats.putUnit}/s.
-                          </td>
-                        </Fragment>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Grid>
-          </Fragment>
-        )}
-      </Grid>
+                          <td className={classes.serverHost}>{stats.host}</td>
+                          {stats.getError && stats.getError !== "" ? (
+                            <td>{stats.getError}</td>
+                          ) : (
+                            <Fragment>
+                              <td className={classes.serverValue}>
+                                {prettyNumber(parseFloat(stats.getValue))}&nbsp;
+                                {stats.getUnit}/s.
+                              </td>
+                            </Fragment>
+                          )}
+                          {stats.putError && stats.putError !== "" ? (
+                            <td>{stats.putError}</td>
+                          ) : (
+                            <Fragment>
+                              <td className={classes.serverValue}>
+                                {prettyNumber(parseFloat(stats.putValue))}&nbsp;
+                                {stats.putUnit}/s.
+                              </td>
+                            </Fragment>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Grid>
+              </Fragment>
+            )}
+          </Grid>
+        </Fragment>
+      )}
     </Fragment>
   );
 };

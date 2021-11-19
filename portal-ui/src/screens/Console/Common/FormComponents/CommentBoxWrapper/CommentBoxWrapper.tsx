@@ -116,8 +116,8 @@ const CommentBoxWrapper = ({
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
-                  <div>
-                    <HelpIcon className={classes.tooltip} />
+                  <div className={classes.tooltip}>
+                    <HelpIcon />
                   </div>
                 </Tooltip>
               </div>
