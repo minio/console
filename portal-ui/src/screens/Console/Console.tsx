@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, Suspense, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,41 +35,73 @@ import { ISessionResponse } from "./types";
 import { snackBarMessage } from "../../types";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../common/types";
-import Buckets from "./Buckets/Buckets";
-import Policies from "./Policies/Policies";
-import Dashboard from "./Dashboard/Dashboard";
+
 import Menu from "./Menu/Menu";
 import api from "../../common/api";
-import Account from "./Account/Account";
-import Users from "./Users/Users";
-import Groups from "./Groups/Groups";
-import ConfigurationMain from "./Configurations/ConfigurationMain";
-import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
-import License from "./License/License";
-import Trace from "./Trace/Trace";
-import Heal from "./Heal/Heal";
-import Watch from "./Watch/Watch";
-import HealthInfo from "./HealthInfo/HealthInfo";
-import Storage from "./Storage/Storage";
-import Metrics from "./Dashboard/Metrics";
-import Hop from "./Tenants/TenantDetails/hop/Hop";
+
 import MainError from "./Common/MainError/MainError";
-import AddTenant from "./Tenants/AddTenant/AddTenant";
-import NotificationEndpoints from "./NotificationEndpoints/NotificationEndpoints";
-import AddNotificationEndpoint from "./NotificationEndpoints/AddNotificationEndpoint";
-import NotificationTypeSelector from "./NotificationEndpoints/NotificationTypeSelector";
-import ListTiersConfiguration from "./Configurations/TiersConfiguration/ListTiersConfiguration";
-import TierTypeSelector from "./Configurations/TiersConfiguration/TierTypeSelector";
-import AddTierConfiguration from "./Configurations/TiersConfiguration/AddTierConfiguration";
-import ListTenants from "./Tenants/ListTenants/ListTenants";
-import Tools from "./Tools/Tools";
-import ErrorLogs from "./Logs/ErrorLogs/ErrorLogs";
-import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
-import GroupsDetails from "./Groups/GroupsDetails";
-import Speedtest from "./Speedtest/Speedtest";
-import IconsScreen from "./Common/IconsScreen";
+
+const Trace = React.lazy(() => import("./Trace/Trace"));
+const Heal = React.lazy(() => import("./Heal/Heal"));
+const Watch = React.lazy(() => import("./Watch/Watch"));
+const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
+const Storage = React.lazy(() => import("./Storage/Storage"));
+const Metrics = React.lazy(() => import("./Dashboard/Metrics"));
+const Hop = React.lazy(() => import("./Tenants/TenantDetails/hop/Hop"));
+
+const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
+
+const NotificationEndpoints = React.lazy(
+  () => import("./NotificationEndpoints/NotificationEndpoints")
+);
+const AddNotificationEndpoint = React.lazy(
+  () => import("./NotificationEndpoints/AddNotificationEndpoint")
+);
+const NotificationTypeSelector = React.lazy(
+  () => import("./NotificationEndpoints/NotificationTypeSelector")
+);
+
+const ListTiersConfiguration = React.lazy(
+  () => import("./Configurations/TiersConfiguration/ListTiersConfiguration")
+);
+const TierTypeSelector = React.lazy(
+  () => import("./Configurations/TiersConfiguration/TierTypeSelector")
+);
+const AddTierConfiguration = React.lazy(
+  () => import("./Configurations/TiersConfiguration/AddTierConfiguration")
+);
+const ListTenants = React.lazy(
+  () => import("./Tenants/ListTenants/ListTenants")
+);
+
+const ErrorLogs = React.lazy(() => import("./Logs/ErrorLogs/ErrorLogs"));
+const LogsSearchMain = React.lazy(
+  () => import("./Logs/LogSearch/LogsSearchMain")
+);
+const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
+
+const Tools = React.lazy(() => import("./Tools/Tools"));
+
+const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
+
+const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
 
 const drawerWidth = 245;
+
+const Buckets = React.lazy(() => import("./Buckets/Buckets"));
+const Policies = React.lazy(() => import("./Policies/Policies"));
+const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
+
+const Account = React.lazy(() => import("./Account/Account"));
+const Users = React.lazy(() => import("./Users/Users"));
+const Groups = React.lazy(() => import("./Groups/Groups"));
+const ConfigurationMain = React.lazy(
+  () => import("./Configurations/ConfigurationMain")
+);
+const TenantDetails = React.lazy(
+  () => import("./Tenants/TenantDetails/TenantDetails")
+);
+const License = React.lazy(() => import("./License/License"));
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -509,12 +541,16 @@ const Console = ({
                     exact
                     path={route.path}
                     children={(routerProps) => (
-                      <route.component {...routerProps} {...route.props} />
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <route.component {...routerProps} {...route.props} />
+                      </Suspense>
                     )}
                   />
                 ))}
                 <Route key={"/icons"} exact path={"/icons"}>
-                  <IconsScreen />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <IconsScreen />
+                  </Suspense>
                 </Route>
                 {allowedRoutes.length > 0 ? (
                   <Redirect to={allowedRoutes[0].path} />
