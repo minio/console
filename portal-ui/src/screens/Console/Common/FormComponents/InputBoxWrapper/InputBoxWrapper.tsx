@@ -66,6 +66,7 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     textBoxContainer: {
       flexGrow: 1,
+      position: "relative",
     },
     textBoxWithIcon: {
       position: "relative",
@@ -163,8 +164,8 @@ const InputBoxWrapper = ({
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
-                  <div>
-                    <HelpIcon className={classes.tooltip} />
+                  <div className={classes.tooltip}>
+                    <HelpIcon />
                   </div>
                 </Tooltip>
               </div>
@@ -189,39 +190,39 @@ const InputBoxWrapper = ({
             placeholder={placeholder}
             className={classes.inputRebase}
           />
-        </div>
-        {overlayIcon && (
-          <div
-            className={`${classes.overlayAction} ${
-              label !== "" ? "withLabel" : ""
-            }`}
-          >
-            <IconButton
-              onClick={
-                overlayAction
-                  ? () => {
-                      overlayAction();
-                    }
-                  : () => null
-              }
-              size={"small"}
-              disableFocusRipple={false}
-              disableRipple={false}
-              disableTouchRipple={false}
+          {overlayIcon && (
+            <div
+              className={`${classes.overlayAction} ${
+                label !== "" ? "withLabel" : ""
+              }`}
             >
-              {overlayIcon}
-            </IconButton>
-          </div>
-        )}
-        {overlayObject && (
-          <div
-            className={`${classes.overlayAction} ${
-              label !== "" ? "withLabel" : ""
-            }`}
-          >
-            {overlayObject}
-          </div>
-        )}
+              <IconButton
+                onClick={
+                  overlayAction
+                    ? () => {
+                        overlayAction();
+                      }
+                    : () => null
+                }
+                size={"small"}
+                disableFocusRipple={false}
+                disableRipple={false}
+                disableTouchRipple={false}
+              >
+                {overlayIcon}
+              </IconButton>
+            </div>
+          )}
+          {overlayObject && (
+            <div
+              className={`${classes.overlayAction} ${
+                label !== "" ? "withLabel" : ""
+              }`}
+            >
+              {overlayObject}
+            </div>
+          )}
+        </div>
       </Grid>
     </React.Fragment>
   );

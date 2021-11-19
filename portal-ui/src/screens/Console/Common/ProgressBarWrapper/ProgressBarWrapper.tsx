@@ -23,6 +23,7 @@ import LinearProgress, {
 interface IProgressBarWrapper {
   value: number;
   ready: boolean;
+  indeterminate?: boolean;
 }
 
 const BorderLinearProgress = styled(LinearProgress)(() => ({
@@ -36,11 +37,15 @@ const BorderLinearProgress = styled(LinearProgress)(() => ({
   },
 }));
 
-const ProgressBarWrapper = ({ value, ready }: IProgressBarWrapper) => {
+const ProgressBarWrapper = ({
+  value,
+  ready,
+  indeterminate,
+}: IProgressBarWrapper) => {
   return (
     <BorderLinearProgress
-      variant="determinate"
-      value={value}
+      variant={indeterminate && !ready ? "indeterminate" : "determinate"}
+      value={ready ? 100 : value}
       color={ready ? "success" : "primary"}
     />
   );

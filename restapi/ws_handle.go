@@ -116,6 +116,10 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 // on the path.
 // Request should come like ws://<host>:<port>/ws/<api>
 func serveWS(w http.ResponseWriter, req *http.Request) {
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+
 	// Perform authentication before upgrading to a Websocket Connection
 	// authenticate WS connection with Console
 	session, err := auth.GetClaimsFromTokenInRequest(req)
@@ -215,7 +219,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		}
 		go wsS3Client.watch(wOptions)
 	case strings.HasPrefix(wsPath, `/speedtest`):
-		fmt.Println("Speedtest triggered")
+		fmt.Println("Speedtest init")
 		speedtestOpts, err := getSpeedtestOptionsFromReq(req)
 
 		if err != nil {
