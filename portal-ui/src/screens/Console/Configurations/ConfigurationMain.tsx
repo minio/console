@@ -18,15 +18,13 @@ import React from "react";
 import { Route, Router, Switch } from "react-router-dom";
 import history from "../../../history";
 import ConfigurationOptions from "./ConfigurationPanels/ConfigurationOptions";
-import ConfigurationForm from "./ConfigurationPanels/ConfigurationForm";
 import NotFoundPage from "../../NotFoundPage";
 
 const ConfigurationMain = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/settings" exact component={ConfigurationOptions} />
-        <Route path="/settings/:option" component={ConfigurationForm} />
+        <Route path="/settings" component={ConfigurationOptions} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>

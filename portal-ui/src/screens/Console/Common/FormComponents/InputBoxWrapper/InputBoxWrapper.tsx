@@ -148,7 +148,9 @@ const InputBoxWrapper = ({
     <React.Fragment>
       <Grid
         container
-        className={` ${error !== "" ? classes.errorInField : ""}`}
+        className={` ${
+          error !== "" ? classes.errorInField : classes.inputBoxContainer
+        }`}
       >
         {label !== "" && (
           <InputLabel
