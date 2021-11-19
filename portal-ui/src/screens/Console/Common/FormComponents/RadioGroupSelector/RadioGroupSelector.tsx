@@ -118,7 +118,7 @@ export const RadioGroupSelector = ({
             <div className={classes.tooltipContainer}>
               <Tooltip title={tooltip} placement="top-start">
                 <div>
-                  <HelpIcon className={classes.tooltip} />
+                  <HelpIcon />
                 </div>
               </Tooltip>
             </div>

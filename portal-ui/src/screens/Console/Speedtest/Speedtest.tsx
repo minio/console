@@ -35,6 +35,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import BackLink from "../../../common/BackLink";
 import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
 import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 interface ISpeedtest {
   classes: any;
@@ -79,6 +80,7 @@ const styles = (theme: Theme) =>
       justifyContent: "space-between",
       "&.open": {
         maxHeight: 400,
+        paddingBottom: 15,
       },
     },
     advancedButton: {
@@ -112,12 +114,13 @@ const Speedtest = ({ classes }: ISpeedtest) => {
   const [durationUnit, setDurationUnit] = useState<string>("s");
   const [size, setSize] = useState<string>("64");
   const [sizeUnit, setSizeUnit] = useState<string>("MB");
-  const [concurrent, setConcurrent] = useState<string>("");
+  const [concurrent, setConcurrent] = useState<string>("32");
   const [topDate, setTopDate] = useState<number>(0);
   const [currentValue, setCurrentValue] = useState<number>(0);
   const [totalSeconds, setTotalSeconds] = useState<number>(0);
   const [speedometerValue, setSpeedometerValue] = useState<number>(0);
   const [advancedOpen, setAdvancedOpen] = useState<boolean>(false);
+  const [autotune, setAutotune] = useState<boolean>(true);
 
   useEffect(() => {
     // begin watch if bucketName in bucketList and start pressed
@@ -128,9 +131,9 @@ const Speedtest = ({ classes }: ISpeedtest) => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${
-          url.hostname
-        }:${port}/ws/speedtest?duration=${duration}${durationUnit}&size=${size}${sizeUnit}${
+        `${wsProt}://${url.hostname}:${port}/ws/speedtest?${
+          autotune ? "autotune=true" : ""
+        }&duration=${duration}${durationUnit}&size=${size}${sizeUnit}${
           concurrent.trim() !== "" ? `&concurrent=${concurrent}` : ""
         }`
       );
@@ -170,7 +173,9 @@ const Speedtest = ({ classes }: ISpeedtest) => {
             if (prevStatus) {
               prSt = [...prevStatus];
             }
-            return [...prSt, data];
+
+            const insertData = data.servers !== 0 ? [data] : [];
+            return [...prSt, ...insertData];
           });
 
           const currTime = moment().unix() / 1000;
@@ -193,7 +198,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
       // reset start status
       setStart(false);
     }
-  }, [concurrent, duration, durationUnit, size, sizeUnit, start]);
+  }, [concurrent, duration, durationUnit, size, sizeUnit, start, autotune]);
 
   useEffect(() => {
     const actualSeconds = (topDate - currentValue) / 1000;
@@ -254,6 +259,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
                 <ProgressBarWrapper
                   value={speedometerValue}
                   ready={currStatus !== null && !start}
+                  indeterminate={autotune && start}
                 />
               </div>
             </Grid>
@@ -281,6 +287,21 @@ const Speedtest = ({ classes }: ISpeedtest) => {
               advancedOpen ? "open" : ""
             }`}
           >
+            <Grid item xs={12}>
+              <CheckboxWrapper
+                checked={autotune}
+                onChange={(e) => setAutotune(e.target.checked)}
+                id={"autotune"}
+                name={"autotune"}
+                label={"Enable Autotune"}
+                tooltip={
+                  "Autotune gets the maximum stats for the system by running with multiple configurations at once. \
+                  This configuration is enabled by default and disables the rest of available options"
+                }
+                value="true"
+                disabled={start}
+              />
+            </Grid>
             <Grid item xs={12} md={3} className={classes.advancedOption}>
               <InputBoxWrapper
                 id={"duration"}
@@ -290,7 +311,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
                   setDuration(e.target.value);
                 }}
                 value={duration}
-                disabled={start}
+                disabled={start || autotune}
                 overlayObject={
                   <InputUnitMenu
                     id={"duration-unit"}
@@ -300,7 +321,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
                       { label: "miliseconds", value: "ms" },
                       { label: "seconds", value: "s" },
                     ]}
-                    disabled={start}
+                    disabled={start || autotune}
                   />
                 }
               />
@@ -314,7 +335,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
                   setSize(e.target.value);
                 }}
                 value={size}
-                disabled={start}
+                disabled={start || autotune}
                 overlayObject={
                   <InputUnitMenu
                     id={"size-unit"}
@@ -325,7 +346,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
                       { label: "MB", value: "MB" },
                       { label: "GB", value: "GB" },
                     ]}
-                    disabled={start}
+                    disabled={start || autotune}
                   />
                 }
               />
@@ -341,7 +362,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
                   setConcurrent(e.target.value);
                 }}
                 value={concurrent}
-                disabled={start}
+                disabled={start || autotune}
               />
             </Grid>
           </Grid>
@@ -349,9 +370,13 @@ const Speedtest = ({ classes }: ISpeedtest) => {
             <Grid item xs={12}>
               <Fragment>
                 <Grid item xs={12}>
-                  {!start && currStatus !== null && (
+                  {currStatus !== null && (
                     <Fragment>
-                      <STResults results={currStatus} />
+                      <STResults
+                        results={currStatus}
+                        start={start}
+                        autotune={autotune}
+                      />
                     </Fragment>
                   )}
                 </Grid>

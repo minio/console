@@ -50,6 +50,9 @@ export const fieldBasic = {
     marginLeft: 5,
     display: "flex",
     alignItems: "center",
+    "& .min-icon": {
+      width: 13,
+    },
   },
   switchContainer: {
     display: "flex",
@@ -101,7 +104,9 @@ export const modalBasic = {
 
 export const tooltipHelper = {
   tooltip: {
-    fontSize: 16,
+    "& .min-icon": {
+      width: 13,
+    },
   },
 };
 
