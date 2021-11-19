@@ -34,7 +34,7 @@ const styles = (theme: Theme) =>
   createStyles({
     redState: {
       color: theme.palette.error.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         float: "left",
@@ -43,7 +43,7 @@ const styles = (theme: Theme) =>
     },
     yellowState: {
       color: theme.palette.warning.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         float: "left",
@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
     },
     greenState: {
       color: theme.palette.success.main,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         float: "left",
@@ -61,7 +61,7 @@ const styles = (theme: Theme) =>
     },
     greyState: {
       color: "grey",
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
         float: "left",
@@ -216,6 +216,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                 <Grid container>
                   <Grid item xs={3} style={{ textAlign: "center" }}>
                     <div className={classes.tenantIcon}>
+                      <TenantsIcon style={{ height: 40, width: 40 }} />
                       <div className={classes.healthStatusIcon}>
                         <span
                           className={healthStatusToClass(tenant.health_status)}
@@ -223,7 +224,6 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                           <CircleIcon />
                         </span>
                       </div>
-                      <TenantsIcon style={{ fontSize: 40 }} />
                     </div>
                   </Grid>
                   <Grid item xs={3}>

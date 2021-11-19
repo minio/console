@@ -122,6 +122,9 @@ const styles = (theme: Theme) =>
     },
     propertiesIcon: {
       marginLeft: 5,
+      "& .min-icon": {
+        height: 12,
+      },
     },
     actionsIconContainer: {
       marginLeft: 12,
@@ -129,7 +132,7 @@ const styles = (theme: Theme) =>
     actionsIcon: {
       height: 16,
       width: 16,
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         height: 16,
       },
     },
@@ -149,7 +152,7 @@ const styles = (theme: Theme) =>
       "&.MuiChip-sizeSmall": {
         height: 18,
       },
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         height: 10,
         width: 10,
       },
@@ -179,7 +182,7 @@ const styles = (theme: Theme) =>
     },
     capitalizeFirst: {
       textTransform: "capitalize",
-      "& .MuiSvgIcon-root": {
+      "& .min-icon": {
         width: 16,
         height: 16,
       },

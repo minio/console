@@ -14,33 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
+import React, { SVGProps } from "react";
 
-interface ICreateIcon {
-  width?: number;
-}
-
-const CreateIcon = ({ width = 24 }: ICreateIcon) => {
+const CreateIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
-        <g id="Group_55" data-name="Group 55" transform="translate(1002 -2555)">
-          <rect
-            id="Rectangle_29"
-            width="2"
-            height="12"
-            transform="translate(-997 2555)"
-          />
-          <rect
-            id="Rectangle_30"
-            width="2"
-            height="12"
-            transform="translate(-990 2560) rotate(90)"
-          />
-        </g>
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 12 12"
+    >
+      <g id="Group_55" data-name="Group 55" transform="translate(1002 -2555)">
+        <rect
+          id="Rectangle_29"
+          width="2"
+          height="12"
+          transform="translate(-997 2555)"
+        />
+        <rect
+          id="Rectangle_30"
+          width="2"
+          height="12"
+          transform="translate(-990 2560) rotate(90)"
+        />
+      </g>
+    </svg>
   );
 };
 

@@ -14,23 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import React, { SVGProps } from "react";
 
-const DeleteIcon = (props: SvgIconProps) => {
+const DeleteIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.836 12.646">
-        <path
-          data-name="Trazado 359"
-          d="M9.527.7h-2.5V.305a.308.308 0 00-.308-.308h-3.6a.308.308 0 00-.308.308V.7h-2.5a.309.309 0 00-.309.309v.787a.309.309 0 00.309.309h9.218a.309.309 0 00.309-.309v-.787A.309.309 0 009.527.7z"
-        />
-        <path
-          data-name="Trazado 360"
-          d="M.703 11.225a1.425 1.425 0 001.42 1.421h5.59a1.425 1.425 0 001.42-1.421V2.81H.703z"
-        />
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="-1.405 0 12.646 12.646"
+    >
+      <path
+        data-name="Trazado 359"
+        d="M9.527.7h-2.5V.305a.308.308 0 00-.308-.308h-3.6a.308.308 0 00-.308.308V.7h-2.5a.309.309 0 00-.309.309v.787a.309.309 0 00.309.309h9.218a.309.309 0 00.309-.309v-.787A.309.309 0 009.527.7z"
+      />
+      <path
+        data-name="Trazado 360"
+        d="M.703 11.225a1.425 1.425 0 001.42 1.421h5.59a1.425 1.425 0 001.42-1.421V2.81H.703z"
+      />
+    </svg>
   );
 };
 

@@ -14,18 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
+import React, { SVGProps } from "react";
 
-const RemoveIcon = () => {
+const RemoveIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon viewBox="0 0 11.656 3.101">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      viewBox="0 -4.2775 11.656 11.656"
+    >
       <path
         fill="#081c42"
         d="M-13157.172,1879.551h-11.656v-3.1h11.656v3.1Z"
         transform="translate(13168.828 -1876.449)"
       />
-    </SvgIcon>
+    </svg>
   );
 };
 

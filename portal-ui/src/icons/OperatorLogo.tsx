@@ -14,18 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { SVGProps } from "react";
 
-interface IOperatorLogo {
-  width?: number;
-}
-
-const OperatorLogo = ({ width = 120 }: IOperatorLogo) => {
+const OperatorLogo = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 606.583 134.691"
-      width={width}
     >
       <g id="prefix__Layer_2" data-name="Layer 2">
         <g id="prefix__Layer_1-2" data-name="Layer 1">

@@ -269,7 +269,7 @@ const styles = () =>
       },
       ".optionsAlignment": {
         textAlign: "center",
-        "& .MuiSvgIcon-root": {
+        "& .min-icon": {
           width: 16,
           height: 16,
         },

@@ -14,23 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
-const ServiceAccountIcon = () => {
+import React, { SVGProps } from "react";
+
+const ServiceAccountIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13.856 16">
-        <title>ic_service-accounts</title>
-        <g id="Layer_2" data-name="Layer 2">
-          <g id="Layer_1-2" data-name="Layer 1">
-            <path
-              className="cls-1"
-              d="M6.928,0,0,4v8l6.928,4,6.928-4V4Zm0,10.286A2.286,2.286,0,1,1,9.215,8,2.286,2.286,0,0,1,6.928,10.286Z"
-            />
-          </g>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 13.856 16"
+    >
+      <title>ic_service-accounts</title>
+      <g id="Layer_2" data-name="Layer 2">
+        <g id="Layer_1-2" data-name="Layer 1">
+          <path
+            className="cls-1"
+            d="M6.928,0,0,4v8l6.928,4,6.928-4V4Zm0,10.286A2.286,2.286,0,1,1,9.215,8,2.286,2.286,0,0,1,6.928,10.286Z"
+          />
         </g>
-      </svg>
-    </SvgIcon>
+      </g>
+    </svg>
   );
 };
 

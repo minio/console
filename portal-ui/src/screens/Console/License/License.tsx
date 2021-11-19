@@ -336,8 +336,9 @@ const styles = (theme: Theme) =>
       fontSize: 16,
       fontWeight: "bold",
       marginBottom: 20,
-      "& .MuiSvgIcon-root": {
-        fontSize: 44,
+      "& .min-icon": {
+        width: 44,
+        height: 44,
         marginRight: 15,
       },
     },

@@ -116,7 +116,7 @@ const styles = (theme: Theme) =>
       },
       "& .MuiInputBase-root": {
         "& .MuiInputAdornment-root": {
-          "& .MuiSvgIcon-root": {
+          "& .min-icon": {
             color: theme.palette.grey["400"],
             height: 14,
           },

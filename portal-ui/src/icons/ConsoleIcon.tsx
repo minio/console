@@ -14,21 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
-const ConsoleIcon = () => {
+import React, { SVGProps } from "react";
+
+const ConsoleIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-        <g transform="translate(-518 -361)">
-          <path
-            d="M-126,0V10h10V0Zm1.5,8.5V2.95h7V8.5Z"
-            transform="translate(644 361)"
-          />
-          <rect width="2" height="1" transform="translate(520.272 364.772)" />
-        </g>
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 10 10"
+    >
+      <g transform="translate(-518 -361)">
+        <path
+          d="M-126,0V10h10V0Zm1.5,8.5V2.95h7V8.5Z"
+          transform="translate(644 361)"
+        />
+        <rect width="2" height="1" transform="translate(520.272 364.772)" />
+      </g>
+    </svg>
   );
 };
 

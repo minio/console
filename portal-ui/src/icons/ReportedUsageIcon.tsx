@@ -15,25 +15,29 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as React from "react";
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import { SVGProps } from "react";
 
-const ReportedUsageIcon = (props: SvgIconProps) => {
+const ReportedUsageIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
-    <SvgIcon {...props}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-        <defs>
-          <clipPath id="prefix__a">
-            <path d="M0 0h256v256H0z" />
-          </clipPath>
-        </defs>
-        <g data-name="Reported Usage" clipPath="url(#prefix__a)">
-          <path
-            data-name="Trazado 390"
-            d="M128.218 1A127.366 127.366 0 00.999 128.219 127.363 127.363 0 00128.218 255.43a127.361 127.361 0 00127.213-127.211A127.364 127.364 0 00128.218 1zm0 221.711a94.6 94.6 0 01-94.5-94.492 94.608 94.608 0 0194.5-94.5v94.5h94.49a94.6 94.6 0 01-94.49 94.492z"
-          />
-        </g>
-      </svg>
-    </SvgIcon>
+    <svg
+      {...props}
+      className={`min-icon`}
+      fill={"currentcolor"}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+    >
+      <defs>
+        <clipPath id="prefix__a">
+          <path d="M0 0h256v256H0z" />
+        </clipPath>
+      </defs>
+      <g data-name="Reported Usage" clipPath="url(#prefix__a)">
+        <path
+          data-name="Trazado 390"
+          d="M128.218 1A127.366 127.366 0 00.999 128.219 127.363 127.363 0 00128.218 255.43a127.361 127.361 0 00127.213-127.211A127.364 127.364 0 00128.218 1zm0 221.711a94.6 94.6 0 01-94.5-94.492 94.608 94.608 0 0194.5-94.5v94.5h94.49a94.6 94.6 0 01-94.49 94.492z"
+        />
+      </g>
+    </svg>
   );
 };
 
