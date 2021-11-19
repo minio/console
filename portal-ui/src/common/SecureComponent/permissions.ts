@@ -112,6 +112,11 @@ export const IAM_SCOPES = {
   S3_GET_BUCKET_LOCATION: "s3:GetBucketLocation",
   S3_DELETE_BUCKET_POLICY: "s3:DeleteBucketPolicy",
   S3_ABORT_MULTIPART_UPLOAD: "s3:AbortMultipartUpload",
+  ADMIN_ADD_USER_TO_GROUP: "admin:AddUserToGroup",
+  ADMIN_REMOVE_USER_FROM_GROUP: "admin:RemoveUserFromGroup",
+  ADMIN_GET_GROUP: "admin:GetGroup",
+  ADMIN_ENABLE_GROUP: "admin:EnableGroup",
+  ADMIN_DISABLE_GROUP: "admin:DisableGroup",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
 };

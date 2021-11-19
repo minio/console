@@ -33,6 +33,13 @@ import BackLink from "../../../common/BackLink";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import SearchBox from "../Common/SearchBox";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent, {
+  hasPermission,
+} from "../../../common/SecureComponent/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -154,16 +161,22 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const isGroupEnabled = groupEnabled === "enabled";
   const memberActionText = members.length > 0 ? "Edit Members" : "Add Members";
 
+  const getGroupDetails = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_GROUP,
+  ]);
+
   function fetchGroupInfo() {
-    api
-      .invoke("GET", `/api/v1/group?name=${encodeURI(groupName)}`)
-      .then((res: any) => {
-        setGroupDetails(res);
-      })
-      .catch((err) => {
-        setModalErrorSnackMessage(err);
-        setGroupDetails({});
-      });
+    if (getGroupDetails) {
+      api
+        .invoke("GET", `/api/v1/group?name=${encodeURI(groupName)}`)
+        .then((res: any) => {
+          setGroupDetails(res);
+        })
+        .catch((err) => {
+          setModalErrorSnackMessage(err);
+          setGroupDetails({});
+        });
+    }
   }
 
   function toggleGroupStatus(nextStatus: boolean) {
@@ -192,28 +205,40 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           }}
           classes={classes}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<UsersIcon />}
-          size="medium"
-          onClick={() => {
-            setUsersOpen(true);
-          }}
+        <SecureComponent
+          resource={CONSOLE_UI_RESOURCE}
+          scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
+          errorProps={{ disabled: true }}
         >
-          {memberActionText}
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            endIcon={<UsersIcon />}
+            size="medium"
+            onClick={() => {
+              setUsersOpen(true);
+            }}
+          >
+            {memberActionText}
+          </Button>
+        </SecureComponent>
       </div>
 
       <div className={classes.tableBlock}>
-        <TableWrapper
-          columns={[{ label: "Access Key", elementKey: "" }]}
-          selectedItems={[]}
-          isLoading={false}
-          records={filteredMembers}
-          entityName="Users"
-          idField=""
-        />
+        <SecureComponent
+          resource={CONSOLE_UI_RESOURCE}
+          scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
+          errorProps={{ disabled: true }}
+        >
+          <TableWrapper
+            columns={[{ label: "Access Key", elementKey: "" }]}
+            selectedItems={[]}
+            isLoading={false}
+            records={filteredMembers}
+            entityName="Users"
+            idField=""
+          />
+        </SecureComponent>
       </div>
     </React.Fragment>
   );
@@ -274,31 +299,47 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 <span className={classes.statusValue}>
                   {isGroupEnabled ? "Enabled" : "Disabled"}
                 </span>
-                <FormSwitchWrapper
-                  indicatorLabels={["Enabled", "Disabled"]}
-                  checked={isGroupEnabled}
-                  value={"group_enabled"}
-                  id="group-status"
-                  name="group-status"
-                  onChange={() => {
-                    toggleGroupStatus(!isGroupEnabled);
-                  }}
-                  switchOnly
-                />
-                <Tooltip title="Delete Group">
-                  <div className={classes.spacerLeft}>
-                    <BoxIconButton
-                      color="primary"
-                      aria-label="Delete Group"
-                      onClick={() => {
-                        setDeleteOpen(true);
-                      }}
-                      size="large"
-                    >
-                      <TrashIcon />
-                    </BoxIconButton>
-                  </div>
-                </Tooltip>
+                <SecureComponent
+                  resource={CONSOLE_UI_RESOURCE}
+                  scopes={[
+                    IAM_SCOPES.ADMIN_ENABLE_GROUP,
+                    IAM_SCOPES.ADMIN_DISABLE_GROUP,
+                  ]}
+                  errorProps={{ disabled: true }}
+                  matchAll
+                >
+                  <FormSwitchWrapper
+                    indicatorLabels={["Enabled", "Disabled"]}
+                    checked={isGroupEnabled}
+                    value={"group_enabled"}
+                    id="group-status"
+                    name="group-status"
+                    onChange={() => {
+                      toggleGroupStatus(!isGroupEnabled);
+                    }}
+                    switchOnly
+                  />
+                </SecureComponent>
+
+                <SecureComponent
+                  resource={CONSOLE_UI_RESOURCE}
+                  scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
+                >
+                  <Tooltip title="Delete Group">
+                    <div className={classes.spacerLeft}>
+                      <BoxIconButton
+                        color="primary"
+                        aria-label="Delete Group"
+                        onClick={() => {
+                          setDeleteOpen(true);
+                        }}
+                        size="large"
+                      >
+                        <TrashIcon />
+                      </BoxIconButton>
+                    </div>
+                  </Tooltip>
+                </SecureComponent>
               </Fragment>
             }
           />
