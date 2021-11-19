@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, Suspense, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -33,7 +33,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
-import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
 import AddToGroup from "./BulkAddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -98,6 +97,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   const [records, setRecords] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
+
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
@@ -187,16 +187,20 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
     },
   ];
 
+  const AddUser = React.lazy(() => import("./AddUser"));
+
   return (
     <Fragment>
       {addScreenOpen && (
-        <AddUser
-          open={addScreenOpen}
-          selectedUser={selectedUser}
-          closeModalAndRefresh={() => {
-            closeAddModalAndRefresh();
-          }}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <AddUser
+            open={addScreenOpen}
+            selectedUser={selectedUser}
+            closeModalAndRefresh={() => {
+              closeAddModalAndRefresh();
+            }}
+          />
+        </Suspense>
       )}
       {policyOpen && (
         <SetPolicy
