@@ -388,8 +388,7 @@ export const settingsCommon = {
     margin: "15px 38px 27px",
   },
   settingsFormContainer: {
-    height: "calc(100vh - 421px)",
-    padding: "15px 38px",
+    padding: 38,
     overflowY: "auto" as const,
     scrollbarWidth: "none" as const,
     "&::-webkit-scrollbar": {
@@ -397,7 +396,6 @@ export const settingsCommon = {
     },
   },
   settingsButtonContainer: {
-    borderTop: "1px solid #EAEAEA",
     padding: "15px 38px",
     textAlign: "right" as const,
   },
