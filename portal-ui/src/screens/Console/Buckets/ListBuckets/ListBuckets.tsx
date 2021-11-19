@@ -392,7 +392,6 @@ const ListBuckets = ({
                         >
                           Create a Bucket.
                         </AButton>
-                        refresh
                       </Fragment>
                     }
                   />

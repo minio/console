@@ -99,7 +99,6 @@ const styles = (theme: Theme) =>
 
 interface IAddBucketProps {
   classes: any;
-  open: boolean;
   addBucketName: typeof addBucketName;
   addBucketVersioned: typeof addBucketVersioning;
   enableObjectLocking: typeof addBucketEnableObjectLocking;

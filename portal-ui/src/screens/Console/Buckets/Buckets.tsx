@@ -14,17 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Suspense } from "react";
 import history from "../../../history";
 import { Redirect, Route, Router, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
-import ListBuckets from "./ListBuckets/ListBuckets";
-import BucketDetails from "./BucketDetails/BucketDetails";
-import BrowserHandler from "./BucketDetails/BrowserHandler";
-import AddBucket from "./ListBuckets/AddBucket";
+
+const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
+const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
+const BrowserHandler = React.lazy(
+  () => import("./BucketDetails/BrowserHandler")
+);
+const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket"));
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -36,20 +39,65 @@ const Buckets = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/add-bucket" component={AddBucket} />
-        <Route path="/buckets/:bucketName/admin/*" component={BucketDetails} />
-        <Route path="/buckets/:bucketName/admin" component={BucketDetails} />
+        <Route
+          path="/add-bucket"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <AddBucket />
+            </Suspense>
+          )}
+        />
+        <Route
+          path="/buckets/:bucketName/admin/*"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <BucketDetails {...routerProps} />
+            </Suspense>
+          )}
+        />
+        <Route
+          path="/buckets/:bucketName/admin"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <BucketDetails {...routerProps} />
+            </Suspense>
+          )}
+        />
         <Route
           path="/buckets/:bucketName/browse/:subpaths+"
-          component={BrowserHandler}
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <BrowserHandler {...routerProps} />
+            </Suspense>
+          )}
         />
-        <Route path="/buckets/:bucketName/browse" component={BrowserHandler} />
+        <Route
+          path="/buckets/:bucketName/browse"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <BrowserHandler {...routerProps} />
+            </Suspense>
+          )}
+        />
         <Route
           path="/buckets/:bucketName"
           component={() => <Redirect to={`/buckets`} />}
         />
-        <Route path="/" component={ListBuckets} />
-        <Route component={NotFoundPage} />
+        <Route
+          path="/"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <ListBuckets {...routerProps} />
+            </Suspense>
+          )}
+        />
+        <Route
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <NotFoundPage />
+            </Suspense>
+          )}
+        />
       </Switch>
     </Router>
   );
