@@ -43,6 +43,13 @@ import history from "../../../history";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent, {
+  hasPermission,
+} from "../../../common/SecureComponent/SecureComponent";
 
 interface IGroupsProps {
   classes: any;
@@ -85,27 +92,43 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
     isLoading(true);
   }, []);
 
+  const displayGroups = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_LIST_GROUPS,
+  ]);
+
+  const deleteGroup = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+  ]);
+
+  const getGroup = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_GROUP,
+  ]);
+
   useEffect(() => {
     if (loading) {
-      const fetchRecords = () => {
-        api
-          .invoke("GET", `/api/v1/groups`)
-          .then((res: GroupsList) => {
-            let resGroups: string[] = [];
-            if (res.groups !== null) {
-              resGroups = res.groups.sort(stringSort);
-            }
-            setRecords(resGroups);
-            isLoading(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            isLoading(false);
-          });
-      };
-      fetchRecords();
+      if (displayGroups) {
+        const fetchRecords = () => {
+          api
+            .invoke("GET", `/api/v1/groups`)
+            .then((res: GroupsList) => {
+              let resGroups: string[] = [];
+              if (res.groups !== null) {
+                resGroups = res.groups.sort(stringSort);
+              }
+              setRecords(resGroups);
+              isLoading(false);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+              isLoading(false);
+            });
+        };
+        fetchRecords();
+      } else {
+        isLoading(false);
+      }
     }
-  }, [loading, setErrorSnackMessage]);
+  }, [loading, setErrorSnackMessage, displayGroups]);
 
   const closeAddModalAndRefresh = () => {
     setGroupOpen(false);
@@ -134,8 +157,16 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
   };
 
   const tableActions = [
-    { type: "view", onClick: viewAction },
-    { type: "delete", onClick: deleteAction },
+    {
+      type: "view",
+      onClick: viewAction,
+      disableButtonFunction: () => !getGroup,
+    },
+    {
+      type: "delete",
+      onClick: deleteAction,
+      disableButtonFunction: () => !deleteGroup,
+    },
   ];
 
   return (
@@ -173,19 +204,27 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             onChange={setFilter}
             classes={classes}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            onClick={() => {
-              setSelectedGroup(null);
-              setGroupOpen(true);
-            }}
+          <SecureComponent
+            resource={CONSOLE_UI_RESOURCE}
+            scopes={[
+              IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+              IAM_SCOPES.ADMIN_LIST_USERS,
+            ]}
+            matchAll
           >
-            Create Group
-          </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<AddIcon />}
+              onClick={() => {
+                setSelectedGroup(null);
+                setGroupOpen(true);
+              }}
+            >
+              Create Group
+            </Button>
+          </SecureComponent>
         </Grid>
-
         {loading && <LinearProgress />}
         {!loading && (
           <Fragment>
@@ -245,18 +284,27 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                         users with membership in that group inherit that policy.
                         Groups support more simplified management of user
                         permissions on the MinIO Tenant.
-                        <br />
-                        <br />
-                        To get started,{" "}
-                        <AButton
-                          onClick={() => {
-                            setSelectedGroup(null);
-                            setGroupOpen(true);
-                          }}
+                        <SecureComponent
+                          resource="console-ui"
+                          scopes={[
+                            IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+                            IAM_SCOPES.ADMIN_LIST_USERS,
+                          ]}
+                          matchAll
                         >
-                          Create a Group
-                        </AButton>
-                        .
+                          <br />
+                          <br />
+                          To get started,{" "}
+                          <AButton
+                            onClick={() => {
+                              setSelectedGroup(null);
+                              setGroupOpen(true);
+                            }}
+                          >
+                            Create a Group
+                          </AButton>
+                          .
+                        </SecureComponent>
                       </Fragment>
                     }
                   />
