@@ -14,13 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { IElementValue, KVField } from "../Configurations/types";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  fieldBasic,
+  formFieldStyles,
+  modalBasic,
+} from "../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
 import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
@@ -35,6 +39,52 @@ interface IConfGenericProps {
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...formFieldStyles,
+    formFieldRow: {
+      ...formFieldStyles.formFieldRow,
+    },
+    inputBoxContainer: {
+      marginBottom: 7,
+      "& .MuiInputLabel-root": {
+        minWidth: 200,
+        "& svg": {
+          width: 16,
+          height: 16,
+        },
+      },
+      "& div[class|='InputBoxWrapper-textBoxContainer']": {
+        display: "flex",
+      },
+    },
+    overlayAction: {
+      top: 0,
+      right: 0,
+      position: "relative",
+      marginLeft: 10,
+      display: "flex",
+      alignItems: "center",
+      "& button": {
+        background: "#EAEAEA",
+      },
+    },
+    fieldContainer: {
+      "& .MuiInputLabel-root": {
+        flex: 1,
+        minWidth: 200,
+      },
+      "& div[class|='CommentBoxWrapper-textBoxContainer']": {
+        flexGrow: 1,
+        width: "100%",
+      },
+    },
+    tooltipContainer: {
+      ...fieldBasic.tooltipContainer,
+      "& svg": {
+        width: 16,
+        height: 16,
+      },
+    },
+
     ...modalBasic,
   });
 
@@ -102,6 +152,7 @@ const ConfTargetGeneric = ({
 
         return (
           <FormSwitchWrapper
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const value = e.target.checked ? "true" : "false";
               setValueElement(field.name, value, item);
@@ -117,6 +168,7 @@ const ConfTargetGeneric = ({
       case "csv":
         return (
           <CSVMultiSelector
+            classes={classes}
             elements={valueHolder[item] ? valueHolder[item].value : ""}
             label={field.label}
             name={field.name}
@@ -125,12 +177,13 @@ const ConfTargetGeneric = ({
             }
             tooltip={field.tooltip}
             commonPlaceholder={field.placeholder}
-            withBorder={!!field.withBorder}
+            withBorder={true}
           />
         );
       case "comment":
         return (
           <CommentBoxWrapper
+            classes={classes}
             id={field.name}
             name={field.name}
             label={field.label}
@@ -145,6 +198,7 @@ const ConfTargetGeneric = ({
       default:
         return (
           <InputBoxWrapper
+            classes={classes}
             id={field.name}
             name={field.name}
             label={field.label}
@@ -162,13 +216,11 @@ const ConfTargetGeneric = ({
 
   return (
     <Grid container>
-      <Grid xs={12} item>
+      <Grid xs={12} item className={classes.fieldBox}>
         {fieldsElements.map((field, item) => (
-          <Fragment key={field.name}>
-            <Grid item xs={12}>
-              {fieldDefinition(field, item)}
-            </Grid>
-          </Fragment>
+          <Grid item xs={12} key={field.name} className={classes.formFieldRow}>
+            {fieldDefinition(field, item)}
+          </Grid>
         ))}
       </Grid>
     </Grid>

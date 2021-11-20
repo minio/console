@@ -146,6 +146,7 @@ const CSVMultiSelector = ({
       <InputBoxWrapper
         id={`${name}-${index.toString()}`}
         label={""}
+        classes={classes}
         name={`${name}-${index.toString()}`}
         value={currentElements[index]}
         onChange={onChangeElement}
