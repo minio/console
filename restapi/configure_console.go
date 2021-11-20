@@ -300,7 +300,13 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 		indexPageBytes = []byte(indexPageStr)
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	mimeType := mimedb.TypeByExtension(filepath.Ext(r.URL.Path))
+
+	if mimeType == "application/octet-stream" {
+		mimeType = "text/html"
+	}
+
+	w.Header().Set("Content-Type", mimeType)
 	http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
 }
 
