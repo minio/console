@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import api from "../../common/api";
-import { setErrorSnackMessage } from "../../actions";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -171,14 +170,10 @@ const styles = (theme: Theme) =>
   });
 
 interface ILoginCallBackProps {
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
-const LoginCallback = ({
-  classes,
-  setErrorSnackMessage,
-}: ILoginCallBackProps) => {
+const LoginCallback = ({ classes }: ILoginCallBackProps) => {
   const [error, setError] = useState<string>("");
   const [errorDescription, setErrorDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);

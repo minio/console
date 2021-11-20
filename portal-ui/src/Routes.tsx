@@ -14,21 +14,41 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Route, Router, Switch } from "react-router-dom";
 import history from "./history";
-import Login from "./screens/LoginPage/LoginPage";
+
 import Console from "./screens/Console/Console";
-import LoginCallback from "./screens/LoginPage/LoginCallback";
 import { hot } from "react-hot-loader/root";
 import ProtectedRoute from "./ProtectedRoutes";
+
+const Login = React.lazy(() => import("./screens/LoginPage/LoginPage"));
+const LoginCallback = React.lazy(
+  () => import("./screens/LoginPage/LoginCallback")
+);
 
 const Routes = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route exact path="/oauth_callback" component={LoginCallback} />
-        <Route exact path="/login" component={Login} />
+        <Route
+          exact
+          path="/oauth_callback"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <LoginCallback />
+            </Suspense>
+          )}
+        />
+        <Route
+          exact
+          path="/login"
+          children={(routerProps) => (
+            <Suspense fallback={<div>Loading...</div>}>
+              <Login />
+            </Suspense>
+          )}
+        />
         <ProtectedRoute Component={Console} />
       </Switch>
     </Router>

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Suspense } from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Divider, Drawer, IconButton, Tooltip } from "@mui/material";
@@ -31,35 +31,46 @@ import { AppState } from "../../../store";
 import { setMenuOpen, userLoggedIn } from "../../../actions";
 import { menuGroups } from "./utils";
 import { IMenuItem } from "./types";
-import {
-  BucketsIcon,
-  DashboardIcon,
-  DiagnosticsIcon,
-  GroupsIcon,
-  IAMPoliciesIcon,
-  LambdaIcon,
-  TiersIcon,
-  ToolsIcon,
-  UsersIcon,
-  VersionIcon,
-} from "../../../icons";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
-import LicenseIcon from "../../../icons/LicenseIcon";
-import LogoutIcon from "../../../icons/LogoutIcon";
-import HealIcon from "../../../icons/HealIcon";
+
 import OperatorLogo from "../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../icons/ConsoleLogo";
 import history from "../../../history";
 import api from "../../../common/api";
-import AccountIcon from "../../../icons/AccountIcon";
-import DocumentationIcon from "../../../icons/DocumentationIcon";
-import SettingsIcon from "../../../icons/SettingsIcon";
-import StorageIcon from "../../../icons/StorageIcon";
-import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
+
 import MenuIcon from "@mui/icons-material/Menu";
+import { LogoutIcon } from "../../../icons";
 
 const drawerWidth = 245;
+
+const BucketsIcon = React.lazy(() => import("../../../icons/BucketsIcon"));
+const DashboardIcon = React.lazy(() => import("../../../icons/DashboardIcon"));
+const DiagnosticsIcon = React.lazy(
+  () => import("../../../icons/DiagnosticsIcon")
+);
+const GroupsIcon = React.lazy(() => import("../../../icons/GroupsIcon"));
+const IAMPoliciesIcon = React.lazy(
+  () => import("../../../icons/IAMPoliciesIcon")
+);
+const LambdaIcon = React.lazy(() => import("../../../icons/LambdaIcon"));
+const TiersIcon = React.lazy(() => import("../../../icons/TiersIcon"));
+const ToolsIcon = React.lazy(() => import("../../../icons/ToolsIcon"));
+const UsersIcon = React.lazy(() => import("../../../icons/UsersIcon"));
+const VersionIcon = React.lazy(() => import("../../../icons/VersionIcon"));
+const LicenseIcon = React.lazy(() => import("../../../icons/LicenseIcon"));
+
+const HealIcon = React.lazy(() => import("../../../icons/HealIcon"));
+const AccountIcon = React.lazy(() => import("../../../icons/AccountIcon"));
+const DocumentationIcon = React.lazy(
+  () => import("../../../icons/DocumentationIcon")
+);
+const SettingsIcon = React.lazy(() => import("../../../icons/SettingsIcon"));
+const StorageIcon = React.lazy(() => import("../../../icons/StorageIcon"));
+const TenantsOutlinedIcon = React.lazy(
+  () => import("../../../icons/TenantsOutlineIcon")
+);
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -316,7 +327,7 @@ const Menu = ({
       component: NavLink,
       to: "/dashboard",
       name: "Dashboard",
-      icon: <DashboardIcon />,
+      icon: DashboardIcon,
     },
     {
       group: "common",
@@ -324,7 +335,7 @@ const Menu = ({
       component: NavLink,
       to: "/buckets",
       name: "Buckets",
-      icon: <BucketsIcon />,
+      icon: BucketsIcon,
     },
 
     {
@@ -333,7 +344,7 @@ const Menu = ({
       component: NavLink,
       to: "/users",
       name: "Users",
-      icon: <UsersIcon />,
+      icon: UsersIcon,
     },
     {
       group: "common",
@@ -341,7 +352,7 @@ const Menu = ({
       component: NavLink,
       to: "/groups",
       name: "Groups",
-      icon: <GroupsIcon />,
+      icon: GroupsIcon,
     },
     {
       group: "common",
@@ -349,7 +360,7 @@ const Menu = ({
       component: NavLink,
       to: "/account",
       name: "Service Accounts",
-      icon: <AccountIcon />,
+      icon: AccountIcon,
     },
     {
       group: "common",
@@ -357,7 +368,7 @@ const Menu = ({
       component: NavLink,
       to: "/policies",
       name: "IAM Policies",
-      icon: <IAMPoliciesIcon />,
+      icon: IAMPoliciesIcon,
     },
     {
       group: "common",
@@ -365,7 +376,7 @@ const Menu = ({
       component: NavLink,
       to: "/settings",
       name: "Settings",
-      icon: <SettingsIcon />,
+      icon: SettingsIcon,
     },
     {
       group: "common",
@@ -373,7 +384,7 @@ const Menu = ({
       component: NavLink,
       to: "/notification-endpoints",
       name: "Notification Endpoints",
-      icon: <LambdaIcon />,
+      icon: LambdaIcon,
     },
     {
       group: "common",
@@ -381,7 +392,7 @@ const Menu = ({
       component: NavLink,
       to: "/tiers",
       name: "Tiers",
-      icon: <TiersIcon />,
+      icon: TiersIcon,
     },
     {
       group: "common",
@@ -389,7 +400,7 @@ const Menu = ({
       component: NavLink,
       to: "/tools",
       name: "Tools",
-      icon: <ToolsIcon />,
+      icon: ToolsIcon,
     },
     {
       group: "Tools",
@@ -397,7 +408,7 @@ const Menu = ({
       component: NavLink,
       to: "/heal",
       name: "Heal",
-      icon: <HealIcon />,
+      icon: HealIcon,
       fsHidden: distributedSetup,
     },
     {
@@ -406,7 +417,7 @@ const Menu = ({
       component: NavLink,
       to: "/health-info",
       name: "Diagnostic",
-      icon: <DiagnosticsIcon />,
+      icon: DiagnosticsIcon,
     },
     {
       group: "Operator",
@@ -414,7 +425,7 @@ const Menu = ({
       component: NavLink,
       to: "/tenants",
       name: "Tenants",
-      icon: <TenantsOutlinedIcon />,
+      icon: TenantsOutlinedIcon,
     },
     {
       group: "Operator",
@@ -422,7 +433,7 @@ const Menu = ({
       component: NavLink,
       to: "/storage",
       name: "Storage",
-      icon: <StorageIcon />,
+      icon: StorageIcon,
     },
   ];
 
@@ -437,7 +448,7 @@ const Menu = ({
     component: NavLink,
     to: "/documentation",
     name: "Documentation",
-    icon: <DocumentationIcon />,
+    icon: DocumentationIcon,
     forceDisplay: true,
   };
 
@@ -477,7 +488,7 @@ const Menu = ({
         component: NavLink,
         to: "/license",
         name: "License",
-        icon: <LicenseIcon />,
+        icon: LicenseIcon,
       },
       {
         ...documentation,
@@ -532,7 +543,9 @@ const Menu = ({
           )}
           {!sidebarOpen && (
             <div className={classes.logoIconClosed}>
-              <VersionIcon />
+              <Suspense fallback={<div>Loading...</div>}>
+                <VersionIcon />
+              </Suspense>
             </div>
           )}
           <IconButton
@@ -582,7 +595,11 @@ const Menu = ({
                           {page.icon && (
                             <Tooltip title={page.name}>
                               <div>
-                                <ListItemIcon>{page.icon}</ListItemIcon>
+                                <ListItemIcon>
+                                  <Suspense fallback={<div>Loading...</div>}>
+                                    <page.icon />
+                                  </Suspense>
+                                </ListItemIcon>
                               </div>
                             </Tooltip>
                           )}
@@ -620,7 +637,6 @@ const Menu = ({
     </React.Fragment>
   );
 };
-
 const mapState = (state: AppState) => ({
   sidebarOpen: state.system.sidebarOpen,
   operatorMode: state.system.operatorMode,
