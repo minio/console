@@ -86,7 +86,6 @@ const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
 
 const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
 
-
 const drawerWidth = 245;
 
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
@@ -103,7 +102,9 @@ const TenantDetails = React.lazy(
   () => import("./Tenants/TenantDetails/TenantDetails")
 );
 const License = React.lazy(() => import("./License/License"));
-const ConfigurationOptions = React.lazy(() => import("./Configurations/ConfigurationPanels/ConfigurationOptions"));
+const ConfigurationOptions = React.lazy(
+  () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
+);
 
 const styles = (theme: Theme) =>
   createStyles({
