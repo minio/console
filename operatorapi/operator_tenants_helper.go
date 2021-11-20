@@ -19,6 +19,7 @@ package operatorapi
 import (
 	"context"
 	"crypto"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -305,6 +306,10 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 		}
 		tlsKey, err := base64.StdEncoding.DecodeString(*keyPair.Key)
 		if err != nil {
+			return nil, err
+		}
+		// check if the key pair is valid
+		if _, err = tls.X509KeyPair(tlsCrt, tlsKey); err != nil {
 			return nil, err
 		}
 		externalTLSCertificateSecret := &corev1.Secret{

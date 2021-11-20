@@ -312,7 +312,8 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
       {clnMetrics.length <= 1 && (
         <Grid container>
           <Grid item xs={12} className={classes.initialResults}>
-            Please wait while we get {autotune? "the initial" : "the system"} results...
+            Please wait while we get {autotune ? "the initial" : "the system"}{" "}
+            results...
           </Grid>
         </Grid>
       )}
@@ -391,9 +392,7 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
           <Grid container>
             <Grid item xs={12} md={6} className={classes.descriptorLabel}>
               {start ? (
-                <Fragment>
-                  Preliminar Results:
-                </Fragment>
+                <Fragment>Preliminar Results:</Fragment>
               ) : (
                 <Fragment>
                   {jsonView ? "JSON Results:" : "Detailed Results:"}
