@@ -17,28 +17,28 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const ReportedUsageIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 256 256"
-    >
-      <defs>
-        <clipPath id="prefix__a">
-          <path d="M0 0h256v256H0z" />
-        </clipPath>
-      </defs>
-      <g data-name="Reported Usage" clipPath="url(#prefix__a)">
-        <path
-          data-name="Trazado 390"
-          d="M128.218 1A127.366 127.366 0 00.999 128.219 127.363 127.363 0 00128.218 255.43a127.361 127.361 0 00127.213-127.211A127.364 127.364 0 00128.218 1zm0 221.711a94.6 94.6 0 01-94.5-94.492 94.608 94.608 0 0194.5-94.5v94.5h94.49a94.6 94.6 0 01-94.49 94.492z"
-        />
-      </g>
-    </svg>
-  );
-};
+const ReportedUsageIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g data-name="Reported Usage" clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <path
+        data-name="Trazado 390"
+        d="M128.003 0a128.151 128.151 0 0 0-128 128c0 70.573 57.424 127.995 128 127.995a128.147 128.147 0 0 0 128-127.995 128.15 128.15 0 0 0-128-128Zm0 223.078a95.188 95.188 0 0 1-95.085-95.075 95.191 95.191 0 0 1 95.085-95.084v95.084h95.075a95.184 95.184 0 0 1-95.075 95.074Z"
+      />
+      <path data-name="Rect\xE1ngulo 869" fill="none" d="M0 0h256v256H0z" />
+    </g>
+  </svg>
+);
 
 export default ReportedUsageIcon;

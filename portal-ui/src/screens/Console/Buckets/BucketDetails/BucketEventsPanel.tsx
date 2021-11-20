@@ -22,7 +22,8 @@ import withStyles from "@mui/styles/withStyles";
 import { Button } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import { AddIcon, LambdaIcon } from "../../../../icons";
+import AddIcon from "../../../../icons/AddIcon";
+import LambdaIcon from "../../../../icons/LambdaIcon";
 import { BucketEvent, BucketEventList, BucketInfo } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
@@ -42,6 +43,7 @@ import SecureComponent, {
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
+
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
 

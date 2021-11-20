@@ -41,7 +41,7 @@ import history from "../../../history";
 import api from "../../../common/api";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { LogoutIcon } from "../../../icons";
+import LogoutIcon from "../../../icons/LogoutIcon";
 
 const drawerWidth = 245;
 

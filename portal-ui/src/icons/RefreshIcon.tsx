@@ -14,20 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SVGProps } from "react";
+import * as React from "react";
+import { SVGProps } from "react";
 
-const RefreshIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="-1.475 0 21.107 21.107"
-    >
-      <path d="M0 12.028a9.086 9.086 0 018.968-9.073l-1.071-1.07A1.1 1.1 0 019.449.333l3.11 3.11a1.1 1.1 0 010 1.565l-3.11 3.11a1.1 1.1 0 01-1.552-1.552l1.161-1.161a6.632 6.632 0 00-6.6 6.624 6.633 6.633 0 006.625 6.625 6.633 6.633 0 006.625-6.625 1.227 1.227 0 011.227-1.227 1.227 1.227 0 011.227 1.227 9.089 9.089 0 01-9.079 9.079A9.089 9.089 0 010 12.028z" />
-    </svg>
-  );
-};
+const RefreshIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <path
+        data-name="Trazado 373"
+        d="M18 145.888A110.2 110.2 0 0 1 126.767 35.85L113.78 22.869c-12.378-12.378 6.448-31.2 18.822-18.824l37.722 37.72a13.32 13.32 0 0 1 0 18.979l-37.722 37.714c-12.374 12.374-31.2-6.442-18.822-18.82l14.085-14.085a80.434 80.434 0 0 0-80.1 80.335 80.443 80.443 0 0 0 80.349 80.35 80.441 80.441 0 0 0 80.349-80.35 14.878 14.878 0 0 1 14.879-14.877 14.879 14.879 0 0 1 14.882 14.877A110.234 110.234 0 0 1 128.114 256 110.232 110.232 0 0 1 18 145.888Z"
+      />
+      <path data-name="Rect\xE1ngulo 871" fill="none" d="M0 0h256v256H0z" />
+    </g>
+  </svg>
+);
 
 export default RefreshIcon;

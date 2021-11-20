@@ -14,24 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SVGProps } from "react";
+import * as React from "react";
+import { SVGProps } from "react";
 
-const RemoveIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      viewBox="0 -4.2775 11.656 11.656"
-    >
+const RemoveIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
       <path
-        fill="#081c42"
-        d="M-13157.172,1879.551h-11.656v-3.1h11.656v3.1Z"
-        transform="translate(13168.828 -1876.449)"
+        data-name="Trazado 6970"
+        d="M27 101h202a27 27 0 0 1 0 54H27a27 27 0 0 1 0-54Z"
       />
-    </svg>
-  );
-};
+      <path data-name="Rect\xE1ngulo 916" fill="none" d="M0 0h256v256H0z" />
+    </g>
+  </svg>
+);
 
 export default RemoveIcon;

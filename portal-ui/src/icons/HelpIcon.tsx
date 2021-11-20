@@ -14,27 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SVGProps } from "react";
+import * as React from "react";
+import { SVGProps } from "react";
 
-const HelpIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox={"0 0 12 12"}
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-    >
+const HelpIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
       <path
-        d="M357.14,346a5,5,0,1,1-5,5,5,5,0,0,1,5-5m0-1a6,6,0,1,0,6,6,6,6,0,0,0-6-6Z"
-        transform="translate(-351.14 -345.03)"
+        data-name="Uni\xF3n 30"
+        d="M.002 128.002a128 128 0 0 1 128-128 128 128 0 0 1 128 128 128 128 0 0 1-128 128 127.993 127.993 0 0 1-128-128Zm25 0a103.115 103.115 0 0 0 103 103 103.116 103.116 0 0 0 103-103 103.117 103.117 0 0 0-103-103A103.116 103.116 0 0 0 25 128.002Zm75.211 58.614c0-10.971 9.48-20.238 20.342-20.238a20.541 20.541 0 0 1 20.133 20.133c0 10.966-9.377 20.447-20.133 20.447-10.864 0-20.344-9.481-20.344-20.342Zm7.457-33.227v-36.213h10.223c20.557 0 31.633-6.495 31.633-18.956 0-11.5-10.971-17.675-31.312-17.675-5.748 0-11.715.423-16.186.846l-2.023-28.008a165.912 165.912 0 0 1 21.508-1.386c37.17 0 58.684 17.147 58.684 44.094 0 24.6-16.4 40.365-46.008 45.051l-.852 12.247Z"
       />
-      <path
-        d="M356.21,352.42v-1.86h.52c1.23,0,1.92-.45,1.92-1.29s-.68-1.18-1.89-1.18a8.07,8.07,0,0,0-.93.06l-.1-1.25a9.13,9.13,0,0,1,1.08-.08c2,0,3.19.94,3.19,2.4s-.93,2.24-2.64,2.46l-.05.74Zm1.56,1.8a1,1,0,1,1-1-1A1,1,0,0,1,357.77,354.22Z"
-        transform="translate(-351.14 -345.03)"
-      />
-    </svg>
-  );
-};
+      <path data-name="Rect\xE1ngulo 917" fill="none" d="M0 0h256v256H0z" />
+    </g>
+  </svg>
+);
 
 export default HelpIcon;

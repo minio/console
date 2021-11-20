@@ -17,21 +17,30 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const LambdaIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 227.615 256"
-    >
-      <path
-        data-name="Trazado 442"
-        d="M35.802 0a15.363 15.363 0 000 30.727c23.352 0 32.017 14.872 40.928 34.353l1.475 3.134c1.229 2.643 3.872 8.542 7.436 16.408L1.757 233.094a15.363 15.363 0 0026.729 15.118l72.823-128.623c19.481 44 44 99.494 44.431 100.415a58.2 58.2 0 0071.046 33.37 15.376 15.376 0 00-9.1-29.375 27.531 27.531 0 01-33.861-16.593c-2.458-5.531-59.856-135.751-67.6-152.282l-1.352-2.95C96.948 35.336 80.786 0 35.802 0z"
-      />
-    </svg>
-  );
-};
+const LambdaIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <g data-name="LambdaIcon">
+        <path data-name="Rect\xE1ngulo 847" fill="none" d="M0 0h256v256H0z" />
+        <path
+          data-name="Trazado 442"
+          d="M40.266 0c-9.543 0-17.279 6.878-17.279 15.363S30.723 30.73 40.266 30.73c26.265 0 36.01 14.872 46.032 34.353l1.659 3.134c1.382 2.643 4.354 8.542 8.363 16.408L1.975 233.094c-4.327 7.346-1.317 16.42 6.8 20.5s18.415 1.7 23.265-5.384l81.9-128.623c21.91 44 49.488 99.494 49.972 100.415 12.921 27.82 47.568 42.291 79.9 33.369 9.123-2.512 14.229-11.123 11.4-19.235s-12.511-12.651-21.634-10.14c-15.631 4.28-32.31-2.987-38.084-16.593-2.765-5.531-67.32-135.751-76.029-152.282l-1.521-2.95C109.038 35.336 90.86 0 40.266 0Z"
+        />
+      </g>
+    </g>
+  </svg>
+);
 
 export default LambdaIcon;

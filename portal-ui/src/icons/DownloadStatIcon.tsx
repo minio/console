@@ -17,29 +17,30 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const DownloadStatIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 13 13"
-    >
-      <g transform="translate(0)">
+const DownloadStatIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <g data-name="DownloadStatIcon">
         <path
-          className="a"
-          fill="#4CCB92"
-          d="M1.966,8.119a.69.69,0,0,0,1.38,0V2.355l.782.781A.69.69,0,0,0,5.1,2.161L3.148.206a.69.69,0,0,0-.984,0L.21,2.161a.69.69,0,0,0,.975.975l.781-.781V8.119Z"
-          transform="translate(9.248 11.151) rotate(180)"
+          data-name="Uni\xF3n 24"
+          d="M0 127.996a128 128 0 0 1 128.008-128 128 128 0 0 1 128 128 128 128 0 0 1-128 128.009A128 128 0 0 1 0 127.996Zm20.484 0A107.643 107.643 0 0 0 128 235.52a107.633 107.633 0 0 0 107.512-107.523A107.631 107.631 0 0 0 128 20.487 107.641 107.641 0 0 0 20.48 127.996Zm98.063 71.518-32.336-32.338a13.192 13.192 0 0 1-3.172-14.743 14.934 14.934 0 0 1 13.3-9.235 13.542 13.542 0 0 1 9.637 4.224l8.563 8.554v-89.16c0-9.069 7.016-13.818 13.953-13.818 6.961 0 13.977 4.749 13.977 13.818v89.16l8.555-8.544a13.481 13.481 0 0 1 9.625-4.233 14.887 14.887 0 0 1 13.3 9.235 13.182 13.182 0 0 1-3.164 14.743l-32.348 32.348a14 14 0 0 1-9.906 4.155 14.085 14.085 0 0 1-9.988-4.166Z"
         />
-        <g className="b" stroke="#4CCB92" fill="none" transform="translate(0)">
-          <circle className="c" stroke="none" cx="6.5" cy="6.5" r="6.5" />
-          <circle className="d" fill="none" cx="6.5" cy="6.5" r="6" />
-        </g>
+        <path data-name="Rect\xE1ngulo 893" fill="none" d="M0 0h256v256H0z" />
       </g>
-    </svg>
-  );
-};
+    </g>
+  </svg>
+);
 
 export default DownloadStatIcon;

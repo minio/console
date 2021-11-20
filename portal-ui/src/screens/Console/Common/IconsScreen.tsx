@@ -25,12 +25,14 @@ import {
   AddFolderIcon,
   AddIcon,
   AllBucketsIcon,
+  ArrowIcon,
   ArrowRightIcon,
   BackSettingsIcon,
   BucketsIcon,
   CalendarIcon,
   CircleIcon,
   ClustersIcon,
+  CollapseIcon,
   ComputerLineIcon,
   ConfigurationsListIcon,
   ConsoleIcon,
@@ -71,7 +73,7 @@ import {
   HelpIcon,
   HistoryIcon,
   IAMPoliciesIcon,
-  JSONIcon,
+  LambdaBalloonIcon,
   LambdaIcon,
   LambdaNotificationsIcon,
   LicenseIcon,
@@ -79,11 +81,14 @@ import {
   LogoutIcon,
   LogsIcon,
   MirroringIcon,
-  NextArrowIcon,
+  MultipleBucketsIcon,
+  NewAccountIcon,
+  NextarrowIcon,
   ObjectBrowser1Icon,
   ObjectBrowserFolderIcon,
   ObjectBrowserIcon,
-  OpenListIcon,
+  ObjectManagerIcon,
+  OpenlistIcon,
   OperatorLogo,
   PermissionIcon,
   PreviewIcon,
@@ -100,6 +105,7 @@ import {
   ServiceAccountsIcon,
   SettingsIcon,
   ShareIcon,
+  SpeedtestIcon,
   StorageIcon,
   SyncIcon,
   TenantsIcon,
@@ -121,6 +127,7 @@ import {
   UploadFolderIcon
 } from "../../../icons";
 import WarnIcon from "../../../icons/WarnIcon";
+import JSONIcon from "../../../icons/JSONIcon";
 
 interface IIconsScreenSimple {
   classes: any;
@@ -131,6 +138,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
     root: {
       fontSize: 12,
+      wordWrap: "break-word",
     },
   });
 
@@ -138,591 +146,422 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
   return (
     <div className={classes.container}>
       <Grid container spacing={4} textAlign={"center"} className={classes.root}>
-        <Grid item>
-          <StorageIcon />
-          <br />
-          StorageIcon
-        </Grid>
-
-        <Grid item>
-          <RefreshIcon />
-          <br />
-          RefreshIcon
-        </Grid>
-
-        <Grid item>
-          <ShareIcon />
-          <br />
-          ShareIcon
-        </Grid>
-
-        <Grid item>
-          <FolderIcon />
-          <br />
-          FolderIcon
-        </Grid>
-
-        <Grid item>
-          <EditIcon />
-          <br />
-          EditIcon
-        </Grid>
-
-        <Grid item>
-          <SearchIcon />
-          <br />
-          SearchIcon
-        </Grid>
-
-        <Grid item>
-          <ObjectBrowserFolderIcon />
-          <br />
-          ObjectBrowserFolderIcon
-        </Grid>
-
-        <Grid item>
-          <RedoIcon />
-          <br />
-          RedoIcon
-        </Grid>
-
-        <Grid item>
-          <DashboardIcon />
-          <br />
-          DashboardIcon
-        </Grid>
-
-        <Grid item>
-          <ClustersIcon />
-          <br />
-          ClustersIcon
-        </Grid>
-
-        <Grid item>
-          <MirroringIcon />
-          <br />
-          MirroringIcon
-        </Grid>
-
-        <Grid item>
-          <ServiceAccountIcon />
-          <br />
-          ServiceAccountIcon
-        </Grid>
-
-        <Grid item>
-          <ConfigurationsListIcon />
-          <br />
-          ConfigurationsListIcon
-        </Grid>
-
-        <Grid item>
-          <WatchIcon />
-          <br />
-          WatchIcon
-        </Grid>
-
-        <Grid item>
-          <HealIcon />
-          <br />
-          HealIcon
-        </Grid>
-
-        <Grid item>
-          <OperatorLogo />
-          <br />
-          OperatorLogo
-        </Grid>
-
-        <Grid item>
-          <DeleteIcon />
-          <br />
-          DeleteIcon
-        </Grid>
-
-        <Grid item>
-          <ReportedUsageIcon />
-          <br />
-          ReportedUsageIcon
-        </Grid>
-
-        <Grid item>
-          <PermissionIcon />
-          <br />
-          PermissionIcon
-        </Grid>
-
-        <Grid item>
-          <AccountIcon />
-          <br />
+        <Grid item xs={1}>
+          <AccountIcon /> <br />
           AccountIcon
         </Grid>
-
-        <Grid item>
-          <DiagnosticIcon />
-          <br />
-          DiagnosticIcon
-        </Grid>
-
-        <Grid item>
-          <TenantsOutlineIcon />
-          <br />
-          TenantsOutlineIcon
-        </Grid>
-
-        <Grid item>
-          <HelpIcon />
-          <br />
-          HelpIcon
-        </Grid>
-
-        <Grid item>
-          <DiagnosticsIcon />
-          <br />
-          DiagnosticsIcon
-        </Grid>
-
-        <Grid item>
-          <ObjectBrowser1Icon />
-          <br />
-          ObjectBrowser1Icon
-        </Grid>
-
-        <Grid item>
-          <WarpIcon />
-          <br />
-          WarpIcon
-        </Grid>
-
-        <Grid item>
-          <CopyIcon />
-          <br />
-          CopyIcon
-        </Grid>
-
-        <Grid item>
-          <ConsoleLogo />
-          <br />
-          ConsoleLogo
-        </Grid>
-
-        <Grid item>
-          <TraceIcon />
-          <br />
-          TraceIcon
-        </Grid>
-
-        <Grid item>
-          <AddIcon />
-          <br />
-          AddIcon
-        </Grid>
-
-        <Grid item>
-          <LambdaNotificationsIcon />
-          <br />
-          LambdaNotificationsIcon
-        </Grid>
-
-        <Grid item>
-          <BackSettingsIcon />
-          <br />
-          BackSettingsIcon
-        </Grid>
-
-        <Grid item>
-          <LicenseIcon />
-          <br />
-          LicenseIcon
-        </Grid>
-
-        <Grid item>
-          <RemoveIcon />
-          <br />
-          RemoveIcon
-        </Grid>
-
-        <Grid item>
-          <AddFolderIcon />
-          <br />
+        <Grid item xs={1}>
+          <AddFolderIcon /> <br />
           AddFolderIcon
         </Grid>
-
-        <Grid item>
-          <IAMPoliciesIcon />
-          <br />
-          IAMPoliciesIcon
+        <Grid item xs={1}>
+          <AddIcon /> <br />
+          AddIcon
         </Grid>
-
-        <Grid item>
-          <UsersIcon />
-          <br />
-          UsersIcon
-        </Grid>
-
-        <Grid item>
-          <EgressIcon />
-          <br />
-          EgressIcon
-        </Grid>
-
-        <Grid item>
-          <DocumentationIcon />
-          <br />
-          DocumentationIcon
-        </Grid>
-
-        <Grid item>
-          <TrashIcon />
-          <br />
-          TrashIcon
-        </Grid>
-
-        <Grid item>
-          <DownloadIcon />
-          <br />
-          DownloadIcon
-        </Grid>
-
-        <Grid item>
-          <AllBucketsIcon />
-          <br />
+        <Grid item xs={1}>
+          <AllBucketsIcon /> <br />
           AllBucketsIcon
         </Grid>
-
-        <Grid item>
-          <SelectMultipleIcon />
-          <br />
-          SelectMultipleIcon
+        <Grid item xs={1}>
+          <ArrowIcon /> <br />
+          ArrowIcon
         </Grid>
-
-        <Grid item>
-          <GroupsIcon />
-          <br />
-          GroupsIcon
-        </Grid>
-
-        <Grid item>
-          <TenantsIcon />
-          <br />
-          TenantsIcon
-        </Grid>
-
-        <Grid item>
-          <UploadFile />
-          <br />
-          UploadFile
-        </Grid>
-
-        <Grid item>
-          <CreateIcon />
-          <br />
-          CreateIcon
-        </Grid>
-
-        <Grid item>
-          <SyncIcon />
-          <br />
-          SyncIcon
-        </Grid>
-
-        <Grid item>
-          <LogoutIcon />
-          <br />
-          LogoutIcon
-        </Grid>
-
-        <Grid item>
-          <HistoryIcon />
-          <br />
-          HistoryIcon
-        </Grid>
-
-        <Grid item>
-          <BucketsIcon />
-          <br />
-          BucketsIcon
-        </Grid>
-
-        <Grid item>
-          <ObjectBrowserIcon />
-          <br />
-          ObjectBrowserIcon
-        </Grid>
-
-        <Grid item>
-          <SettingsIcon />
-          <br />
-          SettingsIcon
-        </Grid>
-
-        <Grid item>
-          <UploadIcon />
-          <br />
-          UploadIcon
-        </Grid>
-
-        <Grid item>
-          <ServiceAccountsIcon />
-          <br />
-          ServiceAccountsIcon
-        </Grid>
-
-        <Grid item>
-          <LogsIcon />
-          <br />
-          LogsIcon
-        </Grid>
-
-        <Grid item>
-          <ConsoleIcon />
-          <br />
-          ConsoleIcon
-        </Grid>
-
-        <Grid item>
-          <ServersIcon />
-          <br />
-          ServersIcon
-        </Grid>
-
-        <Grid item>
-          <DrivesIcon />
-          <br />
-          DrivesIcon
-        </Grid>
-
-        <Grid item>
-          <TotalObjectsIcon />
-          <br />
-          TotalObjectsIcon
-        </Grid>
-
-        <Grid item>
-          <CircleIcon />
-          <br />
-          CircleIcon
-        </Grid>
-
-        <Grid item>
-          <PreviewIcon />
-          <br />
-          PreviewIcon
-        </Grid>
-
-        <Grid item>
-          <LockIcon />
-          <br />
-          LockIcon
-        </Grid>
-
-        <Grid item>
-          <VersionIcon />
-          <br />
-          VersionIcon
-        </Grid>
-
-        <Grid item>
-          <FileLockIcon />
-          <br />
-          FileLockIcon
-        </Grid>
-
-        <Grid item>
-          <FileXlsIcon />
-          <br />
-          FileXlsIcon
-        </Grid>
-
-        <Grid item>
-          <FileZipIcon />
-          <br />
-          FileZipIcon
-        </Grid>
-
-        <Grid item>
-          <FileCloudIcon />
-          <br />
-          FileCloudIcon
-        </Grid>
-
-        <Grid item>
-          <FileMusicIcon />
-          <br />
-          FileMusicIcon
-        </Grid>
-
-        <Grid item>
-          <FileConfigIcon />
-          <br />
-          FileConfigIcon
-        </Grid>
-
-        <Grid item>
-          <FilePdfIcon />
-          <br />
-          FilePdfIcon
-        </Grid>
-
-        <Grid item>
-          <FileFontIcon />
-          <br />
-          FileFontIcon
-        </Grid>
-
-        <Grid item>
-          <FileLinkIcon />
-          <br />
-          FileLinkIcon
-        </Grid>
-
-        <Grid item>
-          <FileImageIcon />
-          <br />
-          FileImageIcon
-        </Grid>
-
-        <Grid item>
-          <FileWorldIcon />
-          <br />
-          FileWorldIcon
-        </Grid>
-
-        <Grid item>
-          <FileBookIcon />
-          <br />
-          FileBookIcon
-        </Grid>
-
-        <Grid item>
-          <FileMissingIcon />
-          <br />
-          FileMissingIcon
-        </Grid>
-
-        <Grid item>
-          <FileCodeIcon />
-          <br />
-          FileCodeIcon
-        </Grid>
-
-        <Grid item>
-          <FilePptIcon />
-          <br />
-          FilePptIcon
-        </Grid>
-
-        <Grid item>
-          <FileDbIcon />
-          <br />
-          FileDbIcon
-        </Grid>
-
-        <Grid item>
-          <FileTxtIcon />
-          <br />
-          FileTxtIcon
-        </Grid>
-
-        <Grid item>
-          <FileVideoIcon />
-          <br />
-          FileVideoIcon
-        </Grid>
-
-        <Grid item>
-          <ArrowRightIcon />
-          <br />
+        <Grid item xs={1}>
+          <ArrowRightIcon /> <br />
           ArrowRightIcon
         </Grid>
-
-        <Grid item>
-          <CalendarIcon />
-          <br />
+        <Grid item xs={1}>
+          <BackSettingsIcon /> <br />
+          BackSettingsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <BucketsIcon /> <br />
+          BucketsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <CalendarIcon /> <br />
           CalendarIcon
         </Grid>
-
-        <Grid item>
-          <UptimeIcon />
-          <br />
-          UptimeIcon
+        <Grid item xs={1}>
+          <CircleIcon /> <br />
+          CircleIcon
         </Grid>
-
-        <Grid item>
-          <LambdaIcon />
-          <br />
-          LambdaIcon
+        <Grid item xs={1}>
+          <ClustersIcon /> <br />
+          ClustersIcon
         </Grid>
-
-        <Grid item>
-          <TiersIcon />
-          <br />
-          TiersIcon
+        <Grid item xs={1}>
+          <CollapseIcon /> <br />
+          CollapseIcon
         </Grid>
-
-        <Grid item>
-          <OpenListIcon />
-          <br />
-          OpenListIcon
-        </Grid>
-
-        <Grid item>
-          <ToolsIcon />
-          <br />
-          ToolsIcon
-        </Grid>
-
-        <Grid item>
-          <RecoverIcon />
-          <br />
-          RecoverIcon
-        </Grid>
-
-        <Grid item>
-          <PrometheusIcon />
-          <br />
-          PrometheusIcon
-        </Grid>
-
-        <Grid item>
-          <NextArrowIcon />
-          <br />
-          NextArrowIcon
-        </Grid>
-
-        <Grid item>
-          <DownloadStatIcon />
-          <br />
-          DownloadStatIcon
-        </Grid>
-
-        <Grid item>
-          <UploadStatIcon />
-          <br />
-          UploadStatIcon
-        </Grid>
-
-        <Grid item>
-          <ComputerLineIcon />
-          <br />
+        <Grid item xs={1}>
+          <ComputerLineIcon /> <br />
           ComputerLineIcon
         </Grid>
-
-        <Grid item>
-          <JSONIcon />
-          <br />
+        <Grid item xs={1}>
+          <ConfigurationsListIcon /> <br />
+          ConfigurationsListIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ConsoleIcon /> <br />
+          ConsoleIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ConsoleLogo /> <br />
+          ConsoleLogo
+        </Grid>
+        <Grid item xs={1}>
+          <CopyIcon /> <br />
+          CopyIcon
+        </Grid>
+        <Grid item xs={1}>
+          <CreateIcon /> <br />
+          CreateIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DashboardIcon /> <br />
+          DashboardIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DeleteIcon /> <br />
+          DeleteIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DiagnosticIcon /> <br />
+          DiagnosticIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DiagnosticsIcon /> <br />
+          DiagnosticsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DocumentationIcon /> <br />
+          DocumentationIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DownloadIcon /> <br />
+          DownloadIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DownloadStatIcon /> <br />
+          DownloadStatIcon
+        </Grid>
+        <Grid item xs={1}>
+          <DrivesIcon /> <br />
+          DrivesIcon
+        </Grid>
+        <Grid item xs={1}>
+          <EditIcon /> <br />
+          EditIcon
+        </Grid>
+        <Grid item xs={1}>
+          <EgressIcon /> <br />
+          EgressIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileBookIcon /> <br />
+          FileBookIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileCloudIcon /> <br />
+          FileCloudIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileCodeIcon /> <br />
+          FileCodeIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileConfigIcon /> <br />
+          FileConfigIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileDbIcon /> <br />
+          FileDbIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileFontIcon /> <br />
+          FileFontIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileImageIcon /> <br />
+          FileImageIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileLinkIcon /> <br />
+          FileLinkIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileLockIcon /> <br />
+          FileLockIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileMissingIcon /> <br />
+          FileMissingIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileMusicIcon /> <br />
+          FileMusicIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FilePdfIcon /> <br />
+          FilePdfIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FilePptIcon /> <br />
+          FilePptIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileTxtIcon /> <br />
+          FileTxtIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileVideoIcon /> <br />
+          FileVideoIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileWorldIcon /> <br />
+          FileWorldIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileXlsIcon /> <br />
+          FileXlsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FileZipIcon /> <br />
+          FileZipIcon
+        </Grid>
+        <Grid item xs={1}>
+          <FolderIcon /> <br />
+          FolderIcon
+        </Grid>
+        <Grid item xs={1}>
+          <GroupsIcon /> <br />
+          GroupsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <HealIcon /> <br />
+          HealIcon
+        </Grid>
+        <Grid item xs={1}>
+          <HelpIcon /> <br />
+          HelpIcon
+        </Grid>
+        <Grid item xs={1}>
+          <HistoryIcon /> <br />
+          HistoryIcon
+        </Grid>
+        <Grid item xs={1}>
+          <IAMPoliciesIcon /> <br />
+          IAMPoliciesIcon
+        </Grid>
+        <Grid item xs={1}>
+          <JSONIcon /> <br />
           JSONIcon
         </Grid>
-        <Grid item>
-          <WarnIcon />
-          <br />
+        <Grid item xs={1}>
+          <LambdaBalloonIcon /> <br />
+          LambdaBalloonIcon
+        </Grid>
+        <Grid item xs={1}>
+          <LambdaIcon /> <br />
+          LambdaIcon
+        </Grid>
+        <Grid item xs={1}>
+          <LambdaNotificationsIcon /> <br />
+          LambdaNotificationsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <LicenseIcon /> <br />
+          LicenseIcon
+        </Grid>
+        <Grid item xs={1}>
+          <LockIcon /> <br />
+          LockIcon
+        </Grid>
+        <Grid item xs={1}>
+          <LogoutIcon /> <br />
+          LogoutIcon
+        </Grid>
+        <Grid item xs={1}>
+          <LogsIcon /> <br />
+          LogsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <MirroringIcon /> <br />
+          MirroringIcon
+        </Grid>
+        <Grid item xs={1}>
+          <MultipleBucketsIcon /> <br />
+          MultipleBucketsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <NewAccountIcon /> <br />
+          NewAccountIcon
+        </Grid>
+        <Grid item xs={1}>
+          <NextarrowIcon /> <br />
+          NextarrowIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ObjectBrowser1Icon /> <br />
+          ObjectBrowser1Icon
+        </Grid>
+        <Grid item xs={1}>
+          <ObjectBrowserFolderIcon /> <br />
+          ObjectBrowserFolderIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ObjectBrowserIcon /> <br />
+          ObjectBrowserIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ObjectManagerIcon /> <br />
+          ObjectManagerIcon
+        </Grid>
+        <Grid item xs={1}>
+          <OpenlistIcon /> <br />
+          OpenlistIcon
+        </Grid>
+        <Grid item xs={1}>
+          <OperatorLogo /> <br />
+          OperatorLogo
+        </Grid>
+        <Grid item xs={1}>
+          <PermissionIcon /> <br />
+          PermissionIcon
+        </Grid>
+        <Grid item xs={1}>
+          <PreviewIcon /> <br />
+          PreviewIcon
+        </Grid>
+        <Grid item xs={1}>
+          <PrometheusIcon /> <br />
+          PrometheusIcon
+        </Grid>
+        <Grid item xs={1}>
+          <RecoverIcon /> <br />
+          RecoverIcon
+        </Grid>
+        <Grid item xs={1}>
+          <RedoIcon /> <br />
+          RedoIcon
+        </Grid>
+        <Grid item xs={1}>
+          <RefreshIcon /> <br />
+          RefreshIcon
+        </Grid>
+        <Grid item xs={1}>
+          <RemoveIcon /> <br />
+          RemoveIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ReportedUsageIcon /> <br />
+          ReportedUsageIcon
+        </Grid>
+        <Grid item xs={1}>
+          <SearchIcon /> <br />
+          SearchIcon
+        </Grid>
+        <Grid item xs={1}>
+          <SelectMultipleIcon /> <br />
+          SelectMultipleIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ServersIcon /> <br />
+          ServersIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ServiceAccountIcon /> <br />
+          ServiceAccountIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ServiceAccountsIcon /> <br />
+          ServiceAccountsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <SettingsIcon /> <br />
+          SettingsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ShareIcon /> <br />
+          ShareIcon
+        </Grid>
+        <Grid item xs={1}>
+          <SpeedtestIcon /> <br />
+          SpeedtestIcon
+        </Grid>
+        <Grid item xs={1}>
+          <StorageIcon /> <br />
+          StorageIcon
+        </Grid>
+        <Grid item xs={1}>
+          <SyncIcon /> <br />
+          SyncIcon
+        </Grid>
+        <Grid item xs={1}>
+          <TenantsIcon /> <br />
+          TenantsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <TenantsOutlineIcon /> <br />
+          TenantsOutlineIcon
+        </Grid>
+        <Grid item xs={1}>
+          <TiersIcon /> <br />
+          TiersIcon
+        </Grid>
+        <Grid item xs={1}>
+          <ToolsIcon /> <br />
+          ToolsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <TotalObjectsIcon /> <br />
+          TotalObjectsIcon
+        </Grid>
+        <Grid item xs={1}>
+          <TraceIcon /> <br />
+          TraceIcon
+        </Grid>
+        <Grid item xs={1}>
+          <TrashIcon /> <br />
+          TrashIcon
+        </Grid>
+        <Grid item xs={1}>
+          <UploadFile /> <br />
+          UploadFile
+        </Grid>
+        <Grid item xs={1}>
+          <UploadIcon /> <br />
+          UploadIcon
+        </Grid>
+        <Grid item xs={1}>
+          <UploadStatIcon /> <br />
+          UploadStatIcon
+        </Grid>
+        <Grid item xs={1}>
+          <UptimeIcon /> <br />
+          UptimeIcon
+        </Grid>
+        <Grid item xs={1}>
+          <UsersIcon /> <br />
+          UsersIcon
+        </Grid>
+        <Grid item xs={1}>
+          <VersionIcon /> <br />
+          VersionIcon
+        </Grid>
+        <Grid item xs={1}>
+          <WarnIcon /> <br />
           WarnIcon
         </Grid>
-      </Grid>
-      <Grid item>
-        <ObjectManagerIcon />
-        <br />
-        ObjectManagerIcon
+        <Grid item xs={1}>
+          <WarpIcon /> <br />
+          WarpIcon
+        </Grid>
+        <Grid item xs={1}>
+          <WatchIcon /> <br />
+          WatchIcon
+        </Grid>
       </Grid>
       <Grid item>
         <UploadFolderIcon />

@@ -50,9 +50,7 @@ import { FileInfoResponse, IFileInfo } from "./types";
 import { download, extensionPreview } from "../utils";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
-import ShareIcon from "../../../../../../icons/ShareIcon";
-import DownloadIcon from "../../../../../../icons/DownloadIcon";
-import DeleteIcon from "../../../../../../icons/DeleteIcon";
+
 import TableWrapper, {
   ItemActions,
 } from "../../../../Common/TableWrapper/TableWrapper";
@@ -71,21 +69,36 @@ import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import EditIcon from "../../../../../../icons/EditIcon";
-import SearchIcon from "../../../../../../icons/SearchIcon";
-import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
+
 import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import VerticalTabs from "../../../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
-import { RecoverIcon } from "../../../../../../icons";
 import SecureComponent from "../../../../../../common/SecureComponent/SecureComponent";
 import {
+  completeObject,
   setNewObject,
   updateProgress,
-  completeObject,
 } from "../../../../ObjectBrowser/actions";
+
+const RecoverIcon = React.lazy(
+  () => import("../../../../../../icons/RecoverIcon")
+);
+const ShareIcon = React.lazy(() => import("../../../../../../icons/ShareIcon"));
+const DownloadIcon = React.lazy(
+  () => import("../../../../../../icons/DownloadIcon")
+);
+const DeleteIcon = React.lazy(
+  () => import("../../../../../../icons/DeleteIcon")
+);
+const EditIcon = React.lazy(() => import("../../../../../../icons/EditIcon"));
+const SearchIcon = React.lazy(
+  () => import("../../../../../../icons/SearchIcon")
+);
+const ObjectBrowserIcon = React.lazy(
+  () => import("../../../../../../icons/ObjectBrowserIcon")
+);
 
 const styles = (theme: Theme) =>
   createStyles({

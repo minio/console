@@ -17,35 +17,44 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const serversIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 256.143 255.276"
-    >
-      <path
-        data-name="Trazado 404"
-        d="M128.072 0C64.444 0 0 15.224 0 44.289v166.7c0 29.064 64.444 44.289 128.072 44.289s128.072-15.225 128.072-44.289v-166.7C256.143 15.224 191.699 0 128.072 0zm105.8 210.987c0 8.919-37.345 25.835-105.8 25.835s-105.8-17.07-105.8-25.835v-58.744c24.129 11.933 65.187 18.146 105.8 18.146s81.668-6.151 105.8-18.239zm0-84.887c0 8.766-37.345 25.835-105.8 25.835s-105.8-17.069-105.8-25.835V70.339c24.129 12.026 65.187 18.238 105.8 18.238s81.668-6.151 105.8-18.238zm-105.8-55.976c-68.454 0-105.8-17.07-105.8-25.835s37.345-25.835 105.8-25.835 105.8 17.07 105.8 25.835-37.347 25.835-105.8 25.835z"
-      />
-      <circle
-        data-name="Elipse 59"
-        cx={15.793}
-        cy={15.793}
-        r={15.793}
-        transform="rotate(-31.72 347.366 44.437)"
-      />
-      <circle
-        data-name="Elipse 60"
-        cx={15.793}
-        cy={15.793}
-        r={15.793}
-        transform="rotate(-31.72 206.504 4.417)"
-      />
-    </svg>
-  );
-};
+const ServersIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <g data-name="servers-icn">
+        <path
+          data-name="Trazado 404"
+          d="M128 0C64.408 0 0 15.267 0 44.414v167.17c0 29.147 64.408 44.415 128 44.415s128-15.268 128-44.415V44.414C256 15.267 191.592 0 128 0Zm105.743 211.584c0 8.945-37.324 25.909-105.739 25.909s-105.74-17.118-105.74-25.909v-58.911c24.116 11.967 65.15 18.2 105.74 18.2s81.623-6.169 105.739-18.29Zm0-85.128c0 8.791-37.324 25.908-105.739 25.908s-105.74-17.118-105.74-25.908V70.537c24.116 12.06 65.15 18.29 105.74 18.29s81.623-6.168 105.739-18.29ZM128.004 70.321c-68.416 0-105.74-17.118-105.74-25.908s37.324-25.908 105.74-25.908 105.739 17.119 105.739 25.909S196.415 70.323 128 70.323Z"
+        />
+        <circle
+          data-name="Elipse 59"
+          cx={15.793}
+          cy={15.793}
+          r={15.793}
+          transform="rotate(-31.72 348.405 44.732)"
+        />
+        <circle
+          data-name="Elipse 60"
+          cx={15.793}
+          cy={15.793}
+          r={15.793}
+          transform="rotate(-31.72 207.061 4.576)"
+        />
+      </g>
+      <path data-name="Rect\xE1ngulo 854" fill="none" d="M0 0h256v256H0z" />
+    </g>
+  </svg>
+);
 
-export default serversIcon;
+export default ServersIcon;

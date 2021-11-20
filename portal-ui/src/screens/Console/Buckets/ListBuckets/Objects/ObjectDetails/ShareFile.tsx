@@ -25,7 +25,7 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
-import { CopyIcon } from "../../../../../../icons";
+
 import { IFileInfo } from "./types";
 import {
   setModalErrorSnackMessage,
@@ -38,6 +38,8 @@ import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { encodeFileName } from "../../../../../../common/utils";
+
+const CopyIcon = React.lazy(() => import("../../../../../../icons/CopyIcon"));
 
 const styles = (theme: Theme) =>
   createStyles({

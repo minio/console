@@ -17,18 +17,25 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const circleIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 256 256"
-    >
+const CircleIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
       <circle data-name="circle-icn" cx={128} cy={128} r={128} />
-    </svg>
-  );
-};
+      <path data-name="Rect\xE1ngulo 852" fill="none" d="M0 0h256v256H0z" />
+    </g>
+  </svg>
+);
 
-export default circleIcon;
+export default CircleIcon;
