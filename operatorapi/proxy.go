@@ -185,7 +185,8 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		responseWriter.WriteHeader(500)
 		return
 	}
-	targetURL.Path = strings.Replace(req.URL.Path, fmt.Sprintf("/api/proxy/%s/%s", tenant.Namespace, tenant.Name), "", -1)
+	tenantBase := fmt.Sprintf("/api/proxy/%s/%s", tenant.Namespace, tenant.Name)
+	targetURL.Path = strings.Replace(req.URL.Path, tenantBase, "", -1)
 
 	proxiedCookie := &http.Cookie{
 		Name:     "token",
@@ -207,8 +208,17 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		}}
+
+	// are we proxying something with cp=y? (console proxy) then add cpb (console proxy base) so the console
+	// on the other side updates the <base href="" /> to this value overriding sub path or root
+	if v := req.URL.Query().Get("cp"); v == "y" {
+		q := req.URL.Query()
+		q.Add("cpb", tenantBase)
+		req.URL.RawQuery = q.Encode()
+	}
 	// copy query params
 	targetURL.RawQuery = req.URL.Query().Encode()
+
 	proxRequest, err := http.NewRequest(req.Method, targetURL.String(), req.Body)
 	if err != nil {
 		log.Println(err)

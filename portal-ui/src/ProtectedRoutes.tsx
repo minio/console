@@ -20,8 +20,8 @@ import { connect } from "react-redux";
 import { AppState } from "./store";
 import {
   consoleOperatorMode,
-  userLoggedIn,
   setDistributedMode,
+  userLoggedIn,
 } from "./actions";
 import api from "./common/api";
 import { saveSessionResponse } from "./screens/Console/actions";
