@@ -17,12 +17,14 @@
 import request from "superagent";
 import get from "lodash/get";
 import { clearSession } from "../utils";
-import { baseUrl } from "../../history";
 import { ErrorResponseHandler } from "../types";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
-    const targetURL = `${baseUrl}${url}`.replace(/\/\//g, "/");
+    let targetURL = url;
+    if (targetURL[0] === "/") {
+      targetURL = targetURL.substr(1);
+    }
     return request(method, targetURL)
       .send(data)
       .then((res) => res.body)
