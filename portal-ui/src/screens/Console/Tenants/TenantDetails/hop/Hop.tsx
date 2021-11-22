@@ -19,7 +19,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Link } from "react-router-dom";
-import { CircularProgress, IconButton } from "@mui/material";
+import { Box, CircularProgress, IconButton } from "@mui/material";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -46,8 +46,8 @@ const styles = (theme: Theme) =>
     divContainer: {
       position: "absolute",
       left: 0,
-      top: 77,
-      height: "calc(100vh - 77px)",
+      top: 80,
+      height: "calc(100vh - 81px)",
       width: "100%",
     },
     loader: {
@@ -55,6 +55,11 @@ const styles = (theme: Theme) =>
       margin: "auto",
       marginTop: 80,
     },
+
+    pageHeader: {
+      borderBottom: "1px solid #dedede",
+    },
+
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -66,72 +71,76 @@ const Hop = ({ classes, match }: IHopSimple) => {
   const consoleFrame = React.useRef<HTMLIFrameElement>(null);
 
   return (
-    <React.Fragment>
-      <PageHeader
-        label={
-          <Fragment>
-            <Link to={"/tenants"} className={classes.breadcrumLink}>
-              Tenants
-            </Link>
-            {` > `}
-            <Link
-              to={`/namespaces/${tenantNamespace}/tenants/${tenantName}`}
-              className={classes.breadcrumLink}
-            >
-              {match.params["tenantName"]}
-            </Link>
-            {` > Management`}
-          </Fragment>
-        }
-        actions={
-          <React.Fragment>
-            <IconButton
-              color="primary"
-              aria-label="Refresh List"
-              component="span"
-              onClick={() => {
-                if (
-                  consoleFrame !== null &&
-                  consoleFrame.current !== null &&
-                  consoleFrame.current.contentDocument !== null
-                ) {
-                  const loc =
-                    consoleFrame.current.contentDocument.location.toString();
+    <Fragment>
+      <Box className={classes.pageHeader}>
+        <PageHeader
+          label={
+            <Fragment>
+              <Link to={"/tenants"} className={classes.breadcrumLink}>
+                Tenants
+              </Link>
+              {` > `}
+              <Link
+                to={`/namespaces/${tenantNamespace}/tenants/${tenantName}`}
+                className={classes.breadcrumLink}
+              >
+                {match.params["tenantName"]}
+              </Link>
+              {` > Management`}
+            </Fragment>
+          }
+          actions={
+            <React.Fragment>
+              <IconButton
+                color="primary"
+                aria-label="Refresh List"
+                component="span"
+                onClick={() => {
+                  if (
+                    consoleFrame !== null &&
+                    consoleFrame.current !== null &&
+                    consoleFrame.current.contentDocument !== null
+                  ) {
+                    const loc =
+                      consoleFrame.current.contentDocument.location.toString();
 
-                  let add = "&";
+                    let add = "&";
 
-                  if (loc.indexOf("?") < 0) {
-                    add = `?`;
+                    if (loc.indexOf("?") < 0) {
+                      add = `?`;
+                    }
+
+                    if (loc.indexOf("cp=y") < 0) {
+                      const next = `${loc}${add}cp=y`;
+                      consoleFrame.current.contentDocument.location.replace(
+                        next
+                      );
+                    } else {
+                      consoleFrame.current.contentDocument.location.reload();
+                    }
                   }
-
-                  if (loc.indexOf("cp=y") < 0) {
-                    const next = `${loc}${add}cp=y`;
-                    consoleFrame.current.contentDocument.location.replace(next);
-                  } else {
-                    consoleFrame.current.contentDocument.location.reload();
-                  }
-                }
-              }}
-              size="large"
-            >
-              <RefreshIcon />
-            </IconButton>
-            <IconButton
-              color="primary"
-              aria-label="Refresh List"
-              component="span"
-              onClick={() => {
-                history.push(
-                  `/namespaces/${tenantNamespace}/tenants/${tenantName}`
-                );
-              }}
-              size="large"
-            >
-              <ExitToAppIcon />
-            </IconButton>
-          </React.Fragment>
-        }
-      />
+                }}
+                size="large"
+              >
+                <RefreshIcon />
+              </IconButton>
+              <IconButton
+                color="primary"
+                aria-label="Refresh List"
+                component="span"
+                onClick={() => {
+                  history.push(
+                    `/namespaces/${tenantNamespace}/tenants/${tenantName}`
+                  );
+                }}
+                size="large"
+              >
+                <ExitToAppIcon />
+              </IconButton>
+            </React.Fragment>
+          }
+        />
+      </Box>
       <div className={classes.divContainer}>
         {loading && (
           <div className={classes.loader}>
@@ -148,7 +157,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
           }}
         />
       </div>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

@@ -63,7 +63,7 @@ const PageHeader = ({
   return (
     <Grid
       container
-      className={classes.headerContainer}
+      className={`${classes.headerContainer} page-header`}
       direction="row"
       alignItems="center"
     >
