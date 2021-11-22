@@ -29,7 +29,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -256,8 +255,6 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		}
 	})
 }
-
-var reHrefIndex = regexp.MustCompile(`(?m)((href|src)="(.\/).*?")`)
 
 type notFoundRedirectRespWr struct {
 	http.ResponseWriter // We embed http.ResponseWriter
