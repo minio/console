@@ -45,25 +45,39 @@ import {
   IRetentionConfig,
 } from "../../../../common/types";
 import api from "../../../../common/api";
-import SetAccessPolicy from "./SetAccessPolicy";
-import SetRetentionConfig from "./SetRetentionConfig";
-import EnableBucketEncryption from "./EnableBucketEncryption";
-import EnableVersioningModal from "./EnableVersioningModal";
 import GavelIcon from "@mui/icons-material/Gavel";
-import EnableQuota from "./EnableQuota";
 import { setBucketDetailsLoad } from "../actions";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import Chip from "@mui/material/Chip";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import AddBucketTagModal from "./AddBucketTagModal";
-import DeleteBucketTagModal from "./DeleteBucketTagModal";
+
 import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
+
+import withSuspense from "../../Common/Components/withSuspense";
+const AddBucketTagModal = withSuspense(
+  React.lazy(() => import("./AddBucketTagModal"))
+);
+const DeleteBucketTagModal = withSuspense(
+  React.lazy(() => import("./DeleteBucketTagModal"))
+);
+const SetAccessPolicy = withSuspense(
+  React.lazy(() => import("./SetAccessPolicy"))
+);
+const SetRetentionConfig = withSuspense(
+  React.lazy(() => import("./SetRetentionConfig"))
+);
+const EnableBucketEncryption = withSuspense(
+  React.lazy(() => import("./EnableBucketEncryption"))
+);
+const EnableVersioningModal = withSuspense(
+  React.lazy(() => import("./EnableVersioningModal"))
+);
+const EnableQuota = withSuspense(React.lazy(() => import("./EnableQuota")));
 
 interface IBucketSummaryProps {
   classes: any;

@@ -31,7 +31,6 @@ import { Button, LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import DeletePolicy from "./DeletePolicy";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -48,6 +47,9 @@ import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
+
+import withSuspense from "../Common/Components/withSuspense";
+const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
 interface IPolicyDetailsProps {
   classes: any;

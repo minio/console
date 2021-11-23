@@ -33,8 +33,7 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import AddPolicy from "./AddPolicy";
-import DeletePolicy from "./DeletePolicy";
+
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
@@ -42,6 +41,10 @@ import history from "../../../history";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
+
+import withSuspense from "../Common/Components/withSuspense";
+const AddPolicy = withSuspense(React.lazy(() => import("./AddPolicy")));
+const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
 const styles = (theme: Theme) =>
   createStyles({
