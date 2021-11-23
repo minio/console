@@ -106,6 +106,11 @@ const ConfigurationOptions = React.lazy(
 
 const styles = (theme: Theme) =>
   createStyles({
+    "@global": {
+      body: {
+        backgroundColor: "#FFFFFF",
+      },
+    },
     root: {
       display: "flex",
       "& .MuiPaper-root.MuiSnackbarContent-root": {
