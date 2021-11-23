@@ -617,43 +617,63 @@ const BucketSummary = ({
                     </td>
                   </tr>
                 </SecureComponent>
-                <tr>
-                  <td className={classes.titleCol}>Tags:</td>
-                  <td>
-                    {tagKeys &&
-                      tagKeys.map((tagKey: any, index: any) => {
-                        const tag = get(tags, `${tagKey}`, "");
-                        if (tag !== "") {
-                          return (
-                            <Chip
-                              key={`chip-${index}`}
-                              className={classes.tag}
-                              size="small"
-                              label={`${tagKey} : ${tag}`}
-                              color="primary"
-                              deleteIcon={<CloseIcon />}
-                              onDelete={() => {
-                                deleteTag(tagKey, tag);
-                              }}
-                            />
-                          );
-                        }
-                        return null;
-                      })}
-                    <Chip
-                      className={classes.tag}
-                      icon={<AddIcon />}
-                      clickable
-                      size="small"
-                      label="Add tag"
-                      color="primary"
-                      variant="outlined"
-                      onClick={() => {
-                        setTagModalOpen(true);
-                      }}
-                    />
-                  </td>
-                </tr>
+                <SecureComponent
+                  scopes={[IAM_SCOPES.S3_GET_BUCKET_TAGGING]}
+                  resource={bucketName}
+                >
+                  <tr>
+                    <td className={classes.titleCol}>Tags:</td>
+                    <td>
+                      {tagKeys &&
+                        tagKeys.map((tagKey: any, index: any) => {
+                          const tag = get(tags, `${tagKey}`, "");
+                          if (tag !== "") {
+                            return (
+                              <SecureComponent
+                                key={`chip-${index}`}
+                                scopes={[IAM_SCOPES.S3_PUT_BUCKET_TAGGING]}
+                                resource={bucketName}
+                                matchAll
+                                errorProps={{
+                                  deleteIcon: null,
+                                  onDelete: null,
+                                }}
+                              >
+                                <Chip
+                                  className={classes.tag}
+                                  size="small"
+                                  label={`${tagKey} : ${tag}`}
+                                  color="primary"
+                                  deleteIcon={<CloseIcon />}
+                                  onDelete={() => {
+                                    deleteTag(tagKey, tag);
+                                  }}
+                                />
+                              </SecureComponent>
+                            );
+                          }
+                          return null;
+                        })}
+                      <SecureComponent
+                        scopes={[IAM_SCOPES.S3_PUT_BUCKET_TAGGING]}
+                        resource={bucketName}
+                      >
+                        <Chip
+                          className={classes.tag}
+                          icon={<AddIcon />}
+                          clickable
+                          size="small"
+                          label="Add tag"
+                          color="primary"
+                          variant="outlined"
+                          onClick={() => {
+                            setTagModalOpen(true);
+                          }}
+                        />
+                      </SecureComponent>
+                    </td>
+                  </tr>
+                </SecureComponent>
               </tbody>
             </table>
           </Grid>
