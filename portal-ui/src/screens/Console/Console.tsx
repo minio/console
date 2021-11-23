@@ -95,9 +95,7 @@ const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 const Account = React.lazy(() => import("./Account/Account"));
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
-const ConfigurationMain = React.lazy(
-  () => import("./Configurations/ConfigurationMain")
-);
+
 const TenantDetails = React.lazy(
   () => import("./Tenants/TenantDetails/TenantDetails")
 );

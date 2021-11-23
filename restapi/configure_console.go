@@ -21,14 +21,16 @@ package restapi
 import (
 	"bytes"
 	"crypto/tls"
+	"fmt"
 	"io"
 	"io/fs"
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/klauspost/compress/gzhttp"
@@ -49,6 +51,9 @@ import (
 var additionalServerFlags = struct {
 	CertsDir string `long:"certs-dir" description:"path to certs directory" env:"CONSOLE_CERTS_DIR"`
 }{}
+
+var subPath = "/"
+var subPathOnce sync.Once
 
 func configureFlags(api *operations.ConsoleAPI) {
 	api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{
@@ -251,8 +256,6 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-var reHrefIndex = regexp.MustCompile(`(?m)((href|src)="(.\/).*?")`)
-
 type notFoundRedirectRespWr struct {
 	http.ResponseWriter // We embed http.ResponseWriter
 	status              int
@@ -274,9 +277,15 @@ func (w *notFoundRedirectRespWr) Write(p []byte) (int, error) {
 
 func handleSPA(w http.ResponseWriter, r *http.Request) {
 	basePath := "/"
-	// For SPA mode we will replace relative paths with absolute unless we receive query param cp=y
+	// For SPA mode we will replace root base with a sub path if configured unless we received cp=y and cpb=/NEW/BASE
 	if v := r.URL.Query().Get("cp"); v == "y" {
-		basePath = "./"
+		if base := r.URL.Query().Get("cpb"); base != "" {
+			// make sure the subpath has a trailing slash
+			if !strings.HasSuffix(base, "/") {
+				base = fmt.Sprintf("%s/", base)
+			}
+			basePath = base
+		}
 	}
 
 	indexPage, err := portal_ui.GetStaticAssets().Open("build/index.html")
@@ -291,16 +300,21 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if basePath != "./" {
-		indexPageStr := string(indexPageBytes)
-		for _, match := range reHrefIndex.FindAllStringSubmatch(indexPageStr, -1) {
-			toReplace := strings.Replace(match[1], match[3], basePath, 1)
-			indexPageStr = strings.Replace(indexPageStr, match[1], toReplace, 1)
-		}
-		indexPageBytes = []byte(indexPageStr)
+	// if we have a seeded basePath. This should override CONSOLE_SUBPATH every time, thus the `if else`
+	if basePath != "/" {
+		indexPageBytes = replaceBaseInIndex(indexPageBytes, basePath)
+		// if we have a custom subpath replace it in
+	} else if getSubPath() != "/" {
+		indexPageBytes = replaceBaseInIndex(indexPageBytes, getSubPath())
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	mimeType := mimedb.TypeByExtension(filepath.Ext(r.URL.Path))
+
+	if mimeType == "application/octet-stream" {
+		mimeType = "text/html"
+	}
+
+	w.Header().Set("Content-Type", mimeType)
 	http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
 }
 
@@ -334,4 +348,25 @@ func (lw nullWriter) Write(b []byte) (int, error) {
 func configureServer(s *http.Server, _, _ string) {
 	// Turn-off random logging by Go net/http
 	s.ErrorLog = log.New(&nullWriter{}, "", 0)
+}
+
+func getSubPath() string {
+	subPathOnce.Do(func() {
+		if v := os.Getenv("CONSOLE_SUBPATH"); v != "" {
+			// make sure the subpath has a trailing slash
+			if !strings.HasSuffix(v, "/") {
+				v = fmt.Sprintf("%s/", v)
+			}
+			subPath = v
+		}
+	})
+	return subPath
+}
+
+func replaceBaseInIndex(indexPageBytes []byte, basePath string) []byte {
+	indexPageStr := string(indexPageBytes)
+	newBase := fmt.Sprintf("<base href=\"%s\"/>", basePath)
+	indexPageStr = strings.Replace(indexPageStr, "<base href=\"/\"/>", newBase, 1)
+	indexPageBytes = []byte(indexPageStr)
+	return indexPageBytes
 }

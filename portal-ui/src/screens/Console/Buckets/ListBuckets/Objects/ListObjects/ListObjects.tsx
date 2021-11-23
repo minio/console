@@ -66,7 +66,6 @@ import RewindEnable from "./RewindEnable";
 
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 import PreviewFileModal from "../Preview/PreviewFileModal";
-import { baseUrl } from "../../../../../../history";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import AddFolderIcon from "../../../../../../icons/AddFolderIcon";
 import HistoryIcon from "../../../../../../icons/HistoryIcon";
@@ -597,7 +596,7 @@ const ListObjects = ({
     }
     e.preventDefault();
     let files = e.target.files;
-    let uploadUrl = `${baseUrl}/api/v1/buckets/${bucketName}/objects/upload`;
+    let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
     if (encodedPath !== "") {
       uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
     }
