@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import { OutlinedInputProps } from "@mui/material/OutlinedInput";
 import {
   CircularProgress,
+  InputAdornment,
   LinearProgress,
   Paper,
   TextFieldProps,
@@ -40,31 +41,10 @@ import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import { encodeFileName } from "../../common/utils";
+import { LockIcon, UsersIcon, VersionIcon } from "../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
-    "@global": {
-      body: {
-        backgroundColor: "#FAFAFA",
-      },
-    },
-    paper: {
-      borderRadius: 8,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      width: 800,
-      height: 424,
-      margin: "auto",
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      marginLeft: -400,
-      marginTop: -212,
-      "&.MuiPaper-root": {
-        borderRadius: 8,
-      },
-    },
     avatar: {
       margin: theme.spacing(1),
       backgroundColor: theme.palette.secondary.main,
@@ -86,10 +66,10 @@ const styles = (theme: Theme) =>
       justifyContent: "center",
       alignItems: "center",
       position: "absolute",
+      zIndex: 9,
       left: "50%",
       top: "50%",
-      marginLeft: -400,
-      marginTop: -290,
+
       color: "#fff",
       fontWeight: 700,
       fontSize: 14,
@@ -97,31 +77,106 @@ const styles = (theme: Theme) =>
       padding: 10,
       boxSizing: "border-box",
     },
-    mainContainer: {
-      position: "relative",
-      height: 424,
-    },
-    theOcean: {
-      borderTopLeftRadius: 8,
-      borderBottomLeftRadius: 8,
-      background:
-        "transparent linear-gradient(to bottom, #073052 0%,#05122b 100%); 0% 0% no-repeat padding-box;",
-    },
-    oceanBg: {
-      backgroundImage: "url(/images/BG_Illustration.svg)",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "bottom left",
+    loginPage: {
       height: "100%",
-      width: 324,
+      display: "flex",
+      flexFlow: "column",
+      alignItems: "stretch",
+      position: "relative",
+      padding: 84,
+
+      "@media (max-width: 900px)": {
+        padding: 0,
+      },
     },
-    theLogin: {
-      padding: "40px 45px 20px 45px",
+    shadowBox: {
+      boxShadow: "0px 3px 10px #00000014",
+      height: "100%",
     },
+    loginContainer: {
+      flex: 1,
+      height: "100%",
+
+      "& .right-items": {
+        padding: 50,
+        flex: 1,
+        height: "100%",
+        display: "flex",
+        flexFlow: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        maxWidth: "33%",
+
+        "@media (max-width: 900px)": {
+          maxWidth: "100%",
+          margin: "auto",
+        },
+      },
+      "& .consoleTextBanner": {
+        fontWeight: 300,
+        fontSize: "calc(3vw + 3vh + 1.5vmin)",
+        lineHeight: 1.15,
+        color: "#ffffff",
+        flex: 1,
+        textAlign: "center",
+        height: "100%",
+        display: "flex",
+        justifyContent: "flex-start",
+        margin: "auto",
+        flexFlow: "column",
+        background: "linear-gradient(120deg,#081c42,#073052)",
+
+        "& .logoLine": {
+          display: "flex",
+          alignItems: "center",
+          fontSize: 18,
+          marginTop: 40,
+        },
+        "& .left-items": {
+          margin: "auto",
+          textAlign: "left",
+        },
+      },
+    },
+    "@media (max-width: 900px)": {
+      loginContainer: {
+        display: "flex",
+        flexFlow: "column",
+
+        "& .consoleTextBanner": {
+          margin: 0,
+          flex: 2,
+
+          "& .left-items": {
+            alignItems: "center",
+            textAlign: "center",
+          },
+
+          "& .logoLine": {
+            justifyContent: "center",
+          },
+        },
+      },
+    },
+    inputField: {
+      "& input": {
+        padding: 5,
+        "&::placeholder": {
+          fontSize: 12,
+        },
+        "@media (max-width: 900px)": {
+          padding: 10,
+        },
+      },
+      "& svg": { height: 16 },
+    },
+
     loadingLoginStrategy: {
       textAlign: "center",
     },
     headerTitle: {
-      marginBottom: 10,
+      marginRight: "auto",
+      marginBottom: 15,
     },
     submitContainer: {
       textAlign: "right",
@@ -292,29 +347,47 @@ const Login = ({
                 <LoginField
                   fullWidth
                   id="accessKey"
+                  className={classes.inputField}
                   value={accessKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setAccessKey(e.target.value)
                   }
-                  label="Enter Username"
+                  placeholder={"Enter Username"}
                   name="accessKey"
                   autoComplete="username"
                   disabled={loginSending}
+                  variant={"outlined"}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <UsersIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
                 <LoginField
                   fullWidth
+                  className={classes.inputField}
                   value={secretKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setSecretKey(e.target.value)
                   }
                   name="secretKey"
-                  label="Enter Password"
                   type="password"
                   id="secretKey"
                   autoComplete="current-password"
                   disabled={loginSending}
+                  placeholder={"Enter Password"}
+                  variant={"outlined"}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
             </Grid>
@@ -340,13 +413,6 @@ const Login = ({
     case loginStrategyType.redirect: {
       loginComponent = (
         <React.Fragment>
-          <Typography
-            component="h1"
-            variant="h6"
-            className={classes.headerTitle}
-          >
-            Welcome
-          </Typography>
           <Button
             component={"a"}
             href={loginStrategy.redirect}
@@ -376,16 +442,25 @@ const Login = ({
               <Grid item xs={12} className={classes.jwtInput}>
                 <LoginField
                   required
+                  className={classes.inputField}
                   fullWidth
                   id="jwt"
                   value={jwt}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setJwt(e.target.value)
                   }
-                  label="JWT"
                   name="jwt"
                   autoComplete="off"
                   disabled={loginSending}
+                  placeholder={"Enter JWT"}
+                  variant={"outlined"}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
             </Grid>
@@ -425,6 +500,7 @@ const Login = ({
                   }}
                   endIcon={<RefreshIcon />}
                   color={"primary"}
+                  variant="outlined"
                   className={classes.retryButton}
                 >
                   Retry
@@ -436,18 +512,31 @@ const Login = ({
       );
   }
 
+  const consoleText =
+    loginStrategy.loginStrategy === loginStrategyType.serviceAccount
+      ? "Operator"
+      : "Console";
+
   return (
     <React.Fragment>
-      <Paper className={classes.paper}>
-        <MainError customStyle={{ marginTop: -140 }} />
-        <Grid container className={classes.mainContainer}>
-          <Grid item xs={7} className={classes.theOcean}>
-            <div className={classes.oceanBg} />
+      <Paper className={classes.loginPage}>
+        <MainError />
+        <div className={classes.shadowBox}>
+          <Grid container className={classes.loginContainer}>
+            <Grid item className="consoleTextBanner">
+              <div className="left-items">
+                <div className="text-line1">Welcome to</div>
+                <div className="text-line2">{consoleText}</div>
+                <div className="logoLine">
+                  <VersionIcon /> MinIO {consoleText}
+                </div>
+              </div>
+            </Grid>
+            <Grid item className="right-items">
+              {loginComponent}
+            </Grid>
           </Grid>
-          <Grid item xs={5} className={classes.theLogin}>
-            {loginComponent}
-          </Grid>
-        </Grid>
+        </div>
       </Paper>
     </React.Fragment>
   );
