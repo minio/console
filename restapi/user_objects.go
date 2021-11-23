@@ -318,6 +318,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (io.ReadCloser, *models.Error) {
 	ctx := context.Background()
 	var prefix string
+	mClient, err := newMinioClient(session)
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
@@ -332,7 +333,6 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		isFolder = true
 	}
 	if isFolder {
-		mClient, err := newMinioClient(session)
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -365,14 +365,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		zipfile := io.NopCloser(bytes.NewReader(w.Bytes()))
 		return zipfile, nil
 	}
-	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
-	if err != nil {
-		return nil, prepareError(err)
-	}
-	// create a mc S3Client interface implementation
-	// defining the client to be used
-	mcClient := mcClient{client: s3Client}
-	object, err := downloadObject(ctx, mcClient, params.VersionID)
+	object, err := mClient.GetObject(ctx, params.BucketName, prefix, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, prepareError(err)
 	}
