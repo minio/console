@@ -372,20 +372,6 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	return object, nil
 }
 
-func downloadObject(ctx context.Context, client MCClient, versionID *string) (io.ReadCloser, error) {
-	// TODO: handle encrypted files
-	var reader io.ReadCloser
-	var version string
-	if versionID != nil {
-		version = *versionID
-	}
-	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: version})
-	if pErr != nil {
-		return nil, pErr.Cause
-	}
-	return reader, nil
-}
-
 // getDeleteObjectResponse returns whether there was an error on deletion of object
 func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteObjectParams) *models.Error {
 	ctx := context.Background()
