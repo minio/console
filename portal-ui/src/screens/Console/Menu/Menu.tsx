@@ -461,7 +461,7 @@ const Menu = ({
         component: NavLink,
         to: "/license",
         name: "License",
-        icon: <LicenseIcon />,
+        icon: LicenseIcon,
       },
       {
         ...documentation,
