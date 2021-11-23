@@ -41,6 +41,17 @@ declare module "@mui/styles/defaultTheme" {
 const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
   "@global": {
+    body: {
+      height: "100vh",
+      width: "100vw",
+    },
+    "#root": {
+      height: "100%",
+      width: "100%",
+      display: "flex",
+      flexFlow: "column",
+      alignItems: "stretch",
+    },
     ".min-icon": {
       // height: 26,
       width: 26,
