@@ -30,7 +30,10 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import history from "../../../../history";
 import { BucketInfo } from "../types";
-import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import SecureComponent, {
   hasPermission,
@@ -90,6 +93,15 @@ const AccessDetails = ({
     true
   );
 
+  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_USER,
+  ]);
+  const viewPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_POLICY,
+    IAM_SCOPES.ADMIN_LIST_USERS,
+    IAM_SCOPES.ADMIN_LIST_GROUPS,
+  ]);
+
   useEffect(() => {
     if (loadingBucket) {
       setLoadingUsers(true);
@@ -100,6 +112,7 @@ const AccessDetails = ({
   const PolicyActions = [
     {
       type: "view",
+      disableButtonFunction: () => !viewPolicy,
       onClick: (policy: any) => {
         history.push(`/policies/${policy.name}`);
       },
@@ -109,6 +122,7 @@ const AccessDetails = ({
   const userTableActions = [
     {
       type: "view",
+      disableButtonFunction: () => !viewUser,
       onClick: (user: any) => {
         history.push(`/users/${user}`);
       },
