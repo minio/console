@@ -117,6 +117,10 @@ export const IAM_SCOPES = {
   ADMIN_GET_GROUP: "admin:GetGroup",
   ADMIN_ENABLE_GROUP: "admin:EnableGroup",
   ADMIN_DISABLE_GROUP: "admin:DisableGroup",
+  ADMIN_GET_USER: "admin:GetUser",
+  ADMIN_CREATE_POLICY: "admin:CreatePolicy",
+  ADMIN_DELETE_POLICY: "admin:DeletePolicy",
+  ADMIN_ATTACH_USER_OR_GROUP_POLICY: "admin:AttachUserOrGroupPolicy",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
 };
