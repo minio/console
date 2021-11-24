@@ -48,6 +48,13 @@ import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent, {
+  hasPermission,
+} from "../../../common/SecureComponent/SecureComponent";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -209,84 +216,129 @@ const PolicyDetails = ({
   const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
+  const displayGroups = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    [IAM_SCOPES.ADMIN_LIST_GROUPS, IAM_SCOPES.ADMIN_GET_GROUP],
+    true
+  );
+
+  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_GROUP,
+  ]);
+
+  const displayUsers = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_LIST_GROUPS,
+  ]);
+
+  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_USER,
+  ]);
+
+  const displayPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_POLICY,
+  ]);
+
+  const editPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_CREATE_POLICY,
+  ]);
+
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
     if (addLoading) {
       return;
     }
     setAddLoading(true);
-    api
-      .invoke("POST", "/api/v1/policies", {
-        name: policyName,
-        policy: policyDefinition,
-      })
-      .then((_) => {
-        setAddLoading(false);
-        setSnackBarMessage("Policy successfully updated");
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setAddLoading(false);
-        setErrorSnackMessage(err);
-      });
+    if (editPolicy) {
+      api
+        .invoke("POST", "/api/v1/policies", {
+          name: policyName,
+          policy: policyDefinition,
+        })
+        .then((_) => {
+          setAddLoading(false);
+          setSnackBarMessage("Policy successfully updated");
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setAddLoading(false);
+          setErrorSnackMessage(err);
+        });
+    } else {
+      setAddLoading(false);
+    }
   };
 
   useEffect(() => {
     const loadUsersForPolicy = () => {
       if (loadingUsers) {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/policies/${encodeURIComponent(policyName)}/users`
-          )
-          .then((result: any) => {
-            setUserList(result);
-            setLoadingUsers(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            setLoadingUsers(false);
-          });
+        if (displayUsers) {
+          api
+            .invoke(
+              "GET",
+              `/api/v1/policies/${encodeURIComponent(policyName)}/users`
+            )
+            .then((result: any) => {
+              setUserList(result);
+              setLoadingUsers(false);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+              setLoadingUsers(false);
+            });
+        } else {
+          setLoadingUsers(false);
+        }
       }
     };
+
     const loadGroupsForPolicy = () => {
       if (loadingGroups) {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/policies/${encodeURIComponent(policyName)}/groups`
-          )
-          .then((result: any) => {
-            setGroupList(result);
-            setLoadingGroups(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            setLoadingGroups(false);
-          });
+        if (displayGroups) {
+          api
+            .invoke(
+              "GET",
+              `/api/v1/policies/${encodeURIComponent(policyName)}/groups`
+            )
+            .then((result: any) => {
+              setGroupList(result);
+              setLoadingGroups(false);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+              setLoadingGroups(false);
+            });
+        } else {
+          setLoadingGroups(false);
+        }
       }
     };
     const loadPolicyDetails = () => {
       if (loadingPolicy) {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/policy?name=${encodeURIComponent(policyName)}`
-          )
-          .then((result: any) => {
-            if (result) {
-              setPolicy(result);
-              setPolicyDefinition(
-                result ? JSON.stringify(JSON.parse(result.policy), null, 4) : ""
-              );
-              const pol: IAMPolicy = JSON.parse(result.policy);
-              setPolicyStatements(pol.Statement);
-            }
-            setLoadingPolicy(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            setLoadingPolicy(false);
-          });
+        if (displayPolicy) {
+          api
+            .invoke(
+              "GET",
+              `/api/v1/policy?name=${encodeURIComponent(policyName)}`
+            )
+            .then((result: any) => {
+              if (result) {
+                setPolicy(result);
+                setPolicyDefinition(
+                  result
+                    ? JSON.stringify(JSON.parse(result.policy), null, 4)
+                    : ""
+                );
+                const pol: IAMPolicy = JSON.parse(result.policy);
+                setPolicyStatements(pol.Statement);
+              }
+              setLoadingPolicy(false);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+              setLoadingPolicy(false);
+            });
+        } else {
+          setLoadingPolicy(false);
+        }
       }
     };
 
@@ -307,6 +359,9 @@ const PolicyDetails = ({
     setPolicy,
     setLoadingUsers,
     setLoadingGroups,
+    displayUsers,
+    displayGroups,
+    displayPolicy,
   ]);
 
   const resetForm = () => {
@@ -328,11 +383,29 @@ const PolicyDetails = ({
   const userViewAction = (user: any) => {
     history.push(`/users/${user}`);
   };
-  const userTableActions = [{ type: "view", onClick: userViewAction }];
+  const userTableActions = [
+    {
+      type: "view",
+      onClick: userViewAction,
+      disableButtonFunction: () => !viewUser,
+    },
+  ];
 
   const filteredUsers = userList.filter((elementItem) =>
     elementItem.includes(filterUsers)
   );
+
+  const groupViewAction = (group: any) => {
+    history.push(`/groups/${group}`);
+  };
+
+  const groupTableActions = [
+    {
+      type: "view",
+      onClick: groupViewAction,
+      disableButtonFunction: () => !viewGroup,
+    },
+  ];
 
   const filteredGroups = groupList.filter((elementItem) =>
     elementItem.includes(filterGroups)
@@ -373,14 +446,20 @@ const PolicyDetails = ({
             subTitle={<Fragment>IAM Policy</Fragment>}
             actions={
               <Fragment>
-                <BoxIconButton
-                  tooltip={"Delete Policy"}
-                  color="primary"
-                  aria-label="Delete Policy"
-                  onClick={deletePolicy}
+                <SecureComponent
+                  scopes={[IAM_SCOPES.ADMIN_DELETE_POLICY]}
+                  resource={CONSOLE_UI_RESOURCE}
                 >
-                  <TrashIcon />
-                </BoxIconButton>
+                  <BoxIconButton
+                    tooltip={"Delete Policy"}
+                    color="primary"
+                    aria-label="Delete Policy"
+                    onClick={deletePolicy}
+                  >
+                    <TrashIcon />
+                  </BoxIconButton>
+                </SecureComponent>
+
                 <BoxIconButton
                   tooltip={"Refresh"}
                   color="primary"
@@ -401,7 +480,7 @@ const PolicyDetails = ({
 
         <VerticalTabs>
           {{
-            tabConfig: { label: "Summary" },
+            tabConfig: { label: "Summary", disabled: !displayPolicy },
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Policy Summary</div>
@@ -479,7 +558,7 @@ const PolicyDetails = ({
             ),
           }}
           {{
-            tabConfig: { label: "Users" },
+            tabConfig: { label: "Users", disabled: !displayUsers },
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Users</div>
@@ -520,7 +599,7 @@ const PolicyDetails = ({
             ),
           }}
           {{
-            tabConfig: { label: "Groups" },
+            tabConfig: { label: "Groups", disabled: !displayGroups },
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Groups</div>
@@ -549,20 +628,19 @@ const PolicyDetails = ({
                     <br />
                   </Grid>
                   <TableWrapper
-                    itemActions={[]}
+                    itemActions={groupTableActions}
                     columns={[{ label: "Name", elementKey: "name" }]}
                     isLoading={loadingGroups}
                     records={filteredGroups}
                     entityName="Groups"
                     idField="name"
-                    /* customPaperHeight={classes.tableHeight}*/
                   />
                 </Grid>
               </Fragment>
             ),
           }}
           {{
-            tabConfig: { label: "Raw Policy" },
+            tabConfig: { label: "Raw Policy", disabled: !displayPolicy },
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Raw Policy</div>
@@ -577,6 +655,7 @@ const PolicyDetails = ({
                     <Grid container>
                       <Grid item xs={12} className={classes.formScrollable}>
                         <CodeMirrorWrapper
+                          readOnly={!editPolicy}
                           value={policyDefinition}
                           onBeforeChange={(editor, data, value) => {
                             setPolicyDefinition(value);
@@ -596,15 +675,19 @@ const PolicyDetails = ({
                             Clear
                           </button>
                         )}
-
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          disabled={addLoading || !validSave}
+                        <SecureComponent
+                          scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
+                          resource={CONSOLE_UI_RESOURCE}
                         >
-                          Save
-                        </Button>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            disabled={addLoading || !validSave}
+                          >
+                            Save
+                          </Button>
+                        </SecureComponent>
                       </Grid>
                       {addLoading && (
                         <Grid item xs={12}>

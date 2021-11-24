@@ -42,6 +42,13 @@ import history from "../../../history";
 import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent, {
+  hasPermission,
+} from "../../../common/SecureComponent/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -91,38 +98,54 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   const [filterPolicies, setFilterPolicies] = useState<string>("");
   const [policyEdit, setPolicyEdit] = useState<any>(null);
 
+  const viewPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_POLICY,
+  ]);
+
+  const deletePolicy = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_DELETE_POLICY,
+  ]);
+
+  const displayPolicies = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+  ]);
+
   useEffect(() => {
     fetchRecords();
   }, []);
 
   useEffect(() => {
     if (loading) {
-      api
-        .invoke("GET", `/api/v1/policies`)
-        .then((res: PolicyList) => {
-          const policies = get(res, "policies", []);
+      if (displayPolicies) {
+        api
+          .invoke("GET", `/api/v1/policies`)
+          .then((res: PolicyList) => {
+            const policies = get(res, "policies", []);
 
-          policies.sort((pa, pb) => {
-            if (pa.name > pb.name) {
-              return 1;
-            }
+            policies.sort((pa, pb) => {
+              if (pa.name > pb.name) {
+                return 1;
+              }
 
-            if (pa.name < pb.name) {
-              return -1;
-            }
+              if (pa.name < pb.name) {
+                return -1;
+              }
 
-            return 0;
+              return 0;
+            });
+
+            setLoading(false);
+            setRecords(policies);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setLoading(false);
+            setErrorSnackMessage(err);
           });
-
-          setLoading(false);
-          setRecords(policies);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoading(false);
-          setErrorSnackMessage(err);
-        });
+      } else {
+        setLoading(false);
+      }
     }
-  }, [loading, setLoading, setRecords, setErrorSnackMessage]);
+  }, [loading, setLoading, setRecords, setErrorSnackMessage, displayPolicies]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -154,8 +177,17 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   };
 
   const tableActions = [
-    { type: "view", onClick: viewAction },
-    { type: "delete", onClick: confirmDeletePolicy, sendOnlyId: true },
+    {
+      type: "view",
+      onClick: viewAction,
+      disableButtonFunction: () => !viewPolicy,
+    },
+    {
+      type: "delete",
+      onClick: confirmDeletePolicy,
+      sendOnlyId: true,
+      disableButtonFunction: () => !deletePolicy,
+    },
   ];
 
   const filteredRecords = records.filter((elementItem) =>
@@ -199,30 +231,41 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             }}
             variant="standard"
           />
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-              setPolicyEdit(null);
-            }}
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
+            resource={CONSOLE_UI_RESOURCE}
           >
-            Create Policy
-          </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<AddIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+                setPolicyEdit(null);
+              }}
+            >
+              Create Policy
+            </Button>
+          </SecureComponent>
         </Grid>
         <Grid item xs={12}>
           <br />
         </Grid>
         <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[{ label: "Name", elementKey: "name" }]}
-            isLoading={loading}
-            records={filteredRecords}
-            entityName="Policies"
-            idField="name"
-          />
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
+            resource={CONSOLE_UI_RESOURCE}
+            errorProps={{ disabled: true }}
+          >
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[{ label: "Name", elementKey: "name" }]}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Policies"
+              idField="name"
+            />
+          </SecureComponent>
         </Grid>
         <Grid item xs={12}>
           <HelpBox

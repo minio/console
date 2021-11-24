@@ -308,7 +308,7 @@ func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([
 	for _, group := range groups {
 		info, err := groupInfo(ctx, adminClient, group)
 		if err != nil {
-			LogError("unable to fetch group info %s: %v", group, err)
+			return nil, prepareError(err)
 		}
 		if info.Policy == policy {
 			filteredGroups = append(filteredGroups, group)
