@@ -22,8 +22,6 @@ import withStyles from "@mui/styles/withStyles";
 import { withRouter } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import {
   BucketObject,
   BucketObjectsList,
@@ -44,6 +42,7 @@ import {
   containerForHeader,
   objectBrowserCommon,
   searchField,
+  tableStyles,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { Badge, Button, Typography } from "@mui/material";
 import * as reactMoment from "react-moment";
@@ -73,7 +72,6 @@ import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import ObjectBrowserFolderIcon from "../../../../../../icons/ObjectBrowserFolderIcon";
 import FolderIcon from "../../../../../../icons/FolderIcon";
 import RefreshIcon from "../../../../../../icons/RefreshIcon";
-import SearchIcon from "../../../../../../icons/SearchIcon";
 import UploadIcon from "../../../../../../icons/UploadIcon";
 import ShareFile from "../ObjectDetails/ShareFile";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
@@ -102,6 +100,7 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import SecureComponent, {
   hasPermission,
 } from "../../../../../../common/SecureComponent/SecureComponent";
+import SearchBox from "../../../../Common/SearchBox";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -188,8 +187,18 @@ const styles = (theme: Theme) =>
         right: 10,
       },
     },
+    screenTitle: {
+      borderBottom: 0,
+      paddingTop: 0,
+    },
+    ...tableStyles,
     ...actionsTray,
     ...searchField,
+
+    searchField: {
+      ...searchField.searchField,
+      maxWidth: 380,
+    },
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -1046,6 +1055,7 @@ const ListObjects = ({
       <PageLayout>
         <Grid item xs={12}>
           <ScreenTitle
+            classes={classes}
             icon={
               <Fragment>
                 <FolderIcon width={40} />
@@ -1145,23 +1155,10 @@ const ListObjects = ({
             scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
             resource={bucketName}
           >
-            <TextField
+            <SearchBox
+              onChange={setFilterObjects}
+              classes={classes}
               placeholder="Search Objects"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setFilterObjects(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              variant="standard"
             />
           </SecureComponent>
           <SecureComponent
@@ -1184,7 +1181,7 @@ const ListObjects = ({
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.tableBlock}>
           <SecureComponent
             scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
             resource={bucketName}

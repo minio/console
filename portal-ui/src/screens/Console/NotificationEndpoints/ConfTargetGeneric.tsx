@@ -52,9 +52,11 @@ const styles = (theme: Theme) =>
           height: 16,
         },
       },
-      "& div[class|='InputBoxWrapper-textBoxContainer']": {
-        display: "flex",
-      },
+    },
+    textBoxContainer: {
+      flexGrow: 1,
+      position: "relative",
+      display: "flex",
     },
     overlayAction: {
       top: 0,
@@ -69,12 +71,7 @@ const styles = (theme: Theme) =>
     },
     fieldContainer: {
       "& .MuiInputLabel-root": {
-        flex: 1,
         minWidth: 200,
-      },
-      "& div[class|='CommentBoxWrapper-textBoxContainer']": {
-        flexGrow: 1,
-        width: "100%",
       },
     },
     tooltipContainer: {

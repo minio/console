@@ -37,9 +37,6 @@ import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import HelpBox from "../../../../common/HelpBox";
 import { ISessionResponse } from "../../types";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "../../../../icons/SearchIcon";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
@@ -50,6 +47,8 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
+import PageLayout from "../../Common/Layout/PageLayout";
+import SearchBox from "../../Common/SearchBox";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -130,10 +129,18 @@ const styles = (theme: Theme) =>
       marginRight: 10,
       marginLeft: 10,
     },
+    bucketList: {
+      marginTop: 25,
+    },
+
     ...containerForHeader(theme.spacing(4)),
     ...searchField,
-    constrainedContainer: {
-      maxWidth: 1180,
+    searchField: {
+      ...searchField.searchField,
+      minWidth: 380,
+      "@media (max-width: 900px)": {
+        minWidth: 220,
+      },
     },
   });
 
@@ -251,89 +258,76 @@ const ListBuckets = ({
         />
       )}
       <PageHeader label={"Buckets"} />
-      <Grid container className={classes.container}>
-        <Grid item xs={12} className={classes.buttonTray}>
-          <Grid container>
-            <Grid item xs={12} sm>
-              <TextField
-                placeholder="Filter Buckets"
-                className={classes.searchField}
-                id="search-resource"
-                label=""
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(e) => {
-                  setFilterBuckets(e.target.value);
-                }}
-                variant="standard"
-              />
-            </Grid>
-            <Grid item xs={12} sm={"auto"}>
-              <BoxIconButton
-                variant={bulkSelect ? "contained" : "outlined"}
-                tooltip={"Select Multiple"}
-                onClick={() => {
-                  setBulkSelect(!bulkSelect);
-                }}
-                size={"small"}
-                className={classes.bulkSelect}
-              >
-                <SelectMultipleIcon />
-              </BoxIconButton>
-              <BoxIconButton
-                variant="outlined"
-                tooltip={"Set Replication"}
-                onClick={() => {
-                  setReplicationModalOpen(true);
-                }}
-                disabled={selectedBuckets.length === 0}
-                size={"small"}
-              >
-                <MultipleBucketsIcon />
-              </BoxIconButton>
-              <BoxIconButton
+      <PageLayout>
+        <Grid item xs={12} className={classes.actionsTray} display="flex">
+          <SearchBox
+            onChange={setFilterBuckets}
+            classes={classes}
+            placeholder="Search Buckets"
+          />
+
+          <Grid
+            item
+            xs={12}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"flex-end"}
+          >
+            <BoxIconButton
+              variant={bulkSelect ? "contained" : "outlined"}
+              tooltip={"Select Multiple"}
+              onClick={() => {
+                setBulkSelect(!bulkSelect);
+              }}
+              size={"small"}
+              className={classes.bulkSelect}
+            >
+              <SelectMultipleIcon />
+            </BoxIconButton>
+            <BoxIconButton
+              variant="outlined"
+              tooltip={"Set Replication"}
+              onClick={() => {
+                setReplicationModalOpen(true);
+              }}
+              disabled={selectedBuckets.length === 0}
+              size={"small"}
+            >
+              <MultipleBucketsIcon />
+            </BoxIconButton>
+            <BoxIconButton
+              color="primary"
+              aria-label="Refresh"
+              tooltip={"Refresh"}
+              onClick={() => {
+                setLoading(true);
+              }}
+              size="large"
+            >
+              <RefreshIcon />
+            </BoxIconButton>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
+              resource={CONSOLE_UI_RESOURCE}
+            >
+              <Button
+                variant="contained"
                 color="primary"
-                aria-label="Refresh"
-                tooltip={"Refresh"}
+                endIcon={<AddIcon />}
                 onClick={() => {
-                  setLoading(true);
+                  history.push("/add-bucket");
                 }}
-                size="large"
+                className={classes.addBucket}
               >
-                <RefreshIcon />
-              </BoxIconButton>
-              <SecureComponent
-                scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
-                resource={CONSOLE_UI_RESOURCE}
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  endIcon={<AddIcon />}
-                  onClick={() => {
-                    history.push("/add-bucket");
-                  }}
-                  className={classes.addBucket}
-                >
-                  Create Bucket
-                </Button>
-              </SecureComponent>
-            </Grid>
+                Create Bucket
+              </Button>
+            </SecureComponent>
           </Grid>
         </Grid>
 
-        <Grid item xs={12}>
-          <br />
-        </Grid>
         {loading && <LinearProgress />}
         {!loading && (
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.bucketList}>
             {filteredRecords.map((bucket, index) => {
               return (
                 <BucketListItem
@@ -405,7 +399,7 @@ const ListBuckets = ({
             )}
           </Grid>
         )}
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };
