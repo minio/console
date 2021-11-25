@@ -17,6 +17,8 @@
 package restapi
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"encoding/base64"
 	"fmt"
@@ -96,40 +98,51 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 				prefixPath = string(decodedPrefix)
 			}
 			prefixElements := strings.Split(prefixPath, "/")
+			isFolder := false
 			if len(prefixElements) > 0 {
-				filename = prefixElements[len(prefixElements)-1]
+				if prefixElements[len(prefixElements)-1] == "" {
+					filename = prefixElements[len(prefixElements)-2]
+					isFolder = true
+				} else {
+					filename = prefixElements[len(prefixElements)-1]
+				}
 			}
 			if isPreview {
 				rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
 				rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
 				rw.Header().Set("X-XSS-Protection", "1")
 
+			} else if isFolder {
+				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", filename))
+				rw.Header().Set("Content-Type", "application/zip")
 			} else {
 				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 				rw.Header().Set("Content-Type", "application/octet-stream")
 			}
 
 			// indicate object size & content type
-			stat, err := resp.(*minio.Object).Stat()
-			if err != nil {
-				log.Println(err)
-			} else {
-				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+			if !isFolder {
+				stat, err := resp.(*minio.Object).Stat()
+				if err != nil {
+					log.Println(err)
+				} else {
+					rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
 
-				contentType := stat.ContentType
+					contentType := stat.ContentType
 
-				if isPreview {
-					// In case content type was uploaded as octet-stream, we double verify content type
-					if stat.ContentType == "application/octet-stream" {
-						contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+					if isPreview {
+						// In case content type was uploaded as octet-stream, we double verify content type
+						if stat.ContentType == "application/octet-stream" {
+							contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+						}
 					}
-				}
 
-				rw.Header().Set("Content-Type", contentType)
+					rw.Header().Set("Content-Type", contentType)
+				}
 			}
 
 			// Copy the stream
-			_, err = io.Copy(rw, resp)
+			_, err := io.Copy(rw, resp)
 			if err != nil {
 				log.Println(err)
 			}
@@ -305,6 +318,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (io.ReadCloser, *models.Error) {
 	ctx := context.Background()
 	var prefix string
+	mClient, err := newMinioClient(session)
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
@@ -313,32 +327,49 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		}
 		prefix = string(decodedPrefix)
 	}
-	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
-	if err != nil {
-		return nil, prepareError(err)
+	isFolder := false
+	folders := strings.Split(prefix, "/")
+	if folders[len(folders)-1] == "" {
+		isFolder = true
 	}
-	// create a mc S3Client interface implementation
-	// defining the client to be used
-	mcClient := mcClient{client: s3Client}
-	object, err := downloadObject(ctx, mcClient, params.VersionID)
+	if isFolder {
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		minioClient := minioClient{client: mClient}
+		objects, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, true, false, false)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		w := new(bytes.Buffer)
+		zipw := zip.NewWriter(w)
+		var folder string
+		if len(folders) > 1 {
+			folder = folders[len(folders)-2]
+		}
+		for i := 0; i < len(objects); i++ {
+			name := folder + objects[i].Name[len(prefix)-1:]
+			object, err := mClient.GetObject(ctx, params.BucketName, objects[i].Name, minio.GetObjectOptions{})
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			f, err := zipw.Create(name)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(object)
+			f.Write(buf.Bytes())
+		}
+		zipw.Close()
+		zipfile := io.NopCloser(bytes.NewReader(w.Bytes()))
+		return zipfile, nil
+	}
+	object, err := mClient.GetObject(ctx, params.BucketName, prefix, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	return object, nil
-}
-
-func downloadObject(ctx context.Context, client MCClient, versionID *string) (io.ReadCloser, error) {
-	// TODO: handle encrypted files
-	var reader io.ReadCloser
-	var version string
-	if versionID != nil {
-		version = *versionID
-	}
-	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: version})
-	if pErr != nil {
-		return nil, pErr.Cause
-	}
-	return reader, nil
 }
 
 // getDeleteObjectResponse returns whether there was an error on deletion of object
