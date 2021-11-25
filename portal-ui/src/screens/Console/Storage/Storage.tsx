@@ -27,10 +27,16 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import history from "../../../history";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import StoragePVCs from "./StoragePVCs";
-import DirectCSIDrives from "../DirectCSI/DirectCSIDrives";
+
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
+
+import withSuspense from "../Common/Components/withSuspense";
+
+const StoragePVCs = withSuspense(React.lazy(() => import("./StoragePVCs")));
+const DirectCSIDrives = withSuspense(
+  React.lazy(() => import("../DirectCSI/DirectCSIDrives"))
+);
 
 interface IStorageProps {
   classes: any;

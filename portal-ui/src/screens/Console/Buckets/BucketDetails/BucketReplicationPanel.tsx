@@ -37,14 +37,21 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState } from "../../../../store";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import AddReplicationModal from "./AddReplicationModal";
-import DeleteReplicationRule from "./DeleteReplicationRule";
+
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+
+import withSuspense from "../../Common/Components/withSuspense";
+const AddReplicationModal = withSuspense(
+  React.lazy(() => import("./AddReplicationModal"))
+);
+const DeleteReplicationRule = withSuspense(
+  React.lazy(() => import("./DeleteReplicationRule"))
+);
 
 interface IBucketReplicationProps {
   classes: any;

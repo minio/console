@@ -24,9 +24,7 @@ import api from "../../../common/api";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage } from "../../../actions";
-import AddServiceAccount from "./AddServiceAccount";
-import DeleteServiceAccount from "./DeleteServiceAccount";
-import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
+
 import { AccountIcon, AddIcon, LockIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -42,6 +40,17 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
+import withSuspense from "../Common/Components/withSuspense";
+
+const AddServiceAccount = withSuspense(
+  React.lazy(() => import("./AddServiceAccount"))
+);
+const DeleteServiceAccount = withSuspense(
+  React.lazy(() => import("./DeleteServiceAccount"))
+);
+const CredentialsPrompt = withSuspense(
+  React.lazy(() => import("../Common/CredentialsPrompt/CredentialsPrompt"))
+);
 
 const styles = (theme: Theme) =>
   createStyles({

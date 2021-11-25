@@ -8,9 +8,9 @@ import { connect } from "react-redux";
 import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
-
-import ListPolicies from "./ListPolicies";
-import PolicyDetails from "./PolicyDetails";
+import withSuspense from "../Common/Components/withSuspense";
+const ListPolicies = withSuspense(React.lazy(() => import("./ListPolicies")));
+const PolicyDetails = withSuspense(React.lazy(() => import("./PolicyDetails")));
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,

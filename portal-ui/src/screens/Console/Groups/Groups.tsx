@@ -33,10 +33,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import AddGroup from "../Groups/AddGroup";
-import DeleteGroup from "./DeleteGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import HelpBox from "../../../common/HelpBox";
 import history from "../../../history";
@@ -50,6 +47,13 @@ import {
 import SecureComponent, {
   hasPermission,
 } from "../../../common/SecureComponent/SecureComponent";
+
+import withSuspense from "../Common/Components/withSuspense";
+const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
+const AddGroup = withSuspense(React.lazy(() => import("../Groups/AddGroup")));
+const SetPolicy = withSuspense(
+  React.lazy(() => import("../Policies/SetPolicy"))
+);
 
 interface IGroupsProps {
   classes: any;

@@ -22,7 +22,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button } from "@mui/material";
-import ConfPostgres from "./CustomForms/ConfPostgres";
+
 import api from "../../../common/api";
 import { serverNeedsRestart, setErrorSnackMessage } from "../../../actions";
 import {
@@ -37,12 +37,25 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { servicesList } from "./utils";
 import { ErrorResponseHandler } from "../../../common/types";
-import ConfMySql from "./CustomForms/ConfMySql";
-import ConfTargetGeneric from "./ConfTargetGeneric";
+
 import { IElementValue } from "../Configurations/types";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { BackSettingsIcon } from "../../../icons";
 import history from "../../../history";
+
+import withSuspense from "../Common/Components/withSuspense";
+
+const ConfMySql = withSuspense(
+  React.lazy(() => import("./CustomForms/ConfMySql"))
+);
+
+const ConfTargetGeneric = withSuspense(
+  React.lazy(() => import("./ConfTargetGeneric"))
+);
+
+const ConfPostgres = withSuspense(
+  React.lazy(() => import("./CustomForms/ConfPostgres"))
+);
 
 const styles = (theme: Theme) =>
   createStyles({
