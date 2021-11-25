@@ -22,8 +22,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import { Policy, PolicyList } from "./types";
 import { AddIcon, IAMPoliciesIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
@@ -31,6 +29,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 
@@ -38,7 +37,6 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import history from "../../../history";
-import SearchIcon from "../../../icons/SearchIcon";
 import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import {
@@ -48,6 +46,7 @@ import {
 import SecureComponent, {
   hasPermission,
 } from "../../../common/SecureComponent/SecureComponent";
+import SearchBox from "../Common/SearchBox";
 
 import withSuspense from "../Common/Components/withSuspense";
 const AddPolicy = withSuspense(React.lazy(() => import("./AddPolicy")));
@@ -84,6 +83,14 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
+    searchField: {
+      ...searchField.searchField,
+      maxWidth: 380,
+    },
+    tableBlock: {
+      ...tableStyles.tableBlock,
+      marginTop: 15,
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -216,24 +223,12 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
       <PageHeader label="IAM Policies" />
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
+          <SearchBox
+            onChange={setFilterPolicies}
+            classes={classes}
             placeholder="Search Policies"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setFilterPolicies(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
           />
+
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
             resource={CONSOLE_UI_RESOURCE}
@@ -254,7 +249,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.tableBlock}>
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
             resource={CONSOLE_UI_RESOURCE}

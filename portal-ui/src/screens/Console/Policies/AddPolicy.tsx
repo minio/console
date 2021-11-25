@@ -27,6 +27,7 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import {
   fieldBasic,
   modalBasic,
+  spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -42,6 +43,20 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    codeMirrorContainer: {
+      marginBottom: 20,
+      marginTop: 20,
+      "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
+        border: "1px solid #EAEAEA",
+      },
+      "& label": {
+        marginBottom: ".5rem",
+      },
+      "& label + div": {
+        display: "none",
+      },
+    },
+    ...spacingUtils,
     ...modalBasic,
     ...fieldBasic,
   });
@@ -120,7 +135,7 @@ const AddPolicy = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="policy-name"
                 name="policy-name"
@@ -133,29 +148,28 @@ const AddPolicy = ({
                 disabled={!!policyEdit}
               />
             </Grid>
-            <Grid item xs={12}>
-              <br />
+
+            <Grid item xs={12} className={classes.codeMirrorContainer}>
+              <CodeMirrorWrapper
+                label={`${policyEdit ? "Edit" : "Write"} Policy`}
+                value={policyDefinition}
+                onBeforeChange={(editor, data, value) => {
+                  setPolicyDefinition(value);
+                }}
+              />
             </Grid>
-            <CodeMirrorWrapper
-              label={`${policyEdit ? "Edit" : "Write"} Policy`}
-              value={policyDefinition}
-              onBeforeChange={(editor, data, value) => {
-                setPolicyDefinition(value);
-              }}
-            />
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             {!policyEdit && (
-              <button
+              <Button
                 type="button"
+                variant="outlined"
                 color="primary"
-                className={classes.clearButton}
-                onClick={() => {
-                  resetForm();
-                }}
+                className={classes.spacerRight}
+                onClick={resetForm}
               >
                 Clear
-              </button>
+              </Button>
             )}
 
             <Button

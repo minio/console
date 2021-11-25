@@ -249,7 +249,7 @@ const Account = ({
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox
-            placeholder={"Search Groups"}
+            placeholder={"Search Service Accounts"}
             onChange={setFilter}
             classes={classes}
           />

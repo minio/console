@@ -237,7 +237,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox
-            placeholder={"Search Groups"}
+            placeholder={"Search Users"}
             onChange={setFilter}
             classes={classes}
           />
