@@ -24,7 +24,11 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { ISessionResponse } from "../types";
-import ListNotificationEndpoints from "./ListNotificationEndpoints";
+
+import withSuspense from "../Common/Components/withSuspense";
+const ListNotificationEndpoints = withSuspense(
+  React.lazy(() => import("./ListNotificationEndpoints"))
+);
 
 interface INotificationEndpoints {
   classes: any;

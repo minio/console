@@ -33,14 +33,17 @@ import {
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
-import DeleteEvent from "./DeleteEvent";
-import AddEvent from "./AddEvent";
+
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+
+import withSuspense from "../../Common/Components/withSuspense";
+const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
+const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
 
 const styles = (theme: Theme) =>
   createStyles({
