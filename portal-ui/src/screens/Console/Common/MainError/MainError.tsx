@@ -43,7 +43,7 @@ const styles = (theme: Theme) =>
       border: "#C72C48 1px solid",
       borderLeftWidth: 12,
       borderRadius: 3,
-      zIndex: 1000,
+      zIndex: 5000,
       padding: "10px 15px",
       maxWidth: 600,
       left: "50%",
