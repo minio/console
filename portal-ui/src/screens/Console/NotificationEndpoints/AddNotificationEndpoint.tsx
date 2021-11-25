@@ -40,10 +40,11 @@ import { ErrorResponseHandler } from "../../../common/types";
 
 import { IElementValue } from "../Configurations/types";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { BackSettingsIcon } from "../../../icons";
 import history from "../../../history";
 
 import withSuspense from "../Common/Components/withSuspense";
+import BackLink from "../../../common/BackLink";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -61,23 +62,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
     ...settingsCommon,
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    lambdaFormIndicator: {
-      display: "flex",
-      marginBottom: 40,
-    },
-    customTitle: {
-      ...settingsCommon.customTitle,
-      marginTop: 0,
-    },
     lambdaNotif: {
       background:
         "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
@@ -88,7 +72,6 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "start",
       marginBottom: 16,
-      marginRight: 8,
       cursor: "pointer",
       padding: 0,
       overflow: "hidden",
@@ -112,13 +95,9 @@ const styles = (theme: Theme) =>
       fontFamily: "Lato,sans-serif",
       paddingLeft: 18,
     },
-    mainCont: {
-      maxWidth: 1180,
-      paddingLeft: 38,
-      paddingRight: 38,
-    },
-    backTo: {
-      margin: "20px 0px 0",
+    formBox: {
+      border: "1px solid #EAEAEA",
+      padding: 15,
     },
   });
 
@@ -208,20 +187,13 @@ const AddNotificationEndpoint = ({
   return (
     <Fragment>
       <PageHeader label="Notification Endpoints" />
-      <form noValidate onSubmit={submitForm}>
-        <Grid container className={classes.mainCont}>
-          <Grid item xs={12} className={classes.backTo}>
-            <button
-              onClick={() => {
-                history.push("/notification-endpoints/add");
-              }}
-              className={classes.backButton}
-            >
-              <BackSettingsIcon />
-              Back To Supported Services
-            </button>
-          </Grid>
+      <BackLink
+        to="/notification-endpoints/add"
+        label={" Back To Supported Services"}
+      />
 
+      <PageLayout>
+        <form noValidate onSubmit={submitForm}>
           {service !== "" && (
             <Fragment>
               <Grid item xs={12}>
@@ -247,23 +219,25 @@ const AddNotificationEndpoint = ({
                   </div>
                 )}
               </Grid>
-              <Grid item xs={12}>
-                {srvComponent}
-              </Grid>
-              <Grid item xs={12} className={classes.settingsButtonContainer}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={saving}
-                >
-                  Save Notification Target
-                </Button>
-              </Grid>
+              <div className={classes.formBox}>
+                <Grid item xs={12} className={classes.configForm}>
+                  {srvComponent}
+                </Grid>
+                <Grid item xs={12} className={classes.settingsButtonContainer}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={saving}
+                  >
+                    Save Notification Target
+                  </Button>
+                </Grid>
+              </div>
             </Fragment>
           )}
-        </Grid>
-      </form>
+        </form>
+      </PageLayout>
     </Fragment>
   );
 };

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,6 +26,7 @@ import {
 import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../history";
 import BackLink from "../../../common/BackLink";
+import PageLayout from "../Common/Layout/PageLayout";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -38,13 +38,8 @@ const styles = (theme: Theme) =>
   createStyles({
     ...settingsCommon,
     ...typesSelection,
-    mainCont: {
-      ...settingsCommon.mainCont,
-      maxWidth: 1180,
-    },
     link: {
-      textDecoration: "none",
-      color: theme.palette.primary.main,
+      maxWidth: 300,
     },
   });
 
@@ -52,43 +47,40 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
   return (
     <Fragment>
       <PageHeader label="Notification Endpoints" />
-      <Grid container className={classes.mainCont}>
-        <Grid item xs={12} className={classes.mainTitle}>
-          <BackLink
-            to="/notification-endpoints"
-            label="Return to Configured Endpoints"
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.centerElements}>
-          <div className={classes.iconContainer}>
-            {withLogos.map((item) => {
-              return (
-                <button
-                  key={`icon-${item.targetTitle}`}
-                  className={classes.lambdaNotif}
-                  onClick={() => {
-                    history.push(
-                      `/notification-endpoints/add/${item.actionTrigger}`
-                    );
-                  }}
-                >
-                  <div className={classes.lambdaNotifIcon}>
-                    <img
-                      src={item.logo}
-                      className={classes.logoButton}
-                      alt={item.targetTitle}
-                    />
-                  </div>
+      <BackLink
+        classes={classes}
+        to="/notification-endpoints"
+        label="Return to Configured Endpoints"
+      />
+      <PageLayout>
+        <div className={classes.iconContainer}>
+          {withLogos.map((item) => {
+            return (
+              <button
+                key={`icon-${item.targetTitle}`}
+                className={classes.lambdaNotif}
+                onClick={() => {
+                  history.push(
+                    `/notification-endpoints/add/${item.actionTrigger}`
+                  );
+                }}
+              >
+                <div className={classes.lambdaNotifIcon}>
+                  <img
+                    src={item.logo}
+                    className={classes.logoButton}
+                    alt={item.targetTitle}
+                  />
+                </div>
 
-                  <div className={classes.lambdaNotifTitle}>
-                    <b>{item.targetTitle}</b>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </Grid>
-      </Grid>
+                <div className={classes.lambdaNotifTitle}>
+                  <b>{item.targetTitle}</b>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </PageLayout>
     </Fragment>
   );
 };

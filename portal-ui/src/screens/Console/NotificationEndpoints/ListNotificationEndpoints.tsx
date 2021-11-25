@@ -19,12 +19,11 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress, TextField } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { red } from "@mui/material/colors";
 import Grid from "@mui/material/Grid";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
 import {
   NotificationEndpointItem,
   NotificationEndpointsList,
@@ -39,15 +38,17 @@ import {
   containerForHeader,
   searchField,
   settingsCommon,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import RefreshIcon from "../../../icons/RefreshIcon";
-import SearchIcon from "../../../icons/SearchIcon";
 import history from "../../../history";
 import HelpBox from "../../../common/HelpBox";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import AButton from "../Common/AButton/AButton";
+import PageLayout from "../Common/Layout/PageLayout";
+import SearchBox from "../Common/SearchBox";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -74,6 +75,19 @@ const styles = (theme: Theme) =>
     },
     lambdaContainer: {
       padding: "15px 0",
+    },
+    searchField: {
+      ...searchField.searchField,
+      maxWidth: 380,
+    },
+    tableBlock: {
+      ...tableStyles.tableBlock,
+    },
+    rightActionItems: {
+      display: "flex",
+      "& button": {
+        whiteSpace: "nowrap",
+      },
     },
   });
 
@@ -139,56 +153,42 @@ const ListNotificationEndpoints = ({
 
   return (
     <Fragment>
-      <Grid container className={classes.container}>
+      <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
+          <SearchBox
+            classes={classes}
+            placeholder="Search target"
+            onChange={setFilter}
           />
-          <BoxIconButton
-            color="primary"
-            aria-label="Refresh List"
-            onClick={() => {
-              setIsLoading(true);
-            }}
-            size="large"
-          >
-            <RefreshIcon />
-          </BoxIconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            onClick={() => {
-              history.push("/notification-endpoints/add");
-            }}
-          >
-            Add Notification Target
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
+          <div className={classes.rightActionItems}>
+            <BoxIconButton
+              color="primary"
+              aria-label="Refresh List"
+              onClick={() => {
+                setIsLoading(true);
+              }}
+              size="large"
+            >
+              <RefreshIcon />
+            </BoxIconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<AddIcon />}
+              onClick={() => {
+                history.push("/notification-endpoints/add");
+              }}
+            >
+              Add Notification Target
+            </Button>
+          </div>
         </Grid>
         {isLoading && <LinearProgress />}
         {!isLoading && (
           <Fragment>
             {records.length > 0 && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.tableBlock}>
                   <TableWrapper
                     itemActions={[]}
                     columns={[
@@ -272,7 +272,7 @@ const ListNotificationEndpoints = ({
             )}
           </Fragment>
         )}
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };
