@@ -50,6 +50,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import { BucketsIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
+import PageLayout from "../../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -279,10 +280,8 @@ const AddBucket = ({
   return (
     <Fragment>
       <PageHeader label={"Create a Bucket"} />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/buckets" label="Return to Buckets" />
-        </Grid>
+      <BackLink label={"Return to Buckets"} to={"/buckets"} />
+      <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
           <form
             noValidate
@@ -536,7 +535,7 @@ const AddBucket = ({
             </Grid>
           </form>
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };
