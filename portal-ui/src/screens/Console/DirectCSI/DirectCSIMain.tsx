@@ -28,8 +28,14 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { selectDrive } from "./actions";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import DirectCSIDrives from "./DirectCSIDrives";
-import DirectCSIVolumes from "./DirectCSIVolumes";
+import withSuspense from "../Common/Components/withSuspense";
+
+const DirectCSIDrives = withSuspense(
+  React.lazy(() => import("./DirectCSIDrives"))
+);
+const DirectCSIVolumes = withSuspense(
+  React.lazy(() => import("./DirectCSIVolumes"))
+);
 
 interface IDirectCSIMain {
   classes: any;

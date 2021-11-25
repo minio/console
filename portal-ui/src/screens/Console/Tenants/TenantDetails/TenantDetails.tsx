@@ -39,17 +39,7 @@ import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import TenantYAML from "./TenantYAML";
-import TenantSummary from "./TenantSummary";
-import TenantLicense from "./TenantLicense";
-import PoolsSummary from "./PoolsSummary";
-import PodsSummary from "./PodsSummary";
-import VolumesSummary from "./VolumesSummary";
-import TenantMetrics from "./TenantMetrics";
-import TenantSecurity from "./TenantSecurity";
 import { CircleIcon, DeleteIcon } from "../../../../icons";
-import DeleteTenant from "../ListTenants/DeleteTenant";
-import PodDetails from "./pods/PodDetails";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
@@ -59,6 +49,24 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
+import withSuspense from "../../Common/Components/withSuspense";
+
+const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
+const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
+const TenantLicense = withSuspense(React.lazy(() => import("./TenantLicense")));
+const PoolsSummary = withSuspense(React.lazy(() => import("./PoolsSummary")));
+const PodsSummary = withSuspense(React.lazy(() => import("./PodsSummary")));
+const VolumesSummary = withSuspense(
+  React.lazy(() => import("./VolumesSummary"))
+);
+const TenantMetrics = withSuspense(React.lazy(() => import("./TenantMetrics")));
+const TenantSecurity = withSuspense(
+  React.lazy(() => import("./TenantSecurity"))
+);
+const DeleteTenant = withSuspense(
+  React.lazy(() => import("../ListTenants/DeleteTenant"))
+);
+const PodDetails = withSuspense(React.lazy(() => import("./pods/PodDetails")));
 
 interface ITenantDetailsProps {
   classes: any;

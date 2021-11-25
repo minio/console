@@ -37,7 +37,6 @@ import {
   encodeFileName,
   niceBytes,
 } from "../../../../../../common/utils";
-import DeleteObject from "./DeleteObject";
 
 import {
   actionsTray,
@@ -53,7 +52,7 @@ import {
   setFileModeEnabled,
 } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
-import CreateFolderModal from "./CreateFolderModal";
+
 import { download, extensionPreview, sortListObjects } from "../utils";
 import {
   setErrorSnackMessage,
@@ -62,10 +61,7 @@ import {
 } from "../../../../../../actions";
 import { BucketInfo, BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import RewindEnable from "./RewindEnable";
 
-import DeleteMultipleObjects from "./DeleteMultipleObjects";
-import PreviewFileModal from "../Preview/PreviewFileModal";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import AddFolderIcon from "../../../../../../icons/AddFolderIcon";
 import HistoryIcon from "../../../../../../icons/HistoryIcon";
@@ -75,7 +71,6 @@ import FolderIcon from "../../../../../../icons/FolderIcon";
 import RefreshIcon from "../../../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import UploadIcon from "../../../../../../icons/UploadIcon";
-import ShareFile from "../ObjectDetails/ShareFile";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
@@ -102,6 +97,23 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import SecureComponent, {
   hasPermission,
 } from "../../../../../../common/SecureComponent/SecureComponent";
+
+import withSuspense from "../../../../Common/Components/withSuspense";
+
+const CreateFolderModal = withSuspense(
+  React.lazy(() => import("./CreateFolderModal"))
+);
+const DeleteMultipleObjects = withSuspense(
+  React.lazy(() => import("./DeleteMultipleObjects"))
+);
+const ShareFile = withSuspense(
+  React.lazy(() => import("../ObjectDetails/ShareFile"))
+);
+const RewindEnable = withSuspense(React.lazy(() => import("./RewindEnable")));
+const DeleteObject = withSuspense(React.lazy(() => import("./DeleteObject")));
+const PreviewFileModal = withSuspense(
+  React.lazy(() => import("../Preview/PreviewFileModal"))
+);
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",

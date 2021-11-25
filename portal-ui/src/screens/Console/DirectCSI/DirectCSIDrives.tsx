@@ -39,13 +39,18 @@ import { selectDrive } from "./actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import FormatDrives from "./FormatDrives";
-import FormatErrorsResult from "./FormatErrorsResult";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import HelpBox from "../../../common/HelpBox";
 import BoxButton from "../Common/BoxButton/BoxButton";
+
+import withSuspense from "../Common/Components/withSuspense";
+
+const FormatDrives = withSuspense(React.lazy(() => import("./FormatDrives")));
+const FormatErrorsResult = withSuspense(
+  React.lazy(() => import("./FormatErrorsResult"))
+);
 
 interface IDirectCSIMain {
   classes: any;

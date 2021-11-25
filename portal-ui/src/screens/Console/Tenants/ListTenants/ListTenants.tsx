@@ -35,7 +35,6 @@ import { setErrorSnackMessage } from "../../../../actions";
 import { AddIcon, TenantsIcon } from "../../../../icons";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
@@ -45,6 +44,11 @@ import HelpBox from "../../../../common/HelpBox";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import AButton from "../../Common/AButton/AButton";
 
+import withSuspense from "../../Common/Components/withSuspense";
+
+const CredentialsPrompt = withSuspense(
+  React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
+);
 interface ITenantsList {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
