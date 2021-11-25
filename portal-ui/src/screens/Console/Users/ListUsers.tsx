@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, Suspense, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -33,16 +33,22 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
-import DeleteUser from "./DeleteUser";
-import AddToGroup from "./BulkAddToGroup";
+
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { decodeFileName } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
+import withSuspense from "../Common/Components/withSuspense";
+
+const AddUser = withSuspense(React.lazy(() => import("./AddUser")));
+const SetPolicy = withSuspense(
+  React.lazy(() => import("../Policies/SetPolicy"))
+);
+const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
+const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -187,20 +193,16 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
     },
   ];
 
-  const AddUser = React.lazy(() => import("./AddUser"));
-
   return (
     <Fragment>
       {addScreenOpen && (
-        <Suspense fallback={<div>Loading...</div>}>
-          <AddUser
-            open={addScreenOpen}
-            selectedUser={selectedUser}
-            closeModalAndRefresh={() => {
-              closeAddModalAndRefresh();
-            }}
-          />
-        </Suspense>
+        <AddUser
+          open={addScreenOpen}
+          selectedUser={selectedUser}
+          closeModalAndRefresh={() => {
+            closeAddModalAndRefresh();
+          }}
+        />
       )}
       {policyOpen && (
         <SetPolicy

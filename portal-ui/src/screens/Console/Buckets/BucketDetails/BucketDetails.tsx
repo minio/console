@@ -40,16 +40,11 @@ import {
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import AccessDetailsPanel from "./AccessDetailsPanel";
-import BucketSummaryPanel from "./BucketSummaryPanel";
-import BucketEventsPanel from "./BucketEventsPanel";
-import BucketReplicationPanel from "./BucketReplicationPanel";
-import BucketLifecyclePanel from "./BucketLifecyclePanel";
+
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { IconButton, Tooltip } from "@mui/material";
 import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
-import DeleteBucket from "../ListBuckets/DeleteBucket";
-import AccessRulePanel from "./AccessRulePanel";
+
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
@@ -59,6 +54,30 @@ import BackLink from "../../../../common/BackLink";
 import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
+
+import withSuspense from "../../Common/Components/withSuspense";
+
+const DeleteBucket = withSuspense(
+  React.lazy(() => import("../ListBuckets/DeleteBucket"))
+);
+const AccessRulePanel = withSuspense(
+  React.lazy(() => import("./AccessRulePanel"))
+);
+const AccessDetailsPanel = withSuspense(
+  React.lazy(() => import("./AccessDetailsPanel"))
+);
+const BucketSummaryPanel = withSuspense(
+  React.lazy(() => import("./BucketSummaryPanel"))
+);
+const BucketEventsPanel = withSuspense(
+  React.lazy(() => import("./BucketEventsPanel"))
+);
+const BucketReplicationPanel = withSuspense(
+  React.lazy(() => import("./BucketReplicationPanel"))
+);
+const BucketLifecyclePanel = withSuspense(
+  React.lazy(() => import("./BucketLifecyclePanel"))
+);
 
 const styles = (theme: Theme) =>
   createStyles({

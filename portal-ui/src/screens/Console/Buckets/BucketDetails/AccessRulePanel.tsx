@@ -26,9 +26,7 @@ import { ISessionResponse } from "../../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
-import AddAccessRuleModal from "./AddAccessRule";
-import DeleteAccessRuleModal from "./DeleteAccessRule";
-import EditAccessRuleModal from "./EditAccessRule";
+
 import { AddIcon } from "../../../../icons";
 import Grid from "@mui/material/Grid";
 import {
@@ -43,6 +41,17 @@ import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
+
+import withSuspense from "../../Common/Components/withSuspense";
+const AddAccessRuleModal = withSuspense(
+  React.lazy(() => import("./AddAccessRule"))
+);
+const DeleteAccessRuleModal = withSuspense(
+  React.lazy(() => import("./DeleteAccessRule"))
+);
+const EditAccessRuleModal = withSuspense(
+  React.lazy(() => import("./EditAccessRule"))
+);
 
 const styles = (theme: Theme) =>
   createStyles({

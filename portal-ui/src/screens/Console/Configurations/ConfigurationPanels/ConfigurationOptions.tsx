@@ -30,12 +30,16 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
 import { SettingsIcon } from "../../../../icons";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
-import ConfigurationForm from "./ConfigurationForm";
 import history from "../../../../history";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import PageLayout from "../../Common/Layout/PageLayout";
 import get from "lodash/get";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
+
+import withSuspense from "../../Common/Components/withSuspense";
+const ConfigurationForm = withSuspense(
+  React.lazy(() => import("./ConfigurationForm"))
+);
 
 interface IConfigurationOptions {
   classes: any;
