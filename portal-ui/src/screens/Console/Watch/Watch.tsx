@@ -37,34 +37,29 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import BackLink from "../../../common/BackLink";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
-    watchList: {
-      background: "white",
-      height: "400px",
-      overflow: "auto",
-      "& ul": {
-        margin: "4px",
-        padding: "0px",
-      },
-      "& ul li": {
-        listStyle: "none",
-        margin: "0px",
-        padding: "0px",
-        borderBottom: "1px solid #dedede",
-      },
-    },
     searchPrefix: {
       flexGrow: 1,
       marginLeft: 15,
     },
+    watchTableHeight: {
+      height: "calc(100vh - 270px)",
+    },
+    bucketField: {
+      flexGrow: 2,
+      minWidth: 200,
+    },
+    ...tableStyles,
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -73,7 +68,6 @@ const styles = (theme: Theme) =>
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: 450,
       lineHeight: "50px",
       "label + &": {
         marginTop: theme.spacing(3),
@@ -86,7 +80,6 @@ const SelectStyled = withStyles((theme: Theme) =>
       height: 50,
       fontSize: 13,
       lineHeight: "50px",
-      width: 450,
     },
   })
 )(InputBase);
@@ -191,13 +184,11 @@ const Watch = ({
   return (
     <React.Fragment>
       <PageHeader label="Watch" />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/tools" label="Return to Tools" />
-        </Grid>
+      <BackLink to="/tools" label="Return to Tools" />
+      <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
-            <FormControl variant="outlined">
+            <FormControl variant="outlined" className={classes.bucketField}>
               <Select
                 id="bucket-name"
                 name="bucket-name"
@@ -227,10 +218,9 @@ const Watch = ({
               </Select>
             </FormControl>
             <TextField
-              placeholder="Prefix"
               className={`${classes.searchField} ${classes.searchPrefix}`}
               id="prefix-resource"
-              label=""
+              label="Prefix"
               disabled={start}
               InputProps={{
                 disableUnderline: true,
@@ -241,10 +231,9 @@ const Watch = ({
               variant="standard"
             />
             <TextField
-              placeholder="Suffix"
               className={`${classes.searchField} ${classes.searchPrefix}`}
               id="suffix-resource"
-              label=""
+              label="Suffix"
               disabled={start}
               InputProps={{
                 disableUnderline: true,
@@ -264,32 +253,33 @@ const Watch = ({
               Start
             </Button>
           </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <TableWrapper
-            columns={[
-              {
-                label: "Time",
-                elementKey: "Time",
-                renderFunction: timeFromDate,
-              },
-              {
-                label: "Size",
-                elementKey: "Size",
-                renderFunction: niceBytes,
-              },
-              { label: "Type", elementKey: "Type" },
-              { label: "Path", elementKey: "Path" },
-            ]}
-            records={messages}
-            entityName={"Watch"}
-            customEmptyMessage={"No Changes at this time"}
-            idField={"watch_table"}
-            isLoading={false}
-          />
+
+          <div className={classes.tableBlock}>
+            <TableWrapper
+              columns={[
+                {
+                  label: "Time",
+                  elementKey: "Time",
+                  renderFunction: timeFromDate,
+                },
+                {
+                  label: "Size",
+                  elementKey: "Size",
+                  renderFunction: niceBytes,
+                },
+                { label: "Type", elementKey: "Type" },
+                { label: "Path", elementKey: "Path" },
+              ]}
+              records={messages}
+              entityName={"Watch"}
+              customEmptyMessage={"No Changes at this time"}
+              idField={"watch_table"}
+              isLoading={false}
+              customPaperHeight={classes.watchTableHeight}
+            />
+          </div>
         </Grid>
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };

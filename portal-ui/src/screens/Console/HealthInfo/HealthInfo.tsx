@@ -47,6 +47,7 @@ import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
 import CircularProgress from "@mui/material/CircularProgress";
 import BackLink from "../../../common/BackLink";
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -133,7 +134,7 @@ const HealthInfo = ({
   const [diagStarted, setDiagStarted] = useState<boolean>(false);
   const [downloadDisabled, setDownloadDisabled] = useState(true);
   const [localMessage, setMessage] = useState<string>("");
-  const [title, setTitle] = useState<string>("Start new Diagnostic");
+  const [title, setTitle] = useState<string>("New Diagnostic");
 
   useEffect(() => {
     if (serverDiagnosticStatus === DiagStatInProgress) {
@@ -242,11 +243,9 @@ const HealthInfo = ({
   return (
     <Fragment>
       <PageHeader label="Diagnostic" />
+      <BackLink to="/tools" label="Return to Tools" />
 
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/tools" label="Return to Tools" />
-        </Grid>
+      <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
           <TestWrapper title={title} advancedVisible={false}>
             <Grid container className={classes.buttons}>
@@ -306,7 +305,7 @@ const HealthInfo = ({
                           disabled={startDiagnostic}
                           onClick={() => setStartDiagnostic(true)}
                         >
-                          Start new Diagnostic
+                          Start New Diagnostic
                         </Button>
                       </Grid>
                     </Fragment>
@@ -316,7 +315,7 @@ const HealthInfo = ({
             </Grid>
           </TestWrapper>
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

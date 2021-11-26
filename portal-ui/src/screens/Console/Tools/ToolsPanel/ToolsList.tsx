@@ -28,6 +28,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import SettingsCard from "../../Common/SettingsCard/SettingsCard";
+import PageLayout from "../../Common/Layout/PageLayout";
 
 interface IConfigurationOptions {
   classes: any;
@@ -78,7 +79,7 @@ const ToolsList = ({ classes }: IConfigurationOptions) => {
   return (
     <Fragment>
       <PageHeader label={"Tools"} />
-      <Grid container className={classes.container}>
+      <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12}>
             <div className={classes.settingsOptionsContainer}>
@@ -92,7 +93,7 @@ const ToolsList = ({ classes }: IConfigurationOptions) => {
             </div>
           </Grid>
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

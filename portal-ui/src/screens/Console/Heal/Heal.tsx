@@ -46,6 +46,7 @@ import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWr
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import BackLink from "../../../common/BackLink";
+import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -69,6 +70,7 @@ const styles = (theme: Theme) =>
       border: "#EAEDEE 1px solid",
       borderRadius: 3,
       padding: "19px 38px",
+      marginTop: 15,
     },
     scanInfo: {
       marginTop: 20,
@@ -79,8 +81,31 @@ const styles = (theme: Theme) =>
     scanData: {
       fontSize: 13,
     },
+    noMinWidthLabel: {
+      fontWeight: 400,
+    },
+    formBox: {
+      padding: 15,
+      border: "1px solid #EAEAEA",
+    },
+    buttonBar: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+    },
+    bucketField: {
+      flex: 1,
+    },
+    prefixField: {
+      ...searchField.searchField,
+      marginLeft: 10,
+      flex: 1,
+    },
+    actionsTray: {
+      ...actionsTray.actionsTray,
+      marginBottom: 0,
+    },
     ...inlineCheckboxes,
-    ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -93,7 +118,6 @@ interface IHeal {
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: 450,
       lineHeight: "50px",
       marginRight: 15,
       "label + &": {
@@ -107,7 +131,6 @@ const SelectStyled = withStyles((theme: Theme) =>
       height: 50,
       fontSize: 13,
       lineHeight: "50px",
-      width: 450,
     },
   })
 )(InputBase);
@@ -248,97 +271,99 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
   return (
     <React.Fragment>
       <PageHeader label="Heal" />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/tools" label="Return to Tools" />
-        </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <FormControl variant="outlined">
-            <Select
-              id="bucket-name"
-              name="bucket-name"
-              value={bucketName}
-              onChange={(e) => {
-                setBucketName(e.target.value as string);
-              }}
-              className={classes.searchField}
-              input={<SelectStyled />}
-              displayEmpty
-            >
-              <MenuItem value="" key={`select-bucket-name-default`}>
-                Select Bucket
-              </MenuItem>
-              {bucketNames.map((option) => (
-                <MenuItem
-                  value={option.value}
-                  key={`select-bucket-name-${option.label}`}
-                >
-                  {option.label}
+      <BackLink to="/tools" label="Return to Tools" />
+      <PageLayout>
+        <Grid xs={12} className={classes.formBox}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <FormControl variant="outlined" className={classes.bucketField}>
+              <Select
+                label="Bucket"
+                id="bucket-name"
+                name="bucket-name"
+                value={bucketName}
+                onChange={(e) => {
+                  setBucketName(e.target.value as string);
+                }}
+                className={classes.searchField}
+                input={<SelectStyled />}
+                displayEmpty
+              >
+                <MenuItem value="" key={`select-bucket-name-default`}>
+                  Select Bucket
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            placeholder="Prefix"
-            className={classes.searchField}
-            id="prefix-resource"
-            label=""
-            disabled={false}
-            InputProps={{
-              disableUnderline: true,
-            }}
-            onChange={(e) => {
-              setPrefix(e.target.value);
-            }}
-            variant="standard"
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={start}
-            onClick={() => setStart(true)}
-          >
-            Start
-          </Button>
-        </Grid>
-        <Grid item xs={12} className={classes.inlineCheckboxes}>
-          <CheckboxWrapper
-            name="recursive"
-            id="recursive"
-            value="recursive"
-            checked={recursive}
-            onChange={(e) => {
-              setRecursive(e.target.checked);
-            }}
-            disabled={false}
-            label="Recursive"
-          />
-          <CheckboxWrapper
-            name="forceStart"
-            id="forceStart"
-            value="forceStart"
-            checked={forceStart}
-            onChange={(e) => {
-              setForceStart(e.target.checked);
-            }}
-            disabled={false}
-            label="Force Start"
-          />
-          <CheckboxWrapper
-            name="forceStop"
-            id="forceStop"
-            value="forceStop"
-            checked={forceStop}
-            onChange={(e) => {
-              setForceStop(e.target.checked);
-            }}
-            disabled={false}
-            label="Force Stop"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <br />
+                {bucketNames.map((option) => (
+                  <MenuItem
+                    value={option.value}
+                    key={`select-bucket-name-${option.label}`}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              label="Prefix"
+              className={classes.prefixField}
+              id="prefix-resource"
+              disabled={false}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              onChange={(e) => {
+                setPrefix(e.target.value);
+              }}
+              variant="standard"
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.inlineCheckboxes}>
+            <CheckboxWrapper
+              name="recursive"
+              id="recursive"
+              classes={classes}
+              value="recursive"
+              checked={recursive}
+              onChange={(e) => {
+                setRecursive(e.target.checked);
+              }}
+              disabled={false}
+              label="Recursive"
+            />
+            <CheckboxWrapper
+              name="forceStart"
+              id="forceStart"
+              classes={classes}
+              value="forceStart"
+              checked={forceStart}
+              onChange={(e) => {
+                setForceStart(e.target.checked);
+              }}
+              disabled={false}
+              label="Force Start"
+            />
+            <CheckboxWrapper
+              name="forceStop"
+              id="forceStop"
+              classes={classes}
+              value="forceStop"
+              checked={forceStop}
+              onChange={(e) => {
+                setForceStop(e.target.checked);
+              }}
+              disabled={false}
+              label="Force Stop"
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.buttonBar}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={start}
+              onClick={() => setStart(true)}
+            >
+              Start
+            </Button>
+          </Grid>
         </Grid>
         <Grid item xs={12} className={classes.graphContainer}>
           <HorizontalBar
@@ -370,7 +395,7 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
             </div>
           </Grid>
         </Grid>
-      </Grid>
+      </PageLayout>
     </React.Fragment>
   );
 };
