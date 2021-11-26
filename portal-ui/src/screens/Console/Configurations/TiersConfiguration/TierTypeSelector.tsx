@@ -29,6 +29,7 @@ import {
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { tierTypes } from "./utils";
 import BackLink from "../../../../common/BackLink";
+import PageLayout from "../../Common/Layout/PageLayout";
 
 interface ITypeTiersConfig {
   classes: any;
@@ -87,14 +88,13 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
   return (
     <Fragment>
       <PageHeader label="Tier Configuration" />
-      <Grid container className={classes.mainCont}>
-        <Grid item xs={12}>
-          <Grid item xs={12} className={classes.mainTitle}>
-            <BackLink to="/tiers" label="Return to Configured Tiers" />
-          </Grid>
+      <BackLink to="/tiers" label="Return to Configured Tiers" />
+
+      <PageLayout>
+        <Grid>
           <Grid item xs={12}>
             <Grid item xs={12}>
-              <Grid item xs={12} className={classes.centerElements}>
+              <Grid item xs={12}>
                 <div className={classes.iconContainer}>
                   {tierTypes.map((tierType, index) => (
                     <button
@@ -122,7 +122,7 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };
