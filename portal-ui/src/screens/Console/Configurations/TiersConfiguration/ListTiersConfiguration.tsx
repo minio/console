@@ -20,15 +20,15 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress, TextField } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
 import {
   actionsTray,
   containerForHeader,
   searchField,
   settingsCommon,
+  tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AddIcon, TiersIcon } from "../../../../icons";
@@ -38,13 +38,19 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 
-import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import AButton from "../../Common/AButton/AButton";
+import PageLayout from "../../Common/Layout/PageLayout";
+import SearchBox from "../../Common/SearchBox";
+
+import withSuspense from "../../Common/Components/withSuspense";
+
+const UpdateTierCredentialsModal = withSuspense(
+  React.lazy(() => import("./UpdateTierCredentialsModal"))
+);
 
 interface IListTiersConfig {
   classes: any;
@@ -59,25 +65,25 @@ const styles = (theme: Theme) =>
     ...settingsCommon,
     ...typesSelection,
     ...containerForHeader(theme.spacing(4)),
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    iconText: {
-      lineHeight: "24px",
-    },
     customConfigurationPage: {
       minHeight: 400,
     },
     actionsTray: {
       ...actionsTray.actionsTray,
     },
-    customTitle: {
-      ...settingsCommon.customTitle,
-      marginTop: 0,
+    searchField: {
+      ...searchField.searchField,
+      marginRight: "auto",
+      maxWidth: 380,
     },
+
+    rightActionButtons: {
+      display: "flex",
+      "& button": {
+        whiteSpace: "nowrap",
+      },
+    },
+    ...tableStyles,
   });
 
 const ListTiersConfiguration = ({
@@ -183,61 +189,48 @@ const ListTiersConfiguration = ({
   return (
     <Fragment>
       {updateCredentialsOpen && (
-        <UpdateTierCredentiasModal
+        <UpdateTierCredentialsModal
           open={updateCredentialsOpen}
           tierData={selectedTier}
           closeModalAndRefresh={closeTierCredentials}
         />
       )}
       <PageHeader label="Tiers" />
-      <Grid container className={classes.container}>
+      <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
+          <SearchBox
             placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
+            onChange={setFilter}
+            classes={classes}
           />
-          <BoxIconButton
-            color="primary"
-            aria-label="Refresh List"
-            onClick={() => {
-              setIsLoading(true);
-            }}
-            size="large"
-          >
-            <RefreshIcon />
-          </BoxIconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            onClick={addTier}
-          >
-            Add Tier
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
+
+          <div className={classes.rightActionButtons}>
+            <BoxIconButton
+              color="primary"
+              aria-label="Refresh List"
+              onClick={() => {
+                setIsLoading(true);
+              }}
+              size="large"
+            >
+              <RefreshIcon />
+            </BoxIconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<AddIcon />}
+              onClick={addTier}
+            >
+              Add Tier
+            </Button>
+          </div>
         </Grid>
         {isLoading && <LinearProgress />}
         {!isLoading && (
           <Fragment>
             {records.length > 0 && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.tableBlock}>
                   <TableWrapper
                     itemActions={[
                       {
@@ -350,7 +343,7 @@ const ListTiersConfiguration = ({
             )}
           </Fragment>
         )}
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };
