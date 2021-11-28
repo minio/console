@@ -1166,3 +1166,39 @@ export const deleteDialogStyles = {
     },
   },
 };
+
+export const advancedFilterToggleStyles: any = {
+  advancedButton: {
+    flexGrow: 1,
+    alignItems: "flex-end",
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  advancedConfiguration: {
+    color: "#2781B0",
+    fontSize: 10,
+    textDecoration: "underline",
+    border: "none",
+    backgroundColor: "transparent",
+    cursor: "pointer",
+    alignItems: "center",
+    display: "flex",
+    float: "right",
+
+    "&:hover": {
+      color: "#07193E",
+    },
+
+    "& svg": {
+      width: 10,
+      alignSelf: "center",
+      marginLeft: 5,
+    },
+  },
+  advancedOpen: {
+    transform: "rotateZ(-90deg) translateX(-4px) translateY(2px)",
+  },
+  advancedClosed: {
+    transform: "rotateZ(90deg)",
+  },
+};

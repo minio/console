@@ -20,8 +20,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { connect } from "react-redux";
 import { Grid } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import moment from "moment/moment";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
@@ -34,19 +32,20 @@ import {
   logsCommon,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
+import PageLayout from "../../Common/Layout/PageLayout";
+import SearchBox from "../../Common/SearchBox";
 
 const styles = (theme: Theme) =>
   createStyles({
     logList: {
       background: "#fff",
       minHeight: 400,
-      height: "calc(100vh - 304px)",
+      height: "calc(100vh - 280px)",
       overflow: "auto",
       fontSize: 13,
-      padding: "25px 45px 0",
+      padding: "15px 15px 0",
       border: "1px solid #EAEDEE",
       borderRadius: 4,
     },
@@ -330,41 +329,17 @@ const ErrorLogs = ({
   return (
     <Fragment>
       <PageHeader label="Logs" />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/tools" label="Return to Tools" />
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container className={classes.logsSubContainer}>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <TextField
-                placeholder="Highlight Line"
-                className={classes.searchField}
-                id="search-resource"
-                label=""
-                onChange={(val) => {
-                  setHighlight(val.target.value);
-                }}
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                variant="standard"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <div className={classes.logList}>{renderLines}</div>
-            </Grid>
+      <BackLink to="/tools" label="Return to Tools" />
+      <PageLayout>
+        <Grid xs={12}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <SearchBox placeholder="Highlight Line" onChange={setHighlight} />
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.logList}>{renderLines}</div>
           </Grid>
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };
