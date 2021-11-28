@@ -1120,6 +1120,25 @@ export const formFieldStyles = {
   },
 };
 
+export const fileInputStyles = {
+  fieldBottom: {
+    borderBottom: 0,
+  },
+  fileReselect: {
+    border: "1px solid #EAEAEA",
+    width: "100%",
+    paddingLeft: 10,
+  },
+  textBoxContainer: {
+    border: "1px solid #EAEAEA",
+    padding: 5,
+    "& input": {
+      width: "100%",
+      margin: "auto",
+    },
+  },
+};
+
 export const deleteDialogStyles = {
   root: {
     "& .MuiPaper-root": {

@@ -22,7 +22,10 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalBasic,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
@@ -53,6 +56,7 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
+    ...formFieldStyles,
   });
 
 const UpdateTierCredentialsModal = ({
@@ -143,34 +147,39 @@ const UpdateTierCredentialsModal = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
+          <Grid item xs={12}>
             {type === "s3" && (
               <Fragment>
-                <InputBoxWrapper
-                  id="accessKey"
-                  name="accessKey"
-                  label="Access Key"
-                  placeholder="Enter Access Key"
-                  value={accessKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setAccessKey(e.target.value);
-                  }}
-                />
-                <InputBoxWrapper
-                  id="secretKey"
-                  name="secretKey"
-                  label="Secret Key"
-                  placeholder="Enter Secret Key"
-                  value={secretKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setSecretKey(e.target.value);
-                  }}
-                />
+                <div className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="accessKey"
+                    name="accessKey"
+                    label="Access Key"
+                    placeholder="Enter Access Key"
+                    value={accessKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setAccessKey(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="secretKey"
+                    name="secretKey"
+                    label="Secret Key"
+                    placeholder="Enter Secret Key"
+                    value={secretKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSecretKey(e.target.value);
+                    }}
+                  />
+                </div>
               </Fragment>
             )}
             {type === "gcs" && (
               <Fragment>
                 <FileSelector
+                  classes={classes}
                   accept=".json"
                   id="creds"
                   label="Credentials"
@@ -185,26 +194,30 @@ const UpdateTierCredentialsModal = ({
             )}
             {type === "azure" && (
               <Fragment>
-                <InputBoxWrapper
-                  id="accountName"
-                  name="accountName"
-                  label="Account Name"
-                  placeholder="Enter Account Name"
-                  value={accountName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setAccountName(e.target.value);
-                  }}
-                />
-                <InputBoxWrapper
-                  id="accountKey"
-                  name="accountKey"
-                  label="Account Key"
-                  placeholder="Enter Account Key"
-                  value={accountKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setAccountKey(e.target.value);
-                  }}
-                />
+                <div className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="accountName"
+                    name="accountName"
+                    label="Account Name"
+                    placeholder="Enter Account Name"
+                    value={accountName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setAccountName(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="accountKey"
+                    name="accountKey"
+                    label="Account Key"
+                    placeholder="Enter Account Key"
+                    value={accountKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setAccountKey(e.target.value);
+                    }}
+                  />
+                </div>
               </Fragment>
             )}
           </Grid>
