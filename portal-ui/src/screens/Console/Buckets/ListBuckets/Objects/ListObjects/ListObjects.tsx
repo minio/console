@@ -311,6 +311,7 @@ const ListObjects = ({
   >("ASC");
   const [currentSortField, setCurrentSortField] = useState<string>("name");
   const [iniLoad, setIniLoad] = useState<boolean>(false);
+  const [fileNames, setFileNames] = useState<string[]>([]);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -466,6 +467,7 @@ const ListObjects = ({
             const records: BucketObject[] = res.objects || [];
             const folders: BucketObject[] = [];
             const files: BucketObject[] = [];
+            const newFileNames: string[] = [];
 
             records.forEach((record) => {
               // this is a folder
@@ -474,9 +476,12 @@ const ListObjects = ({
               } else {
                 // this is a file
                 files.push(record);
+                let splitPath = record.name.split("/");
+                newFileNames.push(splitPath[splitPath.length - 1]);
               }
             });
             const recordsInElement = [...folders, ...files];
+            setFileNames(newFileNames);
             setRecords(recordsInElement);
             // In case no objects were retrieved, We check if item is a file
             if (!res.objects && pathPrefix !== "") {
@@ -490,7 +495,6 @@ const ListObjects = ({
                     ? decodedPath
                     : decodedPath + "/";
                 }
-
                 api
                   .invoke(
                     "GET",
@@ -531,10 +535,20 @@ const ListObjects = ({
                       setFileModeEnabled(false);
                       setLoading(false);
                     } else {
-                      // This is an empty folder.
+                      let found = false;
+                      let pathPrefixChopped = pathPrefix.slice(
+                        0,
+                        pathPrefix.length - 1
+                      );
+                      for (let i = 0; i < res.objects.length; i++) {
+                        if (res.objects[i].name === pathPrefixChopped) {
+                          found = true;
+                        }
+                      }
                       if (
-                        res.objects.length === 1 &&
-                        res.objects[0].name.endsWith("/")
+                        (res.objects.length === 1 &&
+                          res.objects[0].name.endsWith("/")) ||
+                        !found
                       ) {
                         setFileModeEnabled(false);
                       } else {
@@ -1016,6 +1030,7 @@ const ListObjects = ({
           bucketName={bucketName}
           folderName={internalPaths}
           onClose={closeAddFolderModal}
+          existingFiles={fileNames}
         />
       )}
       {rewindSelect && (

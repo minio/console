@@ -26,6 +26,7 @@ import { connect } from "react-redux";
 import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
 import history from "../../../../../../history";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
+import { setErrorSnackMessage } from "../../../../../../actions";
 
 interface ICreateFolder {
   classes: any;
@@ -33,7 +34,9 @@ interface ICreateFolder {
   bucketName: string;
   folderName: string;
   setFileModeEnabled: typeof setFileModeEnabled;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
   onClose: () => any;
+  existingFiles: string[];
 }
 
 const styles = (theme: Theme) =>
@@ -54,7 +57,9 @@ const CreateFolderModal = ({
   bucketName,
   onClose,
   setFileModeEnabled,
+  setErrorSnackMessage,
   classes,
+  existingFiles,
 }: ICreateFolder) => {
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -62,6 +67,7 @@ const CreateFolderModal = ({
   const currentPath = `${bucketName}/${decodeFileName(folderName)}`;
 
   const resetForm = () => {
+    console.log("here");
     setPathUrl("");
   };
 
@@ -72,6 +78,15 @@ const CreateFolderModal = ({
       folderPath = decodedFolderName.endsWith("/")
         ? decodedFolderName
         : `${decodedFolderName}/`;
+    }
+    for (let i = 0; i < existingFiles.length; i++) {
+      if (pathUrl === existingFiles[i]) {
+        setErrorSnackMessage({
+          errorMessage: "Folder cannot have the same name as an existing file",
+          detailedError: "",
+        });
+        return;
+      }
     }
     const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
       `${folderPath}${pathUrl}`
@@ -138,6 +153,7 @@ const CreateFolderModal = ({
 
 const mapDispatchToProps = {
   setFileModeEnabled,
+  setErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);
