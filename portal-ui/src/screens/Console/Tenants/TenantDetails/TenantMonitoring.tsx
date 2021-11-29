@@ -37,6 +37,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import { IMonitoringInfo, ITenantMonitoringStruct } from "../ListTenants/types";
 import { IKeyValue } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 interface ITenantMonitoring {
   classes: any;
@@ -81,6 +82,7 @@ const TenantMonitoring = ({
   const [loadingTenantLogs, setLoadingTenantLogs] = useState<boolean>(false);
   const [monitoringInfo, setMonitoringInfo] =
     useState<ITenantMonitoringStruct>();
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -117,8 +119,10 @@ const TenantMonitoring = ({
         `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`,
         configInfo
       )
-      .then()
-
+      .then(() => {
+        setPrometheusMonitoringEnabled(!prometheusMonitoringEnabled);
+        setConfirmOpen(false);
+      })
       .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);
       });
@@ -142,6 +146,27 @@ const TenantMonitoring = ({
           tenantNamespace={tenantNamespace}
         />
       )}
+      {confirmOpen && (
+        <ConfirmationDialog
+          open={confirmOpen}
+          okLabel={prometheusMonitoringEnabled ? "Disable" : "Enable"}
+          onClose={() => setConfirmOpen(false)}
+          cancelOnClick={() => setConfirmOpen(false)}
+          okOnClick={togglePrometheus}
+          title={
+            prometheusMonitoringEnabled
+              ? "Confirm disabling Prometheus monitoring?"
+              : "Confirm enabling Prometheus monitoring?"
+          }
+          description={
+            prometheusMonitoringEnabled
+              ? "Disabling monitoring will erase any custom values you have used to configure Prometheus monitoring"
+              : "Prometheus monitoring will be enabled with default values"
+          }
+          cancelLabel="Cancel"
+        />
+      )}
+
       <h1 className={classes.sectionTitle}>Monitoring</h1>
       <div className={classes.actionsTray}>
         <FormSwitchWrapper
@@ -152,8 +177,8 @@ const TenantMonitoring = ({
           id="monitoring-status"
           name="monitoring-status"
           onChange={(e) => {
-            togglePrometheus();
-            setPrometheusMonitoringEnabled(!prometheusMonitoringEnabled);
+            setConfirmOpen(true);
+            console.log("You hit the switch");
           }}
           description=""
         />
