@@ -64,8 +64,6 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import AddFolderIcon from "../../../../../../icons/AddFolderIcon";
 import HistoryIcon from "../../../../../../icons/HistoryIcon";
-import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
-import ObjectBrowserFolderIcon from "../../../../../../icons/ObjectBrowserFolderIcon";
 import FolderIcon from "../../../../../../icons/FolderIcon";
 import RefreshIcon from "../../../../../../icons/RefreshIcon";
 import UploadIcon from "../../../../../../icons/UploadIcon";
@@ -73,24 +71,7 @@ import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
-import {
-  DeleteIcon,
-  FileBookIcon,
-  FileCodeIcon,
-  FileConfigIcon,
-  FileDbIcon,
-  FileFontIcon,
-  FileImageIcon,
-  FileLockIcon,
-  FileMissingIcon,
-  FileMusicIcon,
-  FilePdfIcon,
-  FilePptIcon,
-  FileTxtIcon,
-  FileVideoIcon,
-  FileXlsIcon,
-  FileZipIcon,
-} from "../../../../../../icons";
+import { DeleteIcon } from "../../../../../../icons";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import SecureComponent, {
   hasPermission,
@@ -98,6 +79,12 @@ import SecureComponent, {
 import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
+import {
+  setNewObject,
+  updateProgress,
+  completeObject,
+} from "../../../../ObjectBrowser/actions";
+import { displayName } from "./utils";
 
 const CreateFolderModal = withSuspense(
   React.lazy(() => import("./CreateFolderModal"))
@@ -233,6 +220,9 @@ interface IListObjectsProps {
   setBucketInfo: typeof setBucketInfo;
   bucketInfo: BucketInfo | null;
   setBucketDetailsLoad: typeof setBucketDetailsLoad;
+  setNewObject: typeof setNewObject;
+  updateProgress: typeof updateProgress;
+  completeObject: typeof completeObject;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -277,6 +267,9 @@ const ListObjects = ({
   loadingBucket,
   setBucketInfo,
   bucketInfo,
+  setNewObject,
+  updateProgress,
+  completeObject,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -616,62 +609,86 @@ const ListObjects = ({
       return;
     }
     e.preventDefault();
+
     let files = e.target.files;
-    let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
-    if (encodedPath !== "") {
-      uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
-    }
-    let xhr = new XMLHttpRequest();
-    const areMultipleFiles = files.length > 1;
-    const errorMessage = `An error occurred while uploading the file${
-      areMultipleFiles ? "s" : ""
-    }.`;
-    const okMessage = `Object${
-      areMultipleFiles ? "s" : ``
-    } uploaded successfully.`;
 
-    xhr.open("POST", uploadUrl, true);
+    if (files.length > 0) {
+      let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
 
-    xhr.withCredentials = false;
-    xhr.onload = function (event) {
-      if (
-        xhr.status === 401 ||
-        xhr.status === 403 ||
-        xhr.status === 400 ||
-        xhr.status === 500
-      ) {
-        setSnackBarMessage(errorMessage);
+      if (encodedPath !== "") {
+        uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
       }
-      if (xhr.status === 200) {
-        setSnackBarMessage(okMessage);
+
+      for (let file of files) {
+        const fileName = file.name;
+        const blobFile = new Blob([file], { type: file.type });
+
+        const identity = btoa(
+          `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
+        );
+
+        setNewObject({
+          bucketName,
+          done: false,
+          instanceID: identity,
+          percentage: 0,
+          prefix: `${decodeFileName(encodedPath)}${fileName}`,
+          type: "upload",
+          waitingForFile: false,
+        });
+
+        let xhr = new XMLHttpRequest();
+        const areMultipleFiles = files.length > 1;
+        const errorMessage = `An error occurred while uploading the file${
+          areMultipleFiles ? "s" : ""
+        }.`;
+        const okMessage = `Object${
+          areMultipleFiles ? "s" : ``
+        } uploaded successfully.`;
+
+        xhr.open("POST", uploadUrl, true);
+
+        xhr.withCredentials = false;
+        xhr.onload = function (event) {
+          if (
+            xhr.status === 401 ||
+            xhr.status === 403 ||
+            xhr.status === 400 ||
+            xhr.status === 500
+          ) {
+            setSnackBarMessage(errorMessage);
+          }
+          if (xhr.status === 200) {
+            completeObject(identity);
+            setSnackBarMessage(okMessage);
+          }
+        };
+
+        xhr.upload.addEventListener("error", (event) => {
+          setSnackBarMessage(errorMessage);
+        });
+
+        xhr.upload.addEventListener("progress", (event) => {
+          const progress = Math.floor((event.loaded * 100) / event.total);
+
+          updateProgress(identity, progress);
+        });
+
+        xhr.onerror = () => {
+          setSnackBarMessage(errorMessage);
+        };
+        xhr.onloadend = () => {
+          setLoading(true);
+          setLoadingProgress(100);
+        };
+
+        const formData = new FormData();
+        formData.append(file.size, blobFile, fileName);
+
+        xhr.send(formData);
       }
-    };
-
-    xhr.upload.addEventListener("error", (event) => {
-      setSnackBarMessage(errorMessage);
-    });
-
-    xhr.upload.addEventListener("progress", (event) => {
-      setLoadingProgress(Math.floor((event.loaded * 100) / event.total));
-    });
-
-    xhr.onerror = () => {
-      setSnackBarMessage(errorMessage);
-    };
-    xhr.onloadend = () => {
-      setLoading(true);
-      setLoadingProgress(100);
-    };
-
-    const formData = new FormData();
-
-    for (let file of files) {
-      const fileName = file.name;
-      const blobFile = new Blob([file], { type: file.type });
-      formData.append(file.size, blobFile, fileName);
     }
 
-    xhr.send(formData);
     e.target.value = null;
   };
 
@@ -699,14 +716,32 @@ const ListObjects = ({
   };
 
   const downloadObject = (object: BucketObject) => {
-    if (object.size > 104857600) {
-      // If file is bigger than 100MB we show a notification
-      setSnackBarMessage(
-        "Download process started, it may take a few moments to complete"
-      );
-    }
+    const identityDownload = btoa(
+      `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
+    );
 
-    download(bucketName, encodeFileName(object.name), object.version_id);
+    setNewObject({
+      bucketName,
+      done: false,
+      instanceID: identityDownload,
+      percentage: 0,
+      prefix: object.name,
+      type: "download",
+      waitingForFile: true,
+    });
+
+    download(
+      bucketName,
+      encodeFileName(object.name),
+      object.version_id,
+      object.size,
+      (progress) => {
+        updateProgress(identityDownload, progress);
+      },
+      () => {
+        completeObject(identityDownload);
+      }
+    );
   };
 
   const openPath = (idElement: string) => {
@@ -783,113 +818,6 @@ const ListObjects = ({
     });
   }
 
-  const displayName = (element: string) => {
-    let elementString = element;
-    let icon = <ObjectBrowserIcon />;
-    // Element is a folder
-    if (element.endsWith("/")) {
-      icon = <ObjectBrowserFolderIcon />;
-      elementString = element.substr(0, element.length - 1);
-    }
-
-    interface IExtToIcon {
-      icon: any;
-      extensions: string[];
-    }
-
-    const extensionToIcon: IExtToIcon[] = [
-      {
-        icon: <FileVideoIcon />,
-        extensions: ["mp4", "mov", "avi", "mpeg", "mpg"],
-      },
-      {
-        icon: <FileMusicIcon />,
-        extensions: ["mp3", "m4a", "aac"],
-      },
-      {
-        icon: <FilePdfIcon />,
-        extensions: ["pdf"],
-      },
-      {
-        icon: <FilePptIcon />,
-        extensions: ["ppt", "pptx"],
-      },
-      {
-        icon: <FileXlsIcon />,
-        extensions: ["xls", "xlsx"],
-      },
-      {
-        icon: <FileLockIcon />,
-        extensions: ["cer", "crt", "pem"],
-      },
-      {
-        icon: <FileCodeIcon />,
-        extensions: [
-          "html",
-          "xml",
-          "css",
-          "py",
-          "go",
-          "php",
-          "cpp",
-          "h",
-          "java",
-        ],
-      },
-      {
-        icon: <FileConfigIcon />,
-        extensions: ["cfg", "yaml"],
-      },
-      {
-        icon: <FileDbIcon />,
-        extensions: ["sql"],
-      },
-      {
-        icon: <FileFontIcon />,
-        extensions: ["ttf", "otf"],
-      },
-      {
-        icon: <FileTxtIcon />,
-        extensions: ["txt"],
-      },
-      {
-        icon: <FileZipIcon />,
-        extensions: ["zip", "rar", "tar", "gz"],
-      },
-      {
-        icon: <FileBookIcon />,
-        extensions: ["epub", "mobi", "azw", "azw3"],
-      },
-      {
-        icon: <FileImageIcon />,
-        extensions: ["jpeg", "jpg", "gif", "tiff", "png", "heic", "dng"],
-      },
-    ];
-    const lowercaseElement = element.toLowerCase();
-    for (const etc of extensionToIcon) {
-      for (const ext of etc.extensions) {
-        if (lowercaseElement.endsWith(`.${ext}`)) {
-          icon = etc.icon;
-        }
-      }
-    }
-
-    if (!element.endsWith("/") && element.indexOf(".") < 0) {
-      icon = <FileMissingIcon />;
-    }
-
-    const splitItem = elementString.split("/");
-
-    return (
-      <div className={classes.fileName}>
-        {icon}
-        <span className={classes.fileNameText}>
-          {splitItem[splitItem.length - 1]}
-        </span>
-      </div>
-    );
-  };
-
   const filteredRecords = records.filter((b: BucketObject) => {
     if (filterObjects === "") {
       return true;
@@ -938,11 +866,15 @@ const ListObjects = ({
     setLoading(true);
   };
 
+  const renderName = (element: string) => {
+    return displayName(element, classes);
+  };
+
   const listModeColumns = [
     {
       label: "Name",
       elementKey: "name",
-      renderFunction: displayName,
+      renderFunction: renderName,
       enableSort: true,
     },
     {
@@ -967,7 +899,7 @@ const ListObjects = ({
     {
       label: "Name",
       elementKey: "name",
-      renderFunction: displayName,
+      renderFunction: renderName,
       enableSort: true,
     },
     {
@@ -1118,7 +1050,7 @@ const ListObjects = ({
                   </BoxIconButton>
                   <input
                     type="file"
-                    multiple={true}
+                    multiple
                     onChange={(e) => uploadObject(e)}
                     id="file-input"
                     style={{ display: "none" }}
@@ -1244,6 +1176,9 @@ const mapDispatchToProps = {
   resetRewind,
   setBucketDetailsLoad,
   setBucketInfo,
+  setNewObject,
+  updateProgress,
+  completeObject,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

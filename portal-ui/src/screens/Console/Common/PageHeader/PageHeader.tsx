@@ -1,14 +1,28 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
+import { connect } from "react-redux";
+import { Box } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
 import { AppState } from "../../../../store";
-import { connect } from "react-redux";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
-import { Box } from "@mui/material";
+import { IFileItem } from "../../ObjectBrowser/reducers";
+import { toggleList } from "../../ObjectBrowser/actions";
+import { ObjectManagerIcon } from "../../../../icons";
+
+interface IPageHeader {
+  classes: any;
+  sidebarOpen?: boolean;
+  operatorMode?: boolean;
+  label: any;
+  actions?: any;
+  managerObjects?: IFileItem[];
+  toggleList: typeof toggleList;
+}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,20 +59,14 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface IPageHeader {
-  classes: any;
-  sidebarOpen?: boolean;
-  operatorMode?: boolean;
-  label: any;
-  actions?: any;
-}
-
 const PageHeader = ({
   classes,
   label,
   actions,
   sidebarOpen,
   operatorMode,
+  managerObjects,
+  toggleList,
 }: IPageHeader) => {
   return (
     <Grid
@@ -82,11 +90,22 @@ const PageHeader = ({
           {label}
         </Typography>
       </Grid>
-      {actions && (
-        <Grid item xs={12} sm={12} md={6} className={classes.rightMenu}>
-          {actions}
-        </Grid>
-      )}
+      <Grid item xs={12} sm={12} md={6} className={classes.rightMenu}>
+        {actions && actions}
+        {managerObjects && managerObjects.length > 0 && (
+          <IconButton
+            color="primary"
+            aria-label="Refresh List"
+            component="span"
+            onClick={() => {
+              toggleList();
+            }}
+            size="large"
+          >
+            <ObjectManagerIcon />
+          </IconButton>
+        )}
+      </Grid>
     </Grid>
   );
 };
@@ -94,8 +113,13 @@ const PageHeader = ({
 const mapState = (state: AppState) => ({
   sidebarOpen: state.system.sidebarOpen,
   operatorMode: state.system.operatorMode,
+  managerObjects: state.objectBrowser.objectManager.objectsToManage,
 });
 
-const connector = connect(mapState, null);
+const mapDispatchToProps = {
+  toggleList,
+};
+
+const connector = connect(mapState, mapDispatchToProps);
 
 export default connector(withStyles(styles)(PageHeader));

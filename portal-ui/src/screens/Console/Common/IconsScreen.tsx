@@ -117,6 +117,7 @@ import {
   VersionIcon,
   WarpIcon,
   WatchIcon,
+  ObjectManagerIcon,
 } from "../../../icons";
 import WarnIcon from "../../../icons/WarnIcon";
 
@@ -716,6 +717,11 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           <br />
           WarnIcon
         </Grid>
+      </Grid>
+      <Grid item>
+        <ObjectManagerIcon />
+        <br />
+        ObjectManagerIcon
       </Grid>
     </div>
   );

@@ -18,6 +18,12 @@ import {
   REWIND_RESET_REWIND,
   REWIND_FILE_MODE_ENABLED,
   ObjectBrowserActionTypes,
+  OBJECT_MANAGER_NEW_OBJECT,
+  OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT,
+  OBJECT_MANAGER_COMPLETE_OBJECT,
+  OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST,
+  OBJECT_MANAGER_CLEAN_LIST,
+  OBJECT_MANAGER_TOGGLE_LIST,
 } from "./actions";
 
 export interface Route {
@@ -35,10 +41,26 @@ export interface RewindItem {
 export interface ObjectBrowserState {
   fileMode: boolean;
   rewind: RewindItem;
+  objectManager: ObjectManager;
 }
 
 export interface ObjectBrowserReducer {
   objectBrowser: ObjectBrowserState;
+}
+
+export interface ObjectManager {
+  objectsToManage: IFileItem[];
+  managerOpen: boolean;
+}
+
+export interface IFileItem {
+  type: "download" | "upload";
+  instanceID: string;
+  bucketName: string;
+  prefix: string;
+  percentage: number;
+  done: boolean;
+  waitingForFile: boolean;
 }
 
 const defaultRewind = {
@@ -51,6 +73,10 @@ const initialState: ObjectBrowserState = {
   fileMode: false,
   rewind: {
     ...defaultRewind,
+  },
+  objectManager: {
+    objectsToManage: [],
+    managerOpen: false,
   },
 };
 
@@ -76,6 +102,97 @@ export function objectBrowserReducer(
       return { ...state, rewind: resetItem };
     case REWIND_FILE_MODE_ENABLED:
       return { ...state, fileMode: action.status };
+    case OBJECT_MANAGER_NEW_OBJECT:
+      const cloneObjects = [...state.objectManager.objectsToManage];
+
+      cloneObjects.push(action.newObject);
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: cloneObjects,
+          managerOpen: true,
+        },
+      };
+    case OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT:
+      const copyManager = [...state.objectManager.objectsToManage];
+
+      const itemUpdate = state.objectManager.objectsToManage.findIndex(
+        (item) => item.instanceID === action.instanceID
+      );
+
+      if (itemUpdate === -1) {
+        return { ...state };
+      }
+
+      copyManager[itemUpdate].percentage = action.progress;
+      copyManager[itemUpdate].waitingForFile = false;
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: copyManager,
+          managerOpen: state.objectManager.managerOpen,
+        },
+      };
+    case OBJECT_MANAGER_COMPLETE_OBJECT:
+      const copyObject = [...state.objectManager.objectsToManage];
+
+      const objectToComplete = state.objectManager.objectsToManage.findIndex(
+        (item) => item.instanceID === action.instanceID
+      );
+
+      if (objectToComplete === -1) {
+        return { ...state };
+      }
+
+      copyObject[objectToComplete].percentage = 100;
+      copyObject[objectToComplete].waitingForFile = false;
+      copyObject[objectToComplete].done = true;
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: copyObject,
+          managerOpen: state.objectManager.managerOpen,
+        },
+      };
+    case OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST:
+      const notObject = state.objectManager.objectsToManage.filter(
+        (element) => element.instanceID !== action.instanceID
+      );
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: notObject,
+          managerOpen:
+            notObject.length === 0 ? false : state.objectManager.managerOpen,
+        },
+      };
+    case OBJECT_MANAGER_CLEAN_LIST:
+      const nonCompletedList = state.objectManager.objectsToManage.filter(
+        (item) => !item.done
+      );
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: nonCompletedList,
+          managerOpen:
+            nonCompletedList.length === 0
+              ? false
+              : state.objectManager.managerOpen,
+        },
+      };
+    case OBJECT_MANAGER_TOGGLE_LIST:
+      return {
+        ...state,
+        objectManager: {
+          ...state.objectManager,
+          managerOpen: !state.objectManager.managerOpen,
+        },
+      };
     default:
       return state;
   }
