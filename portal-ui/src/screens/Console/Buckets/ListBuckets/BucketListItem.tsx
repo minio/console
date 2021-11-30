@@ -145,6 +145,26 @@ const styles = (theme: Theme) =>
         width: 48,
       },
     },
+    bucketInfo: {
+      display: "flex",
+      "@media (max-width: 900px)": {
+        flexFlow: "column-reverse",
+      },
+    },
+    bucketStats: {
+      marginTop: 15,
+      borderTop: "1px solid rgb(234,234,234, .7)",
+      paddingTop: 14,
+    },
+    bucketActionButtons: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+
+      "@media (max-width: 900px)": {
+        marginTop: "-33px",
+      },
+    },
   });
 
 interface IBucketListItem {
@@ -183,10 +203,10 @@ const BucketListItem = ({
   };
 
   return (
-    <Grid container className={classes.root} spacing={1}>
+    <Grid container className={classes.root}>
       <Grid item xs={12}>
         <Grid container justifyContent={"space-between"}>
-          <Grid item xs={12} sm={8}>
+          <Grid item xs={12} sm={7}>
             <Grid container>
               <Grid item xs={12}>
                 {bulkSelect && (
@@ -209,22 +229,22 @@ const BucketListItem = ({
                 <h1 className={classes.bucketName}>{bucket.name}</h1>
               </Grid>
               <Grid item xs={12}>
-                <Grid container>
+                <Grid container className={classes.bucketInfo}>
                   <Grid item xs={12} sm>
                     <Typography variant="body2">
-                      Created: <b>{bucket.creation_date}</b>
+                      Created: {bucket.creation_date}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm>
                     <Typography variant="body2">
-                      Access: <b> {accessToStr(bucket)}</b>
+                      Access: {accessToStr(bucket)}
                     </Typography>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={4} textAlign={"right"}>
+          <Grid item xs={12} sm={5} className={classes.bucketActionButtons}>
             <SecureComponent
               scopes={IAM_PERMISSIONS[IAM_ROLES.admin]}
               resource={bucket.name}
@@ -260,10 +280,8 @@ const BucketListItem = ({
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <hr />
-      </Grid>
-      <Grid item xs={12}>
+
+      <Grid item xs={12} className={classes.bucketStats}>
         <Grid container justifyContent={"flex-start"} spacing={4}>
           <Grid item className={classes.bucketIcon}>
             <BucketsIcon />

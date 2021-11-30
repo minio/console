@@ -19,7 +19,10 @@ import { BucketObject, RewindObject } from "./ListObjects/types";
 export const download = (
   bucketName: string,
   objectPath: string,
-  versionID: any
+  versionID: any,
+  fileSize: number,
+  progressCallback: (progress: number) => void,
+  completeCallback: () => void
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -27,7 +30,46 @@ export const download = (
   if (versionID) {
     path = path.concat(`&version_id=${versionID}`);
   }
-  window.location.href = path;
+
+  var req = new XMLHttpRequest();
+
+  req.open("GET", path, true);
+  req.addEventListener(
+    "progress",
+    function (evt) {
+      var percentComplete = Math.round((evt.loaded / fileSize) * 100);
+
+      if (progressCallback) {
+        progressCallback(percentComplete);
+      }
+    },
+    false
+  );
+
+  req.responseType = "blob";
+  req.onreadystatechange = () => {
+    if (req.readyState === 4 && req.status === 200) {
+      const rspHeader = req.getResponseHeader("Content-Disposition");
+
+      let filename = "download";
+
+      if (rspHeader) {
+        filename = rspHeader.split('"')[1];
+      }
+
+      if (completeCallback) {
+        completeCallback();
+      }
+
+      var link = document.createElement("a");
+      link.href = window.URL.createObjectURL(req.response);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+  req.send();
 };
 
 // Review file extension by name & returns the type of preview browser that can be used
@@ -50,7 +92,7 @@ export const extensionPreview = (
     "png",
     "heic",
   ];
-  const textExtensions = ["pdf", "txt"];
+  const textExtensions = ["pdf", "txt", "json"];
   const audioExtensions = ["wav", "mp3", "alac", "aiff", "dsd", "pcm"];
   const videoExtensions = [
     "mp4",

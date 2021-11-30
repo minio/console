@@ -29,15 +29,28 @@ import api from "../../../common/api";
 import { PolicyList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import { deleteDialogStyles } from "../Common/FormComponents/common/styleLibrary";
+import withStyles from "@mui/styles/withStyles";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface IDeletePolicyProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedPolicy: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  classes: any;
 }
 
+const styles = (theme: Theme) =>
+  createStyles({
+    ...deleteDialogStyles,
+  });
+
 const DeletePolicy = ({
+  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedPolicy,
@@ -63,6 +76,8 @@ const DeletePolicy = ({
   };
   return (
     <Dialog
+      classes={classes}
+      className={classes.root}
       open={deleteOpen}
       onClose={() => {
         closeDeleteModalAndRefresh(false);
@@ -70,15 +85,32 @@ const DeletePolicy = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete Policy</DialogTitle>
+      <DialogTitle id="alert-dialog-title" className={classes.title}>
+        <div className={classes.titleText}>Delete Policy</div>
+        <div className={classes.closeContainer}>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={() => {
+              closeDeleteModalAndRefresh(false);
+            }}
+            disableRipple
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete policy <b>{selectedPolicy}</b>?
+          Are you sure you want to delete policy <br />
+          <b>{selectedPolicy}</b>?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
+          variant="outlined"
           onClick={() => {
             closeDeleteModalAndRefresh(false);
           }}
@@ -88,6 +120,7 @@ const DeletePolicy = ({
           Cancel
         </Button>
         <Button
+          variant="outlined"
           onClick={() => {
             removeRecord();
           }}
@@ -106,5 +139,4 @@ const mapDispatchToProps = {
 };
 
 const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeletePolicy);
+export default withStyles(styles)(connector(DeletePolicy));

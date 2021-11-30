@@ -1120,6 +1120,25 @@ export const formFieldStyles = {
   },
 };
 
+export const fileInputStyles = {
+  fieldBottom: {
+    borderBottom: 0,
+  },
+  fileReselect: {
+    border: "1px solid #EAEAEA",
+    width: "100%",
+    paddingLeft: 10,
+  },
+  textBoxContainer: {
+    border: "1px solid #EAEAEA",
+    padding: 5,
+    "& input": {
+      width: "100%",
+      margin: "auto",
+    },
+  },
+};
+
 export const deleteDialogStyles = {
   root: {
     "& .MuiPaper-root": {
@@ -1145,5 +1164,41 @@ export const deleteDialogStyles = {
       height: 16,
       width: 16,
     },
+  },
+};
+
+export const advancedFilterToggleStyles: any = {
+  advancedButton: {
+    flexGrow: 1,
+    alignItems: "flex-end",
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  advancedConfiguration: {
+    color: "#2781B0",
+    fontSize: 10,
+    textDecoration: "underline",
+    border: "none",
+    backgroundColor: "transparent",
+    cursor: "pointer",
+    alignItems: "center",
+    display: "flex",
+    float: "right",
+
+    "&:hover": {
+      color: "#07193E",
+    },
+
+    "& svg": {
+      width: 10,
+      alignSelf: "center",
+      marginLeft: 5,
+    },
+  },
+  advancedOpen: {
+    transform: "rotateZ(-90deg) translateX(-4px) translateY(2px)",
+  },
+  advancedClosed: {
+    transform: "rotateZ(90deg)",
   },
 };

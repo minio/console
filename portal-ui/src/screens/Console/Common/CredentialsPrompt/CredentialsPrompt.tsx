@@ -38,6 +38,8 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       "& svg ": {
         marginRight: ".3rem",
+        height: 16,
+        width: 16,
       },
     },
     credentialTitle: {

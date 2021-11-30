@@ -86,6 +86,10 @@ const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
 
 const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
 
+const ObjectManager = React.lazy(
+  () => import("./Common/ObjectManager/ObjectManager")
+);
+
 const drawerWidth = 245;
 
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
@@ -539,6 +543,9 @@ const Console = ({
                 }}
               />
             </div>
+            <Suspense fallback={<div>Loading...</div>}>
+              <ObjectManager />
+            </Suspense>
             <Router history={history}>
               <Switch>
                 {allowedRoutes.map((route: any) => (

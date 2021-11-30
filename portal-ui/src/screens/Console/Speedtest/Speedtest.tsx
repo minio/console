@@ -25,6 +25,7 @@ import moment from "moment/moment";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import {
   actionsTray,
+  advancedFilterToggleStyles,
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
@@ -36,6 +37,7 @@ import BackLink from "../../../common/BackLink";
 import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
 import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import PageLayout from "../Common/Layout/PageLayout";
 
 interface ISpeedtest {
   classes: any;
@@ -43,33 +45,6 @@ interface ISpeedtest {
 
 const styles = (theme: Theme) =>
   createStyles({
-    advancedConfiguration: {
-      color: "#2781B0",
-      fontSize: 10,
-      textDecoration: "underline",
-      border: "none",
-      backgroundColor: "transparent",
-      cursor: "pointer",
-      alignItems: "center",
-      display: "flex",
-      float: "right",
-
-      "&:hover": {
-        color: "#07193E",
-      },
-
-      "& svg": {
-        width: 10,
-        alignSelf: "center",
-        marginLeft: 5,
-      },
-    },
-    advancedOpen: {
-      transform: "rotateZ(-90deg) translateX(-4px) translateY(2px)",
-    },
-    advancedClosed: {
-      transform: "rotateZ(90deg)",
-    },
     advancedContent: {
       backgroundColor: "#FBFAFA",
       maxHeight: 0,
@@ -83,12 +58,6 @@ const styles = (theme: Theme) =>
         paddingBottom: 15,
       },
     },
-    advancedButton: {
-      flexGrow: 1,
-      alignItems: "flex-end",
-      display: "flex",
-      justifyContent: "flex-end",
-    },
     progressContainer: {
       padding: "0 15px",
     },
@@ -99,6 +68,7 @@ const styles = (theme: Theme) =>
     advancedOption: {
       marginTop: 20,
     },
+    ...advancedFilterToggleStyles,
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -215,11 +185,9 @@ const Speedtest = ({ classes }: ISpeedtest) => {
   return (
     <Fragment>
       <PageHeader label="Speedtest" />
+      <BackLink to="/tools" label="Return to Tools" />
 
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/tools" label="Return to Tools" />
-        </Grid>
+      <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
           <Grid container>
             <Grid item>
@@ -384,7 +352,7 @@ const Speedtest = ({ classes }: ISpeedtest) => {
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

@@ -112,9 +112,9 @@ const FileSelector = ({
       <Grid
         item
         xs={12}
-        className={`${classes.fieldBottom} ${classes.fieldContainer} ${
-          error !== "" ? classes.errorInField : ""
-        }`}
+        className={`${classes.fileInputField} ${classes.fieldBottom} ${
+          classes.fieldContainer
+        } ${error !== "" ? classes.errorInField : ""}`}
       >
         {label !== "" && (
           <InputLabel

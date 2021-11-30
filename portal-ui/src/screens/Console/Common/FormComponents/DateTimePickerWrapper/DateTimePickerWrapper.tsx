@@ -95,6 +95,9 @@ const styles = (theme: Theme) =>
         fontWeight: "bold",
         color: "#081C42",
       },
+      "@media (max-width: 900px)": {
+        width: 103,
+      },
     },
     dateSelectorFormOverride: {
       width: "100%",

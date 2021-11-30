@@ -22,7 +22,10 @@ import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { IElementValue } from "../../Configurations/types";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalBasic,
+} from "../../Common/FormComponents/common/styleLibrary";
 import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
@@ -35,6 +38,7 @@ interface IConfMySqlProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
+    ...formFieldStyles,
   });
 
 const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
@@ -146,7 +150,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
       </Grid>
       {useDsnString ? (
         <React.Fragment>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="dsn-string"
               name="dsn_string"
@@ -162,7 +166,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         <React.Fragment>
           <Grid item xs={12}>
             <Grid item xs={12} className={classes.configureString}>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="host"
                   name="host"
@@ -174,7 +178,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="db-name"
                   name="db-name"
@@ -186,7 +190,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="port"
                   name="port"
@@ -199,7 +203,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="user"
                   name="user"
@@ -211,7 +215,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="password"
                   name="password"
@@ -232,7 +236,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           </Grid>
         </React.Fragment>
       )}
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="table"
           name="table"
@@ -245,7 +249,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           }}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <RadioGroupSelector
           currentSelection={format}
           id="format"
@@ -261,7 +265,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           ]}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="queue-dir"
           name="queue_dir"
@@ -274,7 +278,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           }}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="queue-limit"
           name="queue_limit"
@@ -288,7 +292,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           }}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <CommentBoxWrapper
           id="comment"
           name="comment"

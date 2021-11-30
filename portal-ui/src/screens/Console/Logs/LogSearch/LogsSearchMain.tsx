@@ -21,13 +21,11 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid } from "@mui/material";
-import { ArrowDropUp } from "@mui/icons-material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {
-  actionsTray,
+  advancedFilterToggleStyles,
   containerForHeader,
   logsCommon,
-  searchField,
+  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import { niceBytes, nsToSeconds } from "../../../../common/utils";
@@ -42,6 +40,8 @@ import { LogSearchColumnLabels } from "./utils";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
+import PageLayout from "../../Common/Layout/PageLayout";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 interface ILogSearchProps {
   classes: any;
@@ -51,45 +51,20 @@ interface ILogSearchProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    inputBar: {
-      flexGrow: 1,
-      marginLeft: 15,
-    },
-    advancedLabel: {
-      display: "flex",
-      alignItems: "center",
-      color: "#091C42",
-      border: 0,
-      backgroundColor: "transparent",
-      cursor: "pointer",
-      "&:focus, &:active": {
-        outline: "none",
-      },
-    },
-    advancedLabelContainer: {
-      marginTop: 10,
-    },
-    getInformationContainer: {
-      textAlign: "right",
-    },
-    orderButton: {
-      width: 93,
-    },
-    recordsLabel: {
-      alignSelf: "center",
-      marginLeft: 15,
-    },
     blockCollapsed: {
-      height: 0,
+      display: "none",
       overflowY: "hidden",
-      transitionDuration: "0.3s",
     },
     filterOpen: {
-      height: 200,
+      display: "block",
       marginBottom: 12,
     },
     endLineAction: {
       marginBottom: 15,
+      padding: "0 15px 0 15px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
     },
     filtersContainer: {
       display: "flex",
@@ -98,10 +73,6 @@ const styles = (theme: Theme) =>
     },
     innerContainer: {
       backgroundColor: "#fff",
-      border: "#EAEDEE 1px solid",
-      borderRadius: 3,
-      padding: 10,
-      marginBottom: 15,
     },
     noticeLabel: {
       marginLeft: 15,
@@ -111,18 +82,56 @@ const styles = (theme: Theme) =>
     },
 
     tableFOpen: {
-      height: "calc(100vh - 561px)",
+      height: "calc(100vh - 520px)",
     },
     tableFClosed: {
-      height: "calc(100vh - 349px)",
+      height: "calc(100vh - 320px)",
     },
-    "@global": {
-      ".overrideMargin": {
-        marginLeft: 0,
+    ...tableStyles,
+    ...advancedFilterToggleStyles,
+
+    buttonKit: {
+      "& div": {
+        height: 35,
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        border: 0,
+        height: 28,
+        color: "#000000",
       },
     },
-    ...searchField,
-    ...actionsTray,
+    searchOptions: {
+      display: "flex",
+      padding: 15,
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+      },
+    },
+    selectorLabel: {
+      "& + div": {
+        "@media (max-width: 900px)": {
+          width: 110,
+        },
+      },
+      "@media (max-width: 900px)": {
+        marginLeft: 5,
+      },
+    },
+    formBox: {
+      border: "1px solid #EAEAEA",
+      marginBottom: 15,
+    },
+    dateRangePicker: {
+      "& div": {
+        marginBottom: 0,
+      },
+    },
+    advancedButton: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+    },
+    advancedFilterOptions: {},
     ...logsCommon,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -289,103 +298,107 @@ const LogsSearchMain = ({
       )}
 
       <PageHeader label="Audit Logs" />
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <BackLink to="/tools" label="Return to Tools" />
-        </Grid>
-        <Grid container className={classes.logsSubContainer}>
-          <Grid
-            item
-            xs={12}
-            className={`${classes.actionsTray} ${classes.timeContainers}`}
-          >
-            <DateRangeSelector
-              setTimeEnd={setTimeEnd}
-              setTimeStart={setTimeStart}
-              timeEnd={timeEnd}
-              timeStart={timeStart}
-            />
-          </Grid>
-          <Grid item xs={12} className={`${classes.advancedLabelContainer}`}>
-            <div
-              className={`${classes.blockCollapsed} ${
-                filterOpen ? classes.filterOpen : ""
-              }`}
-            >
-              <div className={classes.innerContainer}>
-                <div className={classes.noticeLabel}>
-                  Enable your preferred options to get filtered records.
-                  <br />
-                  You can use '*' to match any character, '.' to signify a
-                  single character or '\' to scape an special character (E.g.
-                  mybucket-*)
-                </div>
-                <div className={classes.filtersContainer}>
-                  <FilterInputWrapper
-                    onChange={setBucket}
-                    value={bucket}
-                    label={"Bucket"}
-                    id="bucket"
-                    name="bucket"
-                  />
-                  <FilterInputWrapper
-                    onChange={setApiName}
-                    value={apiName}
-                    label={"API Name"}
-                    id="api_name"
-                    name="api_name"
-                  />
-                  <FilterInputWrapper
-                    onChange={setUserAgent}
-                    value={userAgent}
-                    label={"User Agent"}
-                    id="user_agent"
-                    name="user_agent"
-                  />
-                </div>
-                <div className={classes.filtersContainer}>
-                  <FilterInputWrapper
-                    onChange={setObject}
-                    value={object}
-                    label={"Object"}
-                    id="object"
-                    name="object"
-                  />
-                  <FilterInputWrapper
-                    onChange={setRequestID}
-                    value={requestID}
-                    label={"Request ID"}
-                    id="request_id"
-                    name="request_id"
-                  />
-                  <FilterInputWrapper
-                    onChange={setResponseStatus}
-                    value={responseStatus}
-                    label={"Response Status"}
-                    id="response_status"
-                    name="response_status"
-                  />
-                </div>
-              </div>
+      <BackLink to="/tools" label="Return to Tools" />
+      <PageLayout>
+        <Grid xs={12} className={classes.formBox}>
+          <Grid item xs={12} className={`${classes.searchOptions}`}>
+            <div className={classes.dateRangePicker}>
+              <DateRangeSelector
+                classes={classes}
+                setTimeEnd={setTimeEnd}
+                setTimeStart={setTimeStart}
+                timeEnd={timeEnd}
+                timeStart={timeStart}
+              />
             </div>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            className={`${classes.actionsTray} ${classes.endLineAction}`}
-          >
-            <div>
+
+            <Grid item className={classes.advancedButton}>
               <button
-                type="button"
-                className={`${classes.advancedLabel} overrideMargin`}
                 onClick={() => {
                   setFilterOpen(!filterOpen);
                 }}
+                className={classes.advancedConfiguration}
               >
-                Advanced Filters{" "}
-                {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
+                {filterOpen ? "Hide" : "Show"} advanced Filters{" "}
+                <span
+                  className={
+                    filterOpen ? classes.advancedOpen : classes.advancedClosed
+                  }
+                >
+                  <ArrowForwardIosIcon />
+                </span>
               </button>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            className={`${classes.blockCollapsed} ${
+              filterOpen ? classes.filterOpen : ""
+            }`}
+          >
+            <div className={classes.innerContainer}>
+              <div className={classes.noticeLabel}>
+                Enable your preferred options to get filtered records.
+                <br />
+                You can use '*' to match any character, '.' to signify a single
+                character or '\' to scape an special character (E.g. mybucket-*)
+              </div>
+              <div className={classes.filtersContainer}>
+                <FilterInputWrapper
+                  classes={classes}
+                  onChange={setBucket}
+                  value={bucket}
+                  label={"Bucket"}
+                  id="bucket"
+                  name="bucket"
+                />
+                <FilterInputWrapper
+                  classes={classes}
+                  onChange={setApiName}
+                  value={apiName}
+                  label={"API Name"}
+                  id="api_name"
+                  name="api_name"
+                />
+                <FilterInputWrapper
+                  classes={classes}
+                  onChange={setUserAgent}
+                  value={userAgent}
+                  label={"User Agent"}
+                  id="user_agent"
+                  name="user_agent"
+                />
+              </div>
+              <div className={classes.filtersContainer}>
+                <FilterInputWrapper
+                  classes={classes}
+                  onChange={setObject}
+                  value={object}
+                  label={"Object"}
+                  id="object"
+                  name="object"
+                />
+                <FilterInputWrapper
+                  classes={classes}
+                  onChange={setRequestID}
+                  value={requestID}
+                  label={"Request ID"}
+                  id="request_id"
+                  name="request_id"
+                />
+                <FilterInputWrapper
+                  classes={classes}
+                  onChange={setResponseStatus}
+                  value={responseStatus}
+                  label={"Response Status"}
+                  id="response_status"
+                  name="response_status"
+                />
+              </div>
             </div>
+          </Grid>
+          <Grid item xs={12} className={classes.endLineAction}>
             <Button
               type="button"
               variant="contained"
@@ -395,93 +408,92 @@ const LogsSearchMain = ({
               Get Information
             </Button>
           </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              columns={[
-                {
-                  label: LogSearchColumnLabels.time,
-                  elementKey: "time",
-                  enableSort: true,
-                },
-                {
-                  label: LogSearchColumnLabels.api_name,
-                  elementKey: "api_name",
-                },
-                { label: LogSearchColumnLabels.bucket, elementKey: "bucket" },
-                { label: LogSearchColumnLabels.object, elementKey: "object" },
-                {
-                  label: LogSearchColumnLabels.remote_host,
-                  elementKey: "remote_host",
-                },
-                {
-                  label: LogSearchColumnLabels.request_id,
-                  elementKey: "request_id",
-                },
-                {
-                  label: LogSearchColumnLabels.user_agent,
-                  elementKey: "user_agent",
-                },
-                {
-                  label: LogSearchColumnLabels.response_status,
-                  elementKey: "response_status",
-                  renderFunction: (element) => (
-                    <Fragment>
-                      <span>
-                        {element.response_status_code} (
-                        {element.response_status})
-                      </span>
-                    </Fragment>
-                  ),
-                  renderFullObject: true,
-                },
-                {
-                  label: LogSearchColumnLabels.request_content_length,
-                  elementKey: "request_content_length",
-                  renderFunction: niceBytes,
-                },
-                {
-                  label: LogSearchColumnLabels.response_content_length,
-                  elementKey: "response_content_length",
-                  renderFunction: niceBytes,
-                },
-                {
-                  label: LogSearchColumnLabels.time_to_response_ns,
-                  elementKey: "time_to_response_ns",
-                  renderFunction: nsToSeconds,
-                  contentTextAlign: "right",
-                },
-              ]}
-              isLoading={loading}
-              records={records}
-              entityName="Logs"
-              customEmptyMessage={"There is no information with this criteria"}
-              idField="request_id"
-              columnsSelector
-              columnsShown={columnsShown}
-              onColumnChange={selectColumn}
-              customPaperHeight={
-                filterOpen ? classes.tableFOpen : classes.tableFClosed
-              }
-              sortConfig={{
-                currentSort: "time",
-                currentDirection: sortOrder,
-                triggerSort: sortChange,
-              }}
-              infiniteScrollConfig={{
-                recordsCount: 1000000,
-                loadMoreRecords: loadMoreRecords,
-              }}
-              itemActions={[
-                {
-                  type: "view",
-                  onClick: openExtraInformation,
-                },
-              ]}
-              textSelectable
-            />
-          </Grid>
         </Grid>
-      </Grid>
+        <Grid item xs={12} className={classes.tableBlock}>
+          <TableWrapper
+            columns={[
+              {
+                label: LogSearchColumnLabels.time,
+                elementKey: "time",
+                enableSort: true,
+              },
+              {
+                label: LogSearchColumnLabels.api_name,
+                elementKey: "api_name",
+              },
+              { label: LogSearchColumnLabels.bucket, elementKey: "bucket" },
+              { label: LogSearchColumnLabels.object, elementKey: "object" },
+              {
+                label: LogSearchColumnLabels.remote_host,
+                elementKey: "remote_host",
+              },
+              {
+                label: LogSearchColumnLabels.request_id,
+                elementKey: "request_id",
+              },
+              {
+                label: LogSearchColumnLabels.user_agent,
+                elementKey: "user_agent",
+              },
+              {
+                label: LogSearchColumnLabels.response_status,
+                elementKey: "response_status",
+                renderFunction: (element) => (
+                  <Fragment>
+                    <span>
+                      {element.response_status_code} ({element.response_status})
+                    </span>
+                  </Fragment>
+                ),
+                renderFullObject: true,
+              },
+              {
+                label: LogSearchColumnLabels.request_content_length,
+                elementKey: "request_content_length",
+                renderFunction: niceBytes,
+              },
+              {
+                label: LogSearchColumnLabels.response_content_length,
+                elementKey: "response_content_length",
+                renderFunction: niceBytes,
+              },
+              {
+                label: LogSearchColumnLabels.time_to_response_ns,
+                elementKey: "time_to_response_ns",
+                renderFunction: nsToSeconds,
+                contentTextAlign: "right",
+              },
+            ]}
+            isLoading={loading}
+            records={records}
+            entityName="Logs"
+            customEmptyMessage={"There is no information with this criteria"}
+            idField="request_id"
+            columnsSelector
+            columnsShown={columnsShown}
+            onColumnChange={selectColumn}
+            customPaperHeight={
+              filterOpen ? classes.tableFOpen : classes.tableFClosed
+            }
+            sortConfig={{
+              currentSort: "time",
+              currentDirection: sortOrder,
+              triggerSort: sortChange,
+            }}
+            infiniteScrollConfig={{
+              recordsCount: 1000000,
+              loadMoreRecords: loadMoreRecords,
+            }}
+            itemActions={[
+              {
+                type: "view",
+                onClick: openExtraInformation,
+              },
+            ]}
+            textSelectable
+          />
+        </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

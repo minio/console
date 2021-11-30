@@ -55,7 +55,7 @@ const BackLink = ({ to, label, classes }: IBackLink) => {
       <div className={classes.icon}>
         <BackSettingsIcon />
       </div>
-      <div>{label}</div>
+      <div className={classes.label}>{label}</div>
     </Link>
   );
 };
