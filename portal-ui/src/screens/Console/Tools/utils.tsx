@@ -28,9 +28,7 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import {
-  hasPermission,
-} from "../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
 
 export const configurationElements: IElement[] = [
   {
