@@ -53,12 +53,12 @@ docker pull minio/console
 ```
 
 ### Build from source
+> You will need a working Go environment. Therefore, please follow [How to install Go](https://golang.org/doc/install).
+> Minimum version required is go1.17
 
 ```
-GO111MODULE=on go install github.com/minio/console/cmd/console@latest
+go install github.com/minio/console/cmd/console@latest
 ```
-> You will need a working Go environment. Therefore, please follow [How to install Go](https://golang.org/doc/install).
-> Minimum version required is go1.16
 
 ## Setup
 
