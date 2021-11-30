@@ -111,7 +111,7 @@ const ObjectManager = ({
             </IconButton>
           </Tooltip>
         </div>
-        <div className={classes.title}>Object Manager</div>
+        <div className={classes.title}>Downloads / Uploads</div>
         <div className={classes.actionsContainer}>
           {objects.map((object, key) => (
             <ObjectHandled
