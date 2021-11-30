@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/go-openapi/loads"
@@ -170,6 +171,10 @@ func loadAllCerts(ctx *cli.Context) error {
 				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}
 		}
+	}
+
+	if restapi.GlobalTLSCertsManager != nil {
+		restapi.GlobalTLSCertsManager.ReloadOnSignal(syscall.SIGHUP)
 	}
 
 	return nil

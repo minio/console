@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/minio/console/restapi"
@@ -171,6 +172,10 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 				operatorapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}
 		}
+	}
+
+	if restapi.GlobalTLSCertsManager != nil {
+		restapi.GlobalTLSCertsManager.ReloadOnSignal(syscall.SIGHUP)
 	}
 
 	return nil
