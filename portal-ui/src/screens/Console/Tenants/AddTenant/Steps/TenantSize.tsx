@@ -22,6 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import {
+  formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -74,6 +75,25 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    compositeFieldContainer: {
+      display: "flex",
+      alignItems: "center",
+    },
+    compositeAddOn: {
+      marginLeft: 10,
+      "& div": {
+        marginBottom: 0,
+      },
+      "@media (max-width: 900px)": {
+        "& div": {
+          marginTop: 5,
+        },
+      },
+    },
+    inputLabel: {
+      minWidth: 200,
+    },
+    ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,
   });
@@ -311,11 +331,12 @@ const TenantSize = ({
           <div className={classes.error}>{memorySize.error}</div>
         </Grid>
       )}
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="nodes"
           name="nodes"
           type="number"
+          classes={classes}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("nodes", e.target.value);
             cleanValidation("nodes");
@@ -328,11 +349,12 @@ const TenantSize = ({
           error={validationErrors["nodes"] || ""}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="drivesps"
           name="drivesps"
           type="number"
+          classes={classes}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("drivesPerServer", e.target.value);
             cleanValidation("drivesps");
@@ -347,45 +369,50 @@ const TenantSize = ({
       </Grid>
       <Grid item xs={12}>
         <div className={classes.multiContainer}>
-          <div>
-            <InputBoxWrapper
-              type="number"
-              id="volume_size"
-              name="volume_size"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("volumeSize", e.target.value);
-                cleanValidation("volume_size");
-              }}
-              label="Total Size"
-              value={volumeSize}
-              disabled={selectedStorageClass === ""}
-              required
-              error={validationErrors["volume_size"] || ""}
-              min="0"
-            />
-          </div>
-          <div className={classes.sizeFactorContainer}>
-            <SelectWrapper
-              label={"Unit"}
-              id="size_factor"
-              name="size_factor"
-              value={sizeFactor}
-              disabled={selectedStorageClass === ""}
-              onChange={(e: SelectChangeEvent<string>) => {
-                updateField("sizeFactor", e.target.value as string);
-              }}
-              options={k8sfactorForDropdown()}
-            />
+          <div className={classes.formFieldRow}>
+            <div className={classes.compositeFieldContainer}>
+              <InputBoxWrapper
+                type="number"
+                id="volume_size"
+                name="volume_size"
+                classes={classes}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("volumeSize", e.target.value);
+                  cleanValidation("volume_size");
+                }}
+                label="Total Size"
+                value={volumeSize}
+                disabled={selectedStorageClass === ""}
+                required
+                error={validationErrors["volume_size"] || ""}
+                min="0"
+              />
+              <div className={classes.compositeAddOn}>
+                <SelectWrapper
+                  label={""}
+                  id="size_factor"
+                  classes={classes}
+                  name="size_factor"
+                  value={sizeFactor}
+                  disabled={selectedStorageClass === ""}
+                  onChange={(e: SelectChangeEvent<string>) => {
+                    updateField("sizeFactor", e.target.value as string);
+                  }}
+                  options={k8sfactorForDropdown()}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </Grid>
 
       <Fragment>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             type="number"
             id="memory_per_node"
             name="memory_per_node"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("memoryNode", e.target.value);
               cleanValidation("memory_per_node");
@@ -398,10 +425,11 @@ const TenantSize = ({
             min="2"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <SelectWrapper
             id="ec_parity"
             name="ec_parity"
+            classes={classes}
             onChange={(e: SelectChangeEvent<string>) => {
               updateField("ecParity", e.target.value as string);
             }}

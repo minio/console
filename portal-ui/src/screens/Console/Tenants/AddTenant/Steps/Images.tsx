@@ -21,6 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, Paper } from "@mui/material";
 import {
+  formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -71,6 +72,12 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    inputLabel: {
+      fontWeight: 300,
+      fontSize: 14,
+      minWidth: 200,
+    },
+    ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,
   });
@@ -317,10 +324,11 @@ const Images = ({
       </div>
 
       <Fragment>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="image"
             name="image"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("imageName", e.target.value);
               cleanValidation("image");
@@ -331,10 +339,11 @@ const Images = ({
             placeholder="E.g. minio/minio:RELEASE.2021-08-20T18-32-01Z"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="logSearchImage"
             name="logSearchImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("logSearchImage", e.target.value);
               cleanValidation("logSearchImage");
@@ -345,10 +354,11 @@ const Images = ({
             placeholder="E.g. minio/logsearchapi:v4.1.1"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="kesImage"
             name="kesImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("kesImage", e.target.value);
               cleanValidation("kesImage");
@@ -359,10 +369,11 @@ const Images = ({
             placeholder="E.g. minio/kes:v0.14.0"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="logSearchPostgresImage"
             name="logSearchPostgresImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("logSearchPostgresImage", e.target.value);
               cleanValidation("logSearchPostgresImage");
@@ -373,10 +384,11 @@ const Images = ({
             placeholder="E.g. library/postgres:13"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="logSearchPostgresInitImage"
             name="logSearchPostgresInitImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("logSearchPostgresInitImage", e.target.value);
               cleanValidation("logSearchPostgresInitImage");
@@ -387,10 +399,11 @@ const Images = ({
             placeholder="E.g. library/busybox:1.33.1"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="prometheusImage"
             name="prometheusImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("prometheusImage", e.target.value);
               cleanValidation("prometheusImage");
@@ -401,10 +414,11 @@ const Images = ({
             placeholder="E.g. quay.io/prometheus/prometheus:latest"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="prometheusSidecarImage"
             name="prometheusSidecarImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("prometheusSidecarImage", e.target.value);
               cleanValidation("prometheusSidecarImage");
@@ -415,10 +429,11 @@ const Images = ({
             placeholder="E.g. quay.io/prometheus/prometheus:latest"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="prometheusInitImage"
             name="prometheusInitImage"
+            classes={classes}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               updateField("prometheusInitImage", e.target.value);
               cleanValidation("prometheusInitImage");
@@ -433,11 +448,12 @@ const Images = ({
 
       {customImage && (
         <Fragment>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="custom_docker_hub"
               id="custom_docker_hub"
               name="custom_docker_hub"
+              classes={classes}
               checked={customDockerhub}
               onChange={(e) => {
                 const targetD = e.target;
@@ -452,10 +468,11 @@ const Images = ({
       )}
       {customDockerhub && (
         <Fragment>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="registry"
               name="registry"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("imageRegistry", e.target.value);
               }}
@@ -466,10 +483,11 @@ const Images = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="registryUsername"
               name="registryUsername"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("imageRegistryUsername", e.target.value);
               }}
@@ -479,10 +497,11 @@ const Images = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="registryPassword"
               name="registryPassword"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("imageRegistryPassword", e.target.value);
               }}

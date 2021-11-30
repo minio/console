@@ -56,12 +56,62 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     overlayAction: {
-      lineHeight: "50px",
-      float: "left",
+      marginLeft: 10,
       "& svg": {
         maxWidth: 15,
         maxHeight: 15,
       },
+      "& button": {
+        background: "#EAEAEA",
+      },
+    },
+    radioOptionsLayout: {
+      "& div": {
+        display: "flex",
+        flexFlow: "column",
+      },
+    },
+    affinityConfigField: {
+      display: "flex",
+    },
+
+    affinityFieldLabel: {
+      display: "flex",
+      flexFlow: "column",
+      flex: 1,
+    },
+    radioField: {
+      display: "flex",
+      alignItems: "flex-start",
+      marginTop: 10,
+      "& div:first-child": {
+        display: "flex",
+        flexFlow: "column",
+        alignItems: "baseline",
+        textAlign: "left !important",
+      },
+    },
+    affinityLabelKey: {
+      "& div:first-child": {
+        marginBottom: 0,
+      },
+    },
+    affinityLabelValue: {
+      marginLeft: 10,
+      "& div:first-child": {
+        marginBottom: 0,
+      },
+    },
+    rowActions: {
+      display: "flex",
+      alignItems: "center",
+    },
+    fieldContainer: {
+      marginBottom: 0,
+    },
+    affinityRow: {
+      marginBottom: 10,
+      display: "flex",
     },
     ...modalBasic,
     ...wizardCommon,
@@ -196,22 +246,32 @@ const Affinity = ({
           Configure how pods will be assigned to nodes
         </span>
       </div>
-      <Grid item xs={12}>
-        <RadioGroupSelector
-          currentSelection={podAffinity}
-          id="affinity-options"
-          name="affinity-options"
-          label="Type"
-          onChange={(e) => {
-            updateField("podAffinity", e.target.value);
-          }}
-          selectorOptions={[
-            { label: "None", value: "none" },
-            { label: "Default (Pod Anti-Affinnity)", value: "default" },
-            { label: "Node Selector", value: "nodeSelector" },
-          ]}
-        />
-        MinIO supports multiple configurations for Pod Affinity
+      <Grid xs={12} className={classes.affinityConfigField}>
+        <Grid item className={classes.affinityFieldLabel}>
+          <div className={classes.label}>Type</div>
+          <div
+            className={`${classes.descriptionText} ${classes.affinityHelpText}`}
+          >
+            MinIO supports multiple configurations for Pod Affinity
+          </div>
+          <Grid item className={classes.radioField}>
+            <RadioGroupSelector
+              classes={classes}
+              currentSelection={podAffinity}
+              id="affinity-options"
+              name="affinity-options"
+              label={" "}
+              onChange={(e) => {
+                updateField("podAffinity", e.target.value);
+              }}
+              selectorOptions={[
+                { label: "None", value: "none" },
+                { label: "Default (Pod Anti-Affinnity)", value: "default" },
+                { label: "Node Selector", value: "nodeSelector" },
+              ]}
+            />
+          </Grid>
+        </Grid>
       </Grid>
       {podAffinity === "nodeSelector" && (
         <Fragment>
@@ -238,8 +298,8 @@ const Affinity = ({
               {keyValuePairs &&
                 keyValuePairs.map((kvp, i) => {
                   return (
-                    <React.Fragment>
-                      <Grid item xs={5}>
+                    <Grid item xs={12} className={classes.affinityRow}>
+                      <Grid item xs={5} className={classes.affinityLabelKey}>
                         {keyOptions.length > 0 && (
                           <SelectWrapper
                             onChange={(e: SelectChangeEvent<string>) => {
@@ -258,6 +318,7 @@ const Affinity = ({
                             label={""}
                             value={kvp.key}
                             options={keyOptions}
+                            classes={classes.fieldContainer}
                           />
                         )}
                         {keyOptions.length === 0 && (
@@ -276,10 +337,11 @@ const Affinity = ({
                             }}
                             index={i}
                             placeholder={"Key"}
+                            classes={classes.fieldContainer}
                           />
                         )}
                       </Grid>
-                      <Grid item xs={5}>
+                      <Grid item xs={5} className={classes.affinityLabelValue}>
                         {keyOptions.length > 0 && (
                           <SelectWrapper
                             onChange={(e: SelectChangeEvent<string>) => {
@@ -301,6 +363,7 @@ const Affinity = ({
                                   })
                                 : []
                             }
+                            classes={classes.fieldContainer}
                           />
                         )}
                         {keyOptions.length === 0 && (
@@ -319,10 +382,11 @@ const Affinity = ({
                             }}
                             index={i}
                             placeholder={"value"}
+                            classes={classes.fieldContainer}
                           />
                         )}
                       </Grid>
-                      <Grid item xs={2}>
+                      <Grid item xs={2} className={classes.rowActions}>
                         <div className={classes.overlayAction}>
                           <IconButton
                             size={"small"}
@@ -359,7 +423,7 @@ const Affinity = ({
                           </div>
                         )}
                       </Grid>
-                    </React.Fragment>
+                    </Grid>
                   );
                 })}
             </Grid>

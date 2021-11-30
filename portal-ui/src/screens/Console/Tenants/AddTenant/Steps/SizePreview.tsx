@@ -361,8 +361,10 @@ const SizePreview = ({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell scope="row">Server Failures Tolerated</TableCell>
-                <TableCell align="right">
+                <TableCell style={{ borderBottom: 0 }} scope="row">
+                  Server Failures Tolerated
+                </TableCell>
+                <TableCell style={{ borderBottom: 0 }} align="right">
                   {distribution
                     ? Math.floor(
                         usableInformation.maxFailureTolerations /

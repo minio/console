@@ -69,6 +69,7 @@ const styles = (theme: Theme) =>
     paddedContentGrid: {
       marginTop: 8,
       padding: "0 10px",
+      minHeight: 400,
     },
     stepsLabel: {
       fontSize: 20,
@@ -88,6 +89,21 @@ const styles = (theme: Theme) =>
       backgroundColor: "#FFFFFF",
       width: "100%",
       maxHeight: 90,
+    },
+    verticalSteps: {
+      borderRight: "1px solid #EAEAEA",
+      background: "#FBFAFA",
+    },
+    stepsContainer: {
+      paddingTop: 0,
+      "& .MuiButtonBase-root.Mui-selected": {
+        background: "#EAEAEA",
+      },
+    },
+    stepItem: {
+      "&:hover": {
+        background: "rgba(247,247,247,0.7)",
+      },
     },
   });
 
@@ -143,14 +159,24 @@ const GenericWizard = ({
   const stepsList = () => {
     return (
       <Fragment>
-        <List component="nav" dense={true}>
+        <List
+          component="nav"
+          dense={true}
+          classes={{
+            root: classes.stepsContainer,
+          }}
+        >
           {wizardSteps.map((step, index) => {
             return (
               <ListItem
                 button
+                disableRipple
                 onClick={() => pageChange(index)}
                 key={`wizard-${index.toString()}`}
                 selected={currentStep === index}
+                classes={{
+                  root: classes.stepItem,
+                }}
               >
                 <ListItemText primary={step.label} />
               </ListItem>
@@ -194,7 +220,15 @@ const GenericWizard = ({
         </Fragment>
       ) : (
         <Fragment>
-          <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+          <Grid
+            item
+            xs={12}
+            sm={2}
+            md={2}
+            lg={2}
+            xl={2}
+            className={classes.verticalSteps}
+          >
             {stepsList()}
           </Grid>
         </Fragment>

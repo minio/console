@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Paper, Typography } from "@mui/material";
+import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   updateAddField,
@@ -31,6 +31,8 @@ import {
   addFileGemaltoCa,
 } from "../../actions";
 import {
+  createTenantCommon,
+  formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -106,6 +108,35 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    encryptionTypeOptions: {
+      marginBottom: 15,
+    },
+    mutualTlsConfig: {
+      marginTop: 15,
+      "& fieldset": {
+        flex: 1,
+      },
+    },
+    fileInputField: {
+      borderBottom: "1px solid #EAEAEA",
+      "&:last-child": {
+        borderBottom: 0,
+      },
+      "& input": {
+        borderBottom: 0,
+      },
+    },
+    rightSpacer: {
+      marginRight: 15,
+    },
+    responsiveContainer: {
+      "@media (max-width: 900px)": {
+        display: "flex",
+        flexFlow: "column",
+      },
+    },
+    ...createTenantCommon,
+    ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,
   });
@@ -443,7 +474,7 @@ const Encryption = ({
       </Grid>
       {enableEncryption && (
         <Fragment>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.encryptionTypeOptions}>
             <RadioGroupSelector
               currentSelection={encryptionType}
               id="encryptionType"
@@ -481,84 +512,80 @@ const Encryption = ({
               </Grid>
               {(enableCustomCertsForKES || !enableAutoCert) && (
                 <Fragment>
-                  <Grid item xs={12}>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Encryption Service Certificates
-                    </Typography>
-                  </Grid>
                   <Grid container>
-                    <Grid item xs={6}>
-                      <FileSelector
-                        onChange={(encodedValue, fileName) => {
-                          addFileServerCert("key", fileName, encodedValue);
-                          cleanValidation("serverKey");
-                        }}
-                        accept=".key,.pem"
-                        id="serverKey"
-                        name="serverKey"
-                        label="Key"
-                        error={validationErrors["serverKey"] || ""}
-                        value={serverCertificate.key}
-                        required={!enableAutoCert}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <FileSelector
-                        onChange={(encodedValue, fileName) => {
-                          addFileServerCert("cert", fileName, encodedValue);
-                          cleanValidation("serverCert");
-                        }}
-                        accept=".cer,.crt,.cert,.pem"
-                        id="serverCert"
-                        name="serverCert"
-                        label="Cert"
-                        error={validationErrors["serverCert"] || ""}
-                        value={serverCertificate.cert}
-                        required={!enableAutoCert}
-                      />
+                    <Grid item xs={12} style={{ marginBottom: 15 }}>
+                      <fieldset className={classes.fieldGroup}>
+                        <legend>Encryption Service Certificates</legend>
+                        <FileSelector
+                          classes={classes}
+                          onChange={(encodedValue, fileName) => {
+                            addFileServerCert("key", fileName, encodedValue);
+                            cleanValidation("serverKey");
+                          }}
+                          accept=".key,.pem"
+                          id="serverKey"
+                          name="serverKey"
+                          label="Key"
+                          error={validationErrors["serverKey"] || ""}
+                          value={serverCertificate.key}
+                          required={!enableAutoCert}
+                        />
+                        <FileSelector
+                          classes={classes}
+                          onChange={(encodedValue, fileName) => {
+                            addFileServerCert("cert", fileName, encodedValue);
+                            cleanValidation("serverCert");
+                          }}
+                          accept=".cer,.crt,.cert,.pem"
+                          id="serverCert"
+                          name="serverCert"
+                          label="Cert"
+                          error={validationErrors["serverCert"] || ""}
+                          value={serverCertificate.cert}
+                          required={!enableAutoCert}
+                        />
+                      </fieldset>
                     </Grid>
                   </Grid>
 
-                  <Grid item xs={12}>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Mutual TLS authentication
-                    </Typography>
-                  </Grid>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <FileSelector
-                        onChange={(encodedValue, fileName) => {
-                          addFileClientCert("key", fileName, encodedValue);
-                          cleanValidation("clientKey");
-                        }}
-                        accept=".key,.pem"
-                        id="clientKey"
-                        name="clientKey"
-                        label="Key"
-                        error={validationErrors["clientKey"] || ""}
-                        value={clientCertificate.key}
-                        required={!enableAutoCert}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <FileSelector
-                        onChange={(encodedValue, fileName) => {
-                          addFileClientCert("cert", fileName, encodedValue);
-                          cleanValidation("clientCert");
-                        }}
-                        accept=".cer,.crt,.cert,.pem"
-                        id="clientCert"
-                        name="clientCert"
-                        label="Cert"
-                        error={validationErrors["clientCert"] || ""}
-                        value={clientCertificate.cert}
-                        required={!enableAutoCert}
-                      />
+                  <Grid container style={{ marginBottom: 15 }}>
+                    <Grid item xs={12}>
+                      <fieldset className={classes.fieldGroup}>
+                        <legend>Mutual TLS authentication</legend>
+                        <FileSelector
+                          classes={classes}
+                          onChange={(encodedValue, fileName) => {
+                            addFileClientCert("key", fileName, encodedValue);
+                            cleanValidation("clientKey");
+                          }}
+                          accept=".key,.pem"
+                          id="clientKey"
+                          name="clientKey"
+                          label="Key"
+                          error={validationErrors["clientKey"] || ""}
+                          value={clientCertificate.key}
+                          required={!enableAutoCert}
+                        />
+                        <FileSelector
+                          classes={classes}
+                          onChange={(encodedValue, fileName) => {
+                            addFileClientCert("cert", fileName, encodedValue);
+                            cleanValidation("clientCert");
+                          }}
+                          accept=".cer,.crt,.cert,.pem"
+                          id="clientCert"
+                          name="clientCert"
+                          label="Cert"
+                          error={validationErrors["clientCert"] || ""}
+                          value={clientCertificate.cert}
+                          required={!enableAutoCert}
+                        />
+                      </fieldset>
                     </Grid>
                   </Grid>
                 </Fragment>
               )}
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="vault_endpoint"
                   name="vault_endpoint"
@@ -572,7 +599,7 @@ const Encryption = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="vault_engine"
                   name="vault_engine"
@@ -584,7 +611,7 @@ const Encryption = ({
                   value={vaultEngine}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="vault_namespace"
                   name="vault_namespace"
@@ -595,7 +622,7 @@ const Encryption = ({
                   value={vaultNamespace}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="vault_prefix"
                   name="vault_prefix"
@@ -606,65 +633,72 @@ const Encryption = ({
                   value={vaultPrefix}
                 />
               </Grid>
-              <h5>App Role</h5>
+
               <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="vault_approle_engine"
-                  name="vault_approle_engine"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("vaultAppRoleEngine", e.target.value);
-                  }}
-                  label="Engine"
-                  value={vaultAppRoleEngine}
-                />
+                <fieldset className={classes.fieldGroup}>
+                  <legend>App Role</legend>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="vault_approle_engine"
+                      name="vault_approle_engine"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("vaultAppRoleEngine", e.target.value);
+                      }}
+                      label="Engine"
+                      value={vaultAppRoleEngine}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="vault_id"
+                      name="vault_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("vaultId", e.target.value);
+                        cleanValidation("vault_id");
+                      }}
+                      label="AppRole ID"
+                      value={vaultId}
+                      error={validationErrors["vault_id"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="vault_secret"
+                      name="vault_secret"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("vaultSecret", e.target.value);
+                        cleanValidation("vault_secret");
+                      }}
+                      label="AppRole Secret"
+                      value={vaultSecret}
+                      error={validationErrors["vault_secret"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      type="number"
+                      min="0"
+                      id="vault_retry"
+                      name="vault_retry"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("vaultRetry", e.target.value);
+                        cleanValidation("vault_retry");
+                      }}
+                      label="Retry (Seconds)"
+                      value={vaultRetry}
+                      error={validationErrors["vault_retry"] || ""}
+                    />
+                  </Grid>
+                </fieldset>
               </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="vault_id"
-                  name="vault_id"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("vaultId", e.target.value);
-                    cleanValidation("vault_id");
-                  }}
-                  label="AppRole ID"
-                  value={vaultId}
-                  error={validationErrors["vault_id"] || ""}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="vault_secret"
-                  name="vault_secret"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("vaultSecret", e.target.value);
-                    cleanValidation("vault_secret");
-                  }}
-                  label="AppRole Secret"
-                  value={vaultSecret}
-                  error={validationErrors["vault_secret"] || ""}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  type="number"
-                  min="0"
-                  id="vault_retry"
-                  name="vault_retry"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("vaultRetry", e.target.value);
-                    cleanValidation("vault_retry");
-                  }}
-                  label="Retry (Seconds)"
-                  value={vaultRetry}
-                  error={validationErrors["vault_retry"] || ""}
-                />
-              </Grid>
-              <h5>Mutual TLS authentication (optional)</h5>
-              <Grid container>
-                <Grid item xs={6}>
+
+              <Grid container className={classes.mutualTlsConfig}>
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Mutual TLS authentication (optional)</legend>
                   <FileSelector
+                    classes={classes}
                     onChange={(encodedValue, fileName) => {
                       addFileVaultCert("key", fileName, encodedValue);
                       cleanValidation("vault_key");
@@ -675,9 +709,8 @@ const Encryption = ({
                     label="Key"
                     value={vaultCertificate.key}
                   />
-                </Grid>
-                <Grid item xs={6}>
                   <FileSelector
+                    classes={classes}
                     onChange={(encodedValue, fileName) => {
                       addFileVaultCert("cert", fileName, encodedValue);
                       cleanValidation("vault_cert");
@@ -688,42 +721,48 @@ const Encryption = ({
                     label="Cert"
                     value={vaultCertificate.cert}
                   />
-                </Grid>
+                  <FileSelector
+                    classes={classes}
+                    onChange={(encodedValue, fileName) => {
+                      addFileVaultCa(fileName, encodedValue);
+                      cleanValidation("vault_ca");
+                    }}
+                    accept=".cer,.crt,.cert,.pem"
+                    id="vault_ca"
+                    name="vault_ca"
+                    label="CA"
+                    value={vaultCA.cert}
+                  />
+                </fieldset>
               </Grid>
-              <Grid item xs={12}>
-                <FileSelector
-                  onChange={(encodedValue, fileName) => {
-                    addFileVaultCa(fileName, encodedValue);
-                    cleanValidation("vault_ca");
-                  }}
-                  accept=".cer,.crt,.cert,.pem"
-                  id="vault_ca"
-                  name="vault_ca"
-                  label="CA"
-                  value={vaultCA.cert}
-                />
-              </Grid>
-              <h5>Status</h5>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  type="number"
-                  min="0"
-                  id="vault_ping"
-                  name="vault_ping"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("vaultPing", e.target.value);
-                    cleanValidation("vault_ping");
-                  }}
-                  label="Ping (Seconds)"
-                  value={vaultPing}
-                  error={validationErrors["vault_ping"] || ""}
-                />
+              <Grid
+                item
+                xs={12}
+                className={classes.formFieldRow}
+                style={{ marginTop: 15 }}
+              >
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Status</legend>
+                  <InputBoxWrapper
+                    type="number"
+                    min="0"
+                    id="vault_ping"
+                    name="vault_ping"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("vaultPing", e.target.value);
+                      cleanValidation("vault_ping");
+                    }}
+                    label="Ping (Seconds)"
+                    value={vaultPing}
+                    error={validationErrors["vault_ping"] || ""}
+                  />
+                </fieldset>
               </Grid>
             </Fragment>
           )}
           {encryptionType === "azure" && (
             <Fragment>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="azure_endpoint"
                   name="azure_endpoint"
@@ -736,51 +775,55 @@ const Encryption = ({
                   error={validationErrors["azure_endpoint"] || ""}
                 />
               </Grid>
-              <h5>Credentials</h5>
               <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="azure_tenant_id"
-                  name="azure_tenant_id"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("azureTenantID", e.target.value);
-                    cleanValidation("azure_tenant_id");
-                  }}
-                  label="Tenant ID"
-                  value={azureTenantID}
-                  error={validationErrors["azure_tenant_id"] || ""}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="azure_client_id"
-                  name="azure_client_id"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("azureClientID", e.target.value);
-                    cleanValidation("azure_client_id");
-                  }}
-                  label="Client ID"
-                  value={azureClientID}
-                  error={validationErrors["azure_client_id"] || ""}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="azure_client_secret"
-                  name="azure_client_secret"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("azureClientSecret", e.target.value);
-                    cleanValidation("azure_client_secret");
-                  }}
-                  label="Client Secret"
-                  value={azureClientSecret}
-                  error={validationErrors["azure_client_secret"] || ""}
-                />
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Credentials</legend>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="azure_tenant_id"
+                      name="azure_tenant_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("azureTenantID", e.target.value);
+                        cleanValidation("azure_tenant_id");
+                      }}
+                      label="Tenant ID"
+                      value={azureTenantID}
+                      error={validationErrors["azure_tenant_id"] || ""}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="azure_client_id"
+                      name="azure_client_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("azureClientID", e.target.value);
+                        cleanValidation("azure_client_id");
+                      }}
+                      label="Client ID"
+                      value={azureClientID}
+                      error={validationErrors["azure_client_id"] || ""}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="azure_client_secret"
+                      name="azure_client_secret"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("azureClientSecret", e.target.value);
+                        cleanValidation("azure_client_secret");
+                      }}
+                      label="Client Secret"
+                      value={azureClientSecret}
+                      error={validationErrors["azure_client_secret"] || ""}
+                    />
+                  </Grid>
+                </fieldset>
               </Grid>
             </Fragment>
           )}
           {encryptionType === "gcp" && (
             <Fragment>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="gcp_project_id"
                   name="gcp_project_id"
@@ -791,7 +834,7 @@ const Encryption = ({
                   value={gcpProjectID}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="gcp_endpoint"
                   name="gcp_endpoint"
@@ -802,56 +845,60 @@ const Encryption = ({
                   value={gcpEndpoint}
                 />
               </Grid>
-              <h5>Credentials</h5>
               <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="gcp_client_email"
-                  name="gcp_client_email"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gcpClientEmail", e.target.value);
-                  }}
-                  label="Client Email"
-                  value={gcpClientEmail}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="gcp_client_id"
-                  name="gcp_client_id"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gcpClientID", e.target.value);
-                  }}
-                  label="Client ID"
-                  value={gcpClientID}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="gcp_private_key_id"
-                  name="gcp_private_key_id"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gcpPrivateKeyID", e.target.value);
-                  }}
-                  label="Private Key ID"
-                  value={gcpPrivateKeyID}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="gcp_private_key"
-                  name="gcp_private_key"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gcpPrivateKey", e.target.value);
-                  }}
-                  label="Private Key"
-                  value={gcpPrivateKey}
-                />
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Credentials</legend>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="gcp_client_email"
+                      name="gcp_client_email"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gcpClientEmail", e.target.value);
+                      }}
+                      label="Client Email"
+                      value={gcpClientEmail}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="gcp_client_id"
+                      name="gcp_client_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gcpClientID", e.target.value);
+                      }}
+                      label="Client ID"
+                      value={gcpClientID}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="gcp_private_key_id"
+                      name="gcp_private_key_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gcpPrivateKeyID", e.target.value);
+                      }}
+                      label="Private Key ID"
+                      value={gcpPrivateKeyID}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="gcp_private_key"
+                      name="gcp_private_key"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gcpPrivateKey", e.target.value);
+                      }}
+                      label="Private Key"
+                      value={gcpPrivateKey}
+                    />
+                  </Grid>
+                </fieldset>
               </Grid>
             </Fragment>
           )}
           {encryptionType === "aws" && (
             <Fragment>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="aws_endpoint"
                   name="aws_endpoint"
@@ -865,7 +912,7 @@ const Encryption = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="aws_region"
                   name="aws_region"
@@ -879,7 +926,7 @@ const Encryption = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="aws_kmsKey"
                   name="aws_kmsKey"
@@ -890,51 +937,55 @@ const Encryption = ({
                   value={awsKMSKey}
                 />
               </Grid>
-              <h5>Credentials</h5>
               <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="aws_accessKey"
-                  name="aws_accessKey"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("awsAccessKey", e.target.value);
-                    cleanValidation("aws_accessKey");
-                  }}
-                  label="Access Key"
-                  value={awsAccessKey}
-                  error={validationErrors["aws_accessKey"] || ""}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="aws_secretKey"
-                  name="aws_secretKey"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("awsSecretKey", e.target.value);
-                    cleanValidation("aws_secretKey");
-                  }}
-                  label="Secret Key"
-                  value={awsSecretKey}
-                  error={validationErrors["aws_secretKey"] || ""}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="aws_token"
-                  name="aws_token"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("awsToken", e.target.value);
-                  }}
-                  label="Token"
-                  value={awsToken}
-                />
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Credentials</legend>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="aws_accessKey"
+                      name="aws_accessKey"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("awsAccessKey", e.target.value);
+                        cleanValidation("aws_accessKey");
+                      }}
+                      label="Access Key"
+                      value={awsAccessKey}
+                      error={validationErrors["aws_accessKey"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="aws_secretKey"
+                      name="aws_secretKey"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("awsSecretKey", e.target.value);
+                        cleanValidation("aws_secretKey");
+                      }}
+                      label="Secret Key"
+                      value={awsSecretKey}
+                      error={validationErrors["aws_secretKey"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="aws_token"
+                      name="aws_token"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("awsToken", e.target.value);
+                      }}
+                      label="Token"
+                      value={awsToken}
+                    />
+                  </Grid>
+                </fieldset>
               </Grid>
             </Fragment>
           )}
           {encryptionType === "gemalto" && (
             <Fragment>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="gemalto_endpoint"
                   name="gemalto_endpoint"
@@ -948,96 +999,116 @@ const Encryption = ({
                   required
                 />
               </Grid>
-              <h5>Credentials</h5>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="gemalto_token"
-                  name="gemalto_token"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gemaltoToken", e.target.value);
-                    cleanValidation("gemalto_token");
-                  }}
-                  label="Token"
-                  value={gemaltoToken}
-                  error={validationErrors["gemalto_token"] || ""}
-                  required
-                />
+              <Grid
+                item
+                xs={12}
+                style={{
+                  marginBottom: 15,
+                }}
+              >
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Credentials</legend>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="gemalto_token"
+                      name="gemalto_token"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gemaltoToken", e.target.value);
+                        cleanValidation("gemalto_token");
+                      }}
+                      label="Token"
+                      value={gemaltoToken}
+                      error={validationErrors["gemalto_token"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      id="gemalto_domain"
+                      name="gemalto_domain"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gemaltoDomain", e.target.value);
+                        cleanValidation("gemalto_domain");
+                      }}
+                      label="Domain"
+                      value={gemaltoDomain}
+                      error={validationErrors["gemalto_domain"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.formFieldRow}>
+                    <InputBoxWrapper
+                      type="number"
+                      min="0"
+                      id="gemalto_retry"
+                      name="gemalto_retry"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("gemaltoRetry", e.target.value);
+                        cleanValidation("gemalto_retry");
+                      }}
+                      label="Retry (seconds)"
+                      value={gemaltoRetry}
+                      error={validationErrors["gemalto_retry"] || ""}
+                    />
+                  </Grid>
+                </fieldset>
               </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="gemalto_domain"
-                  name="gemalto_domain"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gemaltoDomain", e.target.value);
-                    cleanValidation("gemalto_domain");
-                  }}
-                  label="Domain"
-                  value={gemaltoDomain}
-                  error={validationErrors["gemalto_domain"] || ""}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  type="number"
-                  min="0"
-                  id="gemalto_retry"
-                  name="gemalto_retry"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("gemaltoRetry", e.target.value);
-                    cleanValidation("gemalto_retry");
-                  }}
-                  label="Retry (seconds)"
-                  value={gemaltoRetry}
-                  error={validationErrors["gemalto_retry"] || ""}
-                />
-              </Grid>
-              <h5>Custom CA Root certificate verification</h5>
-              <Grid item xs={12}>
-                <FileSelector
-                  onChange={(encodedValue, fileName) => {
-                    addFileGemaltoCa(fileName, encodedValue);
-                    cleanValidation("gemalto_ca");
-                  }}
-                  accept=".cer,.crt,.cert,.pem"
-                  id="gemalto_ca"
-                  name="gemalto_ca"
-                  label="CA"
-                  value={gemaltoCA.cert}
-                />
+              <Grid
+                item
+                xs={12}
+                style={{
+                  marginBottom: 15,
+                }}
+              >
+                <fieldset className={classes.fieldGroup}>
+                  <legend>Custom CA Root certificate verification</legend>
+
+                  <FileSelector
+                    classes={classes}
+                    onChange={(encodedValue, fileName) => {
+                      addFileGemaltoCa(fileName, encodedValue);
+                      cleanValidation("gemalto_ca");
+                    }}
+                    accept=".cer,.crt,.cert,.pem"
+                    id="gemalto_ca"
+                    name="gemalto_ca"
+                    label="CA"
+                    value={gemaltoCA.cert}
+                  />
+                </fieldset>
               </Grid>
             </Fragment>
           )}
           <div className={classes.headerElement}>
-            <h3 className={classes.h3Section}>Additional Configurations</h3>
+            <h4 className={classes.h3Section}>Additional Configurations</h4>
           </div>
           <Grid item xs={12}>
-            <Fragment>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  type="number"
-                  min="1"
-                  id="replicas"
-                  name="replicas"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("replicas", e.target.value);
-                    cleanValidation("replicas");
-                  }}
-                  label="Replicas"
-                  value={replicas}
-                  required
-                  error={validationErrors["replicas"] || ""}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <span className={classes.descriptionText}>
-                  SecurityContext for KES pods
-                </span>
-              </Grid>
-              <br />
-              <Grid item xs={12}>
-                <div className={classes.multiContainer}>
-                  <div>
+            <Grid item xs={12} classes={classes.formFieldRow}>
+              <InputBoxWrapper
+                type="number"
+                min="1"
+                id="replicas"
+                name="replicas"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("replicas", e.target.value);
+                  cleanValidation("replicas");
+                }}
+                label="Replicas"
+                value={replicas}
+                required
+                error={validationErrors["replicas"] || ""}
+              />
+            </Grid>
+
+            <fieldset className={classes.fieldGroup} style={{ marginTop: 15 }}>
+              <legend>SecurityContext for KES pods</legend>
+              <Grid item xs={12} className={classes.kesSecurityContext}>
+                <div
+                  className={`${classes.multiContainer} ${classes.responsiveContainer}`}
+                >
+                  <div
+                    className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                  >
                     <InputBoxWrapper
                       type="number"
                       id="kes_securityContext_runAsUser"
@@ -1058,7 +1129,9 @@ const Encryption = ({
                       min="0"
                     />
                   </div>
-                  <div>
+                  <div
+                    className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                  >
                     <InputBoxWrapper
                       type="number"
                       id="kes_securityContext_runAsGroup"
@@ -1079,7 +1152,9 @@ const Encryption = ({
                       min="0"
                     />
                   </div>
-                  <div>
+                  <div
+                    className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                  >
                     <InputBoxWrapper
                       type="number"
                       id="kes_securityContext_fsGroup"
@@ -1122,7 +1197,7 @@ const Encryption = ({
                   />
                 </div>
               </Grid>
-            </Fragment>
+            </fieldset>
           </Grid>
         </Fragment>
       )}
