@@ -208,14 +208,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewGetTenantMonitoringOK().WithPayload(payload)
 	})
-	//Configure Prometheus monitoring status for tenant
-	api.OperatorAPIConfigureMonitoringHandler = operator_api.ConfigureMonitoringHandlerFunc(func(params operator_api.ConfigureMonitoringParams, session *models.Principal) middleware.Responder {
-		err := getConfigureMonitoringResponse(session, params)
-		if err != nil {
-			return operator_api.NewConfigureMonitoringDefault(int(err.Code)).WithPayload(err)
-		}
-		return operator_api.NewConfigureMonitoringCreated()
-	})
 	//Set configuration fields for Prometheus monitoring on a tenant
 	api.OperatorAPISetTenantMonitoringHandler = operator_api.SetTenantMonitoringHandlerFunc(func(params operator_api.SetTenantMonitoringParams, session *models.Principal) middleware.Responder {
 		_, err := setTenantMonitoringResponse(session, params)
@@ -1521,43 +1513,6 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 	return pullSecretName, nil
 }
 
-//enablePrometheus enables Prometheus monitoring on a tenant
-func enablePrometheus(ctx context.Context, operatorClient OperatorClientI, params operator_api.ConfigureMonitoringParams) error {
-	minInst, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
-	prometheusDiskSpace := 5     // Default is 5 by API
-	prometheusStorageClass := "" // Default is ""
-
-	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
-		DiskCapacityDB:   swag.Int(prometheusDiskSpace),
-		StorageClassName: &prometheusStorageClass,
-	}
-
-	_, err = operatorClient.TenantUpdate(ctx, minInst, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-//disablePrometheus removes Prometheus annotations from a tenant
-func disablePrometheus(ctx context.Context, operatorClient OperatorClientI, params operator_api.ConfigureMonitoringParams) error {
-	minInst, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{}
-
-	_, err = operatorClient.TenantUpdate(ctx, minInst, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // updateTenantAction does an update on the minioTenant by patching the desired changes
 func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, params operator_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
@@ -1872,51 +1827,12 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 			NodeSelector:       mNodeSelector,
 			ServiceAccountName: minInst.Spec.Prometheus.ServiceAccountName,
 			SidecarImage:       minInst.Spec.Prometheus.SideCarImage,
-			//StorageClassName:   minInst.Spec.Prometheus.StorageClassName,
 		}
 
 		return monitoringInfo, nil
 	}
 
 	return monitorngInfo, nil
-
-}
-
-//enable or disable Prometheus monitoring on tenant
-func getConfigureMonitoringResponse(session *models.Principal, params operator_api.ConfigureMonitoringParams) *models.Error {
-	ctx := context.Background()
-	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
-	if err != nil {
-		return prepareError(err)
-	}
-
-	// get Kubernetes Client
-	//clientSet, err := cluster.K8sClient(session.STSSessionToken)
-	if err != nil {
-		return prepareError(err)
-	}
-	opClient := &operatorClient{
-		client: opClientClientSet,
-	}
-
-	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
-	if err != nil {
-		return prepareError(err)
-	}
-
-	if minInst.Spec.Prometheus.DiskCapacityDB != nil {
-		err := disablePrometheus(ctx, opClient, params)
-		if err != nil {
-			return prepareError(err, errors.New("unable to configure tenant"))
-		}
-	} else {
-		err := enablePrometheus(ctx, opClient, params)
-		if err != nil {
-			return prepareError(err, errors.New("unable to configure tenant"))
-		}
-	}
-
-	return nil
 
 }
 

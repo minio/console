@@ -663,32 +663,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI 
-    post:
-      summary: Configure Prometheus monitoring on tenant
-      operationId: ConfigureMonitoring
-      parameters:
-        - name: namespace
-          in: path
-          required: true
-          type: string
-        - name: tenant
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/configureTenantRequest"
-      responses:
-        201:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - OperatorAPI   
     put:
       summary: Set Prometheus monitoring fields for tenant
       operationId: SetTenantMonitoring
@@ -2378,12 +2352,6 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/eventListElement"
-
-  configureTenantRequest:
-    type: object
-    properties:
-      prometheusEnabled:
-        type: boolean    
         
   tenantMonitoringInfo:
     type: object

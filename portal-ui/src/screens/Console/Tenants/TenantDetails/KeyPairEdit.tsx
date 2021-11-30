@@ -27,40 +27,6 @@ interface IKeyPairEditProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
-    },
-    sizeFactorContainer: {
-      marginLeft: 8,
-    },
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      "& div": {
-        flexGrow: 1,
-        width: "100%",
-      },
-    },
-    factorElements: {
-      display: "flex",
-      justifyContent: "flex-start",
-    },
-    sizeNumber: {
-      fontSize: 35,
-      fontWeight: 700,
-      textAlign: "center",
-    },
-    sizeDescription: {
-      fontSize: 14,
-      color: "#777",
-      textAlign: "center",
-    },
     shortened: {
       gridTemplateColumns: "auto auto 20px 20px",
       display: "grid",
@@ -106,6 +72,14 @@ const KeyPairEdit = ({
     const commonVal = commonFormValidation(keyPairValidation);
     setError(commonVal);
   }, [newValues, setError]);
+
+  const removeEntry = (index: number) => {
+    if (newValues.length > 1) {
+      let tempLabels = [...newValues];
+      tempLabels.splice(index, 1);
+      setNewValues(tempLabels);
+    }
+  };
 
   let keyValueInputs = newValues.map((_, index) => {
     return (
@@ -155,16 +129,12 @@ const KeyPairEdit = ({
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Remove" aria-label="add">
+          <Tooltip title="Remove" aria-label="remove">
             <IconButton
               size={"small"}
               style={{ marginLeft: 16 }}
               onClick={() => {
-                if (newValues.length > 1) {
-                  let tempLabels = [...newValues];
-                  tempLabels.splice(index, 1);
-                  setNewValues(tempLabels);
-                }
+                removeEntry(index);
               }}
             >
               <DeleteIcon />

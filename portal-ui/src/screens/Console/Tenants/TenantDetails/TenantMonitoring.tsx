@@ -195,8 +195,8 @@ const TenantMonitoring = ({
           </Button>
         )}
       </div>
-      <Paper className={classes.paperContainer}>
-        {prometheusMonitoringEnabled && !loadingTenantLogs && (
+      {prometheusMonitoringEnabled && !loadingTenantLogs && (
+        <Paper className={classes.paperContainer}>
           <Grid container>
             <Grid item xs={12}>
               <table width={"100%"}>
@@ -259,8 +259,8 @@ const TenantMonitoring = ({
               </table>
             </Grid>
           </Grid>
-        )}
-      </Paper>
+        </Paper>
+      )}
     </Fragment>
   );
 };

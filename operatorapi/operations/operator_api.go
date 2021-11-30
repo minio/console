@@ -63,9 +63,6 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
-		OperatorAPIConfigureMonitoringHandler: operator_api.ConfigureMonitoringHandlerFunc(func(params operator_api.ConfigureMonitoringParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation operator_api.ConfigureMonitoring has not yet been implemented")
-		}),
 		OperatorAPICreateNamespaceHandler: operator_api.CreateNamespaceHandlerFunc(func(params operator_api.CreateNamespaceParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.CreateNamespace has not yet been implemented")
 		}),
@@ -235,8 +232,6 @@ type OperatorAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
-	// OperatorAPIConfigureMonitoringHandler sets the operation handler for the configure monitoring operation
-	OperatorAPIConfigureMonitoringHandler operator_api.ConfigureMonitoringHandler
 	// OperatorAPICreateNamespaceHandler sets the operation handler for the create namespace operation
 	OperatorAPICreateNamespaceHandler operator_api.CreateNamespaceHandler
 	// OperatorAPICreateTenantHandler sets the operation handler for the create tenant operation
@@ -398,9 +393,6 @@ func (o *OperatorAPI) Validate() error {
 		unregistered = append(unregistered, "KeyAuth")
 	}
 
-	if o.OperatorAPIConfigureMonitoringHandler == nil {
-		unregistered = append(unregistered, "operator_api.ConfigureMonitoringHandler")
-	}
 	if o.OperatorAPICreateNamespaceHandler == nil {
 		unregistered = append(unregistered, "operator_api.CreateNamespaceHandler")
 	}
@@ -619,10 +611,6 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/monitoring"] = operator_api.NewConfigureMonitoring(o.context, o.OperatorAPIConfigureMonitoringHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

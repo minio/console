@@ -38,42 +38,6 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
-    },
-    sizeFactorContainer: {
-      marginLeft: 8,
-    },
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      "& div": {
-        flexGrow: 1,
-        width: "100%",
-      },
-    },
-    factorElements: {
-      display: "flex",
-      justifyContent: "flex-start",
-    },
-    sizeNumber: {
-      fontSize: 35,
-      fontWeight: 700,
-      textAlign: "center",
-    },
-    sizeDescription: {
-      fontSize: 14,
-      color: "#777",
-      textAlign: "center",
-    },
-    shortened: {
-      gridTemplateColumns: "auto auto 20px 20px",
-      display: "grid",
-      gridGap: 20,
-    },
     ...modalBasic,
   });
 
@@ -102,8 +66,9 @@ const EditTenantMonitoringModal = ({
     nodeSelector.length > 0 ? [...nodeSelector] : [{ key: "", value: "" }]
   );
   const [newImage, setNewImage] = useState<string>(image);
-  const [newDiskCapacityGB, setNewDiskCapacityGB] =
-    useState<number>(diskCapacityGB);
+  const [newDiskCapacityGB, setNewDiskCapacityGB] = useState<string>(
+    diskCapacityGB.toString()
+  );
   const [newServiceAccountName, setNewServiceAccountName] =
     useState<string>(serviceAccountName);
 
@@ -168,9 +133,9 @@ const EditTenantMonitoringModal = ({
           label={""}
           placeholder={"Disk Capacity (GB)"}
           name={`diskCapacityGB`}
-          value={newDiskCapacityGB as any as string}
+          value={newDiskCapacityGB.toString()}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewDiskCapacityGB(event.target.value as any as number);
+            setNewDiskCapacityGB(event.target.value);
           }}
           key={`diskCapacityGB`}
           error={validationErrors[`diskCapacityGB`] || ""}
@@ -194,7 +159,7 @@ const EditTenantMonitoringModal = ({
             type="submit"
             variant="contained"
             color="primary"
-            disabled={newDiskCapacityGB <= 0}
+            disabled={parseInt(newDiskCapacityGB) <= 0}
           >
             Save
           </Button>
