@@ -26,12 +26,14 @@ const styles = (theme: Theme) =>
     wizardStepContainer: {
       display: "flex",
       flexDirection: "column",
+      flex: 1,
     },
     wizardComponent: {
       overflowY: "auto",
       marginBottom: 10,
       height: "calc(100vh - 100px - 80px)",
-      maxWidth: 840,
+      minHeight: 400,
+      flex: 1,
       width: "100%",
     },
     wizardModal: {
@@ -53,9 +55,9 @@ const styles = (theme: Theme) =>
       },
     },
     buttonInnerContainer: {
-      maxWidth: 840,
       width: "100%",
       textAlign: "right" as const,
+      marginRight: 15,
     },
   });
 

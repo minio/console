@@ -732,6 +732,7 @@ export const wizardCommon = {
   },
   h3Section: {
     marginTop: 0,
+    margin: 0,
   },
   descriptionText: {
     fontSize: 13,
@@ -751,6 +752,7 @@ export const wizardCommon = {
   },
   paperWrapper: {
     padding: 12,
+    border: 0,
   },
 };
 
@@ -873,6 +875,9 @@ export const inputFieldStyles = {
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "#07193E",
       borderWidth: 1,
+    },
+    "&.Mui-error + p": {
+      marginLeft: 3,
     },
   },
   disabled: {
@@ -1200,5 +1205,12 @@ export const advancedFilterToggleStyles: any = {
   },
   advancedClosed: {
     transform: "rotateZ(90deg)",
+  },
+};
+
+export const createTenantCommon: any = {
+  fieldGroup: {
+    border: "1px solid #EAEAEA",
+    paddingTop: 5,
   },
 };

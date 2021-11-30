@@ -28,10 +28,15 @@ import {
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  deleteDialogStyles,
+  modalBasic,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,6 +46,7 @@ const styles = (theme: Theme) =>
       wordWrap: "break-word",
     },
     ...modalBasic,
+    ...deleteDialogStyles,
   });
 
 interface IAddNamespace {
@@ -90,29 +96,47 @@ const AddNamespaceModal = ({
   return (
     <Dialog
       open={addNamespaceOpen}
+      classes={classes}
       onClose={() => {
         closeAddNamespaceModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Create new namespace</DialogTitle>
+      <DialogTitle id="alert-dialog-title" className={classes.title}>
+        <div className={classes.titleText}>Create new namespace</div>
+        <div className={classes.closeContainer}>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={() => {
+              closeAddNamespaceModalAndRefresh(false);
+            }}
+            disableRipple
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
+
       <DialogContent>
         {addNamespaceLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to add a namespace called{" "}
+          Are you sure you want to add a namespace called
+          <br />
           <b className={classes.wrapText}>{namespace}</b>?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
+          type="button"
+          variant="outlined"
           onClick={() => {
             closeAddNamespaceModalAndRefresh(false);
           }}
           color="primary"
           disabled={addNamespaceLoading}
-          type="button"
-          className={classes.clearButton}
         >
           Cancel
         </Button>
@@ -123,7 +147,7 @@ const AddNamespaceModal = ({
           autoFocus
           disabled={addNamespaceLoading}
         >
-          Create Namespace
+          Create
         </Button>
       </DialogActions>
     </Dialog>

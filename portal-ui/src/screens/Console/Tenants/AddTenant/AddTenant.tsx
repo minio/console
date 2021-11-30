@@ -51,6 +51,8 @@ import Affinity from "./Steps/Affinity";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import history from "../../../../history";
 import Images from "./Steps/Images";
+import PageLayout from "../../Common/Layout/PageLayout";
+import BackLink from "../../../../common/BackLink";
 
 interface IAddTenantProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -68,6 +70,9 @@ const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       textAlign: "right",
+    },
+    pageBox: {
+      border: "1px solid #EAEAEA",
     },
     ...modalBasic,
     ...wizardCommon,
@@ -728,16 +733,17 @@ const AddTenant = ({
         />
       )}
       <PageHeader label={"Create New Tenant"} />
-      <Grid container>
+      <BackLink to={"/tenants"} label={"Return to Tenant List"} />
+      <PageLayout>
         {addSending && (
           <Grid item xs={12}>
             <LinearProgress />
           </Grid>
         )}
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.pageBox}>
           <GenericWizard wizardSteps={filteredWizardSteps} />
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

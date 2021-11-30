@@ -29,6 +29,7 @@ import get from "lodash/get";
 import debounce from "lodash/debounce";
 import Grid from "@mui/material/Grid";
 import {
+  formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -65,7 +66,21 @@ const styles = (theme: Theme) =>
     },
     sizePreview: {
       position: "fixed",
+      marginLeft: 10,
+      background: "#FFFFFF",
+      border: "1px solid #EAEAEA",
+      padding: 2,
     },
+    inputLabel: {
+      minWidth: 200,
+    },
+    errorInField: {
+      "& .MuiFormControl-root & .MuiOutlinedInput-root & .MuiFormHelperText-root":
+        {
+          color: "blue",
+        },
+    },
+    ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,
   });
@@ -267,7 +282,7 @@ const NameTenant = ({
         />
       )}
       <Grid container>
-        <Grid item xs={8}>
+        <Grid item xs={8} md={9}>
           <Paper className={classes.paperWrapper}>
             <Grid container>
               <Grid item xs={12}>
@@ -277,21 +292,25 @@ const NameTenant = ({
                     How would you like to name this new tenant?
                   </span>
                 </div>
-                <InputBoxWrapper
-                  id="tenant-name"
-                  name="tenant-name"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("tenantName", e.target.value);
-                    frmValidationCleanup("tenant-name");
-                  }}
-                  label="Name"
-                  value={tenantName}
-                  required
-                  error={validationErrors["tenant-name"] || ""}
-                />
+                <div className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="tenant-name"
+                    classes={classes}
+                    name="tenant-name"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("tenantName", e.target.value);
+                      frmValidationCleanup("tenant-name");
+                    }}
+                    label="Name"
+                    value={tenantName}
+                    required
+                    error={validationErrors["tenant-name"] || ""}
+                  />
+                </div>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
+                  classes={classes}
                   id="namespace"
                   name="namespace"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -306,8 +325,9 @@ const NameTenant = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <SelectWrapper
+                  classes={classes}
                   id="storage_class"
                   name="storage_class"
                   onChange={(e: SelectChangeEvent<string>) => {
@@ -326,7 +346,7 @@ const NameTenant = ({
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} md={3}>
           <div className={classes.sizePreview}>
             <SizePreview />
           </div>

@@ -23,6 +23,8 @@ import { Grid, IconButton, Paper, Tooltip, Typography } from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  createTenantCommon,
+  formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -37,6 +39,7 @@ import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelecto
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "../../../../../icons/RemoveIcon";
 
 interface IIdentityProviderProps {
   classes: any;
@@ -75,15 +78,54 @@ const styles = (theme: Theme) =>
     shortened: {
       gridTemplateColumns: "auto auto 50px 50px",
       display: "grid",
-      gridGap: 20,
+      gridGap: 15,
+      marginBottom: 10,
+      "& input": {
+        fontWeight: 400,
+      },
     },
+
     buttonTray: {
-      gridTemplateColumns: "auto auto 10px 10px",
-      display: "grid",
-      gridGap: 0,
-      height: 16,
-      marginTop: 12,
+      marginLeft: 10,
+      display: "flex",
+      height: 38,
+      "& button": {
+        background: "#EAEAEA",
+      },
     },
+    overlayAction: {
+      marginLeft: 10,
+      "& svg": {
+        maxWidth: 15,
+        maxHeight: 15,
+      },
+      "& button": {
+        background: "#EAEAEA",
+      },
+    },
+    protocolRadioOptions: {
+      display: "flex",
+      flexFlow: "column",
+      marginBottom: 10,
+
+      "& label": {
+        fontSize: 14,
+      },
+      "& div": {
+        display: "flex",
+        flexFlow: "column",
+        alignItems: "baseline",
+      },
+    },
+    adUserDnRows: {
+      display: "flex",
+    },
+
+    inputLabel: {
+      minWidth: 260,
+    },
+    ...createTenantCommon,
+    ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,
   });
@@ -270,46 +312,51 @@ const IdentityProvider = ({
             />
             <div className={classes.buttonTray}>
               <Tooltip title="Add User" aria-label="add">
-                <IconButton
-                  size={"small"}
-                  onClick={() => {
-                    accessKeys.push("");
-                    secretKeys.push("");
-                    updateUserField(accessKeys.length - 1, "");
-                    updatePwordField(secretKeys.length - 1, "");
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Randomize Credentials" aria-label="add">
-                <IconButton
-                  onClick={() => {
-                    updateUserField(index, getRandomString(16));
-                    updatePwordField(index, getRandomString(32));
-                  }}
-                  size={"small"}
-                >
-                  <CasinoIcon />
-                </IconButton>
+                <div className={classes.overlayAction}>
+                  <IconButton
+                    size={"small"}
+                    onClick={() => {
+                      accessKeys.push("");
+                      secretKeys.push("");
+                      updateUserField(accessKeys.length - 1, "");
+                      updatePwordField(secretKeys.length - 1, "");
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </div>
               </Tooltip>
               <Tooltip title="Remove" aria-label="add">
-                <IconButton
-                  size={"small"}
-                  style={{ marginLeft: 16 }}
-                  onClick={() => {
-                    if (accessKeys.length > 1) {
-                      accessKeys.splice(index, 1);
-                      secretKeys.splice(index, 1);
-                      updateUserField(
-                        accessKeys.length - 1,
-                        accessKeys[accessKeys.length - 1]
-                      );
-                    }
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <div className={classes.overlayAction}>
+                  <IconButton
+                    size={"small"}
+                    onClick={() => {
+                      if (accessKeys.length > 1) {
+                        accessKeys.splice(index, 1);
+                        secretKeys.splice(index, 1);
+                        updateUserField(
+                          accessKeys.length - 1,
+                          accessKeys[accessKeys.length - 1]
+                        );
+                      }
+                    }}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                </div>
+              </Tooltip>
+              <Tooltip title="Randomize Credentials" aria-label="add">
+                <div className={classes.overlayAction}>
+                  <IconButton
+                    onClick={() => {
+                      updateUserField(index, getRandomString(16));
+                      updatePwordField(index, getRandomString(32));
+                    }}
+                    size={"small"}
+                  >
+                    <CasinoIcon />
+                  </IconButton>
+                </div>
               </Tooltip>
             </div>
           </div>
@@ -321,11 +368,12 @@ const IdentityProvider = ({
     inputs = ADUserDNs.map((_, index) => {
       return (
         <Fragment key={`identityField-${index.toString()}`}>
-          <div className={classes.shortened}>
+          <div className={classes.adUserDnRows}>
             <InputBoxWrapper
               id={`ad-userdn-${index.toString()}`}
               label={""}
               placeholder=""
+              classes={classes}
               name={`ad-userdn-${index.toString()}`}
               value={ADUserDNs[index]}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -380,12 +428,13 @@ const IdentityProvider = ({
           Manager.
         </span>
       </div>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.protocolRadioOptions}>
+        <label>Protocol</label>
         <RadioGroupSelector
           currentSelection={idpSelection}
           id="idp-options"
           name="idp-options"
-          label="Protocol"
+          label=" "
           onChange={(e) => {
             updateField("idpSelection", e.target.value);
           }}
@@ -404,7 +453,7 @@ const IdentityProvider = ({
       )}
       {idpSelection === "OpenID" && (
         <Fragment>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="openID_CONFIGURATION_URL"
               name="openID_CONFIGURATION_URL"
@@ -419,7 +468,7 @@ const IdentityProvider = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="openID_clientID"
               name="openID_clientID"
@@ -433,7 +482,7 @@ const IdentityProvider = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="openID_secretID"
               name="openID_secretID"
@@ -447,7 +496,7 @@ const IdentityProvider = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="openID_callbackURL"
               name="openID_callbackURL"
@@ -461,7 +510,7 @@ const IdentityProvider = ({
               error={validationErrors["openID_callbackURL"] || ""}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="openID_claimName"
               name="openID_claimName"
@@ -475,7 +524,7 @@ const IdentityProvider = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="openID_scopes"
               name="openID_scopes"
@@ -491,10 +540,11 @@ const IdentityProvider = ({
       )}
       {idpSelection === "AD" && (
         <Fragment>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="AD_URL"
               name="AD_URL"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADURL", e.target.value);
                 cleanValidation("AD_URL");
@@ -506,11 +556,12 @@ const IdentityProvider = ({
               required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="ad_skipTLS"
               id="ad_skipTLS"
               name="ad_skipTLS"
+              classes={classes}
               checked={ADSkipTLS}
               onChange={(e) => {
                 const targetD = e.target;
@@ -520,11 +571,12 @@ const IdentityProvider = ({
               label={"Skip TLS Verification"}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="ad_serverInsecure"
               id="ad_serverInsecure"
               name="ad_serverInsecure"
+              classes={classes}
               checked={ADServerInsecure}
               onChange={(e) => {
                 const targetD = e.target;
@@ -547,11 +599,12 @@ const IdentityProvider = ({
               <br />
             </Grid>
           ) : null}
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="ad_serverStartTLS"
               id="ad_serverStartTLS"
               name="ad_serverStartTLS"
+              classes={classes}
               checked={ADServerStartTLS}
               onChange={(e) => {
                 const targetD = e.target;
@@ -561,10 +614,11 @@ const IdentityProvider = ({
               label={"Start TLS connection to AD/LDAP server"}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_userNameFormat"
               name="ad_userNameFormat"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserNameFormat", e.target.value);
               }}
@@ -573,10 +627,11 @@ const IdentityProvider = ({
               placeholder="uid=%s,cn=accounts,dc=myldapserver,dc=com"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_userNameFilter"
               name="ad_userNameFilter"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserNameSearchFilter", e.target.value);
               }}
@@ -585,10 +640,11 @@ const IdentityProvider = ({
               placeholder="(|(objectclass=posixAccount)(uid=%s))"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_groupSearchBaseDN"
               name="ad_groupSearchBaseDN"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupSearchBaseDN", e.target.value);
               }}
@@ -597,10 +653,11 @@ const IdentityProvider = ({
               placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_groupSearchFilter"
               name="ad_groupSearchFilter"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupSearchFilter", e.target.value);
               }}
@@ -609,10 +666,11 @@ const IdentityProvider = ({
               placeholder="(&(objectclass=groupOfNames)(member=%s))"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_groupNameAttribute"
               name="ad_groupNameAttribute"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupNameAttribute", e.target.value);
               }}
@@ -621,10 +679,11 @@ const IdentityProvider = ({
               placeholder="cn"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_lookupBindDN"
               name="ad_lookupBindDN"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADLookupBindDN", e.target.value);
               }}
@@ -633,10 +692,11 @@ const IdentityProvider = ({
               placeholder="cn=admin,dc=min,dc=io"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_lookupBindPassword"
               name="ad_lookupBindPassword"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADLookupBindPassword", e.target.value);
               }}
@@ -645,10 +705,11 @@ const IdentityProvider = ({
               placeholder="admin"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_userDNSearchBaseDN"
               name="ad_userDNSearchBaseDN"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserDNSearchBaseDN", e.target.value);
               }}
@@ -657,10 +718,11 @@ const IdentityProvider = ({
               placeholder="dc=min,dc=io"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="ad_userDNSearchFilter"
               name="ad_userDNSearchFilter"
+              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserDNSearchFilter", e.target.value);
               }}
@@ -669,10 +731,14 @@ const IdentityProvider = ({
               placeholder="(uid=%s)"
             />
           </Grid>
-          <Grid item xs={12}>
-            List of user DNs (Distinguished Names) to be Tenant Administrators
-            {inputs}
-          </Grid>
+          <fieldset className={classes.fieldGroup}>
+            <legend className={classes.descriptionText}>
+              List of user DNs (Distinguished Names) to be Tenant Administrators
+            </legend>
+            <Grid item xs={12}>
+              {inputs}
+            </Grid>
+          </fieldset>
         </Fragment>
       )}
     </Paper>

@@ -125,7 +125,7 @@ export const RadioGroupSelector = ({
           )}
         </InputLabel>
       </Grid>
-      <Grid item xs>
+      <Grid item xs className={classes.radioOptionsLayout}>
         <RadioGroup
           aria-label={id}
           id={id}

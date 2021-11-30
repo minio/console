@@ -14,13 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, Paper, SelectChangeEvent } from "@mui/material";
 import {
+  createTenantCommon,
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -76,6 +77,62 @@ const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       textAlign: "right",
+    },
+    configSectionItem: {
+      marginRight: 15,
+
+      "& .multiContainer": {
+        border: "1px solid red",
+      },
+    },
+    inputLabel: {
+      fontWeight: 300,
+      fontSize: 14,
+    },
+    textBoxContainer: {
+      "& input": {
+        fontWeight: 400,
+      },
+    },
+    tenantCustomizationFields: {
+      marginLeft: 30, // 2nd Level(15+15)
+      width: "88%",
+      margin: "auto",
+    },
+    containerItem: {
+      marginRight: 15,
+    },
+    fieldGroup: {
+      ...createTenantCommon.fieldGroup,
+      paddingTop: 15,
+      marginBottom: 25,
+    },
+    responsiveSectionItem: {
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+        alignItems: "flex-start",
+
+        "& div > div": {
+          marginBottom: 5,
+          marginRight: 0,
+        },
+      },
+    },
+
+    logSearchCustomFields: {
+      marginLeft: 20, // 2nd Level(15+15)
+      padding: 10,
+      width: "90%",
+      margin: "auto",
+    },
+    fieldSpaceTop: {
+      marginTop: 15,
+    },
+    prometheusCustomFields: {
+      marginLeft: 20, // 2nd Level(15+15)
+      padding: 10,
+      width: "90%",
+      margin: "auto",
     },
     ...modalBasic,
     ...wizardCommon,
@@ -447,12 +504,13 @@ const Configure = ({
           Whether the tenant's services should request an external IP.
         </span>
       </div>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.configSectionItem}>
         <FormSwitchWrapper
           value="expose_minio"
           id="expose_minio"
           name="expose_minio"
           checked={exposeMinIO}
+          classes={classes}
           onChange={(e) => {
             const targetD = e.target;
             const checked = targetD.checked;
@@ -462,11 +520,12 @@ const Configure = ({
           label={"Expose MiniO Service"}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.configSectionItem}>
         <FormSwitchWrapper
           value="expose_console"
           id="expose_console"
           name="expose_console"
+          classes={classes}
           checked={exposeConsole}
           onChange={(e) => {
             const targetD = e.target;
@@ -485,7 +544,7 @@ const Configure = ({
           Search, Prometheus add-ons and your Tenant
         </span>
       </div>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.configSectionItem}>
         <FormSwitchWrapper
           value="tenantConfig"
           id="tenant_configuration"
@@ -501,102 +560,109 @@ const Configure = ({
         />
       </Grid>
       {tenantCustom && (
-        <Fragment>
-          <span className={classes.descriptionText}>
-            SecurityContext for MinIO
-          </span>
-          <br />
-          <br />
-          <Grid item xs={12}>
-            <div className={classes.multiContainer}>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="tenant_securityContext_runAsUser"
-                  name="tenant_securityContext_runAsUser"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        <Grid item xs={12} className={classes.tenantCustomizationFields}>
+          <fieldset className={classes.fieldGroup}>
+            <legend className={classes.descriptionText}>
+              SecurityContext for MinIO
+            </legend>
+            <Grid item xs={12} className={`${classes.configSectionItem}`}>
+              <div
+                className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+              >
+                <div className={classes.containerItem}>
+                  <InputBoxWrapper
+                    type="number"
+                    classes={classes}
+                    id="tenant_securityContext_runAsUser"
+                    name="tenant_securityContext_runAsUser"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("tenantSecurityContext", {
+                        ...tenantSecurityContext,
+                        runAsUser: e.target.value,
+                      });
+                      cleanValidation("tenant_securityContext_runAsUser");
+                    }}
+                    label="Run As User"
+                    value={tenantSecurityContext.runAsUser}
+                    required
+                    error={
+                      validationErrors["tenant_securityContext_runAsUser"] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div className={classes.containerItem}>
+                  <InputBoxWrapper
+                    type="number"
+                    classes={classes}
+                    id="tenant_securityContext_runAsGroup"
+                    name="tenant_securityContext_runAsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("tenantSecurityContext", {
+                        ...tenantSecurityContext,
+                        runAsGroup: e.target.value,
+                      });
+                      cleanValidation("tenant_securityContext_runAsGroup");
+                    }}
+                    label="Run As Group"
+                    value={tenantSecurityContext.runAsGroup}
+                    required
+                    error={
+                      validationErrors["tenant_securityContext_runAsGroup"] ||
+                      ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div className={classes.containerItem}>
+                  <InputBoxWrapper
+                    type="number"
+                    classes={classes}
+                    id="tenant_securityContext_fsGroup"
+                    name="tenant_securityContext_fsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("tenantSecurityContext", {
+                        ...tenantSecurityContext,
+                        fsGroup: e.target.value,
+                      });
+                      cleanValidation("tenant_securityContext_fsGroup");
+                    }}
+                    label="FsGroup"
+                    value={tenantSecurityContext.fsGroup}
+                    required
+                    error={
+                      validationErrors["tenant_securityContext_fsGroup"] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+              </div>
+            </Grid>
+            <br />
+            <Grid item xs={12} className={classes.configSectionItem}>
+              <div className={classes.multiContainer}>
+                <FormSwitchWrapper
+                  classes={classes}
+                  value="tenantSecurityContextRunAsNonRoot"
+                  id="tenant_securityContext_runAsNonRoot"
+                  name="tenant_securityContext_runAsNonRoot"
+                  checked={tenantSecurityContext.runAsNonRoot}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
                     updateField("tenantSecurityContext", {
                       ...tenantSecurityContext,
-                      runAsUser: e.target.value,
+                      runAsNonRoot: checked,
                     });
-                    cleanValidation("tenant_securityContext_runAsUser");
                   }}
-                  label="Run As User"
-                  value={tenantSecurityContext.runAsUser}
-                  required
-                  error={
-                    validationErrors["tenant_securityContext_runAsUser"] || ""
-                  }
-                  min="0"
+                  label={"Do not run as Root"}
                 />
               </div>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="tenant_securityContext_runAsGroup"
-                  name="tenant_securityContext_runAsGroup"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("tenantSecurityContext", {
-                      ...tenantSecurityContext,
-                      runAsGroup: e.target.value,
-                    });
-                    cleanValidation("tenant_securityContext_runAsGroup");
-                  }}
-                  label="Run As Group"
-                  value={tenantSecurityContext.runAsGroup}
-                  required
-                  error={
-                    validationErrors["tenant_securityContext_runAsGroup"] || ""
-                  }
-                  min="0"
-                />
-              </div>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="tenant_securityContext_fsGroup"
-                  name="tenant_securityContext_fsGroup"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("tenantSecurityContext", {
-                      ...tenantSecurityContext,
-                      fsGroup: e.target.value,
-                    });
-                    cleanValidation("tenant_securityContext_fsGroup");
-                  }}
-                  label="FsGroup"
-                  value={tenantSecurityContext.fsGroup}
-                  required
-                  error={
-                    validationErrors["tenant_securityContext_fsGroup"] || ""
-                  }
-                  min="0"
-                />
-              </div>
-            </div>
-          </Grid>
-          <br />
-          <Grid item xs={12}>
-            <div className={classes.multiContainer}>
-              <FormSwitchWrapper
-                value="tenantSecurityContextRunAsNonRoot"
-                id="tenant_securityContext_runAsNonRoot"
-                name="tenant_securityContext_runAsNonRoot"
-                checked={tenantSecurityContext.runAsNonRoot}
-                onChange={(e) => {
-                  const targetD = e.target;
-                  const checked = targetD.checked;
-                  updateField("tenantSecurityContext", {
-                    ...tenantSecurityContext,
-                    runAsNonRoot: checked,
-                  });
-                }}
-                label={"Do not run as Root"}
-              />
-            </div>
-          </Grid>
-        </Fragment>
+            </Grid>
+          </fieldset>
+        </Grid>
       )}
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.configSectionItem}>
         <FormSwitchWrapper
           value="logSearchConfig"
           id="log_search_configuration"
@@ -612,9 +678,10 @@ const Configure = ({
         />
       </Grid>
       {logSearchCustom && (
-        <Fragment>
+        <Grid xs={12} className={classes.logSearchCustomFields}>
           <Grid item xs={12}>
             <SelectWrapper
+              classes={classes}
               id="log_search_storage_class"
               name="log_search_storage_class"
               onChange={(e: SelectChangeEvent<string>) => {
@@ -631,37 +698,41 @@ const Configure = ({
           </Grid>
           <Grid item xs={12}>
             <div className={classes.multiContainer}>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="log_search_volume_size"
-                  name="log_search_volume_size"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("logSearchVolumeSize", e.target.value);
-                    cleanValidation("log_search_volume_size");
-                  }}
-                  label="Storage Size [Gi]"
-                  value={logSearchVolumeSize}
-                  required
-                  error={validationErrors["log_search_volume_size"] || ""}
-                  min="0"
-                />
-              </div>
+              <InputBoxWrapper
+                type="number"
+                id="log_search_volume_size"
+                name="log_search_volume_size"
+                classes={classes}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("logSearchVolumeSize", e.target.value);
+                  cleanValidation("log_search_volume_size");
+                }}
+                label="Storage Size [Gi]"
+                value={logSearchVolumeSize}
+                required
+                error={validationErrors["log_search_volume_size"] || ""}
+                min="0"
+              />
             </div>
           </Grid>
-          <Fragment>
-            <span className={classes.descriptionText}>
+
+          <fieldset
+            className={`${classes.fieldGroup} ${classes.fieldSpaceTop}`}
+          >
+            <legend className={classes.descriptionText}>
               SecurityContext for LogSearch
-            </span>
-            <br />
-            <br />
+            </legend>
+
             <Grid item xs={12}>
-              <div className={classes.multiContainer}>
-                <div>
+              <div
+                className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+              >
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="logSearch_securityContext_runAsUser"
                     name="logSearch_securityContext_runAsUser"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("logSearchSecurityContext", {
                         ...logSearchSecurityContext,
@@ -679,11 +750,12 @@ const Configure = ({
                     min="0"
                   />
                 </div>
-                <div>
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="logSearch_securityContext_runAsGroup"
                     name="logSearch_securityContext_runAsGroup"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("logSearchSecurityContext", {
                         ...logSearchSecurityContext,
@@ -702,11 +774,12 @@ const Configure = ({
                     min="0"
                   />
                 </div>
-                <div>
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="logSearch_securityContext_fsGroup"
                     name="logSearch_securityContext_fsGroup"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("logSearchSecurityContext", {
                         ...logSearchSecurityContext,
@@ -733,6 +806,7 @@ const Configure = ({
                   value="logSearchSecurityContextRunAsNonRoot"
                   id="logSearch_securityContext_runAsNonRoot"
                   name="logSearch_securityContext_runAsNonRoot"
+                  classes={classes}
                   checked={logSearchSecurityContext.runAsNonRoot}
                   onChange={(e) => {
                     const targetD = e.target;
@@ -746,20 +820,22 @@ const Configure = ({
                 />
               </div>
             </Grid>
-          </Fragment>
-          <Fragment>
-            <span className={classes.descriptionText}>
+          </fieldset>
+          <fieldset className={classes.fieldGroup}>
+            <legend className={classes.descriptionText}>
               SecurityContext for PostgreSQL
-            </span>
-            <br />
-            <br />
+            </legend>
+
             <Grid item xs={12}>
-              <div className={classes.multiContainer}>
-                <div>
+              <div
+                className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+              >
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="postgres_securityContext_runAsUser"
                     name="postgres_securityContext_runAsUser"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("logSearchPostgresSecurityContext", {
                         ...logSearchPostgresSecurityContext,
@@ -777,11 +853,12 @@ const Configure = ({
                     min="0"
                   />
                 </div>
-                <div>
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="postgres_securityContext_runAsGroup"
                     name="postgres_securityContext_runAsGroup"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("logSearchPostgresSecurityContext", {
                         ...logSearchPostgresSecurityContext,
@@ -799,11 +876,12 @@ const Configure = ({
                     min="0"
                   />
                 </div>
-                <div>
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="postgres_securityContext_fsGroup"
                     name="postgres_securityContext_fsGroup"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("logSearchPostgresSecurityContext", {
                         ...logSearchPostgresSecurityContext,
@@ -829,6 +907,7 @@ const Configure = ({
                   value="postgresSecurityContextRunAsNonRoot"
                   id="postgres_securityContext_runAsNonRoot"
                   name="postgres_securityContext_runAsNonRoot"
+                  classes={classes}
                   checked={logSearchPostgresSecurityContext.runAsNonRoot}
                   onChange={(e) => {
                     const targetD = e.target;
@@ -842,10 +921,10 @@ const Configure = ({
                 />
               </div>
             </Grid>
-          </Fragment>
-        </Fragment>
+          </fieldset>
+        </Grid>
       )}
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.configSectionItem}>
         <FormSwitchWrapper
           value="prometheusConfig"
           id="prometheus_configuration"
@@ -861,11 +940,12 @@ const Configure = ({
         />
       </Grid>
       {prometheusCustom && (
-        <Fragment>
+        <Grid xs={12} className={classes.prometheusCustomFields}>
           <Grid item xs={12}>
             <SelectWrapper
               id="prometheus_storage_class"
               name="prometheus_storage_class"
+              classes={classes}
               onChange={(e: SelectChangeEvent<string>) => {
                 updateField(
                   "prometheusSelectedStorageClass",
@@ -880,37 +960,39 @@ const Configure = ({
           </Grid>
           <Grid item xs={12}>
             <div className={classes.multiContainer}>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="prometheus_volume_size"
-                  name="prometheus_volume_size"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("prometheusVolumeSize", e.target.value);
-                    cleanValidation("prometheus_volume_size");
-                  }}
-                  label="Storage Size [Gi]"
-                  value={prometheusVolumeSize}
-                  required
-                  error={validationErrors["prometheus_volume_size"] || ""}
-                  min="0"
-                />
-              </div>
+              <InputBoxWrapper
+                type="number"
+                id="prometheus_volume_size"
+                name="prometheus_volume_size"
+                classes={classes}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("prometheusVolumeSize", e.target.value);
+                  cleanValidation("prometheus_volume_size");
+                }}
+                label="Storage Size [Gi]"
+                value={prometheusVolumeSize}
+                required
+                error={validationErrors["prometheus_volume_size"] || ""}
+                min="0"
+              />
             </div>
           </Grid>
-          <Fragment>
-            <span className={classes.descriptionText}>
+          <fieldset
+            className={`${classes.fieldGroup} ${classes.fieldSpaceTop}`}
+          >
+            <legend className={classes.descriptionText}>
               SecurityContext for Prometheus
-            </span>
-            <br />
-            <br />
-            <Grid item xs={12}>
-              <div className={classes.multiContainer}>
-                <div>
+            </legend>
+            <Grid item xs={12} className={classes.configSectionItem}>
+              <div
+                className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+              >
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="prometheus_securityContext_runAsUser"
                     name="prometheus_securityContext_runAsUser"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("prometheusSecurityContext", {
                         ...prometheusSecurityContext,
@@ -929,11 +1011,12 @@ const Configure = ({
                     min="0"
                   />
                 </div>
-                <div>
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="prometheus_securityContext_runAsGroup"
                     name="prometheus_securityContext_runAsGroup"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("prometheusSecurityContext", {
                         ...prometheusSecurityContext,
@@ -952,11 +1035,12 @@ const Configure = ({
                     min="0"
                   />
                 </div>
-                <div>
+                <div className={classes.configSectionItem}>
                   <InputBoxWrapper
                     type="number"
                     id="prometheus_securityContext_fsGroup"
                     name="prometheus_securityContext_fsGroup"
+                    classes={classes}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("prometheusSecurityContext", {
                         ...prometheusSecurityContext,
@@ -976,13 +1060,15 @@ const Configure = ({
                 </div>
               </div>
             </Grid>
-            <br />
-            <Grid item xs={12}>
-              <div className={classes.multiContainer}>
+            <Grid item xs={12} className={classes.configSectionItem}>
+              <div
+                className={`${classes.multiContainer} ${classes.fieldSpaceTop}`}
+              >
                 <FormSwitchWrapper
                   value="prometheusSecurityContextRunAsNonRoot"
                   id="prometheus_securityContext_runAsNonRoot"
                   name="prometheus_securityContext_runAsNonRoot"
+                  classes={classes}
                   checked={prometheusSecurityContext.runAsNonRoot}
                   onChange={(e) => {
                     const targetD = e.target;
@@ -996,8 +1082,8 @@ const Configure = ({
                 />
               </div>
             </Grid>
-          </Fragment>
-        </Fragment>
+          </fieldset>
+        </Grid>
       )}
     </Paper>
   );
