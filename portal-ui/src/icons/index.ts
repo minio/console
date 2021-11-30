@@ -77,6 +77,7 @@ export { default as CircleIcon } from "./CircleIcon";
 export { default as PreviewIcon } from "./PreviewIcon";
 export { default as LockIcon } from "./LockIcon";
 export { default as VersionIcon } from "./VersionIcon";
+export { default as ObjectManagerIcon } from "./ObjectManagerIcon";
 
 export { default as FileLockIcon } from "./FileLockIcon";
 export { default as FileXlsIcon } from "./FileXlsIcon";

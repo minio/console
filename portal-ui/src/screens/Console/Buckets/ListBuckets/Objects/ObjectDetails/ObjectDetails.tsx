@@ -81,6 +81,11 @@ import VerticalTabs from "../../../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import { RecoverIcon } from "../../../../../../icons";
 import SecureComponent from "../../../../../../common/SecureComponent/SecureComponent";
+import {
+  setNewObject,
+  updateProgress,
+  completeObject,
+} from "../../../../ObjectBrowser/actions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -225,6 +230,9 @@ interface IObjectDetailsProps {
   distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
+  setNewObject: typeof setNewObject;
+  updateProgress: typeof updateProgress;
+  completeObject: typeof completeObject;
 }
 
 const emptyFile: IFileInfo = {
@@ -249,6 +257,9 @@ const ObjectDetails = ({
   bucketToRewind,
   setErrorSnackMessage,
   setSnackBarMessage,
+  setNewObject,
+  updateProgress,
+  completeObject,
 }: IObjectDetailsProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -367,14 +378,32 @@ const ObjectDetails = ({
   };
 
   const downloadObject = (object: IFileInfo) => {
-    if (object.size && parseInt(object.size) > 104857600) {
-      // If file is bigger than 100MB we show a notification
-      setSnackBarMessage(
-        "Download process started, it may take a few moments to complete"
-      );
-    }
+    const identityDownload = btoa(
+      `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
+    );
 
-    download(bucketName, internalPaths, object.version_id);
+    setNewObject({
+      bucketName,
+      done: false,
+      instanceID: identityDownload,
+      percentage: 0,
+      prefix: object.name,
+      type: "download",
+      waitingForFile: true,
+    });
+
+    download(
+      bucketName,
+      internalPaths,
+      object.version_id,
+      parseInt(object.size || "0"),
+      (progress) => {
+        updateProgress(identityDownload, progress);
+      },
+      () => {
+        completeObject(identityDownload);
+      }
+    );
   };
 
   const tableActions: ItemActions[] = [
@@ -951,6 +980,9 @@ const mapStateToProps = ({ objectBrowser, system }: AppState) => ({
 const mapDispatchToProps = {
   setErrorSnackMessage,
   setSnackBarMessage,
+  setNewObject,
+  updateProgress,
+  completeObject,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
