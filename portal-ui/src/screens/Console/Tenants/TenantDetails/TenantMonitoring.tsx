@@ -126,7 +126,6 @@ const TenantMonitoring = ({
       )
       .then(() => {
         setPrometheusMonitoringEnabled(!prometheusMonitoringEnabled);
-        setConfirmOpen(false);
         setRefreshMonitoringInfo(true);
       })
       .catch((err: ErrorResponseHandler) => {
@@ -142,14 +141,18 @@ const TenantMonitoring = ({
           open={edit}
           onClose={onCloseEditAndRefresh}
           tenant={tenant}
-          image={""}
-          sidecarImage={""}
-          initImage={""}
-          diskCapacityGB={0}
+          image={monitoringInfo?.image || ""}
+          sidecarImage={monitoringInfo?.sidecarImage || ""}
+          initImage={monitoringInfo?.initImage || ""}
+          diskCapacityGB={
+            monitoringInfo?.diskCapacityGB
+              ? parseInt(monitoringInfo?.diskCapacityGB)
+              : 5
+          }
           labels={testingKeyVal}
           annotations={testingKeyVal}
           nodeSelector={testingKeyVal}
-          serviceAccountName={""}
+          serviceAccountName={monitoringInfo?.serviceAccountName || ""}
           tenantName={tenantName}
           tenantNamespace={tenantNamespace}
         />
