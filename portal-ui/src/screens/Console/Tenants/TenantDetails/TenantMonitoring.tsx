@@ -78,11 +78,12 @@ const TenantMonitoring = ({
   const [prometheusMonitoringEnabled, setPrometheusMonitoringEnabled] =
     useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
-  const [disabled, setDisabled] = useState<boolean>(false);
   const [loadingTenantLogs, setLoadingTenantLogs] = useState<boolean>(false);
   const [monitoringInfo, setMonitoringInfo] =
     useState<ITenantMonitoringStruct>();
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const [refreshMonitoringInfo, setRefreshMonitoringInfo] =
+    useState<boolean>(true);
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -90,23 +91,27 @@ const TenantMonitoring = ({
 
   const onCloseEditAndRefresh = () => {
     setEdit(false);
+    setRefreshMonitoringInfo(true);
   };
 
   useEffect(() => {
-    api
-      .invoke(
-        "GET",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`
-      )
-      .then((res: ITenantMonitoringStruct) => {
-        setPrometheusMonitoringEnabled(res.prometheusEnabled);
-        setDisabled(!prometheusMonitoringEnabled);
-        setMonitoringInfo(res);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
-      });
-  }, [prometheusMonitoringEnabled, edit]);
+    if (refreshMonitoringInfo) {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`
+        )
+        .then((res: ITenantMonitoringStruct) => {
+          setPrometheusMonitoringEnabled(res.prometheusEnabled);
+          setMonitoringInfo(res);
+          setRefreshMonitoringInfo(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setErrorSnackMessage(err);
+          setRefreshMonitoringInfo(false);
+        });
+    }
+  }, [refreshMonitoringInfo]);
 
   const togglePrometheus = () => {
     const configInfo = {
@@ -122,6 +127,7 @@ const TenantMonitoring = ({
       .then(() => {
         setPrometheusMonitoringEnabled(!prometheusMonitoringEnabled);
         setConfirmOpen(false);
+        setRefreshMonitoringInfo(true);
       })
       .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);
@@ -137,6 +143,8 @@ const TenantMonitoring = ({
           onClose={onCloseEditAndRefresh}
           tenant={tenant}
           image={""}
+          sidecarImage={""}
+          initImage={""}
           diskCapacityGB={0}
           labels={testingKeyVal}
           annotations={testingKeyVal}
@@ -178,7 +186,6 @@ const TenantMonitoring = ({
           name="monitoring-status"
           onChange={(e) => {
             setConfirmOpen(true);
-            console.log("You hit the switch");
           }}
           description=""
         />
@@ -195,72 +202,76 @@ const TenantMonitoring = ({
           </Button>
         )}
       </div>
-      {prometheusMonitoringEnabled && !loadingTenantLogs && (
-        <Paper className={classes.paperContainer}>
-          <Grid container>
-            <Grid item xs={12}>
-              <table width={"100%"}>
-                <tbody>
-                  {loadingTenant ? (
-                    <tr>
-                      <td className={classes.centerAlign} colSpan={4}>
-                        <CircularProgress />
-                      </td>
-                    </tr>
-                  ) : (
-                    monitoringInfo !== undefined && (
-                      <Fragment>
-                        {monitoringInfo.image != null && (
-                          <tr>
-                            <td className={classes.titleCol}>Image:</td>
-                            <td>{monitoringInfo.image}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.sidecarImage != null && (
-                          <tr>
-                            <td className={classes.titleCol}>Sidecar Image:</td>
-                            <td>{monitoringInfo?.sidecarImage}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.initImage != null && (
-                          <tr>
-                            <td className={classes.titleCol}>Init Image:</td>
-                            <td>{monitoringInfo?.initImage}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.diskCapacityGB != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Disk Capacity (GB):
-                            </td>
-                            <td>{monitoringInfo?.diskCapacityGB}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.serviceAccountName != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Service Account Name:
-                            </td>
-                            <td>{monitoringInfo?.serviceAccountName}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.storageClassName != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Storage Class Name:
-                            </td>
-                            <td>{monitoringInfo?.storageClassName}</td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    )
-                  )}
-                </tbody>
-              </table>
+      {prometheusMonitoringEnabled &&
+        !loadingTenantLogs &&
+        monitoringInfo !== undefined && (
+          <Paper className={classes.paperContainer}>
+            <Grid container>
+              <Grid item xs={12}>
+                <table width={"100%"}>
+                  <tbody>
+                    {loadingTenant ? (
+                      <tr>
+                        <td className={classes.centerAlign} colSpan={4}>
+                          <CircularProgress />
+                        </td>
+                      </tr>
+                    ) : (
+                      monitoringInfo !== undefined && (
+                        <Fragment>
+                          {monitoringInfo.image != null && (
+                            <tr>
+                              <td className={classes.titleCol}>Image:</td>
+                              <td>{monitoringInfo.image}</td>
+                            </tr>
+                          )}
+                          {monitoringInfo.sidecarImage != null && (
+                            <tr>
+                              <td className={classes.titleCol}>
+                                Sidecar Image:
+                              </td>
+                              <td>{monitoringInfo?.sidecarImage}</td>
+                            </tr>
+                          )}
+                          {monitoringInfo.initImage != null && (
+                            <tr>
+                              <td className={classes.titleCol}>Init Image:</td>
+                              <td>{monitoringInfo?.initImage}</td>
+                            </tr>
+                          )}
+                          {monitoringInfo.diskCapacityGB != null && (
+                            <tr>
+                              <td className={classes.titleCol}>
+                                Disk Capacity (GB):
+                              </td>
+                              <td>{monitoringInfo?.diskCapacityGB}</td>
+                            </tr>
+                          )}
+                          {monitoringInfo.serviceAccountName != null && (
+                            <tr>
+                              <td className={classes.titleCol}>
+                                Service Account Name:
+                              </td>
+                              <td>{monitoringInfo?.serviceAccountName}</td>
+                            </tr>
+                          )}
+                          {monitoringInfo.storageClassName != null && (
+                            <tr>
+                              <td className={classes.titleCol}>
+                                Storage Class Name:
+                              </td>
+                              <td>{monitoringInfo?.storageClassName}</td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </Grid>
             </Grid>
-          </Grid>
-        </Paper>
-      )}
+          </Paper>
+        )}
     </Fragment>
   );
 };

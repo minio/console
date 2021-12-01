@@ -24,6 +24,8 @@ interface IEditTenantMonitoringProps {
   open: boolean;
   onClose: (shouldReload: boolean) => void;
   image: string;
+  sidecarImage: string;
+  initImage: string;
   labels: IKeyValue[];
   annotations: IKeyValue[];
   nodeSelector: IKeyValue[];
@@ -47,6 +49,8 @@ const EditTenantMonitoringModal = ({
   open,
   onClose,
   image,
+  sidecarImage,
+  initImage,
   labels,
   annotations,
   nodeSelector,
@@ -66,6 +70,8 @@ const EditTenantMonitoringModal = ({
     nodeSelector.length > 0 ? [...nodeSelector] : [{ key: "", value: "" }]
   );
   const [newImage, setNewImage] = useState<string>(image);
+  const [newSidecarImage, setNewSidecarImage] = useState<string>(sidecarImage);
+  const [newInitImage, setNewInitImage] = useState<string>(initImage);
   const [newDiskCapacityGB, setNewDiskCapacityGB] = useState<string>(
     diskCapacityGB.toString()
   );
@@ -97,6 +103,8 @@ const EditTenantMonitoringModal = ({
           annotations: trim(newAnnotations),
           nodeSelector: trim(newNodeSelector),
           image: newImage,
+          sidecarImage: newSidecarImage,
+          initImage: newInitImage,
           diskCapacityGB: newDiskCapacityGB,
           serviceAccountName: newServiceAccountName,
         }
@@ -126,6 +134,32 @@ const EditTenantMonitoringModal = ({
           }}
           key={`image`}
           error={validationErrors[`image`] || ""}
+        />
+        <h4>Sidecar Image</h4>
+        <InputBoxWrapper
+          id={`sidecarImage`}
+          label={""}
+          placeholder={"Sidecar Image"}
+          name={`sidecarImage`}
+          value={newSidecarImage}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewSidecarImage(event.target.value);
+          }}
+          key={`sidecarImage`}
+          error={validationErrors[`sidecarImage`] || ""}
+        />
+        <h4>Init Image</h4>
+        <InputBoxWrapper
+          id={`initImage`}
+          label={""}
+          placeholder={"Init Image"}
+          name={`initImage`}
+          value={newInitImage}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewInitImage(event.target.value);
+          }}
+          key={`initImage`}
+          error={validationErrors[`initImage`] || ""}
         />
         <h4>Disk Capacity (GB)</h4>
         <InputBoxWrapper

@@ -1879,14 +1879,11 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		if params.Data.Labels[i] != nil {
 			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
 		}
-		minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
-		_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
-		if err != nil {
-			return false, prepareError(err)
-		}
 	}
-
+	minTenant.Spec.Prometheus.Labels = labels
 	minTenant.Spec.Prometheus.Image = params.Data.Image
+	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
+	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
