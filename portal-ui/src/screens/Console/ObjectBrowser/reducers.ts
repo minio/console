@@ -103,9 +103,7 @@ export function objectBrowserReducer(
     case REWIND_FILE_MODE_ENABLED:
       return { ...state, fileMode: action.status };
     case OBJECT_MANAGER_NEW_OBJECT:
-      const cloneObjects = [...state.objectManager.objectsToManage];
-
-      cloneObjects.push(action.newObject);
+      const cloneObjects = [action.newObject, ...state.objectManager.objectsToManage];
 
       return {
         ...state,

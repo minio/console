@@ -62,11 +62,14 @@ import { BucketInfo, BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import AddFolderIcon from "../../../../../../icons/AddFolderIcon";
-import HistoryIcon from "../../../../../../icons/HistoryIcon";
-import FolderIcon from "../../../../../../icons/FolderIcon";
-import RefreshIcon from "../../../../../../icons/RefreshIcon";
-import UploadIcon from "../../../../../../icons/UploadIcon";
+import {
+  UploadFolderIcon,
+  UploadIcon,
+  RefreshIcon,
+  FolderIcon,
+  HistoryIcon,
+  AddFolderIcon,
+} from "../../../../../../icons";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
@@ -302,6 +305,14 @@ const ListObjects = ({
   const bucketName = match.params["bucketName"];
 
   const fileUpload = useRef<HTMLInputElement>(null);
+  const folderUpload = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (folderUpload.current !== null) {
+      folderUpload.current.setAttribute("directory", "");
+      folderUpload.current.setAttribute("webkitdirectory", "");
+    }
+  }, [folderUpload]);
 
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
@@ -599,7 +610,7 @@ const ListObjects = ({
     setCreateFolderOpen(false);
   };
 
-  const upload = (e: any, bucketName: string, encodedPath: string) => {
+  const upload = (e: any, bucketName: string, path: string) => {
     if (
       e === null ||
       e === undefined ||
@@ -613,15 +624,31 @@ const ListObjects = ({
     let files = e.target.files;
 
     if (files.length > 0) {
-      let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
-
-      if (encodedPath !== "") {
-        uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
-      }
-
       for (let file of files) {
+        let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
         const fileName = file.name;
         const blobFile = new Blob([file], { type: file.type });
+
+        let encodedPath = "";
+
+        const relativeFolderPath = get(file, "webkitRelativePath", "");
+
+        if (path !== "" || relativeFolderPath !== "") {
+          const finalFolderPath = relativeFolderPath
+            .split("/")
+            .slice(0, -1)
+            .join("/");
+
+          encodedPath = encodeFileName(
+            `${path}${finalFolderPath}${
+              !finalFolderPath.endsWith("/") ? "/" : ""
+            }`
+          );
+        }
+
+        if (encodedPath !== "") {
+          uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
+        }
 
         const identity = btoa(
           `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
@@ -758,7 +785,7 @@ const ListObjects = ({
       const decodedPath = decodeFileName(internalPaths);
       pathPrefix = decodedPath.endsWith("/") ? decodedPath : decodedPath + "/";
     }
-    upload(e, bucketName, encodeFileName(pathPrefix));
+    upload(e, bucketName, pathPrefix);
   };
 
   const openPreview = (fileObject: BucketObject) => {
@@ -1037,7 +1064,7 @@ const ListObjects = ({
                   <BoxIconButton
                     tooltip={"Upload file"}
                     color="primary"
-                    aria-label="Refresh List"
+                    aria-label="Upload File"
                     onClick={() => {
                       if (fileUpload && fileUpload.current) {
                         fileUpload.current.click();
@@ -1055,6 +1082,28 @@ const ListObjects = ({
                     id="file-input"
                     style={{ display: "none" }}
                     ref={fileUpload}
+                  />
+                  <BoxIconButton
+                    tooltip={"Upload folder"}
+                    color="primary"
+                    aria-label="Upload Folder"
+                    onClick={() => {
+                      if (folderUpload && folderUpload.current) {
+                        folderUpload.current.click();
+                      }
+                    }}
+                    disabled={rewindEnabled}
+                    size="large"
+                  >
+                    <UploadFolderIcon />
+                  </BoxIconButton>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) => uploadObject(e)}
+                    id="file-input"
+                    style={{ display: "none" }}
+                    ref={folderUpload}
                   />
                 </SecureComponent>
                 <Badge

@@ -112,3 +112,4 @@ export { default as DownloadStatIcon } from "./DownloadStatIcon";
 export { default as UploadStatIcon } from "./UploadStatIcon";
 export { default as ComputerLineIcon } from "./ComputerLineIcon";
 export { default as JSONIcon } from "./JSONIcon";
+export { default as UploadFolderIcon } from "./UploadFolderIcon";
