@@ -17,7 +17,7 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const OpenlistIcon = (props: SVGProps<SVGSVGElement>) => (
+const OpenListIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     className={`min-icon`}
@@ -43,4 +43,4 @@ const OpenlistIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default OpenlistIcon;
+export default OpenListIcon;

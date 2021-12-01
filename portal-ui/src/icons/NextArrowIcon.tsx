@@ -17,7 +17,7 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const NextarrowIcon = (props: SVGProps<SVGSVGElement>) => (
+const NextArrowIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     className={`min-icon`}
@@ -44,4 +44,4 @@ const NextarrowIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default NextarrowIcon;
+export default NextArrowIcon;

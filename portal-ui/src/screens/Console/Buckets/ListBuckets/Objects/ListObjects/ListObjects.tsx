@@ -79,6 +79,7 @@ import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
+import UploadFolderIcon from "../../../../../../icons/UploadFolderIcon";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
