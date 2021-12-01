@@ -190,13 +190,13 @@ func (ac AdminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.P
 	return policies, nil
 }
 
-// implements madmin.ListCannedPolicies()
+// implements madmin.InfoPolicy()
 func (ac AdminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
-	praw, err := ac.Client.InfoCannedPolicy(ctx, name)
+	pinfo, err := ac.Client.InfoCannedPolicy(ctx, name)
 	if err != nil {
 		return nil, err
 	}
-	return iampolicy.ParseConfig(bytes.NewReader(praw))
+	return iampolicy.ParseConfig(bytes.NewReader(pinfo.Policy))
 }
 
 // implements madmin.RemoveCannedPolicy()
