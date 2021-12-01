@@ -199,6 +199,16 @@ const styles = (theme: Theme) =>
       color: "#000",
       textAlign: "center",
     },
+    download: {
+      "& .min-icon": {
+        color: "rgb(113,200,150)",
+      },
+    },
+    upload: {
+      "& .min-icon": {
+        color: "rgb(66,127,172)",
+      },
+    },
   });
 
 const STResults = ({ classes, results, start, autotune }: ISTResults) => {
@@ -323,10 +333,10 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
             <Grid item xs={12} md={6} lg={4}>
               <ObjectGeneral
                 title={
-                  <Fragment>
+                  <div className={classes.download}>
                     <DownloadStatIcon />
                     &nbsp; GET
-                  </Fragment>
+                  </div>
                 }
                 throughput={getThroughput}
                 objects={getObjects}
@@ -335,10 +345,10 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
             <Grid item xs={12} md={6} lg={4}>
               <ObjectGeneral
                 title={
-                  <Fragment>
+                  <div className={classes.upload}>
                     <UploadStatIcon />
                     &nbsp; PUT
-                  </Fragment>
+                  </div>
                 }
                 throughput={putThroughput}
                 objects={putObjects}

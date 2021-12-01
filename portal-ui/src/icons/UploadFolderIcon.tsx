@@ -23,7 +23,7 @@ const UploadFile = (props: SVGProps<SVGSVGElement>) => {
       className={`min-icon`}
       fill={"currentcolor"}
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 255.001 218.1"
+      viewBox="-1 -37.9 256 256"
     >
       <defs>
         <clipPath id="a">
