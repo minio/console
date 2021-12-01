@@ -21,8 +21,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
+	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/minio/pkg/bucket/policy/condition"
 
 	minioIAMPolicy "github.com/minio/pkg/iam/policy"
@@ -70,6 +72,20 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
+func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
+	jp := new(jwtgo.Parser)
+	jp.ValidMethods = []string{
+		"RS256", "RS384", "RS512", "ES256", "ES384", "ES512",
+		"RS3256", "RS3384", "RS3512", "ES3256", "ES3384", "ES3512",
+	}
+	var claims jwtgo.MapClaims
+	_, _, err := jp.ParseUnverified(sessionToken, &claims)
+	if err != nil {
+		return nil, err
+	}
+	return claims, nil
+}
+
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
 func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -104,12 +120,44 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		actions = acl.GetActionsStringFromPolicy(policy)
 	}
 
+	currTime := time.Now().UTC()
+
 	// This actions will be global, meaning has to be attached to all resources
 	conditionValues := map[string][]string{
 		condition.AWSUsername.Name(): {session.AccountAccessKey},
+		// All calls to MinIO from console use temporary credentials.
+		condition.AWSPrincipalType.Name():   {"AssumeRole"},
+		condition.AWSSecureTransport.Name(): {strconv.FormatBool(getMinIOEndpointIsSecure())},
+		condition.AWSCurrentTime.Name():     {currTime.Format(time.RFC3339)},
+		condition.AWSEpochTime.Name():       {strconv.FormatInt(currTime.Unix(), 10)},
+
+		// All calls from console are signature v4.
+		condition.S3SignatureVersion.Name(): {"AWS4-HMAC-SHA256"},
+		// All calls from console are signature v4.
+		condition.S3AuthType.Name(): {"REST-HEADER"},
+		// This is usually empty, may be set some times (rare).
+		condition.S3LocationConstraint.Name(): {GetMinIORegion()},
 	}
+
+	claims, err := getClaimsFromToken(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+	}
+
+	// Support all LDAP, JWT variables
+	for k, v := range claims {
+		vstr, ok := v.(string)
+		if !ok {
+			// skip all non-strings
+			continue
+		}
+		// store all claims from sessionToken
+		conditionValues[k] = []string{vstr}
+	}
+
 	defaultActions := policy.IsAllowedActions("", "", conditionValues)
 	consoleResourceName := "console-ui"
+
 	permissions := map[string]minioIAMPolicy.ActionSet{
 		consoleResourceName: defaultActions,
 	}
