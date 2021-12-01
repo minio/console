@@ -22,6 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { IFileItem } from "../../ObjectBrowser/reducers";
 import ProgressBarWrapper from "../ProgressBarWrapper/ProgressBarWrapper";
 import { DownloadStatIcon, UploadStatIcon } from "../../../../icons";
+import clsx from "clsx";
 
 interface IObjectHandled {
   classes: any;
@@ -73,6 +74,12 @@ const styles = (theme: Theme) =>
         width: 20,
         height: 20,
       },
+    },
+    download: {
+      color: "rgb(113,200,150)",
+    },
+    upload: {
+      color: "rgb(66,127,172)",
     },
     closeIcon: {
       "&::before": {
@@ -128,7 +135,12 @@ const ObjectHandled = ({
           </button>
         </div>
         <div className={classes.objectDetails}>
-          <div className={classes.iconContainer}>
+          <div
+            className={clsx(classes.iconContainer, {
+              [classes.download]: objectToDisplay.type === "download",
+              [classes.upload]: objectToDisplay.type !== "download",
+            })}
+          >
             {objectToDisplay.type === "download" ? (
               <DownloadStatIcon />
             ) : (
