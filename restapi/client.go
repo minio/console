@@ -20,8 +20,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/url"
-	"path"
 	"strings"
 	"time"
 
@@ -383,17 +381,13 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
 	endpoint := getMinIOServer()
-	u, err := url.Parse(endpoint)
-	if err != nil {
-		return nil, fmt.Errorf("the provided endpoint is invalid")
-	}
 	if strings.TrimSpace(bucketName) != "" {
-		u.Path = path.Join(u.Path, bucketName)
+		endpoint += fmt.Sprintf("/%s", bucketName)
 	}
 	if strings.TrimSpace(prefix) != "" {
-		u.Path = path.Join(u.Path, prefix)
+		endpoint += fmt.Sprintf("/%s", prefix)
 	}
-	s3Config := newS3Config(u.String(), claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
+	s3Config := newS3Config(endpoint, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
