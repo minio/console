@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useCallback, Fragment } from "react";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,20 +26,21 @@ import {
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
 import {
-  updateAddField,
-  isPageValid,
-  addFileToCaCertificates,
-  deleteCaCertificate,
   addCaCertificate,
-  addKeyPair,
+  addFileToCaCertificates,
   addFileToKeyPair,
+  addKeyPair,
+  deleteCaCertificate,
   deleteKeyPair,
+  isPageValid,
+  updateAddField,
 } from "../../actions";
 import { AppState } from "../../../../../store";
 import { KeyPair } from "../../ListTenants/utils";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
-import { AddIcon, RemoveIcon } from "../../../../../icons";
+import AddIcon from "../../../../../icons/AddIcon";
+import RemoveIcon from "../../../../../icons/RemoveIcon";
 
 interface ISecurityProps {
   classes: any;

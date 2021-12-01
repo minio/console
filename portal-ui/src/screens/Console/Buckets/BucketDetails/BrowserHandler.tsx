@@ -28,7 +28,7 @@ import { setFileModeEnabled } from "../../ObjectBrowser/actions";
 import ObjectDetails from "../ListBuckets/Objects/ObjectDetails/ObjectDetails";
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import { SettingsIcon } from "../../../../icons";
+import SettingsIcon from "../../../../icons/SettingsIcon";
 import { BucketInfo } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
 import SecureComponent from "../../../../common/SecureComponent/SecureComponent";

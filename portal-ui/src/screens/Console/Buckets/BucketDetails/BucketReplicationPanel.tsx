@@ -21,7 +21,8 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { AddIcon, BucketsIcon } from "../../../../icons";
+import AddIcon from "../../../../icons/AddIcon";
+import BucketsIcon from "../../../../icons/BucketsIcon";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
@@ -46,6 +47,7 @@ import SecureComponent, {
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
+
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
 );

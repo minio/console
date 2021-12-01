@@ -16,7 +16,7 @@
 
 import React, { SVGProps } from "react";
 
-const TrashIcon = (props: SVGProps<SVGSVGElement>) => {
+const ArrowIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -32,16 +32,14 @@ const TrashIcon = (props: SVGProps<SVGSVGElement>) => {
       </defs>
       <g clipPath="url(#prefix__a)">
         <path fill="none" d="M0 0h256v256H0z" />
-        <g data-name="Grupo 1557">
-          <path data-name="Rect\xE1ngulo 826" fill="none" d="M0 0h256v256H0z" />
-          <path
-            data-name="Uni\xF3n 10"
-            d="M71.113 256a37.94 37.94 0 01-37.889-37.9V60.906a15.426 15.426 0 01-14.227-15.353V29.621a15.423 15.423 0 0115.4-15.4h41.541A15.378 15.378 0 0191.258.003h72.871a15.393 15.393 0 0115.334 14.218h41.531a15.423 15.423 0 0115.4 15.4v15.932a15.426 15.426 0 01-14.227 15.353V218.1a37.942 37.942 0 01-37.9 37.9zm-19.605-37.9a19.634 19.634 0 0019.605 19.614h113.164A19.637 19.637 0 00203.89 218.1V60.951H51.507zM218.117 38.6v-6.1h-56.893V18.278H94.177V32.5H37.286v6.1z"
-          />
-        </g>
+        <path
+          data-name="arrow-icn"
+          d="M19.795 108.063c-26.394 0-26.394 40.032 0 40.032h167.688l-22.739 22.669c-18.656 18.622 9.725 46.922 28.382 28.316l56.877-56.732a19.991 19.991 0 000-28.548l-56.877-56.716c-18.656-18.6-47.038 9.684-28.382 28.3l22.739 22.68H19.795z"
+        />
+        <path data-name="Rect\xE1ngulo 863" fill="none" d="M0 0h256v256H0z" />
       </g>
     </svg>
   );
 };
 
-export default TrashIcon;
+export default ArrowIcon;

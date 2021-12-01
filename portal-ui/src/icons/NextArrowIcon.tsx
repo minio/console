@@ -17,21 +17,31 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const NextArrowIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 -2.4905 12.621 12.621"
-    >
-      <path
-        d="M2.821,11.646a.989.989,0,0,0,1.979,0V3.378L5.92,4.5a.99.99,0,0,0,1.4-1.4L4.515.3A.989.989,0,0,0,3.1.3L.3,3.1A.989.989,0,0,0,1.7,4.5L2.821,3.378v8.268Z"
-        transform="translate(12.621) rotate(90)"
-      />
-    </svg>
-  );
-};
+const NextArrowIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <g data-name="NextArrowIcon">
+        <path d="M19.805 108.063c-26.4 0-26.4 40.032 0 40.032h167.684l-22.739 22.668c-18.656 18.622 9.725 46.922 28.382 28.316l56.873-56.731a19.991 19.991 0 0 0 0-28.548l-56.877-56.716c-18.656-18.6-47.038 9.684-28.382 28.3l22.743 22.679H19.805Z" />
+        <path
+          data-name="Rect\xE1ngulo 863"
+          fill="none"
+          d="M.003 0h256v256h-256z"
+        />
+      </g>
+    </g>
+  </svg>
+);
 
 export default NextArrowIcon;

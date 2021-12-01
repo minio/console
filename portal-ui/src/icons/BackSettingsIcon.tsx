@@ -14,40 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@mui/material";
+import * as React from "react";
+import { SVGProps } from "react";
 
-const BackSettingsIcon = () => (
-  <SvgIcon viewBox="0 0 10.847 6.572">
-    <g transform="translate(-84.793 -81.193)">
-      <line
-        x2="9.64"
-        transform="translate(85.5 84.5)"
-        fill="none"
-        stroke="#000"
-        strokeLinecap="round"
-        strokeWidth="1"
+const BackSettingsIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g data-name="Back Settings" clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <path
+        data-name="arrow-icn"
+        d="M236.198 108.063c26.394 0 26.394 40.032 0 40.032H68.514l22.739 22.668c18.656 18.623-9.726 46.923-28.382 28.318L5.998 142.348a19.991 19.991 0 0 1 0-28.548l56.877-56.716c18.656-18.6 47.038 9.684 28.382 28.3l-22.743 22.679h167.684Z"
       />
-      <line
-        y1="2.558"
-        x2="2.645"
-        transform="translate(85.5 81.9)"
-        fill="none"
-        stroke="#000"
-        strokeLinecap="round"
-        strokeWidth="1"
-      />
-      <line
-        x2="2.645"
-        y2="2.558"
-        transform="translate(85.5 84.5)"
-        fill="none"
-        stroke="#000"
-        strokeLinecap="round"
-        strokeWidth="1"
-      />
+      <path data-name="Rect\xE1ngulo 863" fill="none" d="M0 0h256v256H0z" />
     </g>
-  </SvgIcon>
+  </svg>
 );
 
 export default BackSettingsIcon;

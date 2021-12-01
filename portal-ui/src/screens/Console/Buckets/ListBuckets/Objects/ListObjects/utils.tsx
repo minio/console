@@ -15,25 +15,55 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  FileBookIcon,
-  FileCodeIcon,
-  FileConfigIcon,
-  FileDbIcon,
-  FileFontIcon,
-  FileImageIcon,
-  FileLockIcon,
-  FileMissingIcon,
-  FileMusicIcon,
-  FilePdfIcon,
-  FilePptIcon,
-  FileTxtIcon,
-  FileVideoIcon,
-  FileXlsIcon,
-  FileZipIcon,
-} from "../../../../../../icons";
+
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import ObjectBrowserFolderIcon from "../../../../../../icons/ObjectBrowserFolderIcon";
+
+const FileBookIcon = React.lazy(
+  () => import("../../../../../../icons/FileBookIcon")
+);
+const FileCodeIcon = React.lazy(
+  () => import("../../../../../../icons/FileCodeIcon")
+);
+const FileConfigIcon = React.lazy(
+  () => import("../../../../../../icons/FileConfigIcon")
+);
+const FileDbIcon = React.lazy(
+  () => import("../../../../../../icons/FileDbIcon")
+);
+const FileFontIcon = React.lazy(
+  () => import("../../../../../../icons/FileFontIcon")
+);
+const FileImageIcon = React.lazy(
+  () => import("../../../../../../icons/FileImageIcon")
+);
+const FileLockIcon = React.lazy(
+  () => import("../../../../../../icons/FileLockIcon")
+);
+const FileMissingIcon = React.lazy(
+  () => import("../../../../../../icons/FileMissingIcon")
+);
+const FileMusicIcon = React.lazy(
+  () => import("../../../../../../icons/FileMusicIcon")
+);
+const FilePdfIcon = React.lazy(
+  () => import("../../../../../../icons/FilePdfIcon")
+);
+const FilePptIcon = React.lazy(
+  () => import("../../../../../../icons/FilePptIcon")
+);
+const FileTxtIcon = React.lazy(
+  () => import("../../../../../../icons/FileTxtIcon")
+);
+const FileVideoIcon = React.lazy(
+  () => import("../../../../../../icons/FileVideoIcon")
+);
+const FileXlsIcon = React.lazy(
+  () => import("../../../../../../icons/FileXlsIcon")
+);
+const FileZipIcon = React.lazy(
+  () => import("../../../../../../icons/FileZipIcon")
+);
 
 export const displayName = (element: string, classes: any) => {
   let elementString = element;

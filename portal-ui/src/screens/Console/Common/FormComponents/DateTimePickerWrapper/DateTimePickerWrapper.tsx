@@ -26,7 +26,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import { OpenListIcon } from "../../../../../icons";
+import OpenListIcon from "../../../../../icons/OpenListIcon";
 
 interface IDateTimePicker {
   value: any;

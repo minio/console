@@ -17,59 +17,66 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const StorageIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 256 256"
-    >
-      <defs>
-        <clipPath id="prefix__a">
-          <path d="M0 0h256v256H0z" />
-        </clipPath>
-      </defs>
-      <g clipPath="url(#prefix__a)">
-        <g transform="translate(.001)" stroke="#000" strokeWidth={0.2}>
-          <path
-            data-name="Trazado 396"
-            d="M241.464 0H14.521A14.453 14.453 0 00.001 14.342v52.113a14.453 14.453 0 0014.52 14.344h226.943A14.457 14.457 0 00256 66.455V14.342A14.457 14.457 0 00241.464 0zm.285 66.455a.283.283 0 01-.285.281L14.24 66.455l.281-52.393 227.229.279z"
-          />
-          <path
-            data-name="Trazado 397"
-            d="M241.464 87.969H14.521a14.452 14.452 0 00-14.52 14.342v52.109a14.453 14.453 0 0014.52 14.346h226.943A14.456 14.456 0 00256 154.42v-52.109a14.456 14.456 0 00-14.536-14.342zm.285 66.451a.282.282 0 01-.285.281L14.24 154.42l.281-52.393 227.229.283z"
-          />
-          <path
-            data-name="Trazado 398"
-            d="M241.464 175.934H14.521a14.461 14.461 0 00-14.52 14.352v52.109a14.454 14.454 0 0014.52 14.346h226.943A14.458 14.458 0 00256 242.395v-52.109a14.465 14.465 0 00-14.536-14.352zm.285 66.461a.279.279 0 01-.285.281l-227.224-.281.281-52.4 227.229.287z"
-          />
-          <rect
-            data-name="Rect\xE1ngulo 813"
-            width={23.651}
-            height={15.74}
-            rx={0.643}
-            transform="translate(20.301 22.054)"
-          />
-          <rect
-            data-name="Rect\xE1ngulo 814"
-            width={23.651}
-            height={15.741}
-            rx={0.643}
-            transform="translate(20.301 111.377)"
-          />
-          <rect
-            data-name="Rect\xE1ngulo 815"
-            width={23.651}
-            height={15.741}
-            rx={0.643}
-            transform="translate(20.301 200.594)"
-          />
-        </g>
-      </g>
-    </svg>
-  );
-};
+const StorageIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <path data-name="Rect\xE1ngulo 864" fill="none" d="M0 0h256v255.259H0z" />
+      <path
+        data-name="Trazado 396"
+        d="M241.464 0H14.521A14.433 14.433 0 0 0 .001 14.3v51.963a14.433 14.433 0 0 0 14.52 14.3h226.943A14.437 14.437 0 0 0 256 66.263V14.3A14.437 14.437 0 0 0 241.464 0Zm.285 66.263a.283.283 0 0 1-.285.28l-227.224-.28.281-52.241 227.229.278Z"
+        stroke="#000"
+      />
+      <path
+        data-name="Trazado 397"
+        d="M241.464 87.715H14.521a14.431 14.431 0 0 0-14.52 14.3v51.959a14.432 14.432 0 0 0 14.52 14.3h226.943a14.436 14.436 0 0 0 14.536-14.3v-51.959a14.435 14.435 0 0 0-14.536-14.3Zm.285 66.259a.281.281 0 0 1-.285.28l-227.224-.28.281-52.241 227.229.282Z"
+        stroke="#000"
+      />
+      <path
+        data-name="Trazado 398"
+        d="M241.464 175.427H14.521a14.441 14.441 0 0 0-14.52 14.31v51.959a14.434 14.434 0 0 0 14.52 14.3h226.943a14.437 14.437 0 0 0 14.536-14.3v-51.959a14.445 14.445 0 0 0-14.536-14.31Zm.285 66.269a.279.279 0 0 1-.285.281l-227.224-.281.281-52.245 227.229.286Z"
+        stroke="#000"
+      />
+      <rect
+        data-name="Rect\xE1ngulo 813"
+        width={23.651}
+        height={15.695}
+        rx={0.643}
+        transform="translate(20.301 21.991)"
+        stroke="#000"
+        strokeWidth={0.5}
+      />
+      <rect
+        data-name="Rect\xE1ngulo 814"
+        width={23.651}
+        height={15.695}
+        rx={0.643}
+        transform="translate(20.301 111.056)"
+        stroke="#000"
+        strokeWidth={0.5}
+      />
+      <rect
+        data-name="Rect\xE1ngulo 815"
+        width={23.651}
+        height={15.695}
+        rx={0.643}
+        transform="translate(20.301 200.016)"
+        stroke="#000"
+        strokeWidth={0.5}
+      />
+    </g>
+  </svg>
+);
 
 export default StorageIcon;

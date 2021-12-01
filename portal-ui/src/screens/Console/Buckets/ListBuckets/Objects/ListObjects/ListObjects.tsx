@@ -47,8 +47,11 @@ import { Badge, Button, Typography } from "@mui/material";
 import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
+  completeObject,
   resetRewind,
   setFileModeEnabled,
+  setNewObject,
+  updateProgress,
 } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
 
@@ -62,19 +65,12 @@ import { BucketInfo, BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import {
-  UploadFolderIcon,
-  UploadIcon,
-  RefreshIcon,
-  FolderIcon,
-  HistoryIcon,
-  AddFolderIcon,
-} from "../../../../../../icons";
+
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
-import { DeleteIcon } from "../../../../../../icons";
+
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import SecureComponent, {
   hasPermission,
@@ -82,13 +78,28 @@ import SecureComponent, {
 import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
-import {
-  setNewObject,
-  updateProgress,
-  completeObject,
-} from "../../../../ObjectBrowser/actions";
 import { displayName } from "./utils";
+import UploadFolderIcon from "../../../../../../icons/UploadFolderIcon";
 
+const AddFolderIcon = React.lazy(
+  () => import("../../../../../../icons/AddFolderIcon")
+);
+const HistoryIcon = React.lazy(
+  () => import("../../../../../../icons/HistoryIcon")
+);
+const FolderIcon = React.lazy(
+  () => import("../../../../../../icons/FolderIcon")
+);
+const RefreshIcon = React.lazy(
+  () => import("../../../../../../icons/RefreshIcon")
+);
+const UploadIcon = React.lazy(
+  () => import("../../../../../../icons/UploadIcon")
+);
+
+const DeleteIcon = React.lazy(
+  () => import("../../../../../../icons/DeleteIcon")
+);
 const CreateFolderModal = withSuspense(
   React.lazy(() => import("./CreateFolderModal"))
 );

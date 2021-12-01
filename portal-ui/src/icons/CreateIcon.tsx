@@ -14,33 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SVGProps } from "react";
+import * as React from "react";
+import { SVGProps } from "react";
 
-const CreateIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      {...props}
-      className={`min-icon`}
-      fill={"currentcolor"}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 12 12"
-    >
-      <g id="Group_55" data-name="Group 55" transform="translate(1002 -2555)">
-        <rect
-          id="Rectangle_29"
-          width="2"
-          height="12"
-          transform="translate(-997 2555)"
-        />
-        <rect
-          id="Rectangle_30"
-          width="2"
-          height="12"
-          transform="translate(-990 2560) rotate(90)"
-        />
-      </g>
-    </svg>
-  );
-};
+const CreateIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <defs>
+      <clipPath id="prefix__a">
+        <path d="M0 0h256v256H0z" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#prefix__a)">
+      <path fill="none" d="M0 0h256v256H0z" />
+      <path data-name="Rect\xE1ngulo 858" fill="none" d="M0 0h256v256H0z" />
+      <path
+        data-name="Uni\xF3n 20"
+        d="M102.405 230.399v-76.79h-76.8a25.607 25.607 0 0 1 0-51.214h76.8V25.601a25.6 25.6 0 1 1 51.2 0v76.792h76.8a25.607 25.607 0 0 1 0 51.214h-76.8v76.792a25.6 25.6 0 1 1-51.2 0Z"
+      />
+    </g>
+  </svg>
+);
 
 export default CreateIcon;

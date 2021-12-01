@@ -43,7 +43,6 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { IconButton, Tooltip } from "@mui/material";
-import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
 
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
@@ -56,6 +55,10 @@ import SecureComponent, {
 } from "../../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
+
+const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
+const DeleteIcon = React.lazy(() => import("../../../../icons/DeleteIcon"));
+const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
 
 const DeleteBucket = withSuspense(
   React.lazy(() => import("../ListBuckets/DeleteBucket"))

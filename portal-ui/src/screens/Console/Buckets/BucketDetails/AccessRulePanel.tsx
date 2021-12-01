@@ -27,7 +27,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 
-import { AddIcon } from "../../../../icons";
+import AddIcon from "../../../../icons/AddIcon";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
@@ -43,6 +43,7 @@ import SecureComponent, {
 } from "../../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
+
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
 );
