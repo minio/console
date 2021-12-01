@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -206,11 +207,18 @@ func listPoliciesWithBucket(ctx context.Context, bucket string, client MinioAdmi
 
 func policyMatchesBucket(policy *models.Policy, bucket string) bool {
 	policyData := &iampolicy.Policy{}
-	json.Unmarshal([]byte(policy.Policy), policyData)
+	err := json.Unmarshal([]byte(policy.Policy), policyData)
+	if err != nil {
+		LogError("error parsing policy: %v", err)
+		return false
+	}
 	policyStatements := policyData.Statements
 	for i := 0; i < len(policyStatements); i++ {
 		resources := policyStatements[i].Resources
 		if resources.Match(bucket, map[string][]string{}) {
+			return true
+		}
+		if resources.Match(fmt.Sprintf("%s/*", bucket), map[string][]string{}) {
 			return true
 		}
 	}
