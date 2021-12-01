@@ -121,6 +121,7 @@ export const IAM_SCOPES = {
   ADMIN_CREATE_POLICY: "admin:CreatePolicy",
   ADMIN_DELETE_POLICY: "admin:DeletePolicy",
   ADMIN_ATTACH_USER_OR_GROUP_POLICY: "admin:AttachUserOrGroupPolicy",
+  ADMIN_HEAL_ACTION: "admin:Heal",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
 };
@@ -179,6 +180,7 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_GET_POLICY,
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
     IAM_SCOPES.ADMIN_LIST_USERS,
+    IAM_SCOPES.ADMIN_HEAL_ACTION,
   ],
 };
 

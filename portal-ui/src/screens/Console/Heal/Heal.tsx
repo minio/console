@@ -17,6 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { HorizontalBar } from "react-chartjs-2";
+import { Redirect } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -40,6 +41,10 @@ import {
   inlineCheckboxes,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
 import { AppState } from "../../../store";
 import { ErrorResponseHandler } from "../../../common/types";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
@@ -47,6 +52,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
+import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -273,128 +279,134 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
       <PageHeader label="Heal" />
       <BackLink to="/tools" label="Return to Tools" />
       <PageLayout>
-        <Grid xs={12} className={classes.formBox}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <FormControl variant="outlined" className={classes.bucketField}>
-              <Select
-                label="Bucket"
-                id="bucket-name"
-                name="bucket-name"
-                value={bucketName}
-                onChange={(e) => {
-                  setBucketName(e.target.value as string);
-                }}
-                className={classes.searchField}
-                input={<SelectStyled />}
-                displayEmpty
-              >
-                <MenuItem value="" key={`select-bucket-name-default`}>
-                  Select Bucket
-                </MenuItem>
-                {bucketNames.map((option) => (
-                  <MenuItem
-                    value={option.value}
-                    key={`select-bucket-name-${option.label}`}
-                  >
-                    {option.label}
+        <SecureComponent
+          scopes={[IAM_SCOPES.ADMIN_HEAL_ACTION]}
+          resource={CONSOLE_UI_RESOURCE}
+          RenderError={<Redirect to={"/"} />}
+        >
+          <Grid xs={12} className={classes.formBox}>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <FormControl variant="outlined" className={classes.bucketField}>
+                <Select
+                  label="Bucket"
+                  id="bucket-name"
+                  name="bucket-name"
+                  value={bucketName}
+                  onChange={(e) => {
+                    setBucketName(e.target.value as string);
+                  }}
+                  className={classes.searchField}
+                  input={<SelectStyled />}
+                  displayEmpty
+                >
+                  <MenuItem value="" key={`select-bucket-name-default`}>
+                    Select Bucket
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Prefix"
-              className={classes.prefixField}
-              id="prefix-resource"
-              disabled={false}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              onChange={(e) => {
-                setPrefix(e.target.value);
-              }}
-              variant="standard"
-            />
+                  {bucketNames.map((option) => (
+                    <MenuItem
+                      value={option.value}
+                      key={`select-bucket-name-${option.label}`}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Prefix"
+                className={classes.prefixField}
+                id="prefix-resource"
+                disabled={false}
+                InputProps={{
+                  disableUnderline: true,
+                }}
+                onChange={(e) => {
+                  setPrefix(e.target.value);
+                }}
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.inlineCheckboxes}>
+              <CheckboxWrapper
+                name="recursive"
+                id="recursive"
+                classes={classes}
+                value="recursive"
+                checked={recursive}
+                onChange={(e) => {
+                  setRecursive(e.target.checked);
+                }}
+                disabled={false}
+                label="Recursive"
+              />
+              <CheckboxWrapper
+                name="forceStart"
+                id="forceStart"
+                classes={classes}
+                value="forceStart"
+                checked={forceStart}
+                onChange={(e) => {
+                  setForceStart(e.target.checked);
+                }}
+                disabled={false}
+                label="Force Start"
+              />
+              <CheckboxWrapper
+                name="forceStop"
+                id="forceStop"
+                classes={classes}
+                value="forceStop"
+                checked={forceStop}
+                onChange={(e) => {
+                  setForceStop(e.target.checked);
+                }}
+                disabled={false}
+                label="Force Stop"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.buttonBar}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={start}
+                onClick={() => setStart(true)}
+              >
+                Start
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.inlineCheckboxes}>
-            <CheckboxWrapper
-              name="recursive"
-              id="recursive"
-              classes={classes}
-              value="recursive"
-              checked={recursive}
-              onChange={(e) => {
-                setRecursive(e.target.checked);
+          <Grid item xs={12} className={classes.graphContainer}>
+            <HorizontalBar
+              data={data}
+              width={80}
+              height={30}
+              options={{
+                title: {
+                  display: true,
+                  text: "Item's Health Status [%]",
+                  fontSize: 20,
+                },
+                legend: {
+                  display: true,
+                  position: "right",
+                },
               }}
-              disabled={false}
-              label="Recursive"
             />
-            <CheckboxWrapper
-              name="forceStart"
-              id="forceStart"
-              classes={classes}
-              value="forceStart"
-              checked={forceStart}
-              onChange={(e) => {
-                setForceStart(e.target.checked);
-              }}
-              disabled={false}
-              label="Force Start"
-            />
-            <CheckboxWrapper
-              name="forceStop"
-              id="forceStop"
-              classes={classes}
-              value="forceStop"
-              checked={forceStop}
-              onChange={(e) => {
-                setForceStop(e.target.checked);
-              }}
-              disabled={false}
-              label="Force Stop"
-            />
+            <Grid item xs={12} className={classes.scanInfo}>
+              <div className={classes.scanData}>
+                <strong>Size scanned:</strong> {hStatus.sizeScanned}
+              </div>
+              <div className={classes.scanData}>
+                <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
+                {hStatus.objectsScanned}
+              </div>
+              <div className={classes.scanData}>
+                <strong>Healing time:</strong> {hStatus.healDuration}s
+              </div>
+            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonBar}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={start}
-              onClick={() => setStart(true)}
-            >
-              Start
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} className={classes.graphContainer}>
-          <HorizontalBar
-            data={data}
-            width={80}
-            height={30}
-            options={{
-              title: {
-                display: true,
-                text: "Item's Health Status [%]",
-                fontSize: 20,
-              },
-              legend: {
-                display: true,
-                position: "right",
-              },
-            }}
-          />
-          <Grid item xs={12} className={classes.scanInfo}>
-            <div className={classes.scanData}>
-              <strong>Size scanned:</strong> {hStatus.sizeScanned}
-            </div>
-            <div className={classes.scanData}>
-              <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
-              {hStatus.objectsScanned}
-            </div>
-            <div className={classes.scanData}>
-              <strong>Healing time:</strong> {hStatus.healDuration}s
-            </div>
-          </Grid>
-        </Grid>
+        </SecureComponent>
       </PageLayout>
     </React.Fragment>
   );

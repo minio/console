@@ -25,6 +25,7 @@ interface ISettingsCard {
   classes: any;
   configuration: IElement;
   prefix?: string;
+  disabled?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -53,6 +54,11 @@ const styles = (theme: Theme) =>
       "&:hover": {
         backgroundColor: "#FBFAFA",
       },
+      "&.disabled": {
+        backgroundColor: "#F9F9F9",
+        color: "#ababab",
+        cursor: "not-allowed"
+      },
     },
   });
 
@@ -60,11 +66,14 @@ const SettingsCard = ({
   classes,
   configuration,
   prefix = "settings",
+  disabled = false,
 }: ISettingsCard) => {
   return (
     <Link
-      to={`/${prefix}/${configuration.configuration_id}`}
-      className={classes.configurationLink}
+      to={
+        disabled ? `/${prefix}` : `/${prefix}/${configuration.configuration_id}`
+      }
+      className={`${classes.configurationLink} ${disabled ? "disabled" : ""}`}
     >
       {configuration.icon}
       {configuration.configuration_label}

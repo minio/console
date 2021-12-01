@@ -24,6 +24,13 @@ import {
   WatchIcon,
 } from "../../../icons";
 import SpeedtestIcon from "../../../icons/SpeedtestIcon";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import {
+  hasPermission,
+} from "../../../common/SecureComponent/SecureComponent";
 
 export const configurationElements: IElement[] = [
   {
@@ -50,6 +57,9 @@ export const configurationElements: IElement[] = [
     icon: <HealIcon />,
     configuration_id: "heal",
     configuration_label: "heal",
+    disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+      IAM_SCOPES.ADMIN_HEAL_ACTION,
+    ]),
   },
   {
     icon: <DiagnosticsIcon />,
@@ -60,5 +70,8 @@ export const configurationElements: IElement[] = [
     icon: <SpeedtestIcon />,
     configuration_id: "speedtest",
     configuration_label: "Speedtest",
+    disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+      IAM_SCOPES.ADMIN_HEAL_ACTION,
+    ]),
   },
 ];
