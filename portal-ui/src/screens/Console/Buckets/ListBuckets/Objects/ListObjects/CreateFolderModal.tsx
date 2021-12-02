@@ -67,7 +67,6 @@ const CreateFolderModal = ({
   const currentPath = `${bucketName}/${decodeFileName(folderName)}`;
 
   const resetForm = () => {
-    console.log("here");
     setPathUrl("");
   };
 
