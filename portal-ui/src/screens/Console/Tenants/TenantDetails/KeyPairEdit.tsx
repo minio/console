@@ -17,8 +17,8 @@ import { clearValidationError } from "../utils";
 interface IKeyPairEditProps {
   classes: any;
   paramName: string;
-  keyPattern: RegExp;
-  valuePattern: RegExp;
+  // keyPattern: RegExp;
+  // valuePattern: RegExp;
   error: any;
   setError: (e: any) => void;
   newValues: IKeyValue[];
@@ -40,8 +40,8 @@ const KeyPairEdit = ({
   paramName,
   newValues,
   setNewValues,
-  keyPattern,
-  valuePattern,
+  // keyPattern,
+  //valuePattern,
   error,
   setError,
 }: IKeyPairEditProps) => {
@@ -49,7 +49,7 @@ const KeyPairEdit = ({
     setError(clearValidationError(error, fieldName));
   };
 
-  useEffect(() => {
+  /*  useEffect(() => {
     let keyPairValidation: IValidation[] = [];
 
     for (var i = 0; i < newValues.length; i++) {
@@ -72,7 +72,7 @@ const KeyPairEdit = ({
     const commonVal = commonFormValidation(keyPairValidation);
     setError(commonVal);
   }, [newValues, setError]);
-
+*/
   const removeEntry = (index: number) => {
     if (newValues.length > 1) {
       let tempLabels = [...newValues];

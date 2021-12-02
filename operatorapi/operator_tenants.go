@@ -1829,9 +1829,18 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		storageClassName = *minInst.Spec.Prometheus.StorageClassName
 	}
 
-	var mAnnotations []*models.Annotation
-	var mLabels []*models.Label
-	var mNodeSelector []*models.NodeSelector
+	mLabels := []*models.Label{}
+	for k, v := range minInst.Spec.Prometheus.Labels {
+		mLabels = append(mLabels, &models.Label{Key: k, Value: v})
+	}
+	mAnnotations := []*models.Annotation{}
+	for k, v := range minInst.Spec.Prometheus.Annotations {
+		mAnnotations = append(mAnnotations, &models.Annotation{Key: k, Value: v})
+	}
+	mNodeSelector := []*models.NodeSelector{}
+	for k, v := range minInst.Spec.Prometheus.NodeSelector {
+		mNodeSelector = append(mNodeSelector, &models.NodeSelector{Key: k, Value: v})
+	}
 
 	if minInst.Spec.Prometheus != nil {
 		monitoringInfo = &models.TenantMonitoringInfo{
@@ -1895,12 +1904,27 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
 		}
 	}
+	var annotations = make(map[string]string)
+	for i := 0; i < len(params.Data.Annotations); i++ {
+		if params.Data.Annotations[i] != nil {
+			annotations[params.Data.Annotations[i].Key] = params.Data.Annotations[i].Value
+		}
+	}
+	var nodeSelector = make(map[string]string)
+	for i := 0; i < len(params.Data.NodeSelector); i++ {
+		if params.Data.NodeSelector[i] != nil {
+			nodeSelector[params.Data.NodeSelector[i].Key] = params.Data.NodeSelector[i].Value
+		}
+	}
+
 	var storageClassName string
 	if &params.Data.StorageClassName != nil {
 		storageClassName = params.Data.StorageClassName
 	}
 
 	minTenant.Spec.Prometheus.Labels = labels
+	minTenant.Spec.Prometheus.Annotations = annotations
+	minTenant.Spec.Prometheus.NodeSelector = nodeSelector
 	minTenant.Spec.Prometheus.Image = params.Data.Image
 	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
 	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage

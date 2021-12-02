@@ -150,9 +150,9 @@ const TenantMonitoring = ({
               ? parseInt(monitoringInfo?.diskCapacityGB)
               : 5
           }
-          labels={testingKeyVal}
-          annotations={testingKeyVal}
-          nodeSelector={testingKeyVal}
+          labels={monitoringInfo?.labels || []}
+          annotations={monitoringInfo?.annotations || []}
+          nodeSelector={monitoringInfo?.nodeSelector || []}
           serviceAccountName={monitoringInfo?.serviceAccountName || ""}
           tenantName={tenantName}
           tenantNamespace={tenantNamespace}
@@ -268,6 +268,42 @@ const TenantMonitoring = ({
                               <td>{monitoringInfo?.storageClassName}</td>
                             </tr>
                           )}
+                          {monitoringInfo.labels != null &&
+                            monitoringInfo.labels.length > 0 && (
+                              <tr>
+                                <h4>Labels</h4>
+                                <td className={classes.titleCol}>
+                                  <KeyPairView
+                                    records={monitoringInfo.labels}
+                                    recordName="Labels"
+                                  />
+                                </td>
+                              </tr>
+                            )}
+                          {monitoringInfo.annotations != null &&
+                            monitoringInfo.annotations.length > 0 && (
+                              <tr>
+                                <h4>Annotations</h4>
+                                <td className={classes.titleCol}>
+                                  <KeyPairView
+                                    records={monitoringInfo.annotations}
+                                    recordName="Annotations"
+                                  />
+                                </td>
+                              </tr>
+                            )}
+                          {monitoringInfo.nodeSelector != null &&
+                            monitoringInfo.nodeSelector.length > 0 && (
+                              <tr>
+                                <h4>Node Seletor</h4>
+                                <td className={classes.titleCol}>
+                                  <KeyPairView
+                                    records={monitoringInfo.nodeSelector}
+                                    recordName="Node Selector"
+                                  />
+                                </td>
+                              </tr>
+                            )}
                         </Fragment>
                       )
                     )}

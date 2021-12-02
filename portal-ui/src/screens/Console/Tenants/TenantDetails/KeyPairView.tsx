@@ -73,7 +73,7 @@ const styles = (theme: Theme) =>
       textAlign: "center",
     },
     listHeight: {
-      height: "150",
+      height: "50",
     },
     ...containerForHeader(theme.spacing(4)),
   });

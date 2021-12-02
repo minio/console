@@ -205,6 +205,30 @@ const EditTenantMonitoringModal = ({
           key={`storageClassName`}
           error={validationErrors[`storageClassName`] || ""}
         />
+        <h4>Labels</h4>
+        <KeyPairEdit
+          newValues={newLabels}
+          setNewValues={setNewLabels}
+          paramName={"Labels"}
+          error={labelsError}
+          setError={setLabelsError}
+        />
+        <h4>Annotations</h4>
+        <KeyPairEdit
+          newValues={newAnnotations}
+          setNewValues={setNewAnnotations}
+          paramName={"Annotations"}
+          error={annotationsError}
+          setError={setAnnotationsError}
+        />
+        <h4>Node Selector</h4>
+        <KeyPairEdit
+          newValues={newNodeSelector}
+          setNewValues={setNewNodeSelector}
+          paramName={"Node Selector"}
+          error={nodeSelectorError}
+          setError={setNodeSelectorError}
+        />
 
         <div className={classes.buttonContainer}>
           <Button
