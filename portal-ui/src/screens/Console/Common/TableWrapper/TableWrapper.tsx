@@ -33,12 +33,12 @@ import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import TableActionButton from "./TableActionButton";
+import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 import history from "../../../../history";
 import {
   checkboxIcons,
   radioIcons,
 } from "../FormComponents/common/styleLibrary";
-import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 //Interfaces for table Items
 
@@ -103,6 +103,7 @@ interface TableWrapperProps {
   infiniteScrollConfig?: IInfiniteScrollConfig;
   sortConfig?: ISortConfig;
   disabled?: boolean;
+  onSelectAll?: () => void;
 }
 
 const borderColor = "#9c9c9c80";
@@ -225,6 +226,9 @@ const styles = () =>
       padding: 10,
       borderBottom: "#eaeaea 1px solid",
       width: "100%",
+    },
+    checkAllWrapper: {
+      marginTop: -16,
     },
     "@global": {
       ".rowLine": {
@@ -522,6 +526,7 @@ const TableWrapper = ({
   sortConfig,
   autoScrollToBottom = false,
   disabled = false,
+  onSelectAll,
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -704,7 +709,26 @@ const TableWrapper = ({
                     >
                       {hasSelect && (
                         <Column
-                          headerRenderer={() => <Fragment>Select</Fragment>}
+                          headerRenderer={() => (
+                            <Fragment>
+                              {onSelectAll ? (
+                                <div className={classes.checkAllWrapper}>
+                                  <CheckboxWrapper
+                                    label={""}
+                                    onChange={onSelectAll}
+                                    value="all"
+                                    id={"selectAll"}
+                                    name={"selectAll"}
+                                    checked={
+                                      selectedItems?.length === records.length
+                                    }
+                                  />
+                                </div>
+                              ) : (
+                                <Fragment>Select</Fragment>
+                              )}
+                            </Fragment>
+                          )}
                           dataKey={`select-${idField}`}
                           width={selectWidth}
                           disableSort
