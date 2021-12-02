@@ -57,7 +57,7 @@ const styles = (theme: Theme) =>
       "&.disabled": {
         backgroundColor: "#F9F9F9",
         color: "#ababab",
-        cursor: "not-allowed"
+        cursor: "not-allowed",
       },
     },
   });

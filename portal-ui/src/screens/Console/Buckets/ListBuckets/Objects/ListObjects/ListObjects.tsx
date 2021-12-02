@@ -981,11 +981,11 @@ const ListObjects = ({
   }
 
   const selectAllItems = () => {
-    if(selectedObjects.length === payload.length) {
+    if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
       return;
     }
-    
+
     const elements = payload.map((item) => item.name);
     setSelectedObjects(elements);
   };

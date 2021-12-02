@@ -240,9 +240,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
         <SecureComponent
           scopes={[IAM_SCOPES.ADMIN_HEAL_ACTION]}
           resource={CONSOLE_UI_RESOURCE}
-          RenderError={
-            <Redirect to={'/'} />
-          }
+          RenderError={<Redirect to={"/"} />}
         >
           <Grid item xs={12} className={classes.boxy}>
             <Grid container>
