@@ -127,6 +127,7 @@ const TenantMonitoring = ({
       .then(() => {
         setPrometheusMonitoringEnabled(!prometheusMonitoringEnabled);
         setRefreshMonitoringInfo(true);
+        setConfirmOpen(false);
       })
       .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);
@@ -155,6 +156,7 @@ const TenantMonitoring = ({
           serviceAccountName={monitoringInfo?.serviceAccountName || ""}
           tenantName={tenantName}
           tenantNamespace={tenantNamespace}
+          storageClassName={monitoringInfo?.storageClassName || ""}
         />
       )}
       {confirmOpen && (

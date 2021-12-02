@@ -33,6 +33,7 @@ interface IEditTenantMonitoringProps {
   serviceAccountName: string;
   tenantName: string;
   tenantNamespace: string;
+  storageClassName: string;
 }
 
 const styles = (theme: Theme) =>
@@ -56,6 +57,7 @@ const EditTenantMonitoringModal = ({
   nodeSelector,
   diskCapacityGB,
   serviceAccountName,
+  storageClassName,
   tenantName,
   tenantNamespace,
 }: IEditTenantMonitoringProps) => {
@@ -77,6 +79,8 @@ const EditTenantMonitoringModal = ({
   );
   const [newServiceAccountName, setNewServiceAccountName] =
     useState<string>(serviceAccountName);
+  const [newStorageClassName, setNewStorageClassName] =
+    useState<string>(storageClassName);
 
   const [labelsError, setLabelsError] = useState<any>({});
   const [annotationsError, setAnnotationsError] = useState<any>({});
@@ -107,6 +111,7 @@ const EditTenantMonitoringModal = ({
           initImage: newInitImage,
           diskCapacityGB: newDiskCapacityGB,
           serviceAccountName: newServiceAccountName,
+          storageClassName: newStorageClassName,
         }
       )
       .then(() => {
@@ -186,6 +191,19 @@ const EditTenantMonitoringModal = ({
           }}
           key={`serviceAccountName`}
           error={validationErrors[`serviceAccountName`] || ""}
+        />
+        <h4>Storage Class Name</h4>
+        <InputBoxWrapper
+          id={`storageClassName`}
+          label={""}
+          placeholder={"Storage Class Name"}
+          name={`storageClassName`}
+          value={newStorageClassName}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewStorageClassName(event.target.value);
+          }}
+          key={`storageClassName`}
+          error={validationErrors[`storageClassName`] || ""}
         />
 
         <div className={classes.buttonContainer}>

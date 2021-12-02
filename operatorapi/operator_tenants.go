@@ -1800,6 +1800,7 @@ func getPodEventsResponse(session *models.Principal, params operator_api.GetPodE
 //get values for prometheus metrics
 func getTenantMonitoringResponse(session *models.Principal, params operator_api.GetTenantMonitoringParams) (*models.TenantMonitoringInfo, *models.Error) {
 	ctx := context.Background()
+
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1808,17 +1809,33 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
+
 	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	monitorngInfo := &models.TenantMonitoringInfo{}
+
+	var storageClassName string
+	monitoringInfo := &models.TenantMonitoringInfo{}
+
+	if minInst.Spec.Prometheus == nil {
+		monitoringInfo := &models.TenantMonitoringInfo{
+			PrometheusEnabled: (false),
+		}
+		return monitoringInfo, nil
+	}
+
+	if minInst.Spec.Prometheus.StorageClassName != nil {
+		storageClassName = *minInst.Spec.Prometheus.StorageClassName
+	}
+
 	var mAnnotations []*models.Annotation
 	var mLabels []*models.Label
 	var mNodeSelector []*models.NodeSelector
+
 	if minInst.Spec.Prometheus != nil {
-		monitoringInfo := &models.TenantMonitoringInfo{
-			PrometheusEnabled:  (minInst.Spec.Prometheus != nil),
+		monitoringInfo = &models.TenantMonitoringInfo{
+			PrometheusEnabled:  (true),
 			Annotations:        mAnnotations,
 			DiskCapacityGB:     strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB),
 			Image:              minInst.Spec.Prometheus.Image,
@@ -1827,13 +1844,11 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 			NodeSelector:       mNodeSelector,
 			ServiceAccountName: minInst.Spec.Prometheus.ServiceAccountName,
 			SidecarImage:       minInst.Spec.Prometheus.SideCarImage,
+			StorageClassName:   storageClassName,
 		}
-
 		return monitoringInfo, nil
 	}
-
-	return monitorngInfo, nil
-
+	return monitoringInfo, nil
 }
 
 //sets tenant Prometheus monitoring cofiguration fields to values provided
@@ -1880,10 +1895,16 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
 		}
 	}
+	var storageClassName string
+	if &params.Data.StorageClassName != nil {
+		storageClassName = params.Data.StorageClassName
+	}
+
 	minTenant.Spec.Prometheus.Labels = labels
 	minTenant.Spec.Prometheus.Image = params.Data.Image
 	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
 	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
+	minTenant.Spec.Prometheus.StorageClassName = &storageClassName
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
