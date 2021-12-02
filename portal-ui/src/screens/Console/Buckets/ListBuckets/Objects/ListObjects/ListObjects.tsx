@@ -972,13 +972,23 @@ const ListObjects = ({
 
   const sortASC = plSelect.sort(sortListObjects(currentSortField));
 
-  let payload = [];
+  let payload: BucketObject[] | RewindObject[] = [];
 
   if (sortDirection === "ASC") {
     payload = sortASC;
   } else {
     payload = sortASC.reverse();
   }
+
+  const selectAllItems = () => {
+    if(selectedObjects.length === payload.length) {
+      setSelectedObjects([]);
+      return;
+    }
+    
+    const elements = payload.map((item) => item.name);
+    setSelectedObjects(elements);
+  };
 
   return (
     <React.Fragment>
@@ -1210,6 +1220,7 @@ const ListObjects = ({
                 currentDirection: sortDirection,
                 triggerSort: sortChange,
               }}
+              onSelectAll={selectAllItems}
             />
           </SecureComponent>
         </Grid>
