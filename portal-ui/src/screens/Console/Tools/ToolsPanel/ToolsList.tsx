@@ -88,6 +88,7 @@ const ToolsList = ({ classes }: IConfigurationOptions) => {
                   prefix={"tools"}
                   configuration={element}
                   key={`configItem-${element.configuration_label}`}
+                  disabled={element.disabled || false}
                 />
               ))}
             </div>

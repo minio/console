@@ -58,4 +58,5 @@ export interface IElement {
   configuration_id: string;
   configuration_label: string;
   icon?: any;
+  disabled?: boolean;
 }
