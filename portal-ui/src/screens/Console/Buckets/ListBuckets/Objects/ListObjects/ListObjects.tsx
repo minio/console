@@ -79,7 +79,7 @@ import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
-import UploadFolderIcon from "../../../../../../icons/UploadFolderIcon";
+import { UploadFolderIcon, DownloadIcon } from "../../../../../../icons";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -753,7 +753,7 @@ const ListObjects = ({
     return state ? "Yes" : "No";
   };
 
-  const downloadObject = (object: BucketObject) => {
+  const downloadObject = (object: BucketObject | RewindObject) => {
     const identityDownload = btoa(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
@@ -990,6 +990,25 @@ const ListObjects = ({
     setSelectedObjects(elements);
   };
 
+  const downloadSelected = () => {
+    if (selectedObjects.length !== 0) {
+      let itemsToDownload: BucketObject[] | RewindObject[] = [];
+
+      const filterFunction = (currValue: BucketObject | RewindObject) =>
+        selectedObjects.includes(currValue.name);
+
+      if (rewindEnabled) {
+        itemsToDownload = rewind.filter(filterFunction);
+      } else {
+        itemsToDownload = filteredRecords.filter(filterFunction);
+      }
+
+      itemsToDownload.forEach((filteredItem) => {
+        downloadObject(filteredItem);
+      });
+    }
+  };
+
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1175,22 +1194,33 @@ const ListObjects = ({
               placeholder="Search Objects"
             />
           </SecureComponent>
-          <SecureComponent
-            scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-            resource={bucketName}
-          >
+          <div>
             <Button
               variant="contained"
               color="primary"
-              endIcon={<DeleteIcon />}
-              onClick={() => {
-                setDeleteMultipleOpen(true);
-              }}
+              endIcon={<DownloadIcon />}
+              onClick={downloadSelected}
               disabled={selectedObjects.length === 0}
             >
-              Delete Selected
+              Download Selected
             </Button>
-          </SecureComponent>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+              resource={bucketName}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                endIcon={<DeleteIcon />}
+                onClick={() => {
+                  setDeleteMultipleOpen(true);
+                }}
+                disabled={selectedObjects.length === 0}
+              >
+                Delete Selected
+              </Button>
+            </SecureComponent>
+          </div>
         </Grid>
         <Grid item xs={12}>
           <br />
