@@ -17,7 +17,7 @@ import { clearValidationError } from "../utils";
 interface IKeyPairEditProps {
   classes: any;
   paramName: string;
-  // keyPattern: RegExp;
+  //  keyPattern: RegExp;
   // valuePattern: RegExp;
   error: any;
   setError: (e: any) => void;
@@ -27,6 +27,40 @@ interface IKeyPairEditProps {
 
 const styles = (theme: Theme) =>
   createStyles({
+    buttonContainer: {
+      textAlign: "right",
+    },
+    multiContainer: {
+      display: "flex",
+      alignItems: "center" as const,
+      justifyContent: "flex-start" as const,
+    },
+    sizeFactorContainer: {
+      marginLeft: 8,
+    },
+    bottomContainer: {
+      display: "flex",
+      flexGrow: 1,
+      alignItems: "center",
+      "& div": {
+        flexGrow: 1,
+        width: "100%",
+      },
+    },
+    factorElements: {
+      display: "flex",
+      justifyContent: "flex-start",
+    },
+    sizeNumber: {
+      fontSize: 35,
+      fontWeight: 700,
+      textAlign: "center",
+    },
+    sizeDescription: {
+      fontSize: 14,
+      color: "#777",
+      textAlign: "center",
+    },
     shortened: {
       gridTemplateColumns: "auto auto 20px 20px",
       display: "grid",
@@ -41,7 +75,7 @@ const KeyPairEdit = ({
   newValues,
   setNewValues,
   // keyPattern,
-  //valuePattern,
+  // valuePattern,
   error,
   setError,
 }: IKeyPairEditProps) => {
@@ -49,7 +83,7 @@ const KeyPairEdit = ({
     setError(clearValidationError(error, fieldName));
   };
 
-  /*  useEffect(() => {
+  useEffect(() => {
     let keyPairValidation: IValidation[] = [];
 
     for (var i = 0; i < newValues.length; i++) {
@@ -57,14 +91,14 @@ const KeyPairEdit = ({
         fieldKey: `key-${i.toString()}`,
         required: false,
         value: newValues[i].key,
-        pattern: keyPattern,
+        // pattern: keyPattern,
         customPatternMessage: "Invalid key",
       });
       keyPairValidation.push({
         fieldKey: `val-${i.toString()}`,
         required: false,
         value: newValues[i].value,
-        pattern: valuePattern,
+        // pattern: valuePattern,
         customPatternMessage: "Invalid value",
       });
     }
@@ -72,14 +106,6 @@ const KeyPairEdit = ({
     const commonVal = commonFormValidation(keyPairValidation);
     setError(commonVal);
   }, [newValues, setError]);
-*/
-  const removeEntry = (index: number) => {
-    if (newValues.length > 1) {
-      let tempLabels = [...newValues];
-      tempLabels.splice(index, 1);
-      setNewValues(tempLabels);
-    }
-  };
 
   let keyValueInputs = newValues.map((_, index) => {
     return (
@@ -129,12 +155,19 @@ const KeyPairEdit = ({
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Remove" aria-label="remove">
+          <Tooltip title="Remove" aria-label="add">
             <IconButton
               size={"small"}
               style={{ marginLeft: 16 }}
               onClick={() => {
-                removeEntry(index);
+                if (newValues.length == 1) {
+                  setNewValues([{ key: "", value: "" }]);
+                }
+                if (newValues.length > 1) {
+                  let tempLabels = [...newValues];
+                  tempLabels.splice(index, 1);
+                  setNewValues(tempLabels);
+                }
               }}
             >
               <DeleteIcon />
