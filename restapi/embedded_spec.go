@@ -2099,6 +2099,37 @@ func init() {
         }
       }
     },
+    "/configs/{name}/reset": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Configuration reset",
+        "operationId": "ResetConfig",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setConfigResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/group": {
       "get": {
         "tags": [
@@ -7778,6 +7809,37 @@ func init() {
             "schema": {
               "$ref": "#/definitions/setConfigRequest"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setConfigResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/configs/{name}/reset": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Configuration reset",
+        "operationId": "ResetConfig",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
