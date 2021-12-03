@@ -24,6 +24,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Button, CircularProgress, Divider } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -48,6 +49,7 @@ interface ITenantMonitoring {
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...tenantDetailsStyles,
     headerLabel: {
       fontSize: 22,
       fontWeight: 600,

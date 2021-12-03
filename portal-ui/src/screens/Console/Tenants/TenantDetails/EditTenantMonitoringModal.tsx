@@ -95,6 +95,85 @@ const EditTenantMonitoringModal = ({
     }
     return retval;
   };
+
+  const cleanValidation = (fieldName: string) => {
+    setValidationErrors(clearValidationError(validationErrors, fieldName));
+  };
+
+  useEffect(() => {
+    let tenantMonitoringValidation: IValidation[] = [];
+
+    tenantMonitoringValidation.push({
+      fieldKey: `image`,
+      required: false,
+      value: newImage,
+      pattern:
+        /^([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9]?)+(\/(([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9])?)+)*:([a-zA-Z0-9])[a-zA-Z0-9-.]{0,127}$/,
+      customPatternMessage: "Invalid image",
+    });
+    tenantMonitoringValidation.push({
+      fieldKey: `sidecarImage`,
+      required: false,
+      value: newSidecarImage,
+      pattern:
+        /^([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9]?)+(\/(([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9])?)+)*:([a-zA-Z0-9])[a-zA-Z0-9-.]{0,127}$/,
+      customPatternMessage: "Invalid image",
+    });
+    tenantMonitoringValidation.push({
+      fieldKey: `initImage`,
+      required: false,
+      value: newInitImage,
+      pattern:
+        /^([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9]?)+(\/(([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9])?)+)*:([a-zA-Z0-9])[a-zA-Z0-9-.]{0,127}$/,
+      customPatternMessage: "Invalid image",
+    });
+    tenantMonitoringValidation.push({
+      fieldKey: `diskCapacityGB`,
+      required: true,
+      value: newDiskCapacityGB as any as string,
+      pattern: /^[0-9]?(10)?$/,
+      customPatternMessage: "Must be an integer between 0 and 10",
+    });
+    tenantMonitoringValidation.push({
+      fieldKey: `serviceAccountName`,
+      required: false,
+      value: newServiceAccountName,
+      pattern: /^[a-zA-Z0-9-.]{1,253}$/,
+      customPatternMessage: "Invalid service account name",
+    });
+    tenantMonitoringValidation.push({
+      fieldKey: `storageClassName`,
+      required: false,
+      value: newStorageClassName,
+      pattern: /^[a-zA-Z0-9-.]{1,253}$/,
+      customPatternMessage: "Invalid storage class name",
+    });
+
+    const commonVal = commonFormValidation(tenantMonitoringValidation);
+    setValidationErrors(commonVal);
+  }, [
+    newImage,
+    newSidecarImage,
+    newInitImage,
+    newDiskCapacityGB,
+    newServiceAccountName,
+    newStorageClassName,
+    setValidationErrors,
+  ]);
+
+  const checkValid = (): boolean => {
+    if (
+      Object.keys(validationErrors).length !== 0 ||
+      Object.keys(labelsError).length !== 0 ||
+      Object.keys(annotationsError).length !== 0 ||
+      Object.keys(nodeSelectorError).length !== 0
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const submitMonitoringInfo = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -235,7 +314,7 @@ const EditTenantMonitoringModal = ({
             type="submit"
             variant="contained"
             color="primary"
-            disabled={parseInt(newDiskCapacityGB) <= 0}
+            disabled={!checkValid()}
           >
             Save
           </Button>

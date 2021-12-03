@@ -17,7 +17,7 @@ import { clearValidationError } from "../utils";
 interface IKeyPairEditProps {
   classes: any;
   paramName: string;
-  //  keyPattern: RegExp;
+  // keyPattern: RegExp;
   // valuePattern: RegExp;
   error: any;
   setError: (e: any) => void;
@@ -74,8 +74,8 @@ const KeyPairEdit = ({
   paramName,
   newValues,
   setNewValues,
-  // keyPattern,
-  // valuePattern,
+  //keyPattern,
+  //valuePattern,
   error,
   setError,
 }: IKeyPairEditProps) => {

@@ -37,38 +37,7 @@ interface IKeyPairView {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    redState: {
-      color: theme.palette.error.main,
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        marginRight: 4,
-      },
-    },
-    yellowState: {
-      color: theme.palette.warning.main,
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        marginRight: 4,
-      },
-    },
-    greenState: {
-      color: theme.palette.success.main,
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        marginRight: 4,
-      },
-    },
-    greyState: {
-      color: "grey",
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-        marginRight: 4,
-      },
-    },
+
     centerAlign: {
       textAlign: "center",
     },
