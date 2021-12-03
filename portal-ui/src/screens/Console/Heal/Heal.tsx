@@ -17,7 +17,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { HorizontalBar } from "react-chartjs-2";
-import { Redirect } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -264,9 +263,8 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
           <DistributedOnly entity={"Heal"} iconComponent={<HealIcon />} />
         ) : (
           <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_HEAL_ACTION]}
+            scopes={[IAM_SCOPES.ADMIN_HEAL]}
             resource={CONSOLE_UI_RESOURCE}
-            RenderError={<Redirect to={"/"} />}
           >
             <Grid xs={12} item className={classes.formBox}>
               <Grid item xs={12} className={classes.actionsTray}>

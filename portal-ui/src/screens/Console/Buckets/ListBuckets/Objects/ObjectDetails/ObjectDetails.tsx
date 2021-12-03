@@ -589,6 +589,7 @@ const ObjectDetails = ({
                       scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
                       resource={bucketName}
                       matchAll
+                      errorProps={{ disabled: true }}
                     >
                       <BoxIconButton
                         tooltip={"Delete Object"}
@@ -640,6 +641,10 @@ const ObjectDetails = ({
                                       ]}
                                       resource={bucketName}
                                       matchAll
+                                      errorProps={{
+                                        disabled: true,
+                                        onClick: null,
+                                      }}
                                     >
                                       <IconButton
                                         color="primary"
@@ -737,6 +742,7 @@ const ObjectDetails = ({
                                   scopes={[IAM_SCOPES.S3_PUT_OBJECT_TAGGING]}
                                   resource={bucketName}
                                   matchAll
+                                  errorProps={{ disabled: true, onClick: null }}
                                 >
                                   <Chip
                                     className={classes.tag}

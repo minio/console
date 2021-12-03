@@ -3128,10 +3128,6 @@ definitions:
   sessionResponse:
     type: object
     properties:
-      pages:
-        type: array
-        items:
-          type: string
       features:
         type: array
         items:

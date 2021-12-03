@@ -41,6 +41,11 @@ import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -68,14 +73,9 @@ const styles = (theme: Theme) =>
 interface IServiceAccountsProps {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
-  changePassword: boolean;
 }
 
-const Account = ({
-  classes,
-  displayErrorMessage,
-  changePassword,
-}: IServiceAccountsProps) => {
+const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
@@ -193,21 +193,24 @@ const Account = ({
       <PageHeader
         label="Service Accounts"
         actions={
-          <React.Fragment>
-            {changePassword && (
-              <Tooltip title="Change Password">
-                <IconButton
-                  color="primary"
-                  aria-label="Change Password"
-                  component="span"
-                  onClick={() => setChangePasswordModalOpen(true)}
-                  size="large"
-                >
-                  <LockIcon />
-                </IconButton>
-              </Tooltip>
-            )}
-          </React.Fragment>
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
+            resource={CONSOLE_UI_RESOURCE}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
+            <Tooltip title="Change Password">
+              <IconButton
+                color="primary"
+                aria-label="Change Password"
+                component="span"
+                onClick={() => setChangePasswordModalOpen(true)}
+                size="large"
+              >
+                <LockIcon />
+              </IconButton>
+            </Tooltip>
+          </SecureComponent>
         }
       />
       <PageLayout>

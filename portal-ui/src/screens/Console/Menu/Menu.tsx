@@ -60,6 +60,14 @@ import {
   UsersIcon,
   VersionIcon,
 } from "../../../icons";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_PAGES_PERMISSIONS,
+  IAM_PAGES,
+  S3_ALL_RESOURCES,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
 
 const drawerWidth = 245;
 
@@ -217,23 +225,23 @@ const styles = (theme: Theme) =>
 interface IMenuProps {
   classes: any;
   userLoggedIn: typeof userLoggedIn;
-  pages: string[];
   operatorMode: boolean;
   distributedSetup: boolean;
   sidebarOpen: boolean;
   setMenuOpen: typeof setMenuOpen;
   resetSession: typeof resetSession;
+  features: string[] | null;
 }
 
 const Menu = ({
   userLoggedIn,
   classes,
-  pages,
   operatorMode,
   distributedSetup,
   sidebarOpen,
   setMenuOpen,
   resetSession,
+  features,
 }: IMenuProps) => {
   const logout = () => {
     const deleteSession = () => {
@@ -254,12 +262,13 @@ const Menu = ({
       });
   };
 
-  let menuItems: IMenuItem[] = [
+  const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
+  let menuConsoleAdmin: IMenuItem[] = [
     {
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/dashboard",
+      to: IAM_PAGES.DASHBOARD,
       name: "Dashboard",
       icon: DashboardIcon,
     },
@@ -267,40 +276,46 @@ const Menu = ({
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/buckets",
+      to: IAM_PAGES.BUCKETS,
       name: "Buckets",
       icon: BucketsIcon,
+      forceDisplay: true,
     },
-
     {
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/users",
+      to: IAM_PAGES.USERS,
+      customPermissionFnc: () =>
+        hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_LIST_USERS]) ||
+        hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
       name: "Users",
       icon: UsersIcon,
+      fsHidden: ldapIsEnabled,
     },
     {
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/groups",
+      to: IAM_PAGES.GROUPS,
       name: "Groups",
       icon: GroupsIcon,
+      fsHidden: ldapIsEnabled,
     },
     {
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/account",
+      to: IAM_PAGES.ACCOUNT,
       name: "Service Accounts",
       icon: AccountIcon,
+      forceDisplay: true,
     },
     {
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/policies",
+      to: IAM_PAGES.POLICIES,
       name: "IAM Policies",
       icon: IAMPoliciesIcon,
     },
@@ -308,7 +323,7 @@ const Menu = ({
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/settings",
+      to: IAM_PAGES.SETTINGS,
       name: "Settings",
       icon: SettingsIcon,
     },
@@ -316,7 +331,7 @@ const Menu = ({
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/notification-endpoints",
+      to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
       name: "Notification Endpoints",
       icon: LambdaIcon,
     },
@@ -324,7 +339,7 @@ const Menu = ({
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/tiers",
+      to: IAM_PAGES.TIERS,
       name: "Tiers",
       icon: TiersIcon,
     },
@@ -332,107 +347,97 @@ const Menu = ({
       group: "common",
       type: "item",
       component: NavLink,
-      to: "/tools",
+      to: IAM_PAGES.TOOLS,
       name: "Tools",
       icon: ToolsIcon,
     },
     {
+      group: "License",
+      type: "item",
+      component: NavLink,
+      to: IAM_PAGES.LICENSE,
+      name: "License",
+      icon: LicenseIcon,
+      forceDisplay: true,
+    },
+    {
+      group: "License",
+      type: "item",
+      component: NavLink,
+      to: IAM_PAGES.DOCUMENTATION,
+      name: "Documentation",
+      icon: DocumentationIcon,
+      forceDisplay: true,
+      onClick: (
+        e:
+          | React.MouseEvent<HTMLLIElement>
+          | React.MouseEvent<HTMLAnchorElement>
+          | React.MouseEvent<HTMLDivElement>
+      ) => {
+        e.preventDefault();
+        window.open("https://docs.min.io/?ref=con", "_blank");
+      },
+    },
+  ];
+
+  let menuOperatorConsole: IMenuItem[] = [
+    {
       group: "Operator",
       type: "item",
       component: NavLink,
-      to: "/tenants",
+      to: IAM_PAGES.TENANTS,
       name: "Tenants",
       icon: TenantsOutlineIcon,
+      forceDisplay: true,
     },
     {
       group: "Operator",
       type: "item",
       component: NavLink,
-      to: "/storage",
+      to: IAM_PAGES.STORAGE,
       name: "Storage",
       icon: StorageIcon,
+      forceDisplay: true,
+    },
+    {
+      group: "Operator",
+      type: "item",
+      component: NavLink,
+      to: IAM_PAGES.LICENSE,
+      name: "License",
+      icon: LicenseIcon,
+      forceDisplay: true,
+    },
+    {
+      group: "Operator",
+      type: "item",
+      component: NavLink,
+      to: IAM_PAGES.DOCUMENTATION,
+      name: "Documentation",
+      icon: DocumentationIcon,
+      forceDisplay: true,
+      onClick: (
+        e:
+          | React.MouseEvent<HTMLLIElement>
+          | React.MouseEvent<HTMLAnchorElement>
+          | React.MouseEvent<HTMLDivElement>
+      ) => {
+        e.preventDefault();
+        window.open("https://docs.min.io/?ref=op", "_blank");
+      },
     },
   ];
 
-  const allowedPages = pages.reduce((result: any, item: any) => {
-    if (item.startsWith("/tools")) {
-      result["/tools"] = true;
-    }
-    result[item] = true;
-    return result;
-  }, {});
-
-  const documentation: IMenuItem = {
-    group: "License",
-    type: "item",
-    component: NavLink,
-    to: "/documentation",
-    name: "Documentation",
-    icon: DocumentationIcon,
-    forceDisplay: true,
-  };
-
-  // Append the license page according to the allowedPages
-  if (allowedPages.hasOwnProperty("/tenants")) {
-    menuItems.push(
-      {
-        group: "Operator",
-        type: "item",
-        component: NavLink,
-        to: "/license",
-        name: "License",
-        icon: LicenseIcon,
-      },
-      {
-        ...documentation,
-        group: "Operator",
-        onClick: (
-          e:
-            | React.MouseEvent<HTMLLIElement>
-            | React.MouseEvent<HTMLAnchorElement>
-            | React.MouseEvent<HTMLDivElement>
-        ) => {
-          e.preventDefault();
-          window.open(
-            `https://docs.min.io/?ref=${operatorMode ? "op" : "con"}`,
-            "_blank"
-          );
-        },
-      }
-    );
-  } else {
-    menuItems.push(
-      {
-        group: "License",
-        type: "item",
-        component: NavLink,
-        to: "/license",
-        name: "License",
-        icon: LicenseIcon,
-      },
-      {
-        ...documentation,
-        group: "License",
-        onClick: (
-          e:
-            | React.MouseEvent<HTMLLIElement>
-            | React.MouseEvent<HTMLAnchorElement>
-            | React.MouseEvent<HTMLDivElement>
-        ) => {
-          e.preventDefault();
-          window.open(
-            `https://docs.min.io/?ref=${operatorMode ? "op" : "con"}`,
-            "_blank"
-          );
-        },
-      }
-    );
-  }
-
-  const allowedItems = menuItems.filter(
+  const allowedItems = (
+    operatorMode ? menuOperatorConsole : menuConsoleAdmin
+  ).filter(
     (item: any) =>
-      (allowedPages[item.to] || item.forceDisplay || item.type !== "item") &&
-      item.fsHidden !== false
+      ((item.customPermissionFnc
+        ? item.customPermissionFnc()
+        : hasPermission(CONSOLE_UI_RESOURCE, IAM_PAGES_PERMISSIONS[item.to])) ||
+        item.forceDisplay ||
+        item.type !== "item") &&
+      !item.fsHidden
   );
 
   return (
@@ -561,6 +566,7 @@ const mapState = (state: AppState) => ({
   sidebarOpen: state.system.sidebarOpen,
   operatorMode: state.system.operatorMode,
   distributedSetup: state.system.distributedSetup,
+  features: state.console.session.features,
 });
 
 const connector = connect(mapState, {

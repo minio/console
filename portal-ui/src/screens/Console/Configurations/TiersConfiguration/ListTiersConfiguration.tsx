@@ -47,6 +47,13 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import { AppState } from "../../../../store";
+import DistributedOnly from "../../Common/DistributedOnly/DistributedOnly";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
+import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -56,6 +63,7 @@ interface IListTiersConfig {
   classes: any;
   history: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  distributedSetup: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -90,6 +98,7 @@ const ListTiersConfiguration = ({
   classes,
   history,
   setErrorSnackMessage,
+  distributedSetup,
 }: IListTiersConfig) => {
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
@@ -102,21 +111,25 @@ const ListTiersConfiguration = ({
 
   useEffect(() => {
     if (isLoading) {
-      const fetchRecords = () => {
-        api
-          .invoke("GET", `/api/v1/admin/tiers`)
-          .then((res: ITierResponse) => {
-            setRecords(res.items || []);
-            setIsLoading(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            setIsLoading(false);
-          });
-      };
-      fetchRecords();
+      if (distributedSetup) {
+        const fetchRecords = () => {
+          api
+            .invoke("GET", `/api/v1/admin/tiers`)
+            .then((res: ITierResponse) => {
+              setRecords(res.items || []);
+              setIsLoading(false);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+              setIsLoading(false);
+            });
+        };
+        fetchRecords();
+      } else {
+        setIsLoading(false);
+      }
     }
-  }, [isLoading, setErrorSnackMessage]);
+  }, [isLoading, setErrorSnackMessage, distributedSetup]);
 
   const filteredRecords = records.filter((b: ITierElement) => {
     if (filter === "") {
@@ -197,149 +210,168 @@ const ListTiersConfiguration = ({
       )}
       <PageHeader label="Tiers" />
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <SearchBox
-            placeholder="Filter"
-            onChange={setFilter}
-            overrideClass={classes.searchField}
-          />
-
-          <div className={classes.rightActionButtons}>
-            <BoxIconButton
-              color="primary"
-              aria-label="Refresh List"
-              onClick={() => {
-                setIsLoading(true);
-              }}
-              size="large"
-            >
-              <RefreshIcon />
-            </BoxIconButton>
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<AddIcon />}
-              onClick={addTier}
-            >
-              Add Tier
-            </Button>
-          </div>
-        </Grid>
-        {isLoading && <LinearProgress />}
-        {!isLoading && (
+        {!distributedSetup ? (
+          <DistributedOnly entity={"Tiers"} iconComponent={<TiersIcon />} />
+        ) : (
           <Fragment>
-            {records.length > 0 && (
+            <Grid item xs={12} className={classes.actionsTray}>
+              <SearchBox
+                placeholder="Filter"
+                onChange={setFilter}
+                overrideClass={classes.searchField}
+              />
+              <div className={classes.rightActionButtons}>
+                <BoxIconButton
+                  color="primary"
+                  aria-label="Refresh List"
+                  onClick={() => {
+                    setIsLoading(true);
+                  }}
+                  size="large"
+                >
+                  <RefreshIcon />
+                </BoxIconButton>
+                <SecureComponent
+                  scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
+                  resource={CONSOLE_UI_RESOURCE}
+                  errorProps={{ disabled: true }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    endIcon={<AddIcon />}
+                    onClick={addTier}
+                  >
+                    Add Tier
+                  </Button>
+                </SecureComponent>
+              </div>
+            </Grid>
+            {isLoading && <LinearProgress />}
+            {!isLoading && (
               <Fragment>
-                <Grid item xs={12} className={classes.tableBlock}>
-                  <TableWrapper
-                    itemActions={[
-                      {
-                        type: "edit",
-                        onClick: (tierData: ITierElement) => {
-                          setSelectedTier(tierData);
-                          setUpdateCredentialsOpen(true);
-                        },
-                      },
-                    ]}
-                    columns={[
-                      {
-                        label: "Tier Name",
-                        elementKey: "type",
-                        renderFunction: renderTierName,
-                        renderFullObject: true,
-                      },
-                      {
-                        label: "Type",
-                        elementKey: "type",
-                        width: 150,
-                      },
-                      {
-                        label: "Endpoint",
-                        elementKey: "type",
-                        renderFunction: renderTierEndpoint,
-                        renderFullObject: true,
-                      },
-                      {
-                        label: "Bucket",
-                        elementKey: "type",
-                        renderFunction: renderTierBucket,
-                        renderFullObject: true,
-                      },
-                      {
-                        label: "Prefix",
-                        elementKey: "type",
-                        renderFunction: renderTierPrefix,
-                        renderFullObject: true,
-                      },
-                      {
-                        label: "Region",
-                        elementKey: "type",
-                        renderFunction: renderTierRegion,
-                        renderFullObject: true,
-                      },
-                    ]}
-                    isLoading={isLoading}
-                    records={filteredRecords}
-                    entityName="Tiers"
-                    idField="service_name"
-                    customPaperHeight={classes.customConfigurationPage}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <HelpBox
-                    title={"Learn more about TIERS"}
-                    iconComponent={<TiersIcon />}
-                    help={
-                      <Fragment>
-                        Tiers are used by the MinIO Object Lifecycle Management
-                        which allows creating rules for time or date based
-                        automatic transition or expiry of objects. For object
-                        transition, MinIO automatically moves the object to a
-                        configured remote storage tier.
-                        <br />
-                        <br />
-                        You can learn more at our{" "}
-                        <a
-                          href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          documentation
-                        </a>
-                        .
-                      </Fragment>
-                    }
-                  />
-                </Grid>
+                {records.length > 0 && (
+                  <Fragment>
+                    <Grid item xs={12} className={classes.tableBlock}>
+                      <SecureComponent
+                        scopes={[IAM_SCOPES.ADMIN_LIST_TIERS]}
+                        resource={CONSOLE_UI_RESOURCE}
+                        errorProps={{ disabled: true }}
+                      >
+                        <TableWrapper
+                          itemActions={[
+                            {
+                              type: "edit",
+                              onClick: (tierData: ITierElement) => {
+                                setSelectedTier(tierData);
+                                setUpdateCredentialsOpen(true);
+                              },
+                            },
+                          ]}
+                          columns={[
+                            {
+                              label: "Tier Name",
+                              elementKey: "type",
+                              renderFunction: renderTierName,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Type",
+                              elementKey: "type",
+                              width: 150,
+                            },
+                            {
+                              label: "Endpoint",
+                              elementKey: "type",
+                              renderFunction: renderTierEndpoint,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Bucket",
+                              elementKey: "type",
+                              renderFunction: renderTierBucket,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Prefix",
+                              elementKey: "type",
+                              renderFunction: renderTierPrefix,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Region",
+                              elementKey: "type",
+                              renderFunction: renderTierRegion,
+                              renderFullObject: true,
+                            },
+                          ]}
+                          isLoading={isLoading}
+                          records={filteredRecords}
+                          entityName="Tiers"
+                          idField="service_name"
+                          customPaperHeight={classes.customConfigurationPage}
+                        />
+                      </SecureComponent>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <HelpBox
+                        title={"Learn more about TIERS"}
+                        iconComponent={<TiersIcon />}
+                        help={
+                          <Fragment>
+                            Tiers are used by the MinIO Object Lifecycle
+                            Management which allows creating rules for time or
+                            date based automatic transition or expiry of
+                            objects. For object transition, MinIO automatically
+                            moves the object to a configured remote storage
+                            tier.
+                            <br />
+                            <br />
+                            You can learn more at our{" "}
+                            <a
+                              href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              documentation
+                            </a>
+                            .
+                          </Fragment>
+                        }
+                      />
+                    </Grid>
+                  </Fragment>
+                )}
+                {records.length === 0 && (
+                  <Grid
+                    container
+                    justifyContent={"center"}
+                    alignContent={"center"}
+                    alignItems={"center"}
+                  >
+                    <Grid item xs={8}>
+                      <HelpBox
+                        title={"Tiers"}
+                        iconComponent={<TiersIcon />}
+                        help={
+                          <Fragment>
+                            Tiers are used by the MinIO Object Lifecycle
+                            Management which allows creating rules for time or
+                            date based automatic transition or expiry of
+                            objects. For object transition, MinIO automatically
+                            moves the object to a configured remote storage
+                            tier.
+                            <br />
+                            <br />
+                            To get started,{" "}
+                            <AButton onClick={addTier}>Add A Tier</AButton>.
+                          </Fragment>
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+                )}
               </Fragment>
-            )}
-            {records.length === 0 && (
-              <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
-                <Grid item xs={8}>
-                  <HelpBox
-                    title={"Tiers"}
-                    iconComponent={<TiersIcon />}
-                    help={
-                      <Fragment>
-                        Tiers are used by the MinIO Object Lifecycle Management
-                        which allows creating rules for time or date based
-                        automatic transition or expiry of objects. For object
-                        transition, MinIO automatically moves the object to a
-                        configured remote storage tier.
-                        <br />
-                        <br />
-                        To get started,{" "}
-                        <AButton onClick={addTier}>Add A Tier</AButton>.
-                      </Fragment>
-                    }
-                  />
-                </Grid>
-              </Grid>
             )}
           </Fragment>
         )}
@@ -348,10 +380,14 @@ const ListTiersConfiguration = ({
   );
 };
 
+const mapState = (state: AppState) => ({
+  distributedSetup: state.system.distributedSetup,
+});
+
 const mapDispatchToProps = {
   setErrorSnackMessage,
 };
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapState, mapDispatchToProps);
 
 export default withStyles(styles)(connector(ListTiersConfiguration));

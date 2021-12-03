@@ -56,6 +56,7 @@ import SecureComponent, {
 } from "../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
+import { AppState } from "../../../store";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -64,6 +65,7 @@ interface IPolicyDetailsProps {
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
+  features: string[] | null;
 }
 
 const styles = (theme: Theme) =>
@@ -103,6 +105,7 @@ const PolicyDetails = ({
   match,
   setErrorSnackMessage,
   setSnackBarMessage,
+  features,
 }: IPolicyDetailsProps) => {
   const [policy, setPolicy] = useState<Policy | null>(null);
   const [policyStatements, setPolicyStatements] = useState<IAMStatement[]>([]);
@@ -117,6 +120,8 @@ const PolicyDetails = ({
   const [filterGroups, setFilterGroups] = useState<string>("");
   const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+
+  const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
 
   const displayGroups = hasPermission(
     CONSOLE_UI_RESOURCE,
@@ -172,7 +177,7 @@ const PolicyDetails = ({
   useEffect(() => {
     const loadUsersForPolicy = () => {
       if (loadingUsers) {
-        if (displayUsers) {
+        if (displayUsers && !ldapIsEnabled) {
           api
             .invoke(
               "GET",
@@ -194,7 +199,7 @@ const PolicyDetails = ({
 
     const loadGroupsForPolicy = () => {
       if (loadingGroups) {
-        if (displayGroups) {
+        if (displayGroups && !ldapIsEnabled) {
           api
             .invoke(
               "GET",
@@ -264,6 +269,7 @@ const PolicyDetails = ({
     displayUsers,
     displayGroups,
     displayPolicy,
+    ldapIsEnabled,
   ]);
 
   const resetForm = () => {
@@ -347,6 +353,7 @@ const PolicyDetails = ({
                 <SecureComponent
                   scopes={[IAM_SCOPES.ADMIN_DELETE_POLICY]}
                   resource={CONSOLE_UI_RESOURCE}
+                  errorProps={{ disabled: true }}
                 >
                   <BoxIconButton
                     tooltip={"Delete Policy"}
@@ -456,7 +463,10 @@ const PolicyDetails = ({
             ),
           }}
           {{
-            tabConfig: { label: "Users", disabled: !displayUsers },
+            tabConfig: {
+              label: "Users",
+              disabled: !displayUsers || ldapIsEnabled,
+            },
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Users</div>
@@ -497,7 +507,10 @@ const PolicyDetails = ({
             ),
           }}
           {{
-            tabConfig: { label: "Groups", disabled: !displayGroups },
+            tabConfig: {
+              label: "Groups",
+              disabled: !displayGroups || ldapIsEnabled,
+            },
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Groups</div>
@@ -576,6 +589,7 @@ const PolicyDetails = ({
                         <SecureComponent
                           scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
                           resource={CONSOLE_UI_RESOURCE}
+                          errorProps={{ disabled: true }}
                         >
                           <Button
                             type="submit"
@@ -604,7 +618,11 @@ const PolicyDetails = ({
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  features: state.console.session.features,
+});
+
+const connector = connect(mapState, {
   setErrorSnackMessage,
   setSnackBarMessage,
 });

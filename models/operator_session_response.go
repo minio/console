@@ -37,14 +37,8 @@ import (
 // swagger:model operatorSessionResponse
 type OperatorSessionResponse struct {
 
-	// features
-	Features []string `json:"features"`
-
 	// operator
 	Operator bool `json:"operator,omitempty"`
-
-	// pages
-	Pages []string `json:"pages"`
 
 	// status
 	// Enum: [ok]

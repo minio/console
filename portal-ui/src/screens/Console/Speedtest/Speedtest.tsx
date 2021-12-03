@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Button, CircularProgress, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { Redirect } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -205,9 +204,8 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
           />
         ) : (
           <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_HEAL_ACTION]}
+            scopes={[IAM_SCOPES.ADMIN_HEAL]}
             resource={CONSOLE_UI_RESOURCE}
-            RenderError={<Redirect to={"/"} />}
           >
             <Grid item xs={12} className={classes.boxy}>
               <Grid container>

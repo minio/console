@@ -42,6 +42,14 @@ import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+  S3_ALL_RESOURCES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent, {
+  hasPermission,
+} from "../../../common/SecureComponent/SecureComponent";
 
 const AddUser = withSuspense(React.lazy(() => import("./AddUser")));
 const SetPolicy = withSuspense(
@@ -81,6 +89,22 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
+  const displayListUsers = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_LIST_USERS,
+  ]);
+
+  const deleteUser = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_DELETE_USER,
+  ]);
+
+  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_USER,
+  ]);
+
+  const addUserToGroup = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  ]);
+
   const closeAddModalAndRefresh = () => {
     setAddScreenOpen(false);
     setLoading(true);
@@ -102,20 +126,24 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
 
   useEffect(() => {
     if (loading) {
-      api
-        .invoke("GET", `/api/v1/users`)
-        .then((res: UsersList) => {
-          const users = res.users === null ? [] : res.users;
+      if (displayListUsers) {
+        api
+          .invoke("GET", `/api/v1/users`)
+          .then((res: UsersList) => {
+            const users = res.users === null ? [] : res.users;
 
-          setLoading(false);
-          setRecords(users.sort(usersSort));
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoading(false);
-          setErrorSnackMessage(err);
-        });
+            setLoading(false);
+            setRecords(users.sort(usersSort));
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setLoading(false);
+            setErrorSnackMessage(err);
+          });
+      } else {
+        setLoading(false);
+      }
     }
-  }, [loading, setErrorSnackMessage]);
+  }, [loading, setErrorSnackMessage, displayListUsers]);
 
   const filteredRecords = records.filter((elementItem) =>
     elementItem.accessKey.includes(filter)
@@ -155,11 +183,16 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   );
 
   const tableActions = [
-    { type: "view", onClick: viewAction },
+    {
+      type: "view",
+      onClick: viewAction,
+      disableButtonFunction: () => !viewUser,
+    },
     {
       type: "delete",
       onClick: deleteAction,
-      disableButtonFunction: (topValue: any) => topValue === userLoggedIn,
+      disableButtonFunction: (topValue: any) =>
+        topValue === userLoggedIn || !deleteUser,
     },
   ];
 
@@ -211,32 +244,48 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             onChange={setFilter}
             overrideClass={classes.searchField}
           />
-          <Button
-            variant="outlined"
-            color="primary"
-            endIcon={<GroupIcon />}
-            disabled={checkedUsers.length <= 0}
-            onClick={() => {
-              if (checkedUsers.length > 0) {
-                setAddGroupOpen(true);
-              }
-            }}
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
+            resource={CONSOLE_UI_RESOURCE}
+            errorProps={{ disabled: true }}
           >
-            Add to Group
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-              setSelectedUser(null);
-            }}
+            <Button
+              variant="outlined"
+              color="primary"
+              endIcon={<GroupIcon />}
+              disabled={checkedUsers.length <= 0}
+              onClick={() => {
+                if (checkedUsers.length > 0) {
+                  setAddGroupOpen(true);
+                }
+              }}
+            >
+              Add to Group
+            </Button>
+          </SecureComponent>
+          <SecureComponent
+            scopes={[
+              IAM_SCOPES.ADMIN_CREATE_USER,
+              IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+              IAM_SCOPES.ADMIN_LIST_GROUPS,
+            ]}
+            resource={S3_ALL_RESOURCES}
+            matchAll
+            errorProps={{ disabled: true }}
           >
-            Create User
-          </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<AddIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+                setSelectedUser(null);
+              }}
+            >
+              Create User
+            </Button>
+          </SecureComponent>
         </Grid>
-
         <Grid item xs={12}>
           <br />
         </Grid>
@@ -246,16 +295,24 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             {records.length > 0 && (
               <Fragment>
                 <Grid item xs={12} className={classes.tableBlock}>
-                  <TableWrapper
-                    itemActions={tableActions}
-                    columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-                    onSelect={selectionChanged}
-                    selectedItems={checkedUsers}
-                    isLoading={loading}
-                    records={filteredRecords}
-                    entityName="Users"
-                    idField="accessKey"
-                  />
+                  <SecureComponent
+                    scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
+                    resource={CONSOLE_UI_RESOURCE}
+                    errorProps={{ disabled: true }}
+                  >
+                    <TableWrapper
+                      itemActions={tableActions}
+                      columns={[
+                        { label: "Access Key", elementKey: "accessKey" },
+                      ]}
+                      onSelect={addUserToGroup ? selectionChanged : undefined}
+                      selectedItems={checkedUsers}
+                      isLoading={loading}
+                      records={filteredRecords}
+                      entityName="Users"
+                      idField="accessKey"
+                    />
+                  </SecureComponent>
                 </Grid>
                 <Grid item xs={12}>
                   <HelpBox
@@ -315,18 +372,30 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                         explicitly list the actions and resources to which that
                         user has access. Users can also inherit policies from
                         the groups in which they have membership.
-                        <br />
-                        <br />
-                        To get started,{" "}
-                        <AButton
-                          onClick={() => {
-                            setAddScreenOpen(true);
-                            setSelectedUser(null);
-                          }}
+                        <SecureComponent
+                          scopes={[
+                            IAM_SCOPES.ADMIN_CREATE_USER,
+                            IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                            IAM_SCOPES.ADMIN_LIST_GROUPS,
+                          ]}
+                          matchAll
+                          resource={CONSOLE_UI_RESOURCE}
                         >
-                          Create a User
-                        </AButton>
-                        .
+                          <Fragment>
+                            <br />
+                            <br />
+                            To get started,{" "}
+                            <AButton
+                              onClick={() => {
+                                setAddScreenOpen(true);
+                                setSelectedUser(null);
+                              }}
+                            >
+                              Create a User
+                            </AButton>
+                            .
+                          </Fragment>
+                        </SecureComponent>
                       </Fragment>
                     }
                   />

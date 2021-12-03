@@ -265,6 +265,7 @@ const BucketDetails = ({
                     IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
                   ]}
                   resource={bucketName}
+                  errorProps={{ disabled: true }}
                 >
                   <BoxIconButton
                     tooltip={"Delete"}

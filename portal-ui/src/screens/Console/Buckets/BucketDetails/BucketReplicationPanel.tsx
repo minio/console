@@ -188,6 +188,7 @@ const BucketReplicationPanel = ({
             scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
             resource={bucketName}
             matchAll
+            errorProps={{ disabled: true }}
           >
             <Button
               variant="contained"

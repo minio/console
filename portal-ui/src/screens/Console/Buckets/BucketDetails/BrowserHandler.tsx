@@ -88,8 +88,9 @@ const BrowserHandler = ({
         }
         actions={
           <SecureComponent
-            scopes={IAM_PERMISSIONS[IAM_ROLES.admin]}
+            scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
             resource={bucketName}
+            errorProps={{ disabled: true }}
           >
             <Tooltip title={"Configure Bucket"}>
               <IconButton

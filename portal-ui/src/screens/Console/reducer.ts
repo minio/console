@@ -25,7 +25,6 @@ const initialState: ConsoleState = {
   session: {
     operator: false,
     status: "",
-    pages: [],
     features: [],
     distributedMode: false,
     permissions: {},

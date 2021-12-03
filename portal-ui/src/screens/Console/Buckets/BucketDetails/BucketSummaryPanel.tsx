@@ -666,6 +666,7 @@ const BucketSummary = ({
                       <SecureComponent
                         scopes={[IAM_SCOPES.S3_PUT_BUCKET_TAGGING]}
                         resource={bucketName}
+                        errorProps={{ disabled: true, onClick: null }}
                       >
                         <Chip
                           className={classes.tag}

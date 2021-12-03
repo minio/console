@@ -36,16 +36,20 @@ import {
   SearchIcon,
   TraceIcon,
   WatchIcon,
+  SpeedtestIcon,
 } from "../../../../icons";
-import { hasPermission } from "../../../../common/SecureComponent/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
-  IAM_SCOPES,
+  IAM_PAGES,
+  IAM_PAGES_PERMISSIONS,
 } from "../../../../common/SecureComponent/permissions";
-import SpeedtestIcon from "../../../../icons/SpeedtestIcon";
+import { hasPermission } from "../../../../common/SecureComponent/SecureComponent";
+import { AppState } from "../../../../store";
+import { connect } from "react-redux";
 
 interface IConfigurationOptions {
   classes: any;
+  features: string[];
 }
 
 const styles = (theme: Theme) =>
@@ -65,57 +69,70 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const ToolsList = ({ classes }: IConfigurationOptions) => {
+const ToolsList = ({ classes, features }: IConfigurationOptions) => {
   const configurationElements: IElement[] = [
     {
       icon: <LogsIcon />,
       configuration_id: "logs",
       configuration_label: "Logs",
-      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
-        IAM_SCOPES.ADMIN_CONSOLE_LOG_ACTION,
-      ]),
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_LOGS]
+      ),
     },
     {
       icon: <SearchIcon />,
       configuration_id: "audit-logs",
       configuration_label: "Audit Logs",
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_AUDITLOGS]
+      ),
     },
     {
       icon: <WatchIcon />,
       configuration_id: "watch",
       configuration_label: "Watch",
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_WATCH]
+      ),
     },
     {
       icon: <TraceIcon />,
       configuration_id: "trace",
       configuration_label: "Trace",
-      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
-        IAM_SCOPES.ADMIN_TRACE_ACTION,
-      ]),
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_TRACE]
+      ),
     },
     {
       icon: <HealIcon />,
       configuration_id: "heal",
       configuration_label: "Heal",
-      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
-        IAM_SCOPES.ADMIN_HEAL_ACTION,
-      ]),
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_HEAL]
+      ),
     },
     {
       icon: <DiagnosticsIcon />,
       configuration_id: "diagnostics",
       configuration_label: "Diagnostics",
-      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
-        IAM_SCOPES.ADMIN_HEALTH_ACTION,
-      ]),
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_DIAGNOSTICS]
+      ),
     },
     {
       icon: <SpeedtestIcon />,
       configuration_id: "speedtest",
       configuration_label: "Speedtest",
-      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
-        IAM_SCOPES.ADMIN_HEAL_ACTION,
-      ]),
+      disabled: !hasPermission(
+        CONSOLE_UI_RESOURCE,
+        IAM_PAGES_PERMISSIONS[IAM_PAGES.TOOLS_SPEEDTEST]
+      ),
     },
   ];
 
@@ -142,4 +159,10 @@ const ToolsList = ({ classes }: IConfigurationOptions) => {
   );
 };
 
-export default withStyles(styles)(ToolsList);
+const mapState = (state: AppState) => ({
+  features: state.console.session.features,
+});
+
+const connector = connect(mapState, null);
+
+export default connector(withStyles(styles)(ToolsList));

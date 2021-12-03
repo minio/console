@@ -1012,7 +1012,6 @@ const ListObjects = ({
           onClosePreview={closePreviewWindow}
         />
       )}
-
       <PageLayout>
         <Grid item xs={12}>
           <ScreenTitle
@@ -1038,6 +1037,7 @@ const ListObjects = ({
                 <SecureComponent
                   resource={bucketName}
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+                  errorProps={{ disabled: true }}
                 >
                   <BoxIconButton
                     tooltip={"Choose or create a new path"}
@@ -1051,6 +1051,12 @@ const ListObjects = ({
                   >
                     <AddFolderIcon />
                   </BoxIconButton>
+                </SecureComponent>
+                <SecureComponent
+                  resource={bucketName}
+                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+                  errorProps={{ disabled: true }}
+                >
                   <BoxIconButton
                     tooltip={"Upload file"}
                     color="primary"
@@ -1065,14 +1071,20 @@ const ListObjects = ({
                   >
                     <UploadIcon />
                   </BoxIconButton>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={(e) => uploadObject(e)}
-                    id="file-input"
-                    style={{ display: "none" }}
-                    ref={fileUpload}
-                  />
+                </SecureComponent>
+                <input
+                  type="file"
+                  multiple
+                  onChange={(e) => uploadObject(e)}
+                  id="file-input"
+                  style={{ display: "none" }}
+                  ref={fileUpload}
+                />
+                <SecureComponent
+                  resource={bucketName}
+                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+                  errorProps={{ disabled: true }}
+                >
                   <BoxIconButton
                     tooltip={"Upload folder"}
                     color="primary"
@@ -1087,48 +1099,60 @@ const ListObjects = ({
                   >
                     <UploadFolderIcon />
                   </BoxIconButton>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={(e) => uploadObject(e)}
-                    id="file-input"
-                    style={{ display: "none" }}
-                    ref={folderUpload}
-                  />
                 </SecureComponent>
-                <Badge
-                  badgeContent=" "
-                  color="secondary"
-                  variant="dot"
-                  invisible={!rewindEnabled}
-                  className={classes.badgeOverlap}
+                <input
+                  type="file"
+                  multiple
+                  onChange={(e) => uploadObject(e)}
+                  id="file-input"
+                  style={{ display: "none" }}
+                  ref={folderUpload}
+                />
+                <SecureComponent
+                  resource={bucketName}
+                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+                  errorProps={{ disabled: true }}
+                >
+                  <Badge
+                    badgeContent=" "
+                    color="secondary"
+                    variant="dot"
+                    invisible={!rewindEnabled}
+                    className={classes.badgeOverlap}
+                  >
+                    <BoxIconButton
+                      tooltip={"Rewind"}
+                      color="primary"
+                      aria-label="Rewind"
+                      onClick={() => {
+                        setRewindSelect(true);
+                      }}
+                      disabled={!isVersioned}
+                      size="large"
+                    >
+                      <HistoryIcon />
+                    </BoxIconButton>
+                  </Badge>
+                </SecureComponent>
+                <SecureComponent
+                  scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+                  resource={bucketName}
+                  errorProps={{ disabled: true }}
                 >
                   <BoxIconButton
-                    tooltip={"Rewind"}
+                    tooltip={"Refresh list"}
                     color="primary"
-                    aria-label="Rewind"
+                    aria-label="Refresh List"
                     onClick={() => {
-                      setRewindSelect(true);
+                      setLoading(true);
                     }}
-                    disabled={!isVersioned}
+                    disabled={rewindEnabled}
                     size="large"
+                    variant={"contained"}
                   >
-                    <HistoryIcon />
+                    <RefreshIcon />
                   </BoxIconButton>
-                </Badge>
-                <BoxIconButton
-                  tooltip={"Refresh list"}
-                  color="primary"
-                  aria-label="Refresh List"
-                  onClick={() => {
-                    setLoading(true);
-                  }}
-                  disabled={rewindEnabled}
-                  size="large"
-                  variant={"contained"}
-                >
-                  <RefreshIcon />
-                </BoxIconButton>
+                </SecureComponent>
               </Fragment>
             }
           />
@@ -1137,6 +1161,7 @@ const ListObjects = ({
           <SecureComponent
             scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
             resource={bucketName}
+            errorProps={{ disabled: true }}
           >
             <SearchBox
               onChange={setFilterObjects}
@@ -1157,6 +1182,7 @@ const ListObjects = ({
             <SecureComponent
               scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
               resource={bucketName}
+              errorProps={{ disabled: true }}
             >
               <Button
                 variant="contained"

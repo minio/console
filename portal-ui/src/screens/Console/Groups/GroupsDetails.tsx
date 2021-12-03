@@ -17,7 +17,7 @@ import { connect } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid, Tooltip } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import { IAMPoliciesIcon, TrashIcon, UsersIcon } from "../../../icons";
+import { IAMPoliciesIcon, TrashIcon, GroupsIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import history from "../../../history";
 import api from "../../../common/api";
@@ -194,7 +194,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           <Button
             variant="contained"
             color="primary"
-            endIcon={<UsersIcon />}
+            endIcon={<GroupsIcon />}
             size="medium"
             onClick={() => {
               setUsersOpen(true);
@@ -212,6 +212,14 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           errorProps={{ disabled: true }}
         >
           <TableWrapper
+            itemActions={[
+              {
+                type: "view",
+                onClick: (userName) => {
+                  history.push(`/users/${userName}`);
+                },
+              },
+            ]}
             columns={[{ label: "Access Key", elementKey: "" }]}
             selectedItems={[]}
             isLoading={false}
@@ -269,7 +277,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           <ScreenTitle
             icon={
               <Fragment>
-                <UsersIcon width={40} />
+                <GroupsIcon width={40} />
               </Fragment>
             }
             title={groupName}
@@ -305,6 +313,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 <SecureComponent
                   resource={CONSOLE_UI_RESOURCE}
                   scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
+                  errorProps={{ disabled: true }}
                 >
                   <Tooltip title="Delete Group">
                     <div className={classes.spacerLeft}>

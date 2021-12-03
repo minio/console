@@ -31,7 +31,8 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/acl"
+	"github.com/minio/console/pkg/auth/idp/oauth2"
+	"github.com/minio/console/pkg/auth/ldap"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
 )
@@ -111,15 +112,6 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	if err != nil {
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
-	// by default every user starts with an empty array of available val
-	// therefore we would have access only to pages that doesn't require any privilege
-	// ie: service-account page
-	var actions []string
-	// if a policy is assigned to this user we parse the val from there
-	if policy != nil {
-		actions = acl.GetActionsStringFromPolicy(policy)
-	}
-
 	currTime := time.Now().UTC()
 
 	// This actions will be global, meaning has to be attached to all resources
@@ -229,7 +221,6 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		return nil, prepareError(err)
 	}
 	sessionResp := &models.SessionResponse{
-		Pages:           acl.GetAuthorizedEndpoints(actions),
 		Features:        getListOfEnabledFeatures(),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
@@ -241,11 +232,19 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 
 // getListOfEnabledFeatures returns a list of features
 func getListOfEnabledFeatures() []string {
-	var features []string
+	features := []string{}
 	logSearchURL := getLogSearchURL()
+	oidcEnabled := oauth2.IsIDPEnabled()
+	ldapEnabled := ldap.GetLDAPEnabled()
 
 	if logSearchURL != "" {
 		features = append(features, "log-search")
+	}
+	if oidcEnabled {
+		features = append(features, "oidc-idp", "external-idp")
+	}
+	if ldapEnabled {
+		features = append(features, "ldap-idp", "external-idp")
 	}
 
 	return features

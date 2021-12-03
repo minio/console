@@ -206,6 +206,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
             resource={CONSOLE_UI_RESOURCE}
+            errorProps={{ disabled: true }}
           >
             <Button
               variant="contained"
