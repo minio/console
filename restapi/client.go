@@ -377,6 +377,16 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	return minioClient, nil
 }
 
+// pathJoin - like path.Join() but retains trailing slashSeparator of the last element
+func pathJoin(elem ...string) string {
+	if len(elem) > 0 {
+		if strings.HasSuffix(elem[len(elem)-1], "/") {
+			return path.Join(elem...) + "/"
+		}
+	}
+	return path.Join(elem...)
+}
+
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
 func newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
 	if claims == nil {
@@ -391,10 +401,7 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 		u.Path = path.Join(u.Path, bucketName)
 	}
 	if strings.TrimSpace(prefix) != "" {
-		u.Path = path.Join(u.Path, prefix)
-		if prefix[len(prefix)-1] == '/' {
-			u.Path += "/"
-		}
+		u.Path = pathJoin(u.Path, prefix)
 	}
 	s3Config := newS3Config(u.String(), claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
