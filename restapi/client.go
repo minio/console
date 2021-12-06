@@ -392,6 +392,9 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 	}
 	if strings.TrimSpace(prefix) != "" {
 		u.Path = path.Join(u.Path, prefix)
+		if prefix[len(prefix)-1] == '/' {
+			u.Path += "/"
+		}
 	}
 	s3Config := newS3Config(u.String(), claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
