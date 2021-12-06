@@ -311,7 +311,6 @@ const ListObjects = ({
   >("ASC");
   const [currentSortField, setCurrentSortField] = useState<string>("name");
   const [iniLoad, setIniLoad] = useState<boolean>(false);
-  const [fileNames, setFileNames] = useState<string[]>([]);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -467,7 +466,6 @@ const ListObjects = ({
             const records: BucketObject[] = res.objects || [];
             const folders: BucketObject[] = [];
             const files: BucketObject[] = [];
-            const newFileNames: string[] = [];
 
             records.forEach((record) => {
               // this is a folder
@@ -476,12 +474,9 @@ const ListObjects = ({
               } else {
                 // this is a file
                 files.push(record);
-                let splitPath = record.name.split("/");
-                newFileNames.push(splitPath[splitPath.length - 1]);
               }
             });
             const recordsInElement = [...folders, ...files];
-            setFileNames(newFileNames);
             setRecords(recordsInElement);
             // In case no objects were retrieved, We check if item is a file
             if (!res.objects && pathPrefix !== "") {
@@ -535,6 +530,9 @@ const ListObjects = ({
                       setFileModeEnabled(false);
                       setLoading(false);
                     } else {
+                      // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
+                      // Previously, if there was a file test1.txt and the folder test was created with the same prefix, the program
+                      // would open test1.txt instead
                       let found = false;
                       let pathPrefixChopped = pathPrefix.slice(
                         0,
@@ -1030,7 +1028,7 @@ const ListObjects = ({
           bucketName={bucketName}
           folderName={internalPaths}
           onClose={closeAddFolderModal}
-          existingFiles={fileNames}
+          existingFiles={records}
         />
       )}
       {rewindSelect && (

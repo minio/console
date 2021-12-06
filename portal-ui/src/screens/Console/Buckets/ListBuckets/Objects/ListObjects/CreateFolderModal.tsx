@@ -27,6 +27,7 @@ import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
 import history from "../../../../../../history";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../../../actions";
+import { BucketObject } from "./types";
 
 interface ICreateFolder {
   classes: any;
@@ -36,7 +37,7 @@ interface ICreateFolder {
   setFileModeEnabled: typeof setFileModeEnabled;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   onClose: () => any;
-  existingFiles: string[];
+  existingFiles: BucketObject[];
 }
 
 const styles = (theme: Theme) =>
@@ -78,14 +79,14 @@ const CreateFolderModal = ({
         ? decodedFolderName
         : `${decodedFolderName}/`;
     }
-    for (let i = 0; i < existingFiles.length; i++) {
-      if (pathUrl === existingFiles[i]) {
-        setErrorSnackMessage({
-          errorMessage: "Folder cannot have the same name as an existing file",
-          detailedError: "",
-        });
-        return;
-      }
+    const sharesName = (record: BucketObject) =>
+      record.name == folderPath + pathUrl;
+    if (existingFiles.findIndex(sharesName) != -1) {
+      setErrorSnackMessage({
+        errorMessage: "Folder cannot have the same name as an existing file",
+        detailedError: "",
+      });
+      return;
     }
     const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
       `${folderPath}${pathUrl}`
