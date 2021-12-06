@@ -661,7 +661,7 @@ const ListObjects = ({
           uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
         }
 
-        const identity = btoa(
+        const identity = encodeFileName(
           `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
         );
 
@@ -754,7 +754,7 @@ const ListObjects = ({
   };
 
   const downloadObject = (object: BucketObject | RewindObject) => {
-    const identityDownload = btoa(
+    const identityDownload = encodeFileName(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 

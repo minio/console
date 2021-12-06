@@ -377,23 +377,36 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	return minioClient, nil
 }
 
+// computeObjectURLWithoutEncode returns a MinIO url containing the object filename without encoding
+func computeObjectURLWithoutEncode(bucketName, prefix string) (string, error) {
+	endpoint := getMinIOServer()
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		return "", fmt.Errorf("the provided endpoint is invalid")
+	}
+	objectURL := fmt.Sprintf("%s:%s", u.Hostname(), u.Port())
+	if strings.TrimSpace(bucketName) != "" {
+		objectURL = path.Join(objectURL, bucketName)
+	}
+	if strings.TrimSpace(prefix) != "" {
+		objectURL = path.Join(objectURL, prefix)
+	}
+
+	objectURL = fmt.Sprintf("%s://%s", u.Scheme, objectURL)
+	return objectURL, nil
+}
+
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
 func newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
 	if claims == nil {
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
-	endpoint := getMinIOServer()
-	u, err := url.Parse(endpoint)
+	// It's very important to avoid encoding the prefix since the minio client will encode the path itself
+	objectURL, err := computeObjectURLWithoutEncode(bucketName, prefix)
 	if err != nil {
 		return nil, fmt.Errorf("the provided endpoint is invalid")
 	}
-	if strings.TrimSpace(bucketName) != "" {
-		u.Path = path.Join(u.Path, bucketName)
-	}
-	if strings.TrimSpace(prefix) != "" {
-		u.Path = path.Join(u.Path, prefix)
-	}
-	s3Config := newS3Config(u.String(), claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
+	s3Config := newS3Config(objectURL, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
