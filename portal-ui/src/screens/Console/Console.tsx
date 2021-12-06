@@ -439,6 +439,10 @@ const Console = ({
       path: "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring",
     },
     {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring",
+    },
+    {
       component: License,
       path: IAM_PAGES.LICENSE,
       forceDisplay: true,
