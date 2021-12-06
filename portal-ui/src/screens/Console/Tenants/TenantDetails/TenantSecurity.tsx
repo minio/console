@@ -29,7 +29,12 @@ import Chip from "@mui/material/Chip";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  DialogContentText,
+  Typography,
+} from "@mui/material";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
@@ -38,7 +43,7 @@ import { connect } from "react-redux";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setTenantDetailsLoad } from "../actions";
-import ConfirmationDialog from "./ConfirmationDialog";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface ITenantSecurity {
   classes: any;
@@ -311,15 +316,19 @@ const TenantSecurity = ({
   };
   return (
     <React.Fragment>
-      <ConfirmationDialog
-        open={dialogOpen}
-        title="Save and Restart"
-        description="Are you sure you want to save the changes and restart the service?"
+      <ConfirmDialog
+        title={"Save and Restart"}
+        confirmText={"Restart"}
+        cancelText="Cancel"
+        isLoading={isSending}
         onClose={() => setDialogOpen(false)}
-        cancelOnClick={() => setDialogOpen(false)}
-        okOnClick={updateTenantSecurity}
-        cancelLabel="Cancel"
-        okLabel={"Restart"}
+        isOpen={dialogOpen}
+        onConfirm={updateTenantSecurity}
+        confirmationContent={
+          <DialogContentText>
+            Are you sure you want to save the changes and restart the service?
+          </DialogContentText>
+        }
       />
       {loadingTenant ? (
         <Paper className={classes.paperContainer}>

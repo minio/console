@@ -14,23 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
-import api from "../../../../common/api";
+import React, { useState } from "react";
+import { DialogContentText } from "@mui/material";
 import { ITenant } from "./types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
+import useApi from "../../Common/Hooks/useApi";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
@@ -45,29 +38,15 @@ const DeleteTenant = ({
   closeDeleteModalAndRefresh,
   setErrorSnackMessage,
 }: IDeleteTenant) => {
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [retypeTenant, setRetypeTenant] = useState("");
 
-  useEffect(() => {
-    if (deleteLoading) {
-      api
-        .invoke(
-          "DELETE",
-          `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`
-        )
-        .then(() => {
-          setDeleteLoading(false);
-          closeDeleteModalAndRefresh(true);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setDeleteLoading(false);
-          setErrorSnackMessage(err);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteLoading]);
+  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onClose = () => closeDeleteModalAndRefresh(false);
 
-  const removeRecord = () => {
+  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+
+  const onConfirmDelete = () => {
     if (retypeTenant !== selectedTenant.name) {
       setErrorSnackMessage({
         errorMessage: "Tenant name is incorrect",
@@ -75,22 +54,25 @@ const DeleteTenant = ({
       });
       return;
     }
-    setDeleteLoading(true);
+    invokeDeleteApi(
+      "DELETE",
+      `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`
+    );
   };
 
   return (
-    <Dialog
-      open={deleteOpen}
-      onClose={() => {
-        closeDeleteModalAndRefresh(false);
+    <ConfirmDialog
+      title={`Delete Tenant`}
+      confirmText={"Delete"}
+      isOpen={deleteOpen}
+      isLoading={deleteLoading}
+      onConfirm={onConfirmDelete}
+      onClose={onClose}
+      confirmButtonProps={{
+        disabled: retypeTenant !== selectedTenant.name || deleteLoading,
       }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Delete Tenant</DialogTitle>
-      <DialogContent>
-        {deleteLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
+      confirmationContent={
+        <DialogContentText>
           To continue please type <b>{selectedTenant.name}</b> in the box.
           <Grid item xs={12}>
             <InputBoxWrapper
@@ -104,27 +86,8 @@ const DeleteTenant = ({
             />
           </Grid>
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            closeDeleteModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={deleteLoading}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={removeRecord}
-          color="secondary"
-          autoFocus
-          disabled={retypeTenant !== selectedTenant.name}
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 

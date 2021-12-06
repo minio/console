@@ -14,30 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
-import { deleteDialogStyles } from "../Common/FormComponents/common/styleLibrary";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import useApi from "../Common/Hooks/useApi";
+import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...deleteDialogStyles,
     wrapText: {
       maxWidth: "200px",
       whiteSpace: "normal",
@@ -60,95 +49,38 @@ const DeleteServiceAccount = ({
   selectedServiceAccount,
   setErrorSnackMessage,
 }: IDeleteServiceAccountProps) => {
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onClose = () => closeDeleteModalAndRefresh(false);
 
-  useEffect(() => {
-    if (deleteLoading) {
-      api
-        .invoke("DELETE", `/api/v1/service-accounts/${selectedServiceAccount}`)
-        .then(() => {
-          setDeleteLoading(false);
-          closeDeleteModalAndRefresh(true);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setDeleteLoading(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [
-    deleteLoading,
-    closeDeleteModalAndRefresh,
-    selectedServiceAccount,
-    setErrorSnackMessage,
-  ]);
+  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
-  const removeRecord = () => {
-    if (selectedServiceAccount === null) {
-      return;
-    }
+  if (!selectedServiceAccount) {
+    return null;
+  }
 
-    setDeleteLoading(true);
+  const onConfirmDelete = () => {
+    invokeDeleteApi(
+      "DELETE",
+      `/api/v1/service-accounts/${selectedServiceAccount}`
+    );
   };
 
   return (
-    <Dialog
-      open={deleteOpen}
-      classes={classes}
-      className={classes.root}
-      onClose={() => {
-        closeDeleteModalAndRefresh(false);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title" className={classes.title}>
-        <div className={classes.titleText}>Delete ServiceAccount</div>
-        <div className={classes.closeContainer}>
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={() => {
-              closeDeleteModalAndRefresh(true);
-            }}
-            disableRipple
-            size="small"
-          >
-            <CloseIcon />
-          </IconButton>
-        </div>
-      </DialogTitle>
-      <DialogContent>
-        {deleteLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
+    <ConfirmDialog
+      title={`Delete Service Account`}
+      confirmText={"Delete"}
+      isOpen={deleteOpen}
+      isLoading={deleteLoading}
+      onConfirm={onConfirmDelete}
+      onClose={onClose}
+      confirmationContent={
+        <DialogContentText>
           Are you sure you want to delete service account{" "}
           <b className={classes.wrapText}>{selectedServiceAccount}</b>?
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          type="button"
-          variant="outlined"
-          onClick={() => {
-            closeDeleteModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={deleteLoading}
-        >
-          Cancel
-        </Button>
-
-        <Button
-          type="button"
-          variant="outlined"
-          onClick={removeRecord}
-          color="secondary"
-          autoFocus
-          disabled={deleteLoading}
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 

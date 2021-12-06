@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,7 +25,8 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
+import useApi from "../../Common/Hooks/useApi";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteBucketTagModal {
   deleteOpen: boolean;
@@ -66,62 +59,45 @@ const DeleteBucketTagModal = ({
   setErrorSnackMessage,
   classes,
 }: IDeleteBucketTagModal) => {
-  const [deleteLoading, setDeleteSending] = useState<boolean>(false);
   const [tagKey, tagLabel] = selectedTag;
 
-  const removeTagProcess = () => {
-    setDeleteSending(true);
+  const onDelSuccess = () => onCloseAndUpdate(true);
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onClose = () => onCloseAndUpdate(false);
+
+  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+
+  if (!selectedTag) {
+    return null;
+  }
+
+  const onConfirmDelete = () => {
     const cleanObject = { ...currentTags };
     delete cleanObject[tagKey];
 
-    api
-      .invoke("PUT", `/api/v1/buckets/${bucketName}/tags`, {
-        tags: cleanObject,
-      })
-      .then((res: any) => {
-        setDeleteSending(false);
-        onCloseAndUpdate(true);
-      })
-      .catch((error: ErrorResponseHandler) => {
-        setErrorSnackMessage(error);
-        setDeleteSending(false);
-      });
+    invokeDeleteApi("PUT", `/api/v1/buckets/${bucketName}/tags`, {
+      tags: cleanObject,
+    });
   };
 
   return (
-    <Dialog
-      open={deleteOpen}
-      onClose={() => {
-        onCloseAndUpdate(false);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Delete Tag</DialogTitle>
-      <DialogContent>
-        {deleteLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
+    <ConfirmDialog
+      title={`Delete Tag`}
+      confirmText={"Delete"}
+      isOpen={deleteOpen}
+      isLoading={deleteLoading}
+      onConfirm={onConfirmDelete}
+      onClose={onClose}
+      confirmationContent={
+        <DialogContentText>
           Are you sure you want to delete the tag{" "}
           <b className={classes.wrapText}>
             {tagKey} : {tagLabel}
-          </b>
+          </b>{" "}
+          ?
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            onCloseAndUpdate(false);
-          }}
-          color="primary"
-          disabled={deleteLoading}
-        >
-          Cancel
-        </Button>
-        <Button onClick={removeTagProcess} color="secondary" autoFocus>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 
