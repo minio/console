@@ -391,7 +391,7 @@ const ObjectDetails = ({
   };
 
   const downloadObject = (object: IFileInfo) => {
-    const identityDownload = btoa(
+    const identityDownload = encodeFileName(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
