@@ -67,6 +67,9 @@ const DeleteTenant = withSuspense(
   React.lazy(() => import("../ListTenants/DeleteTenant"))
 );
 const PodDetails = withSuspense(React.lazy(() => import("./pods/PodDetails")));
+const TenantMonitoring = withSuspense(
+  React.lazy(() => import("./TenantMonitoring"))
+);
 
 interface ITenantDetailsProps {
   classes: any;
@@ -409,6 +412,10 @@ const TenantDetails = ({
                     component={TenantLicense}
                   />
                   <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/monitoring"
+                    component={TenantMonitoring}
+                  />
+                  <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName"
                     component={() => (
                       <Redirect
@@ -476,6 +483,15 @@ const TenantDetails = ({
               value: "license",
               component: Link,
               to: getRoutePath("license"),
+            },
+          }}
+
+          {{
+            tabConfig: {
+              label: "Monitoring",
+              value: "monitoring",
+              component: Link,
+              to: getRoutePath("monitoring"),
             },
           }}
         </VerticalTabs>
