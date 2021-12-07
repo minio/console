@@ -133,6 +133,31 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   return (
     <Fragment>
       <div className={classes.dashboardBG} />
+      {usage?.prometheusNotReady && (
+        <Grid
+          container
+          justifyContent={"center"}
+          alignContent={"center"}
+          alignItems={"center"}
+        >
+          <Grid item xs={8}>
+            <HelpBox
+              iconComponent={<PrometheusIcon />}
+              title={"We can't retrieve advanced metrics at this time"}
+              help={
+                <Fragment>
+                  MinIO Dashboard will display basic metrics as we couldn't
+                  connect to Prometheus successfully.
+                  <br /> <br />
+                  Please try again in a few minutes. If the problem persists,
+                  you can review your configuration and confirm that Prometheus
+                  server is up and running.
+                </Fragment>
+              }
+            />
+          </Grid>
+        </Grid>
+      )}
       <Grid container spacing={2}>
         <Grid item xs={12} className={classes.generalStatusTitle}>
           General Status
@@ -241,45 +266,47 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
           </TabPanel>
         </Grid>
       </Grid>
-      <Grid
-        container
-        justifyContent={"center"}
-        alignContent={"center"}
-        alignItems={"center"}
-      >
-        <Grid item xs={8}>
-          <HelpBox
-            iconComponent={<PrometheusIcon />}
-            title={"Monitoring"}
-            help={
-              <Fragment>
-                The MinIO Dashboard is displaying basic metrics only due to
-                missing the{" "}
-                <a
-                  href="https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con#configuration"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  necessary settings
-                </a>{" "}
-                for displaying extended metrics.
-                <br />
-                <br />
-                See{" "}
-                <a
-                  href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html?ref=con#minio-metrics-collect-using-prometheus"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Collect MinIO Metrics Using Prometheus
-                </a>{" "}
-                for a complete tutorial on scraping and visualizing MinIO
-                metrics with Prometheus.
-              </Fragment>
-            }
-          />
+      {!usage?.prometheusNotReady && (
+        <Grid
+          container
+          justifyContent={"center"}
+          alignContent={"center"}
+          alignItems={"center"}
+        >
+          <Grid item xs={8}>
+            <HelpBox
+              iconComponent={<PrometheusIcon />}
+              title={"Monitoring"}
+              help={
+                <Fragment>
+                  The MinIO Dashboard is displaying basic metrics only due to
+                  missing the{" "}
+                  <a
+                    href="https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con#configuration"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    necessary settings
+                  </a>{" "}
+                  for displaying extended metrics.
+                  <br />
+                  <br />
+                  See{" "}
+                  <a
+                    href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html?ref=con#minio-metrics-collect-using-prometheus"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Collect MinIO Metrics Using Prometheus
+                  </a>{" "}
+                  for a complete tutorial on scraping and visualizing MinIO
+                  metrics with Prometheus.
+                </Fragment>
+              }
+            />
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Fragment>
   );
 };

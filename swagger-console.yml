@@ -3228,6 +3228,8 @@ definitions:
         type: integer
       usage:
         type: integer
+      prometheusNotReady:
+        type: boolean
       widgets:
         type: array
         items:

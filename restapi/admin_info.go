@@ -58,11 +58,12 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 }
 
 type UsageInfo struct {
-	Buckets    int64
-	Objects    int64
-	Usage      int64
-	DisksUsage int64
-	Servers    []*models.ServerProperties
+	Buckets          int64
+	Objects          int64
+	Usage            int64
+	DisksUsage       int64
+	Servers          []*models.ServerProperties
+	EndpointNotReady bool
 }
 
 // GetAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
@@ -845,7 +846,12 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 }
 
 func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, *models.Error) {
-	if prometheusURL == "" {
+	prometheusNotReady := false
+
+	if prometheusURL != "" && !testPrometheusURL(prometheusURL) {
+		prometheusNotReady = true
+	}
+	if prometheusURL == "" || prometheusNotReady {
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
@@ -858,10 +864,11 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 			return nil, prepareError(err)
 		}
 		sessionResp := &models.AdminInfoResponse{
-			Buckets: usage.Buckets,
-			Objects: usage.Objects,
-			Usage:   usage.Usage,
-			Servers: usage.Servers,
+			Buckets:            usage.Buckets,
+			Objects:            usage.Objects,
+			Usage:              usage.Usage,
+			Servers:            usage.Servers,
+			PrometheusNotReady: prometheusNotReady,
 		}
 		return sessionResp, nil
 	}

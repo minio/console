@@ -3655,6 +3655,9 @@ func init() {
         "objects": {
           "type": "integer"
         },
+        "prometheusNotReady": {
+          "type": "boolean"
+        },
         "servers": {
           "type": "array",
           "items": {
@@ -9502,6 +9505,9 @@ func init() {
         },
         "objects": {
           "type": "integer"
+        },
+        "prometheusNotReady": {
+          "type": "boolean"
         },
         "servers": {
           "type": "array",

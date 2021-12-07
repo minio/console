@@ -111,6 +111,18 @@ const SingleRepWidget = ({
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
   const gradientID = `colorGradient-${title.split(" ").join("-")}`;
 
+  let repNumber = "";
+
+  if (result) {
+    const resultRep = parseInt(result.innerLabel || "0");
+
+    if (!isNaN(resultRep)) {
+      repNumber = representationNumber(resultRep);
+    } else {
+      repNumber = "0";
+    }
+  }
+
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
@@ -150,7 +162,7 @@ const SingleRepWidget = ({
                 fill={"#07193E"}
               >
                 {result
-                  ? representationNumber(parseInt(result.innerLabel || "0"))
+                  ? repNumber
                   : ""}
               </text>
             </AreaChart>

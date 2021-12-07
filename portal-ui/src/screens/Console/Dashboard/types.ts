@@ -20,6 +20,7 @@ export interface Usage {
   usage: number;
   buckets: number;
   objects: number;
+  prometheusNotReady?: boolean;
   widgets?: any;
   servers: ServerInfo[];
 }
