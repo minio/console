@@ -81,7 +81,6 @@ const TenantMonitoring = ({
   const [prometheusMonitoringEnabled, setPrometheusMonitoringEnabled] =
     useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
-  const [loadingTenantLogs, setLoadingTenantLogs] = useState<boolean>(false);
   const [monitoringInfo, setMonitoringInfo] =
     useState<ITenantMonitoringStruct>();
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
@@ -90,7 +89,6 @@ const TenantMonitoring = ({
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
-  const testingKeyVal: IKeyValue[] = [{ key: "", value: "" }];
 
   const onCloseEditAndRefresh = () => {
     setEdit(false);
@@ -211,112 +209,108 @@ const TenantMonitoring = ({
           </Button>
         )}
       </div>
-      {prometheusMonitoringEnabled &&
-        !loadingTenantLogs &&
-        monitoringInfo !== undefined && (
-          <Paper className={classes.paperContainer}>
-            <Grid container>
-              <Grid item xs={12}>
-                <table width={"100%"}>
-                  <tbody>
-                    {loadingTenant ? (
-                      <tr>
-                        <td className={classes.centerAlign} colSpan={4}>
-                          <CircularProgress />
-                        </td>
-                      </tr>
-                    ) : (
-                      monitoringInfo !== undefined && (
-                        <Fragment>
-                          {monitoringInfo.image != null && (
+      {prometheusMonitoringEnabled && monitoringInfo !== undefined && (
+        <Paper className={classes.paperContainer}>
+          <Grid container>
+            <Grid item xs={12}>
+              <table width={"100%"}>
+                <tbody>
+                  {loadingTenant ? (
+                    <tr>
+                      <td className={classes.centerAlign} colSpan={4}>
+                        <CircularProgress />
+                      </td>
+                    </tr>
+                  ) : (
+                    monitoringInfo !== undefined && (
+                      <Fragment>
+                        {monitoringInfo.image != null && (
+                          <tr>
+                            <td className={classes.titleCol}>Image:</td>
+                            <td>{monitoringInfo.image}</td>
+                          </tr>
+                        )}
+                        {monitoringInfo.sidecarImage != null && (
+                          <tr>
+                            <td className={classes.titleCol}>Sidecar Image:</td>
+                            <td>{monitoringInfo?.sidecarImage}</td>
+                          </tr>
+                        )}
+                        {monitoringInfo.initImage != null && (
+                          <tr>
+                            <td className={classes.titleCol}>Init Image:</td>
+                            <td>{monitoringInfo?.initImage}</td>
+                          </tr>
+                        )}
+                        {monitoringInfo.diskCapacityGB != null && (
+                          <tr>
+                            <td className={classes.titleCol}>
+                              Disk Capacity (GB):
+                            </td>
+                            <td>{monitoringInfo?.diskCapacityGB}</td>
+                          </tr>
+                        )}
+                        {monitoringInfo.serviceAccountName != null && (
+                          <tr>
+                            <td className={classes.titleCol}>
+                              Service Account Name:
+                            </td>
+                            <td>{monitoringInfo?.serviceAccountName}</td>
+                          </tr>
+                        )}
+                        {monitoringInfo.storageClassName != null && (
+                          <tr>
+                            <td className={classes.titleCol}>
+                              Storage Class Name:
+                            </td>
+                            <td>{monitoringInfo?.storageClassName}</td>
+                          </tr>
+                        )}
+                        {monitoringInfo.labels != null &&
+                          monitoringInfo.labels.length > 0 && (
                             <tr>
-                              <td className={classes.titleCol}>Image:</td>
-                              <td>{monitoringInfo.image}</td>
-                            </tr>
-                          )}
-                          {monitoringInfo.sidecarImage != null && (
-                            <tr>
+                              <h4>Labels</h4>
                               <td className={classes.titleCol}>
-                                Sidecar Image:
+                                <KeyPairView
+                                  records={monitoringInfo.labels}
+                                  recordName="Labels"
+                                />
                               </td>
-                              <td>{monitoringInfo?.sidecarImage}</td>
                             </tr>
                           )}
-                          {monitoringInfo.initImage != null && (
+                        {monitoringInfo.annotations != null &&
+                          monitoringInfo.annotations.length > 0 && (
                             <tr>
-                              <td className={classes.titleCol}>Init Image:</td>
-                              <td>{monitoringInfo?.initImage}</td>
-                            </tr>
-                          )}
-                          {monitoringInfo.diskCapacityGB != null && (
-                            <tr>
+                              <h4>Annotations</h4>
                               <td className={classes.titleCol}>
-                                Disk Capacity (GB):
+                                <KeyPairView
+                                  records={monitoringInfo.annotations}
+                                  recordName="Annotations"
+                                />
                               </td>
-                              <td>{monitoringInfo?.diskCapacityGB}</td>
                             </tr>
                           )}
-                          {monitoringInfo.serviceAccountName != null && (
+                        {monitoringInfo.nodeSelector != null &&
+                          monitoringInfo.nodeSelector.length > 0 && (
                             <tr>
+                              <h4>Node Seletor</h4>
                               <td className={classes.titleCol}>
-                                Service Account Name:
+                                <KeyPairView
+                                  records={monitoringInfo.nodeSelector}
+                                  recordName="Node Selector"
+                                />
                               </td>
-                              <td>{monitoringInfo?.serviceAccountName}</td>
                             </tr>
                           )}
-                          {monitoringInfo.storageClassName != null && (
-                            <tr>
-                              <td className={classes.titleCol}>
-                                Storage Class Name:
-                              </td>
-                              <td>{monitoringInfo?.storageClassName}</td>
-                            </tr>
-                          )}
-                          {monitoringInfo.labels != null &&
-                            monitoringInfo.labels.length > 0 && (
-                              <tr>
-                                <h4>Labels</h4>
-                                <td className={classes.titleCol}>
-                                  <KeyPairView
-                                    records={monitoringInfo.labels}
-                                    recordName="Labels"
-                                  />
-                                </td>
-                              </tr>
-                            )}
-                          {monitoringInfo.annotations != null &&
-                            monitoringInfo.annotations.length > 0 && (
-                              <tr>
-                                <h4>Annotations</h4>
-                                <td className={classes.titleCol}>
-                                  <KeyPairView
-                                    records={monitoringInfo.annotations}
-                                    recordName="Annotations"
-                                  />
-                                </td>
-                              </tr>
-                            )}
-                          {monitoringInfo.nodeSelector != null &&
-                            monitoringInfo.nodeSelector.length > 0 && (
-                              <tr>
-                                <h4>Node Seletor</h4>
-                                <td className={classes.titleCol}>
-                                  <KeyPairView
-                                    records={monitoringInfo.nodeSelector}
-                                    recordName="Node Selector"
-                                  />
-                                </td>
-                              </tr>
-                            )}
-                        </Fragment>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </Grid>
+                      </Fragment>
+                    )
+                  )}
+                </tbody>
+              </table>
             </Grid>
-          </Paper>
-        )}
+          </Grid>
+        </Paper>
+      )}
     </Fragment>
   );
 };
