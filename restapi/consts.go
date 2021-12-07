@@ -54,4 +54,5 @@ const (
 	ConsoleLogQueryURL                           = "CONSOLE_LOG_QUERY_URL"
 	ConsoleLogQueryAuthToken                     = "CONSOLE_LOG_QUERY_AUTH_TOKEN"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
+	SlashSeparator                               = "/"
 )

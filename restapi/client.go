@@ -421,8 +421,8 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 // pathJoinFinalSlash - like path.Join() but retains trailing slashSeparator of the last element
 func pathJoinFinalSlash(elem ...string) string {
 	if len(elem) > 0 {
-		if strings.HasSuffix(elem[len(elem)-1], "/") {
-			return path.Join(elem...) + "/"
+		if strings.HasSuffix(elem[len(elem)-1], SlashSeparator) {
+			return path.Join(elem...) + SlashSeparator
 		}
 	}
 	return path.Join(elem...)
