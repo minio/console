@@ -80,8 +80,8 @@ const CreateFolderModal = ({
         : `${decodedFolderName}/`;
     }
     const sharesName = (record: BucketObject) =>
-      record.name == folderPath + pathUrl;
-    if (existingFiles.findIndex(sharesName) != -1) {
+      record.name === folderPath + pathUrl;
+    if (existingFiles.findIndex(sharesName) !== -1) {
       setModalErrorSnackMessage({
         errorMessage: "Folder cannot have the same name as an existing file",
         detailedError: "",
