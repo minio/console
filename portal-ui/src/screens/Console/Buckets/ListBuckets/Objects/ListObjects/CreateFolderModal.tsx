@@ -26,6 +26,8 @@ import { connect } from "react-redux";
 import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
 import history from "../../../../../../history";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
+import { BucketObject } from "./types";
 
 interface ICreateFolder {
   classes: any;
@@ -33,7 +35,9 @@ interface ICreateFolder {
   bucketName: string;
   folderName: string;
   setFileModeEnabled: typeof setFileModeEnabled;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   onClose: () => any;
+  existingFiles: BucketObject[];
 }
 
 const styles = (theme: Theme) =>
@@ -54,7 +58,9 @@ const CreateFolderModal = ({
   bucketName,
   onClose,
   setFileModeEnabled,
+  setModalErrorSnackMessage,
   classes,
+  existingFiles,
 }: ICreateFolder) => {
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -72,6 +78,15 @@ const CreateFolderModal = ({
       folderPath = decodedFolderName.endsWith("/")
         ? decodedFolderName
         : `${decodedFolderName}/`;
+    }
+    const sharesName = (record: BucketObject) =>
+      record.name === folderPath + pathUrl;
+    if (existingFiles.findIndex(sharesName) !== -1) {
+      setModalErrorSnackMessage({
+        errorMessage: "Folder cannot have the same name as an existing file",
+        detailedError: "",
+      });
+      return;
     }
     const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
       `${folderPath}${pathUrl}`
@@ -138,6 +153,7 @@ const CreateFolderModal = ({
 
 const mapDispatchToProps = {
   setFileModeEnabled,
+  setModalErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);
