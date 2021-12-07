@@ -457,11 +457,9 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 			prefixPath = string(decodedPrefix)
 		}
 		prefixElements := strings.Split(prefixPath, "/")
-		isFolder := false
 		if len(prefixElements) > 0 {
 			if prefixElements[len(prefixElements)-1] == "" {
 				filename = prefixElements[len(prefixElements)-2]
-				isFolder = true
 			} else {
 				filename = prefixElements[len(prefixElements)-1]
 			}
@@ -469,20 +467,6 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", filename))
 		rw.Header().Set("Content-Type", "application/zip")
-
-		// indicate object size & content type
-		if !isFolder {
-			stat, err := resp.(*minio.Object).Stat()
-			if err != nil {
-				log.Println(err)
-			} else {
-				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
-
-				contentType := stat.ContentType
-
-				rw.Header().Set("Content-Type", contentType)
-			}
-		}
 
 		// Copy the stream
 		_, err := io.Copy(rw, resp)
