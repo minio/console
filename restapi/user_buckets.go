@@ -898,9 +898,6 @@ func getBucketRewindResponse(session *models.Principal, params user_api.GetBucke
 			Name:         name,
 		}
 
-		cont, _ := json.Marshal(content)
-		fmt.Println(string(cont))
-
 		rewindItems = append(rewindItems, listElement)
 	}
 
