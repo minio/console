@@ -42,6 +42,7 @@ import api from "../../../common/api";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "../../../icons/LogoutIcon";
+import { resetSession } from "../actions";
 
 const drawerWidth = 245;
 
@@ -286,6 +287,7 @@ interface IMenuProps {
   distributedSetup: boolean;
   sidebarOpen: boolean;
   setMenuOpen: typeof setMenuOpen;
+  resetSession: typeof resetSession;
 }
 
 const Menu = ({
@@ -296,13 +298,14 @@ const Menu = ({
   distributedSetup,
   sidebarOpen,
   setMenuOpen,
+  resetSession,
 }: IMenuProps) => {
   const logout = () => {
     const deleteSession = () => {
       clearSession();
       userLoggedIn(false);
       localStorage.setItem("userLoggedIn", "");
-
+      resetSession();
       history.push("/login");
     };
     api
@@ -625,6 +628,10 @@ const mapState = (state: AppState) => ({
   distributedSetup: state.system.distributedSetup,
 });
 
-const connector = connect(mapState, { userLoggedIn, setMenuOpen });
+const connector = connect(mapState, {
+  userLoggedIn,
+  setMenuOpen,
+  resetSession,
+});
 
 export default connector(withStyles(styles)(Menu));

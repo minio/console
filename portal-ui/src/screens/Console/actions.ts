@@ -17,16 +17,28 @@
 import { ISessionResponse } from "./types";
 
 export const SESSION_RESPONSE = "SESSION_RESPONSE";
+export const RESET_SESSION = "RESET_SESSION";
 
 interface SessionAction {
   type: typeof SESSION_RESPONSE;
   message: ISessionResponse;
 }
-export type SessionActionTypes = SessionAction;
+
+interface ResetSessionAction {
+  type: typeof RESET_SESSION;
+}
+
+export type SessionActionTypes = SessionAction | ResetSessionAction;
 
 export function saveSessionResponse(message: ISessionResponse) {
   return {
     type: SESSION_RESPONSE,
     message: message,
+  };
+}
+
+export function resetSession() {
+  return {
+    type: RESET_SESSION,
   };
 }
