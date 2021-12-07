@@ -278,6 +278,9 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	ctx := context.Background()
 	var prefix string
 	mClient, err := newMinioClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
@@ -329,13 +332,10 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 
 		// if we are getting a Range Request (video) handle that specially
 		isRange := params.HTTPRequest.Header.Get("Range")
-		fmt.Println("isRange", isRange)
 		if isRange != "" {
 
 			rangeFrom := -1
 			rangeTo := -1
-
-			fmt.Println(isRange)
 
 			parts := strings.Split(isRange, "=")
 			if len(parts) > 1 {
@@ -1053,11 +1053,7 @@ func getHost(authority string) (host string) {
 func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.ObjectInfo, isPreview bool, filename string, resp *minio.Object, params user_api.DownloadObjectParams, rangeTo int, rangeFrom int) bool {
 	parts := strings.Split(isRange, "=")
 	if len(parts) > 1 {
-
 		if parts[1] == "0-1" {
-			fmt.Println("parts")
-			fmt.Println(parts)
-
 			contentType := stat.ContentType
 
 			if isPreview {
@@ -1080,63 +1076,57 @@ func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.Objec
 			}
 			rw.Write(byts)
 			return true
-		} else {
-			fmt.Println("parts")
-			fmt.Println(parts)
-			fmt.Println("CUSTOM THE RANGE")
-			fmt.Println(parts)
-
-			contentType := stat.ContentType
-
-			if isPreview {
-				// In case content type was uploaded as octet-stream, we double verify content type
-				if stat.ContentType == "application/octet-stream" {
-					contentType = mimedb.TypeByExtension(filepath.Ext(filename))
-				}
-			}
-			rw.Header().Set("Content-Type", contentType)
-			isFirefox := false
-			if strings.Contains(params.HTTPRequest.UserAgent(), "Firefox") {
-				isFirefox = true
-			}
-			if !isFirefox {
-				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
-			}
-			fmt.Println(params.HTTPRequest.UserAgent())
-
-			if rangeTo > -1 {
-				rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, rangeTo, stat.Size))
-				if isFirefox {
-					rw.Header().Set("Content-Length", fmt.Sprintf("%d", rangeTo-rangeFrom+1))
-				}
-			} else {
-				rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, stat.Size-1, stat.Size))
-				if isFirefox {
-					rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size-int64(rangeFrom)))
-				}
-			}
-			rw.Header().Set("Accept-Ranges", "bytes")
-			rw.Header().Set("Access-Control-Allow-Origin", "*")
-			rw.WriteHeader(206)
-			if rangeTo > -1 {
-				byts := make([]byte, rangeTo+1)
-				t, err := resp.ReadAt(byts, int64(rangeFrom))
-				log.Println("0 read", t, "bytes")
-				if err != nil {
-					log.Println(err)
-				}
-				rw.Write(byts)
-			} else {
-				byts := make([]byte, stat.Size-int64(rangeFrom))
-				t, err := resp.ReadAt(byts, int64(rangeFrom))
-				log.Println("1 read", t, "bytes")
-				if err != nil {
-					log.Println(err)
-				}
-				rw.Write(byts)
-			}
-
 		}
+
+		contentType := stat.ContentType
+
+		if isPreview {
+			// In case content type was uploaded as octet-stream, we double verify content type
+			if stat.ContentType == "application/octet-stream" {
+				contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+			}
+		}
+		rw.Header().Set("Content-Type", contentType)
+		isFirefox := false
+		if strings.Contains(params.HTTPRequest.UserAgent(), "Firefox") {
+			isFirefox = true
+		}
+		if !isFirefox {
+			rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+		}
+
+		if rangeTo > -1 {
+			rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, rangeTo, stat.Size))
+			if isFirefox {
+				rw.Header().Set("Content-Length", fmt.Sprintf("%d", rangeTo-rangeFrom+1))
+			}
+		} else {
+			rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, stat.Size-1, stat.Size))
+			if isFirefox {
+				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size-int64(rangeFrom)))
+			}
+		}
+		rw.Header().Set("Accept-Ranges", "bytes")
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.WriteHeader(206)
+		if rangeTo > -1 {
+			byts := make([]byte, rangeTo+1)
+			t, err := resp.ReadAt(byts, int64(rangeFrom))
+			log.Println("0 read", t, "bytes")
+			if err != nil {
+				log.Println(err)
+			}
+			rw.Write(byts)
+		} else {
+			byts := make([]byte, stat.Size-int64(rangeFrom))
+			t, err := resp.ReadAt(byts, int64(rangeFrom))
+			log.Println("1 read", t, "bytes")
+			if err != nil {
+				log.Println(err)
+			}
+			rw.Write(byts)
+		}
+
 	}
 	return false
 }
