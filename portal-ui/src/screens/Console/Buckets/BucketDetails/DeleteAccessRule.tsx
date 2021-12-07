@@ -15,23 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
-import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
+import useApi from "../../Common/Hooks/useApi";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -64,46 +58,31 @@ const DeleteAccessRule = ({
   bucket,
   toDelete,
 }: IDeleteAccessRule) => {
-  const deleteProcess = () => {
-    api
-      .invoke("DELETE", `/api/v1/bucket/${bucket}/access-rules`, {
-        prefix: toDelete,
-      })
-      .then((res: any) => {})
-      .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
-      });
+  const onDelSuccess = () => onClose();
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+
+  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+
+  const onConfirmDelete = () => {
+    invokeDeleteApi("DELETE", `/api/v1/bucket/${bucket}/access-rules`, {
+      prefix: toDelete,
+    });
   };
 
   return (
-    <Dialog
-      open={modalOpen}
+    <ConfirmDialog
+      title={`Delete Access Rule`}
+      confirmText={"Delete"}
+      isOpen={modalOpen}
+      isLoading={deleteLoading}
+      onConfirm={onConfirmDelete}
       onClose={onClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Delete Access Rule</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
+      confirmationContent={
+        <DialogContentText>
           Are you sure you want to delete this access rule?
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>
-        <Button
-          onClick={() => {
-            deleteProcess();
-            onClose();
-          }}
-          color="secondary"
-          autoFocus
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 

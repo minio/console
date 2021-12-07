@@ -14,20 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
+import useApi from "../../Common/Hooks/useApi";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteReplicationProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -44,68 +37,40 @@ const DeleteReplicationRule = ({
   ruleToDelete,
   setErrorSnackMessage,
 }: IDeleteReplicationProps) => {
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onClose = () => closeDeleteModalAndRefresh(false);
 
-  const removeRecord = () => {
-    if (!deleteLoading) {
-      setDeleteLoading(true);
+  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
-      api
-        .invoke(
-          "DELETE",
-          `/api/v1/buckets/${selectedBucket}/replication/${ruleToDelete}`
-        )
-        .then(() => {
-          setDeleteLoading(false);
-          closeDeleteModalAndRefresh(true);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setDeleteLoading(false);
-          setErrorSnackMessage(err);
-        });
-    }
+  if (!selectedBucket) {
+    return null;
+  }
+
+  const onConfirmDelete = () => {
+    invokeDeleteApi(
+      "DELETE",
+      `/api/v1/buckets/${selectedBucket}/replication/${ruleToDelete}`
+    );
   };
 
   return (
-    <Dialog
-      open={deleteOpen}
-      onClose={() => {
-        closeDeleteModalAndRefresh(false);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Delete Replication Rule</DialogTitle>
-      <DialogContent>
-        {deleteLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
+    <ConfirmDialog
+      title={`Delete Replication Rule`}
+      confirmText={"Delete"}
+      isOpen={deleteOpen}
+      isLoading={deleteLoading}
+      onConfirm={onConfirmDelete}
+      onClose={onClose}
+      confirmationContent={
+        <DialogContentText>
           Are you sure you want to delete replication rule <b>{ruleToDelete}</b>
           ? <br />
           Remember, at lease one rule must be present once replication has been
           enabled
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            closeDeleteModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={deleteLoading}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={() => {
-            removeRecord();
-          }}
-          color="secondary"
-          autoFocus
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 

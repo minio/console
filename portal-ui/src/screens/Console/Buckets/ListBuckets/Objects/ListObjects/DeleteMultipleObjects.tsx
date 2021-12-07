@@ -14,20 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import api from "../../../../../../common/api";
+import useApi from "../../../../Common/Hooks/useApi";
+import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -44,12 +37,16 @@ const DeleteObject = ({
   selectedObjects,
   setErrorSnackMessage,
 }: IDeleteObjectProps) => {
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onClose = () => closeDeleteModalAndRefresh(false);
 
-  const removeRecord = () => {
-    if (deleteLoading) {
-      return;
-    }
+  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+
+  if (!selectedObjects) {
+    return null;
+  }
+  const onConfirmDelete = () => {
     let toSend = [];
     for (let i = 0; i < selectedObjects.length; i++) {
       if (selectedObjects[i].endsWith("/")) {
@@ -66,60 +63,31 @@ const DeleteObject = ({
         });
       }
     }
-    setDeleteLoading(true);
-    api
-      .invoke(
+
+    if (toSend) {
+      invokeDeleteApi(
         "POST",
         `/api/v1/buckets/${selectedBucket}/delete-objects`,
         toSend
-      )
-      .then(() => {
-        setDeleteLoading(false);
-        closeDeleteModalAndRefresh(true);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setDeleteLoading(false);
-        setErrorSnackMessage(err);
-      });
+      );
+    }
   };
 
   return (
-    <Dialog
-      open={deleteOpen}
-      onClose={() => {
-        closeDeleteModalAndRefresh(false);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Delete</DialogTitle>
-      <DialogContent>
-        {deleteLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete the selected objects?{" "}
+    <ConfirmDialog
+      title={`Delete Objects`}
+      confirmText={"Delete"}
+      isOpen={deleteOpen}
+      isLoading={deleteLoading}
+      onConfirm={onConfirmDelete}
+      onClose={onClose}
+      confirmationContent={
+        <DialogContentText>
+          Are you sure you want to delete the selected {selectedObjects.length}{" "}
+          objects?{" "}
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            closeDeleteModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={deleteLoading}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={() => {
-            removeRecord();
-          }}
-          color="secondary"
-          disabled={deleteLoading}
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 
