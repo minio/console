@@ -26,7 +26,7 @@ import { connect } from "react-redux";
 import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
 import history from "../../../../../../history";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
-import { setErrorSnackMessage } from "../../../../../../actions";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { BucketObject } from "./types";
 
 interface ICreateFolder {
@@ -35,7 +35,7 @@ interface ICreateFolder {
   bucketName: string;
   folderName: string;
   setFileModeEnabled: typeof setFileModeEnabled;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   onClose: () => any;
   existingFiles: BucketObject[];
 }
@@ -58,7 +58,7 @@ const CreateFolderModal = ({
   bucketName,
   onClose,
   setFileModeEnabled,
-  setErrorSnackMessage,
+  setModalErrorSnackMessage,
   classes,
   existingFiles,
 }: ICreateFolder) => {
@@ -82,7 +82,7 @@ const CreateFolderModal = ({
     const sharesName = (record: BucketObject) =>
       record.name == folderPath + pathUrl;
     if (existingFiles.findIndex(sharesName) != -1) {
-      setErrorSnackMessage({
+      setModalErrorSnackMessage({
         errorMessage: "Folder cannot have the same name as an existing file",
         detailedError: "",
       });
@@ -153,7 +153,7 @@ const CreateFolderModal = ({
 
 const mapDispatchToProps = {
   setFileModeEnabled,
-  setErrorSnackMessage,
+  setModalErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);
