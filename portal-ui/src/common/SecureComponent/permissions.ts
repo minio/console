@@ -122,6 +122,9 @@ export const IAM_SCOPES = {
   ADMIN_DELETE_POLICY: "admin:DeletePolicy",
   ADMIN_ATTACH_USER_OR_GROUP_POLICY: "admin:AttachUserOrGroupPolicy",
   ADMIN_HEAL_ACTION: "admin:Heal",
+  ADMIN_HEALTH_ACTION: "admin:OBDInfo",
+  ADMIN_CONSOLE_LOG_ACTION: "admin:ConsoleLog",
+  ADMIN_TRACE_ACTION: "admin:ServerTrace",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
 };

@@ -47,9 +47,6 @@ const drawerWidth = 245;
 
 const BucketsIcon = React.lazy(() => import("../../../icons/BucketsIcon"));
 const DashboardIcon = React.lazy(() => import("../../../icons/DashboardIcon"));
-const DiagnosticsIcon = React.lazy(
-  () => import("../../../icons/DiagnosticsIcon")
-);
 const GroupsIcon = React.lazy(() => import("../../../icons/GroupsIcon"));
 const IAMPoliciesIcon = React.lazy(
   () => import("../../../icons/IAMPoliciesIcon")
@@ -61,7 +58,6 @@ const UsersIcon = React.lazy(() => import("../../../icons/UsersIcon"));
 const VersionIcon = React.lazy(() => import("../../../icons/VersionIcon"));
 const LicenseIcon = React.lazy(() => import("../../../icons/LicenseIcon"));
 
-const HealIcon = React.lazy(() => import("../../../icons/HealIcon"));
 const AccountIcon = React.lazy(() => import("../../../icons/AccountIcon"));
 const DocumentationIcon = React.lazy(
   () => import("../../../icons/DocumentationIcon")
@@ -403,23 +399,6 @@ const Menu = ({
       icon: ToolsIcon,
     },
     {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/heal",
-      name: "Heal",
-      icon: HealIcon,
-      fsHidden: distributedSetup,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/health-info",
-      name: "Diagnostic",
-      icon: DiagnosticsIcon,
-    },
-    {
       group: "Operator",
       type: "item",
       component: NavLink,
@@ -438,6 +417,9 @@ const Menu = ({
   ];
 
   const allowedPages = pages.reduce((result: any, item: any) => {
+    if (item.startsWith("/tools")) {
+      result["/tools"] = true;
+    }
     result[item] = true;
     return result;
   }, {});

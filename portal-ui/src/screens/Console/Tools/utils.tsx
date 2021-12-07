@@ -35,6 +35,9 @@ export const configurationElements: IElement[] = [
     icon: <LogsIcon />,
     configuration_id: "logs",
     configuration_label: "Logs",
+    disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+      IAM_SCOPES.ADMIN_CONSOLE_LOG_ACTION,
+    ]),
   },
   {
     icon: <SearchIcon />,
@@ -50,6 +53,9 @@ export const configurationElements: IElement[] = [
     icon: <TraceIcon />,
     configuration_id: "trace",
     configuration_label: "trace",
+    disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+      IAM_SCOPES.ADMIN_TRACE_ACTION,
+    ]),
   },
   {
     icon: <HealIcon />,
@@ -63,6 +69,9 @@ export const configurationElements: IElement[] = [
     icon: <DiagnosticsIcon />,
     configuration_id: "diagnostics",
     configuration_label: "Diagnostics",
+    disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+      IAM_SCOPES.ADMIN_HEALTH_ACTION,
+    ]),
   },
   {
     icon: <SpeedtestIcon />,

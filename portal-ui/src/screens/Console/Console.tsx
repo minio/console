@@ -270,6 +270,9 @@ const Console = ({
   const allowedPages = !session
     ? []
     : session.pages.reduce((result: any, item: any, index: any) => {
+        if (item.startsWith("/tools")) {
+          result["/tools"] = true;
+        }
         result[item] = true;
         return result;
       }, {});
