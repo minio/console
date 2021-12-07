@@ -41,7 +41,6 @@ import {
   CreateIcon,
   DashboardIcon,
   DeleteIcon,
-  DiagnosticIcon,
   DiagnosticsIcon,
   DocumentationIcon,
   DownloadIcon,
@@ -224,10 +223,6 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         <Grid item xs={3} sm={2} md={1}>
           <DeleteIcon /> <br />
           DeleteIcon
-        </Grid>
-        <Grid item xs={3} sm={2} md={1}>
-          <DiagnosticIcon /> <br />
-          DiagnosticIcon
         </Grid>
         <Grid item xs={3} sm={2} md={1}>
           <DiagnosticsIcon /> <br />

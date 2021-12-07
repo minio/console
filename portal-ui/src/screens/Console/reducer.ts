@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { ISessionResponse } from "./types";
-import { SessionActionTypes, SESSION_RESPONSE } from "./actions";
+import { RESET_SESSION, SESSION_RESPONSE, SessionActionTypes } from "./actions";
 
 export interface ConsoleState {
   session: ISessionResponse;
@@ -41,6 +41,11 @@ export function consoleReducer(
       return {
         ...state,
         session: action.message,
+      };
+    case RESET_SESSION:
+      return {
+        ...state,
+        session: initialState.session,
       };
     default:
       return state;

@@ -34,7 +34,6 @@ export { default as CopyIcon } from "./CopyIcon";
 export { default as CreateIcon } from "./CreateIcon";
 export { default as DashboardIcon } from "./DashboardIcon";
 export { default as DeleteIcon } from "./DeleteIcon";
-export { default as DiagnosticIcon } from "./DiagnosticIcon";
 export { default as DiagnosticsIcon } from "./DiagnosticsIcon";
 export { default as DocumentationIcon } from "./DocumentationIcon";
 export { default as DownloadIcon } from "./DownloadIcon";

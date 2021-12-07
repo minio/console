@@ -20,7 +20,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 
-import { configurationElements } from "../utils";
 import {
   actionsTray,
   containerForHeader,
@@ -29,6 +28,21 @@ import {
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import SettingsCard from "../../Common/SettingsCard/SettingsCard";
 import PageLayout from "../../Common/Layout/PageLayout";
+import { IElement } from "../types";
+import {
+  DiagnosticsIcon,
+  HealIcon,
+  LogsIcon,
+  SearchIcon,
+  TraceIcon,
+  WatchIcon,
+} from "../../../../icons";
+import { hasPermission } from "../../../../common/SecureComponent/SecureComponent";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
+import SpeedtestIcon from "../../../../icons/SpeedtestIcon";
 
 interface IConfigurationOptions {
   classes: any;
@@ -76,6 +90,59 @@ const styles = (theme: Theme) =>
   });
 
 const ToolsList = ({ classes }: IConfigurationOptions) => {
+  const configurationElements: IElement[] = [
+    {
+      icon: <LogsIcon />,
+      configuration_id: "logs",
+      configuration_label: "Logs",
+      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+        IAM_SCOPES.ADMIN_CONSOLE_LOG_ACTION,
+      ]),
+    },
+    {
+      icon: <SearchIcon />,
+      configuration_id: "audit-logs",
+      configuration_label: "Audit Logs",
+    },
+    {
+      icon: <WatchIcon />,
+      configuration_id: "watch",
+      configuration_label: "Watch",
+    },
+    {
+      icon: <TraceIcon />,
+      configuration_id: "trace",
+      configuration_label: "trace",
+      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+        IAM_SCOPES.ADMIN_TRACE_ACTION,
+      ]),
+    },
+    {
+      icon: <HealIcon />,
+      configuration_id: "heal",
+      configuration_label: "heal",
+      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+        IAM_SCOPES.ADMIN_HEAL_ACTION,
+      ]),
+    },
+    {
+      icon: <DiagnosticsIcon />,
+      configuration_id: "diagnostics",
+      configuration_label: "Diagnostics",
+      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+        IAM_SCOPES.ADMIN_HEALTH_ACTION,
+      ]),
+    },
+    {
+      icon: <SpeedtestIcon />,
+      configuration_id: "speedtest",
+      configuration_label: "Speedtest",
+      disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
+        IAM_SCOPES.ADMIN_HEAL_ACTION,
+      ]),
+    },
+  ];
+
   return (
     <Fragment>
       <PageHeader label={"Tools"} />

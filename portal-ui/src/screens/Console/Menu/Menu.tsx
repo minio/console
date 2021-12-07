@@ -42,14 +42,12 @@ import api from "../../../common/api";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "../../../icons/LogoutIcon";
+import { resetSession } from "../actions";
 
 const drawerWidth = 245;
 
 const BucketsIcon = React.lazy(() => import("../../../icons/BucketsIcon"));
 const DashboardIcon = React.lazy(() => import("../../../icons/DashboardIcon"));
-const DiagnosticsIcon = React.lazy(
-  () => import("../../../icons/DiagnosticsIcon")
-);
 const GroupsIcon = React.lazy(() => import("../../../icons/GroupsIcon"));
 const IAMPoliciesIcon = React.lazy(
   () => import("../../../icons/IAMPoliciesIcon")
@@ -61,7 +59,6 @@ const UsersIcon = React.lazy(() => import("../../../icons/UsersIcon"));
 const VersionIcon = React.lazy(() => import("../../../icons/VersionIcon"));
 const LicenseIcon = React.lazy(() => import("../../../icons/LicenseIcon"));
 
-const HealIcon = React.lazy(() => import("../../../icons/HealIcon"));
 const AccountIcon = React.lazy(() => import("../../../icons/AccountIcon"));
 const DocumentationIcon = React.lazy(
   () => import("../../../icons/DocumentationIcon")
@@ -290,6 +287,7 @@ interface IMenuProps {
   distributedSetup: boolean;
   sidebarOpen: boolean;
   setMenuOpen: typeof setMenuOpen;
+  resetSession: typeof resetSession;
 }
 
 const Menu = ({
@@ -300,13 +298,14 @@ const Menu = ({
   distributedSetup,
   sidebarOpen,
   setMenuOpen,
+  resetSession,
 }: IMenuProps) => {
   const logout = () => {
     const deleteSession = () => {
       clearSession();
       userLoggedIn(false);
       localStorage.setItem("userLoggedIn", "");
-
+      resetSession();
       history.push("/login");
     };
     api
@@ -403,23 +402,6 @@ const Menu = ({
       icon: ToolsIcon,
     },
     {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/heal",
-      name: "Heal",
-      icon: HealIcon,
-      fsHidden: distributedSetup,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/health-info",
-      name: "Diagnostic",
-      icon: DiagnosticsIcon,
-    },
-    {
       group: "Operator",
       type: "item",
       component: NavLink,
@@ -438,6 +420,9 @@ const Menu = ({
   ];
 
   const allowedPages = pages.reduce((result: any, item: any) => {
+    if (item.startsWith("/tools")) {
+      result["/tools"] = true;
+    }
     result[item] = true;
     return result;
   }, {});
@@ -643,6 +628,10 @@ const mapState = (state: AppState) => ({
   distributedSetup: state.system.distributedSetup,
 });
 
-const connector = connect(mapState, { userLoggedIn, setMenuOpen });
+const connector = connect(mapState, {
+  userLoggedIn,
+  setMenuOpen,
+  resetSession,
+});
 
 export default connector(withStyles(styles)(Menu));
