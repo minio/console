@@ -89,22 +89,27 @@ const EditConfiguration = ({
     useState<boolean>(false);
   //Effects
   useEffect(() => {
-    const configId = get(selectedConfiguration, "configuration_id", false);
+    if (loadingConfig) {
+      const configId = get(selectedConfiguration, "configuration_id", false);
 
-    if (configId) {
-      api
-        .invoke("GET", `/api/v1/configs/${configId}`)
-        .then((res) => {
-          const keyVals = get(res, "key_values", []);
-          setConfigValues(keyVals);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoadingConfig(false);
-          setErrorSnackMessage(err);
-        });
+      if (configId) {
+        api
+          .invoke("GET", `/api/v1/configs/${configId}`)
+          .then((res) => {
+            const keyVals = get(res, "key_values", []);
+            setConfigValues(keyVals);
+            setLoadingConfig(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setLoadingConfig(false);
+            setErrorSnackMessage(err);
+          });
+
+        return;
+      }
+      setLoadingConfig(false);
     }
-    setLoadingConfig(false);
-  }, [selectedConfiguration, setErrorSnackMessage]);
+  }, [loadingConfig, selectedConfiguration, setErrorSnackMessage]);
 
   useEffect(() => {
     if (saving) {
@@ -153,6 +158,9 @@ const EditConfiguration = ({
   const continueReset = (restart: boolean) => {
     setResetConfigurationOpen(false);
     serverNeedsRestart(restart);
+    if (restart) {
+      setLoadingConfig(true);
+    }
   };
 
   return (

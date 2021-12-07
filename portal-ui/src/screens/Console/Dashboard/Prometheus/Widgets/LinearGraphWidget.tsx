@@ -154,7 +154,12 @@ const LinearGraphWidget = ({
               if (key === "name") {
                 continue;
               }
-              const val = parseInt(dp[key]);
+              let val = parseInt(dp[key]);
+
+              if (isNaN(val)) {
+                val = 0;
+              }
+
               if (maxVal < val) {
                 maxVal = val;
               }

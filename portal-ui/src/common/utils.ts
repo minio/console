@@ -472,7 +472,12 @@ export const getTimeFromTimestamp = (
   timestamp: string,
   fullDate: boolean = false
 ) => {
-  const dateObject = new Date(parseInt(timestamp) * 1000);
+  const timestampToInt = parseInt(timestamp);
+
+  if (isNaN(timestampToInt)) {
+    return "";
+  }
+  const dateObject = new Date(timestampToInt * 1000);
 
   if (fullDate) {
     return `${dateObject.getFullYear()}-${String(

@@ -42,6 +42,9 @@ type AdminInfoResponse struct {
 	// objects
 	Objects int64 `json:"objects,omitempty"`
 
+	// prometheus not ready
+	PrometheusNotReady bool `json:"prometheusNotReady,omitempty"`
+
 	// servers
 	Servers []*ServerProperties `json:"servers"`
 
