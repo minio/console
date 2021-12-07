@@ -122,6 +122,7 @@ const PreviewFile = ({
         <img
           style={{ width: "100%", height: "auto" }}
           src={path}
+          alt={"preview"}
           onLoad={iframeLoaded}
         />
       )}
