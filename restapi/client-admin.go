@@ -84,6 +84,7 @@ type MinioAdmin interface {
 	getConfigKV(ctx context.Context, key string) ([]byte, error)
 	helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error)
 	setConfigKV(ctx context.Context, kv string) (restart bool, err error)
+	delConfigKV(ctx context.Context, kv string) (err error)
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
@@ -231,6 +232,11 @@ func (ac AdminClient) helpConfigKV(ctx context.Context, subSys, key string, envO
 // implements madmin.SetConfigKV()
 func (ac AdminClient) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
 	return ac.Client.SetConfigKV(ctx, kv)
+}
+
+// implements madmin.DelConfigKV()
+func (ac AdminClient) delConfigKV(ctx context.Context, kv string) (err error) {
+	return ac.Client.DelConfigKV(ctx, kv)
 }
 
 // implements madmin.ServiceRestart()

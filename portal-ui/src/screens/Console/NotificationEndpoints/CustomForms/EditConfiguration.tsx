@@ -38,6 +38,7 @@ import {
   IElementValue,
 } from "../../Configurations/types";
 import { ErrorResponseHandler } from "../../../../common/types";
+import ResetConfigurationModal from "./ResetConfigurationModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,6 +85,8 @@ const EditConfiguration = ({
   const [saving, setSaving] = useState<boolean>(false);
   const [loadingConfig, setLoadingConfig] = useState<boolean>(true);
   const [configValues, setConfigValues] = useState<IElementValue[]>([]);
+  const [resetConfigurationOpen, setResetConfigurationOpen] =
+    useState<boolean>(false);
   //Effects
   useEffect(() => {
     const configId = get(selectedConfiguration, "configuration_id", false);
@@ -147,8 +150,21 @@ const EditConfiguration = ({
     [setValueObj]
   );
 
+  const continueReset = (restart: boolean) => {
+    setResetConfigurationOpen(false);
+    serverNeedsRestart(restart);
+  };
+
   return (
     <Fragment>
+      {resetConfigurationOpen && (
+        <ResetConfigurationModal
+          configurationName={selectedConfiguration.configuration_id}
+          closeResetModalAndRefresh={continueReset}
+          resetOpen={resetConfigurationOpen}
+        />
+      )}
+
       <form noValidate onSubmit={submitForm} className={className}>
         <Grid item xs={12} className={classes.settingsFormContainer}>
           {loadingConfig && (
@@ -165,6 +181,17 @@ const EditConfiguration = ({
           />
         </Grid>
         <Grid item xs={12} className={classes.settingsButtonContainer}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            onClick={() => {
+              setResetConfigurationOpen(true);
+            }}
+          >
+            Restore Defaults
+          </Button>
+          &nbsp; &nbsp;
           <Button
             type="submit"
             variant="contained"

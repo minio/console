@@ -311,6 +311,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIRemoveUserHandler: admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemoveUser has not yet been implemented")
 		}),
+		AdminAPIResetConfigHandler: admin_api.ResetConfigHandlerFunc(func(params admin_api.ResetConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ResetConfig has not yet been implemented")
+		}),
 		AdminAPIRestartServiceHandler: admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RestartService has not yet been implemented")
 		}),
@@ -581,6 +584,8 @@ type ConsoleAPI struct {
 	AdminAPIRemovePolicyHandler admin_api.RemovePolicyHandler
 	// AdminAPIRemoveUserHandler sets the operation handler for the remove user operation
 	AdminAPIRemoveUserHandler admin_api.RemoveUserHandler
+	// AdminAPIResetConfigHandler sets the operation handler for the reset config operation
+	AdminAPIResetConfigHandler admin_api.ResetConfigHandler
 	// AdminAPIRestartServiceHandler sets the operation handler for the restart service operation
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
@@ -947,6 +952,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIRemoveUserHandler == nil {
 		unregistered = append(unregistered, "admin_api.RemoveUserHandler")
+	}
+	if o.AdminAPIResetConfigHandler == nil {
+		unregistered = append(unregistered, "admin_api.ResetConfigHandler")
 	}
 	if o.AdminAPIRestartServiceHandler == nil {
 		unregistered = append(unregistered, "admin_api.RestartServiceHandler")
@@ -1429,6 +1437,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/user"] = admin_api.NewRemoveUser(o.context, o.AdminAPIRemoveUserHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/configs/{name}/reset"] = admin_api.NewResetConfig(o.context, o.AdminAPIResetConfigHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

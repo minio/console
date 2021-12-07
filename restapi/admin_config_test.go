@@ -50,6 +50,7 @@ const (
 var minioHelpConfigKVMock func(subSys, key string, envOnly bool) (madmin.Help, error)
 var minioGetConfigKVMock func(key string) ([]byte, error)
 var minioSetConfigKVMock func(kv string) (restart bool, err error)
+var minioDelConfigKVMock func(name string) (err error)
 
 // mock function helpConfigKV()
 func (ac adminClientMock) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
@@ -64,6 +65,10 @@ func (ac adminClientMock) getConfigKV(ctx context.Context, name string) ([]byte,
 // mock function setConfigKV()
 func (ac adminClientMock) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
 	return minioSetConfigKVMock(kv)
+}
+
+func (ac adminClientMock) delConfigKV(ctx context.Context, name string) (err error) {
+	return minioDelConfigKVMock(name)
 }
 
 func TestListConfig(t *testing.T) {
@@ -163,6 +168,34 @@ func TestSetConfig(t *testing.T) {
 	}
 	assert.Equal(restart, true)
 
+}
+
+func TestDelConfig(t *testing.T) {
+	assert := assert.New(t)
+	adminClient := adminClientMock{}
+	function := "resetConfig()"
+	// mock function response from setConfig()
+	minioDelConfigKVMock = func(name string) (err error) {
+		return nil
+	}
+	configName := "region"
+
+	ctx := context.Background()
+	// Test-1 : resetConfig() resets a config with the config name
+	err := resetConfig(ctx, adminClient, &configName)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-2 : resetConfig() returns error, handle properly
+	minioDelConfigKVMock = func(name string) (err error) {
+		return errors.New("error")
+	}
+
+	err = resetConfig(ctx, adminClient, &configName)
+	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
 }
 
 func Test_buildConfig(t *testing.T) {

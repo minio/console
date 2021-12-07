@@ -55,6 +55,15 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewSetConfigOK().WithPayload(resp)
 	})
+	// Reset Configuration
+	api.AdminAPIResetConfigHandler = admin_api.ResetConfigHandlerFunc(func(params admin_api.ResetConfigParams, session *models.Principal) middleware.Responder {
+		resp, err := resetConfigResponse(session, params.Name)
+		if err != nil {
+			return admin_api.NewResetConfigDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewResetConfigOK().WithPayload(resp)
+	})
+
 }
 
 // listConfig gets all configurations' names and their descriptions
@@ -197,4 +206,30 @@ func setConfigResponse(session *models.Principal, name string, configRequest *mo
 		return nil, prepareError(err)
 	}
 	return &models.SetConfigResponse{Restart: needsRestart}, nil
+}
+
+func resetConfig(ctx context.Context, client MinioAdmin, configName *string) (err error) {
+	err = client.delConfigKV(ctx, *configName)
+	return err
+}
+
+// resetConfigResponse implements resetConfig() to be used by handler
+func resetConfigResponse(session *models.Principal, configName string) (*models.SetConfigResponse, *models.Error) {
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a MinIO Admin Client interface implementation
+	// defining the client to be used
+	adminClient := AdminClient{Client: mAdmin}
+
+	ctx := context.Background()
+
+	err = resetConfig(ctx, adminClient, &configName)
+
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	return &models.SetConfigResponse{Restart: true}, nil
 }

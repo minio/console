@@ -1932,6 +1932,27 @@ paths:
       tags:
         - AdminAPI
 
+  /configs/{name}/reset:
+    get:
+      summary: Configuration reset
+      operationId: ResetConfig
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/setConfigResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /service/restart:
     post:
       summary: Restart Service
@@ -2643,7 +2664,7 @@ definitions:
       name:
         type: array
         items:
-         type: string
+          type: string
       entityType:
         $ref: "#/definitions/policyEntity"
       entityName:
@@ -3892,7 +3913,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/iamPolicyStatement"
-
 
   iamPolicyStatement:
     type: object
