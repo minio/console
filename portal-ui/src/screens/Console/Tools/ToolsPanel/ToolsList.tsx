@@ -112,7 +112,7 @@ const ToolsList = ({ classes }: IConfigurationOptions) => {
     {
       icon: <TraceIcon />,
       configuration_id: "trace",
-      configuration_label: "trace",
+      configuration_label: "Trace",
       disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
         IAM_SCOPES.ADMIN_TRACE_ACTION,
       ]),
@@ -120,7 +120,7 @@ const ToolsList = ({ classes }: IConfigurationOptions) => {
     {
       icon: <HealIcon />,
       configuration_id: "heal",
-      configuration_label: "heal",
+      configuration_label: "Heal",
       disabled: !hasPermission(CONSOLE_UI_RESOURCE, [
         IAM_SCOPES.ADMIN_HEAL_ACTION,
       ]),
