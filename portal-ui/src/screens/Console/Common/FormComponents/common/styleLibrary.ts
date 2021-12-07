@@ -308,6 +308,7 @@ export const predefinedList = {
     textAlign: "left" as const,
     marginRight: 10,
     flexGrow: 0,
+    fontWeight: "normal" as const,
   },
   predefinedList: {
     backgroundColor: "#fbfafa",
@@ -1069,11 +1070,6 @@ export const serviceAccountStyles: any = {
   buttonSpacer: {
     marginRight: "1rem",
   },
-  switchContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
 };
 
 export const tableStyles: any = {
@@ -1136,6 +1132,7 @@ export const fileInputStyles = {
   },
   textBoxContainer: {
     border: "1px solid #EAEAEA",
+    borderRadius: 3,
     padding: 5,
     "& input": {
       width: "100%",

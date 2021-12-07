@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import PageHeader from "../Common/PageHeader/PageHeader";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -40,6 +39,7 @@ import {
 import SecureComponent, {
   hasPermission,
 } from "../../../common/SecureComponent/SecureComponent";
+import GroupDetailsHeader from "./GroupDetailsHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -96,10 +96,6 @@ interface IGroupDetailsProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-type DetailsHeaderProps = {
-  classes: any;
-};
-
 type GroupInfo = {
   members?: any[];
   name?: string;
@@ -114,21 +110,6 @@ export const formatPolicy = (policy: string = ""): string[] => {
 
 export const getPoliciesAsString = (policies: string[]): string => {
   return policies.join(", ");
-};
-
-const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
-  return (
-    <PageHeader
-      label={
-        <Fragment>
-          <Link to={"/groups"} className={classes.breadcrumLink}>
-            Groups
-          </Link>
-        </Fragment>
-      }
-      actions={<React.Fragment />}
-    />
-  );
 };
 
 const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
@@ -203,7 +184,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           onChange={(searchText) => {
             setMemberFilter(searchText);
           }}
-          classes={classes}
+          overrideClass={classes.searchField}
         />
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
@@ -280,7 +261,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   );
   return (
     <React.Fragment>
-      <GroupDetailsHeader classes={classes} />
+      <GroupDetailsHeader />
       <BackLink to={"/groups"} label={"Return to Groups"} />
 
       <PageLayout className={classes.pageContainer}>
@@ -377,7 +358,6 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           onSaveClick={() => {}}
           title={memberActionText}
           groupStatus={groupEnabled}
-          classes={classes}
           preSelectedUsers={members}
           open={usersOpen}
           onClose={() => {

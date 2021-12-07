@@ -146,7 +146,6 @@ const AddUserServiceAccount = ({
           <Grid item xs={12}>
             <Grid item xs={12}>
               <FormSwitchWrapper
-                classes={classes}
                 value="locking"
                 id="locking"
                 name="locking"
@@ -189,7 +188,6 @@ const AddUserServiceAccount = ({
                 value="locking"
                 id="locking"
                 name="locking"
-                classes={classes}
                 checked={isRestrictedByPolicy}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setIsRestrictedByPolicy(event.target.checked);

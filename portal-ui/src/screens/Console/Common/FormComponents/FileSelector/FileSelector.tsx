@@ -23,7 +23,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import {
+  fieldBasic,
+  fileInputStyles,
+  tooltipHelper,
+} from "../common/styleLibrary";
 import { fileProcess } from "./utils";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import ErrorBlock from "../../../../shared/ErrorBlock";
@@ -42,8 +46,6 @@ interface InputBoxProps {
   value?: string;
 }
 
-const componentHeight = 48;
-
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
@@ -54,6 +56,22 @@ const styles = (theme: Theme) =>
       display: "flex",
       flexWrap: "nowrap",
       height: componentHeight,
+    errorState: {
+      color: "#b53b4b",
+      fontSize: 14,
+      position: "absolute",
+      top: 7,
+      right: 7,
+    },
+    errorText: {
+      margin: "0",
+      fontSize: "0.75rem",
+      marginTop: 3,
+      textAlign: "left",
+      fontFamily: "Lato,sans-serif",
+      fontWeight: 400,
+      lineHeight: "1.66",
+      color: "#dc1f2e",
     },
     valueString: {
       maxWidth: 350,
@@ -62,17 +80,10 @@ const styles = (theme: Theme) =>
       textOverflow: "ellipsis",
       marginTop: 2,
     },
-    fileReselect: {
-      display: "flex",
-      alignItems: "center",
-      height: componentHeight,
-    },
-    fieldBottom: {
-      borderBottom: "#9c9c9c 1px solid",
-    },
     fileInputField: {
       margin: "13px 0",
     },
+    ...fileInputStyles,
   });
 
 const FileSelector = ({

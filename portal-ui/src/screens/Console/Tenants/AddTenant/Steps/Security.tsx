@@ -251,7 +251,6 @@ const Security = ({
                       >
                         <Grid item xs={10} className={classes.fileItem}>
                           <FileSelector
-                            classes={classes}
                             onChange={(encodedValue, fileName) => {
                               addFileToKeyPair(
                                 keyPair.id,
@@ -267,7 +266,6 @@ const Security = ({
                             value={keyPair.cert}
                           />
                           <FileSelector
-                            classes={classes}
                             onChange={(encodedValue, fileName) => {
                               addFileToKeyPair(
                                 keyPair.id,
@@ -323,7 +321,6 @@ const Security = ({
                       >
                         <Grid item xs={6}>
                           <FileSelector
-                            classes={classes}
                             onChange={(encodedValue, fileName) => {
                               addFileToCaCertificates(
                                 keyPair.id,

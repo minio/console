@@ -246,7 +246,6 @@ const Affinity = ({
           </div>
           <Grid item className={classes.radioField}>
             <RadioGroupSelector
-              classes={classes}
               currentSelection={podAffinity}
               id="affinity-options"
               name="affinity-options"

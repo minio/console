@@ -365,7 +365,6 @@ const IdentityProvider = ({
               id={`ad-userdn-${index.toString()}`}
               label={""}
               placeholder=""
-              classes={classes}
               name={`ad-userdn-${index.toString()}`}
               value={ADUserDNs[index]}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -536,7 +535,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="AD_URL"
               name="AD_URL"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADURL", e.target.value);
                 cleanValidation("AD_URL");
@@ -553,7 +551,6 @@ const IdentityProvider = ({
               value="ad_skipTLS"
               id="ad_skipTLS"
               name="ad_skipTLS"
-              classes={classes}
               checked={ADSkipTLS}
               onChange={(e) => {
                 const targetD = e.target;
@@ -568,7 +565,6 @@ const IdentityProvider = ({
               value="ad_serverInsecure"
               id="ad_serverInsecure"
               name="ad_serverInsecure"
-              classes={classes}
               checked={ADServerInsecure}
               onChange={(e) => {
                 const targetD = e.target;
@@ -596,7 +592,6 @@ const IdentityProvider = ({
               value="ad_serverStartTLS"
               id="ad_serverStartTLS"
               name="ad_serverStartTLS"
-              classes={classes}
               checked={ADServerStartTLS}
               onChange={(e) => {
                 const targetD = e.target;
@@ -610,7 +605,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_userNameFormat"
               name="ad_userNameFormat"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserNameFormat", e.target.value);
               }}
@@ -623,7 +617,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_userNameFilter"
               name="ad_userNameFilter"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserNameSearchFilter", e.target.value);
               }}
@@ -636,7 +629,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_groupSearchBaseDN"
               name="ad_groupSearchBaseDN"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupSearchBaseDN", e.target.value);
               }}
@@ -649,7 +641,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_groupSearchFilter"
               name="ad_groupSearchFilter"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupSearchFilter", e.target.value);
               }}
@@ -662,7 +653,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_groupNameAttribute"
               name="ad_groupNameAttribute"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupNameAttribute", e.target.value);
               }}
@@ -675,7 +665,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_lookupBindDN"
               name="ad_lookupBindDN"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADLookupBindDN", e.target.value);
               }}
@@ -688,7 +677,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_lookupBindPassword"
               name="ad_lookupBindPassword"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADLookupBindPassword", e.target.value);
               }}
@@ -701,7 +689,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_userDNSearchBaseDN"
               name="ad_userDNSearchBaseDN"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserDNSearchBaseDN", e.target.value);
               }}
@@ -714,7 +701,6 @@ const IdentityProvider = ({
             <InputBoxWrapper
               id="ad_userDNSearchFilter"
               name="ad_userDNSearchFilter"
-              classes={classes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADUserDNSearchFilter", e.target.value);
               }}

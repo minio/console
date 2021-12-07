@@ -186,8 +186,8 @@ const ListBuckets = ({
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           <SearchBox
             onChange={setFilterBuckets}
-            classes={classes}
             placeholder="Search Buckets"
+            overrideClass={classes.searchField}
           />
 
           <Grid

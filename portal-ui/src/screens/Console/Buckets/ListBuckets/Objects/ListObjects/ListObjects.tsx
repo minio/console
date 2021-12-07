@@ -135,7 +135,12 @@ const styles = (theme: Theme) =>
         right: 10,
       },
     },
-
+    screenTitle: {
+      borderBottom: 0,
+      paddingTop: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+    },
     ...tableStyles,
     ...actionsTray,
     ...searchField,
@@ -1011,6 +1016,7 @@ const ListObjects = ({
       <PageLayout>
         <Grid item xs={12}>
           <ScreenTitle
+            className={classes.screenTitle}
             icon={
               <Fragment>
                 <FolderIcon width={40} />
@@ -1134,8 +1140,8 @@ const ListObjects = ({
           >
             <SearchBox
               onChange={setFilterObjects}
-              classes={classes}
               placeholder="Search Objects"
+              overrideClass={classes.searchField}
             />
           </SecureComponent>
           <div>

@@ -56,6 +56,12 @@ const styles = (theme: Theme) =>
       position: "relative",
       marginTop: 15,
     },
+    labelContainer: {
+      display: "flex",
+    },
+    inputBoxSpacer: {
+      marginBottom: 7,
+    }
   });
 
 const CSVMultiSelector = ({
@@ -140,21 +146,24 @@ const CSVMultiSelector = ({
 
   const inputs = currentElements.map((element, index) => {
     return (
-      <InputBoxWrapper
-        id={`${name}-${index.toString()}`}
-        label={""}
-        classes={classes}
-        name={`${name}-${index.toString()}`}
-        value={currentElements[index]}
-        onChange={onChangeElement}
-        index={index}
-        key={`csv-${name}-${index.toString()}`}
-        placeholder={commonPlaceholder}
-        overlayIcon={index === currentElements.length - 1 ? <AddIcon /> : null}
-        overlayAction={() => {
-          addEmptyLine(currentElements);
-        }}
-      />
+      <div className={classes.inputBoxSpacer}>
+        <InputBoxWrapper
+          id={`${name}-${index.toString()}`}
+          label={""}
+          name={`${name}-${index.toString()}`}
+          value={currentElements[index]}
+          onChange={onChangeElement}
+          index={index}
+          key={`csv-${name}-${index.toString()}`}
+          placeholder={commonPlaceholder}
+          overlayIcon={
+            index === currentElements.length - 1 ? <AddIcon /> : null
+          }
+          overlayAction={() => {
+            addEmptyLine(currentElements);
+          }}
+        />
+      </div>
     );
   });
 

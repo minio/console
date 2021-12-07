@@ -67,11 +67,7 @@ const AddGroupMember = ({
   return (
     <ModalWrapper modalOpen={open} onClose={onClose} title={title}>
       <div className={classes.formFieldRow}>
-        <PredefinedList
-          classes={classes}
-          label={`Selected Group`}
-          content={selectedGroup}
-        />
+        <PredefinedList label={`Selected Group`} content={selectedGroup} />
       </div>
       <UsersSelectors
         selectedUsers={selectedUsers}
