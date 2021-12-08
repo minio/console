@@ -94,19 +94,55 @@ const PreviewFile = ({
           <LinearProgress />
         </Grid>
       )}
-      <div className={`${loading ? classes.iframeHidden : ""} iframeBase`}>
-        <iframe
-          src={path}
-          title="File Preview"
-          allowTransparency
-          className={`${classes.iframeContainer} ${
-            isFullscreen ? "fullHeight" : objectType
-          }`}
-          onLoad={iframeLoaded}
+      {objectType === "video" && (
+        <video
+          style={{ width: "100%", height: "auto" }}
+          autoPlay={true}
+          controls={true}
+          muted={false}
+          playsInline={true}
+          onPlay={iframeLoaded}
         >
-          File couldn't be loaded. Please try Download instead
-        </iframe>
-      </div>
+          <source src={path} type="video/mp4" />
+        </video>
+      )}
+      {objectType === "audio" && (
+        <audio
+          style={{ width: "100%", height: "auto" }}
+          autoPlay={true}
+          controls={true}
+          muted={false}
+          playsInline={true}
+          onPlay={iframeLoaded}
+        >
+          <source src={path} type="audio/mpeg" />
+        </audio>
+      )}
+      {objectType === "image" && (
+        <img
+          style={{ width: "100%", height: "auto" }}
+          src={path}
+          alt={"preview"}
+          onLoad={iframeLoaded}
+        />
+      )}
+      {objectType !== "video" &&
+        objectType !== "audio" &&
+        objectType !== "image" && (
+          <div className={`${loading ? classes.iframeHidden : ""} iframeBase`}>
+            <iframe
+              src={path}
+              title="File Preview"
+              allowTransparency
+              className={`${classes.iframeContainer} ${
+                isFullscreen ? "fullHeight" : objectType
+              }`}
+              onLoad={iframeLoaded}
+            >
+              File couldn't be loaded. Please try Download instead
+            </iframe>
+          </div>
+        )}
     </Fragment>
   );
 };

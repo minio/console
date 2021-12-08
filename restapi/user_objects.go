@@ -77,76 +77,35 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	})
 	// download object
 	api.UserAPIDownloadObjectHandler = user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, session *models.Principal) middleware.Responder {
-		isPreview := *params.Preview
-		resp, err := getDownloadObjectResponse(session, params)
+		isFolder := false
+
+		var prefix string
+		if params.Prefix != "" {
+			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+			if err != nil {
+				return user_api.NewDownloadObjectDefault(int(400)).WithPayload(prepareError(err))
+			}
+			prefix = string(decodedPrefix)
+		}
+
+		folders := strings.Split(prefix, "/")
+		if folders[len(folders)-1] == "" {
+			isFolder = true
+		}
+		var resp middleware.Responder
+		var err *models.Error
+
+		if isFolder {
+			resp, err = getDownloadFolderResponse(session, params)
+		} else {
+			resp, err = getDownloadObjectResponse(session, params)
+		}
+
 		if err != nil {
 			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
 		}
-		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
-			defer resp.Close()
-
-			// indicate it's a download / inline content to the browser, and the size of the object
-			var prefixPath string
-			var filename string
-			if params.Prefix != "" {
-				encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-				decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-				if err != nil {
-					log.Println(err)
-				}
-
-				prefixPath = string(decodedPrefix)
-			}
-			prefixElements := strings.Split(prefixPath, "/")
-			isFolder := false
-			if len(prefixElements) > 0 {
-				if prefixElements[len(prefixElements)-1] == "" {
-					filename = prefixElements[len(prefixElements)-2]
-					isFolder = true
-				} else {
-					filename = prefixElements[len(prefixElements)-1]
-				}
-			}
-			if isPreview {
-				rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
-				rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
-				rw.Header().Set("X-XSS-Protection", "1")
-
-			} else if isFolder {
-				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", filename))
-				rw.Header().Set("Content-Type", "application/zip")
-			} else {
-				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
-				rw.Header().Set("Content-Type", "application/octet-stream")
-			}
-
-			// indicate object size & content type
-			if !isFolder {
-				stat, err := resp.(*minio.Object).Stat()
-				if err != nil {
-					log.Println(err)
-				} else {
-					rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
-
-					contentType := stat.ContentType
-
-					if isPreview {
-						// In case content type was uploaded as octet-stream, we double verify content type
-						if stat.ContentType == "application/octet-stream" {
-							contentType = mimedb.TypeByExtension(filepath.Ext(filename))
-						}
-					}
-
-					rw.Header().Set("Content-Type", contentType)
-				}
-			}
-
-			// Copy the stream
-			_, err := io.Copy(rw, resp)
-			if err != nil {
-				log.Println(err)
-			}
-		})
+		return resp
 	})
 	// upload object
 	api.UserAPIPostBucketsBucketNameObjectsUploadHandler = user_api.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params user_api.PostBucketsBucketNameObjectsUploadParams, session *models.Principal) middleware.Responder {
@@ -315,7 +274,128 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 	return objects, nil
 }
 
-func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (io.ReadCloser, *models.Error) {
+func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
+	ctx := context.Background()
+	var prefix string
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	if params.Prefix != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		prefix = string(decodedPrefix)
+	}
+
+	resp, err := mClient.GetObject(ctx, params.BucketName, prefix, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
+		defer resp.Close()
+
+		// indicate object size & content type
+		stat, err := resp.Stat()
+		statOk := false
+		if err != nil {
+			log.Println(err)
+		} else {
+			statOk = true
+		}
+
+		isPreview := params.Preview != nil && *params.Preview
+
+		// indicate it's a download / inline content to the browser, and the size of the object
+		var prefixPath string
+		var filename string
+		if params.Prefix != "" {
+			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+			if err != nil {
+				log.Println(err)
+			}
+
+			prefixPath = string(decodedPrefix)
+		}
+		prefixElements := strings.Split(prefixPath, "/")
+		if len(prefixElements) > 0 {
+			if prefixElements[len(prefixElements)-1] == "" {
+				filename = prefixElements[len(prefixElements)-2]
+			} else {
+				filename = prefixElements[len(prefixElements)-1]
+			}
+		}
+
+		// if we are getting a Range Request (video) handle that specially
+		isRange := params.HTTPRequest.Header.Get("Range")
+		if isRange != "" {
+
+			rangeFrom := -1
+			rangeTo := -1
+
+			parts := strings.Split(isRange, "=")
+			if len(parts) > 1 {
+				rangeParts := strings.Split(parts[1], "-")
+				var err error
+				rangeFrom, err = strconv.Atoi(rangeParts[0])
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				if rangeParts[1] != "" {
+					rangeTo, err = strconv.Atoi(rangeParts[1])
+					if err != nil {
+						log.Println(err)
+						return
+					}
+				}
+
+			}
+
+			if handleRangeRequest(rw, isRange, stat, isPreview, filename, resp, params, rangeTo, rangeFrom) {
+				return
+			}
+		}
+
+		if isPreview {
+			rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
+			rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
+			rw.Header().Set("X-XSS-Protection", "1")
+
+		} else {
+			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+			rw.Header().Set("Content-Type", "application/octet-stream")
+		}
+
+		// indicate object size & content type
+
+		if statOk {
+			rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+
+			contentType := stat.ContentType
+
+			if isPreview {
+				// In case content type was uploaded as octet-stream, we double verify content type
+				if stat.ContentType == "application/octet-stream" {
+					contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+				}
+			}
+
+			rw.Header().Set("Content-Type", contentType)
+		}
+
+		// Copy the stream
+		_, err = io.Copy(rw, resp)
+		if err != nil {
+			log.Println(err)
+		}
+	}), nil
+}
+func getDownloadFolderResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
 	ctx := context.Background()
 	var prefix string
 	mClient, err := newMinioClient(session)
@@ -327,49 +407,73 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		}
 		prefix = string(decodedPrefix)
 	}
-	isFolder := false
+
 	folders := strings.Split(prefix, "/")
-	if folders[len(folders)-1] == "" {
-		isFolder = true
-	}
-	if isFolder {
-		if err != nil {
-			return nil, prepareError(err)
-		}
-		minioClient := minioClient{client: mClient}
-		objects, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, true, false, false)
-		if err != nil {
-			return nil, prepareError(err)
-		}
-		w := new(bytes.Buffer)
-		zipw := zip.NewWriter(w)
-		var folder string
-		if len(folders) > 1 {
-			folder = folders[len(folders)-2]
-		}
-		for i := 0; i < len(objects); i++ {
-			name := folder + objects[i].Name[len(prefix)-1:]
-			object, err := mClient.GetObject(ctx, params.BucketName, objects[i].Name, minio.GetObjectOptions{})
-			if err != nil {
-				return nil, prepareError(err)
-			}
-			f, err := zipw.Create(name)
-			if err != nil {
-				return nil, prepareError(err)
-			}
-			buf := new(bytes.Buffer)
-			buf.ReadFrom(object)
-			f.Write(buf.Bytes())
-		}
-		zipw.Close()
-		zipfile := io.NopCloser(bytes.NewReader(w.Bytes()))
-		return zipfile, nil
-	}
-	object, err := mClient.GetObject(ctx, params.BucketName, prefix, minio.GetObjectOptions{})
+
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	return object, nil
+	minioClient := minioClient{client: mClient}
+	objects, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, true, false, false)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	w := new(bytes.Buffer)
+	zipw := zip.NewWriter(w)
+	var folder string
+	if len(folders) > 1 {
+		folder = folders[len(folders)-2]
+	}
+	for i := 0; i < len(objects); i++ {
+		name := folder + objects[i].Name[len(prefix)-1:]
+		object, err := mClient.GetObject(ctx, params.BucketName, objects[i].Name, minio.GetObjectOptions{})
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		f, err := zipw.Create(name)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(object)
+		f.Write(buf.Bytes())
+	}
+	zipw.Close()
+	resp := io.NopCloser(bytes.NewReader(w.Bytes()))
+
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
+		defer resp.Close()
+
+		// indicate it's a download / inline content to the browser, and the size of the object
+		var prefixPath string
+		var filename string
+		if params.Prefix != "" {
+			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+			if err != nil {
+				log.Println(err)
+			}
+
+			prefixPath = string(decodedPrefix)
+		}
+		prefixElements := strings.Split(prefixPath, "/")
+		if len(prefixElements) > 0 {
+			if prefixElements[len(prefixElements)-1] == "" {
+				filename = prefixElements[len(prefixElements)-2]
+			} else {
+				filename = prefixElements[len(prefixElements)-1]
+			}
+		}
+
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", filename))
+		rw.Header().Set("Content-Type", "application/zip")
+
+		// Copy the stream
+		_, err := io.Copy(rw, resp)
+		if err != nil {
+			log.Println(err)
+		}
+	}), nil
 }
 
 // getDeleteObjectResponse returns whether there was an error on deletion of object
@@ -928,4 +1032,85 @@ func getHost(authority string) (host string) {
 		return
 	}
 	return authority
+}
+
+func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.ObjectInfo, isPreview bool, filename string, resp *minio.Object, params user_api.DownloadObjectParams, rangeTo int, rangeFrom int) bool {
+	parts := strings.Split(isRange, "=")
+	if len(parts) > 1 {
+		if parts[1] == "0-1" {
+			contentType := stat.ContentType
+
+			if isPreview {
+				// In case content type was uploaded as octet-stream, we double verify content type
+				if stat.ContentType == "application/octet-stream" {
+					contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+				}
+			}
+			rw.Header().Set("Content-Type", contentType)
+			rw.Header().Set("Content-Length", "2")
+			rw.Header().Set("Content-Range", fmt.Sprintf("bytes 0-1/%d", stat.Size))
+			rw.Header().Set("Accept-Ranges", "bytes")
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.WriteHeader(206)
+			byts := make([]byte, 2)
+			t, err := resp.Read(byts)
+			log.Println("read", t, "bytes")
+			if err != nil {
+				log.Println(err)
+			}
+			rw.Write(byts)
+			return true
+		}
+
+		contentType := stat.ContentType
+
+		if isPreview {
+			// In case content type was uploaded as octet-stream, we double verify content type
+			if stat.ContentType == "application/octet-stream" {
+				contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+			}
+		}
+		rw.Header().Set("Content-Type", contentType)
+		isFirefox := false
+		if strings.Contains(params.HTTPRequest.UserAgent(), "Firefox") {
+			isFirefox = true
+		}
+		if !isFirefox {
+			rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+		}
+
+		if rangeTo > -1 {
+			rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, rangeTo, stat.Size))
+			if isFirefox {
+				rw.Header().Set("Content-Length", fmt.Sprintf("%d", rangeTo-rangeFrom+1))
+			}
+		} else {
+			rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, stat.Size-1, stat.Size))
+			if isFirefox {
+				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size-int64(rangeFrom)))
+			}
+		}
+		rw.Header().Set("Accept-Ranges", "bytes")
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.WriteHeader(206)
+		if rangeTo > -1 {
+			byts := make([]byte, rangeTo+1)
+			t, err := resp.ReadAt(byts, int64(rangeFrom))
+			log.Println("0 read", t, "bytes")
+			if err != nil {
+				log.Println(err)
+			}
+			rw.Write(byts)
+		} else {
+			byts := make([]byte, stat.Size-int64(rangeFrom))
+			t, err := resp.ReadAt(byts, int64(rangeFrom))
+			log.Println("1 read", t, "bytes")
+			if err != nil {
+				log.Println(err)
+			}
+			rw.Write(byts)
+		}
+
+	}
+	return false
 }
