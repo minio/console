@@ -35,9 +35,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     subnetLicenseKey: {
       padding: "10px 10px 10px 0px",
       borderRight: "1px solid rgba(0, 0, 0, 0.12)",

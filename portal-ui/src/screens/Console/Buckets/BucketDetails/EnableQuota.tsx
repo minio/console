@@ -35,21 +35,8 @@ import api from "../../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
     buttonContainer: {
       textAlign: "right",
-    },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
     },
     ...modalBasic,
   });

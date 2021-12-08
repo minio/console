@@ -63,9 +63,6 @@ const styles = (theme: Theme) =>
       ...actionsTray.actionsTray,
       padding: "15px 0 0",
     },
-    logerror: {
-      color: "#A52A2A",
-    },
     logerror_tab: {
       color: "#A52A2A",
       paddingLeft: 25,

@@ -45,10 +45,6 @@ import { LockIcon, UsersIcon, VersionIcon } from "../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
-    avatar: {
-      margin: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main,
-    },
     form: {
       width: "100%", // Fix IE 11 issue.
     },
@@ -57,25 +53,6 @@ const styles = (theme: Theme) =>
       height: 40,
       boxShadow: "none",
       padding: "16px 30px",
-    },
-    errorBlock: {
-      backgroundColor: "#C72C48",
-      width: 800,
-      height: 64,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      position: "absolute",
-      zIndex: 9,
-      left: "50%",
-      top: "50%",
-
-      color: "#fff",
-      fontWeight: 700,
-      fontSize: 14,
-      borderRadius: 8,
-      padding: 10,
-      boxSizing: "border-box",
     },
     loginPage: {
       height: "100%",
@@ -181,19 +158,13 @@ const styles = (theme: Theme) =>
     submitContainer: {
       textAlign: "right",
     },
-    disclaimer: {
-      fontSize: 12,
-      marginTop: 30,
-    },
     jwtInput: {
       marginTop: 45,
     },
     linearPredef: {
       height: 10,
     },
-    errorIconStyle: {
-      marginRight: 3,
-    },
+
     loaderAlignment: {
       display: "flex",
       width: "100%",

@@ -46,9 +46,6 @@ interface IGroupsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
     paper: {
       display: "flex",
       overflow: "auto",

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
@@ -49,23 +49,6 @@ const styles = (theme: Theme) =>
     ...modalBasic,
     ...settingsCommon,
     ...formFieldStyles,
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    customTitle: {
-      ...settingsCommon.customTitle,
-      marginTop: 0,
-    },
-    settingsFormContainer: {
-      ...settingsCommon.settingsFormContainer,
-      height: "calc(100vh - 422px)",
-    },
     lambdaNotif: {
       background:
         "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
@@ -98,14 +81,6 @@ const styles = (theme: Theme) =>
       fontSize: 16,
       fontFamily: "Lato,sans-serif",
       paddingLeft: 18,
-    },
-    mainCont: {
-      maxWidth: 1180,
-      paddingLeft: 38,
-      paddingRight: 38,
-    },
-    backTo: {
-      margin: "20px 0px 0",
     },
     formBox: {
       border: "1px solid #EAEAEA",

@@ -54,42 +54,6 @@ const CredentialsPrompt = withSuspense(
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-    addSideBar: {
-      width: "480px",
-      minWidth: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    imageIcon: {
-      height: "100%",
-    },
-    iconRoot: {
-      textAlign: "center",
-    },
     ...actionsTray,
     ...searchField,
     searchField: {

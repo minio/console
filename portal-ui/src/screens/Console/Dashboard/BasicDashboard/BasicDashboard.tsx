@@ -33,16 +33,6 @@ import HelpBox from "../../../../common/HelpBox";
 
 const styles = (theme: Theme) =>
   createStyles({
-    cardsContainer: {
-      maxHeight: 440,
-      overflowY: "auto",
-      overflowX: "hidden",
-    },
-    generalStatusCards: {
-      display: "flex",
-      flexDirection: "row",
-      flexWrap: "wrap",
-    },
     generalStatusTitle: {
       color: "#767676",
       fontSize: 16,

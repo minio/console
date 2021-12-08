@@ -42,66 +42,6 @@ interface IFormSwitch {
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-      paddingTop: 15,
-      boxShadow: "none",
-    },
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    noFound: {
-      textAlign: "center",
-      padding: "10px 0",
-    },
-    tableContainer: {
-      maxHeight: 200,
-    },
-    stickyHeader: {
-      backgroundColor: "#fff",
-    },
-    actionsTitle: {
-      fontWeight: 600,
-      color: "#081C42",
-      fontSize: 16,
-      alignSelf: "center",
-    },
-    tableBlock: {
-      marginTop: 15,
-    },
-    filterField: {
-      width: 375,
-      fontWeight: 600,
-      "& .input": {
-        "&::placeholder": {
-          fontWeight: 600,
-          color: "#081C42",
-        },
-      },
-    },
     divContainer: {
       marginBottom: 20,
     },

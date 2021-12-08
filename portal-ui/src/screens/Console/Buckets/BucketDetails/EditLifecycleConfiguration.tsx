@@ -33,12 +33,6 @@ import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/Q
 
 const styles = (theme: Theme) =>
   createStyles({
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
     buttonContainer: {
       textAlign: "right",
     },

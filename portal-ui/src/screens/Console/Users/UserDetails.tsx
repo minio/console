@@ -72,67 +72,6 @@ const styles = (theme: Theme) =>
       fontSize: ".9rem",
       marginRight: ".5rem",
     },
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      // padding: theme.spacing(2),
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    fixedHeight: {
-      height: 165,
-      minWidth: 247,
-      padding: "25px 28px",
-      "& svg": {
-        maxHeight: 18,
-      },
-    },
-    paperContainer: {
-      padding: 15,
-      paddingLeft: 50,
-      display: "flex",
-    },
-    gridContainer: {
-      display: "grid",
-      gridTemplateColumns: "auto auto",
-      gridGap: 8,
-      justifyContent: "flex-start",
-      alignItems: "center",
-      "& div:not(.MuiCircularProgress-root)": {
-        display: "flex",
-        alignItems: "center",
-      },
-      "& div:nth-child(odd)": {
-        justifyContent: "flex-end",
-        fontWeight: 700,
-      },
-      "& div:nth-child(2n)": {
-        minWidth: 150,
-      },
-    },
     breadcrumLink: {
       textDecoration: "none",
       color: "black",

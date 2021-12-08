@@ -15,9 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -27,28 +24,7 @@ interface ITabSelector {
   selectedTab: number;
   onChange: (newValue: number) => void;
   tabOptions: ITabOption[];
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    cardsContainer: {
-      maxHeight: 440,
-      overflowY: "auto",
-      overflowX: "hidden",
-    },
-    generalStatusCards: {
-      display: "flex",
-      flexDirection: "row",
-      flexWrap: "wrap",
-    },
-    generalStatusTitle: {
-      color: "#767676",
-      fontSize: 16,
-      fontWeight: "bold",
-      margin: "15px 10px 0 10px",
-    },
-  });
 
 const tabSubStyles = makeStyles({
   root: {
@@ -78,12 +54,7 @@ const tabSubStyles = makeStyles({
   },
 });
 
-const TabSelector = ({
-  selectedTab,
-  onChange,
-  tabOptions,
-  classes,
-}: ITabSelector) => {
+const TabSelector = ({ selectedTab, onChange, tabOptions }: ITabSelector) => {
   const subStyles = tabSubStyles();
 
   return (
@@ -134,4 +105,4 @@ const TabSelector = ({
   );
 };
 
-export default withStyles(styles)(TabSelector);
+export default TabSelector;

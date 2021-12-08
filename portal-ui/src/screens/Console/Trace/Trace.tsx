@@ -47,26 +47,6 @@ import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
-    paperContainer: {
-      padding: 15,
-      paddingLeft: 50,
-      display: "flex",
-    },
-    logList: {
-      background: "white",
-      height: "400px",
-      overflow: "auto",
-      "& ul": {
-        margin: "4px",
-        padding: "0px",
-      },
-      "& ul li": {
-        listStyle: "none",
-        margin: "0px",
-        padding: "0px",
-        borderBottom: "1px solid #dedede",
-      },
-    },
     sizeItem: {
       width: 150,
     },
@@ -123,9 +103,6 @@ const styles = (theme: Theme) =>
       "@media (max-width: 900px)": {
         display: "none",
       },
-    },
-    noMinWidthLabel: {
-      fontWeight: 400,
     },
     ...containerForHeader(theme.spacing(4)),
   });

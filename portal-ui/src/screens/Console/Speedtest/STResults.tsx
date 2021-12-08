@@ -45,46 +45,6 @@ interface ISTResults {
 
 const styles = (theme: Theme) =>
   createStyles({
-    statContainer: {
-      padding: "18px 0 18px 25px",
-    },
-    statBlock: {
-      border: "#EEF1F4 1px solid",
-      borderRadius: 4,
-    },
-    testedAmount: {
-      display: "flex",
-      justifyContent: "space-between",
-      color: "#07193E",
-      padding: "12px 18px",
-      border: "#EEF1F4 1px solid",
-      borderLeft: 0,
-      borderRight: 0,
-    },
-    serverLength: {
-      color: "#696969",
-    },
-    serverDescrContainer: {
-      display: "flex",
-      margin: "15px 5px 0",
-      position: "relative",
-    },
-    serverDescrIcon: {
-      marginRight: 10,
-      "& svg": {
-        width: 16,
-      },
-    },
-    serverDescriptor: {
-      color: "#696969",
-      whiteSpace: "nowrap",
-      maxWidth: "100%",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-    serversResume: {
-      marginBottom: 15,
-    },
     objectGeneralTitle: {
       fontWeight: "bold",
       color: "#000",
@@ -93,9 +53,6 @@ const styles = (theme: Theme) =>
       "& svg": {
         width: 14,
       },
-    },
-    generalContainer: {
-      padding: 20,
     },
     generalUnit: {
       color: "#000",
@@ -107,11 +64,6 @@ const styles = (theme: Theme) =>
       fontSize: 120,
       color: "#081C42",
       fontWeight: "bold",
-    },
-    shareResults: {
-      padding: "18px 25px",
-      color: "#07193E",
-      fontSize: 14,
     },
     metricValContainer: {
       lineHeight: 1,

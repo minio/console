@@ -37,10 +37,6 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
     objectKeyCol: {
       fontWeight: 700,
       paddingRight: "10px",

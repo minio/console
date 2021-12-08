@@ -41,16 +41,7 @@ interface IDeleteTagModal {
   classes: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
-  });
+const styles = (theme: Theme) => createStyles({});
 
 const DeleteTagModal = ({
   deleteOpen,

@@ -20,7 +20,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import {
-  actionsTray,
   containerForHeader,
   searchField,
   settingsCommon,
@@ -38,46 +37,10 @@ interface ITypeTiersConfig {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...actionsTray,
     ...searchField,
     ...settingsCommon,
     ...typesSelection,
     ...containerForHeader(theme.spacing(4)),
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    iconText: {
-      lineHeight: "24px",
-    },
-    customConfigurationPage: {
-      height: "calc(100vh - 410px)",
-      scrollbarWidth: "none" as const,
-      "&::-webkit-scrollbar": {
-        display: "none",
-      },
-    },
-    lambdaContainer: {
-      padding: "15px 0",
-    },
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "0 38px",
-    },
-    customTitle: {
-      ...settingsCommon.customTitle,
-      marginTop: 0,
-    },
-    mainCont: {
-      ...settingsCommon.mainCont,
-      maxWidth: 1180,
-    },
-    link: {
-      textDecoration: "none",
-      color: theme.palette.primary.main,
-    },
   });
 
 const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {

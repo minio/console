@@ -61,20 +61,6 @@ const styles = (theme: Theme) =>
         marginLeft: 8,
       },
     },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
-    },
-    quotaSizeContainer: {
-      flexGrow: 1,
-    },
-    sizeFactorContainer: {
-      flexGrow: 0,
-      maxWidth: 80,
-      marginLeft: 8,
-      alignSelf: "flex-start" as const,
-    },
     error: {
       color: "#b53b4b",
       border: "1px solid #b53b4b",

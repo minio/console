@@ -48,11 +48,6 @@ const styles = (theme: Theme) =>
         borderRadius: 10,
       },
     },
-    cardsContainer: {
-      maxHeight: 440,
-      overflowY: "auto",
-      overflowX: "hidden",
-    },
     metricText: {
       fontSize: 70,
       lineHeight: 1.1,

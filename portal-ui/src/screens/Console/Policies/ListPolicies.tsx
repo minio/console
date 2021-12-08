@@ -49,38 +49,12 @@ import SecureComponent, {
 import SearchBox from "../Common/SearchBox";
 
 import withSuspense from "../Common/Components/withSuspense";
+
 const AddPolicy = withSuspense(React.lazy(() => import("./AddPolicy")));
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-    addSideBar: {
-      width: 320,
-      padding: 20,
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    twHeight: {
-      minHeight: 600,
-    },
     ...actionsTray,
     ...searchField,
     searchField: {

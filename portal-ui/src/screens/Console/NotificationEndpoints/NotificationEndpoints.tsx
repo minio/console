@@ -16,42 +16,14 @@
 
 import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-
-import { AppState } from "../../../store";
-import { connect } from "react-redux";
-import { ISessionResponse } from "../types";
 
 import withSuspense from "../Common/Components/withSuspense";
+
 const ListNotificationEndpoints = withSuspense(
   React.lazy(() => import("./ListNotificationEndpoints"))
 );
 
-interface INotificationEndpoints {
-  classes: any;
-  session: ISessionResponse;
-  distributedSetup: boolean;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
-    ...containerForHeader(theme.spacing(4)),
-  });
-
-const NotificationEndpoints = ({
-  classes,
-  session,
-  distributedSetup,
-}: INotificationEndpoints) => {
+const NotificationEndpoints = () => {
   return (
     <Fragment>
       <PageHeader label="Notification Endpoints" />
@@ -60,11 +32,4 @@ const NotificationEndpoints = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  distributedSetup: state.system.distributedSetup,
-});
-
-const connector = connect(mapState, {});
-
-export default withStyles(styles)(connector(NotificationEndpoints));
+export default NotificationEndpoints;

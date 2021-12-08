@@ -36,10 +36,6 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 
 const styles = (theme: Theme) =>
   createStyles({
-    jsonPolicyEditor: {
-      minHeight: 400,
-      width: "100%",
-    },
     buttonContainer: {
       textAlign: "right",
     },

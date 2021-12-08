@@ -60,33 +60,8 @@ interface IDirectCSIMain {
 
 const styles = (theme: Theme) =>
   createStyles({
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
     tableWrapper: {
       height: "calc(100vh - 275px)",
-    },
-    notAvailableNotice: {
-      border: "#EAEDEE 1px solid",
-      backgroundColor: "#FFF",
-      display: "flex",
-      padding: "19px 38px",
-      overflow: "auto",
-      position: "relative",
-      boxShadow: "none",
-      minHeight: 200,
-      overflowY: "scroll",
-      borderRadius: 3,
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "calc(100vh - 275px)",
-      fontSize: 18,
-      fontWeight: 600,
-      textAlign: "center",
     },
     linkItem: {
       display: "default",

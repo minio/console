@@ -33,9 +33,6 @@ const styles = (theme: Theme) =>
     pageSubTitle: {
       textAlign: "center",
     },
-    paper: {
-      padding: "20px 52px 20px 28px",
-    },
     ...containerForHeader(theme.spacing(4)),
   });
 

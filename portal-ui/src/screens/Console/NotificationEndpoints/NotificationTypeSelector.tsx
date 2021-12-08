@@ -38,9 +38,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...settingsCommon,
     ...typesSelection,
-    link: {
-      maxWidth: 300,
-    },
   });
 
 const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {

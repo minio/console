@@ -41,16 +41,6 @@ interface ITenantVolumesProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     tableWrapper: {
       height: "450px",
     },

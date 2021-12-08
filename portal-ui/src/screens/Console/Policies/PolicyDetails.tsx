@@ -56,6 +56,7 @@ import SecureComponent, {
 } from "../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
+
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
 interface IPolicyDetailsProps {
@@ -74,100 +75,9 @@ const styles = (theme: Theme) =>
       border: "1px solid #EAEAEA",
       height: "100%",
     },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
-    },
-    sizeFactorContainer: {
-      marginLeft: 8,
-    },
-    containerHeader: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
     paperContainer: {
       padding: "15px 15px 15px 50px",
       minHeight: "450px",
-    },
-    infoGrid: {
-      display: "grid",
-      gridTemplateColumns: "auto auto auto auto",
-      gridGap: 8,
-      "& div": {
-        display: "flex",
-        alignItems: "center",
-      },
-      "& div:nth-child(odd)": {
-        justifyContent: "flex-end",
-        fontWeight: 700,
-      },
-      "& div:nth-child(2n)": {
-        paddingRight: 35,
-      },
-    },
-    masterActions: {
-      width: "25%",
-      minWidth: "120px",
-      "& div": {
-        margin: "5px 0px",
-      },
-    },
-    updateButton: {
-      backgroundColor: "transparent",
-      border: 0,
-      padding: "0 6px",
-      cursor: "pointer",
-      "&:focus, &:active": {
-        outline: "none",
-      },
-      "& svg": {
-        height: 12,
-      },
-    },
-    noUnderLine: {
-      textDecoration: "none",
-    },
-    poolLabel: {
-      color: "#666666",
-    },
-    licenseContainer: {
-      position: "relative",
-      padding: "20px 52px 0px 28px",
-      background: "#032F51",
-      boxShadow: "0px 3px 7px #00000014",
-      "& h2": {
-        color: "#FFF",
-        marginBottom: 67,
-      },
-      "& a": {
-        textDecoration: "none",
-      },
-      "& h3": {
-        color: "#FFFFFF",
-        marginBottom: "30px",
-        fontWeight: "bold",
-      },
-      "& h6": {
-        color: "#FFFFFF !important",
-      },
-    },
-    licenseInfo: { color: "#FFFFFF", position: "relative" },
-    licenseInfoTitle: {
-      textTransform: "none",
-      color: "#BFBFBF",
-      fontSize: 11,
-    },
-    licenseInfoValue: {
-      textTransform: "none",
-      fontSize: 14,
-      fontWeight: "bold",
-    },
-    verifiedIcon: {
-      width: 96,
-      position: "absolute",
-      right: 0,
-      bottom: 29,
     },
     breadcrumLink: {
       textDecoration: "none",
@@ -181,16 +91,6 @@ const styles = (theme: Theme) =>
     },
     labelCol: {
       fontWeight: "bold",
-    },
-    statementActions: {
-      textAlign: "right",
-    },
-    addStmt: {
-      color: theme.palette.primary.main,
-    },
-    listBox: {
-      border: "1px solid #DADADA",
-      height: 100,
     },
     ...actionsTray,
     ...searchField,

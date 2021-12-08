@@ -7,9 +7,6 @@ import { pageContentStyles } from "../FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
-    pageContainer: {
-      width: "100%",
-    },
     ...pageContentStyles,
   });
 

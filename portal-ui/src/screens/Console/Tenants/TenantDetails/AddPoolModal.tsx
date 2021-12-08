@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Theme } from "@mui/material/styles";
@@ -28,14 +28,6 @@ const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       textAlign: "right",
-    },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
-    },
-    sizeFactorContainer: {
-      marginLeft: 8,
     },
     bottomContainer: {
       display: "flex",

@@ -79,7 +79,7 @@ import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
-import { UploadFolderIcon, DownloadIcon } from "../../../../../../icons";
+import { DownloadIcon, UploadFolderIcon } from "../../../../../../icons";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -115,71 +115,8 @@ const PreviewFileModal = withSuspense(
   React.lazy(() => import("../Preview/PreviewFileModal"))
 );
 
-const commonIcon = {
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center center",
-  width: 16,
-  minWidth: 16,
-  height: 40,
-  marginRight: 10,
-};
-
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    fileName: {
-      display: "flex",
-      alignItems: "center",
-      "& .min-icon": {
-        width: 16,
-        height: 16,
-        marginRight: 4,
-      },
-    },
-    fileNameText: {
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-    iconFolder: {
-      backgroundImage: "url(/images/object-browser-folder-icn.svg)",
-      backgroundSize: "auto",
-      ...commonIcon,
-    },
-    iconFile: {
-      backgroundImage: "url(/images/object-browser-icn.svg)",
-      backgroundSize: "auto",
-      ...commonIcon,
-    },
-    buttonsContainer: {
-      "& .MuiButtonBase-root": {
-        marginLeft: 10,
-      },
-    },
     browsePaper: {
       height: "calc(100vh - 280px)",
     },
@@ -191,19 +128,14 @@ const styles = (theme: Theme) =>
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
-    listButton: {
-      marginLeft: "10px",
-    },
+
     badgeOverlap: {
       "& .MuiBadge-badge": {
         top: 35,
         right: 10,
       },
     },
-    screenTitle: {
-      borderBottom: 0,
-      paddingTop: 0,
-    },
+
     ...tableStyles,
     ...actionsTray,
     ...searchField,
@@ -917,7 +849,7 @@ const ListObjects = ({
   };
 
   const renderName = (element: string) => {
-    return displayName(element, classes);
+    return displayName(element);
   };
 
   const listModeColumns = [
@@ -1079,7 +1011,6 @@ const ListObjects = ({
       <PageLayout>
         <Grid item xs={12}>
           <ScreenTitle
-            classes={classes}
             icon={
               <Fragment>
                 <FolderIcon width={40} />

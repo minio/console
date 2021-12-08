@@ -30,7 +30,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
@@ -40,9 +40,11 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../../store";
-import { setErrorSnackMessage } from "../../../../../actions";
+import {
+  setErrorSnackMessage,
+  setModalErrorSnackMessage,
+} from "../../../../../actions";
 import { snackBarMessage } from "../../../../../types";
-import { setModalErrorSnackMessage } from "../../../../../actions";
 
 interface ImodalErrorProps {
   customStyle?: any;
@@ -97,12 +99,6 @@ const styles = (theme: Theme) =>
         width: 32,
         height: 32,
       },
-    },
-    simpleError: {
-      marginTop: 5,
-      padding: "2px 5px",
-      fontSize: 16,
-      color: "#000",
     },
     detailsButton: {
       color: "#9C9C9C",

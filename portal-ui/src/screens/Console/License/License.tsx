@@ -79,10 +79,6 @@ const styles = (theme: Theme) =>
       color: "#000000",
       fontSize: 14,
     },
-    paper: {
-      padding: "20px 52px 20px 28px",
-      backgroundColor: "#FFFFFF",
-    },
     licenseContainer: {
       display: "flex",
       flexWrap: "wrap",
@@ -131,10 +127,6 @@ const styles = (theme: Theme) =>
     detailsContainerBorder: {
       borderLeft: "1px solid #e2e2e2",
     },
-    detailsContainerBorderHighlighted: {
-      border: "1px solid #B5B5B5",
-      borderBottom: 0,
-    },
     detailsTitle: {
       fontSize: 19,
       fontWeight: 700,
@@ -145,15 +137,6 @@ const styles = (theme: Theme) =>
       color: "white",
       backgroundColor: "#4CCB92",
       padding: 4,
-    },
-    activePlanHeader: {
-      fontWeight: 700,
-      background: "#D5DDE5",
-      borderRadius: "3px 3px 0px 0px",
-      color: "#121212",
-      padding: 8,
-      borderTop: "1px solid #D5DDE5",
-      marginTop: -2,
     },
     planHeader: {
       background: "#FFFFFF",
@@ -173,10 +156,6 @@ const styles = (theme: Theme) =>
       marginBottom: 12,
       padding: "0% 15%",
     },
-    detailsCapacityMin: {
-      fontSize: 10,
-    },
-
     itemContainer: {
       height: 36,
       "& .item:last-child": {
@@ -235,11 +214,6 @@ const styles = (theme: Theme) =>
       fontSize: 15,
       fontWeight: 700,
     },
-    licenseButton: {
-      float: "right",
-      marginTop: 25,
-      marginRight: 25,
-    },
     openSourcePolicy: {
       color: "#1C5A8D",
       fontWeight: "bold",
@@ -263,10 +237,6 @@ const styles = (theme: Theme) =>
       cursor: "pointer",
       fontSize: 13,
     },
-    fullWidth: {
-      width: "100%",
-      height: "100%",
-    },
     licenseInfo: {
       position: "relative",
     },
@@ -280,25 +250,10 @@ const styles = (theme: Theme) =>
       fontSize: 14,
       fontWeight: "bold",
     },
-    licenseDescription: {
-      background: "#032F51",
-      padding: "30px 30px",
-      borderTop: "1px solid #e2e5e4",
-      borderLeft: "1px solid #e2e5e4",
-      borderRight: "1px solid #e2e5e4",
-      alignSelf: "flex-end",
-    },
     currentPlanBG: {
       background: "#022A4A 0% 0% no-repeat padding-box",
       color: "#FFFFFF",
       borderTop: "1px solid #52687d",
-    },
-    currentPlanButton: {
-      background: "#FFFFFF",
-      color: "#022A4A",
-      "&:hover": {
-        background: "#FFFFFF",
-      },
     },
     planItemsPadding: {
       border: "1px solid #EAEDEE",
@@ -321,10 +276,6 @@ const styles = (theme: Theme) =>
     loadingLoginStrategy: {
       textAlign: "center",
     },
-    clickableBlock: {
-      cursor: "pointer",
-    },
-
     ...containerForHeader(theme.spacing(4)),
     mainContainer: {
       border: "1px solid #EAEDEE",

@@ -25,10 +25,7 @@ import { Bucket, BucketList } from "../types";
 import { AddIcon, BucketsIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
-import {
-  containerForHeader,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import DeleteBucket from "./DeleteBucket";
@@ -52,44 +49,6 @@ import SearchBox from "../../Common/SearchBox";
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    buttonTray: {
-      textAlign: "right",
-      "& .MuiButton-root": {
-        fontSize: 12,
-        borderColor: theme.palette.grey["300"],
-        color: theme.palette.grey["300"],
-        textTransform: "capitalize",
-        marginLeft: 8,
-      },
-      "& .MuiButton-contained": {
-        color: "white",
-      },
-    },
     bulkSelect: {
       marginLeft: 8,
       "&:hover": {
@@ -99,49 +58,14 @@ const styles = (theme: Theme) =>
         backgroundColor: theme.palette.primary.main,
       },
     },
-    theaderSearchLabel: {
-      color: theme.palette.grey["400"],
-      fontSize: 14,
-      fontWeight: "bold",
-    },
     addBucket: {
       marginLeft: 8,
-    },
-    theaderSearch: {
-      borderColor: theme.palette.grey["200"],
-      "& .MuiInputBase-input": {
-        paddingTop: 10,
-        paddingBottom: 10,
-      },
-      "& .MuiInputBase-root": {
-        "& .MuiInputAdornment-root": {
-          "& .min-icon": {
-            color: theme.palette.grey["400"],
-            height: 14,
-          },
-        },
-      },
-      actionHeaderItems: {
-        "@media (min-width: 320px)": {
-          marginTop: 8,
-        },
-      },
-      marginRight: 10,
-      marginLeft: 10,
     },
     bucketList: {
       marginTop: 25,
     },
 
     ...containerForHeader(theme.spacing(4)),
-    ...searchField,
-    searchField: {
-      ...searchField.searchField,
-      minWidth: 380,
-      "@media (max-width: 900px)": {
-        minWidth: 220,
-      },
-    },
   });
 
 interface IListBucketsProps {

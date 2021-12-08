@@ -75,23 +75,11 @@ interface IConfigureProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     configSectionItem: {
       marginRight: 15,
 
       "& .multiContainer": {
         border: "1px solid red",
-      },
-    },
-    inputLabel: {
-      fontWeight: 300,
-      fontSize: 14,
-    },
-    textBoxContainer: {
-      "& input": {
-        fontWeight: 400,
       },
     },
     tenantCustomizationFields: {

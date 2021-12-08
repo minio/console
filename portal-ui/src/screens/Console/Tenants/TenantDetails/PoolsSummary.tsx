@@ -47,18 +47,6 @@ interface IPoolsSummary {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    redState: {
-      color: theme.palette.error.main,
-    },
-    yellowState: {
-      color: theme.palette.warning.main,
-    },
-    greenState: {
-      color: theme.palette.success.main,
-    },
-    greyState: {
-      color: "grey",
-    },
     ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
   });

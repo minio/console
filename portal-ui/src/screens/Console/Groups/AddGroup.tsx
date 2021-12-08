@@ -51,12 +51,6 @@ interface MainGroupProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
     buttonContainer: {
       textAlign: "right",
     },

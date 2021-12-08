@@ -90,8 +90,6 @@ const ObjectManager = React.lazy(
   () => import("./Common/ObjectManager/ObjectManager")
 );
 
-const drawerWidth = 245;
-
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
 const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
@@ -110,11 +108,6 @@ const ConfigurationOptions = React.lazy(
 
 const styles = (theme: Theme) =>
   createStyles({
-    "@global": {
-      body: {
-        backgroundColor: "#FFFFFF",
-      },
-    },
     root: {
       display: "flex",
       "& .MuiPaper-root.MuiSnackbarContent-root": {
@@ -122,86 +115,11 @@ const styles = (theme: Theme) =>
         boxShadow: "none",
       },
     },
-    toolbar: {
-      background: theme.palette.background.default,
-      color: "black",
-      paddingRight: 24, // keep right padding when drawer closed
-    },
-    toolbarIcon: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      padding: "0 8px",
-      ...theme.mixins.toolbar,
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    menuButton: {
-      marginRight: 36,
-    },
-    menuButtonHidden: {
-      display: "none",
-    },
-    title: {
-      flexGrow: 1,
-    },
-    drawerPaper: {
-      position: "relative",
-      whiteSpace: "nowrap",
-      width: drawerWidth,
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      overflowX: "hidden",
-      background:
-        "transparent linear-gradient(90deg, #073052 0%, #081C42 100%) 0% 0% no-repeat padding-box",
-      boxShadow: "0px 3px 7px #00000014",
-    },
-    drawerPaperClose: {
-      overflowX: "hidden",
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing(7),
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9),
-      },
-    },
     content: {
       flexGrow: 1,
       height: "100vh",
       overflow: "auto",
       position: "relative",
-    },
-    container: {
-      paddingBottom: theme.spacing(4),
-      margin: 0,
-      width: "100%",
-      maxWidth: "initial",
-    },
-    paper: {
-      padding: theme.spacing(2),
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-    fixedHeight: {
-      minHeight: 240,
     },
     warningBar: {
       background: theme.palette.primary.main,

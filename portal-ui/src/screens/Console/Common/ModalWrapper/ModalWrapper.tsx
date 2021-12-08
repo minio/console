@@ -67,14 +67,6 @@ const styles = (theme: Theme) =>
         backgroundColor: "initial",
       },
     },
-    modalCloseIcon: {
-      fontSize: 35,
-      color: "#9C9C9C",
-      fontWeight: 300,
-      "&:hover": {
-        color: "#9C9C9C",
-      },
-    },
     closeIcon: {
       "&::before": {
         ...baseCloseLine,

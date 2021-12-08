@@ -56,9 +56,6 @@ const styles = (theme: Theme) =>
       textAlign: "right",
       marginTop: ".9rem",
     },
-    predefinedTitle: {
-      fontWeight: "normal",
-    },
   });
 
 const SetPolicy = ({

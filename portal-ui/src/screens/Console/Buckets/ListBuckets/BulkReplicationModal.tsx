@@ -51,17 +51,6 @@ interface IBulkReplicationModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    buttonContainer: {
-      textAlign: "right",
-    },
     remoteBucketList: {
       display: "grid",
       gridTemplateColumns: "auto auto 45px",

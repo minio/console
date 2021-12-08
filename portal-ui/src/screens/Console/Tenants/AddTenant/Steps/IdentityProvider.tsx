@@ -72,9 +72,6 @@ interface IIdentityProviderProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     shortened: {
       gridTemplateColumns: "auto auto 50px 50px",
       display: "grid",
@@ -84,7 +81,6 @@ const styles = (theme: Theme) =>
         fontWeight: 400,
       },
     },
-
     buttonTray: {
       marginLeft: 10,
       display: "flex",
@@ -119,10 +115,6 @@ const styles = (theme: Theme) =>
     },
     adUserDnRows: {
       display: "flex",
-    },
-
-    inputLabel: {
-      minWidth: 260,
     },
     ...createTenantCommon,
     ...formFieldStyles,

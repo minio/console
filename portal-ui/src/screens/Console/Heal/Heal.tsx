@@ -56,21 +56,6 @@ import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
-    watchList: {
-      background: "white",
-      maxHeight: "400",
-      overflow: "auto",
-      "& ul": {
-        margin: "4",
-        padding: "0",
-      },
-      "& ul li": {
-        listStyle: "none",
-        margin: "0",
-        padding: "0",
-        borderBottom: "1px solid #dedede",
-      },
-    },
     graphContainer: {
       backgroundColor: "#fff",
       border: "#EAEDEE 1px solid",
@@ -86,9 +71,6 @@ const styles = (theme: Theme) =>
     },
     scanData: {
       fontSize: 13,
-    },
-    noMinWidthLabel: {
-      fontWeight: 400,
     },
     formBox: {
       padding: 15,

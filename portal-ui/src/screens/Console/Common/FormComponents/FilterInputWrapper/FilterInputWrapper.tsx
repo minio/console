@@ -62,9 +62,6 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
-    toggleButton: {
-      marginRight: 10,
-    },
     fieldContainer: {
       flexGrow: 1,
       margin: "0 15px",

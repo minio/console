@@ -40,10 +40,6 @@ interface ITenantMetrics {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    flexBox: {
-      display: "flex",
-      flexFlow: "column",
-    },
     iframeStyle: {
       border: "0px",
       flex: "1 1 auto",

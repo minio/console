@@ -49,6 +49,7 @@ import withSuspense from "../../Common/Components/withSuspense";
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
 );
+
 interface ITenantsList {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -66,9 +67,6 @@ const styles = (theme: Theme) =>
       color: theme.palette.grey["400"],
       fontSize: 14,
       fontWeight: "bold",
-    },
-    addBucket: {
-      marginRight: 8,
     },
     theaderSearch: {
       borderColor: theme.palette.grey["200"],
@@ -95,21 +93,6 @@ const styles = (theme: Theme) =>
     mainActions: {
       textAlign: "right",
       marginBottom: 8,
-    },
-    healthStatusIcon: {
-      position: "relative",
-      fontSize: 10,
-      right: -30,
-      height: 10,
-      top: -50,
-    },
-    tenantItem: {
-      border: "1px solid #dedede",
-      marginBottom: 20,
-      paddingLeft: 40,
-      paddingRight: 40,
-      paddingTop: 30,
-      paddingBottom: 30,
     },
   });
 

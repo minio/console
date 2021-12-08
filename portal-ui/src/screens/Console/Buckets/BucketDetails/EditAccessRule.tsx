@@ -48,10 +48,6 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
     ...modalBasic,
   });
 

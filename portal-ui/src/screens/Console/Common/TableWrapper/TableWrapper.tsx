@@ -108,23 +108,8 @@ interface TableWrapperProps {
 
 const borderColor = "#9c9c9c80";
 
-const rowText = {
-  fontWeight: 400,
-  fontSize: 14,
-  borderColor: borderColor,
-  borderWidth: "0.5px",
-  height: 40,
-  transitionDuration: "0.3s",
-  padding: "initial",
-  paddingRight: 6,
-  paddingLeft: 6,
-};
-
 const styles = () =>
   createStyles({
-    dialogContainer: {
-      padding: "12px 26px 22px",
-    },
     paper: {
       display: "flex",
       overflow: "auto",
@@ -151,60 +136,6 @@ const styles = () =>
     },
     defaultPaperHeight: {
       height: "calc(100vh - 205px)",
-    },
-    allTableSettings: {
-      "& .MuiTableCell-sizeSmall:last-child": {
-        paddingRight: "initial",
-      },
-      "& .MuiTableCell-body.MuiTableCell-sizeSmall:last-child": {
-        paddingRight: 6,
-      },
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: 700,
-          fontSize: 14,
-          borderColor: "#39393980",
-          borderWidth: "0.5px",
-          padding: "6px 0 10px",
-        },
-      },
-    },
-    rowUnselected: {
-      ...rowText,
-      color: "#393939",
-    },
-    rowSelected: {
-      ...rowText,
-      color: "#081C42",
-      fontWeight: 600,
-    },
-    paginatorContainer: {
-      display: "flex",
-      justifyContent: "flex-end",
-      padding: "5px 38px",
-    },
-    checkBoxHeader: {
-      width: 50,
-      textAlign: "left",
-      paddingRight: 10,
-      "&.MuiTableCell-paddingCheckbox": {
-        paddingBottom: 4,
-        paddingLeft: 0,
-      },
-    },
-    actionsContainer: {
-      width: 150,
-      borderColor: borderColor,
-    },
-    paginatorComponent: {
-      borderBottom: 0,
-    },
-    checkBoxRow: {
-      borderColor: borderColor,
-      padding: "0 10px 0 0",
     },
     loadingBox: {
       paddingTop: "100px",

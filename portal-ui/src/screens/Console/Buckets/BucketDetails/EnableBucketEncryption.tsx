@@ -32,14 +32,6 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 
 const styles = (theme: Theme) =>
   createStyles({
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
     buttonContainer: {
       textAlign: "right",
     },
