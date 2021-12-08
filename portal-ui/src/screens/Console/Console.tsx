@@ -90,8 +90,6 @@ const ObjectManager = React.lazy(
   () => import("./Common/ObjectManager/ObjectManager")
 );
 
-const drawerWidth = 245;
-
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
 const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));

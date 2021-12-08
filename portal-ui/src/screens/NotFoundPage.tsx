@@ -18,25 +18,10 @@ import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import makeStyles from "@mui/styles/makeStyles";
 import Container from "@mui/material/Container";
 import Copyright from "../common/Copyright";
 
-const useStyles = makeStyles((theme) => ({
-  "@global": {
-    body: {
-      backgroundColor: theme.palette.common.white,
-    },
-  },
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-}));
 const NotFound: React.FC = () => {
-  const classes = useStyles();
   return (
     <Container component="main">
       <CssBaseline />

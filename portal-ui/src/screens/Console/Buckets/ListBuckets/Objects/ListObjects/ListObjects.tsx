@@ -115,15 +115,6 @@ const PreviewFileModal = withSuspense(
   React.lazy(() => import("../Preview/PreviewFileModal"))
 );
 
-const commonIcon = {
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center center",
-  width: 16,
-  minWidth: 16,
-  height: 40,
-  marginRight: 10,
-};
-
 const styles = (theme: Theme) =>
   createStyles({
     browsePaper: {

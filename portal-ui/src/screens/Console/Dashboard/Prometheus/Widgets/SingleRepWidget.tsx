@@ -161,9 +161,7 @@ const SingleRepWidget = ({
                 fontSize={65}
                 fill={"#07193E"}
               >
-                {result
-                  ? repNumber
-                  : ""}
+                {result ? repNumber : ""}
               </text>
             </AreaChart>
           </ResponsiveContainer>

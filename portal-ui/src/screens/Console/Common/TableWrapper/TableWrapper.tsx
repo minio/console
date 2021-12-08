@@ -108,18 +108,6 @@ interface TableWrapperProps {
 
 const borderColor = "#9c9c9c80";
 
-const rowText = {
-  fontWeight: 400,
-  fontSize: 14,
-  borderColor: borderColor,
-  borderWidth: "0.5px",
-  height: 40,
-  transitionDuration: "0.3s",
-  padding: "initial",
-  paddingRight: 6,
-  paddingLeft: 6,
-};
-
 const styles = () =>
   createStyles({
     paper: {
