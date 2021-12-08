@@ -389,7 +389,7 @@ func computeObjectURLWithoutEncode(bucketName, prefix string) (string, error) {
 		objectURL = path.Join(objectURL, bucketName)
 	}
 	if strings.TrimSpace(prefix) != "" {
-		objectURL = path.Join(objectURL, prefix)
+		objectURL = pathJoinFinalSlash(objectURL, prefix)
 	}
 
 	objectURL = fmt.Sprintf("%s://%s", u.Scheme, objectURL)
@@ -416,6 +416,16 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 		return nil, fmt.Errorf("the provided url doesn't point to a S3 server")
 	}
 	return s3Client, nil
+}
+
+// pathJoinFinalSlash - like path.Join() but retains trailing slashSeparator of the last element
+func pathJoinFinalSlash(elem ...string) string {
+	if len(elem) > 0 {
+		if strings.HasSuffix(elem[len(elem)-1], SlashSeparator) {
+			return path.Join(elem...) + SlashSeparator
+		}
+	}
+	return path.Join(elem...)
 }
 
 // newS3Config simply creates a new Config struct using the passed
