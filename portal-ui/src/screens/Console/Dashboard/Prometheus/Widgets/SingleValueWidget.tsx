@@ -41,13 +41,6 @@ interface ISingleValueWidget {
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
-    contentContainer: {
-      ...widgetCommon.contentContainer,
-      fontWeight: 700,
-      color: "#072045",
-      fontSize: 18,
-      textAlign: "center" as const,
-    },
     loadingAlign: {
       width: "100%",
       textAlign: "center",

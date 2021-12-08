@@ -44,23 +44,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...settingsCommon,
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    logoButton: {
-      height: "80px",
-    },
-
-    customTitle: {
-      ...settingsCommon.customTitle,
-      marginTop: 0,
-    },
   });
 
 interface IAddNotificationEndpointProps {

@@ -61,24 +61,12 @@ import { Paper, SelectChangeEvent } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     sizePreview: {
       position: "fixed",
       marginLeft: 10,
       background: "#FFFFFF",
       border: "1px solid #EAEAEA",
       padding: 2,
-    },
-    inputLabel: {
-      minWidth: 200,
-    },
-    errorInField: {
-      "& .MuiFormControl-root & .MuiOutlinedInput-root & .MuiFormHelperText-root":
-        {
-          color: "blue",
-        },
     },
     ...formFieldStyles,
     ...modalBasic,

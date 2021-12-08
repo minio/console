@@ -40,7 +40,7 @@ const NotFound: React.FC = () => {
   return (
     <Container component="main">
       <CssBaseline />
-      <div className={classes.paper}>
+      <div>
         <Typography variant="h1" component="h1">
           404 Not Found
         </Typography>

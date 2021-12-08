@@ -16,54 +16,16 @@
 
 import React from "react";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { configurationElements } from "../utils";
 import EditConfiguration from "../../NotificationEndpoints/CustomForms/EditConfiguration";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  settingsCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
 
-interface IListConfiguration {
-  classes: any;
+interface IConfigurationForm {
   match: any;
   history: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...actionsTray,
-    ...settingsCommon,
-    ...containerForHeader(theme.spacing(4)),
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    iconText: {
-      lineHeight: "24px",
-    },
-    customConfigurationPage: {
-      height: "calc(100vh - 324px)",
-      scrollbarWidth: "none" as const,
-      "&::-webkit-scrollbar": {
-        display: "none",
-      },
-    },
-    mainCont: {
-      ...settingsCommon.mainCont,
-      maxWidth: 1180,
-    },
-  });
-
-const ConfigurationsList = ({ match, history }: IListConfiguration) => {
+const ConfigurationsList = ({ match, history }: IConfigurationForm) => {
   const activeConfRoute = get(match, "url", "");
 
   const configName = activeConfRoute.substring(
@@ -87,4 +49,4 @@ const ConfigurationsList = ({ match, history }: IListConfiguration) => {
   );
 };
 
-export default withStyles(styles)(ConfigurationsList);
+export default ConfigurationsList;

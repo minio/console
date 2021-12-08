@@ -51,16 +51,6 @@ import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
   createStyles({
-    logList: {
-      background: "#fff",
-      minHeight: 400,
-      height: "calc(100vh - 270px)",
-      overflow: "auto",
-      fontSize: 13,
-      padding: "25px 45px",
-      border: "1px solid #EAEDEE",
-      borderRadius: 4,
-    },
     loading: {
       paddingTop: 8,
       paddingLeft: 40,

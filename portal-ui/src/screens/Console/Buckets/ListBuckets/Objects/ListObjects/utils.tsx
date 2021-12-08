@@ -18,6 +18,7 @@ import React from "react";
 
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import ObjectBrowserFolderIcon from "../../../../../../icons/ObjectBrowserFolderIcon";
+import IconWithLabel from "./IconWithLabel";
 
 const FileBookIcon = React.lazy(
   () => import("../../../../../../icons/FileBookIcon")
@@ -65,7 +66,7 @@ const FileZipIcon = React.lazy(
   () => import("../../../../../../icons/FileZipIcon")
 );
 
-export const displayName = (element: string, classes: any) => {
+export const displayName = (element: string) => {
   let elementString = element;
   let icon = <ObjectBrowserIcon />;
   // Element is a folder
@@ -152,12 +153,5 @@ export const displayName = (element: string, classes: any) => {
 
   const splitItem = elementString.split("/");
 
-  return (
-    <div className={classes.fileName}>
-      {icon}
-      <span className={classes.fileNameText}>
-        {splitItem[splitItem.length - 1]}
-      </span>
-    </div>
-  );
+  return <IconWithLabel icon={icon} strings={splitItem} />;
 };

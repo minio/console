@@ -68,9 +68,6 @@ interface IAddTenantProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     pageBox: {
       border: "1px solid #EAEAEA",
     },

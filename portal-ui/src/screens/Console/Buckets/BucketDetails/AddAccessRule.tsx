@@ -47,10 +47,6 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
     ...modalBasic,
   });
 
@@ -121,12 +117,7 @@ const AddAccessRule = ({
             />
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
-            <button
-              type="button"
-              color="primary"
-              className={classes.clearButton}
-              onClick={resetForm}
-            >
+            <button type="button" color="primary" onClick={resetForm}>
               Clear
             </button>
             <Button

@@ -61,9 +61,6 @@ interface ISecurityProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     minioCertificateRows: {
       display: "flex",
       alignItems: "center",
@@ -86,9 +83,6 @@ const styles = (theme: Theme) =>
       "@media (max-width: 900px)": {
         flexFlow: "column",
       },
-    },
-    fileInputField: {
-      borderBottom: 0,
     },
     minioCertsContainer: {
       marginBottom: 15,

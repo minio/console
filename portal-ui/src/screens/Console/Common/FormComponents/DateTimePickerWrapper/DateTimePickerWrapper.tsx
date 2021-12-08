@@ -109,10 +109,6 @@ const styles = (theme: Theme) =>
     textBoxContainer: {
       flexGrow: 1,
     },
-    textBoxWithIcon: {
-      position: "relative",
-      paddingRight: 25,
-    },
     openListIcon: {
       color: "#9D9E9D",
       width: 8,

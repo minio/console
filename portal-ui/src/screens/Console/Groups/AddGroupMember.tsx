@@ -33,10 +33,6 @@ const styles = (theme: Theme) =>
       textAlign: "right",
       marginTop: "1rem",
     },
-    predefinedTitle: {
-      color: "rgba(0,0,0,.87)",
-      fontWeight: "normal",
-    },
     ...formFieldStyles,
     ...modalBasic,
   });

@@ -49,6 +49,7 @@ import SecureComponent, {
 } from "../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
+
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const AddGroup = withSuspense(React.lazy(() => import("../Groups/AddGroup")));
 const SetPolicy = withSuspense(
@@ -63,10 +64,6 @@ interface IGroupsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    pageContainer: {
-      border: "1px solid #EAEAEA",
-      width: "100%",
-    },
     tableBlock: {
       ...tableStyles.tableBlock,
       marginTop: 15,

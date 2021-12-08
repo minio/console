@@ -49,13 +49,6 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
       position: "relative",
     },
-    errorState: {
-      color: "#b53b4b",
-      fontSize: 14,
-      position: "absolute",
-      top: 7,
-      right: 7,
-    },
     cssOutlinedInput: {
       borderColor: "#EAEAEA",
       padding: 16,

@@ -72,9 +72,6 @@ interface ITenantSizeProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     compositeFieldContainer: {
       display: "flex",
       alignItems: "center",
@@ -89,9 +86,6 @@ const styles = (theme: Theme) =>
           marginTop: 5,
         },
       },
-    },
-    inputLabel: {
-      minWidth: 200,
     },
     ...formFieldStyles,
     ...modalBasic,

@@ -56,48 +56,6 @@ const EditAccessRuleModal = withSuspense(
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    fileName: {
-      display: "flex",
-      alignItems: "center",
-    },
-    fileNameText: {
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-    buttonsContainer: {
-      "& .MuiButtonBase-root": {
-        marginLeft: 10,
-      },
-    },
-    browsePaper: {
-      height: "calc(100vh - 280px)",
-    },
     "@global": {
       ".rowLine:hover  .iconFileElm": {
         backgroundImage: "url(/images/ob_file_filled.svg)",
@@ -109,12 +67,6 @@ const styles = (theme: Theme) =>
     listButton: {
       marginLeft: "10px",
       align: "right",
-    },
-    badgeOverlap: {
-      "& .MuiBadge-badge": {
-        top: 35,
-        right: 10,
-      },
     },
     ...actionsTray,
     ...searchField,

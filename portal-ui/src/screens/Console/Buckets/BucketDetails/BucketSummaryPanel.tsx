@@ -59,6 +59,7 @@ import SecureComponent, {
 } from "../../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
+
 const AddBucketTagModal = withSuspense(
   React.lazy(() => import("./AddBucketTagModal"))
 );
@@ -109,12 +110,6 @@ const styles = (theme: Theme) =>
     },
     reportedUsage: {
       padding: "15px",
-    },
-    dualCardLeft: {
-      paddingRight: "5px",
-    },
-    dualCardRight: {
-      paddingLeft: "5px",
     },
     capitalizeFirst: {
       textTransform: "capitalize",

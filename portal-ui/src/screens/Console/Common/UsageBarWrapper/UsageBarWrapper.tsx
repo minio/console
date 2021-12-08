@@ -20,9 +20,6 @@ interface IProgressBar {
 
 const styles = (theme: Theme) =>
   createStyles({
-    paperContainer: {
-      padding: 15,
-    },
     allValue: {
       fontSize: 16,
       fontWeight: 700,

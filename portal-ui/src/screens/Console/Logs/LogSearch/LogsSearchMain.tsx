@@ -90,31 +90,11 @@ const styles = (theme: Theme) =>
     ...tableStyles,
     ...advancedFilterToggleStyles,
 
-    buttonKit: {
-      "& div": {
-        height: 35,
-      },
-      "& .MuiOutlinedInput-notchedOutline": {
-        border: 0,
-        height: 28,
-        color: "#000000",
-      },
-    },
     searchOptions: {
       display: "flex",
       padding: 15,
       "@media (max-width: 900px)": {
         flexFlow: "column",
-      },
-    },
-    selectorLabel: {
-      "& + div": {
-        "@media (max-width: 900px)": {
-          width: 110,
-        },
-      },
-      "@media (max-width: 900px)": {
-        marginLeft: 5,
       },
     },
     formBox: {
@@ -131,7 +111,6 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "flex-start",
     },
-    advancedFilterOptions: {},
     ...logsCommon,
     ...containerForHeader(theme.spacing(4)),
   });

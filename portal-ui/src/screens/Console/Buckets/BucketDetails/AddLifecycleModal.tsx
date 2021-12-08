@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -25,8 +25,8 @@ import Grid from "@mui/material/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import {
-  ITierResponse,
   ITierElement,
+  ITierResponse,
 } from "../../Configurations/TiersConfiguration/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -53,14 +53,6 @@ interface ITiersDropDown {
 
 const styles = (theme: Theme) =>
   createStyles({
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
     buttonContainer: {
       textAlign: "right",
     },

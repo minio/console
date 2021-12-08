@@ -24,7 +24,6 @@ import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import { BucketInfo } from "../types";
 import {
-  actionsTray,
   buttonsStyles,
   containerForHeader,
   hrClass,
@@ -84,116 +83,16 @@ const BucketLifecyclePanel = withSuspense(
 
 const styles = (theme: Theme) =>
   createStyles({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
     pageContainer: {
       border: "1px solid #EAEAEA",
       height: "100%",
     },
     ...pageContentStyles,
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    noRecords: {
-      lineHeight: "24px",
-      textAlign: "center",
-      padding: "20px",
-    },
-    gridWrapper: {
-      width: 320,
-    },
-    gridContainer: {
-      display: "grid",
-      gridTemplateColumns: "auto auto",
-      gridGap: 8,
-      justifyContent: "flex-start",
-      alignItems: "center",
-      "& div:not(.MuiCircularProgress-root)": {
-        display: "flex",
-        alignItems: "center",
-      },
-      "& div:nth-child(odd)": {
-        justifyContent: "flex-end",
-        fontWeight: 700,
-      },
-      "& div:nth-child(2n)": {
-        minWidth: 150,
-      },
-    },
-    masterActions: {
-      width: "25%",
-      minWidth: "120px",
-      "& div": {
-        margin: "5px 0px",
-      },
-    },
-
-    headerContainer: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
-    capitalizeFirst: {
-      textTransform: "capitalize",
-      "& .min-icon": {
-        width: 16,
-        height: 16,
-      },
-    },
-    doubleElement: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
-    encCheckbox: {
-      margin: 0,
-      padding: 0,
-    },
-    tabPan: {
-      marginTop: "5px",
-    },
-    fixedHeight: {
-      height: 165,
-      minWidth: 247,
-      padding: "25px 28px",
-      "& svg": {
-        maxHeight: 18,
-      },
-    },
-    routerContainer: {
-      marginTop: 5,
-    },
-    titleCol: {
-      fontWeight: "bold",
-    },
-
     breadcrumLink: {
       textDecoration: "none",
       color: "black",
     },
     ...searchField,
-    ...actionsTray,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "15px 0 0",
-    },
     capitalize: {
       textTransform: "capitalize",
     },

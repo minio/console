@@ -61,24 +61,8 @@ const styles = (theme: Theme) =>
     ...searchField,
     ...settingsCommon,
     ...containerForHeader(theme.spacing(4)),
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    iconText: {
-      lineHeight: "24px",
-    },
     twHeight: {
       minHeight: 400,
-    },
-    lambdaContainer: {
-      padding: "15px 0",
-    },
-    searchField: {
-      ...searchField.searchField,
-      maxWidth: 380,
     },
     tableBlock: {
       ...tableStyles.tableBlock,

@@ -64,25 +64,12 @@ const styles = (theme: Theme) =>
     },
     bold: { fontWeight: "bold" },
     italic: { fontStyle: "italic" },
-    underline: { textDecorationLine: "underline" },
     paperContainer: {
       padding: "15px 15px 15px 50px",
-    },
-    verifiedIcon: {
-      width: 96,
-      position: "absolute",
-      right: 0,
-      bottom: 29,
-    },
-    noUnderLine: {
-      textDecoration: "none",
     },
     certificateInfo: {
       height: "auto",
       margin: 5,
-    },
-    certificateInfoName: {
-      fontWeight: "bold",
     },
     ...containerForHeader(theme.spacing(4)),
   });

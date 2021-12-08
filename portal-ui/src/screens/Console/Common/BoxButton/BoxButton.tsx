@@ -15,53 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Box, Button, ButtonProps, IconButtonProps } from "@mui/material";
 import BoxIconButton from "../BoxIconButton/BoxIconButton";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    root: {
-      padding: 8,
-      marginLeft: 8,
-      borderWidth: 1,
-      borderColor: "#696969",
-      color: "#696969",
-      borderStyle: "solid",
-      borderRadius: 3,
-      "& .min-icon": {
-        width: 20,
-      },
-      "& .MuiTouchRipple-root span": {
-        backgroundColor: theme.palette.primary.main,
-        borderRadius: 3,
-        opacity: 0.3,
-      },
-      "&:disabled": {
-        color: "#EBEBEB",
-        borderColor: "#EBEBEB",
-      },
-    },
-    contained: {
-      borderColor: theme.palette.primary.main,
-      background: theme.palette.primary.main,
-      color: "white",
-      "& .MuiTouchRipple-root span": {
-        backgroundColor: theme.palette.primary.dark,
-        borderRadius: 3,
-        opacity: 0.3,
-      },
-      "&:hover": {
-        backgroundColor: theme.palette.primary.light,
-        color: "#FFF",
-      },
-    },
-  });
-
 interface IBoxButton extends ButtonProps {
-  classes: any;
   label?: string;
 }
 
@@ -83,4 +40,4 @@ const BoxButton = ({ classes, children, label = "", ...rest }: IBoxButton) => {
   );
 };
 
-export default withStyles(styles)(BoxButton);
+export default BoxButton;

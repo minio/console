@@ -31,9 +31,6 @@ interface IFormatErrorsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    warningBlock: {
-      color: "red",
-    },
     buttonContainer: {
       textAlign: "right",
     },

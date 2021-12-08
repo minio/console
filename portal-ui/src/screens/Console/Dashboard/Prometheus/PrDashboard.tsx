@@ -53,29 +53,12 @@ const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...widgetContainerCommon,
-    syncButton: {
-      "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-of-type": {
-        fontSize: 18,
-      },
-    },
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "0 10px",
-    },
     dashboardRow: {
       display: "flex",
       flexDirection: "row",
       justifyContent: "flex-start",
       flexWrap: "wrap",
       maxWidth: 1180,
-    },
-    schedulerIcon: {
-      opacity: 0.4,
-      fontSize: 10,
-      "& svg": {
-        width: 18,
-        height: 18,
-      },
     },
   });
 

@@ -49,7 +49,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    radioBoxContainer: {},
     optionLabel: {
       "&.Mui-disabled": {
         "& .MuiFormControlLabel-label": {

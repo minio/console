@@ -50,22 +50,6 @@ interface IConfigurationOptions {
 
 const styles = (theme: Theme) =>
   createStyles({
-    strongText: {
-      fontWeight: 700,
-    },
-    keyName: {
-      marginLeft: 5,
-    },
-    iconText: {
-      lineHeight: "24px",
-    },
-    customConfigurationPage: {
-      height: "calc(100vh - 324px)",
-      scrollbarWidth: "none" as const,
-      "&::-webkit-scrollbar": {
-        display: "none",
-      },
-    },
     settingsOptionsContainer: {
       display: "flex" as const,
       flexDirection: "row" as const,
@@ -75,14 +59,6 @@ const styles = (theme: Theme) =>
       borderRadius: 2,
       padding: 5,
       backgroundColor: "#fff",
-    },
-    configurationLink: {
-      border: "#E5E5E5 1px solid",
-      borderRadius: 2,
-      padding: 20,
-      width: 190,
-      height: 80,
-      margin: 15,
     },
     ...searchField,
     ...actionsTray,

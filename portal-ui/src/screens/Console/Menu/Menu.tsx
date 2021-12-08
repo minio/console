@@ -101,16 +101,6 @@ const styles = (theme: Theme) =>
         color: "#ffffff",
       },
     },
-    logoSvg: {
-      width: 40,
-    },
-    logoSvgClosed: {
-      width: 0,
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
     menuList: {
       "& .active": {
         color: "#fff",
@@ -160,17 +150,6 @@ const styles = (theme: Theme) =>
         marginLeft: 5,
       },
     },
-    groupTitle: {
-      color: "#fff",
-      fontSize: 10,
-      textTransform: "uppercase",
-      fontWeight: 700,
-      marginBottom: 3,
-      cursor: "pointer",
-      userSelect: "none",
-      display: "flex",
-      justifyContent: "space-between",
-    },
     subTitleMenu: {
       fontWeight: 700,
       marginLeft: 10,
@@ -178,44 +157,6 @@ const styles = (theme: Theme) =>
         fontSize: 13,
         color: "#fff",
       },
-    },
-    selectorArrow: {
-      marginRight: 20,
-      marginTop: 1,
-      display: "inline-block",
-      width: 0,
-      height: 0,
-      borderStyle: "solid",
-      borderWidth: "4px 4px 0 4px",
-      borderColor:
-        "rgba(255, 255, 255, .29) transparent transparent transparent",
-      transform: "rotateZ(0deg)",
-      transitionDuration: "0.2s",
-    },
-    selectorArrowOpen: {
-      transform: "rotateZ(180deg)",
-    },
-    //new
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    menuButton: {
-      marginRight: 36,
-    },
-    hide: {
-      display: "none",
     },
     drawer: {
       width: drawerWidth,

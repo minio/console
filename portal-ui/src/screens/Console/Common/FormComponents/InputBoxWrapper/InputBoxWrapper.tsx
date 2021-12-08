@@ -68,17 +68,6 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
       position: "relative",
     },
-    textBoxWithIcon: {
-      position: "relative",
-      paddingRight: 25,
-    },
-    errorState: {
-      color: "#b53b4b",
-      fontSize: 14,
-      position: "absolute",
-      top: 7,
-      right: 7,
-    },
     overlayAction: {
       position: "absolute",
       right: 5,

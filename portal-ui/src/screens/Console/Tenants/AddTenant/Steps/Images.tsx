@@ -69,14 +69,6 @@ interface IImagesProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    inputLabel: {
-      fontWeight: 300,
-      fontSize: 14,
-      minWidth: 200,
-    },
     ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,

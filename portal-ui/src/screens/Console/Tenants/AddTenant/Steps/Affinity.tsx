@@ -52,9 +52,6 @@ interface IAffinityProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     overlayAction: {
       marginLeft: 10,
       "& svg": {
@@ -65,16 +62,9 @@ const styles = (theme: Theme) =>
         background: "#EAEAEA",
       },
     },
-    radioOptionsLayout: {
-      "& div": {
-        display: "flex",
-        flexFlow: "column",
-      },
-    },
     affinityConfigField: {
       display: "flex",
     },
-
     affinityFieldLabel: {
       display: "flex",
       flexFlow: "column",

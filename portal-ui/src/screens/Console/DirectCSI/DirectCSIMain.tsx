@@ -45,12 +45,6 @@ interface IDirectCSIMain {
 
 const styles = (theme: Theme) =>
   createStyles({
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
     tabsContainer: {
       marginBottom: 15,
     },

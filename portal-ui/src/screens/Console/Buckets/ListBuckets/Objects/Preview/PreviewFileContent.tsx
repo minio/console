@@ -21,6 +21,7 @@ import { Grid, LinearProgress } from "@mui/material";
 import { BucketObject } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
 import { encodeFileName } from "../../../../../../common/utils";
+import clsx from "clsx";
 
 const styles = () =>
   createStyles({
@@ -129,7 +130,11 @@ const PreviewFile = ({
       {objectType !== "video" &&
         objectType !== "audio" &&
         objectType !== "image" && (
-          <div className={`${loading ? classes.iframeHidden : ""} iframeBase`}>
+          <div
+            className={clsx(classes.iframeBase, {
+              [classes.iframeHidden]: loading,
+            })}
+          >
             <iframe
               src={path}
               title="File Preview"
@@ -146,5 +151,4 @@ const PreviewFile = ({
     </Fragment>
   );
 };
-
 export default withStyles(styles)(PreviewFile);

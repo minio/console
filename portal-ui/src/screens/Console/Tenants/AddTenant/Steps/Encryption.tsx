@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -22,13 +22,13 @@ import withStyles from "@mui/styles/withStyles";
 import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
-  updateAddField,
-  isPageValid,
-  addFileServerCert,
   addFileClientCert,
-  addFileVaultCert,
-  addFileVaultCa,
   addFileGemaltoCa,
+  addFileServerCert,
+  addFileVaultCa,
+  addFileVaultCert,
+  isPageValid,
+  updateAddField,
 } from "../../actions";
 import {
   createTenantCommon,
@@ -105,9 +105,6 @@ interface IEncryptionProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     encryptionTypeOptions: {
       marginBottom: 15,
     },
@@ -115,15 +112,6 @@ const styles = (theme: Theme) =>
       marginTop: 15,
       "& fieldset": {
         flex: 1,
-      },
-    },
-    fileInputField: {
-      borderBottom: "1px solid #EAEAEA",
-      "&:last-child": {
-        borderBottom: 0,
-      },
-      "& input": {
-        borderBottom: 0,
       },
     },
     rightSpacer: {

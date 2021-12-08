@@ -21,7 +21,6 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { IElementValue, KVField } from "../Configurations/types";
 import {
-  fieldBasic,
   formFieldStyles,
   modalBasic,
 } from "../Common/FormComponents/common/styleLibrary";
@@ -43,45 +42,6 @@ const styles = (theme: Theme) =>
     formFieldRow: {
       ...formFieldStyles.formFieldRow,
     },
-    inputBoxContainer: {
-      marginBottom: 7,
-      "& .MuiInputLabel-root": {
-        minWidth: 200,
-        "& svg": {
-          width: 16,
-          height: 16,
-        },
-      },
-    },
-    textBoxContainer: {
-      flexGrow: 1,
-      position: "relative",
-      display: "flex",
-    },
-    overlayAction: {
-      top: 0,
-      right: 0,
-      position: "relative",
-      marginLeft: 10,
-      display: "flex",
-      alignItems: "center",
-      "& button": {
-        background: "#EAEAEA",
-      },
-    },
-    fieldContainer: {
-      "& .MuiInputLabel-root": {
-        minWidth: 200,
-      },
-    },
-    tooltipContainer: {
-      ...fieldBasic.tooltipContainer,
-      "& svg": {
-        width: 16,
-        height: 16,
-      },
-    },
-
     ...modalBasic,
   });
 

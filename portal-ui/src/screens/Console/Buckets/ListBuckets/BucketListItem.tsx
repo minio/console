@@ -84,9 +84,6 @@ const styles = (theme: Theme) =>
         position: "absolute",
       },
     },
-    buttonTray: {
-      textAlign: "right",
-    },
     viewButton: {
       width: 111,
       color: "white",
@@ -108,11 +105,6 @@ const styles = (theme: Theme) =>
           fontSize: 18,
         },
       },
-    },
-    divider: {
-      backgroundColor: theme.palette.grey["200"],
-      marginTop: 10,
-      marginBottom: 4,
     },
     metric: {
       "& .min-icon": {

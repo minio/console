@@ -70,9 +70,6 @@ interface ISizePreviewProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     root: {
       margin: 4,
     },

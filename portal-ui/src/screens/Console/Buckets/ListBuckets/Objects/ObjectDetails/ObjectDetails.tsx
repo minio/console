@@ -102,66 +102,11 @@ const ObjectBrowserIcon = React.lazy(
 
 const styles = (theme: Theme) =>
   createStyles({
-    currentItemContainer: {
-      marginBottom: 8,
-    },
-    pageContainer: {
-      border: "1px solid #EAEAEA",
-      height: "100%",
-    },
-    objectPathContainer: {
-      marginBottom: 26,
-      fontSize: 10,
-    },
-    objectPathLink: {
-      "&:visited": {
-        color: "#000",
-      },
-    },
-    currentItem: {
-      fontSize: 24,
-    },
-    propertiesContainer: {
-      display: "flex",
-      flexDirection: "row",
-      marginBottom: 15,
-    },
-    propertiesItem: {
-      display: "flex",
-      flexDirection: "row",
-      marginRight: 21,
-    },
-    propertiesItemBold: {
-      fontWeight: 700,
-    },
-    propertiesValue: {
-      marginLeft: 8,
-      textTransform: "capitalize",
-    },
     propertiesIcon: {
       marginLeft: 5,
       "& .min-icon": {
         height: 12,
       },
-    },
-    actionsIconContainer: {
-      marginLeft: 12,
-    },
-    actionsIcon: {
-      height: 16,
-      width: 16,
-      "& .min-icon": {
-        height: 16,
-      },
-    },
-    tagsContainer: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 15,
-    },
-    tagText: {
-      marginRight: 13,
     },
     tag: {
       marginRight: 6,
@@ -180,23 +125,6 @@ const styles = (theme: Theme) =>
       "&.MuiFormControl-root": {
         marginRight: 0,
       },
-    },
-    paperContainer: {
-      padding: 15,
-      paddingLeft: 50,
-      display: "flex",
-    },
-    elementTitle: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      marginTop: -9,
-    },
-    dualCardLeft: {
-      paddingRight: "5px",
-    },
-    dualCardRight: {
-      paddingLeft: "5px",
     },
     capitalizeFirst: {
       textTransform: "capitalize",

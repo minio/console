@@ -44,14 +44,6 @@ interface IReplicationModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
     buttonContainer: {
       textAlign: "right",
     },

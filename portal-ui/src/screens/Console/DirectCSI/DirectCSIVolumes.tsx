@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -43,16 +43,6 @@ interface IDirectCSIVolumesProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     tableWrapper: {
       height: "calc(100vh - 267px)",
     },

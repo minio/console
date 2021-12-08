@@ -28,11 +28,6 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const styles = (theme: Theme) =>
   createStyles({
-    "@global": {
-      body: {
-        backgroundColor: "#FAFAFA",
-      },
-    },
     paper: {
       borderRadius: 8,
       display: "flex",
@@ -50,37 +45,11 @@ const styles = (theme: Theme) =>
         borderRadius: 8,
       },
     },
-    avatar: {
-      margin: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-      width: "100%", // Fix IE 11 issue.
-    },
     submit: {
       margin: "30px 0px 16px",
       height: 40,
       boxShadow: "none",
       padding: "16px 30px",
-    },
-    errorBlock: {
-      backgroundColor: "#C72C48",
-      width: 800,
-      height: 64,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      position: "absolute",
-      left: "50%",
-      top: "50%",
-      marginLeft: -400,
-      marginTop: -290,
-      color: "#fff",
-      fontWeight: 700,
-      fontSize: 14,
-      borderRadius: 8,
-      padding: 10,
-      boxSizing: "border-box",
     },
     mainContainer: {
       position: "relative",
@@ -101,39 +70,6 @@ const styles = (theme: Theme) =>
     },
     theLogin: {
       padding: "40px 45px 20px 45px",
-    },
-    loadingLoginStrategy: {
-      textAlign: "center",
-    },
-    headerTitle: {
-      marginBottom: 10,
-    },
-    submitContainer: {
-      textAlign: "right",
-    },
-    disclaimer: {
-      fontSize: 12,
-      marginTop: 30,
-    },
-    jwtInput: {
-      marginTop: 45,
-    },
-    linearPredef: {
-      height: 10,
-    },
-    errorIconStyle: {
-      marginRight: 3,
-    },
-    loaderAlignment: {
-      display: "flex",
-      width: "100%",
-      height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    },
-    retryButton: {
-      alignSelf: "flex-end",
     },
     extraDetailsContainer: {
       fontStyle: "italic",

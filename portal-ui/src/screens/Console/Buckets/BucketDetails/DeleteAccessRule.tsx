@@ -42,13 +42,6 @@ interface IDeleteAccessRule {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
     ...modalBasic,
   });
 

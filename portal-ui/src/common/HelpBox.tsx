@@ -44,9 +44,6 @@ const styles = (theme: Theme) =>
         marginRight: ".8rem",
       },
     },
-    iconSize: {
-      fontSize: 64,
-    },
     helpText: {
       fontSize: 16,
     },

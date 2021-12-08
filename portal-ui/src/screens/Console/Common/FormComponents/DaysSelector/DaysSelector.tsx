@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputLabel from "@mui/material/InputLabel";
 import moment from "moment/moment";
@@ -36,11 +36,6 @@ interface IDaysSelector {
 
 const styles = (theme: Theme) =>
   createStyles({
-    dateInput: {
-      "&:not(:last-child)": {
-        marginRight: 22,
-      },
-    },
     ...fieldBasic,
     ...tooltipHelper,
     labelContainer: {
@@ -55,10 +50,6 @@ const styles = (theme: Theme) =>
       paddingBottom: 10,
       marginTop: 11,
       marginBottom: 6,
-    },
-    fieldContainerBorder: {
-      borderBottom: "#9c9c9c 1px solid",
-      marginBottom: 20,
     },
     dateContainer: {
       height: 20,
