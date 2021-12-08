@@ -12,6 +12,7 @@ spec:
       labels:
         app: console
     spec:
+      serviceAccountName: console-sa
       containers:
         - name: console
           image: minio/console:v0.12.6
