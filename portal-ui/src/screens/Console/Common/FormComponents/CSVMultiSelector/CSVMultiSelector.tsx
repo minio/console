@@ -56,12 +56,9 @@ const styles = (theme: Theme) =>
       position: "relative",
       marginTop: 15,
     },
-    labelContainer: {
-      display: "flex",
-    },
     inputBoxSpacer: {
       marginBottom: 7,
-    }
+    },
   });
 
 const CSVMultiSelector = ({

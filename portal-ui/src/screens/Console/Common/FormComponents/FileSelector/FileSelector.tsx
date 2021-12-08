@@ -50,29 +50,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    textBoxContainer: {
-      flexGrow: 1,
-      position: "relative",
-      display: "flex",
-      flexWrap: "nowrap",
-      height: componentHeight,
-    errorState: {
-      color: "#b53b4b",
-      fontSize: 14,
-      position: "absolute",
-      top: 7,
-      right: 7,
-    },
-    errorText: {
-      margin: "0",
-      fontSize: "0.75rem",
-      marginTop: 3,
-      textAlign: "left",
-      fontFamily: "Lato,sans-serif",
-      fontWeight: 400,
-      lineHeight: "1.66",
-      color: "#dc1f2e",
-    },
     valueString: {
       maxWidth: 350,
       whiteSpace: "nowrap",
