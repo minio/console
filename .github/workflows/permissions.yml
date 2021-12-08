@@ -1,0 +1,42 @@
+name: "Front-End Permission Tests"
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  permissions:
+    name: Front-End Permission Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build Console on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+
+      - name: Install modules
+        working-directory: ./portal-ui
+        run: yarn
+
+      - name: Run permission tests
+        run: |
+          make test-permissions

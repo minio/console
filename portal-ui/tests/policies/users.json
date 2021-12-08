@@ -1,0 +1,16 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+        "admin:ListUsers",
+        "admin:CreateUser",
+        "admin:DeleteUser",
+        "admin:GetUser",
+        "admin:EnableUser",
+        "admin:DisableUser"
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		}
+	]
+}
