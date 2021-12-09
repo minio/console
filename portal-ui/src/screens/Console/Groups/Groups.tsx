@@ -205,7 +205,11 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
             errorProps={{ disabled: true }}
           >
-            <SearchBox placeholder={"Search Groups"} onChange={setFilter} overrideClass={classes.searchField} />
+            <SearchBox
+              placeholder={"Search Groups"}
+              onChange={setFilter}
+              overrideClass={classes.searchField}
+            />
           </SecureComponent>
 
           <SecureComponent
