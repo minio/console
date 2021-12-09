@@ -43,31 +43,25 @@ import api from "../../../common/api";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "../../../icons/LogoutIcon";
 import { resetSession } from "../actions";
+import {
+  AccountIcon,
+  BucketsIcon,
+  DashboardIcon,
+  DocumentationIcon,
+  GroupsIcon,
+  IAMPoliciesIcon,
+  LambdaIcon,
+  LicenseIcon,
+  SettingsIcon,
+  StorageIcon,
+  TenantsOutlineIcon,
+  TiersIcon,
+  ToolsIcon,
+  UsersIcon,
+  VersionIcon,
+} from "../../../icons";
 
 const drawerWidth = 245;
-
-const BucketsIcon = React.lazy(() => import("../../../icons/BucketsIcon"));
-const DashboardIcon = React.lazy(() => import("../../../icons/DashboardIcon"));
-const GroupsIcon = React.lazy(() => import("../../../icons/GroupsIcon"));
-const IAMPoliciesIcon = React.lazy(
-  () => import("../../../icons/IAMPoliciesIcon")
-);
-const LambdaIcon = React.lazy(() => import("../../../icons/LambdaIcon"));
-const TiersIcon = React.lazy(() => import("../../../icons/TiersIcon"));
-const ToolsIcon = React.lazy(() => import("../../../icons/ToolsIcon"));
-const UsersIcon = React.lazy(() => import("../../../icons/UsersIcon"));
-const VersionIcon = React.lazy(() => import("../../../icons/VersionIcon"));
-const LicenseIcon = React.lazy(() => import("../../../icons/LicenseIcon"));
-
-const AccountIcon = React.lazy(() => import("../../../icons/AccountIcon"));
-const DocumentationIcon = React.lazy(
-  () => import("../../../icons/DocumentationIcon")
-);
-const SettingsIcon = React.lazy(() => import("../../../icons/SettingsIcon"));
-const StorageIcon = React.lazy(() => import("../../../icons/StorageIcon"));
-const TenantsOutlinedIcon = React.lazy(
-  () => import("../../../icons/TenantsOutlineIcon")
-);
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -348,7 +342,7 @@ const Menu = ({
       component: NavLink,
       to: "/tenants",
       name: "Tenants",
-      icon: TenantsOutlinedIcon,
+      icon: TenantsOutlineIcon,
     },
     {
       group: "Operator",
