@@ -236,7 +236,8 @@ func (ac AdminClient) setConfigKV(ctx context.Context, kv string) (restart bool,
 
 // implements madmin.DelConfigKV()
 func (ac AdminClient) delConfigKV(ctx context.Context, kv string) (err error) {
-	return ac.Client.DelConfigKV(ctx, kv)
+	_, err = ac.Client.DelConfigKV(ctx, kv)
+	return err
 }
 
 // implements madmin.ServiceRestart()

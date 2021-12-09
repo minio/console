@@ -20,9 +20,9 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
-	github.com/minio/madmin-go v1.1.12
-	github.com/minio/mc v0.0.0-20211110003602-1461b652d920
-	github.com/minio/minio-go/v7 v7.0.15
+	github.com/minio/madmin-go v1.1.17
+	github.com/minio/mc v0.0.0-20211207230606-23a05f5a17f2
+	github.com/minio/minio-go/v7 v7.0.17
 	github.com/minio/operator v0.0.0-20211011212245-31460bbbc4b7
 	github.com/minio/operator/logsearchapi v0.0.0-20211011212245-31460bbbc4b7
 	github.com/minio/pkg v1.1.9
@@ -33,7 +33,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/unrolled/secure v1.0.9
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
-	golang.org/x/net v0.0.0-20210928044308-7d9f5e0b762b
+	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.21.1
@@ -62,7 +62,7 @@ require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/georgysavva/scany v0.2.7 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
-	github.com/go-ole/go-ole v1.2.5 // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-openapi/analysis v0.20.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
@@ -79,6 +79,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
@@ -131,7 +132,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect
-	golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6 // indirect
+	golang.org/x/sys v0.0.0-20211015200801-69063c4bb744 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
