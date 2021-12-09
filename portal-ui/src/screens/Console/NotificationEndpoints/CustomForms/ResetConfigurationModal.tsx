@@ -93,12 +93,16 @@ const ResetConfigurationModal = ({
   return (
     <Dialog
       open={resetOpen}
-      classes={classes}
       onClose={() => {
         closeResetModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      sx={{
+        "& .MuiPaper-root": {
+          padding: "1rem 2rem 2rem 1rem",
+        },
+      }}
     >
       <DialogTitle id="alert-dialog-title" className={classes.title}>
         <div className={classes.titleText}>Restore Defaults</div>

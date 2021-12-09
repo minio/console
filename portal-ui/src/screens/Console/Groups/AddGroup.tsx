@@ -211,7 +211,6 @@ const AddGroup = ({
             )}
             <Grid item xs={12}>
               <UsersSelectors
-                classes={classes}
                 selectedUsers={selectedUsers}
                 setSelectedUsers={setSelectedUsers}
                 editMode={selectedGroup !== null}

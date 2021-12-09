@@ -52,7 +52,6 @@ const ConfirmDialog = ({
   return (
     <Dialog
       open={isOpen}
-      classes={classes}
       onClose={(event, reason) => {
         if (reason !== "backdropClick") {
           onClose(); // close on Esc but not on click outside
@@ -61,6 +60,11 @@ const ConfirmDialog = ({
       className={classes.root}
       onBackdropClick={() => {
         return false;
+      }}
+      sx={{
+        "& .MuiPaper-root": {
+          padding: "1rem 2rem 2rem 1rem",
+        },
       }}
     >
       <DialogTitle className={classes.title}>

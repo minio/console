@@ -171,7 +171,6 @@ const UpdateTierCredentialsModal = ({
             {type === "gcs" && (
               <Fragment>
                 <FileSelector
-                  classes={classes}
                   accept=".json"
                   id="creds"
                   label="Credentials"

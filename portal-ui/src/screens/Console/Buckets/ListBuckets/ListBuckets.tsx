@@ -25,7 +25,10 @@ import { Bucket, BucketList } from "../types";
 import { AddIcon, BucketsIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  searchField,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import DeleteBucket from "./DeleteBucket";
@@ -64,7 +67,13 @@ const styles = (theme: Theme) =>
     bucketList: {
       marginTop: 25,
     },
-
+    searchField: {
+      ...searchField.searchField,
+      minWidth: 380,
+      "@media (max-width: 900px)": {
+        minWidth: 220,
+      },
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -186,8 +195,8 @@ const ListBuckets = ({
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           <SearchBox
             onChange={setFilterBuckets}
-            classes={classes}
             placeholder="Search Buckets"
+            overrideClass={classes.searchField}
           />
 
           <Grid

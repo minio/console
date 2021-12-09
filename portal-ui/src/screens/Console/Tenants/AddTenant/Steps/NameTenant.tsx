@@ -283,7 +283,6 @@ const NameTenant = ({
                 <div className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="tenant-name"
-                    classes={classes}
                     name="tenant-name"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updateField("tenantName", e.target.value);
@@ -298,7 +297,6 @@ const NameTenant = ({
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
-                  classes={classes}
                   id="namespace"
                   name="namespace"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -315,7 +313,6 @@ const NameTenant = ({
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
                 <SelectWrapper
-                  classes={classes}
                   id="storage_class"
                   name="storage_class"
                   onChange={(e: SelectChangeEvent<string>) => {

@@ -58,7 +58,6 @@ interface IListNotificationEndpoints {
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
-    ...searchField,
     ...settingsCommon,
     ...containerForHeader(theme.spacing(4)),
     twHeight: {
@@ -71,6 +70,13 @@ const styles = (theme: Theme) =>
       display: "flex",
       "& button": {
         whiteSpace: "nowrap",
+      },
+    },
+    searchField: {
+      ...searchField.searchField,
+      minWidth: 380,
+      "@media (max-width: 900px)": {
+        minWidth: 220,
       },
     },
   });
@@ -140,9 +146,9 @@ const ListNotificationEndpoints = ({
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox
-            classes={classes}
             placeholder="Search target"
             onChange={setFilter}
+            overrideClass={classes.searchField}
           />
           <div className={classes.rightActionItems}>
             <BoxIconButton

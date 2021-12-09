@@ -423,7 +423,6 @@ const AddTierConfiguration = ({
                       <div className={classes.formFieldRow}>
                         <FileSelector
                           accept=".json"
-                          classes={classes}
                           id="creds"
                           label="Credentials"
                           name="creds"

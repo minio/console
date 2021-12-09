@@ -96,12 +96,16 @@ const AddNamespaceModal = ({
   return (
     <Dialog
       open={addNamespaceOpen}
-      classes={classes}
       onClose={() => {
         closeAddNamespaceModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      sx={{
+        "& .MuiPaper-root": {
+          padding: "1rem 2rem 2rem 1rem",
+        },
+      }}
     >
       <DialogTitle id="alert-dialog-title" className={classes.title}>
         <div className={classes.titleText}>Create new namespace</div>

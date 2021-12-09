@@ -145,6 +145,7 @@ const PolicySelectors = ({
                   onChange={(value) => {
                     setFilter(value);
                   }}
+                  overrideClass={classes.searchField}
                 />
               </div>
             </Grid>

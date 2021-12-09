@@ -20,6 +20,7 @@ type SearchBoxProps = {
   classes: any;
   onChange: (value: string) => void;
   adornmentPosition?: "start" | "end";
+  overrideClass?: any;
 };
 
 const SearchBox = ({
@@ -27,6 +28,8 @@ const SearchBox = ({
   classes,
   onChange,
   adornmentPosition = "end",
+  overrideClass,
+
 }: SearchBoxProps) => {
   const inputProps = {
     disableUnderline: true,
@@ -42,7 +45,7 @@ const SearchBox = ({
   return (
     <TextField
       placeholder={placeholder}
-      className={classes.searchField}
+      className={overrideClass? overrideClass : classes.searchField}
       id="search-resource"
       label=""
       InputProps={inputProps}

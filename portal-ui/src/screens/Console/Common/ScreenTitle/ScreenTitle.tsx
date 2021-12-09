@@ -27,6 +27,7 @@ interface IScreenTitle {
   title?: any;
   subTitle?: any;
   actions?: any;
+  className?: any;
 }
 
 const styles = (theme: Theme) =>
@@ -75,10 +76,15 @@ const ScreenTitle = ({
   title,
   subTitle,
   actions,
+  className,
 }: IScreenTitle) => {
   return (
     <Grid container>
-      <Grid item xs={12} className={classes.screenTitle}>
+      <Grid
+        item
+        xs={12}
+        className={`${classes.screenTitle} ${className ? className : ""}`}
+      >
         <div className={classes.leftItems}>
           {icon ? <div className={classes.headerBarIcon}>{icon}</div> : null}
           <div className={classes.titleColumn}>

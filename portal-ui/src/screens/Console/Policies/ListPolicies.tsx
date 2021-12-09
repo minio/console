@@ -199,8 +199,8 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox
             onChange={setFilterPolicies}
-            classes={classes}
             placeholder="Search Policies"
+            overrideClass={classes.searchField}
           />
 
           <SecureComponent

@@ -331,11 +331,7 @@ const PolicyDetails = ({
           </Fragment>
         }
       />
-      <BackLink
-        to={"/policies"}
-        label={"Return to Policies"}
-        classes={classes}
-      />
+      <BackLink to={"/policies"} label={"Return to Policies"} />
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle

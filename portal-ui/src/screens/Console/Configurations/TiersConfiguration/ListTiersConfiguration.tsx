@@ -201,7 +201,7 @@ const ListTiersConfiguration = ({
           <SearchBox
             placeholder="Filter"
             onChange={setFilter}
-            classes={classes}
+            overrideClass={classes.searchField}
           />
 
           <div className={classes.rightActionButtons}>

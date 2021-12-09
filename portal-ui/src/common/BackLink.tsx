@@ -47,11 +47,12 @@ interface IBackLink {
   classes: any;
   to: string;
   label: string;
+  className?: any;
 }
 
-const BackLink = ({ to, label, classes }: IBackLink) => {
+const BackLink = ({ to, label, classes, className }: IBackLink) => {
   return (
-    <Link to={to} className={classes.link}>
+    <Link to={to} className={`${classes.link} ${className ? className : ""}`}>
       <div className={classes.icon}>
         <BackSettingsIcon />
       </div>

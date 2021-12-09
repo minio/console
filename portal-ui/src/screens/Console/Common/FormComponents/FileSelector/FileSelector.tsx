@@ -23,7 +23,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import {
+  fieldBasic,
+  fileInputStyles,
+  tooltipHelper,
+} from "../common/styleLibrary";
 import { fileProcess } from "./utils";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import ErrorBlock from "../../../../shared/ErrorBlock";
@@ -42,19 +46,10 @@ interface InputBoxProps {
   value?: string;
 }
 
-const componentHeight = 48;
-
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    textBoxContainer: {
-      flexGrow: 1,
-      position: "relative",
-      display: "flex",
-      flexWrap: "nowrap",
-      height: componentHeight,
-    },
     valueString: {
       maxWidth: 350,
       whiteSpace: "nowrap",
@@ -62,17 +57,10 @@ const styles = (theme: Theme) =>
       textOverflow: "ellipsis",
       marginTop: 2,
     },
-    fileReselect: {
-      display: "flex",
-      alignItems: "center",
-      height: componentHeight,
-    },
-    fieldBottom: {
-      borderBottom: "#9c9c9c 1px solid",
-    },
     fileInputField: {
       margin: "13px 0",
     },
+    ...fileInputStyles,
   });
 
 const FileSelector = ({

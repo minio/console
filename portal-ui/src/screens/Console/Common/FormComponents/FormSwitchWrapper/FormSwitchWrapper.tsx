@@ -105,6 +105,11 @@ const StyledSwitch = withStyles((theme) => ({
   },
   checked: {},
   focusVisible: {},
+  switchContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
 }))(Switch);
 
 const FormSwitchWrapper = ({
