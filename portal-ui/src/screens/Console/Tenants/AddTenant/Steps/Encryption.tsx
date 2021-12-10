@@ -503,7 +503,9 @@ const Encryption = ({
                   <Grid container>
                     <Grid item xs={12} style={{ marginBottom: 15 }}>
                       <fieldset className={classes.fieldGroup}>
-                        <legend>Encryption Service Certificates</legend>
+                        <legend className={classes.descriptionText}>
+                          Encryption Service Certificates
+                        </legend>
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
                             addFileServerCert("key", fileName, encodedValue);
@@ -537,7 +539,9 @@ const Encryption = ({
                   <Grid container style={{ marginBottom: 15 }}>
                     <Grid item xs={12}>
                       <fieldset className={classes.fieldGroup}>
-                        <legend>Mutual TLS authentication</legend>
+                        <legend className={classes.descriptionText}>
+                          Mutual TLS authentication
+                        </legend>
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
                             addFileClientCert("key", fileName, encodedValue);
@@ -620,7 +624,7 @@ const Encryption = ({
 
               <Grid item xs={12}>
                 <fieldset className={classes.fieldGroup}>
-                  <legend>App Role</legend>
+                  <legend className={classes.descriptionText}>App Role</legend>
                   <Grid item xs={12} className={classes.formFieldRow}>
                     <InputBoxWrapper
                       id="vault_approle_engine"
@@ -680,7 +684,9 @@ const Encryption = ({
 
               <Grid container className={classes.mutualTlsConfig}>
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Mutual TLS authentication (optional)</legend>
+                  <legend className={classes.descriptionText}>
+                    Mutual TLS authentication (optional)
+                  </legend>
                   <FileSelector
                     onChange={(encodedValue, fileName) => {
                       addFileVaultCert("key", fileName, encodedValue);
@@ -723,7 +729,7 @@ const Encryption = ({
                 style={{ marginTop: 15 }}
               >
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Status</legend>
+                  <legend className={classes.descriptionText}>Status</legend>
                   <InputBoxWrapper
                     type="number"
                     min="0"
@@ -758,7 +764,9 @@ const Encryption = ({
               </Grid>
               <Grid item xs={12}>
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Credentials</legend>
+                  <legend className={classes.descriptionText}>
+                    Credentials
+                  </legend>
                   <Grid item xs={12} className={classes.formFieldRow}>
                     <InputBoxWrapper
                       id="azure_tenant_id"
@@ -828,7 +836,9 @@ const Encryption = ({
               </Grid>
               <Grid item xs={12}>
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Credentials</legend>
+                  <legend className={classes.descriptionText}>
+                    Credentials
+                  </legend>
                   <Grid item xs={12} className={classes.formFieldRow}>
                     <InputBoxWrapper
                       id="gcp_client_email"
@@ -920,7 +930,9 @@ const Encryption = ({
               </Grid>
               <Grid item xs={12}>
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Credentials</legend>
+                  <legend className={classes.descriptionText}>
+                    Credentials
+                  </legend>
                   <Grid item xs={12} className={classes.formFieldRow}>
                     <InputBoxWrapper
                       id="aws_accessKey"
@@ -988,7 +1000,9 @@ const Encryption = ({
                 }}
               >
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Credentials</legend>
+                  <legend className={classes.descriptionText}>
+                    Credentials
+                  </legend>
                   <Grid item xs={12} className={classes.formFieldRow}>
                     <InputBoxWrapper
                       id="gemalto_token"
@@ -1042,7 +1056,9 @@ const Encryption = ({
                 }}
               >
                 <fieldset className={classes.fieldGroup}>
-                  <legend>Custom CA Root certificate verification</legend>
+                  <legend className={classes.descriptionText}>
+                    Custom CA Root certificate verification
+                  </legend>
 
                   <FileSelector
                     onChange={(encodedValue, fileName) => {
@@ -1081,7 +1097,9 @@ const Encryption = ({
             </Grid>
 
             <fieldset className={classes.fieldGroup} style={{ marginTop: 15 }}>
-              <legend>SecurityContext for KES pods</legend>
+              <legend className={classes.descriptionText}>
+                SecurityContext for KES pods
+              </legend>
               <Grid item xs={12} className={classes.kesSecurityContext}>
                 <div
                   className={`${classes.multiContainer} ${classes.responsiveContainer}`}

@@ -736,8 +736,7 @@ export const wizardCommon = {
     margin: 0,
   },
   descriptionText: {
-    fontSize: 13,
-    color: "#777777",
+    fontSize: 14,
   },
   container: {
     padding: "77px 0 0 0",
@@ -1110,6 +1109,12 @@ export const spacingUtils: any = {
   spacerLeft: {
     marginLeft: ".9rem",
   },
+  spacerBottom: {
+    marginBottom: ".9rem",
+  },
+  spacerTop: {
+    marginTop: ".9rem",
+  },
 };
 
 export const formFieldStyles = {
@@ -1161,6 +1166,10 @@ export const deleteDialogStyles = {
       top: -20,
       left: 30,
       position: "relative",
+      padding: 1,
+      "&:focus, &:hover": {
+        background: "#EAEAEA",
+      },
     },
     "& .min-icon": {
       height: 16,
@@ -1208,6 +1217,30 @@ export const advancedFilterToggleStyles: any = {
 export const createTenantCommon: any = {
   fieldGroup: {
     border: "1px solid #EAEAEA",
-    paddingTop: 5,
+    paddingTop: 15,
+  },
+  descriptionText: {
+    fontSize: 16,
+  },
+};
+
+export const modalStyleUtils: any = {
+  modalButtonBar: {
+    marginTop: 15,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+
+    "& button": {
+      marginRight: 10,
+    },
+    "& button:last-child": {
+      marginRight: 0,
+    },
+  },
+  modalFormScrollable: {
+    maxHeight: "calc(100vh - 300px)",
+    overflowY: "auto",
+    paddingTop: 10,
   },
 };

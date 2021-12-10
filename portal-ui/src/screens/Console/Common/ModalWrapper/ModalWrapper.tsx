@@ -21,11 +21,15 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { snackBarCommon } from "../FormComponents/common/styleLibrary";
+import {
+  deleteDialogStyles,
+  snackBarCommon,
+} from "../FormComponents/common/styleLibrary";
 import { AppState } from "../../../../store";
 import { snackBarMessage } from "../../../../types";
 import { setModalSnackMessage } from "../../../../actions";
 import ModalError from "../FormComponents/ModalError/ModalError";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface IModalProps {
   classes: any;
@@ -39,63 +43,17 @@ interface IModalProps {
   setModalSnackMessage: typeof setModalSnackMessage;
 }
 
-const baseCloseLine = {
-  content: '" "',
-  borderLeft: "2px solid #9C9C9C",
-  height: 33,
-  width: 1,
-  position: "absolute",
-};
-
 const styles = (theme: Theme) =>
   createStyles({
-    dialogContainer: {
-      padding: "8px 15px 22px",
-    },
-    closeContainer: {
-      textAlign: "right",
-    },
-    closeButton: {
-      height: 16,
-      width: 16,
-      padding: 0,
-      backgroundColor: "initial",
-      "&:hover": {
-        backgroundColor: "initial",
-      },
-      "&:active": {
-        backgroundColor: "initial",
+    ...deleteDialogStyles,
+    root: {
+      "& .MuiPaper-root": {
+        padding: "1rem 2rem 2rem 1rem",
       },
     },
-    closeIcon: {
-      "&::before": {
-        ...baseCloseLine,
-        transform: "rotate(45deg)",
-        height: 12,
-      },
-      "&::after": {
-        ...baseCloseLine,
-        transform: "rotate(-45deg)",
-        height: 12,
-      },
-      "&:hover::before, &:hover::after": {
-        borderColor: "#9C9C9C",
-      },
-      display: "block",
-      position: "relative",
-      height: 12,
-      width: 12,
-    },
-    titleClass: {
-      padding: "0px 50px 12px",
-      fontSize: "1.2rem",
-      fontWeight: 600,
-      overflow: "hidden",
-      whiteSpace: "nowrap",
-      textOverflow: "ellipsis",
-    },
-    modalContent: {
-      padding: "0 50px",
+    content: {
+      padding: 25,
+      paddingBottom: 0,
     },
     customDialogSize: {
       width: "100%",
@@ -162,51 +120,53 @@ const ModalWrapper = ({
   return (
     <Dialog
       open={modalOpen}
-      onClose={onClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
+      classes={classes}
       {...customSize}
+      scroll={"paper"}
+      onClose={(event, reason) => {
+        if (reason !== "backdropClick") {
+          onClose(); // close on Esc but not on click outside
+        }
+      }}
+      className={classes.root}
     >
-      <div className={classes.dialogContainer}>
-        <ModalError />
-        <Snackbar
-          open={openSnackbar}
-          className={classes.snackBarModal}
-          onClose={() => {
-            closeSnackBar();
-          }}
-          message={message}
-          ContentProps={{
-            className: `${classes.snackBar} ${
-              modalSnackMessage && modalSnackMessage.type === "error"
-                ? classes.errorSnackBar
-                : ""
-            }`,
-          }}
-          autoHideDuration={
-            modalSnackMessage && modalSnackMessage.type === "error"
-              ? 10000
-              : 5000
-          }
-        />
+      <DialogTitle className={classes.title}>
+        <div className={classes.titleText}>{title}</div>
         <div className={classes.closeContainer}>
           <IconButton
             aria-label="close"
             className={classes.closeButton}
             onClick={onClose}
             disableRipple
-            size="large"
+            size="small"
           >
-            <span className={classes.closeIcon} />
+            <CloseIcon />
           </IconButton>
         </div>
-        <DialogTitle id="alert-dialog-title" className={classes.titleClass}>
-          {title}
-        </DialogTitle>
-        <DialogContent className={noContentPadding ? "" : classes.modalContent}>
-          {children}
-        </DialogContent>
-      </div>
+      </DialogTitle>
+
+      <ModalError />
+      <Snackbar
+        open={openSnackbar}
+        className={classes.snackBarModal}
+        onClose={() => {
+          closeSnackBar();
+        }}
+        message={message}
+        ContentProps={{
+          className: `${classes.snackBar} ${
+            modalSnackMessage && modalSnackMessage.type === "error"
+              ? classes.errorSnackBar
+              : ""
+          }`,
+        }}
+        autoHideDuration={
+          modalSnackMessage && modalSnackMessage.type === "error" ? 10000 : 5000
+        }
+      />
+      <DialogContent className={noContentPadding ? "" : classes.content}>
+        {children}
+      </DialogContent>
     </Dialog>
   );
 };

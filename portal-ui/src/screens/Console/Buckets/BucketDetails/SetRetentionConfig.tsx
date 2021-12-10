@@ -21,7 +21,12 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  createTenantCommon,
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   ErrorResponseHandler,
@@ -34,7 +39,10 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...modalBasic,
+    ...spacingUtils,
+    ...createTenantCommon,
+    ...formFieldStyles,
+    ...modalStyleUtils,
   });
 
 interface ISetRetentionConfigProps {
@@ -126,8 +134,8 @@ const SetRetentionConfig = ({
           }}
         >
           <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              <Grid item xs={12}>
+            <Grid item xs={12} className={classes.modalFormScrollable}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <RadioGroupSelector
                   currentSelection={retentionMode}
                   id="retention_mode"
@@ -142,7 +150,7 @@ const SetRetentionConfig = ({
                   ]}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <RadioGroupSelector
                   currentSelection={retentionUnit}
                   id="retention_unit"
@@ -157,7 +165,7 @@ const SetRetentionConfig = ({
                   ]}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   type="number"
                   id="retention_validity"
@@ -172,12 +180,22 @@ const SetRetentionConfig = ({
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.modalButtonBar}>
+              <Button
+                type="button"
+                variant="outlined"
+                color="primary"
+                disabled={addLoading}
+                onClick={() => {
+                  closeModalAndRefresh();
+                }}
+              >
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                fullWidth
                 disabled={addLoading || !valid}
               >
                 Set

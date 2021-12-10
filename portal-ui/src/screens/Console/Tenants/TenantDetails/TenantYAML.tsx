@@ -25,7 +25,7 @@ import api from "../../../../common/api";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   fieldBasic,
-  modalBasic,
+  modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -41,7 +41,20 @@ const styles = (theme: Theme) =>
       fontSize: 14,
       fontWeight: "bold",
     },
-    ...modalBasic,
+    codeMirrorContainer: {
+      marginBottom: 20,
+      paddingLeft: 15,
+      "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
+        border: "1px solid #EAEAEA",
+      },
+      "& label": {
+        marginBottom: ".5rem",
+      },
+      "& label + div": {
+        display: "none",
+      },
+    },
+    ...modalStyleUtils,
     ...fieldBasic,
   });
 
@@ -119,10 +132,16 @@ const TenantYAML = ({
       }}
       title={`YAML`}
     >
-      {loading && <LinearProgress />}
+      {addLoading ||
+        (loading && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        ))}
       {errorMessage !== "" && (
         <div className={classes.errorState}>{errorMessage}</div>
       )}
+
       {!loading && (
         <form
           noValidate
@@ -132,10 +151,7 @@ const TenantYAML = ({
           }}
         >
           <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
+            <Grid item xs={12} className={classes.codeMirrorContainer}>
               <CodeMirrorWrapper
                 label={`Tenant Specification`}
                 value={tenantYaml}
@@ -145,7 +161,18 @@ const TenantYAML = ({
                 }}
               />
             </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
+            <Grid item xs={12} className={classes.modalButtonBar}>
+              <Button
+                type="button"
+                variant="outlined"
+                color="primary"
+                disabled={addLoading}
+                onClick={() => {
+                  closeModalAndRefresh(false);
+                }}
+              >
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 variant="contained"
@@ -155,11 +182,6 @@ const TenantYAML = ({
                 Save
               </Button>
             </Grid>
-            {addLoading && (
-              <Grid item xs={12}>
-                <LinearProgress />
-              </Grid>
-            )}
           </Grid>
         </form>
       )}

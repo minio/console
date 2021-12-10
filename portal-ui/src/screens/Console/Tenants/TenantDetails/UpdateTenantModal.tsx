@@ -20,7 +20,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid } from "@mui/material";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -42,7 +45,11 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    ...modalBasic,
+    infoText: {
+      fontSize: 14,
+    },
+    ...formFieldStyles,
+    ...modalStyleUtils,
   });
 
 const UpdateTenantModal = ({
@@ -138,14 +145,14 @@ const UpdateTenantModal = ({
       onClose={closeAction}
     >
       <Grid container>
-        <Grid item xs={12} className={classes.formScrollable}>
-          <span>
+        <Grid item xs={12} className={classes.modalFormScrollable}>
+          <div className={classes.infoText}>
             Please enter the MinIO image from dockerhub to use. If blank, then
             latest build will be used.
-          </span>
+          </div>
           <br />
           <br />
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               value={minioImage}
               label={"MinIO's Image"}
@@ -157,7 +164,7 @@ const UpdateTenantModal = ({
               }}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="imageRegistry"
               id="setImageRegistry"
@@ -172,7 +179,7 @@ const UpdateTenantModal = ({
           </Grid>
           {imageRegistry && (
             <Fragment>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   value={imageRegistryEndpoint}
                   label={"Endpoint"}
@@ -184,7 +191,7 @@ const UpdateTenantModal = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   value={imageRegistryUsername}
                   label={"Username"}
@@ -196,7 +203,7 @@ const UpdateTenantModal = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   value={imageRegistryPassword}
                   label={"Password"}
@@ -211,15 +218,15 @@ const UpdateTenantModal = ({
             </Fragment>
           )}
         </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
-          <button
+        <Grid item xs={12} className={classes.modalButtonBar}>
+          <Button
             type="button"
             color="primary"
-            className={classes.clearButton}
+            variant="outlined"
             onClick={resetForm}
           >
             Clear
-          </button>
+          </Button>
           <Button
             type="submit"
             variant="contained"

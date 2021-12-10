@@ -26,7 +26,7 @@ import { Policy } from "./types";
 import { setModalErrorSnackMessage } from "../../../actions";
 import {
   fieldBasic,
-  modalBasic,
+  modalStyleUtils,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -53,7 +53,7 @@ const styles = (theme: Theme) =>
       },
     },
     ...spacingUtils,
-    ...modalBasic,
+    ...modalStyleUtils,
     ...fieldBasic,
   });
 
@@ -130,7 +130,7 @@ const AddPolicy = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
+          <Grid item xs={12} className={classes.modalFormScrollable}>
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="policy-name"
@@ -155,13 +155,12 @@ const AddPolicy = ({
               />
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
             {!policyEdit && (
               <Button
                 type="button"
                 variant="outlined"
                 color="primary"
-                className={classes.spacerRight}
                 onClick={resetForm}
               >
                 Clear

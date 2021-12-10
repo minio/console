@@ -21,7 +21,10 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -44,10 +47,8 @@ interface IAddAccessRule {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
   });
 
 const AddAccessRule = ({
@@ -86,53 +87,58 @@ const AddAccessRule = ({
   };
 
   return (
-    <React.Fragment>
-      <ModalWrapper
-        modalOpen={modalOpen}
-        title="Add Access Rule"
-        onClose={onClose}
-      >
-        <Grid container>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              value={prefix}
-              label={"Prefix"}
-              id={"prefix"}
-              name={"prefix"}
-              placeholder={"Enter Prefix"}
-              onChange={(e) => {
-                setPrefix(e.target.value);
-              }}
-            />
-            <SelectWrapper
-              id="access"
-              name="Access"
-              onChange={(e) => {
-                setSelectedAccess(e.target.value);
-              }}
-              label="Access"
-              value={selectedAccess}
-              options={accessOptions}
-              disabled={false}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <button type="button" color="primary" onClick={resetForm}>
-              Clear
-            </button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={prefix.trim() === ""}
-              onClick={createProcess}
-            >
-              Save
-            </Button>
-          </Grid>
+    <ModalWrapper
+      modalOpen={modalOpen}
+      title="Add Access Rule"
+      onClose={onClose}
+    >
+      <Grid container>
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <InputBoxWrapper
+            value={prefix}
+            label={"Prefix"}
+            id={"prefix"}
+            name={"prefix"}
+            placeholder={"Enter Prefix"}
+            onChange={(e) => {
+              setPrefix(e.target.value);
+            }}
+          />
         </Grid>
-      </ModalWrapper>
-    </React.Fragment>
+        <Grid item xs={12}>
+          <SelectWrapper
+            id="access"
+            name="Access"
+            onChange={(e) => {
+              setSelectedAccess(e.target.value);
+            }}
+            label="Access"
+            value={selectedAccess}
+            options={accessOptions}
+            disabled={false}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.modalButtonBar}>
+          <Button
+            type="button"
+            color="primary"
+            variant="outlined"
+            onClick={resetForm}
+          >
+            Clear
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={prefix.trim() === ""}
+            onClick={createProcess}
+          >
+            Save
+          </Button>
+        </Grid>
+      </Grid>
+    </ModalWrapper>
   );
 };
 

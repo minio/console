@@ -41,6 +41,7 @@ const styles = (theme: Theme) =>
     labelContainer: {
       display: "flex",
       alignItems: "center",
+      marginBottom: 15,
     },
     fieldContainer: {
       ...fieldBasic.fieldContainer,
@@ -58,6 +59,34 @@ const styles = (theme: Theme) =>
     },
     dateInputContainer: {
       margin: "0 10px",
+    },
+    durationInputs: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    validityIndicator: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    invalidDurationText: {
+      marginTop: 15,
+      display: "flex",
+      color: "red",
+      fontSize: 11,
+    },
+    validityText: {
+      fontSize: 14,
+      fontWeight: 600,
+      marginTop: 15,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+      },
     },
   });
 
@@ -156,74 +185,85 @@ const DaysSelector = ({
 
   return (
     <Fragment>
-      <Grid item xs={12} className={classes.fieldContainer}>
-        <Grid container alignItems={"center"} justifyContent={"center"}>
+      <Grid container className={classes.fieldContainer}>
+        <Grid item xs={12} alignItems={"center"} justifyContent={"center"}>
           <Grid item xs={12} className={classes.labelContainer}>
             <InputLabel htmlFor={id} className={classes.inputLabel}>
               <span>{label}</span>
             </InputLabel>
           </Grid>
-          <Grid item className={classes.dateInputContainer}>
-            <InputBoxWrapper
-              id={id}
-              type="number"
-              min="0"
-              max={maxDays ? maxDays.toString() : "999"}
-              label="Days"
-              name={id}
-              onChange={(e) => {
-                setSelectedDays(parseInt(e.target.value));
-              }}
-              value={selectedDays.toString()}
-              extraInputProps={extraInputProps}
-              noLabelMinWidth
-            />
-          </Grid>
-          <Grid item className={classes.dateInputContainer}>
-            <InputBoxWrapper
-              id={id}
-              type="number"
-              min="0"
-              max="23"
-              label="Hours"
-              name={id}
-              onChange={(e) => {
-                setSelectedHours(parseInt(e.target.value));
-              }}
-              value={selectedHours.toString()}
-              extraInputProps={extraInputProps}
-              noLabelMinWidth
-            />
-          </Grid>
-          <Grid item className={classes.dateInputContainer}>
-            <InputBoxWrapper
-              id={id}
-              type="number"
-              min="0"
-              max="59"
-              label="Minutes"
-              name={id}
-              onChange={(e) => {
-                setSelectedMinutes(parseInt(e.target.value));
-              }}
-              value={selectedMinutes.toString()}
-              extraInputProps={extraInputProps}
-              noLabelMinWidth
-            />
+          <Grid item xs={12} className={classes.durationInputs}>
+            <Grid item className={classes.dateInputContainer}>
+              <InputBoxWrapper
+                id={id}
+                type="number"
+                min="0"
+                max={maxDays ? maxDays.toString() : "999"}
+                label="Days"
+                name={id}
+                onChange={(e) => {
+                  setSelectedDays(parseInt(e.target.value));
+                }}
+                value={selectedDays.toString()}
+                extraInputProps={extraInputProps}
+                noLabelMinWidth
+              />
+            </Grid>
+            <Grid item className={classes.dateInputContainer}>
+              <InputBoxWrapper
+                id={id}
+                type="number"
+                min="0"
+                max="23"
+                label="Hours"
+                name={id}
+                onChange={(e) => {
+                  setSelectedHours(parseInt(e.target.value));
+                }}
+                value={selectedHours.toString()}
+                extraInputProps={extraInputProps}
+                noLabelMinWidth
+              />
+            </Grid>
+            <Grid item className={classes.dateInputContainer}>
+              <InputBoxWrapper
+                id={id}
+                type="number"
+                min="0"
+                max="59"
+                label="Minutes"
+                name={id}
+                onChange={(e) => {
+                  setSelectedMinutes(parseInt(e.target.value));
+                }}
+                value={selectedMinutes.toString()}
+                extraInputProps={extraInputProps}
+                noLabelMinWidth
+              />
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12} className={classes.dateContainer}>
-          {validDate && (
-            <Fragment>
-              <strong>{entity} will be available until:</strong>{" "}
-              {dateSelected.format("MM/DD/YYYY HH:mm:ss")}
-            </Fragment>
+        <Grid
+          item
+          xs={12}
+          className={`${classes.validityIndicator} ${classes.formFieldRow}`}
+        >
+          {validDate ? (
+            <div className={classes.validityText}>
+              <div className={classes.validityLabel}>
+                {entity} will be available until:
+              </div>{" "}
+              <div className={classes.validTill}>
+                {dateSelected.format("MM/DD/YYYY HH:mm:ss")}
+              </div>
+            </div>
+          ) : (
+            <div className={classes.invalidDurationText}>
+              Please select a valid duration.
+            </div>
           )}
         </Grid>
       </Grid>
-      <br />
     </Fragment>
   );
 };

@@ -21,7 +21,11 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
@@ -35,15 +39,24 @@ import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
-    objectName: {
-      fontSize: 18,
-      fontWeight: 700,
-      marginBottom: 40,
+    ...formFieldStyles,
+    ...modalStyleUtils,
+    ...spacingUtils,
+    dateSelector: {
+      "& div": {
+        borderBottom: 0,
+        marginBottom: 0,
+
+        "& div:nth-child(2)": {
+          border: "1px solid #EAEAEA",
+          paddingLeft: 5,
+
+          "& div": {
+            border: 0,
+          },
+        },
+      },
     },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
   });
 
 interface ISetRetentionProps {
@@ -190,9 +203,9 @@ const SetRetention = ({
         closeModalAndRefresh(false);
       }}
     >
-      <Grid item xs={12} className={classes.objectName}>
-        {objectName}
-      </Grid>
+      <div className={classes.spacerBottom}>
+        <strong>Selected Object</strong>: {objectName}
+      </div>
       <form
         noValidate
         autoComplete="off"
@@ -201,7 +214,7 @@ const SetRetention = ({
         }}
       >
         {showSwitcher && (
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="status"
               id="status"
@@ -215,7 +228,7 @@ const SetRetention = ({
             />
           </Grid>
         )}
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <RadioGroupSelector
             currentSelection={type}
             id="type"
@@ -233,7 +246,7 @@ const SetRetention = ({
             ]}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={`${classes.dateSelector} `}>
           <DateSelector
             id="date"
             label="Date"
@@ -249,15 +262,15 @@ const SetRetention = ({
             }}
           />
         </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
-          <button
+        <Grid item xs={12} className={classes.modalButtonBar}>
+          <Button
             type="button"
+            variant="outlined"
             color="primary"
-            className={classes.clearButton}
             onClick={resetForm}
           >
             Reset
-          </button>
+          </Button>
           <Button
             type="submit"
             variant="contained"

@@ -22,7 +22,11 @@ import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { IFileInfo } from "./types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -33,15 +37,9 @@ import { encodeFileName } from "../../../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
-    objectName: {
-      fontSize: 18,
-      fontWeight: 700,
-      marginBottom: 40,
-    },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
+    ...spacingUtils,
   });
 
 interface ISetRetentionProps {
@@ -107,9 +105,10 @@ const SetLegalHoldModal = ({
         closeModalAndRefresh(false);
       }}
     >
-      <Grid item xs={12} className={classes.objectName}>
-        {objectName}
+      <Grid item xs={12} className={classes.spacerBottom}>
+        Object: {bucketName}
       </Grid>
+
       <form
         noValidate
         autoComplete="off"
@@ -117,7 +116,7 @@ const SetLegalHoldModal = ({
           onSubmit(e);
         }}
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <FormSwitchWrapper
             value="legalhold"
             id="legalhold"
@@ -133,15 +132,15 @@ const SetLegalHoldModal = ({
             }
           />
         </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
-          <button
+        <Grid item xs={12} className={classes.modalButtonBar}>
+          <Button
             type="button"
             color="primary"
-            className={classes.clearButton}
+            variant="outlined"
             onClick={resetForm}
           >
-            Reset
-          </button>
+            Clear
+          </Button>
           <Button
             type="submit"
             variant="contained"

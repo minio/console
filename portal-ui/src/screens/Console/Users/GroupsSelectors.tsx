@@ -50,10 +50,15 @@ const styles = (theme: Theme) =>
       padding: "10px 0",
     },
     actionsTitle: {
-      fontWeight: 600,
+      fontWeight: 400,
       color: "#000",
-      fontSize: 16,
+      fontSize: 14,
       alignSelf: "center",
+
+      marginRight: 48,
+      "@media (max-width: 900px)": {
+        marginRight: 0,
+      },
     },
     searchBox: {
       flex: 1,

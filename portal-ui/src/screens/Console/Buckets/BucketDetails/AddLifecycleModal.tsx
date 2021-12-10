@@ -22,7 +22,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   ITierElement,
@@ -37,6 +36,12 @@ import DateSelector from "../../Common/FormComponents/DateSelector/DateSelector"
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import {
+  createTenantCommon,
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 
 interface IReplicationModal {
   open: boolean;
@@ -53,10 +58,25 @@ interface ITiersDropDown {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
+    dateSelector: {
+      "& div": {
+        borderBottom: 0,
+        marginBottom: 0,
+
+        "& div:nth-child(2)": {
+          border: "1px solid #EAEAEA",
+          paddingLeft: 5,
+
+          "& div": {
+            border: 0,
+          },
+        },
+      },
     },
-    ...modalBasic,
+    ...spacingUtils,
+    ...modalStyleUtils,
+    ...formFieldStyles,
+    ...createTenantCommon,
   });
 
 const AddLifecycleModal = ({
@@ -239,202 +259,265 @@ const AddLifecycleModal = ({
         >
           <Grid container>
             <Grid item xs={12} className={classes.formScrollable}>
-              <h3>Lifecycle Configuration</h3>
-              <Grid item xs={12}>
-                <RadioGroupSelector
-                  currentSelection={ilmType}
-                  id="quota_type"
-                  name="quota_type"
-                  label="ILM Rule"
-                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    setIlmType(e.target.value as string);
-                  }}
-                  selectorOptions={[
-                    { value: "expiry", label: "Expiry" },
-                    { value: "transition", label: "Transition" },
-                  ]}
-                />
-              </Grid>
-              {ilmType === "expiry" ? (
-                <Fragment>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <fieldset className={classes.fieldGroup}>
+                  <legend className={classes.descriptionText}>
+                    Lifecycle Configuration
+                  </legend>
+
                   <Grid item xs={12}>
                     <RadioGroupSelector
-                      currentSelection={expiryType}
-                      id="expiryType"
-                      name="expiryType"
-                      label="Expiry Type"
+                      currentSelection={ilmType}
+                      id="quota_type"
+                      name="quota_type"
+                      label="ILM Rule"
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                        setExpiryType(e.target.value as string);
+                        setIlmType(e.target.value as string);
                       }}
                       selectorOptions={[
-                        { value: "date", label: "Date" },
-                        { value: "days", label: "Days" },
+                        { value: "expiry", label: "Expiry" },
+                        { value: "transition", label: "Transition" },
                       ]}
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    {expiryType === "date" ? (
-                      <DateSelector
-                        id="expiry_date"
-                        label="Expiry Date"
-                        value={expiryDate}
-                        borderBottom={true}
-                        onDateChange={(date: string, isValid: boolean) => {
-                          if (isValid) {
-                            setExpiryDate(date);
-                          }
-                        }}
-                      />
-                    ) : (
-                      <InputBoxWrapper
-                        type="number"
-                        id="expiry_days"
-                        name="expiry_days"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setExpiryDays(e.target.value);
-                        }}
-                        label="Expiry Days"
-                        value={expiryDays}
-                        min="0"
-                      />
-                    )}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <InputBoxWrapper
-                      type="number"
-                      id="noncurrentversion_expiration_days"
-                      name="noncurrentversion_expiration_days"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setNCExpirationDays(e.target.value);
-                      }}
-                      label="Non-current Expiration Days"
-                      value={NCExpirationDays}
-                      min="0"
-                    />
-                  </Grid>
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <Grid item xs={12}>
-                    <RadioGroupSelector
-                      currentSelection={transitionType}
-                      id="transitionType"
-                      name="transitionType"
-                      label="Transition Type"
-                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                        setTransitionType(e.target.value as string);
-                      }}
-                      selectorOptions={[
-                        { value: "date", label: "Date" },
-                        { value: "days", label: "Days" },
-                      ]}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    {transitionType === "date" ? (
-                      <DateSelector
-                        id="transition_date"
-                        label="Transition Date"
-                        value={transitionDate}
-                        borderBottom={true}
-                        onDateChange={(date: string, isValid: boolean) => {
-                          if (isValid) {
-                            setTransitionDate(date);
-                          }
-                        }}
-                      />
-                    ) : (
-                      <InputBoxWrapper
-                        type="number"
-                        id="transition_days"
-                        name="transition_days"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setTransitionDays(e.target.value);
-                        }}
-                        label="Transition Days"
-                        value={transitionDays}
-                        min="0"
-                      />
-                    )}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <InputBoxWrapper
-                      type="number"
-                      id="noncurrentversion_transition_days"
-                      name="noncurrentversion_transition_days"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setNCTransitionDays(e.target.value);
-                      }}
-                      label="Non-current Transition Days"
-                      value={NCTransitionDays}
-                      min="0"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <InputBoxWrapper
-                      id="noncurrentversion_t_SC"
-                      name="noncurrentversion_t_SC"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setNCTransitionSC(e.target.value);
-                      }}
-                      placeholder="Set Non-current Version Transition Storage Class"
-                      label="Non-current Version Transition Storage Class"
-                      value={NCTransitionSC}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <SelectWrapper
-                      label="Storage Class"
-                      id="storage_class"
-                      name="storage_class"
-                      value={storageClass}
-                      onChange={(e: SelectChangeEvent<string>) => {
-                        setStorageClass(e.target.value as string);
-                      }}
-                      options={tiersList}
-                    />
-                  </Grid>
-                </Fragment>
-              )}
-              <h3>File Configuration</h3>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="prefix"
-                  name="prefix"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPrefix(e.target.value);
-                  }}
-                  label="Prefix"
-                  value={prefix}
-                />
+                  {ilmType === "expiry" ? (
+                    <Fragment>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <RadioGroupSelector
+                          currentSelection={expiryType}
+                          id="expiryType"
+                          name="expiryType"
+                          label="Expiry Type"
+                          onChange={(
+                            e: React.ChangeEvent<{ value: unknown }>
+                          ) => {
+                            setExpiryType(e.target.value as string);
+                          }}
+                          selectorOptions={[
+                            { value: "date", label: "Date" },
+                            { value: "days", label: "Days" },
+                          ]}
+                        />
+                      </Grid>
+                      <React.Fragment>
+                        {expiryType === "date" ? (
+                          <Grid
+                            item
+                            xs={12}
+                            className={`${classes.dateSelector} `}
+                          >
+                            <DateSelector
+                              id="expiry_date"
+                              label="Expiry Date"
+                              value={expiryDate}
+                              borderBottom={true}
+                              onDateChange={(
+                                date: string,
+                                isValid: boolean
+                              ) => {
+                                if (isValid) {
+                                  setExpiryDate(date);
+                                }
+                              }}
+                            />
+                          </Grid>
+                        ) : (
+                          <Grid item xs={12} className={classes.formFieldRow}>
+                            <InputBoxWrapper
+                              type="number"
+                              id="expiry_days"
+                              name="expiry_days"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                setExpiryDays(e.target.value);
+                              }}
+                              label="Expiry Days"
+                              value={expiryDays}
+                              min="0"
+                            />
+                          </Grid>
+                        )}
+                      </React.Fragment>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <InputBoxWrapper
+                          type="number"
+                          id="noncurrentversion_expiration_days"
+                          name="noncurrentversion_expiration_days"
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setNCExpirationDays(e.target.value);
+                          }}
+                          label="Non-current Expiration Days"
+                          value={NCExpirationDays}
+                          min="0"
+                        />
+                      </Grid>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <RadioGroupSelector
+                          currentSelection={transitionType}
+                          id="transitionType"
+                          name="transitionType"
+                          label="Transition Type"
+                          onChange={(
+                            e: React.ChangeEvent<{ value: unknown }>
+                          ) => {
+                            setTransitionType(e.target.value as string);
+                          }}
+                          selectorOptions={[
+                            { value: "date", label: "Date" },
+                            { value: "days", label: "Days" },
+                          ]}
+                        />
+                      </Grid>
+                      <React.Fragment>
+                        {transitionType === "date" ? (
+                          <Grid
+                            item
+                            xs={12}
+                            className={`${classes.dateSelector} `}
+                          >
+                            <DateSelector
+                              id="transition_date"
+                              label="Transition Date"
+                              value={transitionDate}
+                              borderBottom={true}
+                              onDateChange={(
+                                date: string,
+                                isValid: boolean
+                              ) => {
+                                if (isValid) {
+                                  setTransitionDate(date);
+                                }
+                              }}
+                            />
+                          </Grid>
+                        ) : (
+                          <Grid item xs={12} className={classes.formFieldRow}>
+                            <InputBoxWrapper
+                              type="number"
+                              id="transition_days"
+                              name="transition_days"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                setTransitionDays(e.target.value);
+                              }}
+                              label="Transition Days"
+                              value={transitionDays}
+                              min="0"
+                            />
+                          </Grid>
+                        )}
+                      </React.Fragment>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <InputBoxWrapper
+                          type="number"
+                          id="noncurrentversion_transition_days"
+                          name="noncurrentversion_transition_days"
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setNCTransitionDays(e.target.value);
+                          }}
+                          label="Non-current Transition Days"
+                          value={NCTransitionDays}
+                          min="0"
+                        />
+                      </Grid>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <InputBoxWrapper
+                          id="noncurrentversion_t_SC"
+                          name="noncurrentversion_t_SC"
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setNCTransitionSC(e.target.value);
+                          }}
+                          placeholder="Set Non-current Version Transition Storage Class"
+                          label="Non-current Version Transition Storage Class"
+                          value={NCTransitionSC}
+                        />
+                      </Grid>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <SelectWrapper
+                          label="Storage Class"
+                          id="storage_class"
+                          name="storage_class"
+                          value={storageClass}
+                          onChange={(e: SelectChangeEvent<string>) => {
+                            setStorageClass(e.target.value as string);
+                          }}
+                          options={tiersList}
+                        />
+                      </Grid>
+                    </Fragment>
+                  )}
+                </fieldset>
               </Grid>
-              <Grid item xs={12}>
-                <QueryMultiSelector
-                  name="tags"
-                  label="Tags"
-                  elements={""}
-                  onChange={(vl: string) => {
-                    setTags(vl);
-                  }}
-                  keyPlaceholder="Tag Key"
-                  valuePlaceholder="Tag Value"
-                  withBorder
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormSwitchWrapper
-                  value="expired_delete_marker"
-                  id="expired_delete_marker"
-                  name="expired_delete_marker"
-                  checked={expiredObjectDM}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setExpiredObjectDM(event.target.checked);
-                  }}
-                  label={"Expired Object Delete Marker"}
-                />
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <fieldset className={classes.fieldGroup}>
+                  <legend className={classes.descriptionText}>
+                    File Configuration
+                  </legend>
+
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="prefix"
+                      name="prefix"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setPrefix(e.target.value);
+                      }}
+                      label="Prefix"
+                      value={prefix}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <QueryMultiSelector
+                      name="tags"
+                      label="Tags"
+                      elements={""}
+                      onChange={(vl: string) => {
+                        setTags(vl);
+                      }}
+                      keyPlaceholder="Tag Key"
+                      valuePlaceholder="Tag Value"
+                      withBorder
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormSwitchWrapper
+                      value="expired_delete_marker"
+                      id="expired_delete_marker"
+                      name="expired_delete_marker"
+                      checked={expiredObjectDM}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        setExpiredObjectDM(event.target.checked);
+                      }}
+                      label={"Expired Object Delete Marker"}
+                    />
+                  </Grid>
+                </fieldset>
               </Grid>
             </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
+            <Grid item xs={12} className={classes.modalButtonBar}>
+              <Button
+                type="button"
+                variant="outlined"
+                color="primary"
+                disabled={addLoading}
+                onClick={() => {
+                  closeModalAndRefresh(false);
+                }}
+              >
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 variant="contained"

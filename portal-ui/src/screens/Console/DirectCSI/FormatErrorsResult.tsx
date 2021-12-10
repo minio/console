@@ -21,6 +21,7 @@ import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectCSIFormatResItem } from "./types";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 
 interface IFormatErrorsProps {
   open: boolean;
@@ -37,6 +38,7 @@ const styles = (theme: Theme) =>
     errorsList: {
       height: "calc(100vh - 280px)",
     },
+    ...modalStyleUtils,
   });
 
 const download = (filename: string, text: string) => {
@@ -68,7 +70,7 @@ const FormatErrorsResult = ({
       onClose={onCloseFormatErrorsList}
     >
       <Grid container>
-        <Grid item xs={12} className={classes.formScrollable}>
+        <Grid item xs={12} className={classes.modalFormScrollable}>
           There were some issues trying to format the selected CSI Drives,
           please fix the issues and try again.
           <br />
@@ -90,16 +92,22 @@ const FormatErrorsResult = ({
             noBackground
           />
         </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
+        <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
+            color="primary"
+            variant="outlined"
             onClick={() => {
               download("csiFormatErrors.json", JSON.stringify([...errorsList]));
             }}
-            color="primary"
           >
             Download
           </Button>
-          <Button onClick={onCloseFormatErrorsList} color="secondary" autoFocus>
+          <Button
+            onClick={onCloseFormatErrorsList}
+            color="primary"
+            variant="contained"
+            autoFocus
+          >
             Done
           </Button>
         </Grid>

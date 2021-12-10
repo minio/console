@@ -24,7 +24,10 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 
 import { IFileInfo } from "./types";
 import {
@@ -43,14 +46,36 @@ const CopyIcon = React.lazy(() => import("../../../../../../icons/CopyIcon"));
 
 const styles = (theme: Theme) =>
   createStyles({
-    copyButtonContainer: {
-      paddingLeft: 16,
-      paddingTop: 18,
+    shareLinkInfo: {
+      fontSize: 13,
+      fontWeight: 400,
     },
-    modalContent: {
-      paddingBottom: 53,
+    copyShareLink: {
+      display: "flex",
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      },
     },
-    ...modalBasic,
+    copyShareLinkInput: {
+      "& div:first-child": {
+        marginTop: 0,
+      },
+      "@media (max-width: 900px)": {
+        minWidth: 250,
+      },
+    },
+    copyShareLinkBtn: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      "@media (max-width: 900px)": {
+        marginTop: 10,
+      },
+    },
+    ...modalStyleUtils,
+    ...formFieldStyles,
   });
 
 interface IShareFileProps {
@@ -189,53 +214,56 @@ const ShareFile = ({
           closeModalAndRefresh();
         }}
       >
-        <Grid container className={classes.modalContent}>
-          {isLoadingVersion && (
-            <Grid item xs={12}>
-              <LinearProgress />
+        {isLoadingVersion && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
+        {!isLoadingVersion && (
+          <Fragment>
+            <Grid item xs={12} className={classes.shareLinkInfo}>
+              This is a temporary URL with integrated access credentials for
+              sharing objects valid for up to 7 days.
+              <br />
+              The temporary URL expires after the configured time limit.
             </Grid>
-          )}
-          {!isLoadingVersion && (
-            <Fragment>
-              <Grid item xs={12} className={classes.moduleDescription}>
-                This module generates a temporary URL with integrated access
-                credentials for sharing objects for up to 7 days.
-                <br />
-                The temporary URL expires after the configured time limit.
+            <Grid item xs={12} className={classes.dateContainer}>
+              <DaysSelector
+                initialDate={initialDate}
+                id="date"
+                label="Active for"
+                maxDays={7}
+                onChange={dateChanged}
+                entity="Link"
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              className={`${classes.copyShareLink} ${classes.formFieldRow} `}
+            >
+              <Grid item xs={10} className={classes.copyShareLinkInput}>
+                <PredefinedList content={shareURL} />
               </Grid>
-              <Grid item xs={12} className={classes.dateContainer}>
-                <DaysSelector
-                  initialDate={initialDate}
-                  id="date"
-                  label="Active for"
-                  maxDays={7}
-                  onChange={dateChanged}
-                  entity="Link"
-                />
+
+              <Grid item xs={2} className={classes.copyShareLinkBtn}>
+                <CopyToClipboard text={shareURL}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    endIcon={<CopyIcon />}
+                    onClick={() => {
+                      setModalSnackMessage("Share URL Copied to clipboard");
+                    }}
+                    disabled={shareURL === "" || isLoadingFile}
+                  >
+                    Copy
+                  </Button>
+                </CopyToClipboard>
               </Grid>
-              <Grid container item xs={12}>
-                <Grid item xs={10}>
-                  <PredefinedList content={shareURL} />
-                </Grid>
-                <Grid item xs={2} className={classes.copyButtonContainer}>
-                  <CopyToClipboard text={shareURL}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      endIcon={<CopyIcon />}
-                      onClick={() => {
-                        setModalSnackMessage("Share URL Copied to clipboard");
-                      }}
-                      disabled={shareURL === "" || isLoadingFile}
-                    >
-                      Copy
-                    </Button>
-                  </CopyToClipboard>
-                </Grid>
-              </Grid>
-            </Fragment>
-          )}
-        </Grid>
+            </Grid>
+          </Fragment>
+        )}
       </ModalWrapper>
     </React.Fragment>
   );

@@ -58,9 +58,6 @@ const ConfirmDialog = ({
         }
       }}
       className={classes.root}
-      onBackdropClick={() => {
-        return false;
-      }}
       sx={{
         "& .MuiPaper-root": {
           padding: "1rem 2rem 2rem 1rem",
@@ -104,12 +101,12 @@ const ConfirmDialog = ({
           onClick={onConfirm}
           loading={isLoading}
           disabled={isLoading}
-          {...confirmButtonProps}
           variant="outlined"
           color="secondary"
           loadingPosition="start"
-          startIcon={null}
+          startIcon={<React.Fragment />}
           autoFocus
+          {...confirmButtonProps}
         >
           {confirmText}
         </LoadingButton>

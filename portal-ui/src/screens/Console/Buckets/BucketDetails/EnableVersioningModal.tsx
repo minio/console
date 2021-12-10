@@ -16,18 +16,11 @@
 
 import React, { useState, Fragment } from "react";
 import { connect } from "react-redux";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import api from "../../../../common/api";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
@@ -67,17 +60,20 @@ const EnableVersioningModal = ({
   };
 
   return (
-    <Dialog
-      open={modalOpen}
+    <ConfirmDialog
+      title={`Versioning on Bucket`}
+      confirmText={versioningCurrentState ? "Disable" : "Enable"}
+      isOpen={modalOpen}
+      isLoading={versioningLoading}
+      onConfirm={enableVersioning}
+      confirmButtonProps={{
+        color: "primary",
+        variant: "contained",
+      }}
       onClose={() => {
         closeVersioningModalAndRefresh(false);
       }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Edit Versioning</DialogTitle>
-      <DialogContent>
-        {versioningLoading && <LinearProgress />}
+      confirmationContent={
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to{" "}
           <strong>{versioningCurrentState ? "disable" : "enable"}</strong>{" "}
@@ -86,32 +82,12 @@ const EnableVersioningModal = ({
             <Fragment>
               <br />
               <br />
-              <strong>File versions won't be automatically deleted</strong>
+              <strong>File versions won't be automatically deleted.</strong>
             </Fragment>
           )}
         </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            closeVersioningModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={versioningLoading}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={() => {
-            enableVersioning();
-          }}
-          color="secondary"
-          autoFocus
-        >
-          {versioningCurrentState ? "Disable" : "Enable"}
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   );
 };
 

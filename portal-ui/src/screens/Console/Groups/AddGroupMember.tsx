@@ -13,6 +13,7 @@ import createStyles from "@mui/styles/createStyles";
 import {
   formFieldStyles,
   modalBasic,
+  modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 
@@ -33,6 +34,13 @@ const styles = (theme: Theme) =>
       textAlign: "right",
       marginTop: "1rem",
     },
+    userSelector: {
+      "& .MuiPaper-root": {
+        padding: 0,
+        marginBottom: 15,
+      },
+    },
+    ...modalStyleUtils,
     ...formFieldStyles,
     ...modalBasic,
   });
@@ -69,18 +77,19 @@ const AddGroupMember = ({
       <div className={classes.formFieldRow}>
         <PredefinedList label={`Selected Group`} content={selectedGroup} />
       </div>
-      <UsersSelectors
-        selectedUsers={selectedUsers}
-        setSelectedUsers={setSelectedUsers}
-        editMode={!selectedGroup}
-      />
+      <div className={classes.userSelector}>
+        <UsersSelectors
+          selectedUsers={selectedUsers}
+          setSelectedUsers={setSelectedUsers}
+          editMode={!selectedGroup}
+        />
+      </div>
 
-      <Grid item xs={12} className={classes.buttonContainer}>
+      <Grid item xs={12} className={classes.modalButtonBar}>
         <Button
           type="button"
           variant="outlined"
           color="primary"
-          className={classes.spacerRight}
           onClick={() => {
             setSelectedUsers(preSelectedUsers);
           }}

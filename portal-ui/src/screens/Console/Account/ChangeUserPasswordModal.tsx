@@ -24,9 +24,10 @@ import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, LinearProgress } from "@mui/material";
 import {
-  actionsTray,
   containerForHeader,
-  modalBasic,
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangeUserPasswordRequest } from "../Buckets/types";
 import { setModalErrorSnackMessage } from "../../../actions";
@@ -38,8 +39,9 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    ...actionsTray,
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
+    ...spacingUtils,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -109,8 +111,6 @@ const ChangeUserPassword = ({
         setReNewPassword("");
         closeModal();
       }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
     >
       <form
         noValidate
@@ -120,9 +120,11 @@ const ChangeUserPassword = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <h3>Change password for {userName}</h3>
-            <Grid item xs={12}>
+          <Grid item xs={12} className={classes.modalFormScrollable}>
+            <div className={classes.spacerBottom}>
+              Change password for: {userName}
+            </div>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="new-password"
                 name="new-password"
@@ -134,7 +136,7 @@ const ChangeUserPassword = ({
                 value={newPassword}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="re-new-password"
                 name="re-new-password"

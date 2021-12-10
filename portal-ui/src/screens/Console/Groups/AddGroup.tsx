@@ -23,7 +23,7 @@ import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   formFieldStyles,
-  modalBasic,
+  modalStyleUtils,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
@@ -54,9 +54,15 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    userSelector: {
+      "& .MuiPaper-root": {
+        padding: 0,
+        marginBottom: 15,
+      },
+    },
     ...formFieldStyles,
     ...spacingUtils,
-    ...modalBasic,
+    ...modalStyleUtils,
   });
 
 const AddGroup = ({
@@ -191,7 +197,7 @@ const AddGroup = ({
       )}
       <form noValidate autoComplete="off" onSubmit={setSaving}>
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
+          <Grid item xs={12} className={classes.modalFormScrollable}>
             {selectedGroup === null ? (
               <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
@@ -205,11 +211,11 @@ const AddGroup = ({
                 />
               </Grid>
             ) : (
-              <React.Fragment>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <PredefinedList label={"Group Name"} content={selectedGroup} />
-              </React.Fragment>
+              </Grid>
             )}
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.userSelector}>
               <UsersSelectors
                 selectedUsers={selectedUsers}
                 setSelectedUsers={setSelectedUsers}

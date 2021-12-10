@@ -16,12 +16,15 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  modalStyleUtils,
+  spacingUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -30,7 +33,8 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...spacingUtils,
   });
 
 interface ISetAccessPolicyProps {
@@ -92,39 +96,46 @@ const SetAccessPolicy = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
-              <SelectWrapper
-                value={accessPolicy}
-                label="Access Policy"
-                id="select-access-policy"
-                name="select-access-policy"
-                onChange={(e: SelectChangeEvent<string>) => {
-                  setAccessPolicy(e.target.value as string);
-                }}
-                options={[
-                  { value: "PRIVATE", label: "Private" },
-                  { value: "PUBLIC", label: "Public" },
-                ]}
-              />
-            </Grid>
+          <Grid
+            item
+            xs={12}
+            className={`${classes.spacerTop} ${classes.formFieldRow}`}
+          >
+            <SelectWrapper
+              value={accessPolicy}
+              label="Access Policy"
+              id="select-access-policy"
+              name="select-access-policy"
+              onChange={(e: SelectChangeEvent<string>) => {
+                setAccessPolicy(e.target.value as string);
+              }}
+              options={[
+                { value: "PRIVATE", label: "Private" },
+                { value: "PUBLIC", label: "Public" },
+              ]}
+            />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                closeModalAndRefresh();
+              }}
+              disabled={addLoading}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              fullWidth
               disabled={addLoading}
             >
               Set
             </Button>
           </Grid>
-          {addLoading && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
         </Grid>
       </form>
     </ModalWrapper>

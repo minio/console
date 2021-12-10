@@ -22,7 +22,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
-  modalBasic,
+  modalStyleUtils,
   serviceAccountStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -37,7 +37,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 const styles = (theme: Theme) =>
   createStyles({
     ...serviceAccountStyles,
-    ...modalBasic,
+    ...modalStyleUtils,
   });
 
 interface IAddUserServiceAccountProps {
@@ -131,7 +131,7 @@ const AddUserServiceAccount = ({
           addUserServiceAccount(e);
         }}
       >
-        <Grid container className={classes.containerScrollable}>
+        <Grid container className={classes.modalFormScrollable}>
           <Grid item xs={12}>
             <div className={classes.infoDetails}>
               Service Accounts inherit the policy explicitly attached to the
@@ -210,12 +210,11 @@ const AddUserServiceAccount = ({
           </Grid>
         </Grid>
         <Grid container>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
               type="button"
               color="primary"
               variant="outlined"
-              className={classes.buttonSpacer}
               onClick={resetForm}
             >
               Clear

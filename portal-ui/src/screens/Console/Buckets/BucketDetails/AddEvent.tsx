@@ -17,7 +17,7 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { Button } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,7 +29,10 @@ import TableBody from "@mui/material/TableBody";
 import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
 import { ArnList } from "../types";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -38,18 +41,13 @@ import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper
 
 const styles = (theme: Theme) =>
   createStyles({
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
+    arnField: {
+      "& div div .MuiOutlinedInput-root": {
+        padding: 0,
       },
     },
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
   });
 
 interface IAddEventProps {
@@ -161,7 +159,7 @@ const AddEvent = ({
       onClose={() => {
         closeModalAndRefresh();
       }}
-      title="Subscribe To Event"
+      title="Subscribe To Bucket Events"
     >
       <form
         noValidate
@@ -172,7 +170,11 @@ const AddEvent = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              className={`${classes.arnField} ${classes.formFieldRow}`}
+            >
               <AutocompleteWrapper
                 onChange={(value: string) => {
                   setArn(value);
@@ -184,7 +186,29 @@ const AddEvent = ({
                 options={arnValues}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id="prefix-input"
+                name="prefix-input"
+                label="Prefix"
+                value={prefix}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPrefix(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id="suffix-input"
+                name="suffix-input"
+                label="Suffix"
+                value={suffix}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSuffix(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <Table size="medium">
                 <TableHead className={classes.minTableHeader}>
                   <TableRow>
@@ -217,36 +241,19 @@ const AddEvent = ({
                 </TableBody>
               </Table>
             </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="prefix-input"
-                name="prefix-input"
-                label="Prefix"
-                value={prefix}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setPrefix(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="suffix-input"
-                name="suffix-input"
-                label="Suffix"
-                value={suffix}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setSuffix(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="primary"
+              disabled={addLoading}
+              onClick={() => {
+                closeModalAndRefresh();
+              }}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
@@ -256,11 +263,6 @@ const AddEvent = ({
               Save
             </Button>
           </Grid>
-          {addLoading && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
         </Grid>
       </form>
     </ModalWrapper>
