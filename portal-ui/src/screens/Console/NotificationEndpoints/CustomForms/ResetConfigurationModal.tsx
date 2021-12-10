@@ -16,27 +16,15 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import {
-  deleteDialogStyles,
-  modalBasic,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { deleteDialogStyles } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,7 +33,6 @@ const styles = (theme: Theme) =>
       whiteSpace: "normal",
       wordWrap: "break-word",
     },
-    ...modalBasic,
     ...deleteDialogStyles,
   });
 
@@ -91,70 +78,29 @@ const ResetConfigurationModal = ({
   };
 
   return (
-    <Dialog
-      open={resetOpen}
+    <ConfirmDialog
+      title={`Restore Defaults`}
+      confirmText={"Yes, Reset Configuration"}
+      isOpen={resetOpen}
+      isLoading={resetLoading}
+      onConfirm={resetConfiguration}
       onClose={() => {
         closeResetModalAndRefresh(false);
       }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      sx={{
-        "& .MuiPaper-root": {
-          padding: "1rem 2rem 2rem 1rem",
-        },
-      }}
-    >
-      <DialogTitle id="alert-dialog-title" className={classes.title}>
-        <div className={classes.titleText}>Restore Defaults</div>
-        <div className={classes.closeContainer}>
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={() => {
-              closeResetModalAndRefresh(false);
-            }}
-            disableRipple
-            size="small"
-          >
-            <CloseIcon />
-          </IconButton>
-        </div>
-      </DialogTitle>
-
-      <DialogContent>
-        {resetLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
-          Are you sure you want to restore these configurations to default
-          values?
-          <br />
-          <b className={classes.wrapText}>
-            Please note that this may cause your system to not be accessible
-          </b>
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          type="button"
-          variant="outlined"
-          onClick={() => {
-            closeResetModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={resetLoading}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={resetConfiguration}
-          variant="contained"
-          color="primary"
-          autoFocus
-          disabled={resetLoading}
-        >
-          Yes, Reset Configuration
-        </Button>
-      </DialogActions>
-    </Dialog>
+      confirmationContent={
+        <React.Fragment>
+          {resetLoading && <LinearProgress />}
+          <DialogContentText>
+            Are you sure you want to restore these configurations to default
+            values?
+            <br />
+            <b className={classes.wrapText}>
+              Please note that this may cause your system to not be accessible
+            </b>
+          </DialogContentText>
+        </React.Fragment>
+      }
+    />
   );
 };
 

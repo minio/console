@@ -25,7 +25,10 @@ import { factorForDropdown, getBytes, units } from "../../../../common/utils";
 import { BucketQuota } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -35,10 +38,8 @@ import api from "../../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
   });
 
 interface IEnableQuotaProps {
@@ -131,7 +132,7 @@ const EnableQuota = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <FormSwitchWrapper
                 value="bucket_quota"
                 id="bucket_quota"
@@ -145,7 +146,7 @@ const EnableQuota = ({
             </Grid>
             {quotaEnabled && (
               <React.Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <RadioGroupSelector
                     currentSelection={quotaType}
                     id="quota_type"
@@ -160,7 +161,7 @@ const EnableQuota = ({
                     ]}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <Grid container>
                     <Grid item xs={10}>
                       <InputBoxWrapper
@@ -194,11 +195,20 @@ const EnableQuota = ({
                 </Grid>
               </React.Fragment>
             )}
-            <Grid item xs={12}>
-              <br />
-            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="primary"
+              disabled={loading}
+              onClick={() => {
+                closeModalAndRefresh();
+              }}
+            >
+              Cancel
+            </Button>
+
             <Button
               type="submit"
               variant="contained"

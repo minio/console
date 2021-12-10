@@ -22,7 +22,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { setModalErrorSnackMessage } from "../../../../actions";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { BucketEncryptionInfo } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -32,10 +35,8 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
   });
 
 interface IEnableBucketEncryptionProps {
@@ -51,7 +52,6 @@ interface IEnableBucketEncryptionProps {
 const EnableBucketEncryption = ({
   classes,
   open,
-  encryptionEnabled,
   encryptionCfg,
   selectedBucket,
   closeModalAndRefresh,
@@ -121,8 +121,8 @@ const EnableBucketEncryption = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
+          <Grid item xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <SelectWrapper
                 onChange={(e: SelectChangeEvent<string>) => {
                   setEncryptionType(e.target.value as string);
@@ -147,11 +147,9 @@ const EnableBucketEncryption = ({
                 ]}
               />
             </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
+
             {encryptionType === "sse-kms" && (
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="kms-key-id"
                   name="kms-key-id"
@@ -163,11 +161,19 @@ const EnableBucketEncryption = ({
                 />
               </Grid>
             )}
-            <Grid item xs={12}>
-              <br />
-            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="submit"
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                closeModalAndRefresh();
+              }}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

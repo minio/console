@@ -21,7 +21,10 @@ import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/I
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
 import history from "../../../../../../history";
@@ -42,14 +45,8 @@ interface ICreateFolder {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
   });
 
 const CreateFolderModal = ({
@@ -112,8 +109,10 @@ const CreateFolderModal = ({
         onClose={onClose}
       >
         <Grid container>
-          <h3 className={classes.pathLabel}>Current Path: {currentPath}</h3>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            Current Path: {currentPath}
+          </Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               value={pathUrl}
               label={"New Folder Path"}
@@ -126,15 +125,15 @@ const CreateFolderModal = ({
               required
             />
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <button
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
               type="button"
               color="primary"
-              className={classes.clearButton}
+              variant="outlined"
               onClick={resetForm}
             >
               Clear
-            </button>
+            </Button>
             <Button
               type="submit"
               variant="contained"
@@ -142,7 +141,7 @@ const CreateFolderModal = ({
               disabled={!isFormValid}
               onClick={createProcess}
             >
-              Go
+              Create
             </Button>
           </Grid>
         </Grid>

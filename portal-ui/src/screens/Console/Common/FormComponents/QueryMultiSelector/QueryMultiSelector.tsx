@@ -59,6 +59,7 @@ const styles = (theme: Theme) =>
     },
     lineInputBoxes: {
       display: "flex",
+      marginBottom: 10,
     },
     queryDiv: {
       alignSelf: "center",

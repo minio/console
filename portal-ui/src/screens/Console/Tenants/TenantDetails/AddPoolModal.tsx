@@ -4,7 +4,10 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
 import { generatePoolName, niceBytes } from "../../../../common/utils";
@@ -33,14 +36,19 @@ const styles = (theme: Theme) =>
       display: "flex",
       flexGrow: 1,
       alignItems: "center",
+      margin: "auto",
+      justifyContent: "center",
       "& div": {
-        flexGrow: 1,
-        width: "100%",
+        width: 150,
+        "@media (max-width: 900px)": {
+          flexFlow: "column",
+        },
       },
     },
     factorElements: {
       display: "flex",
       justifyContent: "flex-start",
+      marginLeft: 30,
     },
     sizeNumber: {
       fontSize: 35,
@@ -52,7 +60,8 @@ const styles = (theme: Theme) =>
       color: "#777",
       textAlign: "center",
     },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
   });
 
 const AddPoolModal = ({
@@ -149,7 +158,7 @@ const AddPoolModal = ({
             });
         }}
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="number_of_nodes"
             name="number_of_nodes"
@@ -161,7 +170,7 @@ const AddPoolModal = ({
             value={numberOfNodes.toString(10)}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="pool_size"
             name="pool_size"
@@ -173,7 +182,7 @@ const AddPoolModal = ({
             value={volumeSize.toString(10)}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             id="volumes_per_sever"
             name="volumes_per_sever"
@@ -185,7 +194,7 @@ const AddPoolModal = ({
             value={volumesPerServer.toString(10)}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.formFieldRow}>
           <SelectWrapper
             id="storage_class"
             name="storage_class"
@@ -198,39 +207,47 @@ const AddPoolModal = ({
             disabled={storageClasses.length < 1}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Grid item xs={12} className={classes.bottomContainer}>
-            <div className={classes.factorElements}>
-              <div>
-                <div className={classes.sizeNumber}>
-                  {niceBytes(instanceCapacity.toString(10))}
-                </div>
-                <div className={classes.sizeDescription}>Instance Capacity</div>
+
+        <Grid item xs={12} className={classes.bottomContainer}>
+          <div className={classes.factorElements}>
+            <div>
+              <div className={classes.sizeNumber}>
+                {niceBytes(instanceCapacity.toString(10))}
               </div>
-              <div>
-                <div className={classes.sizeNumber}>
-                  {niceBytes(totalCapacity.toString(10))}
-                </div>
-                <div className={classes.sizeDescription}>Total Capacity</div>
+              <div className={classes.sizeDescription}>Instance Capacity</div>
+            </div>
+            <div>
+              <div className={classes.sizeNumber}>
+                {niceBytes(totalCapacity.toString(10))}
               </div>
+              <div className={classes.sizeDescription}>Total Capacity</div>
             </div>
-            <div className={classes.buttonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={addSending}
-              >
-                Save
-              </Button>
-            </div>
-          </Grid>
-          {addSending && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
+          </div>
         </Grid>
+        <Grid item xs={12} className={classes.modalButtonBar}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="primary"
+            disabled={addSending}
+            onClick={() => onClosePoolAndReload(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={addSending}
+          >
+            Save
+          </Button>
+        </Grid>
+        {addSending && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
       </form>
     </ModalWrapper>
   );

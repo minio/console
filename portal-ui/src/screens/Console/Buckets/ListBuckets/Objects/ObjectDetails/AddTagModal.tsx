@@ -21,7 +21,6 @@ import { Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -29,6 +28,11 @@ import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/I
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
 import { decodeFileName } from "../../../../../../common/utils";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -44,14 +48,13 @@ interface ITagModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     pathLabel: {
       marginTop: 0,
       marginBottom: 32,
     },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
+    ...spacingUtils,
   });
 
 const AddTagModal = ({
@@ -103,48 +106,48 @@ const AddTagModal = ({
     <React.Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
-        title="Add New Tag"
+        title="Add New Tag to the Object"
         onClose={() => {
           onCloseAndUpdate(false);
         }}
       >
         <Grid container>
-          <h3 className={classes.pathLabel}>
-            Selected Object: {decodeFileName(selectedObject)}
-          </h3>
-          <Grid item xs={12}>
+          <div className={classes.spacerBottom}>
+            <strong>Selected Object</strong>: {decodeFileName(selectedObject)}
+          </div>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               value={newKey}
-              label={"New Tag Key"}
+              label={"Tag Key"}
               id={"newTagKey"}
               name={"newTagKey"}
-              placeholder={"Enter New Tag Key"}
+              placeholder={"Enter Tag Key"}
               onChange={(e) => {
                 setNewKey(e.target.value);
               }}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               value={newLabel}
-              label={"New Tag Label"}
+              label={"Tag Label"}
               id={"newTagLabel"}
               name={"newTagLabel"}
-              placeholder={"Enter New Tag Label"}
+              placeholder={"Enter Tag Label"}
               onChange={(e) => {
                 setNewLabel(e.target.value);
               }}
             />
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <button
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
               type="button"
+              variant="outlined"
               color="primary"
-              className={classes.clearButton}
               onClick={resetForm}
             >
               Clear
-            </button>
+            </Button>
             <Button
               type="submit"
               variant="contained"

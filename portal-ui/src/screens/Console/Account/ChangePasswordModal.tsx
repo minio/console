@@ -24,9 +24,10 @@ import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, LinearProgress } from "@mui/material";
 import {
-  actionsTray,
   containerForHeader,
-  modalBasic,
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangePasswordRequest } from "../Buckets/types";
 import { setModalErrorSnackMessage } from "../../../actions";
@@ -38,8 +39,9 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    ...actionsTray,
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
+    ...spacingUtils,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -118,8 +120,6 @@ const ChangePassword = ({
         setCurrentPassword("");
         closeModal();
       }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
     >
       <form
         noValidate
@@ -129,8 +129,8 @@ const ChangePassword = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
+          <Grid item xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="current-password"
                 name="current-password"
@@ -142,7 +142,7 @@ const ChangePassword = ({
                 value={currentPassword}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="new-password"
                 name="new-password"
@@ -154,7 +154,7 @@ const ChangePassword = ({
                 value={newPassword}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="re-new-password"
                 name="re-new-password"
@@ -167,7 +167,7 @@ const ChangePassword = ({
               />
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
               type="submit"
               variant="contained"

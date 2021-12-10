@@ -24,6 +24,7 @@ import Grid from "@mui/material/Grid";
 import { policySort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
+  searchField,
   selectorsCommon,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
@@ -47,23 +48,27 @@ const styles = (theme: Theme) =>
       textAlign: "center",
       padding: "10px 0",
     },
-    filterBox: {
+    searchBox: {
       flex: 1,
     },
-    searchField: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: ".9rem",
-    },
     fieldLabel: {
-      fontWeight: 600,
+      fontWeight: 400,
       width: 160,
       marginRight: 10,
     },
     tableBlock: {
       ...tableStyles.tableBlock,
     },
+    filterBox: {
+      display: "flex",
+      marginBottom: 15,
+      alignItems: "center",
+      "& span": {
+        fontSize: 14,
+      },
+    },
+    ...searchField,
+    ...tableStyles,
     ...actionsTray,
     ...selectorsCommon,
   });
@@ -136,16 +141,14 @@ const PolicySelectors = ({
         {loading && <LinearProgress />}
         {records.length > 0 ? (
           <React.Fragment>
-            <Grid item xs={12} className={classes.searchField}>
+            <Grid item xs={12} className={classes.filterBox}>
               <span className={classes.fieldLabel}>Assign Policies</span>
-
-              <div className={classes.filterBox}>
+              <div className={classes.searchBox}>
                 <SearchBox
-                  placeholder="Filter by Policy"
+                  placeholder="Filter Policy"
                   onChange={(value) => {
                     setFilter(value);
                   }}
-                  overrideClass={classes.searchField}
                 />
               </div>
             </Grid>

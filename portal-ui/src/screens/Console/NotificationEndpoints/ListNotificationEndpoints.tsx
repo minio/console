@@ -74,10 +74,7 @@ const styles = (theme: Theme) =>
     },
     searchField: {
       ...searchField.searchField,
-      minWidth: 380,
-      "@media (max-width: 900px)": {
-        minWidth: 220,
-      },
+      maxWidth: 380,
     },
   });
 

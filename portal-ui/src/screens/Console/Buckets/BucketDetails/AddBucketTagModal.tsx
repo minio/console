@@ -21,7 +21,11 @@ import { Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -40,14 +44,9 @@ interface IBucketTagModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
-    ...modalBasic,
+    ...formFieldStyles,
+    ...modalStyleUtils,
+    ...spacingUtils,
   });
 
 const AddBucketTagModal = ({
@@ -89,64 +88,64 @@ const AddBucketTagModal = ({
   };
 
   return (
-    <React.Fragment>
-      <ModalWrapper
-        modalOpen={modalOpen}
-        title="Add New Tag"
-        onClose={() => {
-          onCloseAndUpdate(false);
-        }}
-      >
-        <Grid container>
-          <h3 className={classes.pathLabel}>Bucket: {bucketName}</h3>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              value={newKey}
-              label={"New Tag Key"}
-              id={"newTagKey"}
-              name={"newTagKey"}
-              placeholder={"Enter New Tag Key"}
-              onChange={(e: any) => {
-                setNewKey(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              value={newLabel}
-              label={"New Tag Label"}
-              id={"newTagLabel"}
-              name={"newTagLabel"}
-              placeholder={"Enter New Tag Label"}
-              onChange={(e: any) => {
-                setNewLabel(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <button
-              type="button"
-              color="primary"
-              className={classes.clearButton}
-              onClick={resetForm}
-            >
-              Clear
-            </button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={
-                newLabel.trim() === "" || newKey.trim() === "" || isSending
-              }
-              onClick={addTagProcess}
-            >
-              Save
-            </Button>
-          </Grid>
+    <ModalWrapper
+      modalOpen={modalOpen}
+      title={`Add New Tag `}
+      onClose={() => {
+        onCloseAndUpdate(false);
+      }}
+    >
+      <Grid container>
+        <div className={classes.spacerBottom}>
+          <strong>Bucket</strong>: {bucketName}
+        </div>
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <InputBoxWrapper
+            value={newKey}
+            label={"New Tag Key"}
+            id={"newTagKey"}
+            name={"newTagKey"}
+            placeholder={"Enter New Tag Key"}
+            onChange={(e: any) => {
+              setNewKey(e.target.value);
+            }}
+          />
         </Grid>
-      </ModalWrapper>
-    </React.Fragment>
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <InputBoxWrapper
+            value={newLabel}
+            label={"New Tag Label"}
+            id={"newTagLabel"}
+            name={"newTagLabel"}
+            placeholder={"Enter New Tag Label"}
+            onChange={(e: any) => {
+              setNewLabel(e.target.value);
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.modalButtonBar}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="primary"
+            onClick={resetForm}
+          >
+            Clear
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={
+              newLabel.trim() === "" || newKey.trim() === "" || isSending
+            }
+            onClick={addTagProcess}
+          >
+            Save
+          </Button>
+        </Grid>
+      </Grid>
+    </ModalWrapper>
   );
 };
 

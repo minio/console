@@ -21,7 +21,10 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  formFieldStyles,
+  modalStyleUtils,
+} from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
@@ -42,7 +45,8 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
   });
 
 const BulkAddToGroup = ({
@@ -130,30 +134,29 @@ const BulkAddToGroup = ({
       ) : (
         <form noValidate autoComplete="off" onSubmit={setSaving}>
           <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              <PredefinedList
-                label={"Selected Users"}
-                content={checkedUsers.join(", ")}
-              />
-              <Grid item xs={12}>
-                <br />
+            <Grid item xs={12} className={classes.modalFormScrollable}>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <PredefinedList
+                  label={"Selected Users"}
+                  content={checkedUsers.join(", ")}
+                />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <GroupsSelectors
                   selectedGroups={selectedGroups}
                   setSelectedGroups={setSelectedGroups}
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
-              <button
+            <Grid item xs={12} className={classes.modalButtonBar}>
+              <Button
                 type="button"
+                variant="outlined"
                 color="primary"
-                className={classes.clearButton}
                 onClick={resetForm}
               >
                 Clear
-              </button>
+              </Button>
               <Button
                 type="submit"
                 variant="contained"

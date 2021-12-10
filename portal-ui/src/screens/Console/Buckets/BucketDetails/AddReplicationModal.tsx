@@ -19,10 +19,15 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  createTenantCommon,
+  formFieldStyles,
+  modalStyleUtils,
+  spacingUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { BulkReplicationResponse } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -49,10 +54,24 @@ const styles = (theme: Theme) =>
     },
     multiContainer: {
       display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
+      alignItems: "center",
     },
-    ...modalBasic,
+    sizeFactorContainer: {
+      "& label": {
+        display: "none",
+      },
+      "& div:first-child": {
+        marginBottom: 0,
+      },
+    },
+    ...spacingUtils,
+    ...createTenantCommon,
+    ...formFieldStyles,
+    ...modalStyleUtils,
+    modalFormScrollable: {
+      ...modalStyleUtils.modalFormScrollable,
+      paddingRight: 10,
+    },
   });
 
 const AddReplicationModal = ({
@@ -162,8 +181,8 @@ const AddReplicationModal = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
+          <Grid item xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="targetURL"
                 name="targetURL"
@@ -175,7 +194,7 @@ const AddReplicationModal = ({
                 value={targetURL}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <FormSwitchWrapper
                 checked={useTLS}
                 id="useTLS"
@@ -187,7 +206,7 @@ const AddReplicationModal = ({
                 value="yes"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="accessKey"
                 name="accessKey"
@@ -198,7 +217,7 @@ const AddReplicationModal = ({
                 value={accessKey}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="secretKey"
                 name="secretKey"
@@ -209,7 +228,7 @@ const AddReplicationModal = ({
                 value={secretKey}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="targetBucket"
                 name="targetBucket"
@@ -220,7 +239,7 @@ const AddReplicationModal = ({
                 value={targetBucket}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="region"
                 name="region"
@@ -231,7 +250,7 @@ const AddReplicationModal = ({
                 value={region}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <SelectWrapper
                 id="replication_mode"
                 name="replication_mode"
@@ -248,24 +267,22 @@ const AddReplicationModal = ({
             </Grid>
 
             {replicationMode === "async" && (
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.formFieldRow}>
                 <div className={classes.multiContainer}>
-                  <div>
-                    <InputBoxWrapper
-                      type="number"
-                      id="bandwidth_scalar"
-                      name="bandwidth_scalar"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setBandwidthScalar(e.target.value as string);
-                      }}
-                      label="Bandwidth"
-                      value={bandwidthScalar}
-                      min="0"
-                    />
-                  </div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="bandwidth_scalar"
+                    name="bandwidth_scalar"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setBandwidthScalar(e.target.value as string);
+                    }}
+                    label="Bandwidth"
+                    value={bandwidthScalar}
+                    min="0"
+                  />
                   <div className={classes.sizeFactorContainer}>
                     <SelectWrapper
-                      label={"Unit"}
+                      label={" "}
                       id="bandwidth_unit"
                       name="bandwidth_unit"
                       value={bandwidthUnit}
@@ -278,7 +295,7 @@ const AddReplicationModal = ({
                 </div>
               </Grid>
             )}
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="healthCheck"
                 name="healthCheck"
@@ -289,34 +306,44 @@ const AddReplicationModal = ({
                 value={healthCheck}
               />
             </Grid>
-            <h3>Object Filters</h3>
             <Grid item xs={12}>
-              <InputBoxWrapper
-                id="prefix"
-                name="prefix"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setPrefix(e.target.value);
-                }}
-                placeholder="prefix"
-                label="Prefix"
-                value={prefix}
-              />
+              <fieldset className={classes.fieldGroup}>
+                <legend className={classes.descriptionText}>
+                  Object Filters
+                </legend>
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="prefix"
+                    name="prefix"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setPrefix(e.target.value);
+                    }}
+                    placeholder="prefix"
+                    label="Prefix"
+                    value={prefix}
+                  />
+                </Grid>
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <QueryMultiSelector
+                    name="tags"
+                    label="Tags"
+                    elements={""}
+                    onChange={(vl: string) => {
+                      setTags(vl);
+                    }}
+                    keyPlaceholder="Tag Key"
+                    valuePlaceholder="Tag Value"
+                    withBorder
+                  />
+                </Grid>
+              </fieldset>
             </Grid>
-            <Grid item xs={12}>
-              <QueryMultiSelector
-                name="tags"
-                label="Tags"
-                elements={""}
-                onChange={(vl: string) => {
-                  setTags(vl);
-                }}
-                keyPlaceholder="Tag Key"
-                valuePlaceholder="Tag Value"
-                withBorder
-              />
-            </Grid>
-            <h3>Storage Configuration</h3>
-            <Grid item xs={12}>
+
+            <Grid
+              item
+              xs={12}
+              className={`${classes.spacerTop} ${classes.formFieldRow}`}
+            >
               <InputBoxWrapper
                 id="storageClass"
                 name="storageClass"
@@ -328,35 +355,52 @@ const AddReplicationModal = ({
                 value={targetStorageClass}
               />
             </Grid>
-            <h3>Replication Options</h3>
             <Grid item xs={12}>
-              <FormSwitchWrapper
-                checked={repDeleteMarker}
-                id="deleteMarker"
-                name="deleteMarker"
-                label="Delete Marker"
-                onChange={(e) => {
-                  setRepDeleteMarker(e.target.checked);
-                }}
-                value={repDeleteMarker}
-                description={"Replicate soft deletes"}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormSwitchWrapper
-                checked={repDelete}
-                id="repDelete"
-                name="repDelete"
-                label="Deletes"
-                onChange={(e) => {
-                  setRepDelete(e.target.checked);
-                }}
-                value={repDelete}
-                description={"Replicate versioned deletes"}
-              />
+              <fieldset className={classes.fieldGroup}>
+                <legend className={classes.descriptionText}>
+                  Replication Options
+                </legend>
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <FormSwitchWrapper
+                    checked={repDeleteMarker}
+                    id="deleteMarker"
+                    name="deleteMarker"
+                    label="Delete Marker"
+                    onChange={(e) => {
+                      setRepDeleteMarker(e.target.checked);
+                    }}
+                    value={repDeleteMarker}
+                    description={"Replicate soft deletes"}
+                  />
+                </Grid>
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <FormSwitchWrapper
+                    checked={repDelete}
+                    id="repDelete"
+                    name="repDelete"
+                    label="Deletes"
+                    onChange={(e) => {
+                      setRepDelete(e.target.checked);
+                    }}
+                    value={repDelete}
+                    description={"Replicate versioned deletes"}
+                  />
+                </Grid>
+              </fieldset>
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="primary"
+              disabled={addLoading}
+              onClick={() => {
+                closeModalAndRefresh();
+              }}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
@@ -366,11 +410,6 @@ const AddReplicationModal = ({
               Save
             </Button>
           </Grid>
-          {addLoading && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
         </Grid>
       </form>
     </ModalWrapper>

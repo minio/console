@@ -23,7 +23,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   formFieldStyles,
-  modalBasic,
+  modalStyleUtils,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
@@ -40,16 +40,12 @@ import { TabPanel } from "../../shared/tabs";
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-      marginTop: ".9rem",
-    },
     tabsHeader: {
       marginBottom: "1rem",
     },
+    ...modalStyleUtils,
     ...formFieldStyles,
     ...spacingUtils,
-    ...modalBasic,
   });
 
 interface IAddUserContentProps {
@@ -277,12 +273,11 @@ const AddUser = ({
                 </Grid>
               )}
             </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
+            <Grid item xs={12} className={classes.modalButtonBar}>
               <Button
                 type="button"
                 variant="outlined"
                 color="primary"
-                className={classes.spacerRight}
                 onClick={resetForm}
               >
                 Clear

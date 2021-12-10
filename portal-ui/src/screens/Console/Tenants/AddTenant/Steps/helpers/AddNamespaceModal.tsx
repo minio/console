@@ -16,15 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  LinearProgress,
-} from "@mui/material";
+import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,8 +27,7 @@ import {
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -94,67 +85,30 @@ const AddNamespaceModal = ({
   };
 
   return (
-    <Dialog
-      open={addNamespaceOpen}
+    <ConfirmDialog
+      title={`New namespace`}
+      confirmText={"Create"}
+      confirmButtonProps={{
+        color: "primary",
+        variant: "contained",
+      }}
+      isOpen={addNamespaceOpen}
+      isLoading={addNamespaceLoading}
+      onConfirm={addNamespace}
       onClose={() => {
         closeAddNamespaceModalAndRefresh(false);
       }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      sx={{
-        "& .MuiPaper-root": {
-          padding: "1rem 2rem 2rem 1rem",
-        },
-      }}
-    >
-      <DialogTitle id="alert-dialog-title" className={classes.title}>
-        <div className={classes.titleText}>Create new namespace</div>
-        <div className={classes.closeContainer}>
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={() => {
-              closeAddNamespaceModalAndRefresh(false);
-            }}
-            disableRipple
-            size="small"
-          >
-            <CloseIcon />
-          </IconButton>
-        </div>
-      </DialogTitle>
-
-      <DialogContent>
-        {addNamespaceLoading && <LinearProgress />}
-        <DialogContentText id="alert-dialog-description">
-          Are you sure you want to add a namespace called
-          <br />
-          <b className={classes.wrapText}>{namespace}</b>?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          type="button"
-          variant="outlined"
-          onClick={() => {
-            closeAddNamespaceModalAndRefresh(false);
-          }}
-          color="primary"
-          disabled={addNamespaceLoading}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={addNamespace}
-          variant="contained"
-          color="primary"
-          autoFocus
-          disabled={addNamespaceLoading}
-        >
-          Create
-        </Button>
-      </DialogActions>
-    </Dialog>
+      confirmationContent={
+        <React.Fragment>
+          {addNamespaceLoading && <LinearProgress />}
+          <DialogContentText>
+            Are you sure you want to add a namespace called
+            <br />
+            <b className={classes.wrapText}>{namespace}</b>?
+          </DialogContentText>
+        </React.Fragment>
+      }
+    />
   );
 };
 
