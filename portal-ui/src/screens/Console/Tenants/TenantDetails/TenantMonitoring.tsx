@@ -37,7 +37,7 @@ import api from "../../../../common/api";
 import { EditIcon } from "../../../../icons";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
-import { IKeyValue } from "../ListTenants/types";
+//import { IKeyValue } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
 import ConfirmationDialog from "./ConfirmationDialog";
 
