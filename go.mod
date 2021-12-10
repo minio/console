@@ -24,7 +24,6 @@ require (
 	github.com/minio/mc v0.0.0-20211207230606-23a05f5a17f2
 	github.com/minio/minio-go/v7 v7.0.21
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
-	github.com/minio/operator/logsearchapi v0.0.0-20220110040724-a5d59a342b7f
 	github.com/minio/pkg v1.1.14
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -60,7 +59,6 @@ require (
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/georgysavva/scany v0.2.7 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-openapi/analysis v0.20.1 // indirect
@@ -80,10 +78,6 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/jackc/pgconn v1.7.0 // indirect
-	github.com/jackc/pgproto3/v2 v2.0.5 // indirect
-	github.com/jackc/pgtype v1.5.0 // indirect
-	github.com/jackc/puddle v1.1.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
@@ -124,7 +118,6 @@ require (
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/shirou/gopsutil/v3 v3.21.8 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/tidwall/gjson v1.10.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect

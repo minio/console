@@ -17,14 +17,9 @@
 package auth
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
-)
-
-var (
-	errInvalidCredentials = errors.New("invalid Login")
 )
 
 // GetCredentialsFromLDAP authenticates the user against MinIO when the LDAP integration is enabled

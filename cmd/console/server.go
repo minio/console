@@ -19,11 +19,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
-	"strconv"
 	"syscall"
-	"time"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -178,52 +175,4 @@ func loadAllCerts(ctx *cli.Context) error {
 	}
 
 	return nil
-}
-
-// StartServer starts the console service
-func StartServer(ctx *cli.Context) error {
-	if os.Getenv("CONSOLE_OPERATOR_MODE") != "" && os.Getenv("CONSOLE_OPERATOR_MODE") == "on" {
-		return startOperatorServer(ctx)
-	}
-
-	if err := loadAllCerts(ctx); err != nil {
-		// Log this as a warning and continue running console without TLS certificates
-		restapi.LogError("Unable to load certs: %v", err)
-	}
-
-	var rctx restapi.Context
-	if err := rctx.Load(ctx); err != nil {
-		restapi.LogError("argument validation failed: %v", err)
-		return err
-	}
-
-	server, err := buildServer()
-	if err != nil {
-		restapi.LogError("Unable to initialize console server: %v", err)
-		return err
-	}
-
-	server.Host = rctx.Host
-	server.Port = rctx.HTTPPort
-	// set conservative timesout for uploads
-	server.ReadTimeout = 1 * time.Hour
-	// no timeouts for response for downloads
-	server.WriteTimeout = 0
-	restapi.Port = strconv.Itoa(server.Port)
-	restapi.Hostname = server.Host
-
-	if len(restapi.GlobalPublicCerts) > 0 {
-		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
-		// plain HTTP connections to HTTPS server
-		server.EnabledListeners = []string{"http", "https"}
-		server.TLSPort = rctx.HTTPSPort
-		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
-		restapi.TLSPort = strconv.Itoa(server.TLSPort)
-		restapi.Hostname = rctx.Host
-		restapi.TLSRedirect = rctx.TLSRedirect
-	}
-
-	defer server.Shutdown()
-
-	return server.Serve()
 }

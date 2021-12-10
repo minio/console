@@ -18,13 +18,10 @@ package restapi
 
 import (
 	"crypto/x509"
-	"io/ioutil"
 	"net"
 	"net/url"
 	"strconv"
 	"strings"
-
-	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 
 	xcerts "github.com/minio/pkg/certs"
 	"github.com/minio/pkg/env"
@@ -232,17 +229,6 @@ func getPrometheusJobID() string {
 
 // GetSubnetLicense returns the current subnet jwt license
 func GetSubnetLicense() string {
-	// if this is running on embedded console try to get the license from the MinIO tenant configuration
-	minioConfigPath := env.Get(MinIOConfigEnvFile, "")
-	if minioConfigPath != "" {
-		dat, err := ioutil.ReadFile(minioConfigPath)
-		if err == nil {
-			minioConfiguration := miniov2.ParseRawConfiguration(dat)
-			if val, ok := minioConfiguration[MinIOSubnetLicense]; ok {
-				return string(val)
-			}
-		}
-	}
 	// fallback to console license env variable
 	return env.Get(ConsoleSubnetLicense, "")
 }
