@@ -1300,6 +1300,43 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/metadata": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Gets the metadata of an object",
+        "operationId": "GetObjectMetadata",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/metadata"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/restore": {
       "put": {
         "tags": [
@@ -4554,6 +4591,15 @@ func init() {
         }
       }
     },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "objectMetadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
     "multiBucketReplication": {
       "required": [
         "accessKey",
@@ -7015,6 +7061,43 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/metadata": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Gets the metadata of an object",
+        "operationId": "GetObjectMetadata",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/metadata"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -10396,6 +10479,15 @@ func init() {
         },
         "versioning": {
           "type": "boolean"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "objectMetadata": {
+          "type": "object",
+          "additionalProperties": true
         }
       }
     },

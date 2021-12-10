@@ -611,6 +611,31 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/metadata:
+    get:
+      summary: Gets the metadata of an object
+      operationId: GetObjectMetadata
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/metadata"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/tags:
     put:
       summary: Put Bucket's tags
@@ -3929,3 +3954,10 @@ definitions:
         type: object
         additionalProperties:
           type: object
+
+  metadata:
+    type: object
+    properties:
+      objectMetadata:
+        type: object
+        additionalProperties: true

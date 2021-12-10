@@ -66,6 +66,7 @@ type MinioClient interface {
 	putObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
 	putObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
 	putObjectRetention(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+	statObject(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
 	setBucketEncryption(ctx context.Context, bucketName string, config *sse.Configuration) error
 	removeBucketEncryption(ctx context.Context, bucketName string) error
 	getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error)
@@ -168,6 +169,10 @@ func (c minioClient) putObjectLegalHold(ctx context.Context, bucketName, objectN
 
 func (c minioClient) putObjectRetention(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 	return c.client.PutObjectRetention(ctx, bucketName, objectName, opts)
+}
+
+func (c minioClient) statObject(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error) {
+	return c.client.StatObject(ctx, bucketName, prefix, opts)
 }
 
 // implements minio.SetBucketEncryption(ctx, bucketName, config)

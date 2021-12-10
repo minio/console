@@ -191,6 +191,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
+		UserAPIGetObjectMetadataHandler: user_api.GetObjectMetadataHandlerFunc(func(params user_api.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetObjectMetadata has not yet been implemented")
+		}),
 		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
 		}),
@@ -504,6 +507,8 @@ type ConsoleAPI struct {
 	UserAPIGetBucketRewindHandler user_api.GetBucketRewindHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
+	// UserAPIGetObjectMetadataHandler sets the operation handler for the get object metadata operation
+	UserAPIGetObjectMetadataHandler user_api.GetObjectMetadataHandler
 	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
 	AdminAPIGetTierHandler admin_api.GetTierHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
@@ -832,6 +837,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
+	}
+	if o.UserAPIGetObjectMetadataHandler == nil {
+		unregistered = append(unregistered, "user_api.GetObjectMetadataHandler")
 	}
 	if o.AdminAPIGetTierHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTierHandler")
@@ -1277,6 +1285,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = user_api.NewGetBucketVersioning(o.context, o.UserAPIGetBucketVersioningHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/objects/metadata"] = user_api.NewGetObjectMetadata(o.context, o.UserAPIGetObjectMetadataHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

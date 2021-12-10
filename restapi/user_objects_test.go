@@ -43,6 +43,7 @@ var minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName
 var minioPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
 var minioGetObjectTaggingMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
 var minioPutObjectTaggingMock func(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
+var minioStatObjectMock func(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
 
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
@@ -79,6 +80,10 @@ func (ac minioClientMock) getObjectTagging(ctx context.Context, bucketName, obje
 
 func (ac minioClientMock) putObjectTagging(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error {
 	return minioPutObjectTaggingMock(ctx, bucketName, objectName, otags, opts)
+}
+
+func (ac minioClientMock) statObject(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error) {
+	return minioStatObjectMock(ctx, bucketName, prefix, opts)
 }
 
 // mock functions for s3ClientMock
@@ -1042,6 +1047,58 @@ func Test_deleteObjectRetention(t *testing.T) {
 				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("deleteObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
 			} else {
 				assert.Nil(err, fmt.Sprintf("deleteObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+			}
+		})
+	}
+}
+
+func Test_getObjectInfo(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+	client := minioClientMock{}
+
+	type args struct {
+		bucketName string
+		prefix     string
+		statFunc   func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
+	}
+	tests := []struct {
+		test      string
+		args      args
+		wantError error
+	}{
+		{
+			test: "Test function not returns an error",
+			args: args{
+				bucketName: "bucket1",
+				prefix:     "someprefix",
+				statFunc: func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (minio.ObjectInfo, error) {
+					return minio.ObjectInfo{}, nil
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Test function returns an error",
+			args: args{
+				bucketName: "bucket2",
+				prefix:     "someprefi2",
+				statFunc: func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (minio.ObjectInfo, error) {
+					return minio.ObjectInfo{}, errors.New("new Error")
+				},
+			},
+			wantError: errors.New("new Error"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			minioStatObjectMock = tt.args.statFunc
+			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix)
+			if tt.wantError != nil {
+				fmt.Println(t.Name())
+				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("getObjectInfo() error: `%s`, wantErr: `%s`", err, tt.wantError))
+			} else {
+				assert.Nil(err, fmt.Sprintf("getObjectInfo() error: %v, wantErr: %v", err, tt.wantError))
 			}
 		})
 	}
