@@ -23,7 +23,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -274,6 +273,85 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 	return objects, nil
 }
 
+type httpRange struct {
+	Start  int64
+	Length int64
+}
+
+// Example:
+//   "Content-Range": "bytes 100-200/1000"
+//   "Content-Range": "bytes 100-200/*"
+func getRange(start, end, total int64) string {
+	// unknown total: -1
+	if total == -1 {
+		return fmt.Sprintf("bytes %d-%d/*", start, end)
+	}
+
+	return fmt.Sprintf("bytes %d-%d/%d", start, end, total)
+}
+
+// Example:
+//   "Range": "bytes=100-200"
+//   "Range": "bytes=-50"
+//   "Range": "bytes=150-"
+//   "Range": "bytes=0-0,-1"
+func parseRange(s string, size int64) ([]httpRange, error) {
+	if s == "" {
+		return nil, nil // header not present
+	}
+	const b = "bytes="
+	if !strings.HasPrefix(s, b) {
+		return nil, errors.New("invalid range")
+	}
+	var ranges []httpRange
+	for _, ra := range strings.Split(s[len(b):], ",") {
+		ra = strings.TrimSpace(ra)
+		if ra == "" {
+			continue
+		}
+		i := strings.Index(ra, "-")
+		if i < 0 {
+			return nil, errors.New("invalid range")
+		}
+		start, end := strings.TrimSpace(ra[:i]), strings.TrimSpace(ra[i+1:])
+		var r httpRange
+		if start == "" {
+			// If no start is specified, end specifies the
+			// range start relative to the end of the file.
+			i, err := strconv.ParseInt(end, 10, 64)
+			if err != nil {
+				return nil, errors.New("invalid range")
+			}
+			if i > size {
+				i = size
+			}
+			r.Start = size - i
+			r.Length = size - r.Start
+		} else {
+			i, err := strconv.ParseInt(start, 10, 64)
+			if err != nil || i >= size || i < 0 {
+				return nil, errors.New("invalid range")
+			}
+			r.Start = i
+			if end == "" {
+				// If no end is specified, range extends to end of the file.
+				r.Length = size - r.Start
+			} else {
+				i, err := strconv.ParseInt(end, 10, 64)
+				if err != nil || r.Start > i {
+					return nil, errors.New("invalid range")
+				}
+				if i >= size {
+					i = size - 1
+				}
+				r.Length = i - r.Start + 1
+			}
+		}
+		ranges = append(ranges, r)
+	}
+	return ranges, nil
+}
+
 func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
 	ctx := context.Background()
 	var prefix string
@@ -298,30 +376,10 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
 		defer resp.Close()
 
-		// indicate object size & content type
-		stat, err := resp.Stat()
-		statOk := false
-		if err != nil {
-			log.Println(err)
-		} else {
-			statOk = true
-		}
-
 		isPreview := params.Preview != nil && *params.Preview
-
 		// indicate it's a download / inline content to the browser, and the size of the object
-		var prefixPath string
 		var filename string
-		if params.Prefix != "" {
-			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-			if err != nil {
-				log.Println(err)
-			}
-
-			prefixPath = string(decodedPrefix)
-		}
-		prefixElements := strings.Split(prefixPath, "/")
+		prefixElements := strings.Split(prefix, "/")
 		if len(prefixElements) > 0 {
 			if prefixElements[len(prefixElements)-1] == "" {
 				filename = prefixElements[len(prefixElements)-2]
@@ -330,68 +388,60 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			}
 		}
 
+		// indicate object size & content type
+		stat, err := resp.Stat()
+		if err != nil {
+			LogError("Failed to get Stat() response from server for %s: %v", prefix, err)
+			return
+		}
+
 		// if we are getting a Range Request (video) handle that specially
-		isRange := params.HTTPRequest.Header.Get("Range")
-		if isRange != "" {
-
-			rangeFrom := -1
-			rangeTo := -1
-
-			parts := strings.Split(isRange, "=")
-			if len(parts) > 1 {
-				rangeParts := strings.Split(parts[1], "-")
-				var err error
-				rangeFrom, err = strconv.Atoi(rangeParts[0])
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				if rangeParts[1] != "" {
-					rangeTo, err = strconv.Atoi(rangeParts[1])
-					if err != nil {
-						log.Println(err)
-						return
-					}
-				}
-
-			}
-
-			if handleRangeRequest(rw, isRange, stat, isPreview, filename, resp, params, rangeTo, rangeFrom) {
-				return
-			}
+		ranges, err := parseRange(params.HTTPRequest.Header.Get("Range"), stat.Size)
+		if err != nil {
+			LogError("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err)
+			return
 		}
 
 		if isPreview {
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
 			rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
 			rw.Header().Set("X-XSS-Protection", "1")
-
 		} else {
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
-			rw.Header().Set("Content-Type", "application/octet-stream")
 		}
 
-		// indicate object size & content type
+		rw.Header().Set("Last-Modified", stat.LastModified.UTC().Format(http.TimeFormat))
 
-		if statOk {
-			rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+		contentType := stat.ContentType
+		if isPreview {
+			// In case content type was uploaded as octet-stream, we double verify content type
+			if stat.ContentType == "application/octet-stream" {
+				contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+			}
+		}
+		rw.Header().Set("Content-Type", contentType)
+		length := stat.Size
+		if len(ranges) > 0 {
+			start := ranges[0].Start
+			length = ranges[0].Length
 
-			contentType := stat.ContentType
-
-			if isPreview {
-				// In case content type was uploaded as octet-stream, we double verify content type
-				if stat.ContentType == "application/octet-stream" {
-					contentType = mimedb.TypeByExtension(filepath.Ext(filename))
-				}
+			_, err = resp.Seek(start, io.SeekStart)
+			if err != nil {
+				LogError("Unable to seek at offset %d: %v", start, err)
+				return
 			}
 
-			rw.Header().Set("Content-Type", contentType)
+			rw.Header().Set("Accept-Ranges", "bytes")
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.Header().Set("Content-Range", getRange(start, start+length-1, stat.Size))
+			rw.WriteHeader(http.StatusPartialContent)
 		}
 
-		// Copy the stream
-		_, err = io.Copy(rw, resp)
+		rw.Header().Set("Content-Length", fmt.Sprintf("%d", length))
+		_, err = io.Copy(rw, io.LimitReader(resp, length))
 		if err != nil {
-			log.Println(err)
+			LogError("Unable to write all data to client: %v", err)
+			return
 		}
 	}), nil
 }
@@ -451,7 +501,8 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				log.Println(err)
+				LogError("Unable to parse encoded prefix %s: %v", encodedPrefix, err)
+				return
 			}
 
 			prefixPath = string(decodedPrefix)
@@ -471,7 +522,7 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 		// Copy the stream
 		_, err := io.Copy(rw, resp)
 		if err != nil {
-			log.Println(err)
+			LogError("Unable to write all the requested data: %v", err)
 		}
 	}), nil
 }
@@ -1032,85 +1083,4 @@ func getHost(authority string) (host string) {
 		return
 	}
 	return authority
-}
-
-func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.ObjectInfo, isPreview bool, filename string, resp *minio.Object, params user_api.DownloadObjectParams, rangeTo int, rangeFrom int) bool {
-	parts := strings.Split(isRange, "=")
-	if len(parts) > 1 {
-		if parts[1] == "0-1" {
-			contentType := stat.ContentType
-
-			if isPreview {
-				// In case content type was uploaded as octet-stream, we double verify content type
-				if stat.ContentType == "application/octet-stream" {
-					contentType = mimedb.TypeByExtension(filepath.Ext(filename))
-				}
-			}
-			rw.Header().Set("Content-Type", contentType)
-			rw.Header().Set("Content-Length", "2")
-			rw.Header().Set("Content-Range", fmt.Sprintf("bytes 0-1/%d", stat.Size))
-			rw.Header().Set("Accept-Ranges", "bytes")
-			rw.Header().Set("Access-Control-Allow-Origin", "*")
-			rw.WriteHeader(206)
-			byts := make([]byte, 2)
-			t, err := resp.Read(byts)
-			log.Println("read", t, "bytes")
-			if err != nil {
-				log.Println(err)
-			}
-			rw.Write(byts)
-			return true
-		}
-
-		contentType := stat.ContentType
-
-		if isPreview {
-			// In case content type was uploaded as octet-stream, we double verify content type
-			if stat.ContentType == "application/octet-stream" {
-				contentType = mimedb.TypeByExtension(filepath.Ext(filename))
-			}
-		}
-		rw.Header().Set("Content-Type", contentType)
-		isFirefox := false
-		if strings.Contains(params.HTTPRequest.UserAgent(), "Firefox") {
-			isFirefox = true
-		}
-		if !isFirefox {
-			rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
-		}
-
-		if rangeTo > -1 {
-			rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, rangeTo, stat.Size))
-			if isFirefox {
-				rw.Header().Set("Content-Length", fmt.Sprintf("%d", rangeTo-rangeFrom+1))
-			}
-		} else {
-			rw.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeFrom, stat.Size-1, stat.Size))
-			if isFirefox {
-				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size-int64(rangeFrom)))
-			}
-		}
-		rw.Header().Set("Accept-Ranges", "bytes")
-		rw.Header().Set("Access-Control-Allow-Origin", "*")
-		rw.WriteHeader(206)
-		if rangeTo > -1 {
-			byts := make([]byte, rangeTo+1)
-			t, err := resp.ReadAt(byts, int64(rangeFrom))
-			log.Println("0 read", t, "bytes")
-			if err != nil {
-				log.Println(err)
-			}
-			rw.Write(byts)
-		} else {
-			byts := make([]byte, stat.Size-int64(rangeFrom))
-			t, err := resp.ReadAt(byts, int64(rangeFrom))
-			log.Println("1 read", t, "bytes")
-			if err != nil {
-				log.Println(err)
-			}
-			rw.Write(byts)
-		}
-
-	}
-	return false
 }
