@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"github.com/minio/minio-go/v7"
 	"io"
-	"log"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -302,7 +301,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		stat, err := resp.Stat()
 		statOk := false
 		if err != nil {
-			log.Println(err)
+			LogError(err.Error())
 		} else {
 			statOk = true
 		}
@@ -316,7 +315,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				log.Println(err)
+				LogError(err.Error())
 			}
 
 			prefixPath = string(decodedPrefix)
@@ -343,13 +342,13 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 				var err error
 				rangeFrom, err = strconv.Atoi(rangeParts[0])
 				if err != nil {
-					log.Println(err)
+					LogError(err.Error())
 					return
 				}
 				if rangeParts[1] != "" {
 					rangeTo, err = strconv.Atoi(rangeParts[1])
 					if err != nil {
-						log.Println(err)
+						LogError(err.Error())
 						return
 					}
 				}
@@ -391,7 +390,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		// Copy the stream
 		_, err = io.Copy(rw, resp)
 		if err != nil {
-			log.Println(err)
+			LogError(err.Error())
 		}
 	}), nil
 }
@@ -451,7 +450,7 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				log.Println(err)
+				LogError(err.Error())
 			}
 
 			prefixPath = string(decodedPrefix)
@@ -471,7 +470,7 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 		// Copy the stream
 		_, err := io.Copy(rw, resp)
 		if err != nil {
-			log.Println(err)
+			LogError(err.Error())
 		}
 	}), nil
 }
@@ -1055,7 +1054,7 @@ func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.Objec
 			byts := make([]byte, 2)
 			_, err := resp.Read(byts)
 			if err != nil && !errors.Is(err, io.EOF) {
-				log.Println(err)
+				LogError(err.Error())
 			}
 			rw.Write(byts)
 			return true
@@ -1096,14 +1095,14 @@ func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.Objec
 			byts := make([]byte, rangeTo+1)
 			_, err := resp.ReadAt(byts, int64(rangeFrom))
 			if err != nil && !errors.Is(err, io.EOF) {
-				log.Println(err)
+				LogError(err.Error())
 			}
 			rw.Write(byts)
 		} else {
 			byts := make([]byte, stat.Size-int64(rangeFrom))
 			_, err := resp.ReadAt(byts, int64(rangeFrom))
 			if err != nil && !errors.Is(err, io.EOF) {
-				log.Println(err)
+				LogError(err.Error())
 			}
 			rw.Write(byts)
 		}
