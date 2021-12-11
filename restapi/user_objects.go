@@ -22,6 +22,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/minio/minio-go/v7"
 	"io"
 	"log"
 	"net/http"
@@ -41,7 +42,6 @@ import (
 	"github.com/minio/console/restapi/operations/user_api"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/tags"
 	"github.com/minio/pkg/mimedb"
 )
@@ -1053,9 +1053,8 @@ func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.Objec
 			rw.Header().Set("Access-Control-Allow-Origin", "*")
 			rw.WriteHeader(206)
 			byts := make([]byte, 2)
-			t, err := resp.Read(byts)
-			log.Println("read", t, "bytes")
-			if err != nil {
+			_, err := resp.Read(byts)
+			if err != nil && !errors.Is(err, io.EOF) {
 				log.Println(err)
 			}
 			rw.Write(byts)
@@ -1095,17 +1094,15 @@ func handleRangeRequest(rw http.ResponseWriter, isRange string, stat minio.Objec
 		rw.WriteHeader(206)
 		if rangeTo > -1 {
 			byts := make([]byte, rangeTo+1)
-			t, err := resp.ReadAt(byts, int64(rangeFrom))
-			log.Println("0 read", t, "bytes")
-			if err != nil {
+			_, err := resp.ReadAt(byts, int64(rangeFrom))
+			if err != nil && !errors.Is(err, io.EOF) {
 				log.Println(err)
 			}
 			rw.Write(byts)
 		} else {
 			byts := make([]byte, stat.Size-int64(rangeFrom))
-			t, err := resp.ReadAt(byts, int64(rangeFrom))
-			log.Println("1 read", t, "bytes")
-			if err != nil {
+			_, err := resp.ReadAt(byts, int64(rangeFrom))
+			if err != nil && !errors.Is(err, io.EOF) {
 				log.Println(err)
 			}
 			rw.Write(byts)
