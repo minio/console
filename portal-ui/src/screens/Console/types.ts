@@ -20,7 +20,6 @@ export interface ISessionPermissions {
 
 export interface ISessionResponse {
   status: string;
-  pages: string[];
   features: string[];
   operator: boolean;
   distributedMode: boolean;

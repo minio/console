@@ -21,7 +21,6 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/user_api"
-	"github.com/minio/console/pkg/acl"
 )
 
 func registerSessionHandlers(api *operations.OperatorAPI) {
@@ -42,16 +41,8 @@ func getSessionResponse(session *models.Principal) (*models.OperatorSessionRespo
 		return nil, prepareError(errorGenericInvalidSession)
 	}
 	sessionResp := &models.OperatorSessionResponse{
-		Pages:    acl.GetAuthorizedEndpoints([]string{}),
-		Features: getListOfEnabledFeatures(),
 		Status:   models.OperatorSessionResponseStatusOk,
 		Operator: true,
 	}
 	return sessionResp, nil
-}
-
-// getListOfEnabledFeatures returns a list of features
-func getListOfEnabledFeatures() []string {
-	var features []string
-	return features
 }

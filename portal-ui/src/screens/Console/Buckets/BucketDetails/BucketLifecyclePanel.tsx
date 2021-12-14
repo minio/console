@@ -211,6 +211,7 @@ const BucketLifecyclePanel = ({
             ]}
             resource={bucketName}
             matchAll
+            errorProps={{ disabled: true }}
           >
             <Button
               variant="contained"

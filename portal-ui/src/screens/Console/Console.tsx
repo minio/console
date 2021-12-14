@@ -40,6 +40,15 @@ import Menu from "./Menu/Menu";
 import api from "../../common/api";
 
 import MainError from "./Common/MainError/MainError";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
+  IAM_PAGES_PERMISSIONS,
+  IAM_SCOPES,
+  S3_ALL_RESOURCES,
+} from "../../common/SecureComponent/permissions";
+import { hasPermission } from "../../common/SecureComponent/SecureComponent";
+import { IRouteRule } from "./Menu/types";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -149,6 +158,9 @@ interface IConsoleProps {
   loadingProgress: number;
   snackBarMessage: snackBarMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
+  operatorMode: boolean;
+  distributedSetup: boolean;
+  features: string[] | null;
 }
 
 const Console = ({
@@ -162,9 +174,13 @@ const Console = ({
   loadingProgress,
   snackBarMessage,
   setSnackBarMessage,
+  operatorMode,
+  distributedSetup,
+  features,
 }: IConsoleProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
+  const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
   const restartServer = () => {
     serverIsLoading(true);
     api
@@ -185,199 +201,259 @@ const Console = ({
       });
   };
 
-  const allowedPages = !session
-    ? []
-    : session.pages.reduce((result: any, item: any, index: any) => {
-        if (item.startsWith("/tools")) {
-          result["/tools"] = true;
-        }
-        result[item] = true;
-        return result;
-      }, {});
-  const routes = [
+  const consoleAdminRoutes: IRouteRule[] = [
     {
       component: Dashboard,
-      path: "/dashboard",
+      path: IAM_PAGES.DASHBOARD,
     },
     {
       component: Metrics,
-      path: "/metrics",
+      path: IAM_PAGES.METRICS,
     },
     {
       component: Buckets,
-      path: "/add-bucket",
+      path: IAM_PAGES.ADD_BUCKETS,
     },
     {
       component: Buckets,
-      path: "/buckets",
+      path: IAM_PAGES.BUCKETS,
+      forceDisplay: true,
     },
     {
       component: Buckets,
-      path: "/buckets/*",
-    },
-    {
-      component: Watch,
-      path: "/tools/watch",
-    },
-    {
-      component: Speedtest,
-      path: "/tools/speedtest",
-    },
-    {
-      component: Users,
-      path: "/users/:userName+",
-    },
-    {
-      component: Users,
-      path: "/users",
-    },
-    {
-      component: Groups,
-      path: "/groups",
-    },
-    {
-      component: GroupsDetails,
-      path: "/groups/:groupName+",
-    },
-    {
-      component: Policies,
-      path: "/policies/*",
-    },
-    {
-      component: Policies,
-      path: "/policies",
-    },
-    {
-      component: Heal,
-      path: "/tools/heal",
-    },
-    {
-      component: Trace,
-      path: "/tools/trace",
-    },
-    {
-      component: HealthInfo,
-      path: "/tools/diagnostics",
-    },
-    {
-      component: ErrorLogs,
-      path: "/tools/logs",
-    },
-    {
-      component: LogsSearchMain,
-      path: "/tools/audit-logs",
-    },
-    {
-      component: Tools,
-      path: "/tools",
-    },
-    {
-      component: ConfigurationOptions,
-      path: "/settings",
-    },
-    {
-      component: ConfigurationOptions,
-      path: "/settings/:option",
-    },
-    {
-      component: AddNotificationEndpoint,
-      path: "/notification-endpoints/add/:service",
-    },
-    {
-      component: NotificationTypeSelector,
-      path: "/notification-endpoints/add",
-    },
-    {
-      component: NotificationEndpoints,
-      path: "/notification-endpoints",
-    },
-    {
-      component: AddTierConfiguration,
-      path: "/tiers/add/:service",
-    },
-    {
-      component: TierTypeSelector,
-      path: "/tiers/add",
-    },
-    {
-      component: ListTiersConfiguration,
-      path: "/tiers",
-    },
-    {
-      component: Account,
-      path: "/account",
-      props: {
-        changePassword: (!session ? [] : session.pages).includes(
-          "/account/change-password"
-        ),
+      path: IAM_PAGES.BUCKETS_ADMIN_VIEW,
+      customPermissionFnc: () => {
+        const path = window.location.pathname;
+        const resource = path.match(/buckets\/(.*)\/admin*/);
+        return (
+          resource &&
+          resource.length > 0 &&
+          hasPermission(
+            resource[1],
+            IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_ADMIN_VIEW]
+          )
+        );
       },
     },
     {
-      component: ListTenants,
-      path: "/tenants",
+      component: Buckets,
+      path: IAM_PAGES.BUCKETS_BROWSE_VIEW,
+      customPermissionFnc: () => {
+        const path = window.location.pathname;
+        const resource = path.match(/buckets\/(.*)\/browse*/);
+        return (
+          resource &&
+          resource.length > 0 &&
+          hasPermission(
+            resource[1],
+            IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
+          )
+        );
+      },
     },
     {
-      component: AddTenant,
-      path: "/tenants/add",
+      component: Watch,
+      path: IAM_PAGES.TOOLS_WATCH,
     },
     {
-      component: Storage,
-      path: "/storage",
+      component: Speedtest,
+      path: IAM_PAGES.TOOLS_SPEEDTEST,
     },
     {
-      component: Storage,
-      path: "/storage/volumes",
+      component: Users,
+      path: IAM_PAGES.USERS_VIEW,
     },
     {
-      component: Storage,
-      path: "/storage/drives",
+      component: Users,
+      path: IAM_PAGES.USERS,
+      fsHidden: ldapIsEnabled,
+      customPermissionFnc: () =>
+        hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_LIST_USERS]) ||
+        hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName",
+      component: Groups,
+      path: IAM_PAGES.GROUPS,
+      fsHidden: ldapIsEnabled,
     },
     {
-      component: Hop,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
+      component: GroupsDetails,
+      path: IAM_PAGES.GROUPS_VIEW,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
+      component: Policies,
+      path: IAM_PAGES.POLICIES_VIEW,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/summary",
+      component: Policies,
+      path: IAM_PAGES.POLICIES,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/metrics",
+      component: Heal,
+      path: IAM_PAGES.TOOLS_HEAL,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods",
+      component: Trace,
+      path: IAM_PAGES.TOOLS_TRACE,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
+      component: HealthInfo,
+      path: IAM_PAGES.TOOLS_DIAGNOSTICS,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
+      component: ErrorLogs,
+      path: IAM_PAGES.TOOLS_LOGS,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/license",
+      component: LogsSearchMain,
+      path: IAM_PAGES.TOOLS_AUDITLOGS,
     },
     {
-      component: TenantDetails,
-      path: "/namespaces/:tenantNamespace/tenants/:tenantName/security",
+      component: Tools,
+      path: IAM_PAGES.TOOLS,
+    },
+    {
+      component: ConfigurationOptions,
+      path: IAM_PAGES.SETTINGS,
+    },
+    {
+      component: ConfigurationOptions,
+      path: IAM_PAGES.SETTINGS_VIEW,
+    },
+    {
+      component: AddNotificationEndpoint,
+      path: IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD_SERVICE,
+    },
+    {
+      component: NotificationTypeSelector,
+      path: IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD,
+    },
+    {
+      component: NotificationEndpoints,
+      path: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
+    },
+    {
+      component: AddTierConfiguration,
+      path: IAM_PAGES.TIERS_ADD_SERVICE,
+      fsHidden: !distributedSetup,
+    },
+    {
+      component: TierTypeSelector,
+      path: IAM_PAGES.TIERS_ADD,
+      fsHidden: !distributedSetup,
+    },
+    {
+      component: ListTiersConfiguration,
+      path: IAM_PAGES.TIERS,
+    },
+    {
+      component: Account,
+      path: IAM_PAGES.ACCOUNT,
+      forceDisplay: true, // user has implicit access to service-accounts
     },
     {
       component: License,
-      path: "/license",
+      path: IAM_PAGES.LICENSE,
+      forceDisplay: true,
     },
   ];
-  const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
+
+  const operatorConsoleRoutes: IRouteRule[] = [
+    {
+      component: ListTenants,
+      path: IAM_PAGES.TENANTS,
+      forceDisplay: true,
+    },
+    {
+      component: AddTenant,
+      path: IAM_PAGES.TENANTS_ADD,
+      forceDisplay: true,
+    },
+    {
+      component: Storage,
+      path: IAM_PAGES.STORAGE,
+      forceDisplay: true,
+    },
+    {
+      component: Storage,
+      path: IAM_PAGES.STORAGE_VOLUMES,
+      forceDisplay: true,
+    },
+    {
+      component: Storage,
+      path: IAM_PAGES.STORAGE_DRIVES,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT,
+      forceDisplay: true,
+    },
+    {
+      component: Hop,
+      path: IAM_PAGES.NAMESPACE_TENANT_HOP,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_PODS,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_SUMMARY,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_METRICS,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_PODS_LIST,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_POOLS,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_VOLUMES,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_LICENSE,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_SECURITY,
+      forceDisplay: true,
+    },
+    {
+      component: License,
+      path: IAM_PAGES.LICENSE,
+      forceDisplay: true,
+    },
+  ];
+
+  const allowedRoutes = (
+    operatorMode ? operatorConsoleRoutes : consoleAdminRoutes
+  ).filter(
+    (route: any) =>
+      (route.forceDisplay ||
+        (route.customPermissionFnc
+          ? route.customPermissionFnc()
+          : hasPermission(
+              CONSOLE_UI_RESOURCE,
+              IAM_PAGES_PERMISSIONS[route.path]
+            ))) &&
+      !route.fsHidden
+  );
 
   const closeSnackBar = () => {
     setOpenSnackbar(false);
@@ -409,7 +485,7 @@ const Console = ({
       {session && session.status === "ok" ? (
         <div className={classes.root}>
           <CssBaseline />
-          {!hideMenu && <Menu pages={session.pages} />}
+          {!hideMenu && <Menu />}
 
           <main className={classes.content}>
             {needsRestart && (
@@ -505,6 +581,9 @@ const mapState = (state: AppState) => ({
   session: state.console.session,
   loadingProgress: state.system.loadingProgress,
   snackBarMessage: state.system.snackBar,
+  operatorMode: state.system.operatorMode,
+  distributedSetup: state.system.distributedSetup,
+  features: state.console.session.features,
 });
 
 const connector = connect(mapState, {

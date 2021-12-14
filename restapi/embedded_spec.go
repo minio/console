@@ -5223,12 +5223,6 @@ func init() {
         "operator": {
           "type": "boolean"
         },
-        "pages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "permissions": {
           "type": "object",
           "additionalProperties": {
@@ -11073,12 +11067,6 @@ func init() {
         },
         "operator": {
           "type": "boolean"
-        },
-        "pages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "permissions": {
           "type": "object",

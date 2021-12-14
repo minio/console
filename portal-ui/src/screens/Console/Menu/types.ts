@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { userLoggedIn } from "../../../actions";
-
 export interface IMenuItem {
   group: string;
   type: string;
@@ -27,4 +25,13 @@ export interface IMenuItem {
   forceDisplay?: boolean;
   extraMargin?: boolean;
   fsHidden?: boolean;
+  customPermissionFnc?: any;
+}
+
+export interface IRouteRule {
+  component: any;
+  path: string;
+  forceDisplay?: boolean;
+  fsHidden?: boolean;
+  customPermissionFnc?: any;
 }

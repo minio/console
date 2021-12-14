@@ -19,7 +19,7 @@
 // match some of the permissions)
 export const hasAccessToResource = (
   userPermissionsOnBucket: string[] | null | undefined,
-  requiredPermissions: string[],
+  requiredPermissions: string[] = [],
   matchAll?: boolean
 ) => {
   if (!userPermissionsOnBucket) {
@@ -44,10 +44,9 @@ export const hasAccessToResource = (
 };
 
 export const IAM_ROLES = {
-  viewer: "VIEWER",
-  editor: "EDITOR",
-  owner: "OWNER",
-  admin: "ADMIN",
+  BUCKET_OWNER: "BUCKET_OWNER", // upload/delete objects from the bucket
+  BUCKET_VIEWER: "BUCKET_VIEWER", // only view objects on the bucket
+  BUCKET_ADMIN: "BUCKET_ADMIN", // administrate the bucket
 };
 
 export const IAM_SCOPES = {
@@ -84,11 +83,17 @@ export const IAM_SCOPES = {
     "s3:PutBucketObjectLockConfiguration",
   ADMIN_GET_POLICY: "admin:GetPolicy",
   ADMIN_LIST_USERS: "admin:ListUsers",
+  ADMIN_CREATE_USER: "admin:CreateUser",
+  ADMIN_DELETE_USER: "admin:DeleteUser",
+  ADMIN_ENABLE_USER: "admin:EnableUser",
+  ADMIN_DISABLE_USER: "admin:DisableUser",
+  ADMIN_GET_USER: "admin:GetUser",
   ADMIN_LIST_USER_POLICIES: "admin:ListUserPolicies",
   ADMIN_SERVER_INFO: "admin:ServerInfo",
   ADMIN_GET_BUCKET_QUOTA: "admin:GetBucketQuota",
   ADMIN_SET_BUCKET_QUOTA: "admin:SetBucketQuota",
   ADMIN_LIST_TIERS: "admin:ListTier",
+  ADMIN_SET_TIER: "admin:SetTier",
   ADMIN_LIST_GROUPS: "admin:ListGroups",
   S3_GET_OBJECT_VERSION_FOR_REPLICATION: "s3:GetObjectVersionForReplication",
   S3_REPLICATE_TAGS: "s3:ReplicateTags",
@@ -117,20 +122,87 @@ export const IAM_SCOPES = {
   ADMIN_GET_GROUP: "admin:GetGroup",
   ADMIN_ENABLE_GROUP: "admin:EnableGroup",
   ADMIN_DISABLE_GROUP: "admin:DisableGroup",
-  ADMIN_GET_USER: "admin:GetUser",
   ADMIN_CREATE_POLICY: "admin:CreatePolicy",
   ADMIN_DELETE_POLICY: "admin:DeletePolicy",
   ADMIN_ATTACH_USER_OR_GROUP_POLICY: "admin:AttachUserOrGroupPolicy",
-  ADMIN_HEAL_ACTION: "admin:Heal",
-  ADMIN_HEALTH_ACTION: "admin:OBDInfo",
-  ADMIN_CONSOLE_LOG_ACTION: "admin:ConsoleLog",
-  ADMIN_TRACE_ACTION: "admin:ServerTrace",
+  ADMIN_CREATE_SERVICEACCOUNT: "admin:CreateServiceAccount",
+  ADMIN_UPDATE_SERVICEACCOUNT: "admin:UpdateServiceAccount",
+  ADMIN_REMOVE_SERVICEACCOUNT: "admin:RemoveServiceAccount",
+  ADMIN_LIST_SERVICEACCOUNTS: "admin:ListServiceAccounts",
+  ADMIN_CONFIG_UPDATE: "admin:ConfigUpdate",
+  ADMIN_GET_CONSOLE_LOG: "admin:ConsoleLog",
+  ADMIN_SERVER_TRACE: "admin:ServerTrace",
+  ADMIN_HEALTH_INFO: "admin:OBDInfo",
+  ADMIN_HEAL: "admin:Heal",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
 };
 
+export const IAM_PAGES = {
+  POLICIES: "/policies",
+  POLICIES_VIEW: "/policies/*",
+  DASHBOARD: "/dashboard",
+  METRICS: "/metrics",
+  ADD_BUCKETS: "/add-bucket",
+  BUCKETS: "/buckets",
+  BUCKETS_ADMIN_VIEW: "/buckets/:bucketName/admin*",
+  BUCKETS_BROWSE_VIEW: "/buckets/:bucketName/browse*",
+  TOOLS_WATCH: "/tools/watch",
+  TOOLS_SPEEDTEST: "/tools/speedtest",
+  USERS: "/users",
+  USERS_VIEW: "/users/:userName+",
+  GROUPS: "/groups",
+  GROUPS_VIEW: "/groups/:groupName+",
+  TOOLS_HEAL: "/tools/heal",
+  TOOLS_TRACE: "/tools/trace",
+  TOOLS_DIAGNOSTICS: "/tools/diagnostics",
+  TOOLS_LOGS: "/tools/logs",
+  TOOLS_AUDITLOGS: "/tools/audit-logs",
+  TOOLS: "/tools",
+  SETTINGS: "/settings",
+  SETTINGS_VIEW: "/settings/:option",
+  NOTIFICATIONS_ENDPOINTS_ADD: "/notification-endpoints/add",
+  NOTIFICATIONS_ENDPOINTS_ADD_SERVICE: "/notification-endpoints/add/:service",
+  NOTIFICATIONS_ENDPOINTS: "/notification-endpoints",
+  TIERS: "/tiers",
+  TIERS_ADD: "/tiers/add",
+  TIERS_ADD_SERVICE: "/tiers/add/:service",
+  ACCOUNT: "/account",
+  TENANTS: "/tenants",
+  TENANTS_ADD: "/tenants/add",
+  STORAGE: "/storage",
+  STORAGE_VOLUMES: "/storage/volumes",
+  STORAGE_DRIVES: "/storage/drives",
+  NAMESPACE_TENANT: "/namespaces/:tenantNamespace/tenants/:tenantName",
+  NAMESPACE_TENANT_HOP: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
+  NAMESPACE_TENANT_PODS:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
+  NAMESPACE_TENANT_PODS_LIST:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/pods",
+  NAMESPACE_TENANT_SUMMARY:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/summary",
+  NAMESPACE_TENANT_METRICS:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/metrics",
+  NAMESPACE_TENANT_POOLS:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
+  NAMESPACE_TENANT_VOLUMES:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
+  NAMESPACE_TENANT_LICENSE:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/license",
+  NAMESPACE_TENANT_SECURITY:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/security",
+  LICENSE: "/license",
+  DOCUMENTATION: "/documentation",
+};
+
+// roles
 export const IAM_PERMISSIONS = {
-  [IAM_ROLES.admin]: [
+  [IAM_ROLES.BUCKET_OWNER]: [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_DELETE_OBJECT,
+  ],
+  [IAM_ROLES.BUCKET_VIEWER]: [IAM_SCOPES.S3_LIST_BUCKET],
+  [IAM_ROLES.BUCKET_ADMIN]: [
     IAM_SCOPES.S3_ALL_ACTIONS,
     IAM_SCOPES.ADMIN_ALL_ACTIONS,
     IAM_SCOPES.S3_REPLICATE_OBJECT,
@@ -183,8 +255,110 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_GET_POLICY,
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
     IAM_SCOPES.ADMIN_LIST_USERS,
-    IAM_SCOPES.ADMIN_HEAL_ACTION,
+    IAM_SCOPES.ADMIN_HEAL,
   ],
+};
+
+// application pages/routes and required scopes/roles
+export const IAM_PAGES_PERMISSIONS = {
+  [IAM_PAGES.ADD_BUCKETS]: [
+    IAM_SCOPES.S3_CREATE_BUCKET, // create bucket page
+  ],
+  [IAM_PAGES.BUCKETS_ADMIN_VIEW]: [
+    ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN], // bucket admin page
+  ],
+  [IAM_PAGES.BUCKETS_BROWSE_VIEW]: [
+    ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_OWNER],
+    ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
+  ],
+  [IAM_PAGES.GROUPS]: [
+    IAM_SCOPES.ADMIN_LIST_GROUPS, // displays groups
+    IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP, // displays create group button
+  ],
+  [IAM_PAGES.GROUPS_VIEW]: [
+    IAM_SCOPES.ADMIN_GET_GROUP,
+    IAM_SCOPES.ADMIN_DISABLE_GROUP,
+    IAM_SCOPES.ADMIN_ENABLE_GROUP,
+    IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+    IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP, // display "edit members" button in groups detail page
+    IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY, // display "set policy" button in groups details page
+  ],
+  [IAM_PAGES.USERS]: [
+    IAM_SCOPES.ADMIN_LIST_USERS, // displays users
+    IAM_SCOPES.ADMIN_CREATE_USER, // displays create user button
+  ],
+  [IAM_PAGES.USERS_VIEW]: [
+    IAM_SCOPES.ADMIN_GET_USER, // displays list of users
+    IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP, // displays "add to gorups" button in user details page
+    IAM_SCOPES.ADMIN_ENABLE_USER,
+    IAM_SCOPES.ADMIN_DISABLE_USER,
+    IAM_SCOPES.ADMIN_DELETE_USER,
+  ],
+  [IAM_PAGES.DASHBOARD]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
+  ],
+  [IAM_PAGES.POLICIES_VIEW]: [
+    IAM_SCOPES.ADMIN_DELETE_POLICY,
+    IAM_SCOPES.ADMIN_LIST_GROUPS,
+    IAM_SCOPES.ADMIN_GET_GROUP,
+    IAM_SCOPES.ADMIN_GET_POLICY,
+    IAM_SCOPES.ADMIN_CREATE_POLICY,
+  ],
+  [IAM_PAGES.POLICIES]: [
+    IAM_SCOPES.ADMIN_LIST_USER_POLICIES, // displays policies
+    IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
+  ],
+  [IAM_PAGES.SETTINGS]: [
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE, // displays configuration list
+  ],
+  [IAM_PAGES.SETTINGS_VIEW]: [
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE, // displays configuration list
+  ],
+  [IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD_SERVICE]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.NOTIFICATIONS_ENDPOINTS]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO, // displays notifications endpoints
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE, // displays create notification button
+  ],
+  [IAM_PAGES.TIERS]: [
+    IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
+    IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button
+  ],
+  [IAM_PAGES.TIERS_ADD]: [
+    IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
+  ],
+  [IAM_PAGES.TIERS_ADD_SERVICE]: [
+    IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
+  ],
+  [IAM_PAGES.TOOLS]: [
+    IAM_SCOPES.S3_LISTEN_NOTIFICATIONS, // displays watch notifications
+    IAM_SCOPES.S3_LISTEN_BUCKET_NOTIFICATIONS, // display watch notifications
+    IAM_SCOPES.ADMIN_GET_CONSOLE_LOG, // display minio console logs
+    IAM_SCOPES.ADMIN_SERVER_TRACE, // display minio trace
+    IAM_SCOPES.ADMIN_HEAL, // display heal
+    IAM_SCOPES.ADMIN_HEALTH_INFO, // display diagnostics / display speedtest / display audit log
+    IAM_SCOPES.ADMIN_SERVER_INFO, // display diagnostics
+  ],
+  [IAM_PAGES.TOOLS_LOGS]: [IAM_SCOPES.ADMIN_GET_CONSOLE_LOG],
+  [IAM_PAGES.TOOLS_AUDITLOGS]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.TOOLS_WATCH]: [
+    IAM_SCOPES.S3_LISTEN_NOTIFICATIONS, // displays watch notifications
+    IAM_SCOPES.S3_LISTEN_BUCKET_NOTIFICATIONS, // display watch notifications
+  ],
+  [IAM_PAGES.TOOLS_TRACE]: [IAM_SCOPES.ADMIN_SERVER_TRACE],
+  [IAM_PAGES.TOOLS_HEAL]: [IAM_SCOPES.ADMIN_HEAL],
+  [IAM_PAGES.TOOLS_DIAGNOSTICS]: [
+    IAM_SCOPES.ADMIN_HEALTH_INFO,
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+  ],
+  [IAM_PAGES.TOOLS_SPEEDTEST]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";

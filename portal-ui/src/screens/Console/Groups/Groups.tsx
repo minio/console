@@ -219,6 +219,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
               IAM_SCOPES.ADMIN_LIST_USERS,
             ]}
             matchAll
+            errorProps={{ disabled: true }}
           >
             <Button
               variant="contained"

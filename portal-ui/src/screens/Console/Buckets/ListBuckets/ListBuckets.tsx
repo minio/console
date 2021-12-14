@@ -242,6 +242,7 @@ const ListBuckets = ({
             <SecureComponent
               scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
               resource={CONSOLE_UI_RESOURCE}
+              errorProps={{ disabled: true }}
             >
               <Button
                 variant="contained"

@@ -46,9 +46,6 @@ type SessionResponse struct {
 	// operator
 	Operator bool `json:"operator,omitempty"`
 
-	// pages
-	Pages []string `json:"pages"`
-
 	// permissions
 	Permissions map[string][]string `json:"permissions,omitempty"`
 

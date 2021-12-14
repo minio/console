@@ -64,12 +64,9 @@ interface IAccessDetailsProps {
 }
 
 const AccessDetails = ({
-  classes,
   match,
   setErrorSnackMessage,
-  session,
   loadingBucket,
-  bucketInfo,
 }: IAccessDetailsProps) => {
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
@@ -189,6 +186,7 @@ const AccessDetails = ({
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
             resource={bucketName}
+            errorProps={{ disabled: true }}
           >
             <TableWrapper
               noBackground={true}
@@ -211,6 +209,7 @@ const AccessDetails = ({
             ]}
             resource={bucketName}
             matchAll
+            errorProps={{ disabled: true }}
           >
             <TableWrapper
               noBackground={true}

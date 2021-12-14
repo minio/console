@@ -2296,20 +2296,8 @@ func init() {
     "operatorSessionResponse": {
       "type": "object",
       "properties": {
-        "features": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "operator": {
           "type": "boolean"
-        },
-        "pages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "status": {
           "type": "string",
@@ -6103,20 +6091,8 @@ func init() {
     "operatorSessionResponse": {
       "type": "object",
       "properties": {
-        "features": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "operator": {
           "type": "boolean"
-        },
-        "pages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "status": {
           "type": "string",
