@@ -16,6 +16,8 @@
 
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
+import {useDropzone} from 'react-dropzone'
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -82,6 +84,7 @@ import SearchBox from "../../../../Common/SearchBox";
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
 import { DownloadIcon, UploadFolderIcon } from "../../../../../../icons";
+
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -250,6 +253,10 @@ const ListObjects = ({
   >("ASC");
   const [currentSortField, setCurrentSortField] = useState<string>("name");
   const [iniLoad, setIniLoad] = useState<boolean>(false);
+  
+
+
+  
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -572,29 +579,38 @@ const ListObjects = ({
     setCreateFolderOpen(false);
   };
 
-  const upload = (e: any, bucketName: string, path: string) => {
-    if (
+  const handleUploadButton = (e: any) => {
+ if (
       e === null ||
       e === undefined ||
-      e.target === null ||
-      e.target === undefined
+      e.target.files === null ||
+      e.target.files === undefined
     ) {
       return;
     }
     e.preventDefault();
+    var newFiles : File[] = [];
 
-    let files = e.target.files;
+    for (var i=0; i<e.target.files.length; i++) {
+    newFiles.push(e.target.files[i])
 
+    } 
+    uploadObject(newFiles, "");
+  }
+
+  const upload = (files: File[], bucketName: string, path: string, folderPath: string) => {
+   
     if (files.length > 0) {
-      for (let file of files) {
+      for (let file of files) {     
         let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
         const fileName = file.name;
         const blobFile = new Blob([file], { type: file.type });
 
         let encodedPath = "";
-
-        const relativeFolderPath = get(file, "webkitRelativePath", "");
-
+        const relativeFolderPath = get(file, "webkitRelativePath", "") !== "" 
+                                    ? get(file, "webkitRelativePath", "")
+                                    : folderPath
+           
         if (path !== "" || relativeFolderPath !== "") {
           const finalFolderPath = relativeFolderPath
             .split("/")
@@ -672,13 +688,14 @@ const ListObjects = ({
         };
 
         const formData = new FormData();
-        formData.append(file.size, blobFile, fileName);
-
+        if (file.size !== undefined){
+        formData.append(file.size.toString(), blobFile, fileName);
+        
         xhr.send(formData);
+        }
       }
     }
 
-    e.target.value = null;
   };
 
   const displayParsedDate = (object: BucketObject) => {
@@ -741,14 +758,25 @@ const ListObjects = ({
     return;
   };
 
-  const uploadObject = (e: any): void => {
+  const uploadObject = (files: File[], folderPath: string): void => {
     let pathPrefix = "";
     if (internalPaths) {
       const decodedPath = decodeFileName(internalPaths);
       pathPrefix = decodedPath.endsWith("/") ? decodedPath : decodedPath + "/";
-    }
-    upload(e, bucketName, pathPrefix);
+      }
+
+    upload(files, bucketName, pathPrefix, folderPath);
+    
   };
+
+    const onDrop = React.useCallback(acceptedFiles => {
+     
+      let newFolderPath: string = acceptedFiles[0].path;
+      uploadObject(acceptedFiles , newFolderPath);
+      
+  }, [uploadObject]);
+  
+  const {getRootProps, getInputProps} = useDropzone({noClick: true, onDrop});
 
   const openPreview = (fileObject: BucketObject) => {
     setSelectedPreview(fileObject);
@@ -969,6 +997,8 @@ const ListObjects = ({
     }
   };
 
+  
+
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1086,7 +1116,7 @@ const ListObjects = ({
                 <input
                   type="file"
                   multiple
-                  onChange={(e) => uploadObject(e)}
+                  onChange={handleUploadButton}
                   id="file-input"
                   style={{ display: "none" }}
                   ref={fileUpload}
@@ -1110,11 +1140,19 @@ const ListObjects = ({
                   >
                     <UploadFolderIcon />
                   </BoxIconButton>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    id="file-input"
+                    style={{ display: "none" }}
+                    ref={folderUpload}
+                  />
                 </SecureComponent>
                 <input
                   type="file"
                   multiple
-                  onChange={(e) => uploadObject(e)}
+                  onChange={handleUploadButton}
                   id="file-input"
                   style={{ display: "none" }}
                   ref={folderUpload}
@@ -1212,6 +1250,8 @@ const ListObjects = ({
         <Grid item xs={12}>
           <br />
         </Grid>
+        <div {...getRootProps()}>
+          <input {...getInputProps()} />
         <Grid item xs={12} className={classes.tableBlock}>
           <SecureComponent
             scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
@@ -1241,7 +1281,8 @@ const ListObjects = ({
             />
           </SecureComponent>
         </Grid>
-      </PageLayout>
+        </div>
+        </PageLayout>
     </React.Fragment>
   );
 };
