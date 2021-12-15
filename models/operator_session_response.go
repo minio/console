@@ -40,6 +40,9 @@ type OperatorSessionResponse struct {
 	// operator
 	Operator bool `json:"operator,omitempty"`
 
+	// permissions
+	Permissions map[string][]string `json:"permissions,omitempty"`
+
 	// status
 	// Enum: [ok]
 	Status string `json:"status,omitempty"`

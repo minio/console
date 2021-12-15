@@ -983,6 +983,12 @@ definitions:
         enum: [ ok ]
       operator:
         type: boolean
+      permissions:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string
 
   tenantStatus:
     type: object
