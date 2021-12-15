@@ -43,6 +43,9 @@ type Bucket struct {
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
 
+	// definition
+	Definition string `json:"definition,omitempty"`
+
 	// details
 	Details *BucketDetails `json:"details,omitempty"`
 

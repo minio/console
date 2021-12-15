@@ -2417,6 +2417,8 @@ definitions:
         format: int64
       access:
         $ref: "#/definitions/bucketAccess"
+      definition:
+        type: string
       rw_access:
         type: object
         properties:
@@ -3044,6 +3046,8 @@ definitions:
     properties:
       access:
         $ref: "#/definitions/bucketAccess"
+      definition:
+        type: string
   bucketQuota:
     type: object
     properties:

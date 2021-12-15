@@ -3735,6 +3735,9 @@ func init() {
         "creation_date": {
           "type": "string"
         },
+        "definition": {
+          "type": "string"
+        },
         "details": {
           "type": "object",
           "properties": {
@@ -5294,6 +5297,9 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        },
+        "definition": {
+          "type": "string"
         }
       }
     },
@@ -9626,6 +9632,9 @@ func init() {
         "creation_date": {
           "type": "string"
         },
+        "definition": {
+          "type": "string"
+        },
         "details": {
           "type": "object",
           "properties": {
@@ -11185,6 +11194,9 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        },
+        "definition": {
+          "type": "string"
         }
       }
     },

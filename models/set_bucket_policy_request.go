@@ -39,6 +39,9 @@ type SetBucketPolicyRequest struct {
 	// access
 	// Required: true
 	Access *BucketAccess `json:"access"`
+
+	// definition
+	Definition string `json:"definition,omitempty"`
 }
 
 // Validate validates this set bucket policy request

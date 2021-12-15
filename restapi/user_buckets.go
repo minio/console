@@ -436,7 +436,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 }
 
 // setBucketAccessPolicy set the access permissions on an existing bucket.
-func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName string, access models.BucketAccess) error {
+func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName string, access models.BucketAccess, policyDefinition string) error {
 	if strings.TrimSpace(bucketName) == "" {
 		return fmt.Errorf("error: bucket name not present")
 	}
@@ -444,23 +444,30 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 		return fmt.Errorf("error: bucket access not present")
 	}
 	// Prepare policyJSON corresponding to the access type
-	if access != models.BucketAccessPRIVATE && access != models.BucketAccessPUBLIC {
+	if access != models.BucketAccessPRIVATE && access != models.BucketAccessPUBLIC && access != models.BucketAccessCUSTOM {
 		return fmt.Errorf("access: `%s` not supported", access)
 	}
-	bucketPolicy := consoleAccess2policyAccess(access)
 
 	bucketAccessPolicy := policy.BucketAccessPolicy{Version: minioIAMPolicy.DefaultVersion}
+	if access == models.BucketAccessCUSTOM {
+		err := client.setBucketPolicyWithContext(ctx, bucketName, policyDefinition)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	bucketPolicy := consoleAccess2policyAccess(access)
 	bucketAccessPolicy.Statements = policy.SetPolicy(bucketAccessPolicy.Statements,
 		bucketPolicy, bucketName, "")
-	// implemented like minio/mc/ s3Client.SetAccess()
-	if len(bucketAccessPolicy.Statements) == 0 {
-		return client.setBucketPolicyWithContext(ctx, bucketName, "")
-	}
 	policyJSON, err := json.Marshal(bucketAccessPolicy)
 	if err != nil {
 		return err
 	}
-	return client.setBucketPolicyWithContext(ctx, bucketName, string(policyJSON))
+	err = client.setBucketPolicyWithContext(ctx, bucketName, string(policyJSON))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
@@ -469,6 +476,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
+	// get updated bucket details and return it
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -476,11 +484,11 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	// set bucket access policy
-	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access); err != nil {
+
+	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access, req.Definition); err != nil {
 		return nil, prepareError(err)
 	}
-	// get updated bucket details and return it
+	// set bucket access policy
 	bucket, err := getBucketInfo(ctx, minioClient, bucketName)
 	if err != nil {
 		return nil, prepareError(err)
@@ -559,9 +567,6 @@ func getBucketInfo(ctx context.Context, client MinioClient, bucketName string) (
 		policyAccess = policy.GetPolicy(p.Statements, bucketName, "")
 	}
 	bucketAccess = policyAccess2consoleAccess(policyAccess)
-	if bucketAccess == models.BucketAccessPRIVATE && policyStr != "" {
-		bucketAccess = models.BucketAccessCUSTOM
-	}
 	bucketTags, err := client.GetBucketTagging(ctx, bucketName)
 	if err != nil {
 		// we can tolerate this error
@@ -574,6 +579,7 @@ func getBucketInfo(ctx context.Context, client MinioClient, bucketName string) (
 	return &models.Bucket{
 		Name:         &bucketName,
 		Access:       &bucketAccess,
+		Definition:   policyStr,
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 		Details:      bucketDetails,
