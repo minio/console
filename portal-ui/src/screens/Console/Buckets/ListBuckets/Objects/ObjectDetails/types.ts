@@ -32,3 +32,7 @@ export interface FileInfoResponse {
   objects: IFileInfo[];
   total: number;
 }
+
+export interface MetadataResponse {
+  objectMetadata: object;
+}

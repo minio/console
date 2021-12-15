@@ -46,7 +46,7 @@ import {
   hrClass,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { FileInfoResponse, IFileInfo } from "./types";
+import { IFileInfo, MetadataResponse } from "./types";
 import { download, extensionPreview } from "../utils";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
@@ -232,7 +232,7 @@ const ObjectDetails = ({
   }
 
   useEffect(() => {
-    if (loadObjectData) {
+    if (loadObjectData && internalPaths !== "") {
       api
         .invoke(
           "GET",
@@ -268,15 +268,14 @@ const ObjectDetails = ({
   ]);
 
   useEffect(() => {
-    if (metadataLoad) {
+    if (metadataLoad && internalPaths !== "") {
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}&with_metadata=true`
+          `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
         )
-        .then((res: FileInfoResponse) => {
-          const fileData = res.objects[0];
-          let metadata = get(fileData, "user_metadata", {});
+        .then((res: MetadataResponse) => {
+          let metadata = get(res, "objectMetadata", {});
 
           setMetadata(metadata);
           setMetadataLoad(false);
@@ -776,6 +775,14 @@ const ObjectDetails = ({
                         >
                           <TableBody>
                             {Object.keys(metadata).map((element, index) => {
+                              const renderItem = Array.isArray(
+                                metadata[element]
+                              )
+                                ? metadata[element]
+                                    .map(decodeURIComponent)
+                                    .join(", ")
+                                : decodeURIComponent(metadata[element]);
+
                               return (
                                 <TableRow key={`tRow-${index.toString()}`}>
                                   <TableCell
@@ -786,7 +793,7 @@ const ObjectDetails = ({
                                     {element}
                                   </TableCell>
                                   <TableCell align="right">
-                                    {metadata[element]}
+                                    {renderItem}
                                   </TableCell>
                                 </TableRow>
                               );

@@ -156,6 +156,14 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewPutObjectRestoreOK()
 	})
+	// Metadata in object
+	api.UserAPIGetObjectMetadataHandler = user_api.GetObjectMetadataHandlerFunc(func(params user_api.GetObjectMetadataParams, session *models.Principal) middleware.Responder {
+		resp, err := getObjectMetadataResponse(session, params)
+		if err != nil {
+			return user_api.NewGetObjectMetadataDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewGetObjectMetadataOK().WithPayload(resp)
+	})
 }
 
 // getListObjectsResponse returns a list of objects
@@ -1010,6 +1018,49 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 	}
 
 	return nil
+}
+
+// Metadata Response from minio-go API
+func getObjectMetadataResponse(session *models.Principal, params user_api.GetObjectMetadataParams) (*models.Metadata, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	var prefix string
+
+	if params.Prefix != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		prefix = string(decodedPrefix)
+	}
+
+	objectInfo, err := getObjectInfo(ctx, minioClient, params.BucketName, prefix)
+
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	metadata := &models.Metadata{ObjectMetadata: objectInfo.Metadata}
+
+	return metadata, nil
+}
+
+func getObjectInfo(ctx context.Context, client MinioClient, bucketName, prefix string) (minio.ObjectInfo, error) {
+	objectData, err := client.statObject(ctx, bucketName, prefix, minio.GetObjectOptions{})
+
+	if err != nil {
+		return minio.ObjectInfo{}, err
+	}
+
+	return objectData, nil
 }
 
 // newClientURL returns an abstracted URL for filesystems and object storage.
