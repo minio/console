@@ -41,8 +41,9 @@ func getSessionResponse(session *models.Principal) (*models.OperatorSessionRespo
 		return nil, prepareError(errorGenericInvalidSession)
 	}
 	sessionResp := &models.OperatorSessionResponse{
-		Status:   models.OperatorSessionResponseStatusOk,
-		Operator: true,
+		Status:      models.OperatorSessionResponseStatusOk,
+		Operator:    true,
+		Permissions: map[string][]string{},
 	}
 	return sessionResp, nil
 }

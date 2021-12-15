@@ -27,7 +27,7 @@ export const hasPermission = (
     return false;
   }
   const state = store.getState();
-  const sessionGrants = state.console.session.permissions;
+  const sessionGrants = state.console.session.permissions || {};
   const resourceGrants =
     sessionGrants[resource] ||
     sessionGrants[`arn:aws:s3:::${resource}/*`] ||

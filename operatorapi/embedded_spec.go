@@ -2299,6 +2299,15 @@ func init() {
         "operator": {
           "type": "boolean"
         },
+        "permissions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
         "status": {
           "type": "string",
           "enum": [
@@ -6093,6 +6102,15 @@ func init() {
       "properties": {
         "operator": {
           "type": "boolean"
+        },
+        "permissions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
         "status": {
           "type": "string",
