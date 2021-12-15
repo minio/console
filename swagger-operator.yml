@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
   /login/operator:
@@ -55,7 +55,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -76,7 +76,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -109,7 +109,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-
 
   /subscription/info:
     get:
@@ -187,7 +186,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI
-
 
   /tenants:
     get:
@@ -794,6 +792,29 @@ paths:
       tags:
         - OperatorAPI
 
+  /cluster/allocatable-resources:
+    get:
+      summary: Get allocatable cpu and memory for given number of nodes
+      operationId: GetAllocatableResources
+      parameters:
+        - name: num_nodes
+          in: query
+          required: true
+          type: integer
+          format: int32
+          minimum: 1
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/allocatableResourcesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /get-parity/{nodes}/{disksPerNode}:
     get:
       summary: Gets parity by sending number of nodes & number of disks
@@ -926,7 +947,6 @@ paths:
         - OperatorAPI
 
 definitions:
-
   error:
     type: object
     required:
@@ -945,7 +965,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account ]
+        enum: [form, redirect, service-account]
       redirect:
         type: string
   loginRequest:
@@ -980,7 +1000,7 @@ definitions:
     properties:
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
       permissions:
@@ -1325,10 +1345,10 @@ definitions:
         type: string
       securityContext:
         type: object
-        $ref: '#/definitions/securityContext'
+        $ref: "#/definitions/securityContext"
       postgres_securityContext:
         type: object
-        $ref: '#/definitions/securityContext'
+        $ref: "#/definitions/securityContext"
       postgres_image:
         type: string
       postgres_init_image:
@@ -1350,7 +1370,7 @@ definitions:
         type: string
       securityContext:
         type: object
-        $ref: '#/definitions/securityContext'
+        $ref: "#/definitions/securityContext"
   idpConfiguration:
     type: object
     properties:
@@ -1454,7 +1474,7 @@ definitions:
             $ref: "#/definitions/azureConfiguration"
           securityContext:
             type: object
-            $ref: '#/definitions/securityContext'
+            $ref: "#/definitions/securityContext"
 
   vaultConfiguration:
     type: object
@@ -1701,7 +1721,7 @@ definitions:
         $ref: "#/definitions/poolTolerations"
       securityContext:
         type: object
-        $ref: '#/definitions/securityContext'
+        $ref: "#/definitions/securityContext"
 
   poolTolerations:
     description: Tolerations allows users to set entries like effect,
@@ -2150,7 +2170,6 @@ definitions:
     items:
       type: string
 
-
   subscriptionValidateRequest:
     type: object
     properties:
@@ -2225,7 +2244,6 @@ definitions:
         type: string
       drive:
         type: string
-
 
   csiFormatErrorResponse:
     type: object
@@ -2330,19 +2348,42 @@ definitions:
       force:
         type: boolean
   securityContext:
-     type: object
-     required:
-       - runAsUser
-       - runAsGroup
-       - runAsNonRoot
-       - fsGroup
-     properties:
-       runAsUser:
-         type: string
-       runAsGroup:
-         type: string
-       runAsNonRoot:
-         type: boolean
-       fsGroup:
-         type: string
+    type: object
+    required:
+      - runAsUser
+      - runAsGroup
+      - runAsNonRoot
+      - fsGroup
+    properties:
+      runAsUser:
+        type: string
+      runAsGroup:
+        type: string
+      runAsNonRoot:
+        type: boolean
+      fsGroup:
+        type: string
 
+  allocatableResourcesResponse:
+    type: object
+    properties:
+      min_allocatable_mem:
+        type: integer
+        format: int64
+      min_allocatable_cpu:
+        type: integer
+        format: int64
+      cpu_priority:
+        $ref: "#/definitions/nodeMaxAllocatableResources"
+      mem_priority:
+        $ref: "#/definitions/nodeMaxAllocatableResources"
+
+  nodeMaxAllocatableResources:
+    type: object
+    properties:
+      max_allocatable_cpu:
+        type: integer
+        format: int64
+      max_allocatable_mem:
+        type: integer
+        format: int64

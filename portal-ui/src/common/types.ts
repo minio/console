@@ -153,10 +153,12 @@ export interface IResourceModel {
 
 export interface IResourceRequests {
   memory: number;
+  cpu: number;
 }
 
 export interface IResourceLimits {
   memory: number;
+  cpu: number;
 }
 
 export interface ITLSTenantConfiguration {

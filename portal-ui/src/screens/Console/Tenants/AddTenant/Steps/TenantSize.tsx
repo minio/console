@@ -17,8 +17,10 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { SelectChangeEvent } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import get from "lodash/get";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import {
@@ -33,21 +35,17 @@ import {
   getBytes,
   k8sfactorForDropdown,
   niceBytes,
-  setMemoryResource,
+  setResourcesValidation,
 } from "../../../../../common/utils";
 import { clearValidationError } from "../../utils";
 import { ecListTransform, Opts } from "../../ListTenants/utils";
-import { IMemorySize } from "../../ListTenants/types";
-import {
-  ErrorResponseHandler,
-  ICapacity,
-  IErasureCodeCalc,
-} from "../../../../../common/types";
+import { IResourcesSize } from "../../ListTenants/types";
+import { AllocableResourcesResponse } from "../../types";
+import { ICapacity, IErasureCodeCalc } from "../../../../../common/types";
 import { commonFormValidation } from "../../../../../utils/validationFunctions";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { SelectChangeEvent } from "@mui/material";
 
 interface ITenantSizeProps {
   classes: any;
@@ -63,11 +61,15 @@ interface ITenantSizeProps {
   ecParityChoices: Opts[];
   cleanECChoices: string[];
   maxAllocableMemo: number;
-  memorySize: IMemorySize;
+  resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
   limitSize: any;
   selectedStorageClass: string;
+  cpuToUse: string;
+  maxAllocatableResources: AllocableResourcesResponse;
+  maxCPUsUse: string;
+  maxMemorySize: string;
 }
 
 const styles = (theme: Theme) =>
@@ -106,11 +108,15 @@ const TenantSize = ({
   ecParityChoices,
   cleanECChoices,
   maxAllocableMemo,
-  memorySize,
+  resourcesSize,
   distribution,
   ecParityCalc,
   limitSize,
+  cpuToUse,
   selectedStorageClass,
+  maxAllocatableResources,
+  maxCPUsUse,
+  maxMemorySize,
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
@@ -132,46 +138,22 @@ const TenantSize = ({
 
   // Storage Quotas
 
-  const validateMemorySize = useCallback(() => {
-    const memSize = parseInt(memoryNode) || 0;
-    const clusterSize = volumeSize || 0;
-    const maxMemSize = maxAllocableMemo || 0;
-    const clusterSizeFactor = sizeFactor;
+  const validateResourcesSize = useCallback(() => {
+    const memSize = memoryNode || "0";
+    const cpusSelected = cpuToUse;
 
-    const clusterSizeBytes = getBytes(
-      clusterSize.toString(10),
-      clusterSizeFactor
+    const resourcesSize = setResourcesValidation(
+      parseInt(memSize),
+      parseInt(cpusSelected),
+      maxAllocatableResources
     );
-    const memoSize = setMemoryResource(memSize, clusterSizeBytes, maxMemSize);
-    updateField("memorySize", memoSize);
-  }, [maxAllocableMemo, memoryNode, sizeFactor, updateField, volumeSize]);
 
-  const getMaxAllocableMemory = (nodes: string) => {
-    if (nodes !== "" && !isNaN(parseInt(nodes))) {
-      setNodeError("");
-      api
-        .invoke(
-          "GET",
-          `/api/v1/cluster/max-allocatable-memory?num_nodes=${nodes}`
-        )
-        .then((res: { max_memory: number }) => {
-          const maxMemory = res.max_memory ? res.max_memory : 0;
-          updateField("maxAllocableMemo", maxMemory);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorFlag(true);
-          setNodeError(err.errorMessage);
-        });
-    }
-  };
+    updateField("resourcesSize", resourcesSize);
+  }, [memoryNode, cpuToUse, maxAllocatableResources, updateField]);
 
   useEffect(() => {
-    validateMemorySize();
-  }, [memoryNode, validateMemorySize]);
-
-  useEffect(() => {
-    validateMemorySize();
-  }, [maxAllocableMemo, validateMemorySize]);
+    validateResourcesSize();
+  }, [memoryNode, cpuToUse, validateResourcesSize]);
 
   useEffect(() => {
     if (ecParityChoices.length > 0 && distribution.error === "") {
@@ -190,13 +172,7 @@ const TenantSize = ({
 
   /*Calculate Allocation*/
   useEffect(() => {
-    validateClusterSize();
-    getECValue();
-    getMaxAllocableMemory(nodes);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, volumeSize, sizeFactor, drivesPerServer]);
-
-  const validateClusterSize = () => {
+    //Validate Cluster Size
     const size = volumeSize;
     const factor = sizeFactor;
     const limitSize = getBytes("12", "Ti", true);
@@ -214,31 +190,84 @@ const TenantSize = ({
     );
 
     updateField("distribution", distrCalculate);
-  };
+    setErrorFlag(false);
+    setNodeError("");
 
-  const getECValue = () => {
-    updateField("ecParity", "");
+    // Get allocatable Resources
+    api
+      .invoke("GET", `api/v1/cluster/allocatable-resources?num_nodes=${nodes}`)
+      .then((res: AllocableResourcesResponse) => {
+        updateField("maxAllocatableResources", res);
 
-    if (nodes.trim() !== "" && drivesPerServer.trim() !== "") {
-      api
-        .invoke("GET", `/api/v1/get-parity/${nodes}/${drivesPerServer}`)
-        .then((ecList: string[]) => {
-          updateField("ecParityChoices", ecListTransform(ecList));
-          updateField("cleanECChoices", ecList);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          updateField("ecparityChoices", []);
-          isPageValid("tenantSize", false);
-          updateField("ecParity", "");
-        });
-    }
-  };
+        const maxAllocatableResources = res;
+
+        const memoryExists = get(
+          maxAllocatableResources,
+          "min_allocatable_mem",
+          false
+        );
+
+        const cpuExists = get(
+          maxAllocatableResources,
+          "min_allocatable_cpu",
+          false
+        );
+
+        if (memoryExists === false || cpuExists === false) {
+          updateField("cpuToUse", 0);
+
+          updateField("maxMemorySize", "0");
+          updateField("maxCPUsUse", "0");
+
+          validateResourcesSize();
+          return;
+        }
+
+        // We default to Best CPU Configuration
+        updateField(
+          "maxMemorySize",
+          res.mem_priority.max_allocatable_mem.toString()
+        );
+        updateField(
+          "maxCPUsUse",
+          res.cpu_priority.max_allocatable_cpu.toString()
+        );
+
+        updateField("maxAllocableMemo", res.mem_priority.max_allocatable_mem);
+
+        const cpuInt = parseInt(cpuToUse);
+        const maxAlocatableCPU = get(
+          maxAllocatableResources,
+          "cpu_priority.max_allocatable_cpu",
+          0
+        );
+
+        if (cpuInt === 0 && cpuInt !== maxAlocatableCPU) {
+          updateField("cpuToUse", maxAlocatableCPU);
+        } else if (cpuInt > maxAlocatableCPU) {
+          updateField("cpuToUse", maxAlocatableCPU);
+        }
+
+        // We reset error states
+        validateResourcesSize();
+      })
+      .catch((err: any) => {
+        updateField("maxAllocableMemo", 0);
+        updateField("cpuToUse", "0");
+        setErrorFlag(true);
+        setNodeError(err.errorMessage);
+        console.error(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, volumeSize, sizeFactor, updateField]);
+
   /*Calculate Allocation End*/
 
   /* Validations of pages */
 
   useEffect(() => {
     const parsedSize = getBytes(volumeSize, sizeFactor, true);
+
     const commonValidation = commonFormValidation([
       {
         fieldKey: "nodes",
@@ -283,7 +312,10 @@ const TenantSize = ({
         !("drivesps" in commonValidation) &&
         distribution.error === "" &&
         ecParityCalc.error === 0 &&
-        memorySize.error === ""
+        resourcesSize.error === "" &&
+        parseInt(cpuToUse) <= parseInt(maxCPUsUse) &&
+        parseInt(cpuToUse) > 0 &&
+        ecParity !== ""
     );
 
     setValidationErrors(commonValidation);
@@ -293,15 +325,39 @@ const TenantSize = ({
     sizeFactor,
     memoryNode,
     distribution,
-    drivesPerServer,
     ecParityCalc,
-    memorySize,
+    resourcesSize,
     limitSize,
     selectedStorageClass,
+    cpuToUse,
+    maxCPUsUse,
     isPageValid,
     errorFlag,
     nodeError,
+    drivesPerServer,
+    ecParity,
   ]);
+
+  useEffect(() => {
+    if (distribution.error === "") {
+      // Get EC Value
+      updateField("ecParity", "");
+
+      if (nodes.trim() !== "" && distribution.disks !== 0) {
+        api
+          .invoke("GET", `api/v1/get-parity/${nodes}/${distribution.disks}`)
+          .then((ecList: string[]) => {
+            updateField("ecParityChoices", ecListTransform(ecList));
+            updateField("cleanECChoices", ecList);
+          })
+          .catch((err: any) => {
+            updateField("ecparityChoices", []);
+            isPageValid("tenantSize", false);
+            updateField("ecParity", "");
+          });
+      }
+    }
+  }, [distribution, isPageValid, updateField, nodes]);
 
   /* End Validation of pages */
 
@@ -320,19 +376,20 @@ const TenantSize = ({
           <div className={classes.error}>{distribution.error}</div>
         </Grid>
       )}
-      {memorySize.error !== "" && (
+      {resourcesSize.error !== "" && (
         <Grid item xs={12}>
-          <div className={classes.error}>{memorySize.error}</div>
+          <div className={classes.error}>{resourcesSize.error}</div>
         </Grid>
       )}
       <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="nodes"
           name="nodes"
-          type="number"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("nodes", e.target.value);
-            cleanValidation("nodes");
+            if (e.target.validity.valid) {
+              updateField("nodes", e.target.value);
+              cleanValidation("nodes");
+            }
           }}
           label="Number of Servers"
           disabled={selectedStorageClass === ""}
@@ -340,16 +397,18 @@ const TenantSize = ({
           min="4"
           required
           error={validationErrors["nodes"] || ""}
+          pattern={"[0-9]*"}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="drivesps"
           name="drivesps"
-          type="number"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("drivesPerServer", e.target.value);
-            cleanValidation("drivesps");
+            if (e.target.validity.valid) {
+              updateField("drivesPerServer", e.target.value);
+              cleanValidation("drivesps");
+            }
           }}
           label="Number of Drives per Server"
           value={drivesPerServer}
@@ -357,6 +416,7 @@ const TenantSize = ({
           min="1"
           required
           error={validationErrors["drivesps"] || ""}
+          pattern={"[0-9]*"}
         />
       </Grid>
       <Grid item xs={12}>
@@ -396,42 +456,66 @@ const TenantSize = ({
         </div>
       </Grid>
 
-      <Fragment>
-        <Grid item xs={12} className={classes.formFieldRow}>
-          <InputBoxWrapper
-            type="number"
-            id="memory_per_node"
-            name="memory_per_node"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              updateField("memoryNode", e.target.value);
-              cleanValidation("memory_per_node");
-            }}
-            label="Memory per Node [Gi]"
-            value={memoryNode}
-            disabled={selectedStorageClass === ""}
-            required
-            error={validationErrors["memory_per_node"] || ""}
-            min="2"
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.formFieldRow}>
-          <SelectWrapper
-            id="ec_parity"
-            name="ec_parity"
-            onChange={(e: SelectChangeEvent<string>) => {
-              updateField("ecParity", e.target.value as string);
-            }}
-            label="Erasure Code Parity"
-            disabled={selectedStorageClass === ""}
-            value={ecParity}
-            options={ecParityChoices}
-          />
-          <span className={classes.descriptionText}>
-            Please select the desired parity. This setting will change the max
-            usable capacity in the cluster
-          </span>
-        </Grid>
-      </Fragment>
+      <Grid item xs={12} className={classes.formFieldRow}>
+        <InputBoxWrapper
+          label={"CPU Selection"}
+          id={"cpuToUse"}
+          name={"cpuToUse"}
+          onChange={(e) => {
+            if (e.target.validity.valid) {
+              updateField("cpuToUse", e.target.value);
+            }
+          }}
+          value={cpuToUse}
+          disabled={selectedStorageClass === ""}
+          min="1"
+          max={maxCPUsUse}
+          error={
+            parseInt(cpuToUse) > parseInt(maxCPUsUse) ||
+            parseInt(cpuToUse) <= 0 ||
+            isNaN(parseInt(cpuToUse))
+              ? "Invalid CPU Configuration"
+              : ""
+          }
+          pattern={"[0-9]*"}
+        />
+      </Grid>
+
+      <Grid item xs={12} className={classes.formFieldRow}>
+        <InputBoxWrapper
+          type="number"
+          id="memory_per_node"
+          name="memory_per_node"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            updateField("memoryNode", e.target.value);
+            cleanValidation("memory_per_node");
+          }}
+          label="Memory per Node [Gi]"
+          value={memoryNode}
+          disabled={selectedStorageClass === ""}
+          required
+          error={validationErrors["memory_per_node"] || ""}
+          min="2"
+          max={maxMemorySize}
+        />
+      </Grid>
+      <Grid item xs={12} className={classes.formFieldRow}>
+        <SelectWrapper
+          id="ec_parity"
+          name="ec_parity"
+          onChange={(e: SelectChangeEvent<string>) => {
+            updateField("ecParity", e.target.value as string);
+          }}
+          label="Erasure Code Parity"
+          disabled={selectedStorageClass === ""}
+          value={ecParity}
+          options={ecParityChoices}
+        />
+        <span className={classes.descriptionText}>
+          Please select the desired parity. This setting will change the max
+          usable capacity in the cluster
+        </span>
+      </Grid>
     </Fragment>
   );
 };
@@ -448,12 +532,17 @@ const mapState = (state: AppState) => ({
   cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
   maxAllocableMemo:
     state.tenants.createTenant.fields.tenantSize.maxAllocableMemo,
-  memorySize: state.tenants.createTenant.fields.tenantSize.memorySize,
+  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
   distribution: state.tenants.createTenant.fields.tenantSize.distribution,
   ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
-  limitSize: state.tenants.createTenant.fields.tenantSize.limitSize,
+  limitSize: state.tenants.createTenant.limitSize,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+  cpuToUse: state.tenants.createTenant.fields.tenantSize.cpuToUse,
+  maxAllocatableResources:
+    state.tenants.createTenant.fields.tenantSize.maxAllocatableResources,
+  maxCPUsUse: state.tenants.createTenant.fields.tenantSize.maxCPUsUse,
+  maxMemorySize: state.tenants.createTenant.fields.tenantSize.maxMemorySize,
 });
 
 const connector = connect(mapState, {

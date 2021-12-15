@@ -122,8 +122,10 @@ export interface ITenantsResponse {
   tenants: ITenant[];
 }
 
-export interface IMemorySize {
+export interface IResourcesSize {
   error: string;
-  limit: number;
-  request: number;
+  memoryRequest: number;
+  memoryLimit: number;
+  cpuRequest: number;
+  cpuLimit: number;
 }

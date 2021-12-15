@@ -18,6 +18,7 @@ package operatorapi
 
 import (
 	"context"
+	"errors"
 	"sort"
 
 	"github.com/minio/minio-go/v7/pkg/set"
@@ -50,6 +51,20 @@ func registerNodesHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewListNodeLabelsOK().WithPayload(*resp)
 	})
+
+	api.OperatorAPIGetAllocatableResourcesHandler = operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, principal *models.Principal) middleware.Responder {
+		resp, err := getAllocatableResourcesResponse(params.NumNodes, principal)
+		if err != nil {
+			return operator_api.NewGetAllocatableResourcesDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetAllocatableResourcesOK().WithPayload(resp)
+	})
+}
+
+type NodeResourceInfo struct {
+	Name              string
+	AllocatableMemory int64
+	AllocatableCPU    int64
 }
 
 // getMaxAllocatableMemory get max allocatable memory given a desired number of nodes
@@ -206,6 +221,150 @@ func getNodeLabelsResponse(ctx context.Context, session *models.Principal) (*mod
 	}
 
 	clusterResources, err := getNodeLabels(ctx, client.CoreV1())
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return clusterResources, nil
+}
+
+func getClusterResourcesInfo(numNodes int32, inNodesResources []NodeResourceInfo) *models.AllocatableResourcesResponse {
+
+	// purge any nodes with 0 cpu
+	var nodesResources []NodeResourceInfo
+	for _, n := range inNodesResources {
+		if n.AllocatableCPU > 0 {
+			nodesResources = append(nodesResources, n)
+		}
+	}
+
+	if int32(len(nodesResources)) < numNodes || numNodes == 0 {
+		return &models.AllocatableResourcesResponse{
+			CPUPriority: &models.NodeMaxAllocatableResources{
+				MaxAllocatableCPU: 0,
+				MaxAllocatableMem: 0,
+			},
+			MemPriority: &models.NodeMaxAllocatableResources{
+				MaxAllocatableCPU: 0,
+				MaxAllocatableMem: 0,
+			},
+			MinAllocatableCPU: 0,
+			MinAllocatableMem: 0,
+		}
+	}
+
+	allocatableResources := &models.AllocatableResourcesResponse{}
+
+	// sort nodesResources giving CPU priority
+	sort.Slice(nodesResources, func(i, j int) bool { return nodesResources[i].AllocatableCPU < nodesResources[j].AllocatableCPU })
+	maxCPUNodesNeeded := len(nodesResources) - int(numNodes)
+	maxMemNodesNeeded := maxCPUNodesNeeded
+
+	maxAllocatableCPU := nodesResources[maxCPUNodesNeeded].AllocatableCPU
+	minAllocatableCPU := nodesResources[maxCPUNodesNeeded].AllocatableCPU
+	minAllocatableMem := nodesResources[maxMemNodesNeeded].AllocatableMemory
+
+	availableMemsForMaxCPU := []int64{}
+	for _, info := range nodesResources {
+		if info.AllocatableCPU >= maxAllocatableCPU {
+			availableMemsForMaxCPU = append(availableMemsForMaxCPU, info.AllocatableMemory)
+		}
+		// min allocatable resources overall
+		minAllocatableCPU = min(minAllocatableCPU, info.AllocatableCPU)
+		minAllocatableMem = min(minAllocatableMem, info.AllocatableMemory)
+	}
+
+	sort.Slice(availableMemsForMaxCPU, func(i, j int) bool { return availableMemsForMaxCPU[i] < availableMemsForMaxCPU[j] })
+	maxAllocatableMem := availableMemsForMaxCPU[len(availableMemsForMaxCPU)-int(numNodes)]
+
+	allocatableResources.MinAllocatableCPU = minAllocatableCPU
+	allocatableResources.MinAllocatableMem = minAllocatableMem
+	allocatableResources.CPUPriority = &models.NodeMaxAllocatableResources{
+		MaxAllocatableCPU: maxAllocatableCPU,
+		MaxAllocatableMem: maxAllocatableMem,
+	}
+
+	// sort nodesResources giving Mem priority
+	sort.Slice(nodesResources, func(i, j int) bool { return nodesResources[i].AllocatableMemory < nodesResources[j].AllocatableMemory })
+	maxMemNodesNeeded = len(nodesResources) - int(numNodes)
+	maxAllocatableMem = nodesResources[maxMemNodesNeeded].AllocatableMemory
+
+	availableCPUsForMaxMem := []int64{}
+	for _, info := range nodesResources {
+		if info.AllocatableMemory >= maxAllocatableMem {
+			availableCPUsForMaxMem = append(availableCPUsForMaxMem, info.AllocatableCPU)
+		}
+	}
+
+	sort.Slice(availableCPUsForMaxMem, func(i, j int) bool { return availableCPUsForMaxMem[i] < availableCPUsForMaxMem[j] })
+	maxAllocatableCPU = availableCPUsForMaxMem[len(availableCPUsForMaxMem)-int(numNodes)]
+
+	allocatableResources.MemPriority = &models.NodeMaxAllocatableResources{
+		MaxAllocatableCPU: maxAllocatableCPU,
+		MaxAllocatableMem: maxAllocatableMem,
+	}
+
+	return allocatableResources
+}
+
+// getAllocatableResources get max allocatable memory given a desired number of nodes
+func getAllocatableResources(ctx context.Context, clientset v1.CoreV1Interface, numNodes int32) (*models.AllocatableResourcesResponse, error) {
+	if numNodes == 0 {
+		return nil, errors.New("error NumNodes must be greated than 0")
+	}
+
+	// get all nodes from cluster
+	nodes, err := clientset.Nodes().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	nodesInfo := []NodeResourceInfo{}
+OUTER:
+	for _, n := range nodes.Items {
+		// Don't consider node if it has a NoSchedule or NoExecute Taint
+		for _, t := range n.Spec.Taints {
+			switch t.Effect {
+			case corev1.TaintEffectNoSchedule:
+				continue OUTER
+			case corev1.TaintEffectNoExecute:
+				continue OUTER
+			default:
+				continue
+			}
+		}
+
+		var nodeMemory int64
+		var nodeCPU int64
+		if quantity, ok := n.Status.Allocatable[corev1.ResourceMemory]; ok {
+			// availableMemSizes = append(availableMemSizes, quantity.Value())
+			nodeMemory = quantity.Value()
+		}
+		// we assume all nodes have allocatable cpu resource
+		if quantity, ok := n.Status.Allocatable[corev1.ResourceCPU]; ok {
+			// availableCPU = append(availableCPU, quantity.Value())
+			nodeCPU = quantity.Value()
+		}
+		nodeInfo := NodeResourceInfo{
+			Name:              n.Name,
+			AllocatableCPU:    nodeCPU,
+			AllocatableMemory: nodeMemory,
+		}
+		nodesInfo = append(nodesInfo, nodeInfo)
+	}
+	res := getClusterResourcesInfo(numNodes, nodesInfo)
+
+	return res, nil
+}
+
+// Get allocatable resources response
+
+func getAllocatableResourcesResponse(numNodes int32, session *models.Principal) (*models.AllocatableResourcesResponse, *models.Error) {
+	ctx := context.Background()
+	client, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	clusterResources, err := getAllocatableResources(ctx, client.CoreV1(), numNodes)
 	if err != nil {
 		return nil, prepareError(err)
 	}

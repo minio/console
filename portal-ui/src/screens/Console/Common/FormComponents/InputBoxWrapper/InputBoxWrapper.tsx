@@ -58,6 +58,7 @@ interface InputBoxProps {
   overlayObject?: any;
   extraInputProps?: StandardInputProps["inputProps"];
   noLabelMinWidth?: boolean;
+  pattern?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -121,6 +122,7 @@ const InputBoxWrapper = ({
   extraInputProps = {},
   overlayAction,
   noLabelMinWidth = false,
+  pattern="",
   classes,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
@@ -131,6 +133,10 @@ const InputBoxWrapper = ({
 
   if (type === "number" && max) {
     inputProps["max"] = max;
+  }
+
+  if(pattern !== "") {
+    inputProps["pattern"] = pattern;
   }
 
   return (

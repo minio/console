@@ -15,8 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
+import get from "lodash/get";
 import { ICapacity, IErasureCodeCalc, IStorageFactors } from "./types";
 import { IPool } from "../screens/Console/Tenants/ListTenants/types";
+import { AllocableResourcesResponse } from "../screens/Console/Tenants/types";
 
 const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
@@ -593,4 +595,114 @@ export const decodeFileName = (text: string) => {
   } catch (err) {
     return text;
   }
+};
+
+export const setResourcesValidation = (
+  memorySize: number,
+  cpusSelected: number,
+  maxAllocatableResources: AllocableResourcesResponse
+) => {
+  const requestedSizeBytes = getBytes(memorySize.toString(10), "GB");
+  const memReqSize = parseInt(requestedSizeBytes, 10);
+
+  const minimalRequiredMemory = 2147483648; // Minimal required memory, 2Gi
+
+  const memoryExists = get(
+    maxAllocatableResources,
+    "min_allocatable_mem",
+    false
+  );
+
+  const cpuExists = get(maxAllocatableResources, "min_allocatable_cpu", false);
+
+  if (memoryExists === false) {
+    return {
+      error:
+        "No available memory for the selected number of nodes. Please try another combination.",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  if (cpuExists === false) {
+    return {
+      error:
+        "No available CPUs for the selected number of nodes. Please try another combination",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  if (memReqSize < minimalRequiredMemory) {
+    return {
+      error: "Memory size is set bellow minimum required",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  if (cpusSelected < 1) {
+    return {
+      error: "CPU amount is set bellow minimum available",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  if (
+    memReqSize <= maxAllocatableResources.mem_priority.max_allocatable_mem &&
+    cpusSelected > maxAllocatableResources.mem_priority.max_allocatable_cpu
+  ) {
+    return {
+      error:
+        "It is not possible to allocate this amount of memory in all the CPUs",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  if (
+    cpusSelected <= maxAllocatableResources.cpu_priority.max_allocatable_cpu &&
+    memReqSize > maxAllocatableResources.cpu_priority.max_allocatable_mem
+  ) {
+    return {
+      error:
+        "It is not possible to allocate this amount of CPUs with the available memory",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  if (
+    cpusSelected > maxAllocatableResources.cpu_priority.max_allocatable_cpu ||
+    memReqSize > maxAllocatableResources.mem_priority.max_allocatable_mem
+  ) {
+    return {
+      error: "CPUs or Memory selected is beyond bounds",
+      memoryRequest: 0,
+      memoryLimit: 0,
+      cpuRequest: 0,
+      cpuLimit: 0,
+    };
+  }
+
+  return {
+    error: "",
+    memoryRequest: memReqSize,
+    memoryLimit: maxAllocatableResources.mem_priority.max_allocatable_mem,
+    cpuRequest: cpusSelected,
+    cpuLimit: maxAllocatableResources.cpu_priority.max_allocatable_cpu,
+  };
 };

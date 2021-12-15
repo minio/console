@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -29,22 +29,11 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import {
-  calculateDistribution,
-  erasureCodeCalc,
-  getBytes,
-  niceBytes,
-  setMemoryResource,
-} from "../../../../../common/utils";
-import { ecListTransform, Opts } from "../../ListTenants/utils";
-import { IMemorySize } from "../../ListTenants/types";
-import {
-  ErrorResponseHandler,
-  ICapacity,
-  IErasureCodeCalc,
-} from "../../../../../common/types";
-import { commonFormValidation } from "../../../../../utils/validationFunctions";
-import api from "../../../../../common/api";
+import { niceBytes } from "../../../../../common/utils";
+import { Opts } from "../../ListTenants/utils";
+import { IResourcesSize } from "../../ListTenants/types";
+import { IErasureCodeCalc } from "../../../../../common/types";
+
 import { Divider } from "@mui/material";
 
 interface ISizePreviewProps {
@@ -61,11 +50,12 @@ interface ISizePreviewProps {
   ecParityChoices: Opts[];
   cleanECChoices: string[];
   maxAllocableMemo: number;
-  memorySize: IMemorySize;
+  resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
   limitSize: any;
   selectedStorageClass: string;
+  cpuToUse: string;
 }
 
 const styles = (theme: Theme) =>
@@ -96,200 +86,16 @@ const SizePreview = ({
   ecParityChoices,
   cleanECChoices,
   maxAllocableMemo,
-  memorySize,
+  resourcesSize,
   distribution,
   ecParityCalc,
   limitSize,
   selectedStorageClass,
+  cpuToUse,
 }: ISizePreviewProps) => {
-  const [errorFlag, setErrorFlag] = useState<boolean>(false);
-  const [nodeError, setNodeError] = useState<string>("");
   const usableInformation = ecParityCalc.storageFactors.find(
     (element) => element.erasureCode === ecParity
   );
-
-  // Common
-  const updateField = useCallback(
-    (field: string, value: any) => {
-      updateAddField("tenantSize", field, value);
-    },
-    [updateAddField]
-  );
-
-  /*Debounce functions*/
-
-  // Storage Quotas
-
-  const validateMemorySize = useCallback(() => {
-    const memSize = parseInt(memoryNode) || 0;
-    const clusterSize = volumeSize || 0;
-    const maxMemSize = maxAllocableMemo || 0;
-    const clusterSizeFactor = sizeFactor;
-
-    const clusterSizeBytes = getBytes(
-      clusterSize.toString(10),
-      clusterSizeFactor
-    );
-    const memoSize = setMemoryResource(memSize, clusterSizeBytes, maxMemSize);
-    updateField("memorySize", memoSize);
-  }, [maxAllocableMemo, memoryNode, sizeFactor, updateField, volumeSize]);
-
-  const getMaxAllocableMemory = (nodes: string) => {
-    if (nodes !== "" && !isNaN(parseInt(nodes))) {
-      setNodeError("");
-      api
-        .invoke(
-          "GET",
-          `/api/v1/cluster/max-allocatable-memory?num_nodes=${nodes}`
-        )
-        .then((res: { max_memory: number }) => {
-          const maxMemory = res.max_memory ? res.max_memory : 0;
-          updateField("maxAllocableMemo", maxMemory);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorFlag(true);
-          setNodeError(err.errorMessage);
-        });
-    }
-  };
-
-  useEffect(() => {
-    validateMemorySize();
-  }, [memoryNode, validateMemorySize]);
-
-  useEffect(() => {
-    validateMemorySize();
-  }, [maxAllocableMemo, validateMemorySize]);
-
-  useEffect(() => {
-    if (ecParityChoices.length > 0 && distribution.error === "") {
-      const ecCodeValidated = erasureCodeCalc(
-        cleanECChoices,
-        distribution.persistentVolumes,
-        distribution.pvSize,
-        distribution.nodes
-      );
-
-      updateField("ecParityCalc", ecCodeValidated);
-      updateField("ecParity", ecCodeValidated.defaultEC);
-    }
-  }, [ecParityChoices.length, distribution, cleanECChoices, updateField]);
-  /*End debounce functions*/
-
-  /*Calculate Allocation*/
-  useEffect(() => {
-    validateClusterSize();
-    getECValue();
-    getMaxAllocableMemory(nodes);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, volumeSize, sizeFactor, drivesPerServer]);
-
-  const validateClusterSize = () => {
-    const size = volumeSize;
-    const factor = sizeFactor;
-    const limitSize = getBytes("12", "Ti", true);
-
-    const clusterCapacity: ICapacity = {
-      unit: factor,
-      value: size.toString(),
-    };
-
-    const distrCalculate = calculateDistribution(
-      clusterCapacity,
-      parseInt(nodes),
-      parseInt(limitSize),
-      parseInt(drivesPerServer)
-    );
-
-    updateField("distribution", distrCalculate);
-  };
-
-  const getECValue = () => {
-    updateField("ecParity", "");
-
-    if (nodes.trim() !== "" && drivesPerServer.trim() !== "") {
-      api
-        .invoke("GET", `/api/v1/get-parity/${nodes}/${drivesPerServer}`)
-        .then((ecList: string[]) => {
-          updateField("ecParityChoices", ecListTransform(ecList));
-          updateField("cleanECChoices", ecList);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          updateField("ecparityChoices", []);
-          isPageValid("tenantSize", false);
-          updateField("ecParity", "");
-        });
-    }
-  };
-  /*Calculate Allocation End*/
-
-  /* Validations of pages */
-
-  useEffect(() => {
-    const parsedSize = getBytes(volumeSize, sizeFactor, true);
-    const commonValidation = commonFormValidation([
-      {
-        fieldKey: "nodes",
-        required: true,
-        value: nodes,
-        customValidation: errorFlag,
-        customValidationMessage: nodeError,
-      },
-      {
-        fieldKey: "volume_size",
-        required: true,
-        value: volumeSize,
-        customValidation:
-          parseInt(parsedSize) < 1073741824 ||
-          parseInt(parsedSize) > limitSize[selectedStorageClass],
-        customValidationMessage: `Volume size must be greater than 1Gi and less than ${niceBytes(
-          limitSize[selectedStorageClass],
-          true
-        )}`,
-      },
-      {
-        fieldKey: "memory_per_node",
-        required: true,
-        value: memoryNode,
-        customValidation: parseInt(memoryNode) < 2,
-        customValidationMessage: "Memory size must be greater than 2Gi",
-      },
-      {
-        fieldKey: "drivesps",
-        required: true,
-        value: drivesPerServer,
-        customValidation: parseInt(drivesPerServer) < 1,
-        customValidationMessage: "There must be at least one drive",
-      },
-    ]);
-
-    isPageValid(
-      "tenantSize",
-      !("nodes" in commonValidation) &&
-        !("volume_size" in commonValidation) &&
-        !("memory_per_node" in commonValidation) &&
-        !("drivesps" in commonValidation) &&
-        distribution.error === "" &&
-        ecParityCalc.error === 0 &&
-        memorySize.error === ""
-    );
-  }, [
-    nodes,
-    volumeSize,
-    sizeFactor,
-    memoryNode,
-    distribution,
-    drivesPerServer,
-    ecParityCalc,
-    memorySize,
-    limitSize,
-    selectedStorageClass,
-    isPageValid,
-    errorFlag,
-    nodeError,
-  ]);
-
-  /* End Validation of pages */
 
   return (
     <div className={classes.root}>
@@ -327,6 +133,10 @@ const SizePreview = ({
               <TableCell align="right">{memoryNode} Gi</TableCell>
             </TableRow>
           )}
+          <TableRow>
+            <TableCell scope="row">CPU Selection</TableCell>
+            <TableCell align="right">{cpuToUse}</TableCell>
+          </TableRow>
         </TableBody>
       </Table>
       {ecParityCalc.error === 0 && usableInformation && (
@@ -390,12 +200,13 @@ const mapState = (state: AppState) => ({
   cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
   maxAllocableMemo:
     state.tenants.createTenant.fields.tenantSize.maxAllocableMemo,
-  memorySize: state.tenants.createTenant.fields.tenantSize.memorySize,
+  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
   distribution: state.tenants.createTenant.fields.tenantSize.distribution,
   ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
   limitSize: state.tenants.createTenant.fields.tenantSize.limitSize,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+  cpuToUse: state.tenants.createTenant.fields.tenantSize.cpuToUse,
 });
 
 const connector = connect(mapState, {

@@ -78,6 +78,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIDirectCSIFormatDriveHandler: operator_api.DirectCSIFormatDriveHandlerFunc(func(params operator_api.DirectCSIFormatDriveParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DirectCSIFormatDrive has not yet been implemented")
 		}),
+		OperatorAPIGetAllocatableResourcesHandler: operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.GetAllocatableResources has not yet been implemented")
+		}),
 		OperatorAPIGetDirectCSIDriveListHandler: operator_api.GetDirectCSIDriveListHandlerFunc(func(params operator_api.GetDirectCSIDriveListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetDirectCSIDriveList has not yet been implemented")
 		}),
@@ -236,6 +239,8 @@ type OperatorAPI struct {
 	OperatorAPIDeleteTenantHandler operator_api.DeleteTenantHandler
 	// OperatorAPIDirectCSIFormatDriveHandler sets the operation handler for the direct c s i format drive operation
 	OperatorAPIDirectCSIFormatDriveHandler operator_api.DirectCSIFormatDriveHandler
+	// OperatorAPIGetAllocatableResourcesHandler sets the operation handler for the get allocatable resources operation
+	OperatorAPIGetAllocatableResourcesHandler operator_api.GetAllocatableResourcesHandler
 	// OperatorAPIGetDirectCSIDriveListHandler sets the operation handler for the get direct c s i drive list operation
 	OperatorAPIGetDirectCSIDriveListHandler operator_api.GetDirectCSIDriveListHandler
 	// OperatorAPIGetDirectCSIVolumeListHandler sets the operation handler for the get direct c s i volume list operation
@@ -397,6 +402,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIDirectCSIFormatDriveHandler == nil {
 		unregistered = append(unregistered, "operator_api.DirectCSIFormatDriveHandler")
+	}
+	if o.OperatorAPIGetAllocatableResourcesHandler == nil {
+		unregistered = append(unregistered, "operator_api.GetAllocatableResourcesHandler")
 	}
 	if o.OperatorAPIGetDirectCSIDriveListHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetDirectCSIDriveListHandler")
@@ -615,6 +623,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/direct-csi/drives/format"] = operator_api.NewDirectCSIFormatDrive(o.context, o.OperatorAPIDirectCSIFormatDriveHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/cluster/allocatable-resources"] = operator_api.NewGetAllocatableResources(o.context, o.OperatorAPIGetAllocatableResourcesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
