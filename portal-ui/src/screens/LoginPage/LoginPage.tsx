@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { OutlinedInputProps } from "@mui/material/OutlinedInput";
 import {
   CircularProgress,
   InputAdornment,
@@ -31,7 +30,6 @@ import withStyles from "@mui/styles/withStyles";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { SystemState } from "../../types";
 import { setErrorSnackMessage, userLoggedIn } from "../../actions";
@@ -41,7 +39,8 @@ import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import { encodeFileName } from "../../common/utils";
-import { LockIcon, UsersIcon, VersionIcon } from "../../icons";
+import { LockIcon, UsersIcon, LoginMinIOLogo } from "../../icons";
+import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,7 +66,7 @@ const styles = (theme: Theme) =>
       },
     },
     shadowBox: {
-      boxShadow: "0px 3px 10px #00000014",
+      boxShadow: "0px 3px 20px #00000014",
       height: "100%",
     },
     loginContainer: {
@@ -113,6 +112,36 @@ const styles = (theme: Theme) =>
           margin: "auto",
           textAlign: "left",
         },
+        "& .text-line1": {
+          font: "normal 100 70px 'Lato'",
+          marginBottom: 20,
+          "@media (max-width: 600px)": {
+            fontSize: 35,
+          },
+        },
+        "& .text-line2": {
+          fontSize: 70,
+          marginLeft: 25,
+          fontWeight: 400,
+
+          "@media (max-width: 600px)": {
+            fontSize: 35,
+            marginLeft: 0,
+          },
+        },
+        "& .logo-console": {
+          display: "flex",
+          alignItems: "center",
+
+          "@media (max-width: 900px)": {
+            marginTop: 20,
+            flexFlow: "column",
+
+            "& svg": {
+              width: "50%",
+            },
+          },
+        },
       },
     },
     "@media (max-width: 900px)": {
@@ -135,19 +164,6 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    inputField: {
-      "& input": {
-        padding: 5,
-        "&::placeholder": {
-          fontSize: 12,
-        },
-        "@media (max-width: 900px)": {
-          padding: 10,
-        },
-      },
-      "& svg": { height: 16 },
-    },
-
     loadingLoginStrategy: {
       textAlign: "center",
     },
@@ -157,9 +173,6 @@ const styles = (theme: Theme) =>
     },
     submitContainer: {
       textAlign: "right",
-    },
-    jwtInput: {
-      marginTop: 45,
     },
     linearPredef: {
       height: 10,
@@ -176,14 +189,38 @@ const styles = (theme: Theme) =>
     retryButton: {
       alignSelf: "flex-end",
     },
+    ...spacingUtils,
   });
 
 const inputStyles = makeStyles((theme: Theme) =>
   createStyles({
-    disabled: {
-      "&.MuiInput-underline::before": {
-        borderColor: "#eaeaea",
-        borderBottomStyle: "solid",
+    root: {
+      "& .MuiOutlinedInput-root": {
+        paddingLeft: 0,
+        "& svg": { height: 16 },
+        "& input": {
+          padding: 5,
+          paddingLeft: 0,
+          "&::placeholder": {
+            fontSize: 12,
+          },
+          "@media (max-width: 900px)": {
+            padding: 10,
+          },
+        },
+        "& fieldset": {
+          border: "none", // default
+          borderBottom: "1px solid #EAEAEA",
+          borderRadius: 0,
+        },
+        "&.Mui-focused fieldset": {
+          borderBottom: "1px solid #000000",
+          borderRadius: 0,
+        },
+        "& fieldset:hover": {
+          borderBottom: "2px solid #000000",
+          borderRadius: 0,
+        },
       },
     },
   })
@@ -194,7 +231,9 @@ function LoginField(props: TextFieldProps) {
 
   return (
     <TextField
-      InputProps={{ classes } as Partial<OutlinedInputProps>}
+      classes={{
+        root: classes.root,
+      }}
       variant="standard"
       {...props}
     />
@@ -305,16 +344,9 @@ const Login = ({
     case loginStrategyType.form: {
       loginComponent = (
         <React.Fragment>
-          <Typography
-            component="h1"
-            variant="h6"
-            className={classes.headerTitle}
-          >
-            Console Login
-          </Typography>
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.spacerBottom}>
                 <LoginField
                   fullWidth
                   id="accessKey"
@@ -323,7 +355,7 @@ const Login = ({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setAccessKey(e.target.value)
                   }
-                  placeholder={"Enter Username"}
+                  placeholder={"Username"}
                   name="accessKey"
                   autoComplete="username"
                   disabled={loginSending}
@@ -350,7 +382,7 @@ const Login = ({
                   id="secretKey"
                   autoComplete="current-password"
                   disabled={loginSending}
-                  placeholder={"Enter Password"}
+                  placeholder={"Password"}
                   variant={"outlined"}
                   InputProps={{
                     startAdornment: (
@@ -401,16 +433,9 @@ const Login = ({
     case loginStrategyType.serviceAccount: {
       loginComponent = (
         <React.Fragment>
-          <Typography
-            component="h1"
-            variant="h6"
-            className={classes.headerTitle}
-          >
-            Operator Login
-          </Typography>
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12} className={classes.jwtInput}>
+              <Grid item xs={12}>
                 <LoginField
                   required
                   className={classes.inputField}
@@ -497,9 +522,9 @@ const Login = ({
             <Grid item className="consoleTextBanner">
               <div className="left-items">
                 <div className="text-line1">Welcome to</div>
-                <div className="text-line2">{consoleText}</div>
-                <div className="logoLine">
-                  <VersionIcon /> MinIO {consoleText}
+                <div className="logo-console">
+                  <LoginMinIOLogo />
+                  <div className="text-line2">{consoleText}</div>
                 </div>
               </div>
             </Grid>
