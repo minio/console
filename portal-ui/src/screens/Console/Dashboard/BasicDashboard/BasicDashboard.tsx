@@ -20,7 +20,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { IDriveInfo, Usage } from "../types";
-import { calculateBytes } from "../../../../common/utils";
+import {calculateBytes, representationNumber} from "../../../../common/utils";
 import { TabPanel } from "../../../shared/tabs";
 import ServerInfoCard from "./ServerInfoCard";
 import DriveInfoCard from "./DriveInfoCard";
@@ -163,7 +163,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
           >
             <CommonCard
               title={"All Buckets"}
-              metricValue={usage ? prettyNumber(usage.buckets) : 0}
+              metricValue={usage ? representationNumber(usage.buckets) : 0}
               extraMargin
             />
           </Grid>
@@ -192,7 +192,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
           >
             <CommonCard
               title={"Total Objects"}
-              metricValue={usage ? prettyNumber(usage.objects) : 0}
+              metricValue={usage ? representationNumber(usage.objects) : 0}
               extraMargin
             />
           </Grid>
