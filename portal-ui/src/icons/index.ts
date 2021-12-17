@@ -118,3 +118,4 @@ export { default as VersionIcon } from "./VersionIcon";
 export { default as WarnIcon } from "./WarnIcon";
 export { default as WarpIcon } from "./WarpIcon";
 export { default as WatchIcon } from "./WatchIcon";
+export { default as LoginMinIOLogo } from "./LoginMinIOLogo";
