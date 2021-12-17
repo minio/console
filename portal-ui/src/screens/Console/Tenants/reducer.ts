@@ -39,6 +39,7 @@ import {
   ADD_TENANT_ENCRYPTION_VAULT_CA,
   ADD_TENANT_ENCRYPTION_GEMALTO_CA,
   ADD_TENANT_RESET_FORM,
+  ADD_TENANT_SET_LIMIT_SIZE,
   TENANT_DETAILS_SET_LOADING,
   TENANT_DETAILS_SET_CURRENT_TENANT,
   TENANT_DETAILS_SET_TENANT,
@@ -200,10 +201,13 @@ const initialState: ITenantState = {
         ecParityChoices: [],
         cleanECChoices: [],
         maxAllocableMemo: 0,
-        memorySize: {
+        cpuToUse: "0",
+        resourcesSize: {
           error: "",
-          limit: 0,
-          request: 0,
+          memoryRequest: 0,
+          memoryLimit: 0,
+          cpuRequest: 0,
+          cpuLimit: 0,
         },
         distribution: {
           error: "",
@@ -221,6 +225,20 @@ const initialState: ITenantState = {
           storageFactors: [],
         },
         limitSize: {},
+        maxAllocatableResources: {
+          min_allocatable_mem: 0,
+          min_allocatable_cpu: 0,
+          cpu_priority: {
+            max_allocatable_cpu: 0,
+            max_allocatable_mem: 0,
+          },
+          mem_priority: {
+            max_allocatable_cpu: 0,
+            max_allocatable_mem: 0,
+          },
+        },
+        maxCPUsUse: "0",
+        maxMemorySize: "0"
       },
       affinity: {
         nodeSelectorLabels: "",
@@ -371,6 +389,13 @@ export function tenantsReducer(
         },
       };
       return { ...changeCL };
+    case ADD_TENANT_SET_LIMIT_SIZE:
+      const changeSizeLimit = {
+        ...state,
+        createTenant: { ...state.createTenant, limitSize: action.limitSize },
+      };
+
+      return { ...changeSizeLimit };
     case ADD_TENANT_ADD_MINIO_KEYPAIR:
       const minioCerts = [
         ...state.createTenant.certificates.minioCertificates,
@@ -714,11 +739,6 @@ export function tenantsReducer(
               ecParityChoices: [],
               cleanECChoices: [],
               maxAllocableMemo: 0,
-              memorySize: {
-                error: "",
-                limit: 0,
-                request: 0,
-              },
               distribution: {
                 error: "",
                 nodes: 0,
@@ -735,6 +755,28 @@ export function tenantsReducer(
                 storageFactors: [],
               },
               limitSize: {},
+              cpuToUse: "0",
+              resourcesSize: {
+                error: "",
+                memoryRequest: 0,
+                memoryLimit: 0,
+                cpuRequest: 0,
+                cpuLimit: 0,
+              },
+              maxAllocatableResources: {
+                min_allocatable_mem: 0,
+                min_allocatable_cpu: 0,
+                cpu_priority: {
+                  max_allocatable_cpu: 0,
+                  max_allocatable_mem: 0,
+                },
+                mem_priority: {
+                  max_allocatable_cpu: 0,
+                  max_allocatable_mem: 0,
+                },
+              },
+              maxCPUsUse: "0",
+              maxMemorySize: "0"
             },
             affinity: {
               nodeSelectorLabels: "",

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { IErasureCodeCalc } from "../../../common/types";
-import { IMemorySize, ITenant } from "./ListTenants/types";
+import { ITenant, IResourcesSize } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
 
 export const ADD_TENANT_SET_CURRENT_PAGE = "ADD_TENANT/SET_CURRENT_PAGE";
@@ -238,10 +238,14 @@ export interface ITenantSizeFields {
   ecParityChoices: Opts[];
   cleanECChoices: string[];
   maxAllocableMemo: number;
-  memorySize: IMemorySize;
+  resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
+  cpuToUse: string;
   limitSize: any;
+  maxAllocatableResources: AllocableResourcesResponse;
+  maxCPUsUse: string;
+  maxMemorySize: string;
 }
 
 export interface ITenantAffinity {
@@ -266,6 +270,18 @@ export interface ITenantState {
 export interface ILabelKeyPair {
   labelKey: string;
   labelValue: string;
+}
+
+export interface AllocableResourcesResponse {
+  min_allocatable_mem?: number;
+  min_allocatable_cpu?: number;
+  cpu_priority: NodeMaxAllocatableResources;
+  mem_priority: NodeMaxAllocatableResources;
+}
+
+export interface NodeMaxAllocatableResources {
+  max_allocatable_cpu: number;
+  max_allocatable_mem: number;
 }
 
 interface SetTenantWizardPage {

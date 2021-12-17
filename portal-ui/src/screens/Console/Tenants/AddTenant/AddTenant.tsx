@@ -174,7 +174,7 @@ const AddTenant = ({
     const enableTLS = fields.security.enableTLS;
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
-    const memorySize = fields.tenantSize.memorySize;
+    const resourcesSize = fields.tenantSize.resourcesSize;
     const tenantCustom = fields.configure.tenantCustom;
     const logSearchCustom = fields.configure.logSearchCustom;
     const prometheusCustom = fields.configure.prometheusCustom;
@@ -255,10 +255,12 @@ const AddTenant = ({
             },
             resources: {
               requests: {
-                memory: memorySize.request,
+                memory: resourcesSize.memoryRequest,
+                cpu: resourcesSize.cpuRequest,
               },
               limits: {
-                memory: memorySize.limit,
+                memory: resourcesSize.memoryRequest,
+                cpu: resourcesSize.cpuRequest,
               },
             },
             securityContext: tenantCustom ? tenantSecurityContext : null,

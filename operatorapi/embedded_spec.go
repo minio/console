@@ -52,6 +52,39 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/cluster/allocatable-resources": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get allocatable cpu and memory for given number of nodes",
+        "operationId": "GetAllocatableResources",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "name": "num_nodes",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/allocatableResourcesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/cluster/max-allocatable-memory": {
       "get": {
         "tags": [
@@ -1382,6 +1415,25 @@ func init() {
     }
   },
   "definitions": {
+    "allocatableResourcesResponse": {
+      "type": "object",
+      "properties": {
+        "cpu_priority": {
+          "$ref": "#/definitions/nodeMaxAllocatableResources"
+        },
+        "mem_priority": {
+          "$ref": "#/definitions/nodeMaxAllocatableResources"
+        },
+        "min_allocatable_cpu": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "min_allocatable_mem": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "awsConfiguration": {
       "type": "object",
       "required": [
@@ -2226,6 +2278,19 @@ func init() {
         "type": "array",
         "items": {
           "type": "string"
+        }
+      }
+    },
+    "nodeMaxAllocatableResources": {
+      "type": "object",
+      "properties": {
+        "max_allocatable_cpu": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "max_allocatable_mem": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3187,6 +3252,39 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/cluster/allocatable-resources": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get allocatable cpu and memory for given number of nodes",
+        "operationId": "GetAllocatableResources",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "name": "num_nodes",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/allocatableResourcesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/cluster/max-allocatable-memory": {
       "get": {
         "tags": [
@@ -5242,6 +5340,25 @@ func init() {
         }
       }
     },
+    "allocatableResourcesResponse": {
+      "type": "object",
+      "properties": {
+        "cpu_priority": {
+          "$ref": "#/definitions/nodeMaxAllocatableResources"
+        },
+        "mem_priority": {
+          "$ref": "#/definitions/nodeMaxAllocatableResources"
+        },
+        "min_allocatable_cpu": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "min_allocatable_mem": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "awsConfiguration": {
       "type": "object",
       "required": [
@@ -6074,6 +6191,19 @@ func init() {
         "type": "array",
         "items": {
           "type": "string"
+        }
+      }
+    },
+    "nodeMaxAllocatableResources": {
+      "type": "object",
+      "properties": {
+        "max_allocatable_cpu": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "max_allocatable_mem": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
