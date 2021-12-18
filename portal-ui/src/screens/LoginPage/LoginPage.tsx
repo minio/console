@@ -112,6 +112,20 @@ const styles = (theme: Theme) =>
         "& .left-items": {
           margin: "auto",
           textAlign: "left",
+          paddingRight: 240,
+          paddingBottom: 200,
+          "@media (max-width: 1400px)": {
+            paddingBottom: 120,
+            paddingRight: 50,
+          },
+          "@media (max-width: 900px)": {
+            paddingBottom: 0,
+            paddingRight: 0,
+          },
+          "@media (max-width: 600px)": {
+            paddingBottom: 0,
+            paddingRight: 0,
+          },
         },
         "& .left-logo": {
           "& .min-icon": {
