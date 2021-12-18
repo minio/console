@@ -39,7 +39,7 @@ import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import { encodeFileName } from "../../common/utils";
-import { LockIcon, UsersIcon, LoginMinIOLogo } from "../../icons";
+import { LockIcon, LoginMinIOLogo, UsersIcon } from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
@@ -66,7 +66,8 @@ const styles = (theme: Theme) =>
       },
     },
     shadowBox: {
-      boxShadow: "0px 3px 20px #00000014",
+      boxShadow:
+        "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.125) 0px 15px 50px 0px",
       height: "100%",
     },
     loginContainer: {
@@ -111,21 +112,47 @@ const styles = (theme: Theme) =>
         "& .left-items": {
           margin: "auto",
           textAlign: "left",
-        },
-        "& .text-line1": {
-          font: "normal 100 70px 'Lato'",
-          marginBottom: 20,
+          paddingRight: 240,
+          paddingBottom: 200,
+          "@media (max-width: 1400px)": {
+            paddingBottom: 120,
+            paddingRight: 50,
+          },
+          "@media (max-width: 900px)": {
+            paddingBottom: 0,
+            paddingRight: 0,
+          },
           "@media (max-width: 600px)": {
-            fontSize: 35,
+            paddingBottom: 0,
+            paddingRight: 0,
           },
         },
-        "& .text-line2": {
-          fontSize: 70,
-          marginLeft: 25,
-          fontWeight: 400,
+        "& .left-logo": {
+          "& .min-icon": {
+            width: 108,
+          },
+          marginBottom: 10,
+        },
+        "& .text-line1": {
+          font: " 100 70px 'Lato'",
 
           "@media (max-width: 600px)": {
             fontSize: 35,
+          },
+          "@media (max-width: 800px)": {
+            fontSize: 45,
+          },
+        },
+        "& .text-line2": {
+          fontSize: 100,
+          fontWeight: 100,
+          textTransform: "uppercase",
+          "@media (max-width: 600px)": {
+            fontSize: 35,
+            marginLeft: 0,
+          },
+          "@media (max-width: 800px)": {
+            fontSize: 55,
             marginLeft: 0,
           },
         },
@@ -197,7 +224,10 @@ const inputStyles = makeStyles((theme: Theme) =>
     root: {
       "& .MuiOutlinedInput-root": {
         paddingLeft: 0,
-        "& svg": { height: 16 },
+        "& svg": {
+          height: 16,
+          color: theme.palette.primary.main,
+        },
         "& input": {
           padding: 5,
           paddingLeft: 0,
@@ -362,7 +392,10 @@ const Login = ({
                   variant={"outlined"}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">
+                      <InputAdornment
+                        position="start"
+                        className={classes.iconColor}
+                      >
                         <UsersIcon />
                       </InputAdornment>
                     ),
@@ -386,7 +419,10 @@ const Login = ({
                   variant={"outlined"}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">
+                      <InputAdornment
+                        position="start"
+                        className={classes.iconColor}
+                      >
                         <LockIcon />
                       </InputAdornment>
                     ),
@@ -521,11 +557,11 @@ const Login = ({
           <Grid container className={classes.loginContainer}>
             <Grid item className="consoleTextBanner">
               <div className="left-items">
-                <div className="text-line1">Welcome to</div>
-                <div className="logo-console">
+                <div className="left-logo">
                   <LoginMinIOLogo />
-                  <div className="text-line2">{consoleText}</div>
                 </div>
+                <div className="text-line1">Welcome to</div>
+                <div className="text-line2">{consoleText}</div>
               </div>
             </Grid>
             <Grid item className="right-items">
