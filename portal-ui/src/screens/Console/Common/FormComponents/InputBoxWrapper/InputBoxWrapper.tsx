@@ -122,7 +122,7 @@ const InputBoxWrapper = ({
   extraInputProps = {},
   overlayAction,
   noLabelMinWidth = false,
-  pattern="",
+  pattern = "",
   classes,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
@@ -135,7 +135,7 @@ const InputBoxWrapper = ({
     inputProps["max"] = max;
   }
 
-  if(pattern !== "") {
+  if (pattern !== "") {
     inputProps["pattern"] = pattern;
   }
 

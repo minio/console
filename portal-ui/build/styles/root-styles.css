@@ -135,6 +135,19 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Thin.eot");
+  src: url("./fonts/Lato/Lato-Thin.eot?#iefix") format("embedded-opentype"),
+    url("./fonts/Lato/Lato-Thin.woff2") format("woff2"),
+    url("./fonts/Lato/Lato-Thin.woff") format("woff"),
+    url("./fonts/Lato/Lato-Thin.ttf") format("truetype"),
+    url("./fonts/Lato/Lato-Thin.svg#Lato-Thin") format("svg");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   margin: 0;
   background-color: #fff;
