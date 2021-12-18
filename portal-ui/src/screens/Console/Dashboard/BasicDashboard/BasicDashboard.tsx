@@ -20,7 +20,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { IDriveInfo, Usage } from "../types";
-import {calculateBytes, representationNumber} from "../../../../common/utils";
+import { calculateBytes, representationNumber } from "../../../../common/utils";
 import { TabPanel } from "../../../shared/tabs";
 import ServerInfoCard from "./ServerInfoCard";
 import DriveInfoCard from "./DriveInfoCard";

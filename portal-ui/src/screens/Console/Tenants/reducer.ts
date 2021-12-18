@@ -238,7 +238,7 @@ const initialState: ITenantState = {
           },
         },
         maxCPUsUse: "0",
-        maxMemorySize: "0"
+        maxMemorySize: "0",
       },
       affinity: {
         nodeSelectorLabels: "",
@@ -776,7 +776,7 @@ export function tenantsReducer(
                 },
               },
               maxCPUsUse: "0",
-              maxMemorySize: "0"
+              maxMemorySize: "0",
             },
             affinity: {
               nodeSelectorLabels: "",
