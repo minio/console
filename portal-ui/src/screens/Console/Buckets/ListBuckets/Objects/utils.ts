@@ -54,7 +54,7 @@ export const download = (
       let filename = "download";
 
       if (rspHeader) {
-        filename = rspHeader.split('"')[1];
+        filename = decodeURI(rspHeader.split('"')[1]);
       }
 
       if (completeCallback) {
