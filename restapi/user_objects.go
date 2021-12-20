@@ -415,7 +415,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
 			rw.Header().Set("X-XSS-Protection", "1")
 		} else {
-			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", url.QueryEscape(filename)))
 		}
 
 		rw.Header().Set("Last-Modified", stat.LastModified.UTC().Format(http.TimeFormat))
