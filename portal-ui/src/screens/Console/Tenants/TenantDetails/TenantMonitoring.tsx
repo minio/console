@@ -26,7 +26,7 @@ import {
   searchField,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, CircularProgress, Divider } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -37,7 +37,6 @@ import api from "../../../../common/api";
 import { EditIcon } from "../../../../icons";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
-//import { IKeyValue } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
 import ConfirmationDialog from "./ConfirmationDialog";
 

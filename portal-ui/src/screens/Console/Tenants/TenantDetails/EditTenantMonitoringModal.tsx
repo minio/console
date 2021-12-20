@@ -169,12 +169,13 @@ const EditTenantMonitoringModal = ({
       Object.keys(annotationsError).length !== 0 ||
       Object.keys(nodeSelectorError).length !== 0
     ) {
-      return false;
+     
       let err: ErrorResponseHandler = {
         errorMessage: "Invalid entry",
         detailedError: "",
       };
       setModalErrorSnackMessage(err);
+      return false;
     } else {
       return true;
     }

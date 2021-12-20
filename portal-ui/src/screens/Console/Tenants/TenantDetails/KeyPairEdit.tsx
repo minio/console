@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -17,8 +17,6 @@ import { clearValidationError } from "../utils";
 interface IKeyPairEditProps {
   classes: any;
   paramName: string;
-  // keyPattern: RegExp;
-  // valuePattern: RegExp;
   error: any;
   setError: (e: any) => void;
   newValues: IKeyValue[];
@@ -74,8 +72,6 @@ const KeyPairEdit = ({
   paramName,
   newValues,
   setNewValues,
-  //keyPattern,
-  //valuePattern,
   error,
   setError,
 }: IKeyPairEditProps) => {
@@ -91,14 +87,12 @@ const KeyPairEdit = ({
         fieldKey: `key-${i.toString()}`,
         required: false,
         value: newValues[i].key,
-        // pattern: keyPattern,
         customPatternMessage: "Invalid key",
       });
       keyPairValidation.push({
         fieldKey: `val-${i.toString()}`,
         required: false,
         value: newValues[i].value,
-        // pattern: valuePattern,
         customPatternMessage: "Invalid value",
       });
     }
@@ -106,14 +100,6 @@ const KeyPairEdit = ({
     const commonVal = commonFormValidation(keyPairValidation);
     setError(commonVal);
   }, [newValues, setError]);
-
-  const removeEntry = (index: number) => {
-    if (newValues.length > 1) {
-      let tempLabels = [...newValues];
-      tempLabels.splice(index, 1);
-      setNewValues(tempLabels);
-    }
-  };
 
   let keyValueInputs = newValues.map((_, index) => {
     return (
@@ -168,7 +154,7 @@ const KeyPairEdit = ({
               size={"small"}
               style={{ marginLeft: 16 }}
               onClick={() => {
-                if (newValues.length == 1) {
+                if (newValues.length === 1) {
                   setNewValues([{ key: "", value: "" }]);
                 }
                 if (newValues.length > 1) {
