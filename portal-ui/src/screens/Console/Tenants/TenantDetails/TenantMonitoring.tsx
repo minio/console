@@ -26,7 +26,7 @@ import {
   searchField,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -38,7 +38,7 @@ import { EditIcon } from "../../../../icons";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
-import ConfirmationDialog from "./ConfirmationDialog";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface ITenantMonitoring {
   classes: any;
@@ -161,23 +161,26 @@ const TenantMonitoring = ({
         />
       )}
       {confirmOpen && (
-        <ConfirmationDialog
-          open={confirmOpen}
-          okLabel={prometheusMonitoringEnabled ? "Disable" : "Enable"}
-          onClose={() => setConfirmOpen(false)}
-          cancelOnClick={() => setConfirmOpen(false)}
-          okOnClick={togglePrometheus}
+        <ConfirmDialog
+          isOpen={confirmOpen}
           title={
             prometheusMonitoringEnabled
-              ? "Confirm disabling Prometheus monitoring?"
-              : "Confirm enabling Prometheus monitoring?"
+              ? "Disable Prometheus monitoring?"
+              : "Enable Prometheus monitoring?"
           }
-          description={
-            prometheusMonitoringEnabled
+          confirmText={prometheusMonitoringEnabled ? "Disable" : "Enable"}
+          cancelText="Cancel"
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={togglePrometheus}
+          
+          confirmationContent={
+            <DialogContentText>
+           { prometheusMonitoringEnabled
               ? "Disabling monitoring will erase any custom values you have used to configure Prometheus monitoring"
-              : "Prometheus monitoring will be enabled with default values"
+              : "Prometheus monitoring will be enabled with default values"}
+              </DialogContentText>
           }
-          cancelLabel="Cancel"
+          
         />
       )}
 
