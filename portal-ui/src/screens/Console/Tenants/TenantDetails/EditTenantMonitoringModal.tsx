@@ -15,7 +15,6 @@ import {
   commonFormValidation,
   IValidation,
 } from "../../../../utils/validationFunctions";
-import { clearValidationError } from "../utils";
 import { setModalErrorSnackMessage } from "../../../../actions";
 
 interface IEditTenantMonitoringProps {
@@ -94,10 +93,6 @@ const EditTenantMonitoringModal = ({
       }
     }
     return retval;
-  };
-
-  const cleanValidation = (fieldName: string) => {
-    setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
 
   useEffect(() => {
