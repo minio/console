@@ -172,15 +172,13 @@ const TenantMonitoring = ({
           cancelText="Cancel"
           onClose={() => setConfirmOpen(false)}
           onConfirm={togglePrometheus}
-          
           confirmationContent={
             <DialogContentText>
-           { prometheusMonitoringEnabled
-              ? "Disabling monitoring will erase any custom values you have used to configure Prometheus monitoring"
-              : "Prometheus monitoring will be enabled with default values"}
-              </DialogContentText>
+              {prometheusMonitoringEnabled
+                ? "Disabling monitoring will erase any custom values you have used to configure Prometheus monitoring"
+                : "Prometheus monitoring will be enabled with default values"}
+            </DialogContentText>
           }
-          
         />
       )}
 

@@ -1508,6 +1508,9 @@ func init() {
         "min_allocatable_mem": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
     "annotation": {
       "type": "object",
       "properties": {
@@ -2395,6 +2398,9 @@ func init() {
         "max_allocatable_mem": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
     "nodeSelector": {
       "type": "object",
       "properties": {
@@ -5592,6 +5598,9 @@ func init() {
         "min_allocatable_mem": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
     "annotation": {
       "type": "object",
       "properties": {
@@ -6467,6 +6476,9 @@ func init() {
         "max_allocatable_mem": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
     "nodeSelector": {
       "type": "object",
       "properties": {

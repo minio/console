@@ -63,8 +63,7 @@ const EditTenantMonitoringModal = ({
 }: IEditTenantMonitoringProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
-    labels.length > 0 ? [...labels] 
-     :[{ key: "", value: "" }]
+    labels.length > 0 ? [...labels] : [{ key: "", value: "" }]
   );
   const [newAnnotations, setNewAnnotations] = useState<IKeyValue[]>(
     annotations.length > 0 ? [...annotations] : [{ key: "", value: "" }]
@@ -90,7 +89,7 @@ const EditTenantMonitoringModal = ({
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
     for (let i = 0; i < x.length; i++) {
-      if (x[i].key !== "" ) {
+      if (x[i].key !== "") {
         retval.push(x[i]);
       }
     }
@@ -169,7 +168,6 @@ const EditTenantMonitoringModal = ({
       Object.keys(annotationsError).length !== 0 ||
       Object.keys(nodeSelectorError).length !== 0
     ) {
-     
       let err: ErrorResponseHandler = {
         errorMessage: "Invalid entry",
         detailedError: "",
