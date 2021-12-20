@@ -26,7 +26,7 @@ import Grid from "@mui/material/Grid";
 import CredentialItem from "./CredentialItem";
 import NewAccountIcon from "../../../../icons/NewAccountIcon";
 import WarnIcon from "../../../../icons/WarnIcon";
-import { DownloadIcon } from "../../../../icons";
+import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -123,6 +123,7 @@ const CredentialsPrompt = ({
           <div>New {entity} Created</div>
         </div>
       }
+      titleIcon={<ServiceAccountCredentialsIcon />}
     >
       <Grid container>
         <Grid item xs={12} className={classes.formScrollable}>

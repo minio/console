@@ -33,6 +33,7 @@ import { ChangeUserPasswordRequest } from "../Buckets/types";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
+import { ChangePasswordIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -111,6 +112,7 @@ const ChangeUserPassword = ({
         setReNewPassword("");
         closeModal();
       }}
+      titleIcon={<ChangePasswordIcon />}
     >
       <form
         noValidate

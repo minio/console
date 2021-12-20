@@ -22,6 +22,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectCSIFormatResItem } from "./types";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import { DriveFormatErrorsIcon } from "../../../icons";
 
 interface IFormatErrorsProps {
   open: boolean;
@@ -68,6 +69,7 @@ const FormatErrorsResult = ({
       modalOpen={open}
       title={"Format Errors"}
       onClose={onCloseFormatErrorsList}
+      titleIcon={<DriveFormatErrorsIcon />}
     >
       <Grid container>
         <Grid item xs={12} className={classes.modalFormScrollable}>

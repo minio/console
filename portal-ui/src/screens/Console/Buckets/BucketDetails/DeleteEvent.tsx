@@ -23,6 +23,7 @@ import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmDeleteIcon } from "../../../../icons";
 
 interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -74,6 +75,7 @@ const DeleteEvent = ({
       title={`Delete Event`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
+      titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
       onClose={onClose}

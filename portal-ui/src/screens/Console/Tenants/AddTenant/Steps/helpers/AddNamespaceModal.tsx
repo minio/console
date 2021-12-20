@@ -28,6 +28,7 @@ import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmModalIcon } from "../../../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -93,6 +94,7 @@ const AddNamespaceModal = ({
         variant: "contained",
       }}
       isOpen={addNamespaceOpen}
+      titleIcon={<ConfirmModalIcon />}
       isLoading={addNamespaceLoading}
       onConfirm={addNamespace}
       onClose={() => {

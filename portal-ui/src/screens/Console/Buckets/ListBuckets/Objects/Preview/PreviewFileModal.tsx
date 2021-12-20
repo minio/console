@@ -18,6 +18,7 @@ import React, { Fragment } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PreviewFileContent from "./PreviewFileContent";
 import { BucketObject } from "../ListObjects/types";
+import { ObjectPreviewIcon } from "../../../../../../icons";
 
 interface IPreviewFileProps {
   open: boolean;
@@ -39,6 +40,7 @@ const PreviewFileModal = ({
         title={`Preview - ${object?.name}`}
         onClose={onClosePreview}
         wideLimit={false}
+        titleIcon={<ObjectPreviewIcon />}
       >
         <PreviewFileContent bucketName={bucketName} object={object} />
       </ModalWrapper>

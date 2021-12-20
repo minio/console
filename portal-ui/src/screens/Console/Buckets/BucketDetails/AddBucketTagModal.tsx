@@ -32,6 +32,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
+import { AddNewTagIcon } from "../../../../icons";
 
 interface IBucketTagModal {
   modalOpen: boolean;
@@ -94,6 +95,7 @@ const AddBucketTagModal = ({
       onClose={() => {
         onCloseAndUpdate(false);
       }}
+      titleIcon={<AddNewTagIcon />}
     >
       <Grid container>
         <div className={classes.spacerBottom}>

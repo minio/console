@@ -41,6 +41,7 @@ interface IModalProps {
   modalSnackMessage?: snackBarMessage;
   noContentPadding?: boolean;
   setModalSnackMessage: typeof setModalSnackMessage;
+  titleIcon?: React.ReactNode;
 }
 
 const styles = (theme: Theme) =>
@@ -72,6 +73,7 @@ const ModalWrapper = ({
   modalSnackMessage,
   noContentPadding,
   setModalSnackMessage,
+  titleIcon = null,
 }: IModalProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
@@ -131,7 +133,9 @@ const ModalWrapper = ({
       className={classes.root}
     >
       <DialogTitle className={classes.title}>
-        <div className={classes.titleText}>{title}</div>
+        <div className={classes.titleText}>
+          {titleIcon} {title}
+        </div>
         <div className={classes.closeContainer}>
           <IconButton
             aria-label="close"

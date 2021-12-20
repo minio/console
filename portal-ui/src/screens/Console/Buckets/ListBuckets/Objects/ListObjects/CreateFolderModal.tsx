@@ -31,6 +31,7 @@ import history from "../../../../../../history";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { BucketObject } from "./types";
+import { CreateNewPathIcon } from "../../../../../../icons";
 
 interface ICreateFolder {
   classes: any;
@@ -107,6 +108,7 @@ const CreateFolderModal = ({
         modalOpen={modalOpen}
         title="Choose or create a new path"
         onClose={onClose}
+        titleIcon={<CreateNewPathIcon />}
       >
         <Grid container>
           <Grid item xs={12} className={classes.formFieldRow}>

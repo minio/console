@@ -30,6 +30,7 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
+import { LifecycleConfigIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -114,6 +115,7 @@ const EditLifecycleConfiguration = ({
       }}
       modalOpen={open}
       title={"Edit Lifecycle Configuration"}
+      titleIcon={<LifecycleConfigIcon />}
     >
       <div className={classes.floatingEnabled}>
         <FormSwitchWrapper

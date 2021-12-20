@@ -26,6 +26,7 @@ import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmDeleteIcon } from "../../../../icons";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -69,6 +70,7 @@ const DeleteAccessRule = ({
       isOpen={modalOpen}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
+      titleIcon={<ConfirmDeleteIcon />}
       onClose={onClose}
       confirmationContent={
         <DialogContentText>

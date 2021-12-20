@@ -20,13 +20,17 @@ import { Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  modalStyleUtils,
+  spacingUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { AddAccessRuleIcon } from "../../../../icons";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -48,7 +52,8 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    ...modalBasic,
+    ...modalStyleUtils,
+    ...spacingUtils,
   });
 
 const EditAccessRule = ({
@@ -92,9 +97,10 @@ const EditAccessRule = ({
         modalOpen={modalOpen}
         title={`Edit Access Rule for ${toEdit}`}
         onClose={onClose}
+        titleIcon={<AddAccessRuleIcon />}
       >
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.spacerTop}>
             <SelectWrapper
               id="access"
               name="Access"
@@ -107,15 +113,15 @@ const EditAccessRule = ({
               disabled={false}
             />
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <button
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
               type="button"
               color="primary"
-              className={classes.clearButton}
+              variant="outlined"
               onClick={resetForm}
             >
               Clear
-            </button>
+            </Button>
             <Button
               type="submit"
               variant="contained"

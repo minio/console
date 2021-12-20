@@ -42,6 +42,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { LifecycleConfigIcon } from "../../../../icons";
 
 interface IReplicationModal {
   open: boolean;
@@ -238,6 +239,7 @@ const AddLifecycleModal = ({
         closeModalAndRefresh(false);
       }}
       title="Add Lifecycle Rule"
+      titleIcon={<LifecycleConfigIcon />}
     >
       {loadingTiers && (
         <Grid container className={classes.loadingBox}>

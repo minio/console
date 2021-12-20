@@ -25,6 +25,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import { FormatDrivesIcon } from "../../../icons";
 
 interface IFormatAllDrivesProps {
   closeFormatModalAndRefresh: (
@@ -82,6 +83,7 @@ const FormatDrives = ({
       onClose={() => {
         closeFormatModalAndRefresh(false, []);
       }}
+      titleIcon={<FormatDrivesIcon />}
       confirmationContent={
         <React.Fragment>
           <DialogContentText>

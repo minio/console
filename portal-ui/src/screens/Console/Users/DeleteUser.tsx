@@ -22,6 +22,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ErrorResponseHandler } from "../../../common/types";
+import { ConfirmDeleteIcon } from "../../../icons";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -61,6 +62,7 @@ const DeleteUser = ({
       title={`Delete User`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
+      titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
       onClose={onClose}

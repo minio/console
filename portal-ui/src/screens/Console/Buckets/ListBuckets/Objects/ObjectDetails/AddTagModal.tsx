@@ -33,6 +33,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
+import { AddNewTagIcon } from "../../../../../../icons";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -110,6 +111,7 @@ const AddTagModal = ({
         onClose={() => {
           onCloseAndUpdate(false);
         }}
+        titleIcon={<AddNewTagIcon />}
       >
         <Grid container>
           <div className={classes.spacerBottom}>
