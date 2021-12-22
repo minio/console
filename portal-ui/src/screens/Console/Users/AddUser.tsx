@@ -37,6 +37,7 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import PolicySelectors from "../Policies/PolicySelectors";
 import { TabPanel } from "../../shared/tabs";
+import { CreateUserIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -177,6 +178,7 @@ const AddUser = ({
       }}
       modalOpen={open}
       title={selectedUser !== null ? "Edit User" : "Create User"}
+      titleIcon={<CreateUserIcon />}
     >
       {selectedUser !== null && (
         <div className={classes.floatingEnabled}>

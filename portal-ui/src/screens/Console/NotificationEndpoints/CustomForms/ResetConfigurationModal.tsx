@@ -25,6 +25,7 @@ import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmDeleteIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,6 +83,7 @@ const ResetConfigurationModal = ({
       title={`Restore Defaults`}
       confirmText={"Yes, Reset Configuration"}
       isOpen={resetOpen}
+      titleIcon={<ConfirmDeleteIcon />}
       isLoading={resetLoading}
       onConfirm={resetConfiguration}
       onClose={() => {

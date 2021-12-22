@@ -35,6 +35,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import api from "../../../../common/api";
+import { BucketQuotaIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -122,6 +123,7 @@ const EnableQuota = ({
         closeModalAndRefresh();
       }}
       title="Enable Bucket Quota"
+      titleIcon={<BucketQuotaIcon />}
     >
       <form
         noValidate

@@ -24,6 +24,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import Grid from "@mui/material/Grid";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmDeleteIcon } from "../../../../icons";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
@@ -65,6 +66,7 @@ const DeleteTenant = ({
       title={`Delete Tenant`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
+      titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
       onClose={onClose}

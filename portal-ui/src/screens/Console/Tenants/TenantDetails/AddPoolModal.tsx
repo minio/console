@@ -19,6 +19,7 @@ import { getDefaultAffinity } from "./utils";
 
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { IQuotaElement, IQuotas, Opts } from "../ListTenants/utils";
+import { NewPoolIcon } from "../../../../icons";
 
 interface IAddPoolProps {
   tenant: ITenant;
@@ -115,6 +116,7 @@ const AddPoolModal = ({
       onClose={() => onClosePoolAndReload(false)}
       modalOpen={open}
       title="Add Pool"
+      titleIcon={<NewPoolIcon />}
     >
       <form
         noValidate

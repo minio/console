@@ -30,6 +30,7 @@ import {
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import { EditYamlIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -131,6 +132,7 @@ const TenantYAML = ({
         closeModalAndRefresh(false);
       }}
       title={`YAML`}
+      titleIcon={<EditYamlIcon />}
     >
       {addLoading ||
         (loading && (

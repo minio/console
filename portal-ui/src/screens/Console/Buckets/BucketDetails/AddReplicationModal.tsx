@@ -38,6 +38,7 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
+import { BucketReplicationIcon } from "../../../../icons";
 
 interface IReplicationModal {
   open: boolean;
@@ -170,6 +171,7 @@ const AddReplicationModal = ({
         closeModalAndRefresh();
       }}
       title="Set Bucket Replication"
+      titleIcon={<BucketReplicationIcon />}
     >
       <form
         noValidate

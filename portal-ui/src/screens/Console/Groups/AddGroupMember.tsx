@@ -16,6 +16,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
+import { AddMembersToGroupIcon } from "../../../icons";
 
 type UserPickerModalProps = {
   classes?: any;
@@ -73,7 +74,12 @@ const AddGroupMember = ({
   }
 
   return (
-    <ModalWrapper modalOpen={open} onClose={onClose} title={title}>
+    <ModalWrapper
+      modalOpen={open}
+      onClose={onClose}
+      title={title}
+      titleIcon={<AddMembersToGroupIcon />}
+    >
       <div className={classes.formFieldRow}>
         <PredefinedList label={`Selected Group`} content={selectedGroup} />
       </div>

@@ -30,6 +30,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import AddMembersToGroup from "../../../icons/AddMembersToGroupIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -150,6 +151,7 @@ const ChangeUserGroups = ({
       }}
       modalOpen={open}
       title={"Set Groups"}
+      titleIcon={<AddMembersToGroup />}
     >
       <React.Fragment>
         <form

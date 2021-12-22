@@ -27,6 +27,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import { encodeFileName } from "../../../../../../common/utils";
 import useApi from "../../../../Common/Hooks/useApi";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmDeleteIcon } from "../../../../../../icons";
 
 interface IDeleteTagModal {
   deleteOpen: boolean;
@@ -87,6 +88,7 @@ const DeleteTagModal = ({
       title={`Delete Tag`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
+      titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
       onClose={onClose}

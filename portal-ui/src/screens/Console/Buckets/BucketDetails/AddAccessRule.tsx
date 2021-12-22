@@ -31,6 +31,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { AddAccessRuleIcon } from "../../../../icons";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -91,6 +92,7 @@ const AddAccessRule = ({
       modalOpen={modalOpen}
       title="Add Access Rule"
       onClose={onClose}
+      titleIcon={<AddAccessRuleIcon />}
     >
       <Grid container>
         <Grid item xs={12} className={classes.formFieldRow}>

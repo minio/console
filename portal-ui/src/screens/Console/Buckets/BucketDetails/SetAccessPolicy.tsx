@@ -30,6 +30,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { ChangeAccessPolicyIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -87,6 +88,7 @@ const SetAccessPolicy = ({
       onClose={() => {
         closeModalAndRefresh();
       }}
+      titleIcon={<ChangeAccessPolicyIcon />}
     >
       <form
         noValidate

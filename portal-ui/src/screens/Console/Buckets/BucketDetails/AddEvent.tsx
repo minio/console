@@ -38,6 +38,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
+import { EventSubscriptionIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -160,6 +161,7 @@ const AddEvent = ({
         closeModalAndRefresh();
       }}
       title="Subscribe To Bucket Events"
+      titleIcon={<EventSubscriptionIcon />}
     >
       <form
         noValidate

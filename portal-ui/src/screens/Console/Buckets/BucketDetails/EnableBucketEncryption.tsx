@@ -32,6 +32,7 @@ import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { BucketEncryptionIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -112,6 +113,7 @@ const EnableBucketEncryption = ({
         closeModalAndRefresh();
       }}
       title="Enable Bucket Encryption"
+      titleIcon={<BucketEncryptionIcon />}
     >
       <form
         noValidate

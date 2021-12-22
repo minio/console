@@ -22,6 +22,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import history from "../../../history";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmDeleteIcon } from "../../../icons";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -62,6 +63,7 @@ const DeleteUserString = ({
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
       onClose={onClose}
+      titleIcon={<ConfirmDeleteIcon />}
       confirmationContent={
         <DialogContentText>
           Are you sure you want to delete user <br />

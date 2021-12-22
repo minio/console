@@ -1160,6 +1160,11 @@ export const deleteDialogStyles = {
   titleText: {
     fontSize: "1rem",
     fontWeight: 600,
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      marginRight: 10,
+    },
   },
   closeContainer: {
     "& .MuiIconButton-root": {

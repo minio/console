@@ -31,6 +31,7 @@ import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import { AddMembersToGroupIcon } from "../../../icons";
 
 interface IAddToGroup {
   open: boolean;
@@ -117,6 +118,7 @@ const BulkAddToGroup = ({
           ? "The selected users were added to the following groups."
           : "Add Users to Group"
       }
+      titleIcon={<AddMembersToGroupIcon />}
     >
       {accepted ? (
         <React.Fragment>

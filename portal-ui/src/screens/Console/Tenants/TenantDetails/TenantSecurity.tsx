@@ -44,6 +44,7 @@ import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setTenantDetailsLoad } from "../actions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmModalIcon } from "../../../../icons";
 
 interface ITenantSecurity {
   classes: any;
@@ -307,6 +308,7 @@ const TenantSecurity = ({
         title={"Save and Restart"}
         confirmText={"Restart"}
         cancelText="Cancel"
+        titleIcon={<ConfirmModalIcon />}
         isLoading={isSending}
         onClose={() => setDialogOpen(false)}
         isOpen={dialogOpen}

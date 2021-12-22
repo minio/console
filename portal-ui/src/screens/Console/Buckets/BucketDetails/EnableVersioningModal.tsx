@@ -21,6 +21,7 @@ import api from "../../../../common/api";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ConfirmModalIcon } from "../../../../icons";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
@@ -65,6 +66,7 @@ const EnableVersioningModal = ({
       confirmText={versioningCurrentState ? "Disable" : "Enable"}
       isOpen={modalOpen}
       isLoading={versioningLoading}
+      titleIcon={<ConfirmModalIcon />}
       onConfirm={enableVersioning}
       confirmButtonProps={{
         color: "primary",

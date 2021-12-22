@@ -119,3 +119,26 @@ export { default as WarnIcon } from "./WarnIcon";
 export { default as WarpIcon } from "./WarpIcon";
 export { default as WatchIcon } from "./WatchIcon";
 export { default as LoginMinIOLogo } from "./LoginMinIOLogo";
+
+/*Modal Title Icons **/
+export { default as AddAccessRuleIcon } from "./AddAccessRuleIcon";
+export { default as AddMembersToGroupIcon } from "./AddMembersToGroupIcon";
+export { default as AddNewTagIcon } from "./AddNewTagIcon";
+export { default as ChangeAccessPolicyIcon } from "./ChangeAccessPolicyIcon";
+export { default as ChangePasswordIcon } from "./ChangePasswordIcon";
+export { default as CreateGroupIcon } from "./CreateGroupIcon";
+export { default as CreateNewPathIcon } from "./CreateNewPathIcon";
+export { default as CreateUserIcon } from "./CreateUserIcon";
+export { default as DriveFormatErrorsIcon } from "./DriveFormatErrorsIcon";
+export { default as EditYamlIcon } from "./EditYamlIcon";
+export { default as BucketEncryptionIcon } from "./BucketEncryptionIcon";
+export { default as BucketQuotaIcon } from "./BucketQuotaIcon";
+export { default as NewPoolIcon } from "./NewPoolIcon";
+export { default as FormatDrivesIcon } from "./FormatDrivesIcon";
+export { default as LifecycleConfigIcon } from "./LifecycleConfigIcon";
+export { default as ServiceAccountCredentialsIcon } from "./ServiceAccountCredentialsIcon";
+export { default as ObjectPreviewIcon } from "./ObjectPreviewIcon";
+export { default as BucketReplicationIcon } from "./BucketReplicationIcon";
+export { default as EventSubscriptionIcon } from "./EventSubscriptionIcon";
+export { default as ConfirmModalIcon } from "./ConfirmModalIcon";
+export { default as ConfirmDeleteIcon } from "./ConfirmDeleteIcon";

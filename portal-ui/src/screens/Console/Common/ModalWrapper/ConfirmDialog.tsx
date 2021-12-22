@@ -33,6 +33,7 @@ type ConfirmDialogProps = {
   confirmText?: string;
   confirmButtonProps?: Partial<ButtonProps>;
   cancelButtonProps?: Partial<ButtonProps>;
+  titleIcon?: React.ReactNode;
 };
 
 const ConfirmDialog = ({
@@ -48,6 +49,7 @@ const ConfirmDialog = ({
   confirmText = "Confirm",
   confirmButtonProps = {},
   cancelButtonProps = {},
+  titleIcon = null,
 }: ConfirmDialogProps) => {
   return (
     <Dialog
@@ -65,7 +67,9 @@ const ConfirmDialog = ({
       }}
     >
       <DialogTitle className={classes.title}>
-        <div className={classes.titleText}>{title}</div>
+        <div className={classes.titleText}>
+          {titleIcon} {title}
+        </div>
         <div className={classes.closeContainer}>
           <IconButton
             aria-label="close"

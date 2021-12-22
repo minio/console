@@ -34,6 +34,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import { CreateGroupIcon } from "../../../icons";
 
 interface IGroupProps {
   open: boolean;
@@ -179,6 +180,7 @@ const AddGroup = ({
       modalOpen={open}
       onClose={closeModalAndRefresh}
       title={selectedGroup !== null ? `Edit Group` : "Create Group"}
+      titleIcon={<CreateGroupIcon />}
     >
       {selectedGroup !== null && (
         <div className={classes.floatingEnabled}>

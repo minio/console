@@ -21,6 +21,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
+import { ConfirmDeleteIcon } from "../../../icons";
 
 interface IDeleteGroup {
   selectedGroup: string;
@@ -53,6 +54,7 @@ const DeleteGroup = ({
       title={`Delete Group`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
+      titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
       onConfirm={onDeleteGroup}
       onClose={onClose}
