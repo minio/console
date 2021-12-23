@@ -2008,16 +2008,95 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-
-  /subscription/info:
+  /subnet/registration-token:
     get:
-      summary: Subscription info
-      operationId: SubscriptionInfo
+      summary: Subnet registraton token
+      operationId: SubnetRegToken
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/SubnetRegTokenResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /subnet/info:
+    get:
+      summary: Subnet info
+      operationId: SubnetInfo
       responses:
         200:
           description: A successful response.
           schema:
             $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /subnet/register:
+    post:
+      summary: Register cluster with Subnet
+      operationId: SubnetRegister
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subnetRegisterRequest"
+      responses:
+        200:
+          description: A successful response.
+#          schema:
+#            $ref: "#/definitions/subnetRegisterResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /subnet/login:
+    post:
+      summary: Login to subnet
+      operationId: SubnetLogin
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subnetLoginRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/subnetLoginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /subnet/login/mfa:
+    post:
+      summary: Login to subnet using mfa
+      operationId: SubnetLoginMFA
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subnetLoginMFARequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/subnetLoginResponse"
         default:
           description: Generic error response.
           schema:
@@ -3923,3 +4002,74 @@ definitions:
       objectMetadata:
         type: object
         additionalProperties: true
+
+  subnetLoginResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+      organisations:
+        type: array
+        items:
+          $ref: "#/definitions/subnetOrganisation"
+      mfa_token:
+        type: string
+      registered:
+        type: boolean
+
+  subnetLoginRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      apiKey:
+        type: string
+
+  subnetLoginMFARequest:
+    type: object
+    required:
+      - username
+      - otp
+      - mfa_token
+    properties:
+      username:
+        type: string
+      otp:
+        type: string
+      mfa_token:
+        type: string
+
+  subnetRegisterRequest:
+    type: object
+    required:
+      - token
+      - account_id
+    properties:
+      token:
+        type: string
+      account_id:
+        type: string
+
+  SubnetRegTokenResponse:
+    type: object
+    properties:
+      regToken:
+        type: string
+
+  subnetOrganisation:
+    type: object
+    properties:
+      userId:
+        type: integer
+      accountId:
+        type: integer
+      subscriptionStatus:
+        type: string
+      isAccountOwner:
+        type: boolean
+      company:
+        type: string
+      shortName:
+        type: string

@@ -558,18 +558,6 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 	info.IdpOidcEnabled = oidcEnabled
 	info.MinioTLS = minTenant.TLS()
 
-	// obtain current subnet license for tenant (if exists)
-	if license, ok := tenantConfiguration[MinIOSubnetLicense]; ok {
-		client := &cluster.HTTPClient{
-			Client: restapi.GetConsoleHTTPClient(),
-		}
-		licenseInfo, _, _ := subscriptionValidate(client, string(license), "", "")
-		// if licenseInfo is present attach it to the tenantInfo response
-		if licenseInfo != nil {
-			info.SubnetLicense = licenseInfo
-		}
-	}
-
 	// attach status information
 	info.Status = &models.TenantStatus{
 		HealthStatus:  string(minTenant.Status.HealthStatus),
@@ -1239,13 +1227,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			}
 			minInst.Spec.ExternalCaCertSecret = certificateSecrets
 		}
-	}
-
-	// If Subnet License is present in k8s secrets, copy that to the MINIO_SUBNET_LICENSE env variable
-	// of the console tenant
-	license, _ := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
-	if license != "" {
-		tenantConfigurationENV[MinIOSubnetLicense] = license
 	}
 
 	// add annotations

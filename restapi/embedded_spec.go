@@ -3127,18 +3127,137 @@ func init() {
         }
       }
     },
-    "/subscription/info": {
+    "/subnet/info": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Subscription info",
-        "operationId": "SubscriptionInfo",
+        "summary": "Subnet info",
+        "operationId": "SubnetInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet",
+        "operationId": "SubnetLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login/mfa": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet using mfa",
+        "operationId": "SubnetLoginMFA",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/register": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Register cluster with Subnet",
+        "operationId": "SubnetRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/registration-token": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Subnet registraton token",
+        "operationId": "SubnetRegToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SubnetRegTokenResponse"
             }
           },
           "default": {
@@ -3490,6 +3609,14 @@ func init() {
     }
   },
   "definitions": {
+    "SubnetRegTokenResponse": {
+      "type": "object",
+      "properties": {
+        "regToken": {
+          "type": "string"
+        }
+      }
+    },
     "accessRule": {
       "type": "object",
       "properties": {
@@ -5411,6 +5538,97 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
+        }
+      }
+    },
+    "subnetLoginMFARequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "otp",
+        "mfa_token"
+      ],
+      "properties": {
+        "mfa_token": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginRequest": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "mfa_token": {
+          "type": "string"
+        },
+        "organisations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subnetOrganisation"
+          }
+        },
+        "registered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "subnetOrganisation": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "integer"
+        },
+        "company": {
+          "type": "string"
+        },
+        "isAccountOwner": {
+          "type": "boolean"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "subscriptionStatus": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "subnetRegisterRequest": {
+      "type": "object",
+      "required": [
+        "token",
+        "account_id"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -8843,18 +9061,137 @@ func init() {
         }
       }
     },
-    "/subscription/info": {
+    "/subnet/info": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Subscription info",
-        "operationId": "SubscriptionInfo",
+        "summary": "Subnet info",
+        "operationId": "SubnetInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet",
+        "operationId": "SubnetLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login/mfa": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet using mfa",
+        "operationId": "SubnetLoginMFA",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/register": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Register cluster with Subnet",
+        "operationId": "SubnetRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/registration-token": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Subnet registraton token",
+        "operationId": "SubnetRegToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SubnetRegTokenResponse"
             }
           },
           "default": {
@@ -9269,6 +9606,14 @@ func init() {
         },
         "write": {
           "type": "boolean"
+        }
+      }
+    },
+    "SubnetRegTokenResponse": {
+      "type": "object",
+      "properties": {
+        "regToken": {
+          "type": "string"
         }
       }
     },
@@ -11247,6 +11592,97 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
+        }
+      }
+    },
+    "subnetLoginMFARequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "otp",
+        "mfa_token"
+      ],
+      "properties": {
+        "mfa_token": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginRequest": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "mfa_token": {
+          "type": "string"
+        },
+        "organisations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subnetOrganisation"
+          }
+        },
+        "registered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "subnetOrganisation": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "integer"
+        },
+        "company": {
+          "type": "string"
+        },
+        "isAccountOwner": {
+          "type": "boolean"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "subscriptionStatus": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "subnetRegisterRequest": {
+      "type": "object",
+      "required": [
+        "token",
+        "account_id"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },
