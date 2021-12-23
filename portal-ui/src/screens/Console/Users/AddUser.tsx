@@ -212,6 +212,7 @@ const AddUser = ({
                   name="accesskey-input"
                   label="Access Key"
                   value={accessKey}
+                  autoFocus={true}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setAccessKey(e.target.value);
                   }}

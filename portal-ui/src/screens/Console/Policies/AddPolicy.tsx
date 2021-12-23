@@ -137,6 +137,7 @@ const AddPolicy = ({
                 name="policy-name"
                 label="Policy Name"
                 placeholder="Enter Policy Name"
+                autoFocus={true}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setPolicyName(e.target.value);
                 }}

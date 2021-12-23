@@ -290,6 +290,7 @@ const AddBucket = ({
                   <InputBoxWrapper
                     id="bucket-name"
                     name="bucket-name"
+                    autoFocus={true}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       addBucketName(event.target.value);
                     }}

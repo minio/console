@@ -59,6 +59,7 @@ interface InputBoxProps {
   extraInputProps?: StandardInputProps["inputProps"];
   noLabelMinWidth?: boolean;
   pattern?: string;
+  autoFocus?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -123,6 +124,7 @@ const InputBoxWrapper = ({
   overlayAction,
   noLabelMinWidth = false,
   pattern = "",
+  autoFocus = false,
   classes,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
@@ -176,6 +178,7 @@ const InputBoxWrapper = ({
             name={name}
             fullWidth
             value={value}
+            autoFocus={autoFocus}
             disabled={disabled}
             onChange={onChange}
             type={type}

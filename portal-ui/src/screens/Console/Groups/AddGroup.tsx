@@ -206,6 +206,7 @@ const AddGroup = ({
                   id="group-name"
                   name="group-name"
                   label="Group Name"
+                  autoFocus={true}
                   value={groupName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setGroupName(e.target.value);
