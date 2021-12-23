@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// SubscriptionInfoOKCode is the HTTP code returned for type SubscriptionInfoOK
-const SubscriptionInfoOKCode int = 200
+// SubnetLoginOKCode is the HTTP code returned for type SubnetLoginOK
+const SubnetLoginOKCode int = 200
 
-/*SubscriptionInfoOK A successful response.
+/*SubnetLoginOK A successful response.
 
-swagger:response subscriptionInfoOK
+swagger:response subnetLoginOK
 */
-type SubscriptionInfoOK struct {
+type SubnetLoginOK struct {
 
 	/*
 	  In: Body
 	*/
-	Payload *models.License `json:"body,omitempty"`
+	Payload *models.SubnetLoginResponse `json:"body,omitempty"`
 }
 
-// NewSubscriptionInfoOK creates SubscriptionInfoOK with default headers values
-func NewSubscriptionInfoOK() *SubscriptionInfoOK {
+// NewSubnetLoginOK creates SubnetLoginOK with default headers values
+func NewSubnetLoginOK() *SubnetLoginOK {
 
-	return &SubscriptionInfoOK{}
+	return &SubnetLoginOK{}
 }
 
-// WithPayload adds the payload to the subscription info o k response
-func (o *SubscriptionInfoOK) WithPayload(payload *models.License) *SubscriptionInfoOK {
+// WithPayload adds the payload to the subnet login o k response
+func (o *SubnetLoginOK) WithPayload(payload *models.SubnetLoginResponse) *SubnetLoginOK {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the subscription info o k response
-func (o *SubscriptionInfoOK) SetPayload(payload *models.License) {
+// SetPayload sets the payload to the subnet login o k response
+func (o *SubnetLoginOK) SetPayload(payload *models.SubnetLoginResponse) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *SubscriptionInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *SubnetLoginOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
 	if o.Payload != nil {
@@ -74,11 +74,11 @@ func (o *SubscriptionInfoOK) WriteResponse(rw http.ResponseWriter, producer runt
 	}
 }
 
-/*SubscriptionInfoDefault Generic error response.
+/*SubnetLoginDefault Generic error response.
 
-swagger:response subscriptionInfoDefault
+swagger:response subnetLoginDefault
 */
-type SubscriptionInfoDefault struct {
+type SubnetLoginDefault struct {
 	_statusCode int
 
 	/*
@@ -87,41 +87,41 @@ type SubscriptionInfoDefault struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewSubscriptionInfoDefault creates SubscriptionInfoDefault with default headers values
-func NewSubscriptionInfoDefault(code int) *SubscriptionInfoDefault {
+// NewSubnetLoginDefault creates SubnetLoginDefault with default headers values
+func NewSubnetLoginDefault(code int) *SubnetLoginDefault {
 	if code <= 0 {
 		code = 500
 	}
 
-	return &SubscriptionInfoDefault{
+	return &SubnetLoginDefault{
 		_statusCode: code,
 	}
 }
 
-// WithStatusCode adds the status to the subscription info default response
-func (o *SubscriptionInfoDefault) WithStatusCode(code int) *SubscriptionInfoDefault {
+// WithStatusCode adds the status to the subnet login default response
+func (o *SubnetLoginDefault) WithStatusCode(code int) *SubnetLoginDefault {
 	o._statusCode = code
 	return o
 }
 
-// SetStatusCode sets the status to the subscription info default response
-func (o *SubscriptionInfoDefault) SetStatusCode(code int) {
+// SetStatusCode sets the status to the subnet login default response
+func (o *SubnetLoginDefault) SetStatusCode(code int) {
 	o._statusCode = code
 }
 
-// WithPayload adds the payload to the subscription info default response
-func (o *SubscriptionInfoDefault) WithPayload(payload *models.Error) *SubscriptionInfoDefault {
+// WithPayload adds the payload to the subnet login default response
+func (o *SubnetLoginDefault) WithPayload(payload *models.Error) *SubnetLoginDefault {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the subscription info default response
-func (o *SubscriptionInfoDefault) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the subnet login default response
+func (o *SubnetLoginDefault) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *SubscriptionInfoDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *SubnetLoginDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

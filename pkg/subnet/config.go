@@ -49,3 +49,15 @@ func GetLicenseInfoFromJWT(license string, publicKeys []string) (*licverifier.Li
 	}
 	return nil, errors.New("invalid license key")
 }
+
+// MfaReq - JSON payload of the SUBNET mfa api
+type MfaReq struct {
+	Username string `json:"username"`
+	OTP      string `json:"otp"`
+	Token    string `json:"token"`
+}
+
+type LoginResp struct {
+	AccessToken string
+	MfaToken    string
+}

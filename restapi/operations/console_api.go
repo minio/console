@@ -350,8 +350,20 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
-		AdminAPISubscriptionInfoHandler: admin_api.SubscriptionInfoHandlerFunc(func(params admin_api.SubscriptionInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubscriptionInfo has not yet been implemented")
+		AdminAPISubnetInfoHandler: admin_api.SubnetInfoHandlerFunc(func(params admin_api.SubnetInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetInfo has not yet been implemented")
+		}),
+		AdminAPISubnetLoginHandler: admin_api.SubnetLoginHandlerFunc(func(params admin_api.SubnetLoginParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetLogin has not yet been implemented")
+		}),
+		AdminAPISubnetLoginMFAHandler: admin_api.SubnetLoginMFAHandlerFunc(func(params admin_api.SubnetLoginMFAParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetLoginMFA has not yet been implemented")
+		}),
+		AdminAPISubnetRegTokenHandler: admin_api.SubnetRegTokenHandlerFunc(func(params admin_api.SubnetRegTokenParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetRegToken has not yet been implemented")
+		}),
+		AdminAPISubnetRegisterHandler: admin_api.SubnetRegisterHandlerFunc(func(params admin_api.SubnetRegisterParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetRegister has not yet been implemented")
 		}),
 		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
@@ -616,8 +628,16 @@ type ConsoleAPI struct {
 	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
-	// AdminAPISubscriptionInfoHandler sets the operation handler for the subscription info operation
-	AdminAPISubscriptionInfoHandler admin_api.SubscriptionInfoHandler
+	// AdminAPISubnetInfoHandler sets the operation handler for the subnet info operation
+	AdminAPISubnetInfoHandler admin_api.SubnetInfoHandler
+	// AdminAPISubnetLoginHandler sets the operation handler for the subnet login operation
+	AdminAPISubnetLoginHandler admin_api.SubnetLoginHandler
+	// AdminAPISubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
+	AdminAPISubnetLoginMFAHandler admin_api.SubnetLoginMFAHandler
+	// AdminAPISubnetRegTokenHandler sets the operation handler for the subnet reg token operation
+	AdminAPISubnetRegTokenHandler admin_api.SubnetRegTokenHandler
+	// AdminAPISubnetRegisterHandler sets the operation handler for the subnet register operation
+	AdminAPISubnetRegisterHandler admin_api.SubnetRegisterHandler
 	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
 	AdminAPITiersListHandler admin_api.TiersListHandler
 	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
@@ -1002,8 +1022,20 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
 	}
-	if o.AdminAPISubscriptionInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubscriptionInfoHandler")
+	if o.AdminAPISubnetInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetInfoHandler")
+	}
+	if o.AdminAPISubnetLoginHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetLoginHandler")
+	}
+	if o.AdminAPISubnetLoginMFAHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetLoginMFAHandler")
+	}
+	if o.AdminAPISubnetRegTokenHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetRegTokenHandler")
+	}
+	if o.AdminAPISubnetRegisterHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetRegisterHandler")
 	}
 	if o.AdminAPITiersListHandler == nil {
 		unregistered = append(unregistered, "admin_api.TiersListHandler")
@@ -1508,7 +1540,23 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/subscription/info"] = admin_api.NewSubscriptionInfo(o.context, o.AdminAPISubscriptionInfoHandler)
+	o.handlers["GET"]["/subnet/info"] = admin_api.NewSubnetInfo(o.context, o.AdminAPISubnetInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/login"] = admin_api.NewSubnetLogin(o.context, o.AdminAPISubnetLoginHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/login/mfa"] = admin_api.NewSubnetLoginMFA(o.context, o.AdminAPISubnetLoginMFAHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subnet/registration-token"] = admin_api.NewSubnetRegToken(o.context, o.AdminAPISubnetRegTokenHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/register"] = admin_api.NewSubnetRegister(o.context, o.AdminAPISubnetRegisterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

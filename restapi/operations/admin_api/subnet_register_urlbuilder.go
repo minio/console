@@ -28,15 +28,15 @@ import (
 	golangswaggerpaths "path"
 )
 
-// SubscriptionInfoURL generates an URL for the subscription info operation
-type SubscriptionInfoURL struct {
+// SubnetRegisterURL generates an URL for the subnet register operation
+type SubnetRegisterURL struct {
 	_basePath string
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *SubscriptionInfoURL) WithBasePath(bp string) *SubscriptionInfoURL {
+func (o *SubnetRegisterURL) WithBasePath(bp string) *SubnetRegisterURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -44,15 +44,15 @@ func (o *SubscriptionInfoURL) WithBasePath(bp string) *SubscriptionInfoURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *SubscriptionInfoURL) SetBasePath(bp string) {
+func (o *SubnetRegisterURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *SubscriptionInfoURL) Build() (*url.URL, error) {
+func (o *SubnetRegisterURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/subscription/info"
+	var _path = "/subnet/register"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -64,7 +64,7 @@ func (o *SubscriptionInfoURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *SubscriptionInfoURL) Must(u *url.URL, err error) *url.URL {
+func (o *SubnetRegisterURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -75,17 +75,17 @@ func (o *SubscriptionInfoURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *SubscriptionInfoURL) String() string {
+func (o *SubnetRegisterURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *SubscriptionInfoURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *SubnetRegisterURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on SubscriptionInfoURL")
+		return nil, errors.New("scheme is required for a full url on SubnetRegisterURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on SubscriptionInfoURL")
+		return nil, errors.New("host is required for a full url on SubnetRegisterURL")
 	}
 
 	base, err := o.Build()
@@ -99,6 +99,6 @@ func (o *SubscriptionInfoURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *SubscriptionInfoURL) StringFull(scheme, host string) string {
+func (o *SubnetRegisterURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

@@ -34,6 +34,7 @@ import {
   tooltipHelper,
 } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
+import clsx from "clsx";
 
 interface InputBoxProps {
   label: string;
@@ -60,6 +61,7 @@ interface InputBoxProps {
   noLabelMinWidth?: boolean;
   pattern?: string;
   autoFocus?: boolean;
+  className?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -130,6 +132,7 @@ const InputBoxWrapper = ({
   pattern = "",
   autoFocus = false,
   classes,
+  className = "",
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
 
@@ -149,9 +152,10 @@ const InputBoxWrapper = ({
     <React.Fragment>
       <Grid
         container
-        className={` ${
+        className={clsx(
+          className !== "" ? className : "",
           error !== "" ? classes.errorInField : classes.inputBoxContainer
-        }`}
+        )}
       >
         {label !== "" && (
           <InputLabel

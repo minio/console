@@ -26,7 +26,7 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ITenant } from "../ListTenants/types";
-import { LicenseInfo } from "../../License/types";
+import { SubnetInfo } from "../../License/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
@@ -56,7 +56,7 @@ const TenantLicense = ({
   loadingTenant,
   setTenantDetailsLoad,
 }: ITenantLicense) => {
-  const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
+  const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
   const [loadingActivateProduct, setLoadingActivateProduct] =
     useState<boolean>(false);
@@ -87,7 +87,7 @@ const TenantLicense = ({
     if (loadingLicenseInfo) {
       api
         .invoke("GET", `/api/v1/subscription/info`)
-        .then((res: LicenseInfo) => {
+        .then((res: SubnetInfo) => {
           setLicenseInfo(res);
           setLoadingLicenseInfo(false);
         })
