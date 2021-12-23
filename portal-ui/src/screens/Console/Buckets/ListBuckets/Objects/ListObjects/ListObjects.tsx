@@ -29,7 +29,9 @@ import {
   RewindObjectList,
 } from "./types";
 import api from "../../../../../../common/api";
-import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
+import TableWrapper, {
+  ItemActions,
+} from "../../../../Common/TableWrapper/TableWrapper";
 import {
   decodeFileName,
   encodeFileName,
@@ -763,21 +765,29 @@ const ListObjects = ({
     setSelectedPreview(null);
   };
 
-  const tableActions = [
-    { type: "view", onClick: openPath, sendOnlyId: true },
+  const tableActions: ItemActions[] = [
+    {
+      type: "view",
+      label: "View",
+      onClick: openPath,
+      sendOnlyId: true,
+    },
     {
       type: "preview",
+      label: "Preview",
       onClick: openPreview,
       disableButtonFunction: (item: string) =>
         extensionPreview(item) === "none",
     },
     {
       type: "share",
+      label: "Share",
       onClick: openShare,
       disableButtonFunction: (item: string) => item.endsWith("/"),
     },
     {
       type: "download",
+      label: "Download",
       onClick: downloadObject,
       showLoaderFunction: (item: string) =>
         downloadingFiles.includes(`${match.params["bucket"]}/${item}`),
@@ -798,6 +808,7 @@ const ListObjects = ({
   if (displayDeleteObject) {
     tableActions.push({
       type: "delete",
+      label: "Delete",
       onClick: confirmDeleteObject,
       disableButtonFunction: () => {
         return rewindEnabled;
