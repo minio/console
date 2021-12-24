@@ -463,11 +463,7 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 	if err != nil {
 		return err
 	}
-	err = client.setBucketPolicyWithContext(ctx, bucketName, string(policyJSON))
-	if err != nil {
-		return err
-	}
-	return nil
+	return client.setBucketPolicyWithContext(ctx, bucketName, string(policyJSON))
 }
 
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
@@ -556,17 +552,20 @@ func getBucketInfo(ctx context.Context, client MinioClient, bucketName string) (
 		LogError("error getting bucket policy: %v", err)
 	}
 
-	var policyAccess policy.BucketPolicy
 	if policyStr == "" {
-		policyAccess = policy.BucketPolicyNone
+		bucketAccess = models.BucketAccessPRIVATE
 	} else {
 		var p policy.BucketAccessPolicy
 		if err = json.Unmarshal([]byte(policyStr), &p); err != nil {
 			return nil, err
 		}
-		policyAccess = policy.GetPolicy(p.Statements, bucketName, "")
+		policyAccess := policy.GetPolicy(p.Statements, bucketName, "")
+		if len(p.Statements) > 0 && policyAccess == policy.BucketPolicyNone {
+			bucketAccess = models.BucketAccessCUSTOM
+		} else {
+			bucketAccess = policyAccess2consoleAccess(policyAccess)
+		}
 	}
-	bucketAccess = policyAccess2consoleAccess(policyAccess)
 	bucketTags, err := client.GetBucketTagging(ctx, bucketName)
 	if err != nil {
 		// we can tolerate this error
