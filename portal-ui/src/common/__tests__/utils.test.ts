@@ -37,6 +37,7 @@ test("From value and unit to a number of bytes for kubernetes", () => {
   expect(getBytes("1", "Ki", true)).toBe("1024");
   expect(getBytes("1", "Mi", true)).toBe("1048576");
   expect(getBytes("1", "Gi", true)).toBe("1073741824");
+  expect(getBytes("7500", "Gi", true)).toBe("8053063680000");
 });
 
 test("Determine the amount of memory to use", () => {

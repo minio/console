@@ -35,6 +35,7 @@ import { IResourcesSize } from "../../ListTenants/types";
 import { IErasureCodeCalc } from "../../../../../common/types";
 
 import { Divider } from "@mui/material";
+import { IntegrationConfiguration } from "./TenantResources/utils";
 
 interface ISizePreviewProps {
   classes: any;
@@ -56,6 +57,7 @@ interface ISizePreviewProps {
   limitSize: any;
   selectedStorageClass: string;
   cpuToUse: string;
+  integrationSelection: IntegrationConfiguration;
 }
 
 const styles = (theme: Theme) =>
@@ -92,6 +94,7 @@ const SizePreview = ({
   limitSize,
   selectedStorageClass,
   cpuToUse,
+  integrationSelection,
 }: ISizePreviewProps) => {
   const usableInformation = ecParityCalc.storageFactors.find(
     (element) => element.erasureCode === ecParity
@@ -109,34 +112,47 @@ const SizePreview = ({
               {parseInt(nodes) > 0 ? nodes : "-"}
             </TableCell>
           </TableRow>
-          <TableRow>
-            <TableCell scope="row">Drives per Server</TableCell>
-            <TableCell align="right">
-              {distribution ? distribution.disks : "-"}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell scope="row">Drive Capacity</TableCell>
-            <TableCell align="right">
-              {distribution ? niceBytes(distribution.pvSize) : "-"}
-            </TableCell>
-          </TableRow>
+          {integrationSelection.typeSelection === "" &&
+            integrationSelection.storageClass === "" && (
+              <Fragment>
+                <TableRow>
+                  <TableCell scope="row">Drives per Server</TableCell>
+                  <TableCell align="right">
+                    {distribution ? distribution.disks : "-"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell scope="row">Drive Capacity</TableCell>
+                  <TableCell align="right">
+                    {distribution ? niceBytes(distribution.pvSize) : "-"}
+                  </TableCell>
+                </TableRow>
+              </Fragment>
+            )}
+
           <TableRow>
             <TableCell scope="row">Total Volumes</TableCell>
             <TableCell align="right">
               {distribution ? distribution.persistentVolumes : "-"}
             </TableCell>
           </TableRow>
-          {!advancedMode && (
-            <TableRow>
-              <TableCell scope="row">Memory per Node</TableCell>
-              <TableCell align="right">{memoryNode} Gi</TableCell>
-            </TableRow>
-          )}
-          <TableRow>
-            <TableCell scope="row">CPU Selection</TableCell>
-            <TableCell align="right">{cpuToUse}</TableCell>
-          </TableRow>
+          {integrationSelection.typeSelection === "" &&
+            integrationSelection.storageClass === "" && (
+              <Fragment>
+                <TableRow>
+                  <TableCell scope="row">Memory per Node</TableCell>
+                  <TableCell align="right">{memoryNode} Gi</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={{ borderBottom: 0 }} scope="row">
+                    CPU Selection
+                  </TableCell>
+                  <TableCell style={{ borderBottom: 0 }} align="right">
+                    {cpuToUse}
+                  </TableCell>
+                </TableRow>
+              </Fragment>
+            )}
         </TableBody>
       </Table>
       {ecParityCalc.error === 0 && usableInformation && (
@@ -184,6 +200,54 @@ const SizePreview = ({
           </Table>
         </Fragment>
       )}
+      {integrationSelection.typeSelection !== "" &&
+        integrationSelection.storageClass !== "" && (
+          <Fragment>
+            <h4>Single Instance Configuration</h4>
+            <Divider />
+            <Table
+              className={classes.table}
+              aria-label="simple table"
+              size={"small"}
+            >
+              <TableBody>
+                <TableRow>
+                  <TableCell scope="row">CPU</TableCell>
+                  <TableCell align="right">
+                    {integrationSelection.CPU !== 0
+                      ? integrationSelection.CPU
+                      : "-"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell scope="row">Memory</TableCell>
+                  <TableCell align="right">
+                    {integrationSelection.memory !== 0
+                      ? `${integrationSelection.memory} Gi`
+                      : "-"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell scope="row">Drives per Server</TableCell>
+                  <TableCell align="right">
+                    {integrationSelection.drivesPerServer !== 0
+                      ? `${integrationSelection.drivesPerServer}`
+                      : "-"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={{ borderBottom: 0 }} scope="row">
+                    Drive Size
+                  </TableCell>
+                  <TableCell style={{ borderBottom: 0 }} align="right">
+                    {integrationSelection.driveSize.driveSize}
+                    {integrationSelection.driveSize.sizeUnit}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Fragment>
+        )}
     </div>
   );
 };
@@ -207,6 +271,8 @@ const mapState = (state: AppState) => ({
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
   cpuToUse: state.tenants.createTenant.fields.tenantSize.cpuToUse,
+  integrationSelection:
+    state.tenants.createTenant.fields.tenantSize.integrationSelection,
 });
 
 const connector = connect(mapState, {

@@ -1257,9 +1257,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.LogSearchConfiguration.StorageClass != "" {
 			logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
 		}
-		if tenantReq.LogSearchConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
-			logSearchStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
-		}
 		if tenantReq.LogSearchConfiguration.Image != "" {
 			logSearchImage = tenantReq.LogSearchConfiguration.Image
 		}
@@ -1346,12 +1343,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.PrometheusConfiguration.StorageClass != "" {
 			prometheusStorageClass = tenantReq.PrometheusConfiguration.StorageClass
 		}
-
-		// Default class name for prometheus
-		if tenantReq.PrometheusConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
-			prometheusStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
-		}
-
 		if tenantReq.PrometheusConfiguration.Image != "" {
 			prometheusImage = tenantReq.PrometheusConfiguration.Image
 		}
@@ -1820,10 +1811,14 @@ func parseTenantPoolRequest(poolParams *models.Pool) (*miniov2.Pool, error) {
 	resourcesLimits := make(corev1.ResourceList)
 	if poolParams.Resources != nil {
 		for key, val := range poolParams.Resources.Requests {
-			resourcesRequests[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
+			if val != 0 {
+				resourcesRequests[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
+			}
 		}
 		for key, val := range poolParams.Resources.Limits {
-			resourcesLimits[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
+			if val != 0 {
+				resourcesLimits[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
+			}
 		}
 	}
 

@@ -17,6 +17,7 @@
 import { IErasureCodeCalc } from "../../../common/types";
 import { ITenant, IResourcesSize } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
+import { IntegrationConfiguration } from "./AddTenant/Steps/TenantResources/utils";
 
 export const ADD_TENANT_SET_CURRENT_PAGE = "ADD_TENANT/SET_CURRENT_PAGE";
 export const ADD_TENANT_SET_ADVANCED_MODE = "ADD_TENANT/SET_ADVANCED_MODE";
@@ -119,6 +120,7 @@ export interface INameTenantFields {
   tenantName: string;
   namespace: string;
   selectedStorageClass: string;
+  selectedStorageType: string;
 }
 
 export interface ISecurityContext {
@@ -246,6 +248,7 @@ export interface ITenantSizeFields {
   maxAllocatableResources: AllocableResourcesResponse;
   maxCPUsUse: string;
   maxMemorySize: string;
+  integrationSelection: IntegrationConfiguration;
 }
 
 export interface ITenantAffinity {

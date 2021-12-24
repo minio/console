@@ -32,32 +32,33 @@ import {
   formFieldStyles,
   modalBasic,
   wizardCommon,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../../actions";
+} from "../../../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
 import {
   isPageValid,
   setLimitSize,
   setStorageClassesList,
   updateAddField,
-} from "../../actions";
+} from "../../../actions";
 import {
   getLimitSizes,
   IQuotaElement,
   IQuotas,
   Opts,
-} from "../../ListTenants/utils";
-import { AppState } from "../../../../../store";
-import { commonFormValidation } from "../../../../../utils/validationFunctions";
-import { clearValidationError } from "../../utils";
-import { ErrorResponseHandler } from "../../../../../common/types";
-import api from "../../../../../common/api";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import AddIcon from "../../../../../icons/AddIcon";
-import AddNamespaceModal from "./helpers/AddNamespaceModal";
-import SizePreview from "./SizePreview";
+} from "../../../ListTenants/utils";
+import { AppState } from "../../../../../../store";
+import { commonFormValidation } from "../../../../../../utils/validationFunctions";
+import { clearValidationError } from "../../../utils";
+import { ErrorResponseHandler } from "../../../../../../common/types";
+import api from "../../../../../../common/api";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import AddIcon from "../../../../../../icons/AddIcon";
+import AddNamespaceModal from "../helpers/AddNamespaceModal";
+import SizePreview from "../SizePreview";
 import TenantSize from "./TenantSize";
 import { Paper, SelectChangeEvent } from "@mui/material";
+import { IMkEnvs, mkPanelConfigurations } from "./utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,7 +74,7 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-interface INameTenantScreen {
+interface INameTenantMainScreen {
   classes: any;
   storageClasses: Opts[];
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
@@ -84,20 +85,24 @@ interface INameTenantScreen {
   tenantName: string;
   namespace: string;
   selectedStorageClass: string;
+  selectedStorageType: string;
+  formToRender?: IMkEnvs;
 }
 
-const NameTenant = ({
+const NameTenantMain = ({
   classes,
   storageClasses,
   tenantName,
   namespace,
   selectedStorageClass,
+  selectedStorageType,
+  formToRender = IMkEnvs.default,
   updateAddField,
   setStorageClassesList,
   setLimitSize,
   isPageValid,
   setModalErrorSnackMessage,
-}: INameTenantScreen) => {
+}: INameTenantMainScreen) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
   const [loadingNamespaceInfo, setLoadingNamespaceInfo] =
@@ -230,7 +235,8 @@ const NameTenant = ({
     const isValid =
       !("tenant-name" in commonValidation) &&
       !("namespace" in commonValidation) &&
-      storageClasses.length > 0;
+      ((formToRender === IMkEnvs.default && storageClasses.length > 0) ||
+        (formToRender !== IMkEnvs.default && selectedStorageType !== ""));
 
     isPageValid("nameTenant", isValid);
 
@@ -242,6 +248,8 @@ const NameTenant = ({
     isPageValid,
     emptyNamespace,
     loadingNamespaceInfo,
+    selectedStorageType,
+    formToRender,
   ]);
 
   const frmValidationCleanup = (fieldName: string) => {
@@ -271,7 +279,7 @@ const NameTenant = ({
       )}
       <Grid container>
         <Grid item xs={8} md={9}>
-          <Paper className={classes.paperWrapper}>
+          <Paper className={classes.paperWrapper} sx={{ minHeight: 550 }}>
             <Grid container>
               <Grid item xs={12}>
                 <div className={classes.headerElement}>
@@ -311,23 +319,57 @@ const NameTenant = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <SelectWrapper
-                  id="storage_class"
-                  name="storage_class"
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    updateField(
-                      "selectedStorageClass",
-                      e.target.value as string
-                    );
-                  }}
-                  label="Storage Class"
-                  value={selectedStorageClass}
-                  options={storageClasses}
-                  disabled={storageClasses.length < 1}
-                />
-              </Grid>
-              <TenantSize />
+              {formToRender === IMkEnvs.default ? (
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <SelectWrapper
+                    id="storage_class"
+                    name="storage_class"
+                    onChange={(e: SelectChangeEvent<string>) => {
+                      updateField(
+                        "selectedStorageClass",
+                        e.target.value as string
+                      );
+                    }}
+                    label="Storage Class"
+                    value={selectedStorageClass}
+                    options={storageClasses}
+                    disabled={storageClasses.length < 1}
+                  />
+                </Grid>
+              ) : (
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <SelectWrapper
+                    id="storage_type"
+                    name="storage_type"
+                    onChange={(e: SelectChangeEvent<string>) => {
+                      updateField(
+                        "selectedStorageType",
+                        e.target.value as string
+                      );
+                    }}
+                    label={get(
+                      mkPanelConfigurations,
+                      `${formToRender}.variantSelectorLabel`,
+                      "Storage Type"
+                    )}
+                    value={selectedStorageType}
+                    options={get(
+                      mkPanelConfigurations,
+                      `${formToRender}.variantSelectorValues`,
+                      []
+                    )}
+                  />
+                </Grid>
+              )}
+              {formToRender === IMkEnvs.default ? (
+                <TenantSize />
+              ) : (
+                get(
+                  mkPanelConfigurations,
+                  `${formToRender}.sizingComponent`,
+                  null
+                )
+              )}
             </Grid>
           </Paper>
         </Grid>
@@ -346,6 +388,8 @@ const mapState = (state: AppState) => ({
   namespace: state.tenants.createTenant.fields.nameTenant.namespace,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+  selectedStorageType:
+    state.tenants.createTenant.fields.nameTenant.selectedStorageType,
   storageClasses: state.tenants.createTenant.storageClasses,
 });
 
@@ -357,4 +401,4 @@ const connector = connect(mapState, {
   isPageValid,
 });
 
-export default withStyles(styles)(connector(NameTenant));
+export default withStyles(styles)(connector(NameTenantMain));

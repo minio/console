@@ -272,7 +272,7 @@ export interface IActiveDirectoryConfiguration {
 }
 
 export interface IStorageDistribution {
-  error: number;
+  error: number | string;
   nodes: number;
   persistentVolumes: number;
   disks: number;

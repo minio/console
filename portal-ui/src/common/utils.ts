@@ -16,7 +16,12 @@
 
 import storage from "local-storage-fallback";
 import get from "lodash/get";
-import { ICapacity, IErasureCodeCalc, IStorageFactors } from "./types";
+import {
+  ICapacity,
+  IErasureCodeCalc,
+  IStorageDistribution,
+  IStorageFactors,
+} from "./types";
 import { IPool } from "../screens/Console/Tenants/ListTenants/types";
 import { AllocableResourcesResponse } from "../screens/Console/Tenants/types";
 
@@ -199,8 +204,7 @@ export const calculateDistribution = (
   forcedNodes: number = 0,
   limitSize: number = 0,
   drivesPerServer: number = 0
-) => {
-  let numberOfNodes = {};
+): IStorageDistribution => {
   const requestedSizeBytes = getBytes(
     capacityToUse.value,
     capacityToUse.unit,
@@ -227,7 +231,7 @@ export const calculateDistribution = (
     };
   }
 
-  numberOfNodes = calculateStorage(
+  let numberOfNodes = calculateStorage(
     requestedSizeBytes,
     forcedNodes,
     limitSize,
@@ -242,7 +246,7 @@ const calculateStorage = (
   forcedNodes: number,
   limitSize: number,
   drivesPerServer: number
-) => {
+): IStorageDistribution => {
   // Size validation
   const intReqBytes = parseInt(requestedBytes, 10);
   const maxDiskSize = minStReq * 256; // 256 GiB
@@ -263,7 +267,7 @@ const structureCalc = (
   maxDiskSize: number,
   maxClusterSize: number,
   disksPerNode: number = 0
-) => {
+): IStorageDistribution => {
   if (
     isNaN(nodes) ||
     isNaN(desiredCapacity) ||
@@ -275,7 +279,7 @@ const structureCalc = (
       nodes: 0,
       persistentVolumes: 0,
       disks: 0,
-      volumePerDisk: 0,
+      pvSize: 0,
     }; // Invalid Data
   }
 
@@ -316,7 +320,7 @@ const structureCalc = (
         nodes: 0,
         persistentVolumes: 0,
         disks: 0,
-        volumePerDisk: 0,
+        pvSize: 0,
       }; // Cannot allocate this server
     }
   }
@@ -328,7 +332,7 @@ const structureCalc = (
       nodes: 0,
       persistentVolumes: 0,
       disks: 0,
-      volumePerDisk: 0,
+      pvSize: 0,
     }; // Cannot allocate this volume size
   }
 
@@ -501,7 +505,8 @@ export const getTimeFromTimestamp = (
 export const calculateBytes = (
   x: string,
   showDecimals = false,
-  roundFloor = true
+  roundFloor = true,
+  k8sUnit = false
 ) => {
   const bytes = parseInt(x, 10);
 
@@ -523,7 +528,7 @@ export const calculateBytes = (
 
   // Get Unit parsed
   const unitParsed = parseFloat(roundedUnit.toFixed(fractionDigits));
-  const finalUnit = units[i];
+  const finalUnit = k8sUnit ? k8sCalcUnits[i] : units[i];
 
   return { total: unitParsed, unit: finalUnit };
 };

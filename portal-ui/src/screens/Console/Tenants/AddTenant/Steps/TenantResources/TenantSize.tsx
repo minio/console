@@ -21,13 +21,13 @@ import { SelectChangeEvent } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import { AppState } from "../../../../../store";
-import { isPageValid, updateAddField } from "../../actions";
+import { AppState } from "../../../../../../store";
+import { isPageValid, updateAddField } from "../../../actions";
 import {
   formFieldStyles,
   modalBasic,
   wizardCommon,
-} from "../../../Common/FormComponents/common/styleLibrary";
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import {
   calculateDistribution,
@@ -36,16 +36,16 @@ import {
   k8sfactorForDropdown,
   niceBytes,
   setResourcesValidation,
-} from "../../../../../common/utils";
-import { clearValidationError } from "../../utils";
-import { ecListTransform, Opts } from "../../ListTenants/utils";
-import { IResourcesSize } from "../../ListTenants/types";
-import { AllocableResourcesResponse } from "../../types";
-import { ICapacity, IErasureCodeCalc } from "../../../../../common/types";
-import { commonFormValidation } from "../../../../../utils/validationFunctions";
-import api from "../../../../../common/api";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+} from "../../../../../../common/utils";
+import { clearValidationError } from "../../../utils";
+import { ecListTransform, Opts } from "../../../ListTenants/utils";
+import { IResourcesSize } from "../../../ListTenants/types";
+import { AllocableResourcesResponse } from "../../../types";
+import { ICapacity, IErasureCodeCalc } from "../../../../../../common/types";
+import { commonFormValidation } from "../../../../../../utils/validationFunctions";
+import api from "../../../../../../common/api";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 interface ITenantSizeProps {
   classes: any;

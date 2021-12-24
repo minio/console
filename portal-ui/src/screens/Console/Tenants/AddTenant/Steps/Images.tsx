@@ -277,31 +277,6 @@ const Images = ({
     logSearchVolumeSize,
   ]);
 
-  useEffect(() => {
-    // New default values is current selection is invalid
-    if (storageClasses.length > 0) {
-      const filterPrometheus = storageClasses.filter(
-        (item: any) => item.value === prometheusSelectedStorageClass
-      );
-      if (filterPrometheus.length === 0) {
-        updateField("prometheusSelectedStorageClass", selectedStorageClass);
-      }
-
-      const filterLogSearch = storageClasses.filter(
-        (item: any) => item.value === logSearchSelectedStorageClass
-      );
-      if (filterLogSearch.length === 0) {
-        updateField("logSearchSelectedStorageClass", selectedStorageClass);
-      }
-    }
-  }, [
-    logSearchSelectedStorageClass,
-    prometheusSelectedStorageClass,
-    selectedStorageClass,
-    storageClasses,
-    updateField,
-  ]);
-
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
