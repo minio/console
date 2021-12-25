@@ -21,10 +21,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"net/http"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/minio/pkg/env"
 )
@@ -89,26 +87,10 @@ func getLatestMinIOImage(client HTTPClientI) (*string, error) {
 	return nil, errCantDetermineMinIOImage
 }
 
-var latestMinIOImage, errLatestMinIOImage = getLatestMinIOImage(
-	&HTTPClient{
-		Client: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-	})
-
-// GetMinioImage returns the image URL to be used when deploying a MinIO instance, if there is
-// a preferred image to be used (configured via ENVIRONMENT VARIABLES) GetMinioImage will return that
-// if not, GetMinioImage will try to obtain the image URL for the latest version of MinIO and return that
-func GetMinioImage() (*string, error) {
-	image := strings.TrimSpace(env.Get(ConsoleMinioImage, ""))
-	// if there is a preferred image configured by the user we'll always return that
-	if image != "" {
-		return &image, nil
-	}
-	if errLatestMinIOImage != nil {
-		return nil, errLatestMinIOImage
-	}
-	return latestMinIOImage, nil
+// GetUserPreferredMinioImage returns the image URL to be used when deploying a MinIO instance
+// specified in the environment variable, return empty if not.
+func GetUserPreferredMinioImage() string {
+	return strings.TrimSpace(env.Get(ConsoleMinioImage, ""))
 }
 
 // GetLatestMinioImage returns the latest image URL on minio repository

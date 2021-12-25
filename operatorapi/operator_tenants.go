@@ -887,15 +887,12 @@ func getListTenantsResponse(session *models.Principal, params operator_api.ListT
 }
 
 func getTenantCreatedResponse(session *models.Principal, params operator_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
+	ctx := context.Background()
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
-	ctx := context.Background()
 	if minioImage == "" {
-		minImg, err := cluster.GetMinioImage()
-		// we can live without figuring out the latest version of MinIO, Operator will use a hardcoded value
-		if err == nil {
-			minioImage = *minImg
-		}
+		// We can still live without empty MinIO image. Operator will use a hardcoded value.
+		minioImage = cluster.GetUserPreferredMinioImage()
 	}
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
