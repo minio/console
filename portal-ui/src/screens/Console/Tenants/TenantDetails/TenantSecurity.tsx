@@ -21,6 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
+  spacingUtils,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
@@ -44,7 +45,7 @@ import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setTenantDetailsLoad } from "../actions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmModalIcon } from "../../../../icons";
+import { AddIcon, ConfirmModalIcon } from "../../../../icons";
 
 interface ITenantSecurity {
   classes: any;
@@ -57,6 +58,7 @@ interface ITenantSecurity {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
+    ...spacingUtils,
     loaderAlign: {
       textAlign: "center",
     },
@@ -71,6 +73,29 @@ const styles = (theme: Theme) =>
     certificateInfo: {
       height: "auto",
       margin: 5,
+    },
+    fileItem: {
+      marginRight: 10,
+      display: "flex",
+      "& div label": {
+        minWidth: 50,
+      },
+
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+      },
+    },
+    certInputRow: {
+      display: "flex",
+      alignItems: "center",
+      borderBottom: "1px solid #eaeaea",
+      marginBottom: 10,
+    },
+    caCertsRow: {
+      borderBottom: "1px solid #eaeaea",
+      display: "flex",
+      alignItems: "center",
+      marginBottom: 10,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -358,82 +383,70 @@ const TenantSecurity = ({
                 label={"Custom Certificates"}
               />
             </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={dialogOpen || isSending}
-                onClick={() => setDialogOpen(true)}
-              >
-                Save
-              </Button>
-            </Grid>
-          </Paper>
-          {enableCustomCerts && (
-            <Fragment>
-              <br />
-              <Paper className={classes.paperContainer}>
-                <Grid container>
-                  <Grid container item xs={12}>
-                    <Typography variant="h5" display="block" gutterBottom>
-                      MinIO Certificates
-                    </Typography>
-                  </Grid>
-                  <Grid container item xs={12}>
-                    {minioTLSCertificateSecrets.map(
-                      (certificateInfo: ICertificateInfo) => (
-                        <Chip
-                          key={certificateInfo.name}
-                          variant="outlined"
-                          color="primary"
-                          className={classes.certificateInfo}
-                          label={
-                            <div>
-                              <Typography
-                                variant="subtitle1"
-                                display="block"
-                                gutterBottom
-                              >
-                                {certificateInfo.name}
-                              </Typography>
-                              <Typography
-                                className={classes.italic}
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                {certificateInfo.domains &&
-                                  certificateInfo.domains.map((dom) => {
-                                    return <div>{dom}</div>;
-                                  })}
-                              </Typography>
-                              <Typography
-                                className={classes.bold}
-                                variant="overline"
-                                gutterBottom
-                              >
-                                Expiry:&nbsp;
-                              </Typography>
-                              <Typography variant="caption" gutterBottom>
-                                <Moment format="YYYY-MM-DD">
-                                  {certificateInfo.expiry}
-                                </Moment>
-                              </Typography>
-                            </div>
-                          }
-                          onDelete={() => removeCertificate(certificateInfo)}
-                        />
-                      )
-                    )}
-                  </Grid>
-                  <Grid container item xs={12}>
-                    <br />
-                  </Grid>
-                  <Grid container item xs={12}>
-                    {minioCertificates.map((keyPair) => (
-                      <Fragment key={keyPair.id}>
-                        <Grid item xs={5}>
+
+            {enableCustomCerts && (
+              <Grid container>
+                <Grid container item xs={12}>
+                  <h4>MinIO Certificates</h4>
+                </Grid>
+                <Grid container item xs={12}>
+                  {minioTLSCertificateSecrets.map(
+                    (certificateInfo: ICertificateInfo) => (
+                      <Chip
+                        key={certificateInfo.name}
+                        variant="outlined"
+                        color="primary"
+                        className={classes.certificateInfo}
+                        label={
+                          <div>
+                            <Typography
+                              variant="subtitle1"
+                              display="block"
+                              gutterBottom
+                            >
+                              {certificateInfo.name}
+                            </Typography>
+                            <Typography
+                              className={classes.italic}
+                              variant="caption"
+                              display="block"
+                              gutterBottom
+                            >
+                              {certificateInfo.domains &&
+                                certificateInfo.domains.map((dom) => {
+                                  return <div>{dom}</div>;
+                                })}
+                            </Typography>
+                            <Typography
+                              className={classes.bold}
+                              variant="overline"
+                              gutterBottom
+                            >
+                              Expiry:&nbsp;
+                            </Typography>
+                            <Typography variant="caption" gutterBottom>
+                              <Moment format="YYYY-MM-DD">
+                                {certificateInfo.expiry}
+                              </Moment>
+                            </Typography>
+                          </div>
+                        }
+                        onDelete={() => removeCertificate(certificateInfo)}
+                      />
+                    )
+                  )}
+                </Grid>
+
+                <Grid container item xs={12}>
+                  {minioCertificates.map((keyPair) => (
+                    <Grid
+                      item
+                      xs={12}
+                      key={keyPair.id}
+                      className={classes.certInputRow}
+                    >
+                      <Grid item xs={9} className={classes.fileItem}>
+                        <Grid item xs={6}>
                           <FileSelector
                             onChange={(encodedValue, fileName) =>
                               addFileToKeyPair(
@@ -451,7 +464,7 @@ const TenantSecurity = ({
                             value={keyPair.cert}
                           />
                         </Grid>
-                        <Grid item xs={5}>
+                        <Grid item xs={6} className={classes.spacerLeft}>
                           <FileSelector
                             onChange={(encodedValue, fileName) =>
                               addFileToKeyPair(
@@ -469,138 +482,144 @@ const TenantSecurity = ({
                             value={keyPair.key}
                           />
                         </Grid>
-                        <Grid item xs={1}>
-                          <Button
-                            onClick={() => deleteKeyPair("minio", keyPair.id)}
-                            color="secondary"
-                          >
-                            Remove
-                          </Button>
-                        </Grid>
-                      </Fragment>
-                    ))}
-                  </Grid>
-                  <Grid container item xs={12}>
-                    <Button onClick={() => addKeyPair("minio")} color="primary">
-                      Add Certificate
-                    </Button>
-                  </Grid>
-                  <Grid container item xs={12}>
-                    <br />
-                  </Grid>
-
-                  <Grid container item xs={12}>
-                    <Typography variant="h6" display="block" gutterBottom>
-                      MinIO CA Certificates
-                    </Typography>
-                  </Grid>
-                  <Grid container item xs={12}>
-                    {minioTLSCaCertificateSecrets.map(
-                      (certificateInfo: ICertificateInfo) => (
-                        <Chip
-                          key={certificateInfo.name}
+                      </Grid>
+                      <Grid item md={2} xs={1}>
+                        <Button
                           variant="outlined"
-                          color="primary"
-                          className={classes.certificateInfo}
-                          label={
-                            <div>
-                              <Typography
-                                variant="subtitle1"
-                                display="block"
-                                gutterBottom
-                              >
-                                {certificateInfo.name}
-                              </Typography>
-                              <Typography
-                                className={classes.italic}
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                {certificateInfo.domains &&
-                                  certificateInfo.domains.map((dom) => {
-                                    return <div>{dom}</div>;
-                                  })}
-                              </Typography>
-                              <Typography
-                                className={classes.bold}
-                                variant="overline"
-                                gutterBottom
-                              >
-                                Expiry:&nbsp;
-                              </Typography>
-                              <Typography variant="caption" gutterBottom>
-                                <Moment format="YYYY-MM-DD">
-                                  {certificateInfo.expiry}
-                                </Moment>
-                              </Typography>
-                            </div>
-                          }
-                          onDelete={() => removeCertificate(certificateInfo)}
-                        />
-                      )
-                    )}
-                  </Grid>
-                  <Grid container item xs={12}>
-                    <br />
-                  </Grid>
-                  <Grid container item xs={12}>
-                    {minioCaCertificates.map((keyPair: KeyPair) => (
-                      <Fragment key={keyPair.id}>
-                        <Grid item xs={10}>
-                          <FileSelector
-                            onChange={(encodedValue, fileName) =>
-                              addFileToKeyPair(
-                                "minioCAs",
-                                keyPair.id,
-                                "cert",
-                                fileName,
-                                encodedValue
-                              )
-                            }
-                            accept=".cer,.crt,.cert,.pem"
-                            id="tlsCert"
-                            name="tlsCert"
-                            label="Cert"
-                            value={keyPair.cert}
-                          />
-                        </Grid>
-                        <Grid item xs={1}>
-                          <Button
-                            onClick={() =>
-                              deleteKeyPair("minioCAs", keyPair.id)
-                            }
-                            color="secondary"
-                          >
-                            Remove
-                          </Button>
-                        </Grid>
-                      </Fragment>
-                    ))}
-                  </Grid>
-                  <Grid container item xs={12}>
-                    <Button
-                      onClick={() => addKeyPair("minioCAs")}
-                      color="primary"
-                    >
-                      Add CA Certificate
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} className={classes.buttonContainer}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={dialogOpen || isSending}
-                      onClick={() => setDialogOpen(true)}
-                    >
-                      Save
-                    </Button>
-                  </Grid>
+                          color="secondary"
+                          onClick={() => deleteKeyPair("minio", keyPair.id)}
+                        >
+                          Remove
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  ))}
                 </Grid>
-              </Paper>
-            </Fragment>
-          )}
+                <Grid container item xs={12}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    endIcon={<AddIcon />}
+                    onClick={() => addKeyPair("minio")}
+                  >
+                    Add Certificate
+                  </Button>
+                </Grid>
+
+                <Grid container item xs={12}>
+                  <h4>MinIO CA Certificates</h4>
+                </Grid>
+                <Grid container item xs={12}>
+                  {minioTLSCaCertificateSecrets.map(
+                    (certificateInfo: ICertificateInfo) => (
+                      <Chip
+                        key={certificateInfo.name}
+                        variant="outlined"
+                        color="primary"
+                        className={classes.certificateInfo}
+                        label={
+                          <div>
+                            <Typography
+                              variant="subtitle1"
+                              display="block"
+                              gutterBottom
+                            >
+                              {certificateInfo.name}
+                            </Typography>
+                            <Typography
+                              className={classes.italic}
+                              variant="caption"
+                              display="block"
+                              gutterBottom
+                            >
+                              {certificateInfo.domains &&
+                                certificateInfo.domains.map((dom) => {
+                                  return <div>{dom}</div>;
+                                })}
+                            </Typography>
+                            <Typography
+                              className={classes.bold}
+                              variant="overline"
+                              gutterBottom
+                            >
+                              Expiry:&nbsp;
+                            </Typography>
+                            <Typography variant="caption" gutterBottom>
+                              <Moment format="YYYY-MM-DD">
+                                {certificateInfo.expiry}
+                              </Moment>
+                            </Typography>
+                          </div>
+                        }
+                        onDelete={() => removeCertificate(certificateInfo)}
+                      />
+                    )
+                  )}
+                </Grid>
+
+                <Grid container item xs={12}>
+                  {minioCaCertificates.map((keyPair: KeyPair) => (
+                    <Grid
+                      item
+                      xs={12}
+                      className={classes.caCertsRow}
+                      key={keyPair.id}
+                    >
+                      <Grid item xs={9} className={classes.fileItem}>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) =>
+                            addFileToKeyPair(
+                              "minioCAs",
+                              keyPair.id,
+                              "cert",
+                              fileName,
+                              encodedValue
+                            )
+                          }
+                          accept=".cer,.crt,.cert,.pem"
+                          id="tlsCert"
+                          name="tlsCert"
+                          label="Cert"
+                          value={keyPair.cert}
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => deleteKeyPair("minioCAs", keyPair.id)}
+                        >
+                          Remove
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  ))}
+                </Grid>
+                <Grid container item xs={12}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    endIcon={<AddIcon />}
+                    onClick={() => addKeyPair("minioCAs")}
+                  >
+                    Add CA Certificate
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
+
+            <Grid item xs={12} className={classes.buttonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={dialogOpen || isSending}
+                onClick={() => setDialogOpen(true)}
+              >
+                Save
+              </Button>
+            </Grid>
+          </Paper>
         </Fragment>
       )}
     </React.Fragment>

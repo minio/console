@@ -22,6 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
   containerForHeader,
+  tableStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Button, TextField } from "@mui/material";
@@ -48,6 +49,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...actionsTray,
+    ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -130,7 +132,7 @@ const PoolsSummary = ({
           <br />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.tableBlock}>
           <TableWrapper
             itemActions={[]}
             columns={[

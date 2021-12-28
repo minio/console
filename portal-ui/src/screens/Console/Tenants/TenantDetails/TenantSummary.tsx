@@ -24,18 +24,20 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
-import { Button, CircularProgress } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { niceBytes } from "../../../../common/utils";
 import { ITenant } from "../ListTenants/types";
-import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
 import history from "./../../../../history";
-import { CircleIcon } from "../../../../icons";
 import { tenantIsOnline } from "../ListTenants/utils";
 import AButton from "../../Common/AButton/AButton";
+import { styled } from "@mui/styles";
+import SummaryUsageBar from "../../Common/UsageBarWrapper/SummaryUsageBar";
+import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
+import StackRow from "../../Common/UsageBarWrapper/StackRow";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface ITenantsSummary {
   classes: any;
@@ -115,6 +117,76 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
+const StackItem = styled(Paper)(({ theme }) => ({
+  border: 0,
+}));
+
+const healthStatusToClass = (health_status: string = "red", classes: any) => {
+  return health_status === "red"
+    ? classes.redState
+    : health_status === "yellow"
+    ? classes.yellowState
+    : health_status === "green"
+    ? classes.greenState
+    : classes.greyState;
+};
+
+const StorageSummary = ({ tenant, classes }: Partial<ITenantsSummary>) => {
+  return (
+    <SummaryUsageBar
+      currValue={tenant?.status?.usage?.raw_usage ?? 0}
+      maxValue={tenant?.status?.usage?.raw ?? 1}
+      label={"Storage"}
+      renderFunction={niceBytes}
+      error={""}
+      loading={false}
+      healthStatus={healthStatusToClass(tenant?.status?.health_status, classes)}
+    />
+  );
+};
+
+const getToggle = (toggleValue: boolean, idPrefix = "") => {
+  return (
+    <FormSwitchWrapper
+      indicatorLabels={["Enabled", "Disabled"]}
+      checked={toggleValue}
+      value={toggleValue}
+      id={`${idPrefix}-status`}
+      name={`${idPrefix}-status`}
+      onChange={() => {}}
+      switchOnly
+    />
+  );
+};
+
+const featureRowStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  marginTop: "10px",
+  "@media (max-width: 600px)": {
+    flexFlow: "column",
+  },
+};
+
+const featureItemStyleProps = {
+  stkProps: {
+    sx: {
+      flex: 1,
+      marginRight: 10,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      "@media (max-width: 900px)": {
+        marginRight: "25px",
+      },
+    },
+  },
+  lblProps: {
+    style: {
+      minWidth: 100,
+    },
+  },
+};
 const TenantSummary = ({
   classes,
   match,
@@ -129,7 +201,6 @@ const TenantSummary = ({
   oidcEnabled,
   loadingTenant,
 }: ITenantsSummary) => {
-  const [capacity, setCapacity] = useState<number>(0);
   const [poolCount, setPoolCount] = useState<number>(0);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
@@ -138,19 +209,8 @@ const TenantSummary = ({
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
 
-  const healthStatusToClass = (health_status: string) => {
-    return health_status === "red"
-      ? classes.redState
-      : health_status === "yellow"
-      ? classes.yellowState
-      : health_status === "green"
-      ? classes.greenState
-      : classes.greyState;
-  };
-
   useEffect(() => {
     if (tenant) {
-      setCapacity(tenant.total_size || 0);
       setPoolCount(tenant.pools.length);
       setVolumes(tenant.total_volumes || 0);
       setInstances(tenant.total_instances || 0);
@@ -169,265 +229,200 @@ const TenantSummary = ({
           namespace={tenantNamespace}
         />
       )}
-      <h1 className={classes.sectionTitle}>Summary</h1>
-      <Paper className={classes.paperContainer}>
-        <Grid container>
-          <Grid item xs={12} sm={8}>
-            <Grid container>
-              <Grid item xs={12}>
-                <h2>Details</h2>
-                <hr className={classes.hrClass} />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={6}
-                className={classes.detailSection}
+
+      <Stack
+        direction={{ xs: "column-reverse", sm: "row" }}
+        justifyContent="space-between"
+      >
+        <StackItem>
+          <h3>Details</h3>
+        </StackItem>
+        <StackItem>
+          <Button
+            size={"small"}
+            color={"primary"}
+            variant="contained"
+            style={{ textDecoration: "none !important" }}
+            onClick={() => {
+              history.push(
+                `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
+              );
+            }}
+            disabled={!tenant || !tenantIsOnline(tenant)}
+          >
+            Manage Tenant
+          </Button>
+        </StackItem>
+      </Stack>
+
+      <StorageSummary tenant={tenant} classes={classes} />
+
+      <Stack>
+        <StackRow>
+          <LabelValuePair label={"Instances:"} value={instances} />
+          <LabelValuePair
+            label={"Clusters:"}
+            value={poolCount}
+            stkProps={{
+              style: {
+                marginRight: 47,
+              },
+            }}
+          />
+        </StackRow>
+        <StackRow>
+          <LabelValuePair
+            label={"Endpoint:"}
+            value={
+              <a
+                href={tenant?.endpoints?.minio}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.linkedSection}
               >
-                <div>
-                  <b>Capacity:</b>
-                  <i>{niceBytes(capacity.toString(10))}</i>
-                  <div />
-                </div>
-                <div>
-                  <b>Instances:</b>
-                  <i>{instances}</i>
-                  <div />
-                </div>
-                <div>
-                  <b>Endpoint:</b>
-                  <i>
-                    <a
-                      href={tenant?.endpoints?.minio}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={classes.linkedSection}
-                    >
-                      {tenant?.endpoints?.minio}
-                    </a>
-                  </i>
-                  <div />
-                </div>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={6}
-                className={classes.detailSection}
+                {tenant?.endpoints?.minio || "-"}
+              </a>
+            }
+          />
+
+          <LabelValuePair
+            label="Volumes:"
+            value={volumes}
+            stkProps={{
+              style: {
+                marginRight: 43,
+              },
+            }}
+          />
+        </StackRow>
+        <StackRow>
+          <LabelValuePair
+            label="MinIO:"
+            value={
+              <AButton
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "normal",
+                  wordBreak: "break-all",
+                }}
+                onClick={() => {
+                  setUpdateMinioVersion(true);
+                }}
               >
-                <div>
-                  <b>Clusters:</b>
-                  <i>{poolCount}</i>
-                  <div />
-                </div>
-                <div>
-                  <b>Volumes:</b>
-                  <i>{volumes}</i>
-                  <div />
-                </div>
-                <div>
-                  <b>Console:</b>
-                  <i>
-                    <a
-                      href={tenant?.endpoints?.console}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={classes.linkedSection}
-                    >
-                      {tenant?.endpoints?.console}
-                    </a>
-                  </i>
-                  <div />
-                </div>
-              </Grid>
-              <Grid item xs={12} className={classes.detailSection}>
-                <div>
-                  <b>MinIO:</b>
-                  <i>
-                    <AButton
-                      onClick={() => {
-                        setUpdateMinioVersion(true);
-                      }}
-                    >
-                      {tenant ? tenant.image : ""}
-                    </AButton>
-                  </i>
-                  <div />
-                </div>
-              </Grid>
-              <Grid item xs={12} className={classes.detailSection}>
-                <div>
-                  <b>State:</b>
-                  <i>{tenant?.currentState}</i>
-                  <div />
-                </div>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            {loadingTenant ? (
-              <div className={classes.centerAlign}>
-                <CircularProgress />
-              </div>
-            ) : (
-              <Fragment>
-                <UsageBarWrapper
-                  currValue={tenant?.status?.usage?.raw_usage ?? 0}
-                  maxValue={tenant?.status?.usage?.raw ?? 1}
-                  label={"Storage"}
-                  renderFunction={niceBytes}
-                  error={""}
-                  loading={false}
-                />
-                <h4>
-                  {tenant && tenant.status && (
-                    <span
-                      className={healthStatusToClass(
-                        tenant?.status?.health_status
-                      )}
-                    >
-                      <CircleIcon />
-                    </span>
-                  )}
-                  Health
-                </h4>
-                <table>
-                  <tbody>
-                    <tr>
-                      <td className={classes.healthCol}>Drives Online</td>
-                      <td>
-                        {tenant?.status?.drives_online
-                          ? tenant?.status?.drives_online
-                          : 0}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes.healthCol}>Drives Offline</td>
-                      <td>
-                        {tenant?.status?.drives_offline
-                          ? tenant?.status?.drives_offline
-                          : 0}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes.healthCol}>Write Quorum</td>
-                      <td>
-                        {tenant?.status?.write_quorum
-                          ? tenant?.status?.write_quorum
-                          : 0}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <Button
-                  size={"small"}
-                  color={"primary"}
-                  variant="contained"
-                  style={{ textDecoration: "none !important" }}
-                  onClick={() => {
-                    history.push(
-                      `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
-                    );
-                  }}
-                  disabled={!tenant || !tenantIsOnline(tenant)}
-                >
-                  Manage Tenant
-                </Button>
-              </Fragment>
-            )}
-          </Grid>
-        </Grid>
-      </Paper>
-      <br />
-      <br />
-      <Paper className={classes.paperContainer}>
-        <Grid container>
-          <Grid item xs={12}>
-            <h2>Features</h2>
-            <hr className={classes.hrClass} />
-          </Grid>
-          {loadingTenant ? (
-            <Grid item xs={12} className={classes.centerAlign}>
-              <CircularProgress />
-            </Grid>
-          ) : (
-            <Fragment>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={6}
-                className={classes.detailSection}
+                {tenant ? tenant.image : ""}
+              </AButton>
+            }
+          />
+          <LabelValuePair
+            label={"Drives Online:"}
+            value={
+              tenant?.status?.drives_online ? tenant?.status?.drives_online : 0
+            }
+            stkProps={{
+              style: {
+                marginRight: 8,
+              },
+            }}
+          />
+        </StackRow>
+        <StackRow>
+          <LabelValuePair
+            label={"Console:"}
+            value={
+              <a
+                href={tenant?.endpoints?.console}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.linkedSection}
               >
-                <div>
-                  <b>Logs:</b>
-                  <i>
-                    <Button color="primary" className={classes.anchorButton}>
-                      {logEnabled ? "Enabled" : "Disabled"}
-                    </Button>
-                  </i>
-                  <div />
-                </div>
-                <div>
-                  <b>MinIO TLS:</b>
-                  <i>
-                    <Button color="primary" className={classes.anchorButton}>
-                      {minioTLS ? "Enabled" : "Disabled"}
-                    </Button>
-                  </i>
-                  <div />
-                </div>
-                <div>
-                  <b>AD/LDAP:</b>
-                  <i>
-                    <Button color="primary" className={classes.anchorButton}>
-                      {adEnabled ? "Enabled" : "Disabled"}
-                    </Button>
-                  </i>
-                  <div />
-                </div>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={6}
-                className={classes.detailSection}
-              >
-                <div>
-                  <b>Monitoring:</b>
-                  <i>
-                    <Button color="primary" className={classes.anchorButton}>
-                      {monitoringEnabled ? "Enabled" : "Disabled"}
-                    </Button>
-                  </i>
-                  <div />
-                </div>
-                <div>
-                  <b>Encryption:</b>
-                  <i>
-                    <Button color="primary" className={classes.anchorButton}>
-                      {encryptionEnabled ? "Enabled" : "Disabled"}
-                    </Button>
-                  </i>
-                  <div />
-                </div>
-                <div>
-                  <b>OpenID:</b>
-                  <i>
-                    <Button color="primary" className={classes.anchorButton}>
-                      {oidcEnabled ? "Enabled" : "Disabled"}
-                    </Button>
-                  </i>
-                  <div />
-                </div>
-              </Grid>
-            </Fragment>
-          )}
-        </Grid>
-      </Paper>
+                {tenant?.endpoints?.console || "-"}
+              </a>
+            }
+          />
+          <LabelValuePair
+            label={"Drives Offline:"}
+            value={
+              tenant?.status?.drives_offline
+                ? tenant?.status?.drives_offline
+                : 0
+            }
+            stkProps={{
+              style: {
+                marginRight: 7,
+              },
+            }}
+          />
+        </StackRow>
+        <StackRow>
+          <LabelValuePair label={"State:"} value={tenant?.currentState} />
+          <LabelValuePair
+            label={"Write Quorum:"}
+            value={
+              tenant?.status?.write_quorum ? tenant?.status?.write_quorum : 0
+            }
+          />
+        </StackRow>
+      </Stack>
+
+      <Stack>
+        <StackRow
+          sx={{
+            borderBottom: "1px solid #eaeaea",
+            margin: 0,
+          }}
+        >
+          <h3
+            style={{
+              marginBottom: 10,
+            }}
+          >
+            Features
+          </h3>
+        </StackRow>
+        <Box sx={{ ...featureRowStyle }}>
+          <LabelValuePair
+            orientation="row"
+            label="Logs:"
+            value={getToggle(logEnabled, "tenant-log")}
+            {...featureItemStyleProps}
+          />
+
+          <LabelValuePair
+            orientation="row"
+            label={"AD/LDAP:"}
+            value={getToggle(adEnabled, "tenant-sts")}
+            {...featureItemStyleProps}
+          />
+          <LabelValuePair
+            orientation="row"
+            label={"Encryption:"}
+            value={getToggle(encryptionEnabled, "tenant-enc")}
+            {...featureItemStyleProps}
+          />
+        </Box>
+        <Box sx={{ ...featureRowStyle }}>
+          <LabelValuePair
+            orientation="row"
+            label="MinIO TLS:"
+            value={getToggle(minioTLS, "tenant-tls")}
+            {...featureItemStyleProps}
+          />
+
+          <LabelValuePair
+            orientation="row"
+            label={"Monitoring:"}
+            value={getToggle(monitoringEnabled, "tenant-monitor")}
+            {...featureItemStyleProps}
+          />
+          <LabelValuePair
+            orientation="row"
+            label={"OpenID:"}
+            value={getToggle(oidcEnabled, "tenant-oidc")}
+            {...featureItemStyleProps}
+          />
+        </Box>
+      </Stack>
     </Fragment>
   );
 };

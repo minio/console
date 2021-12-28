@@ -21,6 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
+  tableStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { niceDays } from "../../../../common/utils";
@@ -32,6 +33,7 @@ import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
+import { Grid } from "@mui/material";
 
 interface IPodsSummary {
   classes: any;
@@ -44,6 +46,7 @@ interface IPodsSummary {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
+    ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -126,27 +129,29 @@ const PodsSummary = ({
         />
       )}
       <h1 className={classes.sectionTitle}>Pods</h1>
-      <TableWrapper
-        columns={[
-          { label: "Name", elementKey: "name" },
-          { label: "Status", elementKey: "status" },
-          { label: "Age", elementKey: "time" },
-          { label: "Pod IP", elementKey: "podIP" },
-          {
-            label: "Restarts",
-            elementKey: "restarts",
-            renderFunction: (input) => {
-              return input !== null ? input : 0;
+      <Grid item xs={12} className={classes.tableBlock}>
+        <TableWrapper
+          columns={[
+            { label: "Name", elementKey: "name" },
+            { label: "Status", elementKey: "status" },
+            { label: "Age", elementKey: "time" },
+            { label: "Pod IP", elementKey: "podIP" },
+            {
+              label: "Restarts",
+              elementKey: "restarts",
+              renderFunction: (input) => {
+                return input !== null ? input : 0;
+              },
             },
-          },
-          { label: "Node", elementKey: "node" },
-        ]}
-        isLoading={loadingPods}
-        records={pods}
-        itemActions={podTableActions}
-        entityName="Servers"
-        idField="name"
-      />
+            { label: "Node", elementKey: "node" },
+          ]}
+          isLoading={loadingPods}
+          records={pods}
+          itemActions={podTableActions}
+          entityName="Servers"
+          idField="name"
+        />
+      </Grid>
     </Fragment>
   );
 };
