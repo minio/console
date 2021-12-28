@@ -101,7 +101,11 @@ const SetAccessPolicy = ({
 
   useEffect(() => {
     setAccessPolicy(actualPolicy);
-    setPolicyDefinition(actualDefinition);
+    setPolicyDefinition(
+      actualDefinition
+        ? JSON.stringify(JSON.parse(actualDefinition), null, 4)
+        : ""
+    );
   }, [setAccessPolicy, actualPolicy, setPolicyDefinition, actualDefinition]);
 
   return (
