@@ -42,6 +42,9 @@ const styles = (theme: Theme) =>
     },
     headerBarSubheader: {
       color: "grey",
+      "@media (max-width: 900px)": {
+        maxWidth: 200,
+      },
     },
     screenTitle: {
       display: "flex",
@@ -49,6 +52,9 @@ const styles = (theme: Theme) =>
       justifyContent: "space-between",
       padding: "1rem",
       borderBottom: "1px solid #EAEAEA",
+      "@media (max-width: 600px)": {
+        flexFlow: "column",
+      },
     },
     titleColumn: {
       height: "auto",
@@ -63,6 +69,9 @@ const styles = (theme: Theme) =>
     leftItems: {
       display: "flex",
       alignItems: "center",
+      "@media (max-width: 600px)": {
+        flexFlow: "column",
+      },
     },
     rightItems: {
       display: "flex",

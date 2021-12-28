@@ -137,7 +137,7 @@ const FileSelector = ({
                 }}
                 disableRipple={false}
                 disableFocusRipple={false}
-                size="large"
+                size="small"
               >
                 <CancelIcon />
               </IconButton>
@@ -157,7 +157,7 @@ const FileSelector = ({
               }}
               disableRipple={false}
               disableFocusRipple={false}
-              size="large"
+              size="small"
             >
               <AttachFileIcon />
             </IconButton>

@@ -39,7 +39,7 @@ import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import { CircleIcon, DeleteIcon } from "../../../../icons";
+import { CircleIcon, TrashIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
@@ -133,6 +133,27 @@ const styles = (theme: Theme) =>
       top: 4,
     },
     ...containerForHeader(theme.spacing(4)),
+    tenantActionButton: {
+      "& span": {
+        fontSize: 14,
+        "@media (max-width: 900px)": {
+          display: "none",
+        },
+      },
+      "& .min-icon": {
+        width: 12,
+        marginLeft: 5,
+
+        "@media (max-width: 900px)": {
+          width: 16,
+          marginLeft: 0,
+        },
+      },
+    },
+    deleteBtn: {
+      color: "#f44336",
+      border: "1px solid rgba(244, 67, 54, 0.5)",
+    },
   });
 
 const TenantDetails = ({
@@ -334,35 +355,48 @@ const TenantDetails = ({
               <div>
                 <BoxIconButton
                   tooltip={"Delete"}
-                  color="primary"
+                  variant="outlined"
                   aria-label="Delete"
                   onClick={() => {
                     confirmDeleteTenant();
                   }}
+                  color="secondary"
+                  classes={{
+                    root: `${classes.tenantActionButton} ${classes.deleteBtn}`,
+                  }}
                   size="large"
                 >
-                  <DeleteIcon />
+                  <span>Delete Tenant</span> <TrashIcon />
                 </BoxIconButton>
                 <BoxIconButton
+                  classes={{
+                    root: classes.tenantActionButton,
+                  }}
                   tooltip={"Edit YAML"}
                   color="primary"
+                  variant="outlined"
                   aria-label="Edit YAML"
                   onClick={() => {
                     editYaml();
                   }}
                   size="large"
                 >
+                  <span>Edit Tenant</span>
                   <EditIcon />
                 </BoxIconButton>
                 <BoxIconButton
+                  classes={{
+                    root: classes.tenantActionButton,
+                  }}
                   tooltip={"Refresh"}
                   color="primary"
+                  variant="outlined"
                   aria-label="Refresh List"
                   onClick={() => {
                     setTenantDetailsLoad(true);
                   }}
                 >
-                  <RefreshIcon />
+                  <span>Reload</span> <RefreshIcon />
                 </BoxIconButton>
               </div>
             }

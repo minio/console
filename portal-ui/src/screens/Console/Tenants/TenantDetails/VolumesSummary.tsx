@@ -25,6 +25,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IPVCsResponse, IStoragePVCs } from "../../Storage/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -46,6 +47,7 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
+    ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -110,7 +112,7 @@ const TenantVolumes = ({
       <Grid item xs={12}>
         <br />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
           itemActions={[]}
           columns={[

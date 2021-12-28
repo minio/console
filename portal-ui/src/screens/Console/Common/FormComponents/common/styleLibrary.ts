@@ -1134,15 +1134,25 @@ export const fileInputStyles = {
     border: "1px solid #EAEAEA",
     width: "100%",
     paddingLeft: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 36,
+    maxWidth: 300,
   },
   textBoxContainer: {
     border: "1px solid #EAEAEA",
     borderRadius: 3,
+    height: 36,
     padding: 5,
     "& input": {
       width: "100%",
       margin: "auto",
     },
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    maxWidth: 300,
   },
 };
 

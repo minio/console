@@ -40,7 +40,10 @@ interface ISubnetLicenseTenant {
 const styles = (theme: Theme) =>
   createStyles({
     paperContainer: {
-      padding: "15px 15px 15px 50px",
+      padding: "15px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
     licenseInfoValue: {
       textTransform: "none",
