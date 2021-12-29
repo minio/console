@@ -26,7 +26,7 @@ export enum IMkEnvs {
   undefined,
 }
 
-export interface iDriveSizing {
+export interface IDriveSizing {
   driveSize: string;
   sizeUnit: string;
 }
@@ -37,7 +37,7 @@ export interface IntegrationConfiguration {
   CPU: number;
   memory: number;
   drivesPerServer: number;
-  driveSize: iDriveSizing;
+  driveSize: IDriveSizing;
 }
 
 export const AWSStorageTypes: Opts[] = [
