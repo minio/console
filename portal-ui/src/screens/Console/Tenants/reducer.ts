@@ -32,7 +32,6 @@ import {
   ADD_TENANT_ENCRYPTION_VAULT_CA,
   ADD_TENANT_ENCRYPTION_VAULT_CERT,
   ADD_TENANT_RESET_FORM,
-  ADD_TENANT_SET_ADVANCED_MODE,
   ADD_TENANT_SET_CURRENT_PAGE,
   ADD_TENANT_SET_LIMIT_SIZE,
   ADD_TENANT_SET_PAGE_VALID,
@@ -61,7 +60,6 @@ const initialState: ITenantState = {
       "security",
       "encryption",
     ],
-    advancedModeOn: false,
     storageClasses: [],
     limitSize: {},
     fields: {
@@ -201,8 +199,17 @@ const initialState: ITenantState = {
         ecParity: "",
         ecParityChoices: [],
         cleanECChoices: [],
-        maxAllocableMemo: 0,
         cpuToUse: "0",
+        // resource request
+        resourcesSpecifyLimit: false,
+        resourcesCPURequestError: "",
+        resourcesCPURequest: "",
+        resourcesCPULimitError: "",
+        resourcesCPULimit: "",
+        resourcesMemoryRequestError: "",
+        resourcesMemoryRequest: "",
+        resourcesMemoryLimitError: "",
+        resourcesMemoryLimit: "",
         resourcesSize: {
           error: "",
           memoryRequest: 0,
@@ -346,10 +353,7 @@ export function tenantsReducer(
       newState.createTenant.page = action.page;
 
       return { ...newState };
-    case ADD_TENANT_SET_ADVANCED_MODE:
-      newState.createTenant.advancedModeOn = action.state;
 
-      return { ...newState };
     case ADD_TENANT_UPDATE_FIELD:
       if (
         has(newState.createTenant.fields, `${action.pageName}.${action.field}`)
@@ -607,7 +611,6 @@ export function tenantsReducer(
             "security",
             "encryption",
           ],
-          advancedModeOn: false,
           storageClasses: [],
           limitSize: {},
           fields: {
@@ -747,7 +750,6 @@ export function tenantsReducer(
               ecParity: "",
               ecParityChoices: [],
               cleanECChoices: [],
-              maxAllocableMemo: 0,
               distribution: {
                 error: "",
                 nodes: 0,
@@ -764,6 +766,16 @@ export function tenantsReducer(
               },
               limitSize: {},
               cpuToUse: "0",
+              // resource request
+              resourcesSpecifyLimit: false,
+              resourcesCPURequestError: "",
+              resourcesCPURequest: "",
+              resourcesCPULimitError: "",
+              resourcesCPULimit: "",
+              resourcesMemoryRequestError: "",
+              resourcesMemoryRequest: "",
+              resourcesMemoryLimitError: "",
+              resourcesMemoryLimit: "",
               resourcesSize: {
                 error: "",
                 memoryRequest: 0,

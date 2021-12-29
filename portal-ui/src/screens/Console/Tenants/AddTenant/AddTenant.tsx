@@ -33,11 +33,7 @@ import { generatePoolName } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import {
-  ErrorResponseHandler,
-  IResourceRequests,
-  ITenantCreator,
-} from "../../../../common/types";
+import { ErrorResponseHandler, ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
 import { setErrorSnackMessage } from "../../../../actions";
@@ -178,7 +174,6 @@ const AddTenant = ({
     const enableTLS = fields.security.enableTLS;
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
-    const resourcesSize = fields.tenantSize.resourcesSize;
     const tenantCustom = fields.configure.tenantCustom;
     const logSearchCustom = fields.configure.logSearchCustom;
     const prometheusCustom = fields.configure.prometheusCustom;
@@ -234,30 +229,6 @@ const AddTenant = ({
 
       const erasureCode = ecParity.split(":")[1];
 
-      let resources = {};
-
-      if (resourcesSize.memoryRequest !== 0 || resourcesSize.cpuRequest !== 0) {
-        let requestsObject: IResourceRequests = {};
-
-        if (resourcesSize.memoryRequest !== 0) {
-          requestsObject.memory = resourcesSize.memoryRequest;
-        }
-
-        if (resourcesSize.cpuRequest !== 0) {
-          requestsObject.cpu = resourcesSize.cpuRequest;
-        }
-
-        const resourcesRequest = { requests: { ...requestsObject } };
-        const resourcesLimits = { limits: { ...requestsObject } };
-
-        resources = {
-          resources: {
-            ...resourcesRequest,
-            ...resourcesLimits,
-          },
-        };
-      }
-
       let dataSend: ITenantCreator = {
         name: tenantName,
         namespace: namespace,
@@ -281,7 +252,6 @@ const AddTenant = ({
               size: distribution.pvSize,
               storage_class_name: selectedStorageClass,
             },
-            ...resources,
             securityContext: tenantCustom ? tenantSecurityContext : null,
             ...affinityObject,
           },
@@ -289,6 +259,49 @@ const AddTenant = ({
         erasureCodingParity: parseInt(erasureCode, 10),
       };
 
+      // Set Resources
+      if (
+        fields.tenantSize.resourcesCPURequest !== "" ||
+        fields.tenantSize.resourcesCPULimit !== "" ||
+        fields.tenantSize.resourcesMemoryRequest !== "" ||
+        fields.tenantSize.resourcesMemoryLimit !== ""
+      ) {
+        dataSend.pools[0].resources = {};
+        // requests
+        if (
+          fields.tenantSize.resourcesCPURequest !== "" ||
+          fields.tenantSize.resourcesMemoryRequest !== ""
+        ) {
+          dataSend.pools[0].resources.requests = {};
+          if (fields.tenantSize.resourcesCPURequest !== "") {
+            dataSend.pools[0].resources.requests.cpu = parseInt(
+              fields.tenantSize.resourcesCPURequest
+            );
+          }
+          if (fields.tenantSize.resourcesMemoryRequest !== "") {
+            dataSend.pools[0].resources.requests.memory = parseInt(
+              fields.tenantSize.resourcesMemoryRequest
+            );
+          }
+        }
+        // limits
+        if (
+          fields.tenantSize.resourcesCPULimit !== "" ||
+          fields.tenantSize.resourcesMemoryLimit !== ""
+        ) {
+          dataSend.pools[0].resources.limits = {};
+          if (fields.tenantSize.resourcesCPULimit !== "") {
+            dataSend.pools[0].resources.limits.cpu = parseInt(
+              fields.tenantSize.resourcesCPULimit
+            );
+          }
+          if (fields.tenantSize.resourcesMemoryLimit !== "") {
+            dataSend.pools[0].resources.limits.memory = parseInt(
+              fields.tenantSize.resourcesMemoryLimit
+            );
+          }
+        }
+      }
       if (customDockerhub) {
         dataSend = {
           ...dataSend,

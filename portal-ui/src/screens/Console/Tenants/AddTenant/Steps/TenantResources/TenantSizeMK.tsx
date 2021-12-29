@@ -193,6 +193,15 @@ const TenantSizeMK = ({
           };
 
           updateField("distribution", distrCalculate);
+          // apply requests, half of the available resources
+          updateField(
+            "resourcesCPURequest",
+            Math.max(1, mainSelection.CPU / 2)
+          );
+          updateField(
+            "resourcesMemoryRequest",
+            Math.max(2, mainSelection.memory / 2)
+          );
         }
       }
     }
