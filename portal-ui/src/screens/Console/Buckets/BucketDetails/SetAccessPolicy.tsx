@@ -31,18 +31,37 @@ import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { ChangeAccessPolicyIcon } from "../../../../icons";
+import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
+    codeMirrorContainer: {
+      marginBottom: 20,
+      paddingLeft: 15,
+      "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
+        border: "1px solid #EAEAEA",
+      },
+      "& label": {
+        marginBottom: ".5rem",
+      },
+      "& label + div": {
+        display: "none",
+      },
+    },
     ...modalStyleUtils,
     ...spacingUtils,
   });
+createStyles({
+  ...modalStyleUtils,
+  ...spacingUtils,
+});
 
 interface ISetAccessPolicyProps {
   classes: any;
   open: boolean;
   bucketName: string;
   actualPolicy: string;
+  actualDefinition: string;
   closeModalAndRefresh: () => void;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
@@ -52,11 +71,13 @@ const SetAccessPolicy = ({
   open,
   bucketName,
   actualPolicy,
+  actualDefinition,
   closeModalAndRefresh,
   setModalErrorSnackMessage,
 }: ISetAccessPolicyProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessPolicy, setAccessPolicy] = useState<string>("");
+  const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
     if (addLoading) {
@@ -66,6 +87,7 @@ const SetAccessPolicy = ({
     api
       .invoke("PUT", `/api/v1/buckets/${bucketName}/set-policy`, {
         access: accessPolicy,
+        definition: policyDefinition,
       })
       .then((res) => {
         setAddLoading(false);
@@ -79,7 +101,12 @@ const SetAccessPolicy = ({
 
   useEffect(() => {
     setAccessPolicy(actualPolicy);
-  }, [setAccessPolicy, actualPolicy]);
+    setPolicyDefinition(
+      actualDefinition
+        ? JSON.stringify(JSON.parse(actualDefinition), null, 4)
+        : ""
+    );
+  }, [setAccessPolicy, actualPolicy, setPolicyDefinition, actualDefinition]);
 
   return (
     <ModalWrapper
@@ -98,24 +125,34 @@ const SetAccessPolicy = ({
         }}
       >
         <Grid container>
-          <Grid
-            item
-            xs={12}
-            className={`${classes.spacerTop} ${classes.formFieldRow}`}
-          >
-            <SelectWrapper
-              value={accessPolicy}
-              label="Access Policy"
-              id="select-access-policy"
-              name="select-access-policy"
-              onChange={(e: SelectChangeEvent<string>) => {
-                setAccessPolicy(e.target.value as string);
-              }}
-              options={[
-                { value: "PRIVATE", label: "Private" },
-                { value: "PUBLIC", label: "Public" },
-              ]}
-            />
+          <Grid item xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <SelectWrapper
+                value={accessPolicy}
+                label="Access Policy"
+                id="select-access-policy"
+                name="select-access-policy"
+                onChange={(e: SelectChangeEvent<string>) => {
+                  setAccessPolicy(e.target.value as string);
+                }}
+                options={[
+                  { value: "PRIVATE", label: "Private" },
+                  { value: "PUBLIC", label: "Public" },
+                  { value: "CUSTOM", label: "Custom" },
+                ]}
+              />
+            </Grid>
+            {accessPolicy === "CUSTOM" && (
+              <Grid item xs={12} className={classes.codeMirrorContainer}>
+                <CodeMirrorWrapper
+                  label={`Write Policy`}
+                  value={policyDefinition}
+                  onBeforeChange={(editor, data, value) => {
+                    setPolicyDefinition(value);
+                  }}
+                />
+              </Grid>
+            )}
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
@@ -133,7 +170,9 @@ const SetAccessPolicy = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={addLoading}
+              disabled={
+                addLoading || (accessPolicy === "CUSTOM" && !policyDefinition)
+              }
             >
               Set
             </Button>

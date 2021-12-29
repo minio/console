@@ -41,6 +41,7 @@ export interface Details {
 export interface BucketInfo {
   name: string;
   access: string;
+  definition: string;
 }
 
 export interface BucketList {

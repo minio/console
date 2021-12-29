@@ -178,9 +178,11 @@ const BucketSummary = ({
   const bucketName = match.params["bucketName"];
 
   let accessPolicy = "n/a";
+  let policyDefinition = "";
 
   if (bucketInfo !== null) {
     accessPolicy = bucketInfo.access;
+    policyDefinition = bucketInfo.definition;
   }
 
   const displayGetBucketObjectLockConfiguration = hasPermission(bucketName, [
@@ -485,6 +487,7 @@ const BucketSummary = ({
           bucketName={bucketName}
           open={accessPolicyScreenOpen}
           actualPolicy={accessPolicy}
+          actualDefinition={policyDefinition}
           closeModalAndRefresh={closeSetAccessPolicy}
         />
       )}
