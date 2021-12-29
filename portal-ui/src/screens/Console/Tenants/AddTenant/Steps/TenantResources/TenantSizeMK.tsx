@@ -327,26 +327,45 @@ const TenantSizeMK = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
-  sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
-  drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
-  nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-  memoryNode: state.tenants.createTenant.fields.tenantSize.memoryNode,
-  ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
-  ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
-  cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
-  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
-  distribution: state.tenants.createTenant.fields.tenantSize.distribution,
-  ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
-  limitSize: state.tenants.createTenant.limitSize,
-  selectedStorageType:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageType,
-  cpuToUse: state.tenants.createTenant.fields.tenantSize.cpuToUse,
-  maxCPUsUse: state.tenants.createTenant.fields.tenantSize.maxCPUsUse,
-  integrationSelection:
-    state.tenants.createTenant.fields.tenantSize.integrationSelection,
-});
+const mapState = (state: AppState) => () => {
+  const createTenant = state.tenants.createTenant;
+
+  const {
+    memoryNode,
+    ecParityChoices,
+    distribution,
+    cleanECChoices,
+    sizeFactor,
+    ecParity,
+    cpuToUse,
+    integrationSelection,
+    resourcesSize,
+    drivesPerServer,
+    maxCPUsUse,
+    ecParityCalc,
+    volumeSize,
+    nodes,
+  } = createTenant.fields.tenantSize;
+
+  return {
+    volumeSize,
+    sizeFactor,
+    drivesPerServer,
+    nodes,
+    memoryNode,
+    ecParity,
+    ecParityChoices,
+    cleanECChoices,
+    resourcesSize,
+    distribution,
+    ecParityCalc,
+    cpuToUse,
+    maxCPUsUse,
+    integrationSelection,
+    limitSize: createTenant.limitSize,
+    selectedStorageType: createTenant.fields.nameTenant.selectedStorageType,
+  };
+};
 
 const connector = connect(mapState, {
   updateAddField,
