@@ -28,7 +28,7 @@ const styles = (theme: Theme) =>
     },
     tabsHeaderContainer: {
       width: "300px",
-      background: "#FBFAFA",
+      background: "#F8F8F8",
       borderRight: "1px solid #EAEAEA",
       "& .MuiTabs-root": {
         "& .MuiTabs-indicator": {
@@ -46,6 +46,7 @@ const styles = (theme: Theme) =>
           },
           "&.Mui-selected": {
             background: "#E5E5E5",
+            fontWeight: 600,
           },
         },
 
@@ -78,6 +79,10 @@ const styles = (theme: Theme) =>
       },
     },
   });
+
+const tabStripStyle = {
+  minHeight: 60,
+};
 
 const VerticalTabs = ({
   children,
@@ -123,6 +128,7 @@ const VerticalTabs = ({
                     className={classes.tabHeader}
                     key={`v-tab-${index}`}
                     value={`${index}`}
+                    style={tabStripStyle}
                     {...item}
                     disableRipple
                     disableTouchRipple

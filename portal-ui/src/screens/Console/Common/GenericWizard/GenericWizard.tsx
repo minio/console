@@ -85,16 +85,18 @@ const styles = (theme: Theme) =>
       maxHeight: 90,
     },
     verticalSteps: {
-      borderRight: "1px solid #EAEAEA",
-      background: "#FBFAFA",
+      borderRight: "1px solid #E5E5E5",
+      background: "#F8F8F8",
     },
     stepsContainer: {
       paddingTop: 0,
       "& .MuiButtonBase-root.Mui-selected": {
-        background: "#EAEAEA",
+        background: "#E5E5E5",
       },
     },
     stepItem: {
+      minHeight: 60,
+      borderBottom: "1px solid #E5E5E5",
       "&:hover": {
         background: "rgba(247,247,247,0.7)",
       },
