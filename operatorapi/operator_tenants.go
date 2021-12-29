@@ -1811,14 +1811,10 @@ func parseTenantPoolRequest(poolParams *models.Pool) (*miniov2.Pool, error) {
 	resourcesLimits := make(corev1.ResourceList)
 	if poolParams.Resources != nil {
 		for key, val := range poolParams.Resources.Requests {
-			if val != 0 {
-				resourcesRequests[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
-			}
+			resourcesRequests[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
 		}
 		for key, val := range poolParams.Resources.Limits {
-			if val != 0 {
-				resourcesLimits[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
-			}
+			resourcesLimits[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
 		}
 	}
 
