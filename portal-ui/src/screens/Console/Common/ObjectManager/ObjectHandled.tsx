@@ -115,7 +115,7 @@ const ObjectHandled = ({
   objectToDisplay,
   deleteFromList,
 }: IObjectHandled) => {
-  const prefix = `/${objectToDisplay.prefix}`;
+  const prefix = `${objectToDisplay.prefix}`;
   return (
     <Fragment>
       <div

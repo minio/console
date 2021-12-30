@@ -355,8 +355,7 @@ const ListObjects = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-              pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
             }`
           )
           .then((res: RewindObjectList) => {
@@ -405,8 +404,7 @@ const ListObjects = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects${
-              pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+            `/api/v1/buckets/${bucketName}/objects${pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
             }`
           )
           .then((res: BucketObjectsList) => {
@@ -440,8 +438,7 @@ const ListObjects = ({
                 api
                   .invoke(
                     "GET",
-                    `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-                      pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+                    `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
                     }`
                   )
                   .then((res: RewindObjectList) => {
@@ -466,8 +463,7 @@ const ListObjects = ({
                 api
                   .invoke(
                     "GET",
-                    `/api/v1/buckets/${bucketName}/objects${
-                      internalPaths ? `?prefix=${internalPaths}` : ``
+                    `/api/v1/buckets/${bucketName}/objects${internalPaths ? `?prefix=${internalPaths}` : ``
                     }`
                   )
                   .then((res: BucketObjectsList) => {
@@ -651,9 +647,8 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
-    const newPath = `/buckets/${bucketName}/browse${
-      idElement ? `/${encodeFileName(idElement)}` : ``
-    }`;
+    const newPath = `/buckets/${bucketName}/browse${idElement ? `/${encodeFileName(idElement)}` : ``
+      }`;
     history.push(newPath);
     return;
   };
@@ -696,8 +691,7 @@ const ListObjects = ({
                   .join("/");
 
                 encodedPath = encodeFileName(
-                  `${path}${finalFolderPath}${
-                    !finalFolderPath.endsWith("/") ? "/" : ""
+                  `${path}${finalFolderPath}${!finalFolderPath.endsWith("/") ? "/" : ""
                   }`
                 );
               }
@@ -724,12 +718,10 @@ const ListObjects = ({
               xhr.open("POST", uploadUrl, true);
 
               const areMultipleFiles = files.length > 1;
-              const errorMessage = `An error occurred while uploading the file${
-                areMultipleFiles ? "s" : ""
-              }.`;
-              const okMessage = `Object${
-                areMultipleFiles ? "s" : ``
-              } uploaded successfully.`;
+              const errorMessage = `An error occurred while uploading the file${areMultipleFiles ? "s" : ""
+                }.`;
+              const okMessage = `Object${areMultipleFiles ? "s" : ``
+                } uploaded successfully.`;
 
               xhr.withCredentials = false;
               xhr.onload = function (event) {
@@ -1315,9 +1307,8 @@ const ListObjects = ({
                 customPaperHeight={classes.browsePaper}
                 selectedItems={selectedObjects}
                 onSelect={selectListObjects}
-                customEmptyMessage={`This location is empty${
-                  !rewindEnabled ? ", please try uploading a new file" : ""
-                }`}
+                customEmptyMessage={`This location is empty${!rewindEnabled ? ", please try uploading a new file" : ""
+                  }`}
                 sortConfig={{
                   currentSort: currentSortField,
                   currentDirection: sortDirection,
