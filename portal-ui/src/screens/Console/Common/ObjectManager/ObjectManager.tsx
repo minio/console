@@ -96,32 +96,36 @@ const ObjectManager = ({
 }: IObjectManager) => {
   return (
     <Fragment>
-      <div
-        className={`${classes.downloadContainer} ${managerOpen ? "open" : ""}`}
-      >
-        <div className={classes.cleanIcon}>
-          <Tooltip title={"Clean Completed Objects"} placement="bottom-start">
-            <IconButton
-              aria-label={"Clear Completed List"}
-              size={"small"}
-              onClick={cleanList}
-              className={classes.cleanButton}
-            >
-              <TrashIcon />
-            </IconButton>
-          </Tooltip>
+      {managerOpen && (
+        <div
+          className={`${classes.downloadContainer} ${
+            managerOpen ? "open" : ""
+          }`}
+        >
+          <div className={classes.cleanIcon}>
+            <Tooltip title={"Clean Completed Objects"} placement="bottom-start">
+              <IconButton
+                aria-label={"Clear Completed List"}
+                size={"small"}
+                onClick={cleanList}
+                className={classes.cleanButton}
+              >
+                <TrashIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+          <div className={classes.title}>Downloads / Uploads</div>
+          <div className={classes.actionsContainer}>
+            {objects.map((object, key) => (
+              <ObjectHandled
+                objectToDisplay={object}
+                key={`object-handled-${object.instanceID}`}
+                deleteFromList={deleteFromList}
+              />
+            ))}
+          </div>
         </div>
-        <div className={classes.title}>Downloads / Uploads</div>
-        <div className={classes.actionsContainer}>
-          {objects.map((object, key) => (
-            <ObjectHandled
-              objectToDisplay={object}
-              key={`object-handled-${object.instanceID}`}
-              deleteFromList={deleteFromList}
-            />
-          ))}
-        </div>
-      </div>
+      )}
     </Fragment>
   );
 };
