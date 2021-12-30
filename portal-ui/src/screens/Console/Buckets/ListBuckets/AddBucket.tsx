@@ -334,7 +334,7 @@ const AddBucket = ({
                       "Allows to keep multiple versions of the same object under the same key."
                     }
                     label={"Versioning"}
-                    disabled={!distributedSetup}
+                    disabled={!distributedSetup || lockingEnabled}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -346,6 +346,9 @@ const AddBucket = ({
                     checked={lockingEnabled}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       enableObjectLocking(event.target.checked);
+                      if (event.target.checked) {
+                        addBucketVersioned(true);
+                      }
                     }}
                     label={"Object Locking"}
                     description={
