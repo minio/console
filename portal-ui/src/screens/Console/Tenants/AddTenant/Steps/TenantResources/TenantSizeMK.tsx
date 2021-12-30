@@ -148,9 +148,12 @@ const TenantSizeMK = ({
       );
 
       updateField("ecParityCalc", ecCodeValidated);
-      updateField("ecParity", ecCodeValidated.defaultEC);
+
+      if (!cleanECChoices.includes(ecParity) || ecParity === "") {
+        updateField("ecParity", ecCodeValidated.defaultEC);
+      }
     }
-  }, [ecParityChoices.length, distribution, cleanECChoices, updateField]);
+  }, [ecParity, ecParityChoices, distribution, cleanECChoices, updateField]);
   /*End debounce functions*/
 
   /*Set location Storage Types*/
@@ -253,8 +256,6 @@ const TenantSizeMK = ({
   useEffect(() => {
     if (integrationSelection.drivesPerServer !== 0) {
       // Get EC Value
-      updateField("ecParity", "");
-
       if (nodes.trim() !== "") {
         api
           .invoke(

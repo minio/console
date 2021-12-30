@@ -134,9 +134,11 @@ const TenantSize = ({
       );
 
       updateField("ecParityCalc", ecCodeValidated);
-      updateField("ecParity", ecCodeValidated.defaultEC);
+      if (!cleanECChoices.includes(ecParity) || ecParity === "") {
+        updateField("ecParity", ecCodeValidated.defaultEC);
+      }
     }
-  }, [ecParityChoices.length, distribution, cleanECChoices, updateField]);
+  }, [ecParity, ecParityChoices.length, distribution, cleanECChoices, updateField]);
   /*End debounce functions*/
 
   /*Calculate Allocation*/
