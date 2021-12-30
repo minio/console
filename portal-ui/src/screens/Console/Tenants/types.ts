@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { IErasureCodeCalc } from "../../../common/types";
-import { ITenant, IResourcesSize } from "./ListTenants/types";
+import { IResourcesSize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
 import { IntegrationConfiguration } from "./AddTenant/Steps/TenantResources/utils";
 
@@ -65,6 +65,7 @@ export const TENANT_DETAILS_SET_CURRENT_TENANT =
   "TENANT_DETAILS/SET_CURRENT_TENANT";
 export const TENANT_DETAILS_SET_TENANT = "TENANT_DETAILS/SET_TENANT";
 export const TENANT_DETAILS_SET_TAB = "TENANT_DETAILS/SET_TAB";
+
 export interface ICertificateInfo {
   name: string;
   serialNumber: string;
@@ -87,7 +88,6 @@ export interface ITenantSecurityResponse {
 export interface ICreateTenant {
   page: number;
   validPages: string[];
-  advancedModeOn: boolean;
   storageClasses: Opts[];
   limitSize: any;
   fields: IFieldStore;
@@ -239,7 +239,6 @@ export interface ITenantSizeFields {
   ecParity: string;
   ecParityChoices: Opts[];
   cleanECChoices: string[];
-  maxAllocableMemo: number;
   resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
@@ -249,6 +248,18 @@ export interface ITenantSizeFields {
   maxCPUsUse: string;
   maxMemorySize: string;
   integrationSelection: IntegrationConfiguration;
+
+  resourcesSpecifyLimit: boolean;
+
+  resourcesCPURequestError: string;
+  resourcesCPURequest: string;
+  resourcesCPULimitError: string;
+  resourcesCPULimit: string;
+
+  resourcesMemoryRequestError: string;
+  resourcesMemoryRequest: string;
+  resourcesMemoryLimitError: string;
+  resourcesMemoryLimit: string;
 }
 
 export interface ITenantAffinity {
@@ -292,11 +303,6 @@ interface SetTenantWizardPage {
   page: number;
 }
 
-interface SetAdvancedMode {
-  type: typeof ADD_TENANT_SET_ADVANCED_MODE;
-  state: boolean;
-}
-
 interface UpdateATField {
   type: typeof ADD_TENANT_UPDATE_FIELD;
   pageName: keyof IFieldStore;
@@ -336,6 +342,7 @@ interface DeleteMinioKeyPair {
   type: typeof ADD_TENANT_DELETE_MINIO_KEYPAIR;
   id: string;
 }
+
 interface AddCAKeyPair {
   type: typeof ADD_TENANT_ADD_CA_KEYPAIR;
 }
@@ -352,6 +359,7 @@ interface DeleteCAKeyPair {
   type: typeof ADD_TENANT_DELETE_CA_KEYPAIR;
   id: string;
 }
+
 interface AddConsoleCAKeyPair {
   type: typeof ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR;
 }
@@ -439,7 +447,6 @@ export type FieldsToHandle = INameTenantFields;
 
 export type TenantsManagementTypes =
   | SetTenantWizardPage
-  | SetAdvancedMode
   | UpdateATField
   | SetPageValid
   | SetStorageClassesList

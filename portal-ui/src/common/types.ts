@@ -147,7 +147,7 @@ export interface ITolerationSeconds {
 }
 
 export interface IResourceModel {
-  requests: IResourceRequests;
+  requests?: IResourceRequests;
   limits?: IResourceLimits;
 }
 
@@ -157,8 +157,8 @@ export interface IResourceRequests {
 }
 
 export interface IResourceLimits {
-  memory: number;
-  cpu: number;
+  memory?: number;
+  cpu?: number;
 }
 
 export interface ITLSTenantConfiguration {

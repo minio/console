@@ -283,7 +283,7 @@ const NameTenantMain = ({
             <Grid container>
               <Grid item xs={12}>
                 <div className={classes.headerElement}>
-                  <h3 className={classes.h3Section}>Name Tenant</h3>
+                  <h3 className={classes.h3Section}>Name</h3>
                   <span className={classes.descriptionText}>
                     How would you like to name this new tenant?
                   </span>

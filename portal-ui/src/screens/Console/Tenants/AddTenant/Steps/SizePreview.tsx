@@ -41,7 +41,6 @@ interface ISizePreviewProps {
   classes: any;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
-  advancedMode: boolean;
   volumeSize: string;
   sizeFactor: string;
   drivesPerServer: string;
@@ -50,7 +49,6 @@ interface ISizePreviewProps {
   ecParity: string;
   ecParityChoices: Opts[];
   cleanECChoices: string[];
-  maxAllocableMemo: number;
   resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
@@ -78,7 +76,6 @@ const SizePreview = ({
   classes,
   updateAddField,
   isPageValid,
-  advancedMode,
   volumeSize,
   sizeFactor,
   drivesPerServer,
@@ -87,7 +84,6 @@ const SizePreview = ({
   ecParity,
   ecParityChoices,
   cleanECChoices,
-  maxAllocableMemo,
   resourcesSize,
   distribution,
   ecParityCalc,
@@ -253,7 +249,6 @@ const SizePreview = ({
 };
 
 const mapState = (state: AppState) => ({
-  advancedMode: state.tenants.createTenant.advancedModeOn,
   volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
   sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
   drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
@@ -262,8 +257,6 @@ const mapState = (state: AppState) => ({
   ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
   ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
   cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
-  maxAllocableMemo:
-    state.tenants.createTenant.fields.tenantSize.maxAllocableMemo,
   resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
   distribution: state.tenants.createTenant.fields.tenantSize.distribution,
   ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
