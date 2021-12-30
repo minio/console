@@ -24,6 +24,8 @@ import {
   OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST,
   OBJECT_MANAGER_CLEAN_LIST,
   OBJECT_MANAGER_TOGGLE_LIST,
+  OBJECT_MANAGER_CLOSE_LIST,
+  OBJECT_MANAGER_OPEN_LIST,
 } from "./actions";
 
 export interface Route {
@@ -112,7 +114,7 @@ export function objectBrowserReducer(
         ...state,
         objectManager: {
           objectsToManage: cloneObjects,
-          managerOpen: true,
+          managerOpen: state.objectManager.managerOpen,
         },
       };
     case OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT:
@@ -192,6 +194,22 @@ export function objectBrowserReducer(
         objectManager: {
           ...state.objectManager,
           managerOpen: !state.objectManager.managerOpen,
+        },
+      };
+    case OBJECT_MANAGER_OPEN_LIST:
+      return {
+        ...state,
+        objectManager: {
+          ...state.objectManager,
+          managerOpen: true,
+        },
+      };
+    case OBJECT_MANAGER_CLOSE_LIST:
+      return {
+        ...state,
+        objectManager: {
+          ...state.objectManager,
+          managerOpen: false,
         },
       };
     default:

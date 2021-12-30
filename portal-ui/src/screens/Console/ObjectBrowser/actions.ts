@@ -27,7 +27,9 @@ export const OBJECT_MANAGER_COMPLETE_OBJECT = "OBJECT_MANAGER/COMPLETE_OBJECT";
 export const OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST =
   "OBJECT_MANAGER/DELETE_FROM_OBJECT_LIST";
 export const OBJECT_MANAGER_CLEAN_LIST = "OBJECT_MANAGER/CLEAN_LIST";
-export const OBJECT_MANAGER_TOGGLE_LIST = "OBJECT_MANAGER/OPEN_LIST";
+export const OBJECT_MANAGER_TOGGLE_LIST = "OBJECT_MANAGER/TOGGLE_LIST";
+export const OBJECT_MANAGER_OPEN_LIST = "OBJECT_MANAGER/OPEN_LIST";
+export const OBJECT_MANAGER_CLOSE_LIST = "OBJECT_MANAGER/CLOSE_LIST";
 
 interface RewindSetEnabled {
   type: typeof REWIND_SET_ENABLE;
@@ -73,6 +75,12 @@ interface OMCleanList {
 interface OMToggleList {
   type: typeof OBJECT_MANAGER_TOGGLE_LIST;
 }
+interface OMOpenList {
+  type: typeof OBJECT_MANAGER_OPEN_LIST;
+}
+interface OMCloseList {
+  type: typeof OBJECT_MANAGER_CLOSE_LIST;
+}
 
 export type ObjectBrowserActionTypes =
   | RewindSetEnabled
@@ -83,7 +91,9 @@ export type ObjectBrowserActionTypes =
   | OMCompleteObject
   | OMDeleteFromList
   | OMCleanList
-  | OMToggleList;
+  | OMToggleList
+  | OMOpenList
+  | OMCloseList;
 
 export const setRewindEnable = (
   state: boolean,
@@ -149,5 +159,17 @@ export const cleanList = () => {
 export const toggleList = () => {
   return {
     type: OBJECT_MANAGER_TOGGLE_LIST,
+  };
+};
+
+export const openList = () => {
+  return {
+    type: OBJECT_MANAGER_OPEN_LIST,
+  };
+};
+
+export const closeList = () => {
+  return {
+    type: OBJECT_MANAGER_CLOSE_LIST,
   };
 };

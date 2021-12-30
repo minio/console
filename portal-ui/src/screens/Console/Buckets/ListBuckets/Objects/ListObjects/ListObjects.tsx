@@ -14,9 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { connect } from "react-redux";
-import {useDropzone} from 'react-dropzone'
+import { useDropzone } from "react-dropzone";
 
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -52,6 +58,7 @@ import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
   completeObject,
+  openList,
   resetRewind,
   setFileModeEnabled,
   setNewObject,
@@ -62,7 +69,6 @@ import { Route } from "../../../../ObjectBrowser/reducers";
 import { download, extensionPreview, sortListObjects } from "../utils";
 import {
   setErrorSnackMessage,
-  setLoadingProgress,
   setSnackBarMessage,
 } from "../../../../../../actions";
 import { BucketInfo, BucketVersioning } from "../../../types";
@@ -84,7 +90,6 @@ import SearchBox from "../../../../Common/SearchBox";
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
 import { DownloadIcon, UploadFolderIcon } from "../../../../../../icons";
-
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -167,7 +172,6 @@ interface IListObjectsProps {
   rewindEnabled: boolean;
   rewindDate: any;
   bucketToRewind: string;
-  setLoadingProgress: typeof setLoadingProgress;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
@@ -179,6 +183,7 @@ interface IListObjectsProps {
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
+  openList: typeof openList;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -214,7 +219,6 @@ const ListObjects = ({
   rewindEnabled,
   rewindDate,
   bucketToRewind,
-  setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
   resetRewind,
@@ -226,6 +230,7 @@ const ListObjects = ({
   setNewObject,
   updateProgress,
   completeObject,
+  openList,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -253,10 +258,6 @@ const ListObjects = ({
   >("ASC");
   const [currentSortField, setCurrentSortField] = useState<string>("name");
   const [iniLoad, setIniLoad] = useState<boolean>(false);
-  
-
-
-  
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -580,7 +581,7 @@ const ListObjects = ({
   };
 
   const handleUploadButton = (e: any) => {
- if (
+    if (
       e === null ||
       e === undefined ||
       e.target.files === null ||
@@ -589,113 +590,12 @@ const ListObjects = ({
       return;
     }
     e.preventDefault();
-    var newFiles : File[] = [];
+    var newFiles: File[] = [];
 
-    for (var i=0; i<e.target.files.length; i++) {
-    newFiles.push(e.target.files[i])
-
-    } 
-    uploadObject(newFiles, "");
-  }
-
-  const upload = (files: File[], bucketName: string, path: string, folderPath: string) => {
-   
-    if (files.length > 0) {
-      for (let file of files) {     
-        let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
-        const fileName = file.name;
-        const blobFile = new Blob([file], { type: file.type });
-
-        let encodedPath = "";
-        const relativeFolderPath = get(file, "webkitRelativePath", "") !== "" 
-                                    ? get(file, "webkitRelativePath", "")
-                                    : folderPath
-           
-        if (path !== "" || relativeFolderPath !== "") {
-          const finalFolderPath = relativeFolderPath
-            .split("/")
-            .slice(0, -1)
-            .join("/");
-
-          encodedPath = encodeFileName(
-            `${path}${finalFolderPath}${
-              !finalFolderPath.endsWith("/") ? "/" : ""
-            }`
-          );
-        }
-
-        if (encodedPath !== "") {
-          uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
-        }
-
-        const identity = encodeFileName(
-          `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
-        );
-
-        setNewObject({
-          bucketName,
-          done: false,
-          instanceID: identity,
-          percentage: 0,
-          prefix: `${decodeFileName(encodedPath)}${fileName}`,
-          type: "upload",
-          waitingForFile: false,
-        });
-
-        let xhr = new XMLHttpRequest();
-        const areMultipleFiles = files.length > 1;
-        const errorMessage = `An error occurred while uploading the file${
-          areMultipleFiles ? "s" : ""
-        }.`;
-        const okMessage = `Object${
-          areMultipleFiles ? "s" : ``
-        } uploaded successfully.`;
-
-        xhr.open("POST", uploadUrl, true);
-
-        xhr.withCredentials = false;
-        xhr.onload = function (event) {
-          if (
-            xhr.status === 401 ||
-            xhr.status === 403 ||
-            xhr.status === 400 ||
-            xhr.status === 500
-          ) {
-            setSnackBarMessage(errorMessage);
-          }
-          if (xhr.status === 200) {
-            completeObject(identity);
-            setSnackBarMessage(okMessage);
-          }
-        };
-
-        xhr.upload.addEventListener("error", (event) => {
-          setSnackBarMessage(errorMessage);
-        });
-
-        xhr.upload.addEventListener("progress", (event) => {
-          const progress = Math.floor((event.loaded * 100) / event.total);
-
-          updateProgress(identity, progress);
-        });
-
-        xhr.onerror = () => {
-          setSnackBarMessage(errorMessage);
-        };
-        xhr.onloadend = () => {
-          setLoading(true);
-          setLoadingProgress(100);
-        };
-
-        const formData = new FormData();
-        if (file.size !== undefined){
-        formData.append(file.size.toString(), blobFile, fileName);
-        
-        xhr.send(formData);
-        }
-      }
+    for (var i = 0; i < e.target.files.length; i++) {
+      newFiles.push(e.target.files[i]);
     }
-
+    uploadObject(newFiles, "");
   };
 
   const displayParsedDate = (object: BucketObject) => {
@@ -758,25 +658,173 @@ const ListObjects = ({
     return;
   };
 
-  const uploadObject = (files: File[], folderPath: string): void => {
-    let pathPrefix = "";
-    if (internalPaths) {
-      const decodedPath = decodeFileName(internalPaths);
-      pathPrefix = decodedPath.endsWith("/") ? decodedPath : decodedPath + "/";
+  const uploadObject = useCallback(
+    (files: File[], folderPath: string): void => {
+      let pathPrefix = "";
+      if (internalPaths) {
+        const decodedPath = decodeFileName(internalPaths);
+        pathPrefix = decodedPath.endsWith("/")
+          ? decodedPath
+          : decodedPath + "/";
       }
 
-    upload(files, bucketName, pathPrefix, folderPath);
-    
-  };
+      const upload = (
+        files: File[],
+        bucketName: string,
+        path: string,
+        folderPath: string
+      ) => {
+        if (files.length > 0) {
+          openList();
+          let nextFile = files.pop();
+          let uploadPromise = (file: File) => {
+            return new Promise((resolve, reject) => {
+              let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
+              const fileName = file.name;
+              const blobFile = new Blob([file], { type: file.type });
 
-    const onDrop = React.useCallback(acceptedFiles => {
-     
-      let newFolderPath: string = acceptedFiles[0].path;
-      uploadObject(acceptedFiles , newFolderPath);
-      
-  }, [uploadObject]);
-  
-  const {getRootProps, getInputProps} = useDropzone({noClick: true, onDrop});
+              let encodedPath = "";
+              const relativeFolderPath =
+                get(file, "webkitRelativePath", "") !== ""
+                  ? get(file, "webkitRelativePath", "")
+                  : folderPath;
+
+              if (path !== "" || relativeFolderPath !== "") {
+                const finalFolderPath = relativeFolderPath
+                  .split("/")
+                  .slice(0, -1)
+                  .join("/");
+
+                encodedPath = encodeFileName(
+                  `${path}${finalFolderPath}${
+                    !finalFolderPath.endsWith("/") ? "/" : ""
+                  }`
+                );
+              }
+
+              if (encodedPath !== "") {
+                uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
+              }
+
+              const identity = encodeFileName(
+                `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
+              );
+
+              setNewObject({
+                bucketName,
+                done: false,
+                instanceID: identity,
+                percentage: 0,
+                prefix: `${decodeFileName(encodedPath)}${fileName}`,
+                type: "upload",
+                waitingForFile: false,
+              });
+
+              let xhr = new XMLHttpRequest();
+              xhr.open("POST", uploadUrl, true);
+
+              const areMultipleFiles = files.length > 1;
+              const errorMessage = `An error occurred while uploading the file${
+                areMultipleFiles ? "s" : ""
+              }.`;
+              const okMessage = `Object${
+                areMultipleFiles ? "s" : ``
+              } uploaded successfully.`;
+
+              xhr.withCredentials = false;
+              xhr.onload = function (event) {
+                if (
+                  xhr.status === 401 ||
+                  xhr.status === 403 ||
+                  xhr.status === 400 ||
+                  xhr.status === 500
+                ) {
+                  setSnackBarMessage(errorMessage);
+                }
+                if (xhr.status === 200) {
+                  completeObject(identity);
+                  if (files.length === 0) {
+                    setSnackBarMessage(okMessage);
+                  }
+                }
+                resolve(xhr.status);
+                if (files.length > 0) {
+                  let nFile = files.pop();
+                  if (nFile) {
+                    return uploadPromise(nFile);
+                  }
+                }
+              };
+
+              xhr.upload.addEventListener("error", (event) => {
+                setSnackBarMessage(errorMessage);
+              });
+
+              xhr.upload.addEventListener("progress", (event) => {
+                const progress = Math.floor((event.loaded * 100) / event.total);
+
+                updateProgress(identity, progress);
+              });
+
+              xhr.onerror = () => {
+                setSnackBarMessage(errorMessage);
+                console.log("GONNA REJECT");
+                reject(errorMessage);
+              };
+              xhr.onloadend = () => {
+                if (files.length === 0) {
+                  setLoading(true);
+                }
+              };
+
+              const formData = new FormData();
+              if (file.size !== undefined) {
+                formData.append(file.size.toString(), blobFile, fileName);
+
+                xhr.send(formData);
+              }
+            });
+          };
+
+          if (nextFile) {
+            uploadPromise(nextFile!)
+              .then(() => {
+                console.log("done uploading file!");
+              })
+              .catch((err) => {
+                console.log("error uploading file!", err);
+              });
+          }
+        }
+      };
+
+      upload(files, bucketName, pathPrefix, folderPath);
+    },
+    [
+      bucketName,
+      completeObject,
+      internalPaths,
+      openList,
+      setNewObject,
+      setSnackBarMessage,
+      updateProgress,
+    ]
+  );
+
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      if (acceptedFiles && acceptedFiles.length > 0) {
+        let newFolderPath: string = acceptedFiles[0].path;
+        uploadObject(acceptedFiles, newFolderPath);
+      }
+    },
+    [uploadObject]
+  );
+
+  const { getRootProps, getInputProps } = useDropzone({
+    noClick: true,
+    onDrop,
+  });
 
   const openPreview = (fileObject: BucketObject) => {
     setSelectedPreview(fileObject);
@@ -996,8 +1044,6 @@ const ListObjects = ({
       });
     }
   };
-
-  
 
   return (
     <React.Fragment>
@@ -1252,37 +1298,37 @@ const ListObjects = ({
         </Grid>
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-        <Grid item xs={12} className={classes.tableBlock}>
-          <SecureComponent
-            scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
-            resource={bucketName}
-            errorProps={{ disabled: true }}
-          >
-            <TableWrapper
-              itemActions={tableActions}
-              columns={rewindEnabled ? rewindModeColumns : listModeColumns}
-              isLoading={rewindEnabled ? loadingRewind : loading}
-              loadingMessage={loadingMessage}
-              entityName="Objects"
-              idField="name"
-              records={payload}
-              customPaperHeight={classes.browsePaper}
-              selectedItems={selectedObjects}
-              onSelect={selectListObjects}
-              customEmptyMessage={`This location is empty${
-                !rewindEnabled ? ", please try uploading a new file" : ""
-              }`}
-              sortConfig={{
-                currentSort: currentSortField,
-                currentDirection: sortDirection,
-                triggerSort: sortChange,
-              }}
-              onSelectAll={selectAllItems}
-            />
-          </SecureComponent>
-        </Grid>
+          <Grid item xs={12} className={classes.tableBlock}>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+              resource={bucketName}
+              errorProps={{ disabled: true }}
+            >
+              <TableWrapper
+                itemActions={tableActions}
+                columns={rewindEnabled ? rewindModeColumns : listModeColumns}
+                isLoading={rewindEnabled ? loadingRewind : loading}
+                loadingMessage={loadingMessage}
+                entityName="Objects"
+                idField="name"
+                records={payload}
+                customPaperHeight={classes.browsePaper}
+                selectedItems={selectedObjects}
+                onSelect={selectListObjects}
+                customEmptyMessage={`This location is empty${
+                  !rewindEnabled ? ", please try uploading a new file" : ""
+                }`}
+                sortConfig={{
+                  currentSort: currentSortField,
+                  currentDirection: sortDirection,
+                  triggerSort: sortChange,
+                }}
+                onSelectAll={selectAllItems}
+              />
+            </SecureComponent>
+          </Grid>
         </div>
-        </PageLayout>
+      </PageLayout>
     </React.Fragment>
   );
 };
@@ -1298,7 +1344,6 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
 });
 
 const mapDispatchToProps = {
-  setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
   setFileModeEnabled,
@@ -1308,6 +1353,7 @@ const mapDispatchToProps = {
   setNewObject,
   updateProgress,
   completeObject,
+  openList,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
