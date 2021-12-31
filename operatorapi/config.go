@@ -66,7 +66,7 @@ func getK8sSAToken() string {
 	return string(dat)
 }
 
-// Marketplace Mode Token
-func getMPMode() string {
-	return env.Get(ConsoleMPMode, "")
+// Get Marketplace deployment platform
+func getMarketplace() string {
+	return env.Get(ConsoleMarketplace, "")
 }
