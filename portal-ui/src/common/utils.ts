@@ -15,10 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
-import get from "lodash/get";
-import { ICapacity, IErasureCodeCalc, IStorageFactors } from "./types";
+import {
+  ICapacity,
+  IErasureCodeCalc,
+  IStorageDistribution,
+  IStorageFactors,
+} from "./types";
 import { IPool } from "../screens/Console/Tenants/ListTenants/types";
-import { AllocableResourcesResponse } from "../screens/Console/Tenants/types";
 
 const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
@@ -199,8 +202,7 @@ export const calculateDistribution = (
   forcedNodes: number = 0,
   limitSize: number = 0,
   drivesPerServer: number = 0
-) => {
-  let numberOfNodes = {};
+): IStorageDistribution => {
   const requestedSizeBytes = getBytes(
     capacityToUse.value,
     capacityToUse.unit,
@@ -227,7 +229,7 @@ export const calculateDistribution = (
     };
   }
 
-  numberOfNodes = calculateStorage(
+  let numberOfNodes = calculateStorage(
     requestedSizeBytes,
     forcedNodes,
     limitSize,
@@ -242,7 +244,7 @@ const calculateStorage = (
   forcedNodes: number,
   limitSize: number,
   drivesPerServer: number
-) => {
+): IStorageDistribution => {
   // Size validation
   const intReqBytes = parseInt(requestedBytes, 10);
   const maxDiskSize = minStReq * 256; // 256 GiB
@@ -263,7 +265,7 @@ const structureCalc = (
   maxDiskSize: number,
   maxClusterSize: number,
   disksPerNode: number = 0
-) => {
+): IStorageDistribution => {
   if (
     isNaN(nodes) ||
     isNaN(desiredCapacity) ||
@@ -275,7 +277,7 @@ const structureCalc = (
       nodes: 0,
       persistentVolumes: 0,
       disks: 0,
-      volumePerDisk: 0,
+      pvSize: 0,
     }; // Invalid Data
   }
 
@@ -316,7 +318,7 @@ const structureCalc = (
         nodes: 0,
         persistentVolumes: 0,
         disks: 0,
-        volumePerDisk: 0,
+        pvSize: 0,
       }; // Cannot allocate this server
     }
   }
@@ -328,7 +330,7 @@ const structureCalc = (
       nodes: 0,
       persistentVolumes: 0,
       disks: 0,
-      volumePerDisk: 0,
+      pvSize: 0,
     }; // Cannot allocate this volume size
   }
 
@@ -501,7 +503,8 @@ export const getTimeFromTimestamp = (
 export const calculateBytes = (
   x: string,
   showDecimals = false,
-  roundFloor = true
+  roundFloor = true,
+  k8sUnit = false
 ) => {
   const bytes = parseInt(x, 10);
 
@@ -523,7 +526,7 @@ export const calculateBytes = (
 
   // Get Unit parsed
   const unitParsed = parseFloat(roundedUnit.toFixed(fractionDigits));
-  const finalUnit = units[i];
+  const finalUnit = k8sUnit ? k8sCalcUnits[i] : units[i];
 
   return { total: unitParsed, unit: finalUnit };
 };
@@ -595,114 +598,4 @@ export const decodeFileName = (text: string) => {
   } catch (err) {
     return text;
   }
-};
-
-export const setResourcesValidation = (
-  memorySize: number,
-  cpusSelected: number,
-  maxAllocatableResources: AllocableResourcesResponse
-) => {
-  const requestedSizeBytes = getBytes(memorySize.toString(10), "GB");
-  const memReqSize = parseInt(requestedSizeBytes, 10);
-
-  const minimalRequiredMemory = 2147483648; // Minimal required memory, 2Gi
-
-  const memoryExists = get(
-    maxAllocatableResources,
-    "min_allocatable_mem",
-    false
-  );
-
-  const cpuExists = get(maxAllocatableResources, "min_allocatable_cpu", false);
-
-  if (memoryExists === false) {
-    return {
-      error:
-        "No available memory for the selected number of nodes. Please try another combination.",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  if (cpuExists === false) {
-    return {
-      error:
-        "No available CPUs for the selected number of nodes. Please try another combination",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  if (memReqSize < minimalRequiredMemory) {
-    return {
-      error: "Memory size is set bellow minimum required",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  if (cpusSelected < 1) {
-    return {
-      error: "CPU amount is set bellow minimum available",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  if (
-    memReqSize <= maxAllocatableResources.mem_priority.max_allocatable_mem &&
-    cpusSelected > maxAllocatableResources.mem_priority.max_allocatable_cpu
-  ) {
-    return {
-      error:
-        "It is not possible to allocate this amount of memory in all the CPUs",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  if (
-    cpusSelected <= maxAllocatableResources.cpu_priority.max_allocatable_cpu &&
-    memReqSize > maxAllocatableResources.cpu_priority.max_allocatable_mem
-  ) {
-    return {
-      error:
-        "It is not possible to allocate this amount of CPUs with the available memory",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  if (
-    cpusSelected > maxAllocatableResources.cpu_priority.max_allocatable_cpu ||
-    memReqSize > maxAllocatableResources.mem_priority.max_allocatable_mem
-  ) {
-    return {
-      error: "CPUs or Memory selected is beyond bounds",
-      memoryRequest: 0,
-      memoryLimit: 0,
-      cpuRequest: 0,
-      cpuLimit: 0,
-    };
-  }
-
-  return {
-    error: "",
-    memoryRequest: memReqSize,
-    memoryLimit: maxAllocatableResources.mem_priority.max_allocatable_mem,
-    cpuRequest: cpusSelected,
-    cpuLimit: maxAllocatableResources.cpu_priority.max_allocatable_cpu,
-  };
 };

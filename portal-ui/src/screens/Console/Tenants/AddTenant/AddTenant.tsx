@@ -39,7 +39,6 @@ import { KeyPair } from "../ListTenants/utils";
 import { setErrorSnackMessage } from "../../../../actions";
 import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
-import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
 import { ICertificatesItems, IFieldStore } from "../types";
 import { resetAddTenantForm, updateAddField } from "../actions";
@@ -53,6 +52,7 @@ import history from "../../../../history";
 import Images from "./Steps/Images";
 import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
+import TenantResources from "./Steps/TenantResources/TenantResources";
 
 interface IAddTenantProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -174,7 +174,6 @@ const AddTenant = ({
     const enableTLS = fields.security.enableTLS;
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
-    const resourcesSize = fields.tenantSize.resourcesSize;
     const tenantCustom = fields.configure.tenantCustom;
     const logSearchCustom = fields.configure.logSearchCustom;
     const prometheusCustom = fields.configure.prometheusCustom;
@@ -253,16 +252,6 @@ const AddTenant = ({
               size: distribution.pvSize,
               storage_class_name: selectedStorageClass,
             },
-            resources: {
-              requests: {
-                memory: resourcesSize.memoryRequest,
-                cpu: resourcesSize.cpuRequest,
-              },
-              limits: {
-                memory: resourcesSize.memoryRequest,
-                cpu: resourcesSize.cpuRequest,
-              },
-            },
             securityContext: tenantCustom ? tenantSecurityContext : null,
             ...affinityObject,
           },
@@ -270,6 +259,49 @@ const AddTenant = ({
         erasureCodingParity: parseInt(erasureCode, 10),
       };
 
+      // Set Resources
+      if (
+        fields.tenantSize.resourcesCPURequest !== "" ||
+        fields.tenantSize.resourcesCPULimit !== "" ||
+        fields.tenantSize.resourcesMemoryRequest !== "" ||
+        fields.tenantSize.resourcesMemoryLimit !== ""
+      ) {
+        dataSend.pools[0].resources = {};
+        // requests
+        if (
+          fields.tenantSize.resourcesCPURequest !== "" ||
+          fields.tenantSize.resourcesMemoryRequest !== ""
+        ) {
+          dataSend.pools[0].resources.requests = {};
+          if (fields.tenantSize.resourcesCPURequest !== "") {
+            dataSend.pools[0].resources.requests.cpu = parseInt(
+              fields.tenantSize.resourcesCPURequest
+            );
+          }
+          if (fields.tenantSize.resourcesMemoryRequest !== "") {
+            dataSend.pools[0].resources.requests.memory = parseInt(
+              fields.tenantSize.resourcesMemoryRequest
+            );
+          }
+        }
+        // limits
+        if (
+          fields.tenantSize.resourcesCPULimit !== "" ||
+          fields.tenantSize.resourcesMemoryLimit !== ""
+        ) {
+          dataSend.pools[0].resources.limits = {};
+          if (fields.tenantSize.resourcesCPULimit !== "") {
+            dataSend.pools[0].resources.limits.cpu = parseInt(
+              fields.tenantSize.resourcesCPULimit
+            );
+          }
+          if (fields.tenantSize.resourcesMemoryLimit !== "") {
+            dataSend.pools[0].resources.limits.memory = parseInt(
+              fields.tenantSize.resourcesMemoryLimit
+            );
+          }
+        }
+      }
       if (customDockerhub) {
         dataSend = {
           ...dataSend,
@@ -285,7 +317,10 @@ const AddTenant = ({
         dataSend = {
           ...dataSend,
           logSearchConfiguration: {
-            storageClass: logSearchSelectedStorageClass,
+            storageClass:
+              logSearchSelectedStorageClass === "default"
+                ? ""
+                : logSearchSelectedStorageClass,
             storageSize: parseInt(logSearchVolumeSize),
             image: logSearchImage,
             postgres_image: logSearchPostgresImage,
@@ -309,7 +344,10 @@ const AddTenant = ({
         dataSend = {
           ...dataSend,
           prometheusConfiguration: {
-            storageClass: prometheusSelectedStorageClass,
+            storageClass:
+              prometheusSelectedStorageClass === "default"
+                ? ""
+                : prometheusSelectedStorageClass,
             storageSize: parseInt(prometheusVolumeSize),
             image: prometheusImage,
             sidecar_image: prometheusSidecarImage,
@@ -671,7 +709,7 @@ const AddTenant = ({
   const wizardSteps: IWizardElement[] = [
     {
       label: "Setup",
-      componentRender: <NameTenant />,
+      componentRender: <TenantResources />,
       buttons: [cancelButton, createButton],
     },
     {

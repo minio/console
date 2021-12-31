@@ -147,18 +147,18 @@ export interface ITolerationSeconds {
 }
 
 export interface IResourceModel {
-  requests: IResourceRequests;
+  requests?: IResourceRequests;
   limits?: IResourceLimits;
 }
 
 export interface IResourceRequests {
-  memory: number;
-  cpu: number;
+  memory?: number;
+  cpu?: number;
 }
 
 export interface IResourceLimits {
-  memory: number;
-  cpu: number;
+  memory?: number;
+  cpu?: number;
 }
 
 export interface ITLSTenantConfiguration {
@@ -272,7 +272,7 @@ export interface IActiveDirectoryConfiguration {
 }
 
 export interface IStorageDistribution {
-  error: number;
+  error: number | string;
   nodes: number;
   persistentVolumes: number;
   disks: number;

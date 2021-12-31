@@ -16,34 +16,33 @@
 import has from "lodash/has";
 import get from "lodash/get";
 import {
-  TenantsManagementTypes,
-  ITenantState,
+  ADD_TENANT_ADD_CA_KEYPAIR,
+  ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_ADD_CONSOLE_CERT,
+  ADD_TENANT_ADD_FILE_TO_CA_KEYPAIR,
+  ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR,
+  ADD_TENANT_ADD_MINIO_KEYPAIR,
+  ADD_TENANT_DELETE_CA_KEYPAIR,
+  ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_DELETE_MINIO_KEYPAIR,
+  ADD_TENANT_ENCRYPTION_CLIENT_CERT,
+  ADD_TENANT_ENCRYPTION_GEMALTO_CA,
+  ADD_TENANT_ENCRYPTION_SERVER_CERT,
+  ADD_TENANT_ENCRYPTION_VAULT_CA,
+  ADD_TENANT_ENCRYPTION_VAULT_CERT,
+  ADD_TENANT_RESET_FORM,
   ADD_TENANT_SET_CURRENT_PAGE,
-  ADD_TENANT_SET_ADVANCED_MODE,
-  ADD_TENANT_UPDATE_FIELD,
+  ADD_TENANT_SET_LIMIT_SIZE,
   ADD_TENANT_SET_PAGE_VALID,
   ADD_TENANT_SET_STORAGE_CLASSES_LIST,
-  ADD_TENANT_ADD_MINIO_KEYPAIR,
-  ADD_TENANT_DELETE_MINIO_KEYPAIR,
-  ADD_TENANT_ADD_CA_KEYPAIR,
-  ADD_TENANT_ADD_FILE_TO_CA_KEYPAIR,
-  ADD_TENANT_DELETE_CA_KEYPAIR,
-  ADD_TENANT_ADD_CONSOLE_CERT,
-  ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR,
-  ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
-  ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
-  ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR,
-  ADD_TENANT_ENCRYPTION_SERVER_CERT,
-  ADD_TENANT_ENCRYPTION_CLIENT_CERT,
-  ADD_TENANT_ENCRYPTION_VAULT_CERT,
-  ADD_TENANT_ENCRYPTION_VAULT_CA,
-  ADD_TENANT_ENCRYPTION_GEMALTO_CA,
-  ADD_TENANT_RESET_FORM,
-  ADD_TENANT_SET_LIMIT_SIZE,
-  TENANT_DETAILS_SET_LOADING,
+  ADD_TENANT_UPDATE_FIELD,
+  ITenantState,
   TENANT_DETAILS_SET_CURRENT_TENANT,
-  TENANT_DETAILS_SET_TENANT,
+  TENANT_DETAILS_SET_LOADING,
   TENANT_DETAILS_SET_TAB,
+  TENANT_DETAILS_SET_TENANT,
+  TenantsManagementTypes,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
@@ -61,7 +60,6 @@ const initialState: ITenantState = {
       "security",
       "encryption",
     ],
-    advancedModeOn: false,
     storageClasses: [],
     limitSize: {},
     fields: {
@@ -69,6 +67,7 @@ const initialState: ITenantState = {
         tenantName: "",
         namespace: "",
         selectedStorageClass: "",
+        selectedStorageType: "",
       },
       configure: {
         customImage: true,
@@ -90,8 +89,8 @@ const initialState: ITenantState = {
         logSearchPostgresInitImage: "",
         prometheusVolumeSize: "5",
         prometheusSizeFactor: "Gi",
-        logSearchSelectedStorageClass: "",
-        prometheusSelectedStorageClass: "",
+        logSearchSelectedStorageClass: "default",
+        prometheusSelectedStorageClass: "default",
         prometheusImage: "",
         prometheusSidecarImage: "",
         prometheusInitImage: "",
@@ -200,8 +199,17 @@ const initialState: ITenantState = {
         ecParity: "",
         ecParityChoices: [],
         cleanECChoices: [],
-        maxAllocableMemo: 0,
         cpuToUse: "0",
+        // resource request
+        resourcesSpecifyLimit: false,
+        resourcesCPURequestError: "",
+        resourcesCPURequest: "",
+        resourcesCPULimitError: "",
+        resourcesCPULimit: "",
+        resourcesMemoryRequestError: "",
+        resourcesMemoryRequest: "",
+        resourcesMemoryLimitError: "",
+        resourcesMemoryLimit: "",
         resourcesSize: {
           error: "",
           memoryRequest: 0,
@@ -214,7 +222,6 @@ const initialState: ITenantState = {
           nodes: 0,
           persistentVolumes: 0,
           disks: 0,
-          volumePerDisk: 0,
         },
         ecParityCalc: {
           error: 0,
@@ -239,6 +246,14 @@ const initialState: ITenantState = {
         },
         maxCPUsUse: "0",
         maxMemorySize: "0",
+        integrationSelection: {
+          driveSize: { driveSize: "0", sizeUnit: "B" },
+          CPU: 0,
+          typeSelection: "",
+          memory: 0,
+          drivesPerServer: 0,
+          storageClass: "",
+        },
       },
       affinity: {
         nodeSelectorLabels: "",
@@ -338,10 +353,7 @@ export function tenantsReducer(
       newState.createTenant.page = action.page;
 
       return { ...newState };
-    case ADD_TENANT_SET_ADVANCED_MODE:
-      newState.createTenant.advancedModeOn = action.state;
 
-      return { ...newState };
     case ADD_TENANT_UPDATE_FIELD:
       if (
         has(newState.createTenant.fields, `${action.pageName}.${action.field}`)
@@ -599,7 +611,6 @@ export function tenantsReducer(
             "security",
             "encryption",
           ],
-          advancedModeOn: false,
           storageClasses: [],
           limitSize: {},
           fields: {
@@ -607,6 +618,7 @@ export function tenantsReducer(
               tenantName: "",
               namespace: "",
               selectedStorageClass: "",
+              selectedStorageType: "",
             },
             configure: {
               customImage: false,
@@ -622,14 +634,14 @@ export function tenantsReducer(
               prometheusCustom: false,
               logSearchVolumeSize: "5",
               logSearchSizeFactor: "Gi",
-              logSearchSelectedStorageClass: "",
+              logSearchSelectedStorageClass: "default",
               logSearchImage: "",
               kesImage: "",
               logSearchPostgresImage: "",
               logSearchPostgresInitImage: "",
               prometheusVolumeSize: "5",
               prometheusSizeFactor: "Gi",
-              prometheusSelectedStorageClass: "",
+              prometheusSelectedStorageClass: "default",
               prometheusImage: "",
               prometheusSidecarImage: "",
               prometheusInitImage: "",
@@ -738,13 +750,11 @@ export function tenantsReducer(
               ecParity: "",
               ecParityChoices: [],
               cleanECChoices: [],
-              maxAllocableMemo: 0,
               distribution: {
                 error: "",
                 nodes: 0,
                 persistentVolumes: 0,
                 disks: 0,
-                volumePerDisk: 0,
               },
               ecParityCalc: {
                 error: 0,
@@ -756,6 +766,16 @@ export function tenantsReducer(
               },
               limitSize: {},
               cpuToUse: "0",
+              // resource request
+              resourcesSpecifyLimit: false,
+              resourcesCPURequestError: "",
+              resourcesCPURequest: "",
+              resourcesCPULimitError: "",
+              resourcesCPULimit: "",
+              resourcesMemoryRequestError: "",
+              resourcesMemoryRequest: "",
+              resourcesMemoryLimitError: "",
+              resourcesMemoryLimit: "",
               resourcesSize: {
                 error: "",
                 memoryRequest: 0,
@@ -777,6 +797,14 @@ export function tenantsReducer(
               },
               maxCPUsUse: "0",
               maxMemorySize: "0",
+              integrationSelection: {
+                driveSize: { driveSize: "0", sizeUnit: "B" },
+                CPU: 0,
+                typeSelection: "",
+                memory: 0,
+                drivesPerServer: 0,
+                storageClass: "",
+              },
             },
             affinity: {
               nodeSelectorLabels: "",

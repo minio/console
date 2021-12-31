@@ -998,6 +998,10 @@ definitions:
   operatorSessionResponse:
     type: object
     properties:
+      features:
+        type: array
+        items:
+          type: string
       status:
         type: string
         enum: [ok]

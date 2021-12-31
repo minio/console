@@ -17,6 +17,8 @@
 package operatorapi
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
@@ -44,6 +46,19 @@ func getSessionResponse(session *models.Principal) (*models.OperatorSessionRespo
 		Status:      models.OperatorSessionResponseStatusOk,
 		Operator:    true,
 		Permissions: map[string][]string{},
+		Features:    getListOfOperatorFeatures(),
 	}
 	return sessionResp, nil
+}
+
+// getListOfEnabledFeatures returns a list of features
+func getListOfOperatorFeatures() []string {
+	features := []string{}
+	mpEnabled := getMPMode()
+
+	if mpEnabled != "" {
+		features = append(features, fmt.Sprintf("mp-mode-%s", mpEnabled))
+	}
+
+	return features
 }

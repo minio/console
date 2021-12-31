@@ -1257,9 +1257,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.LogSearchConfiguration.StorageClass != "" {
 			logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
 		}
-		if tenantReq.LogSearchConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
-			logSearchStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
-		}
 		if tenantReq.LogSearchConfiguration.Image != "" {
 			logSearchImage = tenantReq.LogSearchConfiguration.Image
 		}
@@ -1346,12 +1343,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.PrometheusConfiguration.StorageClass != "" {
 			prometheusStorageClass = tenantReq.PrometheusConfiguration.StorageClass
 		}
-
-		// Default class name for prometheus
-		if tenantReq.PrometheusConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
-			prometheusStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
-		}
-
 		if tenantReq.PrometheusConfiguration.Image != "" {
 			prometheusImage = tenantReq.PrometheusConfiguration.Image
 		}

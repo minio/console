@@ -20,14 +20,13 @@ import { Theme } from "@mui/material/styles";
 import { SelectChangeEvent } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import get from "lodash/get";
-import { AppState } from "../../../../../store";
-import { isPageValid, updateAddField } from "../../actions";
+import { AppState } from "../../../../../../store";
+import { isPageValid, updateAddField } from "../../../actions";
 import {
   formFieldStyles,
   modalBasic,
   wizardCommon,
-} from "../../../Common/FormComponents/common/styleLibrary";
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import {
   calculateDistribution,
@@ -35,23 +34,21 @@ import {
   getBytes,
   k8sfactorForDropdown,
   niceBytes,
-  setResourcesValidation,
-} from "../../../../../common/utils";
-import { clearValidationError } from "../../utils";
-import { ecListTransform, Opts } from "../../ListTenants/utils";
-import { IResourcesSize } from "../../ListTenants/types";
-import { AllocableResourcesResponse } from "../../types";
-import { ICapacity, IErasureCodeCalc } from "../../../../../common/types";
-import { commonFormValidation } from "../../../../../utils/validationFunctions";
-import api from "../../../../../common/api";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+} from "../../../../../../common/utils";
+import { clearValidationError } from "../../../utils";
+import { ecListTransform, Opts } from "../../../ListTenants/utils";
+import { IResourcesSize } from "../../../ListTenants/types";
+import { ICapacity, IErasureCodeCalc } from "../../../../../../common/types";
+import { commonFormValidation } from "../../../../../../utils/validationFunctions";
+import api from "../../../../../../common/api";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import TenantSizeResources from "./TenantSizeResources";
 
 interface ITenantSizeProps {
   classes: any;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
-  advancedMode: boolean;
   volumeSize: string;
   sizeFactor: string;
   drivesPerServer: string;
@@ -60,16 +57,11 @@ interface ITenantSizeProps {
   ecParity: string;
   ecParityChoices: Opts[];
   cleanECChoices: string[];
-  maxAllocableMemo: number;
   resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
   limitSize: any;
   selectedStorageClass: string;
-  cpuToUse: string;
-  maxAllocatableResources: AllocableResourcesResponse;
-  maxCPUsUse: string;
-  maxMemorySize: string;
 }
 
 const styles = (theme: Theme) =>
@@ -98,7 +90,6 @@ const TenantSize = ({
   classes,
   updateAddField,
   isPageValid,
-  advancedMode,
   volumeSize,
   sizeFactor,
   drivesPerServer,
@@ -107,16 +98,11 @@ const TenantSize = ({
   ecParity,
   ecParityChoices,
   cleanECChoices,
-  maxAllocableMemo,
   resourcesSize,
   distribution,
   ecParityCalc,
   limitSize,
-  cpuToUse,
   selectedStorageClass,
-  maxAllocatableResources,
-  maxCPUsUse,
-  maxMemorySize,
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
@@ -138,23 +124,6 @@ const TenantSize = ({
 
   // Storage Quotas
 
-  const validateResourcesSize = useCallback(() => {
-    const memSize = memoryNode || "0";
-    const cpusSelected = cpuToUse;
-
-    const resourcesSize = setResourcesValidation(
-      parseInt(memSize),
-      parseInt(cpusSelected),
-      maxAllocatableResources
-    );
-
-    updateField("resourcesSize", resourcesSize);
-  }, [memoryNode, cpuToUse, maxAllocatableResources, updateField]);
-
-  useEffect(() => {
-    validateResourcesSize();
-  }, [memoryNode, cpuToUse, validateResourcesSize]);
-
   useEffect(() => {
     if (ecParityChoices.length > 0 && distribution.error === "") {
       const ecCodeValidated = erasureCodeCalc(
@@ -165,9 +134,11 @@ const TenantSize = ({
       );
 
       updateField("ecParityCalc", ecCodeValidated);
-      updateField("ecParity", ecCodeValidated.defaultEC);
+      if (!cleanECChoices.includes(ecParity) || ecParity === "") {
+        updateField("ecParity", ecCodeValidated.defaultEC);
+      }
     }
-  }, [ecParityChoices.length, distribution, cleanECChoices, updateField]);
+  }, [ecParity, ecParityChoices.length, distribution, cleanECChoices, updateField]);
   /*End debounce functions*/
 
   /*Calculate Allocation*/
@@ -192,74 +163,7 @@ const TenantSize = ({
     updateField("distribution", distrCalculate);
     setErrorFlag(false);
     setNodeError("");
-
-    // Get allocatable Resources
-    api
-      .invoke("GET", `api/v1/cluster/allocatable-resources?num_nodes=${nodes}`)
-      .then((res: AllocableResourcesResponse) => {
-        updateField("maxAllocatableResources", res);
-
-        const maxAllocatableResources = res;
-
-        const memoryExists = get(
-          maxAllocatableResources,
-          "min_allocatable_mem",
-          false
-        );
-
-        const cpuExists = get(
-          maxAllocatableResources,
-          "min_allocatable_cpu",
-          false
-        );
-
-        if (memoryExists === false || cpuExists === false) {
-          updateField("cpuToUse", 0);
-
-          updateField("maxMemorySize", "0");
-          updateField("maxCPUsUse", "0");
-
-          validateResourcesSize();
-          return;
-        }
-
-        // We default to Best CPU Configuration
-        updateField(
-          "maxMemorySize",
-          res.mem_priority.max_allocatable_mem.toString()
-        );
-        updateField(
-          "maxCPUsUse",
-          res.cpu_priority.max_allocatable_cpu.toString()
-        );
-
-        updateField("maxAllocableMemo", res.mem_priority.max_allocatable_mem);
-
-        const cpuInt = parseInt(cpuToUse);
-        const maxAlocatableCPU = get(
-          maxAllocatableResources,
-          "cpu_priority.max_allocatable_cpu",
-          0
-        );
-
-        if (cpuInt === 0 && cpuInt !== maxAlocatableCPU) {
-          updateField("cpuToUse", maxAlocatableCPU);
-        } else if (cpuInt > maxAlocatableCPU) {
-          updateField("cpuToUse", maxAlocatableCPU);
-        }
-
-        // We reset error states
-        validateResourcesSize();
-      })
-      .catch((err: any) => {
-        updateField("maxAllocableMemo", 0);
-        updateField("cpuToUse", "0");
-        setErrorFlag(true);
-        setNodeError(err.errorMessage);
-        console.error(err);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, volumeSize, sizeFactor, updateField]);
+  }, [nodes, volumeSize, sizeFactor, updateField, drivesPerServer]);
 
   /*Calculate Allocation End*/
 
@@ -289,13 +193,6 @@ const TenantSize = ({
         )}`,
       },
       {
-        fieldKey: "memory_per_node",
-        required: true,
-        value: memoryNode,
-        customValidation: parseInt(memoryNode) < 2,
-        customValidationMessage: "Memory size must be greater than 2Gi",
-      },
-      {
         fieldKey: "drivesps",
         required: true,
         value: drivesPerServer,
@@ -308,13 +205,9 @@ const TenantSize = ({
       "tenantSize",
       !("nodes" in commonValidation) &&
         !("volume_size" in commonValidation) &&
-        !("memory_per_node" in commonValidation) &&
         !("drivesps" in commonValidation) &&
         distribution.error === "" &&
         ecParityCalc.error === 0 &&
-        resourcesSize.error === "" &&
-        parseInt(cpuToUse) <= parseInt(maxCPUsUse) &&
-        parseInt(cpuToUse) > 0 &&
         ecParity !== ""
     );
 
@@ -329,8 +222,6 @@ const TenantSize = ({
     resourcesSize,
     limitSize,
     selectedStorageClass,
-    cpuToUse,
-    maxCPUsUse,
     isPageValid,
     errorFlag,
     nodeError,
@@ -365,7 +256,7 @@ const TenantSize = ({
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Tenant Size</h3>
+          <h3 className={classes.h3Section}>Capacity</h3>
           <span className={classes.descriptionText}>
             Please select the desired capacity
           </span>
@@ -374,11 +265,6 @@ const TenantSize = ({
       {distribution.error !== "" && (
         <Grid item xs={12}>
           <div className={classes.error}>{distribution.error}</div>
-        </Grid>
-      )}
-      {resourcesSize.error !== "" && (
-        <Grid item xs={12}>
-          <div className={classes.error}>{resourcesSize.error}</div>
         </Grid>
       )}
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -410,7 +296,7 @@ const TenantSize = ({
               cleanValidation("drivesps");
             }
           }}
-          label="Number of Drives per Server"
+          label="Drives per Server"
           value={drivesPerServer}
           disabled={selectedStorageClass === ""}
           min="1"
@@ -457,49 +343,6 @@ const TenantSize = ({
       </Grid>
 
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
-          label={"CPU Selection"}
-          id={"cpuToUse"}
-          name={"cpuToUse"}
-          onChange={(e) => {
-            if (e.target.validity.valid) {
-              updateField("cpuToUse", e.target.value);
-            }
-          }}
-          value={cpuToUse}
-          disabled={selectedStorageClass === ""}
-          min="1"
-          max={maxCPUsUse}
-          error={
-            parseInt(cpuToUse) > parseInt(maxCPUsUse) ||
-            parseInt(cpuToUse) <= 0 ||
-            isNaN(parseInt(cpuToUse))
-              ? "Invalid CPU Configuration"
-              : ""
-          }
-          pattern={"[0-9]*"}
-        />
-      </Grid>
-
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
-          type="number"
-          id="memory_per_node"
-          name="memory_per_node"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("memoryNode", e.target.value);
-            cleanValidation("memory_per_node");
-          }}
-          label="Memory per Node [Gi]"
-          value={memoryNode}
-          disabled={selectedStorageClass === ""}
-          required
-          error={validationErrors["memory_per_node"] || ""}
-          min="2"
-          max={maxMemorySize}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
         <SelectWrapper
           id="ec_parity"
           name="ec_parity"
@@ -516,12 +359,13 @@ const TenantSize = ({
           usable capacity in the cluster
         </span>
       </Grid>
+
+      <TenantSizeResources />
     </Fragment>
   );
 };
 
 const mapState = (state: AppState) => ({
-  advancedMode: state.tenants.createTenant.advancedModeOn,
   volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
   sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
   drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
@@ -530,19 +374,13 @@ const mapState = (state: AppState) => ({
   ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
   ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
   cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
-  maxAllocableMemo:
-    state.tenants.createTenant.fields.tenantSize.maxAllocableMemo,
+
   resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
   distribution: state.tenants.createTenant.fields.tenantSize.distribution,
   ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
   limitSize: state.tenants.createTenant.limitSize,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  cpuToUse: state.tenants.createTenant.fields.tenantSize.cpuToUse,
-  maxAllocatableResources:
-    state.tenants.createTenant.fields.tenantSize.maxAllocatableResources,
-  maxCPUsUse: state.tenants.createTenant.fields.tenantSize.maxCPUsUse,
-  maxMemorySize: state.tenants.createTenant.fields.tenantSize.maxMemorySize,
 });
 
 const connector = connect(mapState, {

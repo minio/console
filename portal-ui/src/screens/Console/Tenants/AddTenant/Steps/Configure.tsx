@@ -163,6 +163,11 @@ const Configure = ({
 }: IConfigureProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
+  const configureSTClasses = [
+    { label: "Default", value: "default" },
+    ...storageClasses,
+  ];
+
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
@@ -450,20 +455,20 @@ const Configure = ({
   ]);
 
   useEffect(() => {
-    // New default values is current selection is invalid
+    // New default values in current selection is invalid
     if (storageClasses.length > 0) {
       const filterPrometheus = storageClasses.filter(
         (item: any) => item.value === prometheusSelectedStorageClass
       );
       if (filterPrometheus.length === 0) {
-        updateField("prometheusSelectedStorageClass", selectedStorageClass);
+        updateField("prometheusSelectedStorageClass", "default");
       }
 
       const filterLogSearch = storageClasses.filter(
         (item: any) => item.value === logSearchSelectedStorageClass
       );
       if (filterLogSearch.length === 0) {
-        updateField("logSearchSelectedStorageClass", selectedStorageClass);
+        updateField("logSearchSelectedStorageClass", "default");
       }
     }
   }, [
@@ -673,8 +678,8 @@ const Configure = ({
               }}
               label="Log Search Storage Class"
               value={logSearchSelectedStorageClass}
-              options={storageClasses}
-              disabled={storageClasses.length < 1}
+              options={configureSTClasses}
+              disabled={configureSTClasses.length < 1}
             />
           </Grid>
           <Grid item xs={12}>
@@ -925,8 +930,8 @@ const Configure = ({
               }}
               label="Prometheus Storage Class"
               value={prometheusSelectedStorageClass}
-              options={storageClasses}
-              disabled={storageClasses.length < 1}
+              options={configureSTClasses}
+              disabled={configureSTClasses.length < 1}
             />
           </Grid>
           <Grid item xs={12}>
