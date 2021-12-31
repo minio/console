@@ -54,7 +54,7 @@ func getSessionResponse(session *models.Principal) (*models.OperatorSessionRespo
 // getListOfEnabledFeatures returns a list of features
 func getListOfOperatorFeatures() []string {
 	features := []string{}
-	mpEnabled := getMPMode()
+	mpEnabled := getMarketplace()
 
 	if mpEnabled != "" {
 		features = append(features, fmt.Sprintf("mp-mode-%s", mpEnabled))
