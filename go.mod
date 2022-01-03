@@ -20,20 +20,20 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
-	github.com/minio/madmin-go v1.1.21
+	github.com/minio/madmin-go v1.1.23
 	github.com/minio/mc v0.0.0-20211207230606-23a05f5a17f2
 	github.com/minio/minio-go/v7 v7.0.20
 	github.com/minio/operator v0.0.0-20211011212245-31460bbbc4b7
 	github.com/minio/operator/logsearchapi v0.0.0-20211011212245-31460bbbc4b7
-	github.com/minio/pkg v1.1.10
-	github.com/minio/selfupdate v0.3.1
+	github.com/minio/pkg v1.1.11
+	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.3.0
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.7.0
 	github.com/unrolled/secure v1.0.9
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
-	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
+	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.21.1
