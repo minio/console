@@ -12,4 +12,4 @@ jobs:
         run: yarn
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
-        run: if yarn build | grep "Compiled with warnings"; then echo "There are warnings in the code" && false ; else echo "All good"; fi
+        run: make test-warnings
