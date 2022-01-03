@@ -12,4 +12,5 @@ jobs:
         run: yarn
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
+        continue-on-error: false
         run: make test-warnings
