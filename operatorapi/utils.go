@@ -63,3 +63,8 @@ func GenerateTenantConfigurationFile(configuration map[string]string) string {
 	}
 	return rawConfiguration
 }
+
+// Create a copy of a string and return its pointer
+func stringPtr(str string) *string {
+	return &str
+}
