@@ -5,4 +5,4 @@ build-static:
 	NODE_OPTIONS=--openssl-legacy-provider yarn build
 
 test-warnings:
-	if yarn build | grep "Compiled with warnings"; then echo "There are warnings in the code" && false ; else echo "All good"; fi
+	if yarn build | grep "Compiled with warnings"; then echo "There are warnings in the code" && exit 2 ; else echo "All good"; fi
