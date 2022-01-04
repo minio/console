@@ -292,8 +292,7 @@ const TenantSummary = ({
                   rel="noopener noreferrer"
                   className={classes.linkedSection}
                 >
-                  {tenant?.endpoints?.minio ||
-                    "https://a71cfd6a18e634b1db6eaeee2bfe35ae-1574374742.us-west-2.elb.amazonaws.com/"}
+                  {tenant?.endpoints?.minio || "-"}
                 </a>
               }
             />
