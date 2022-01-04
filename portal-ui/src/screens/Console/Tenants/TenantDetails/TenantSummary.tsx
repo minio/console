@@ -24,7 +24,7 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Grid, Stack } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { niceBytes } from "../../../../common/utils";
 import { ITenant } from "../ListTenants/types";
@@ -36,8 +36,8 @@ import AButton from "../../Common/AButton/AButton";
 import { styled } from "@mui/styles";
 import SummaryUsageBar from "../../Common/UsageBarWrapper/SummaryUsageBar";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
-import StackRow from "../../Common/UsageBarWrapper/StackRow";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import StackRow from "../../Common/UsageBarWrapper/StackRow";
 
 interface ITenantsSummary {
   classes: any;
@@ -257,113 +257,128 @@ const TenantSummary = ({
 
       <StorageSummary tenant={tenant} classes={classes} />
 
-      <Stack>
-        <StackRow>
-          <LabelValuePair label={"Instances:"} value={instances} />
-          <LabelValuePair
-            label={"Clusters:"}
-            value={poolCount}
-            stkProps={{
-              style: {
-                marginRight: 47,
-              },
-            }}
-          />
-        </StackRow>
-        <StackRow>
-          <LabelValuePair
-            label={"Endpoint:"}
-            value={
-              <a
-                href={tenant?.endpoints?.minio}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={classes.linkedSection}
-              >
-                {tenant?.endpoints?.minio || "-"}
-              </a>
-            }
-          />
-
-          <LabelValuePair
-            label="Volumes:"
-            value={volumes}
-            stkProps={{
-              style: {
-                marginRight: 43,
-              },
-            }}
-          />
-        </StackRow>
-        <StackRow>
-          <LabelValuePair
-            label="MinIO:"
-            value={
-              <AButton
-                style={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "normal",
-                  wordBreak: "break-all",
-                }}
-                onClick={() => {
-                  setUpdateMinioVersion(true);
-                }}
-              >
-                {tenant ? tenant.image : ""}
-              </AButton>
-            }
-          />
-          <LabelValuePair
-            label={"Drives Online:"}
-            value={
-              tenant?.status?.drives_online ? tenant?.status?.drives_online : 0
-            }
-            stkProps={{
-              style: {
-                marginRight: 8,
-              },
-            }}
-          />
-        </StackRow>
-        <StackRow>
-          <LabelValuePair
-            label={"Console:"}
-            value={
-              <a
-                href={tenant?.endpoints?.console}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={classes.linkedSection}
-              >
-                {tenant?.endpoints?.console || "-"}
-              </a>
-            }
-          />
-          <LabelValuePair
-            label={"Drives Offline:"}
-            value={
-              tenant?.status?.drives_offline
-                ? tenant?.status?.drives_offline
-                : 0
-            }
-            stkProps={{
-              style: {
-                marginRight: 7,
-              },
-            }}
-          />
-        </StackRow>
-        <StackRow>
-          <LabelValuePair label={"State:"} value={tenant?.currentState} />
-          <LabelValuePair
-            label={"Write Quorum:"}
-            value={
-              tenant?.status?.write_quorum ? tenant?.status?.write_quorum : 0
-            }
-          />
-        </StackRow>
-      </Stack>
+      <Grid container>
+        <Grid xs={12} sm={12} md={8} container>
+          <Grid xs={12}>
+            <LabelValuePair label={"State:"} value={tenant?.currentState} />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label="MinIO:"
+              value={
+                <AButton
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "normal",
+                    wordBreak: "break-all",
+                  }}
+                  onClick={() => {
+                    setUpdateMinioVersion(true);
+                  }}
+                >
+                  {tenant ? tenant.image : ""}
+                </AButton>
+              }
+            />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label={"Endpoint:"}
+              value={
+                <a
+                  href={tenant?.endpoints?.minio}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={classes.linkedSection}
+                >
+                  {tenant?.endpoints?.minio || "-"}
+                </a>
+              }
+            />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label={"Console:"}
+              value={
+                <a
+                  href={tenant?.endpoints?.console}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={classes.linkedSection}
+                >
+                  {tenant?.endpoints?.console || "-"}
+                </a>
+              }
+            />
+          </Grid>
+        </Grid>
+        <Grid xs={12} sm={12} md={4} container>
+          <Grid xs={12}>
+            <LabelValuePair label={"Instances:"} value={instances} />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label={"Clusters:"}
+              value={poolCount}
+              stkProps={{
+                style: {
+                  marginRight: 47,
+                },
+              }}
+            />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label="Total Drives:"
+              value={volumes}
+              stkProps={{
+                style: {
+                  marginRight: 43,
+                },
+              }}
+            />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label={"Write Quorum:"}
+              value={
+                tenant?.status?.write_quorum ? tenant?.status?.write_quorum : 0
+              }
+            />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label={"Drives Online:"}
+              value={
+                tenant?.status?.drives_online
+                  ? tenant?.status?.drives_online
+                  : 0
+              }
+              stkProps={{
+                style: {
+                  marginRight: 8,
+                },
+              }}
+            />
+          </Grid>
+          <Grid xs={12}>
+            <LabelValuePair
+              label={"Drives Offline:"}
+              value={
+                tenant?.status?.drives_offline
+                  ? tenant?.status?.drives_offline
+                  : 0
+              }
+              stkProps={{
+                style: {
+                  marginRight: 7,
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
 
       <Stack>
         <StackRow
