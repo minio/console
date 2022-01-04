@@ -129,3 +129,39 @@ export interface IResourcesSize {
   cpuRequest: number;
   cpuLimit: number;
 }
+
+export interface ITenantMonitoringStruct {
+  image: string;
+  sidecarImage: string;
+  initImage: string;
+  storageClassName: string;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
+  diskCapacityGB: string;
+  serviceAccountName: string;
+  prometheusEnabled: boolean;
+}
+
+export interface IKeyValue {
+  key: string;
+  value: string;
+}
+
+export interface ITenantMonitoringStruct {
+  image: string;
+  sidecarImage: string;
+  initImage: string;
+  storageClassName: string;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
+  diskCapacityGB: string;
+  serviceAccountName: string;
+  prometheusEnabled: boolean;
+}
+
+export interface IKeyValue {
+  key: string;
+  value: string;
+}

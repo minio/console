@@ -28,12 +28,20 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
   let returnErrors: any = {};
 
   fieldsValidate.forEach((field) => {
-    if (field.required && field.value.trim() === "") {
+    if (
+      field.required &&
+      typeof field.value !== "undefined" &&
+      field.value.trim() === ""
+    ) {
       returnErrors[field.fieldKey] = "Field cannot be empty";
       return;
     }
     // if it's not required and the value is empty, we are done here
-    if (!field.required && field.value.trim() === "") {
+    if (
+      !field.required &&
+      typeof field.value !== "undefined" &&
+      field.value.trim() === ""
+    ) {
       return;
     }
 
@@ -45,7 +53,11 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
     if (field.pattern && field.customPatternMessage) {
       const rgx = new RegExp(field.pattern, "g");
 
-      if (!field.value.match(rgx)) {
+      if (
+        !field.value.match(rgx) &&
+        typeof field.value !== "undefined" &&
+        field.value.trim() !== ""
+      ) {
         returnErrors[field.fieldKey] = field.customPatternMessage;
       }
       return;

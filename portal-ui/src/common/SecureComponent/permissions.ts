@@ -191,6 +191,8 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/license",
   NAMESPACE_TENANT_SECURITY:
     "/namespaces/:tenantNamespace/tenants/:tenantName/security",
+  NAMESPACE_TENANT_MONITORING:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring",
   LICENSE: "/license",
   DOCUMENTATION: "/documentation",
 };

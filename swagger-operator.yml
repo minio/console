@@ -636,6 +636,56 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI
+  /namespaces/{namespace}/tenants/{tenant}/monitoring:
+    get:
+      summary: Get Prometheus Monitoring config info For The Tenant
+      operationId: GetTenantMonitoring
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+              $ref: "#/definitions/tenantMonitoringInfo"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI 
+    put:
+      summary: Set Prometheus monitoring fields for tenant
+      operationId: SetTenantMonitoring
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tenantMonitoringInfo"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI        
 
   /namespaces/{namespace}/tenants/{tenant}/certificates:
     put:
@@ -2337,6 +2387,68 @@ definitions:
         type: string
       message:
         type: string
+        
+  tenantMonitoringInfo:
+    type: object
+    properties:
+      prometheusEnabled:
+        type: boolean 
+      toggle:
+        type: boolean  
+      image:
+        type: string
+      sidecarImage:
+        type: string
+      initImage:
+        type: string
+      labels:
+        type: array
+        items:
+          $ref: "#/definitions/label"
+      annotations:
+        type: array
+        items:
+          $ref: "#/definitions/annotation"
+      diskCapacityGB:
+        type: string
+      nodeSelector:
+        type: array
+        items:
+          $ref: "#/definitions/nodeSelector"
+      serviceAccountName:
+        type: string  
+      storageClassName:
+        type: string    
+ 
+  label:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+  annotation:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+        
+  nodeSelector:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+  configureTenantRequest:
+    type: object
+    properties:
+      prometheusEnabled:
+        type: boolean    
 
   formatConfiguration:
     type: object

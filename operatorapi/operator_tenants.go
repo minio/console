@@ -201,6 +201,23 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewGetPodEventsOK().WithPayload(payload)
 	})
 
+	//Get tenant monitoring info
+	api.OperatorAPIGetTenantMonitoringHandler = operator_api.GetTenantMonitoringHandlerFunc(func(params operator_api.GetTenantMonitoringParams, session *models.Principal) middleware.Responder {
+		payload, err := getTenantMonitoringResponse(session, params)
+		if err != nil {
+			return operator_api.NewGetTenantMonitoringDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetTenantMonitoringOK().WithPayload(payload)
+	})
+	//Set configuration fields for Prometheus monitoring on a tenant
+	api.OperatorAPISetTenantMonitoringHandler = operator_api.SetTenantMonitoringHandlerFunc(func(params operator_api.SetTenantMonitoringParams, session *models.Principal) middleware.Responder {
+		_, err := setTenantMonitoringResponse(session, params)
+		if err != nil {
+			return operator_api.NewSetTenantMonitoringDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewSetTenantMonitoringCreated()
+	})
+
 	// Update Tenant Pools
 	api.OperatorAPITenantUpdatePoolsHandler = operator_api.TenantUpdatePoolsHandlerFunc(func(params operator_api.TenantUpdatePoolsParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantUpdatePoolResponse(session, params)
@@ -1771,6 +1788,152 @@ func getPodEventsResponse(session *models.Principal, params operator_api.GetPodE
 		return retval[i].LastSeen < retval[j].LastSeen
 	})
 	return retval, nil
+}
+
+//get values for prometheus metrics
+func getTenantMonitoringResponse(session *models.Principal, params operator_api.GetTenantMonitoringParams) (*models.TenantMonitoringInfo, *models.Error) {
+	ctx := context.Background()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	var storageClassName string
+	monitoringInfo := &models.TenantMonitoringInfo{}
+
+	if minInst.Spec.Prometheus == nil {
+		monitoringInfo := &models.TenantMonitoringInfo{
+			PrometheusEnabled: (false),
+		}
+		return monitoringInfo, nil
+	}
+
+	if minInst.Spec.Prometheus.StorageClassName != nil {
+		storageClassName = *minInst.Spec.Prometheus.StorageClassName
+	}
+
+	mLabels := []*models.Label{}
+	for k, v := range minInst.Spec.Prometheus.Labels {
+		mLabels = append(mLabels, &models.Label{Key: k, Value: v})
+	}
+	mAnnotations := []*models.Annotation{}
+	for k, v := range minInst.Spec.Prometheus.Annotations {
+		mAnnotations = append(mAnnotations, &models.Annotation{Key: k, Value: v})
+	}
+	mNodeSelector := []*models.NodeSelector{}
+	for k, v := range minInst.Spec.Prometheus.NodeSelector {
+		mNodeSelector = append(mNodeSelector, &models.NodeSelector{Key: k, Value: v})
+	}
+
+	if minInst.Spec.Prometheus != nil {
+		monitoringInfo = &models.TenantMonitoringInfo{
+			PrometheusEnabled:  (true),
+			Annotations:        mAnnotations,
+			DiskCapacityGB:     strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB),
+			Image:              minInst.Spec.Prometheus.Image,
+			InitImage:          minInst.Spec.Prometheus.InitImage,
+			Labels:             mLabels,
+			NodeSelector:       mNodeSelector,
+			ServiceAccountName: minInst.Spec.Prometheus.ServiceAccountName,
+			SidecarImage:       minInst.Spec.Prometheus.SideCarImage,
+			StorageClassName:   storageClassName,
+		}
+		return monitoringInfo, nil
+	}
+	return monitoringInfo, nil
+}
+
+//sets tenant Prometheus monitoring cofiguration fields to values provided
+func setTenantMonitoringResponse(session *models.Principal, params operator_api.SetTenantMonitoringParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	if params.Data.Toggle {
+		if params.Data.PrometheusEnabled {
+			minTenant.Spec.Prometheus = nil
+		} else {
+			promDiskSpaceGB := 5
+			promImage := ""
+			minTenant.Spec.Prometheus = &miniov2.PrometheusConfig{
+				DiskCapacityDB: swag.Int(promDiskSpaceGB),
+				Image:          promImage,
+			}
+		}
+		_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+		if err != nil {
+			return false, prepareError(err)
+		}
+		return true, nil
+	}
+
+	var labels = make(map[string]string)
+	for i := 0; i < len(params.Data.Labels); i++ {
+		if params.Data.Labels[i] != nil {
+			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
+		}
+	}
+	var annotations = make(map[string]string)
+	for i := 0; i < len(params.Data.Annotations); i++ {
+		if params.Data.Annotations[i] != nil {
+			annotations[params.Data.Annotations[i].Key] = params.Data.Annotations[i].Value
+		}
+	}
+	var nodeSelector = make(map[string]string)
+	for i := 0; i < len(params.Data.NodeSelector); i++ {
+		if params.Data.NodeSelector[i] != nil {
+			nodeSelector[params.Data.NodeSelector[i].Key] = params.Data.NodeSelector[i].Value
+		}
+	}
+
+	var storageClassName string
+	if &params.Data.StorageClassName != nil {
+		storageClassName = params.Data.StorageClassName
+	}
+
+	minTenant.Spec.Prometheus.Labels = labels
+	minTenant.Spec.Prometheus.Annotations = annotations
+	minTenant.Spec.Prometheus.NodeSelector = nodeSelector
+	minTenant.Spec.Prometheus.Image = params.Data.Image
+	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
+	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
+	minTenant.Spec.Prometheus.StorageClassName = &storageClassName
+	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
+	if err == nil {
+		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
+	}
+	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+
+	return true, nil
+
 }
 
 // parseTenantPoolRequest parse pool request and returns the equivalent
