@@ -21,7 +21,7 @@ import TenantSizeMK from "./TenantSizeMK";
 export enum IMkEnvs {
   "aws",
   "azure",
-  "gcs",
+  "gcp",
   "default",
   undefined,
 }
@@ -54,7 +54,7 @@ export const AzureStorageTypes: Opts[] = [
 export const resourcesConfigurations = {
   "mp-mode-aws": IMkEnvs.aws,
   "mp-mode-azure": IMkEnvs.azure,
-  "mp-mode-gcs": IMkEnvs.gcs,
+  "mp-mode-gcp": IMkEnvs.gcp,
 };
 
 export const AWSConfigurations: IntegrationConfiguration[] = [
@@ -119,6 +119,18 @@ export const AzureConfigurations: IntegrationConfiguration[] = [
   },
 ];
 
+export const GCPStorageTypes: Opts[] = [{ label: "SSD", value: "ssd" }];
+
+export const GCPConfigurations: IntegrationConfiguration[] = [
+  {
+    typeSelection: "ssd",
+    storageClass: "local-ssd",
+    CPU: 32,
+    memory: 128,
+    driveSize: { driveSize: "368", sizeUnit: "Gi" },
+    drivesPerServer: 24,
+  },
+];
 
 export const mkPanelConfigurations = {
   [IMkEnvs.aws]: {
@@ -133,7 +145,12 @@ export const mkPanelConfigurations = {
     configurations: AzureConfigurations,
     sizingComponent: <TenantSizeMK formToRender={IMkEnvs.azure} />,
   },
-  [IMkEnvs.gcs]: {},
+  [IMkEnvs.gcp]: {
+    variantSelectorLabel: "Storage Type",
+    variantSelectorValues: GCPStorageTypes,
+    configurations: GCPConfigurations,
+    sizingComponent: <TenantSizeMK formToRender={IMkEnvs.gcp} />,
+  },
   [IMkEnvs.default]: {},
   [IMkEnvs.undefined]: {},
 };
