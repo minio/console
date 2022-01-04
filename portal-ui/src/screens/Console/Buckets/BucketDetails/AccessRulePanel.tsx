@@ -34,6 +34,7 @@ import {
   containerForHeader,
   objectBrowserCommon,
   searchField,
+  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketInfo } from "../types";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
@@ -68,6 +69,7 @@ const styles = (theme: Theme) =>
       marginLeft: "10px",
       align: "right",
     },
+    ...tableStyles,
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
@@ -238,7 +240,7 @@ const AccessRule = ({
           </Button>
         </SecureComponent>
       </Grid>
-      <Paper>
+      <Paper className={classes.tableBlock}>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
           resource={bucketName}
