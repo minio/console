@@ -45,6 +45,12 @@ export const AWSStorageTypes: Opts[] = [
   { label: "HDD", value: "hdd" },
 ];
 
+export const AzureStorageTypes: Opts[] = [
+  { label: "Standard_L32s_v2", value: "Standard_L32s_v2" },
+  { label: "Standard_L48s_v2", value: "Standard_L48s_v2" },
+  { label: "Standard_L64s_v2", value: "Standard_L64s_v2" },
+];
+
 export const resourcesConfigurations = {
   "mp-mode-aws": IMkEnvs.aws,
   "mp-mode-azure": IMkEnvs.azure,
@@ -70,6 +76,50 @@ export const AWSConfigurations: IntegrationConfiguration[] = [
   },
 ];
 
+export const AzureConfigurations: IntegrationConfiguration[] = [
+  {
+    typeSelection: "Standard_L8s_v2",
+    storageClass: "local-nvme",
+    CPU: 8,
+    memory: 64,
+    driveSize: { driveSize: "1787", sizeUnit: "Gi" },
+    drivesPerServer: 1,
+  },
+  {
+    typeSelection: "Standard_L16s_v2",
+    storageClass: "local-nvme",
+    CPU: 16,
+    memory: 128,
+    driveSize: { driveSize: "1787", sizeUnit: "Gi" },
+    drivesPerServer: 2,
+  },
+  {
+    typeSelection: "Standard_L32s_v2",
+    storageClass: "local-nvme",
+    CPU: 32,
+    memory: 256,
+    driveSize: { driveSize: "1787", sizeUnit: "Gi" },
+    drivesPerServer: 4,
+  },
+  {
+    typeSelection: "Standard_L48s_v2",
+    storageClass: "local-nvme",
+    CPU: 48,
+    memory: 384,
+    driveSize: { driveSize: "1787", sizeUnit: "Gi" },
+    drivesPerServer: 6,
+  },
+  {
+    typeSelection: "Standard_L64s_v2",
+    storageClass: "local-nvme",
+    CPU: 64,
+    memory: 512,
+    driveSize: { driveSize: "1787", sizeUnit: "Gi" },
+    drivesPerServer: 8,
+  },
+];
+
+
 export const mkPanelConfigurations = {
   [IMkEnvs.aws]: {
     variantSelectorLabel: "Storage Type",
@@ -77,7 +127,12 @@ export const mkPanelConfigurations = {
     configurations: AWSConfigurations,
     sizingComponent: <TenantSizeMK formToRender={IMkEnvs.aws} />,
   },
-  [IMkEnvs.azure]: {},
+  [IMkEnvs.azure]: {
+    variantSelectorLabel: "VM Size",
+    variantSelectorValues: AzureStorageTypes,
+    configurations: AzureConfigurations,
+    sizingComponent: <TenantSizeMK formToRender={IMkEnvs.azure} />,
+  },
   [IMkEnvs.gcs]: {},
   [IMkEnvs.default]: {},
   [IMkEnvs.undefined]: {},
