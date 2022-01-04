@@ -1243,10 +1243,10 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	//Default class name for Log search
 	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
-	logSearchStorageClass := ""                    // Default is ""
 	logSearchImage := ""
 	logSearchPgImage := ""
 	logSearchPgInitImage := ""
+	var logSearchStorageClass *string // Nil means use default storage class
 	var logSearchSecurityContext *corev1.PodSecurityContext
 	var logSearchPgSecurityContext *corev1.PodSecurityContext
 
@@ -1255,7 +1255,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			diskSpaceFromAPI = int64(*tenantReq.LogSearchConfiguration.StorageSize) * humanize.GiByte
 		}
 		if tenantReq.LogSearchConfiguration.StorageClass != "" {
-			logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
+			logSearchStorageClass = stringPtr(tenantReq.LogSearchConfiguration.StorageClass)
 		}
 		if tenantReq.LogSearchConfiguration.Image != "" {
 			logSearchImage = tenantReq.LogSearchConfiguration.Image
@@ -1308,7 +1308,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 							corev1.ResourceStorage: *logSearchDiskSpace,
 						},
 					},
-					StorageClassName: &logSearchStorageClass,
+					StorageClassName: logSearchStorageClass,
 				},
 			},
 		},
@@ -1331,17 +1331,18 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 
 	prometheusDiskSpace := 5      // Default is 5 by API
-	prometheusStorageClass := ""  // Default is ""
 	prometheusImage := ""         // Default is ""
 	prometheusSidecardImage := "" // Default is ""
 	prometheusInitImage := ""     // Default is ""
+
+	var prometheusStorageClass *string // Nil means default storage class
 
 	if tenantReq.PrometheusConfiguration != nil {
 		if tenantReq.PrometheusConfiguration.StorageSize != nil {
 			prometheusDiskSpace = int(*tenantReq.PrometheusConfiguration.StorageSize)
 		}
 		if tenantReq.PrometheusConfiguration.StorageClass != "" {
-			prometheusStorageClass = tenantReq.PrometheusConfiguration.StorageClass
+			prometheusStorageClass = stringPtr(tenantReq.PrometheusConfiguration.StorageClass)
 		}
 		if tenantReq.PrometheusConfiguration.Image != "" {
 			prometheusImage = tenantReq.PrometheusConfiguration.Image
@@ -1356,7 +1357,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
 		DiskCapacityDB:   swag.Int(prometheusDiskSpace),
-		StorageClassName: &prometheusStorageClass,
+		StorageClassName: prometheusStorageClass,
 	}
 	if prometheusImage != "" {
 		minInst.Spec.Prometheus.Image = prometheusImage
