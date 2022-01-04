@@ -1259,3 +1259,9 @@ export const modalStyleUtils: any = {
     paddingTop: 10,
   },
 };
+
+export const textStyleUtils: any = {
+  textMuted: {
+    color: "#8399AB",
+  },
+};

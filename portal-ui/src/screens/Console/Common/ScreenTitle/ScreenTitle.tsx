@@ -51,6 +51,7 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "space-between",
       padding: "1rem",
+
       borderBottom: "1px solid #EAEAEA",
       "@media (max-width: 600px)": {
         flexFlow: "column",
@@ -63,7 +64,7 @@ const styles = (theme: Theme) =>
       flexFlow: "column",
       alignItems: "flex-start",
       "& h1": {
-        fontSize: "1.4rem",
+        fontSize: 19,
       },
     },
     leftItems: {

@@ -38,6 +38,10 @@ import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import { tableStyles } from "../../Common/FormComponents/common/styleLibrary";
+import withStyles from "@mui/styles/withStyles";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -63,10 +67,15 @@ interface IAccessDetailsProps {
   bucketInfo: BucketInfo | null;
 }
 
+const styles = (theme: Theme) =>
+  createStyles({
+    ...tableStyles,
+  });
 const AccessDetails = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
+  classes,
 }: IAccessDetailsProps) => {
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
@@ -181,7 +190,7 @@ const AccessDetails = ({
         {displayPoliciesList && <Tab label="Policies" {...a11yProps(0)} />}
         {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
       </Tabs>
-      <Paper>
+      <Paper className={classes.tableBlock}>
         <TabPanel index={0} value={curTab}>
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
@@ -227,4 +236,4 @@ const AccessDetails = ({
   );
 };
 
-export default connector(AccessDetails);
+export default withStyles(styles)(connector(AccessDetails));

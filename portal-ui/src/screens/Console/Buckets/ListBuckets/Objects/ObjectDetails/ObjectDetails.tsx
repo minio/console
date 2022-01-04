@@ -154,6 +154,10 @@ const styles = (theme: Theme) =>
         top: 3,
       },
     },
+    tabsContainer: {
+      border: "1px solid #eaeaea",
+      borderTop: 0,
+    },
     ...hrClass,
     ...buttonsStyles,
     ...actionsTray,
@@ -607,7 +611,11 @@ const ObjectDetails = ({
                 }
               />
             </Grid>
-            <VerticalTabs>
+            <VerticalTabs
+              classes={{
+                tabsContainer: classes.tabsContainer,
+              }}
+            >
               {{
                 tabConfig: {
                   label: "Details",

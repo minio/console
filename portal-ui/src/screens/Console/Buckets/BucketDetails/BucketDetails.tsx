@@ -31,20 +31,15 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import {
-  setBucketDetailsLoad,
-  setBucketDetailsTab,
-  setBucketInfo,
-} from "../actions";
+import { setBucketDetailsLoad, setBucketInfo } from "../actions";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import { IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
@@ -54,9 +49,10 @@ import SecureComponent, {
 } from "../../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import RBIconButton from "./SummaryItems/RBIconButton";
+import { TrashIcon } from "../../../../icons";
 
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
-const DeleteIcon = React.lazy(() => import("../../../../icons/DeleteIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
 
 const DeleteBucket = withSuspense(
@@ -84,8 +80,11 @@ const BucketLifecyclePanel = withSuspense(
 const styles = (theme: Theme) =>
   createStyles({
     pageContainer: {
-      border: "1px solid #EAEAEA",
       height: "100%",
+    },
+    screenTitle: {
+      border: 0,
+      paddingTop: 0,
     },
     ...pageContentStyles,
     breadcrumLink: {
@@ -96,6 +95,11 @@ const styles = (theme: Theme) =>
     capitalize: {
       textTransform: "capitalize",
     },
+    deleteBtn: {
+      color: "#f44336",
+      border: "1px solid rgba(244, 67, 54, 0.5)",
+      maxWidth: 140,
+    },
     ...hrClass,
     ...buttonsStyles,
     ...containerForHeader(theme.spacing(4)),
@@ -105,10 +109,8 @@ interface IBucketDetailsProps {
   classes: any;
   match: any;
   history: any;
-  selectedTab: string;
   distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-  setBucketDetailsTab: typeof setBucketDetailsTab;
   setBucketDetailsLoad: typeof setBucketDetailsLoad;
   loadingBucket: boolean;
   setBucketInfo: typeof setBucketInfo;
@@ -119,9 +121,7 @@ const BucketDetails = ({
   classes,
   match,
   history,
-  selectedTab,
   setErrorSnackMessage,
-  setBucketDetailsTab,
   distributedSetup,
   setBucketDetailsLoad,
   loadingBucket,
@@ -240,6 +240,9 @@ const BucketDetails = ({
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
+            classes={{
+              screenTitle: classes.screenTitle,
+            }}
             icon={
               <Fragment>
                 <BucketsIcon width={40} />
@@ -251,8 +254,11 @@ const BucketDetails = ({
                 scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
                 resource={bucketName}
               >
-                Access:{" "}
-                <span className={classes.capitalize}>
+                <span style={{ fontSize: 15 }}>Access: </span>
+                <span
+                  className={classes.capitalize}
+                  style={{ fontWeight: 600, fontSize: 15 }}
+                >
                   {bucketInfo?.access.toLowerCase()}
                 </span>
               </SecureComponent>
@@ -267,160 +273,157 @@ const BucketDetails = ({
                   resource={bucketName}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
-                    tooltip={"Delete"}
-                    color="primary"
-                    aria-label="Delete"
+                  <RBIconButton
+                    classes={{
+                      root: classes.deleteBtn,
+                    }}
                     onClick={() => {
                       setDeleteOpen(true);
                     }}
-                    size="large"
-                  >
-                    <DeleteIcon />
-                  </BoxIconButton>
+                    text={`Delete Bucket`}
+                    icon={<TrashIcon />}
+                  />
                 </SecureComponent>
-                <BoxIconButton
-                  tooltip={"Refresh"}
-                  color="primary"
-                  aria-label="Refresh List"
+                <RBIconButton
                   onClick={() => {
                     setBucketDetailsLoad(true);
                   }}
-                  size="large"
-                  variant={"contained"}
-                >
-                  <RefreshIcon />
-                </BoxIconButton>
+                  text={`Refresh`}
+                  icon={<RefreshIcon />}
+                  color={"primary"}
+                />
               </Fragment>
             }
           />
         </Grid>
-        <VerticalTabs
-          selectedTab={activeTab}
-          isRouteTabs
-          routes={
-            <div className={classes.contentSpacer}>
-              <Router history={history}>
-                <Switch>
-                  <Route
-                    exact
-                    path="/buckets/:bucketName/admin/summary"
-                    component={BucketSummaryPanel}
-                  />
-                  <Route
-                    exact
-                    path="/buckets/:bucketName/admin/events"
-                    component={BucketEventsPanel}
-                  />
-                  {distributedSetup && (
+        <Box sx={{ border: "1px solid #eaeaea" }}>
+          <VerticalTabs
+            selectedTab={activeTab}
+            isRouteTabs
+            routes={
+              <div className={classes.contentSpacer}>
+                <Router history={history}>
+                  <Switch>
                     <Route
                       exact
-                      path="/buckets/:bucketName/admin/replication"
-                      component={BucketReplicationPanel}
+                      path="/buckets/:bucketName/admin/summary"
+                      component={BucketSummaryPanel}
                     />
-                  )}
-                  {distributedSetup && (
                     <Route
                       exact
-                      path="/buckets/:bucketName/admin/lifecycle"
-                      component={BucketLifecyclePanel}
+                      path="/buckets/:bucketName/admin/events"
+                      component={BucketEventsPanel}
                     />
-                  )}
-
-                  <Route
-                    exact
-                    path="/buckets/:bucketName/admin/access"
-                    component={AccessDetailsPanel}
-                  />
-                  <Route
-                    exact
-                    path="/buckets/:bucketName/admin/prefix"
-                    component={AccessRulePanel}
-                  />
-                  <Route
-                    path="/buckets/:bucketName"
-                    component={() => (
-                      <Redirect to={`/buckets/${bucketName}/admin/summary`} />
+                    {distributedSetup && (
+                      <Route
+                        exact
+                        path="/buckets/:bucketName/admin/replication"
+                        component={BucketReplicationPanel}
+                      />
                     )}
-                  />
-                </Switch>
-              </Router>
-            </div>
-          }
-        >
-          {{
-            tabConfig: {
-              label: "Summary",
-              value: "summary",
-              component: Link,
-              to: getRoutePath("summary"),
-            },
-          }}
-          {{
-            tabConfig: {
-              label: "Events",
-              value: "events",
-              component: Link,
-              disabled: !hasPermission(bucketName, [
-                IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
-                IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
-              ]),
-              to: getRoutePath("events"),
-            },
-          }}
-          {{
-            tabConfig: {
-              label: "Replication",
-              value: "replication",
-              component: Link,
-              disabled:
-                !distributedSetup ||
-                !hasPermission(bucketName, [
-                  IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
-                  IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                    {distributedSetup && (
+                      <Route
+                        exact
+                        path="/buckets/:bucketName/admin/lifecycle"
+                        component={BucketLifecyclePanel}
+                      />
+                    )}
+
+                    <Route
+                      exact
+                      path="/buckets/:bucketName/admin/access"
+                      component={AccessDetailsPanel}
+                    />
+                    <Route
+                      exact
+                      path="/buckets/:bucketName/admin/prefix"
+                      component={AccessRulePanel}
+                    />
+                    <Route
+                      path="/buckets/:bucketName"
+                      component={() => (
+                        <Redirect to={`/buckets/${bucketName}/admin/summary`} />
+                      )}
+                    />
+                  </Switch>
+                </Router>
+              </div>
+            }
+          >
+            {{
+              tabConfig: {
+                label: "Summary",
+                value: "summary",
+                component: Link,
+                to: getRoutePath("summary"),
+              },
+            }}
+            {{
+              tabConfig: {
+                label: "Events",
+                value: "events",
+                component: Link,
+                disabled: !hasPermission(bucketName, [
+                  IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
+                  IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
                 ]),
-              to: getRoutePath("replication"),
-            },
-          }}
-          {{
-            tabConfig: {
-              label: "Lifecycle",
-              value: "lifecycle",
-              component: Link,
-              disabled:
-                !distributedSetup ||
-                !hasPermission(bucketName, [
-                  IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
-                  IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                to: getRoutePath("events"),
+              },
+            }}
+            {{
+              tabConfig: {
+                label: "Replication",
+                value: "replication",
+                component: Link,
+                disabled:
+                  !distributedSetup ||
+                  !hasPermission(bucketName, [
+                    IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+                    IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                  ]),
+                to: getRoutePath("replication"),
+              },
+            }}
+            {{
+              tabConfig: {
+                label: "Lifecycle",
+                value: "lifecycle",
+                component: Link,
+                disabled:
+                  !distributedSetup ||
+                  !hasPermission(bucketName, [
+                    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+                    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                  ]),
+                to: getRoutePath("lifecycle"),
+              },
+            }}
+            {{
+              tabConfig: {
+                label: "Access Audit",
+                value: "access",
+                component: Link,
+                disabled: !hasPermission(bucketName, [
+                  IAM_SCOPES.ADMIN_GET_POLICY,
+                  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                  IAM_SCOPES.ADMIN_LIST_USERS,
                 ]),
-              to: getRoutePath("lifecycle"),
-            },
-          }}
-          {{
-            tabConfig: {
-              label: "Access Audit",
-              value: "access",
-              component: Link,
-              disabled: !hasPermission(bucketName, [
-                IAM_SCOPES.ADMIN_GET_POLICY,
-                IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                IAM_SCOPES.ADMIN_LIST_USERS,
-              ]),
-              to: getRoutePath("access"),
-            },
-          }}
-          {{
-            tabConfig: {
-              label: "Access Rules",
-              value: "prefix",
-              component: Link,
-              disabled: !hasPermission(bucketName, [
-                IAM_SCOPES.S3_GET_BUCKET_POLICY,
-              ]),
-              to: getRoutePath("prefix"),
-            },
-          }}
-        </VerticalTabs>
+                to: getRoutePath("access"),
+              },
+            }}
+            {{
+              tabConfig: {
+                label: "Access Rules",
+                value: "prefix",
+                component: Link,
+                disabled: !hasPermission(bucketName, [
+                  IAM_SCOPES.S3_GET_BUCKET_POLICY,
+                ]),
+                to: getRoutePath("prefix"),
+              },
+            }}
+          </VerticalTabs>
+        </Box>
       </PageLayout>
     </Fragment>
   );
@@ -436,7 +439,6 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
-  setBucketDetailsTab,
   setBucketDetailsLoad,
   setBucketInfo,
 });

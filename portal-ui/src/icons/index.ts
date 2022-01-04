@@ -142,3 +142,7 @@ export { default as BucketReplicationIcon } from "./BucketReplicationIcon";
 export { default as EventSubscriptionIcon } from "./EventSubscriptionIcon";
 export { default as ConfirmModalIcon } from "./ConfirmModalIcon";
 export { default as ConfirmDeleteIcon } from "./ConfirmDeleteIcon";
+export { default as EnabledIcon } from "./EnabledIcon";
+export { default as DisabledIcon } from "./DisabledIcon";
+export { default as HardBucketQuotaIcon } from "./HardBucketQuotaIcon";
+export { default as ReportedUsageFullIcon } from "./ReportedUsageFullIcon";
