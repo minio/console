@@ -32,7 +32,6 @@ export const download = (
   }
 
   var req = new XMLHttpRequest();
-
   req.open("GET", path, true);
   req.addEventListener(
     "progress",
@@ -52,9 +51,9 @@ export const download = (
       const rspHeader = req.getResponseHeader("Content-Disposition");
 
       let filename = "download";
-
       if (rspHeader) {
-        filename = rspHeader.split('"')[1];
+        let rspHeaderDecoded = decodeURIComponent(rspHeader);
+        filename = rspHeaderDecoded.split('"')[1];
       }
 
       if (completeCallback) {
