@@ -20,9 +20,8 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import {
   actionsTray,
   containerForHeader,
@@ -31,7 +30,7 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { AddIcon, TiersIcon } from "../../../../icons";
+import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -41,7 +40,6 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
-import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import AButton from "../../Common/AButton/AButton";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
@@ -54,6 +52,8 @@ import {
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import { tierTypes } from "./utils";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -155,6 +155,28 @@ const ListTiersConfiguration = ({
     return "";
   };
 
+  const renderTierType = (item: string) => {
+    const { logoXs } =
+      tierTypes.find((tierConf) => tierConf.serviceName === item) || {};
+    if (item) {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            "& .min-icon": {
+              width: "18px",
+              height: "22px",
+            },
+          }}
+        >
+          {logoXs}
+        </Box>
+      );
+    }
+    return "";
+  };
+
   const renderTierPrefix = (item: ITierElement) => {
     const prefix = get(item, `${item.type}.prefix`, "");
 
@@ -211,7 +233,10 @@ const ListTiersConfiguration = ({
       <PageHeader label="Tiers" />
       <PageLayout>
         {!distributedSetup ? (
-          <DistributedOnly entity={"Tiers"} iconComponent={<TiersIcon />} />
+          <DistributedOnly
+            entity={"Tiers"}
+            iconComponent={<TiersNotAvailableIcon />}
+          />
         ) : (
           <Fragment>
             <Grid item xs={12} className={classes.actionsTray}>
@@ -221,29 +246,27 @@ const ListTiersConfiguration = ({
                 overrideClass={classes.searchField}
               />
               <div className={classes.rightActionButtons}>
-                <BoxIconButton
+                <RBIconButton
+                  icon={<RefreshIcon />}
                   color="primary"
-                  aria-label="Refresh List"
+                  text={`Refresh List`}
                   onClick={() => {
                     setIsLoading(true);
                   }}
-                  size="large"
-                >
-                  <RefreshIcon />
-                </BoxIconButton>
+                />
+
                 <SecureComponent
                   scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <Button
-                    variant="contained"
+                  <RBIconButton
+                    icon={<AddIcon />}
                     color="primary"
-                    endIcon={<AddIcon />}
+                    text={`Create Tier`}
                     onClick={addTier}
-                  >
-                    Add Tier
-                  </Button>
+                    variant="contained"
+                  />
                 </SecureComponent>
               </div>
             </Grid>
@@ -278,7 +301,7 @@ const ListTiersConfiguration = ({
                             {
                               label: "Type",
                               elementKey: "type",
-                              width: 150,
+                              renderFunction: renderTierType,
                             },
                             {
                               label: "Endpoint",
@@ -313,7 +336,13 @@ const ListTiersConfiguration = ({
                         />
                       </SecureComponent>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        marginTop: "15px",
+                      }}
+                    >
                       <HelpBox
                         title={"Learn more about TIERS"}
                         iconComponent={<TiersIcon />}

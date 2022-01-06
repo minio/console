@@ -15,35 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import {
-  containerForHeader,
-  searchField,
-  settingsCommon,
-  typesSelection,
-} from "../../Common/FormComponents/common/styleLibrary";
+
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { tierTypes } from "./utils";
 import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
+import { Box } from "@mui/material";
+import TierTypeCard from "./TierTypeCard";
 
 interface ITypeTiersConfig {
-  classes: any;
   history: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...settingsCommon,
-    ...typesSelection,
-    ...containerForHeader(theme.spacing(4)),
-  });
-
-const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
+const TierTypeSelector = ({ history }: ITypeTiersConfig) => {
   const typeSelect = (selectName: string) => {
     history.push(`/tiers/add/${selectName}`);
   };
@@ -54,40 +38,43 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
       <BackLink to="/tiers" label="Return to Configured Tiers" />
 
       <PageLayout>
-        <Grid>
-          <Grid item xs={12}>
-            <Grid item xs={12}>
-              <Grid item xs={12}>
-                <div className={classes.iconContainer}>
-                  {tierTypes.map((tierType, index) => (
-                    <button
-                      className={classes.lambdaNotif}
-                      onClick={() => {
-                        typeSelect(tierType.serviceName);
-                      }}
-                      key={`tierOpt-${index.toString}-${tierType.targetTitle}`}
-                    >
-                      <div className={classes.lambdaNotifIcon}>
-                        <img
-                          src={tierType.logo}
-                          className={classes.logoButton}
-                          alt={tierType.targetTitle}
-                        />
-                      </div>
-
-                      <div className={classes.lambdaNotifTitle}>
-                        <b>{tierType.targetTitle}</b>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+        <Box
+          sx={{
+            border: "1px solid #eaeaea",
+            padding: "40px",
+          }}
+        >
+          <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
+            Select Tier Type
+          </div>
+          <Box
+            sx={{
+              margin: "0 auto",
+              display: "grid",
+              gridGap: "47px",
+              gridTemplateColumns: {
+                xs: "repeat(1, 1fr)",
+                sm: "repeat(2, 1fr)",
+                md: "repeat(3, 1fr)",
+                lg: "repeat(4, 1fr)",
+              },
+            }}
+          >
+            {tierTypes.map((tierType, index) => (
+              <TierTypeCard
+                key={`tierOpt-${index.toString}-${tierType.targetTitle}`}
+                name={tierType.targetTitle}
+                onClick={() => {
+                  typeSelect(tierType.serviceName);
+                }}
+                icon={tierType.logo}
+              />
+            ))}
+          </Box>
+        </Box>
       </PageLayout>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(TierTypeSelector);
+export default TierTypeSelector;

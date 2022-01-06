@@ -14,6 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import {
+  AzureTierIcon,
+  GoogleTierIcon,
+  MinIOTierIcon,
+  MinIOTierIconXs,
+  S3TierIcon,
+  GoogleTierIconXs,
+  S3TierIconXs,
+  AzureTierIconXs,
+} from "../../../../icons";
+
 export const minioServiceName = "minio";
 export const gcsServiceName = "gcs";
 export const s3ServiceName = "s3";
@@ -23,21 +34,25 @@ export const tierTypes = [
   {
     serviceName: minioServiceName,
     targetTitle: "MinIO",
-    logo: "/minio-logo.svg",
+    logo: <MinIOTierIcon />,
+    logoXs: <MinIOTierIconXs />,
   },
   {
     serviceName: gcsServiceName,
     targetTitle: "Google Cloud Storage",
-    logo: "/gcs-logo.svg",
+    logo: <GoogleTierIcon />,
+    logoXs: <GoogleTierIconXs />,
   },
   {
     serviceName: s3ServiceName,
     targetTitle: "AWS S3",
-    logo: "/aws-logo.svg",
+    logo: <S3TierIcon />,
+    logoXs: <S3TierIconXs />,
   },
   {
     serviceName: azureServiceName,
     targetTitle: "Azure",
-    logo: "/azure-logo.svg",
+    logo: <AzureTierIcon />,
+    logoXs: <AzureTierIconXs />,
   },
 ];

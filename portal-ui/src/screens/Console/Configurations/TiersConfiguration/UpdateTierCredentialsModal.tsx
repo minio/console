@@ -33,6 +33,7 @@ import api from "../../../../common/api";
 import { ITierElement } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import { LockIcon } from "../../../../icons";
 
 interface ITierCredentialsModal {
   open: boolean;
@@ -124,6 +125,7 @@ const UpdateTierCredentialsModal = ({
   return (
     <ModalWrapper
       modalOpen={open}
+      titleIcon={<LockIcon />}
       onClose={() => {
         closeModalAndRefresh(false);
       }}

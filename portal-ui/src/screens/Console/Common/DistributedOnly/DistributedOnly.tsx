@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import { Grid } from "@mui/material";
+import React from "react";
+import { Box, Grid } from "@mui/material";
 import HelpBox from "../../../../common/HelpBox";
 
 interface IDistributedOnly {
@@ -25,30 +25,41 @@ interface IDistributedOnly {
 
 const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
   return (
-    <Grid
-      container
-      justifyContent={"center"}
-      alignContent={"center"}
-      alignItems={"center"}
-    >
-      <Grid item xs={8}>
+    <Grid container alignItems={"center"}>
+      <Grid item xs={12}>
         <HelpBox
           title={`${entity} not available`}
           iconComponent={iconComponent}
           help={
-            <Fragment>
-              This feature is not available for a single-disk setup.
-              <br />
-              Please deploy a server in{" "}
-              <a
-                href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Distributed Mode
-              </a>{" "}
-              to use this feature.
-            </Fragment>
+            <Box
+              sx={{
+                fontSize: "14px",
+                display: "flex",
+                border: "none",
+                flexFlow: {
+                  xs: "column",
+                  md: "row",
+                },
+                "& a": {
+                  color: (theme) => theme.colors.link,
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              <div>This feature is not available for a single-disk setup. </div>
+
+              <div>
+                Please deploy a server in{" "}
+                <a
+                  href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Distributed Mode
+                </a>{" "}
+                to use this feature.
+              </div>
+            </Box>
           }
         />
       </Grid>
