@@ -478,8 +478,7 @@ export const typesSelection = {
     height: "80px",
   },
   lambdaNotif: {
-    background:
-      "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
+    background: "#ffffff",
     border: "#E5E5E5 1px solid",
     borderRadius: 5,
     width: 250,

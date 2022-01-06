@@ -59,6 +59,9 @@ const styles = (theme: Theme) =>
     },
     fileInputField: {
       margin: "13px 0",
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+      },
     },
     ...fileInputStyles,
   });

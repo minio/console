@@ -29,6 +29,7 @@ type DeleteButtonProps = {
   tooltip?: string;
   classes?: any;
   icon?: React.ReactNode;
+  [x: string]: any;
 };
 
 const styles = (theme: Theme) =>

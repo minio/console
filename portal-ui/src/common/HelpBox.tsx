@@ -23,29 +23,29 @@ import Grid from "@mui/material/Grid";
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      border: "1px solid rgb(234, 237, 238)",
-      borderRadius: 5,
-      paddingTop: 10,
-      paddingLeft: 40,
-      paddingRight: 40,
-      paddingBottom: 40,
-      marginTop: 10,
-      marginBottom: 10,
-      backgroundColor: "#fbfafa",
+      border: "1px solid #E2E2E2",
+      borderRadius: 2,
+      backgroundColor: "#FBFAFA",
+      paddingLeft: 25,
+      paddingTop: 31,
+      paddingBottom: 21,
+      paddingRight: 30,
     },
     leftItems: {
       fontSize: 16,
       fontWeight: "bold",
-      marginBottom: 20,
+      marginBottom: 15,
       display: "flex",
       alignItems: "center",
       "& .min-icon": {
-        width: "2.5rem",
-        marginRight: ".8rem",
+        marginRight: 15,
+        height: 28,
+        width: 38,
       },
     },
     helpText: {
       fontSize: 16,
+      paddingLeft: 5,
     },
   });
 

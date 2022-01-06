@@ -113,6 +113,23 @@ const theme = createTheme({
       },
     },
   },
+  colors: {
+    link: "#2781B0",
+  },
 });
+
+declare module "@mui/material/styles" {
+  interface Theme {
+    colors: {
+      link: string;
+    };
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    colors?: {
+      link?: string;
+    };
+  }
+}
 
 export default theme;
