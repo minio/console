@@ -149,7 +149,7 @@ const ListTiersConfiguration = ({
     const name = get(item, `${item.type}.name`, "");
 
     if (name !== null) {
-      return name;
+      return <b>{name}</b>;
     }
 
     return "";
@@ -302,6 +302,7 @@ const ListTiersConfiguration = ({
                               label: "Type",
                               elementKey: "type",
                               renderFunction: renderTierType,
+                              width: 50,
                             },
                             {
                               label: "Endpoint",
