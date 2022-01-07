@@ -26,7 +26,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Box, Button, Grid, Stack } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { niceBytes } from "../../../../common/utils";
 import { ITenant } from "../ListTenants/types";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
@@ -134,10 +133,9 @@ const healthStatusToClass = (health_status: string = "red", classes: any) => {
 const StorageSummary = ({ tenant, classes }: Partial<ITenantsSummary>) => {
   return (
     <SummaryUsageBar
-      currValue={tenant?.status?.usage?.raw_usage ?? 0}
-      maxValue={tenant?.status?.usage?.raw ?? 1}
+      currValue={tenant?.status?.usage?.raw_usage}
+      maxValue={tenant?.status?.usage?.raw}
       label={"Storage"}
-      renderFunction={niceBytes}
       error={""}
       loading={false}
       healthStatus={healthStatusToClass(tenant?.status?.health_status, classes)}
