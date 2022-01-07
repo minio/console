@@ -14,4 +14,4 @@ jobs:
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          if yarn build | grep "Compiled with warnings"; then echo "There are warnings in the code" && exit 1 ; fi
+          chmod +x check-warnings.sh  && ./check-warnings.sh 
