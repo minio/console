@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Button } from "@mui/material";
-import { ITenant } from "./types";
+import { ITenant, ValueUnit } from "./types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../actions";
 import Grid from "@mui/material/Grid";
@@ -117,11 +117,6 @@ const styles = (theme: Theme) =>
 interface ITenantListItem {
   tenant: ITenant;
   classes: any;
-}
-
-interface ValueUnit {
-  value: string;
-  unit: string;
 }
 
 const TenantListItem = ({ tenant, classes }: ITenantListItem) => {

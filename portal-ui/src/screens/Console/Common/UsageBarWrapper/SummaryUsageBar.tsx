@@ -8,12 +8,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ErrorBlock from "../../../shared/ErrorBlock";
 import { CircleIcon } from "../../../../icons";
 import LabelValuePair from "./LabelValuePair";
+import { ValueUnit } from "../../Tenants/ListTenants/types";
+import { niceBytes } from "../../../../common/utils";
 
-interface IProgressBar {
-  maxValue: number;
-  currValue: number;
+interface ISummaryUsageBar {
+  maxValue: number | undefined;
+  currValue: number | undefined;
   label: string;
-  renderFunction?: (element: string) => any;
   error: string;
   loading: boolean;
   classes: any;
@@ -59,11 +60,29 @@ const SummaryUsageBar = ({
   maxValue,
   currValue,
   healthStatus,
-  renderFunction,
   loading,
   error,
-}: IProgressBar) => {
-  const porcentualValue = (currValue * 100) / maxValue;
+}: ISummaryUsageBar) => {
+  var capacity: ValueUnit = { value: "n/a", unit: "" };
+  var used: ValueUnit = { value: "n/a", unit: "" };
+
+  if (maxValue) {
+    const b = niceBytes(`${maxValue}`, true);
+    const parts = b.split(" ");
+    capacity.value = parts[0];
+    capacity.unit = parts[1];
+  }
+  if (currValue) {
+    const b = niceBytes(`${currValue}`, true);
+    const parts = b.split(" ");
+    used.value = parts[0];
+    used.unit = parts[1];
+  }
+
+  let percentagelValue = 0;
+  if (currValue && maxValue) {
+    percentagelValue = (currValue * 100) / maxValue;
+  }
 
   const renderComponent = () => {
     if (!loading) {
@@ -71,7 +90,10 @@ const SummaryUsageBar = ({
         <ErrorBlock errorMessage={error} withBreak={false} />
       ) : (
         <Grid item xs={12}>
-          <BorderLinearProgress variant="determinate" value={porcentualValue} />
+          <BorderLinearProgress
+            variant="determinate"
+            value={percentagelValue}
+          />
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={{ xs: 1, sm: 2, md: 4 }}
@@ -81,18 +103,12 @@ const SummaryUsageBar = ({
             <LabelValuePair
               label={"Storage Capacity:"}
               orientation={"row"}
-              value={
-                renderFunction ? renderFunction(maxValue.toString()) : maxValue
-              }
+              value={`${capacity.value} ${capacity.unit}`}
             />
             <LabelValuePair
               label={"Used:"}
               orientation={"row"}
-              value={
-                renderFunction
-                  ? renderFunction(currValue.toString())
-                  : currValue
-              }
+              value={`${used.value} ${used.unit}`}
             />
             {healthStatus && (
               <LabelValuePair
