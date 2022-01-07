@@ -26,7 +26,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Box, Button, Grid, Stack } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { niceBytes } from "../../../../common/utils";
 import { ITenant } from "../ListTenants/types";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
