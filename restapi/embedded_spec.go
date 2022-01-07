@@ -732,6 +732,11 @@ func init() {
             "required": true
           },
           {
+            "type": "boolean",
+            "name": "all_versions",
+            "in": "query"
+          },
+          {
             "name": "files",
             "in": "body",
             "required": true,
@@ -1185,6 +1190,11 @@ func init() {
           {
             "type": "boolean",
             "name": "recursive",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "all_versions",
             "in": "query"
           }
         ],
@@ -6448,6 +6458,11 @@ func init() {
             "required": true
           },
           {
+            "type": "boolean",
+            "name": "all_versions",
+            "in": "query"
+          },
+          {
             "name": "files",
             "in": "body",
             "required": true,
@@ -6901,6 +6916,11 @@ func init() {
           {
             "type": "boolean",
             "name": "recursive",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "all_versions",
             "in": "query"
           }
         ],

@@ -335,6 +335,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: all_versions
+          in: query
+          required: false
+          type: boolean
       responses:
         200:
           description: A successful response.
@@ -354,6 +358,10 @@ paths:
           in: path
           required: true
           type: string
+        - name: all_versions
+          in: query
+          required: false
+          type: boolean
         - name: files
           in: body
           required: true

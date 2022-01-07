@@ -570,6 +570,7 @@ func Test_listObjects(t *testing.T) {
 func Test_deleteObjects(t *testing.T) {
 	ctx := context.Background()
 	client := s3ClientMock{}
+	client2 := minioClientMock{}
 	type args struct {
 		bucket     string
 		path       string
@@ -723,7 +724,7 @@ func Test_deleteObjects(t *testing.T) {
 		t.Run(tt.test, func(t *testing.T) {
 			mcListMock = tt.args.listFunc
 			mcRemoveMock = tt.args.removeFunc
-			err := deleteObjects(ctx, client, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive)
+			err := deleteObjects(ctx, client, client2, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive, false)
 			if !reflect.DeepEqual(err, tt.wantError) {
 				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
 				return
