@@ -27,7 +27,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -36,6 +35,7 @@ import (
 	"github.com/klauspost/compress/gzhttp"
 
 	portal_ui "github.com/minio/console/portal-ui"
+	"github.com/minio/pkg/env"
 	"github.com/minio/pkg/mimedb"
 
 	"github.com/go-openapi/errors"
@@ -352,12 +352,13 @@ func configureServer(s *http.Server, _, _ string) {
 
 func getSubPath() string {
 	subPathOnce.Do(func() {
-		if v := os.Getenv("CONSOLE_SUBPATH"); v != "" {
-			// make sure the subpath has a trailing slash
-			if !strings.HasSuffix(v, "/") {
-				v = fmt.Sprintf("%s/", v)
+		if v := env.Get("CONSOLE_SUBPATH", ""); v != "" {
+			// Replace all unnecessary `\` to `/`
+			// also add pro-actively at the end.
+			subPath = filepath.Clean(filepath.ToSlash(v)) + SlashSeparator
+			if !strings.HasPrefix(subPath, SlashSeparator) {
+				subPath = SlashSeparator + subPath
 			}
-			subPath = v
 		}
 	})
 	return subPath
