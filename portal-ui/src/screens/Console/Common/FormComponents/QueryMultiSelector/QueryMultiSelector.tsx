@@ -86,7 +86,7 @@ const QueryMultiSelector = ({
   // Use effect to get the initial values from props
   useEffect(() => {
     if (
-      currentKeys.length == 1 &&
+      currentKeys.length === 1 &&
       currentKeys[0] === "" &&
       currentValues.length === 1 &&
       currentValues[0] === "" &&
