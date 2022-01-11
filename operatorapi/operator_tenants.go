@@ -177,6 +177,40 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewGetTenantUsageOK().WithPayload(payload)
 	})
 
+	// Get Tenant Logs
+	api.OperatorAPIGetTenantLogsHandler = operator_api.GetTenantLogsHandlerFunc(func(params operator_api.GetTenantLogsParams, session *models.Principal) middleware.Responder {
+		payload, err := getTenantLogsResponse(session, params)
+		if err != nil {
+			return operator_api.NewGetTenantLogsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetTenantLogsOK().WithPayload(payload)
+	})
+
+	api.OperatorAPISetTenantLogsHandler = operator_api.SetTenantLogsHandlerFunc(func(params operator_api.SetTenantLogsParams, session *models.Principal) middleware.Responder {
+		payload, err := setTenantLogsResponse(session, params)
+		if err != nil {
+			return operator_api.NewSetTenantLogsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewSetTenantLogsOK().WithPayload(payload)
+	})
+
+	// Get Tenant Logs
+	api.OperatorAPIEnableTenantLoggingHandler = operator_api.EnableTenantLoggingHandlerFunc(func(params operator_api.EnableTenantLoggingParams, session *models.Principal) middleware.Responder {
+		payload, err := enableTenantLoggingResponse(session, params)
+		if err != nil {
+			return operator_api.NewEnableTenantLoggingDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewEnableTenantLoggingOK().WithPayload(payload)
+	})
+
+	api.OperatorAPIDisableTenantLoggingHandler = operator_api.DisableTenantLoggingHandlerFunc(func(params operator_api.DisableTenantLoggingParams, session *models.Principal) middleware.Responder {
+		payload, err := disableTenantLoggingResponse(session, params)
+		if err != nil {
+			return operator_api.NewDisableTenantLoggingDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewDisableTenantLoggingOK().WithPayload(payload)
+	})
+
 	api.OperatorAPIGetTenantPodsHandler = operator_api.GetTenantPodsHandlerFunc(func(params operator_api.GetTenantPodsParams, session *models.Principal) middleware.Responder {
 		payload, err := getTenantPodsResponse(session, params)
 		if err != nil {
@@ -1713,6 +1747,307 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 	}
 	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
 	return info, nil
+}
+
+// getTenantLogsResponse returns the logs of a tenant
+func getTenantLogsResponse(session *models.Principal, params operator_api.GetTenantLogsParams) (*models.TenantLogs, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err, errorUnableToGetTenantLogs)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return nil, prepareError(err, errorUnableToGetTenantLogs)
+	}
+	if minTenant.Spec.Log == nil {
+		retval := &models.TenantLogs{
+			Disabled: true,
+		}
+		return retval, nil
+	}
+	annotations := []*models.Annotation{}
+	for k, v := range minTenant.Spec.Log.Annotations {
+		annotations = append(annotations, &models.Annotation{Key: k, Value: v})
+	}
+	labels := []*models.Label{}
+	for k, v := range minTenant.Spec.Log.Labels {
+		labels = append(labels, &models.Label{Key: k, Value: v})
+	}
+	nodeSelector := []*models.NodeSelector{}
+	for k, v := range minTenant.Spec.Log.NodeSelector {
+		nodeSelector = append(nodeSelector, &models.NodeSelector{Key: k, Value: v})
+	}
+
+	if minTenant.Spec.Log.Db == nil {
+		minTenant.Spec.Log.Db = &miniov2.LogDbConfig{}
+	}
+
+	dbAnnotations := []*models.Annotation{}
+	for k, v := range minTenant.Spec.Log.Db.Annotations {
+		dbAnnotations = append(dbAnnotations, &models.Annotation{Key: k, Value: v})
+	}
+	dbLabels := []*models.Label{}
+	for k, v := range minTenant.Spec.Log.Db.Labels {
+		dbLabels = append(dbLabels, &models.Label{Key: k, Value: v})
+	}
+	dbNodeSelector := []*models.NodeSelector{}
+	for k, v := range minTenant.Spec.Log.Db.NodeSelector {
+		dbNodeSelector = append(dbNodeSelector, &models.NodeSelector{Key: k, Value: v})
+	}
+
+	if minTenant.Spec.Log.Audit == nil || minTenant.Spec.Log.Audit.DiskCapacityGB == nil {
+		minTenant.Spec.Log.Audit = &miniov2.AuditConfig{DiskCapacityGB: swag.Int(0)}
+	}
+
+	/*if minTenant.Spec.Log.Image == "" {
+		minTenant.Spec.Log.Image = miniov2.DefaultLogSearchAPIImage
+	}
+
+	if minTenant.Spec.Log.Db.Image == "" {
+		minTenant.Spec.Log.Db.Image = miniov2.LogPgImage
+	}*/
+
+	retval := &models.TenantLogs{
+		Image:                minTenant.Spec.Log.Image,
+		DiskCapacityGB:       fmt.Sprintf("%d", *minTenant.Spec.Log.Audit.DiskCapacityGB),
+		Annotations:          annotations,
+		Labels:               labels,
+		NodeSelector:         nodeSelector,
+		ServiceAccountName:   minTenant.Spec.Log.ServiceAccountName,
+		DbImage:              minTenant.Spec.Log.Db.Image,
+		DbAnnotations:        dbAnnotations,
+		DbLabels:             dbLabels,
+		DbNodeSelector:       dbNodeSelector,
+		DbServiceAccountName: minTenant.Spec.Log.Db.ServiceAccountName,
+		Disabled:             false,
+	}
+	return retval, nil
+}
+
+// setTenantLogsResponse returns the logs of a tenant
+func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	var labels = make(map[string]string)
+	for i := 0; i < len(params.Data.Labels); i++ {
+		if params.Data.Labels[i] != nil {
+			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
+		}
+	}
+	minTenant.Spec.Log.Labels = labels
+	var annotations = make(map[string]string)
+	for i := 0; i < len(params.Data.Annotations); i++ {
+		if params.Data.Annotations[i] != nil {
+			annotations[params.Data.Annotations[i].Key] = params.Data.Annotations[i].Value
+		}
+	}
+	minTenant.Spec.Log.Annotations = annotations
+	var nodeSelector = make(map[string]string)
+	for i := 0; i < len(params.Data.NodeSelector); i++ {
+		if params.Data.NodeSelector[i] != nil {
+			nodeSelector[params.Data.NodeSelector[i].Key] = params.Data.NodeSelector[i].Value
+		}
+	}
+	minTenant.Spec.Log.NodeSelector = nodeSelector
+	modified := false
+	if minTenant.Spec.Log.Db != nil {
+		modified = true
+	}
+	var dbLabels = make(map[string]string)
+	for i := 0; i < len(params.Data.DbLabels); i++ {
+		if params.Data.DbLabels[i] != nil {
+			dbLabels[params.Data.DbLabels[i].Key] = params.Data.DbLabels[i].Value
+		}
+		modified = true
+	}
+	var dbAnnotations = make(map[string]string)
+	for i := 0; i < len(params.Data.DbAnnotations); i++ {
+		if params.Data.DbAnnotations[i] != nil {
+			dbAnnotations[params.Data.DbAnnotations[i].Key] = params.Data.DbAnnotations[i].Value
+		}
+		modified = true
+	}
+	var dbNodeSelector = make(map[string]string)
+	for i := 0; i < len(params.Data.DbNodeSelector); i++ {
+		if params.Data.DbNodeSelector[i] != nil {
+			dbNodeSelector[params.Data.DbNodeSelector[i].Key] = params.Data.DbNodeSelector[i].Value
+		}
+		modified = true
+	}
+	minTenant.Spec.Log.Image = params.Data.Image
+	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
+	if err == nil {
+		if minTenant.Spec.Log.Audit != nil && minTenant.Spec.Log.Audit.DiskCapacityGB != nil {
+			*minTenant.Spec.Log.Audit.DiskCapacityGB = diskCapacityGB
+		} else {
+			minTenant.Spec.Log.Audit = &miniov2.AuditConfig{DiskCapacityGB: swag.Int(diskCapacityGB)}
+		}
+	}
+	minTenant.Spec.Log.ServiceAccountName = params.Data.ServiceAccountName
+	if params.Data.DbImage != "" || params.Data.DbServiceAccountName != "" {
+		modified = true
+	}
+	if modified {
+		if minTenant.Spec.Log.Db == nil {
+			//Default class name for Log search
+			diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
+			logSearchStorageClass := "standard"
+
+			logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
+
+			minTenant.Spec.Log.Db = &miniov2.LogDbConfig{
+				VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: params.Tenant + "-log",
+					},
+					Spec: corev1.PersistentVolumeClaimSpec{
+						AccessModes: []corev1.PersistentVolumeAccessMode{
+							corev1.ReadWriteOnce,
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceStorage: *logSearchDiskSpace,
+							},
+						},
+						StorageClassName: &logSearchStorageClass,
+					},
+				},
+				Labels:             dbLabels,
+				Annotations:        dbAnnotations,
+				NodeSelector:       dbNodeSelector,
+				Image:              params.Data.DbImage,
+				ServiceAccountName: params.Data.DbServiceAccountName,
+			}
+		} else {
+			minTenant.Spec.Log.Db.Labels = dbLabels
+			minTenant.Spec.Log.Db.Annotations = dbAnnotations
+			minTenant.Spec.Log.Db.NodeSelector = dbNodeSelector
+			minTenant.Spec.Log.Db.Image = params.Data.DbImage
+			minTenant.Spec.Log.Db.ServiceAccountName = params.Data.DbServiceAccountName
+		}
+	}
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+	return true, nil
+}
+
+// enableTenantLoggingResponse enables Tenant Logging
+func enableTenantLoggingResponse(session *models.Principal, params operator_api.EnableTenantLoggingParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	minTenant.EnsureDefaults()
+
+	//Default class name for Log search
+	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
+	logSearchStorageClass := "standard"
+
+	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
+
+	auditMaxCap := 10
+	if (diskSpaceFromAPI / humanize.GiByte) < int64(auditMaxCap) {
+		auditMaxCap = int(diskSpaceFromAPI / humanize.GiByte)
+	}
+
+	minTenant.Spec.Log = &miniov2.LogConfig{
+		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(auditMaxCap)},
+		Db: &miniov2.LogDbConfig{
+			VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: params.Tenant + "-log",
+				},
+				Spec: corev1.PersistentVolumeClaimSpec{
+					AccessModes: []corev1.PersistentVolumeAccessMode{
+						corev1.ReadWriteOnce,
+					},
+					Resources: corev1.ResourceRequirements{
+						Requests: corev1.ResourceList{
+							corev1.ResourceStorage: *logSearchDiskSpace,
+						},
+					},
+					StorageClassName: &logSearchStorageClass,
+				},
+			},
+		},
+	}
+
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+	return true, nil
+}
+
+// disableTenantLoggingResponse disables Tenant Logging
+func disableTenantLoggingResponse(session *models.Principal, params operator_api.DisableTenantLoggingParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	minTenant.EnsureDefaults()
+	minTenant.Spec.Log = nil
+
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+	return true, nil
 }
 
 func getTenantPodsResponse(session *models.Principal, params operator_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {

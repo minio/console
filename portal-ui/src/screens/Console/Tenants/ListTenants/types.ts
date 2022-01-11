@@ -161,9 +161,19 @@ export interface ITenantMonitoringStruct {
   prometheusEnabled: boolean;
 }
 
-export interface IKeyValue {
-  key: string;
-  value: string;
+export interface ITenantLogsStruct {
+  image: string;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
+  diskCapacityGB: number;
+  serviceAccountName: string;
+  dbImage: string;
+  dbLabels: IKeyValue[];
+  dbAnnotations: IKeyValue[];
+  dbNodeSelector: IKeyValue[];
+  dbServiceAccountName: string;
+  disabled: boolean;
 }
 
 export interface ValueUnit {

@@ -23,6 +23,7 @@ var (
 	// Explicit error messages
 	errorInvalidErasureCodingValue        = errors.New("invalid Erasure Coding Value")
 	errorUnableToGetTenantUsage           = errors.New("unable to get tenant usage")
+	errorUnableToGetTenantLogs            = errors.New("unable to get tenant logs")
 	errorUnableToUpdateTenantCertificates = errors.New("unable to update tenant certificates")
 	errorUpdatingEncryptionConfig         = errors.New("unable to update encryption configuration")
 	errBucketBodyNotInRequest             = errors.New("error bucket body not in request")

@@ -81,6 +81,12 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIDirectCSIFormatDriveHandler: operator_api.DirectCSIFormatDriveHandlerFunc(func(params operator_api.DirectCSIFormatDriveParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DirectCSIFormatDrive has not yet been implemented")
 		}),
+		OperatorAPIDisableTenantLoggingHandler: operator_api.DisableTenantLoggingHandlerFunc(func(params operator_api.DisableTenantLoggingParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.DisableTenantLogging has not yet been implemented")
+		}),
+		OperatorAPIEnableTenantLoggingHandler: operator_api.EnableTenantLoggingHandlerFunc(func(params operator_api.EnableTenantLoggingParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.EnableTenantLogging has not yet been implemented")
+		}),
 		OperatorAPIGetAllocatableResourcesHandler: operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetAllocatableResources has not yet been implemented")
 		}),
@@ -104,6 +110,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		OperatorAPIGetResourceQuotaHandler: operator_api.GetResourceQuotaHandlerFunc(func(params operator_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetResourceQuota has not yet been implemented")
+		}),
+		OperatorAPIGetTenantLogsHandler: operator_api.GetTenantLogsHandlerFunc(func(params operator_api.GetTenantLogsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.GetTenantLogs has not yet been implemented")
 		}),
 		OperatorAPIGetTenantMonitoringHandler: operator_api.GetTenantMonitoringHandlerFunc(func(params operator_api.GetTenantMonitoringParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetTenantMonitoring has not yet been implemented")
@@ -149,6 +158,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		}),
+		OperatorAPISetTenantLogsHandler: operator_api.SetTenantLogsHandlerFunc(func(params operator_api.SetTenantLogsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.SetTenantLogs has not yet been implemented")
 		}),
 		OperatorAPISetTenantMonitoringHandler: operator_api.SetTenantMonitoringHandlerFunc(func(params operator_api.SetTenantMonitoringParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.SetTenantMonitoring has not yet been implemented")
@@ -250,6 +262,10 @@ type OperatorAPI struct {
 	OperatorAPIDeleteTenantHandler operator_api.DeleteTenantHandler
 	// OperatorAPIDirectCSIFormatDriveHandler sets the operation handler for the direct c s i format drive operation
 	OperatorAPIDirectCSIFormatDriveHandler operator_api.DirectCSIFormatDriveHandler
+	// OperatorAPIDisableTenantLoggingHandler sets the operation handler for the disable tenant logging operation
+	OperatorAPIDisableTenantLoggingHandler operator_api.DisableTenantLoggingHandler
+	// OperatorAPIEnableTenantLoggingHandler sets the operation handler for the enable tenant logging operation
+	OperatorAPIEnableTenantLoggingHandler operator_api.EnableTenantLoggingHandler
 	// OperatorAPIGetAllocatableResourcesHandler sets the operation handler for the get allocatable resources operation
 	OperatorAPIGetAllocatableResourcesHandler operator_api.GetAllocatableResourcesHandler
 	// OperatorAPIGetDirectCSIDriveListHandler sets the operation handler for the get direct c s i drive list operation
@@ -266,6 +282,8 @@ type OperatorAPI struct {
 	OperatorAPIGetPodLogsHandler operator_api.GetPodLogsHandler
 	// OperatorAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	OperatorAPIGetResourceQuotaHandler operator_api.GetResourceQuotaHandler
+	// OperatorAPIGetTenantLogsHandler sets the operation handler for the get tenant logs operation
+	OperatorAPIGetTenantLogsHandler operator_api.GetTenantLogsHandler
 	// OperatorAPIGetTenantMonitoringHandler sets the operation handler for the get tenant monitoring operation
 	OperatorAPIGetTenantMonitoringHandler operator_api.GetTenantMonitoringHandler
 	// OperatorAPIGetTenantPodsHandler sets the operation handler for the get tenant pods operation
@@ -296,6 +314,8 @@ type OperatorAPI struct {
 	OperatorAPIPutTenantYAMLHandler operator_api.PutTenantYAMLHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
+	// OperatorAPISetTenantLogsHandler sets the operation handler for the set tenant logs operation
+	OperatorAPISetTenantLogsHandler operator_api.SetTenantLogsHandler
 	// OperatorAPISetTenantMonitoringHandler sets the operation handler for the set tenant monitoring operation
 	OperatorAPISetTenantMonitoringHandler operator_api.SetTenantMonitoringHandler
 	// OperatorAPISubscriptionActivateHandler sets the operation handler for the subscription activate operation
@@ -421,6 +441,12 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPIDirectCSIFormatDriveHandler == nil {
 		unregistered = append(unregistered, "operator_api.DirectCSIFormatDriveHandler")
 	}
+	if o.OperatorAPIDisableTenantLoggingHandler == nil {
+		unregistered = append(unregistered, "operator_api.DisableTenantLoggingHandler")
+	}
+	if o.OperatorAPIEnableTenantLoggingHandler == nil {
+		unregistered = append(unregistered, "operator_api.EnableTenantLoggingHandler")
+	}
 	if o.OperatorAPIGetAllocatableResourcesHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetAllocatableResourcesHandler")
 	}
@@ -444,6 +470,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetResourceQuotaHandler")
+	}
+	if o.OperatorAPIGetTenantLogsHandler == nil {
+		unregistered = append(unregistered, "operator_api.GetTenantLogsHandler")
 	}
 	if o.OperatorAPIGetTenantMonitoringHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetTenantMonitoringHandler")
@@ -489,6 +518,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.UserAPISessionCheckHandler == nil {
 		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	}
+	if o.OperatorAPISetTenantLogsHandler == nil {
+		unregistered = append(unregistered, "operator_api.SetTenantLogsHandler")
 	}
 	if o.OperatorAPISetTenantMonitoringHandler == nil {
 		unregistered = append(unregistered, "operator_api.SetTenantMonitoringHandler")
@@ -651,6 +683,14 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/direct-csi/drives/format"] = operator_api.NewDirectCSIFormatDrive(o.context, o.OperatorAPIDirectCSIFormatDriveHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/disable-logging"] = operator_api.NewDisableTenantLogging(o.context, o.OperatorAPIDisableTenantLoggingHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/enable-logging"] = operator_api.NewEnableTenantLogging(o.context, o.OperatorAPIEnableTenantLoggingHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -683,6 +723,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/resourcequotas/{resource-quota-name}"] = operator_api.NewGetResourceQuota(o.context, o.OperatorAPIGetResourceQuotaHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/log"] = operator_api.NewGetTenantLogs(o.context, o.OperatorAPIGetTenantLogsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -743,6 +787,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/log"] = operator_api.NewSetTenantLogs(o.context, o.OperatorAPISetTenantLogsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

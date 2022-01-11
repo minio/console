@@ -662,6 +662,80 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/disable-logging": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Disable Tenant Logging",
+        "operationId": "DisableTenantLogging",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/enable-logging": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Enable Tenant Logging",
+        "operationId": "EnableTenantLogging",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/encryption": {
       "put": {
         "tags": [
@@ -694,6 +768,86 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/log": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Tenant Logs",
+        "operationId": "GetTenantLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantLogs"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Set Tenant Logs",
+        "operationId": "SetTenantLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tenantLogs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -3123,6 +3277,65 @@ func init() {
         }
       }
     },
+    "tenantLogs": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "dbAnnotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "dbImage": {
+          "type": "string"
+        },
+        "dbLabels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "dbNodeSelector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelector"
+          }
+        },
+        "dbServiceAccountName": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "diskCapacityGB": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "nodeSelector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelector"
+          }
+        },
+        "serviceAccountName": {
+          "type": "string"
+        }
+      }
+    },
     "tenantMonitoringInfo": {
       "type": "object",
       "properties": {
@@ -4073,6 +4286,80 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/disable-logging": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Disable Tenant Logging",
+        "operationId": "DisableTenantLogging",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/enable-logging": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Enable Tenant Logging",
+        "operationId": "EnableTenantLogging",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/encryption": {
       "put": {
         "tags": [
@@ -4105,6 +4392,86 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/log": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Tenant Logs",
+        "operationId": "GetTenantLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantLogs"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Set Tenant Logs",
+        "operationId": "SetTenantLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tenantLogs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7109,6 +7476,65 @@ func init() {
         },
         "volume_count": {
           "type": "integer"
+        }
+      }
+    },
+    "tenantLogs": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "dbAnnotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "dbImage": {
+          "type": "string"
+        },
+        "dbLabels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "dbNodeSelector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelector"
+          }
+        },
+        "dbServiceAccountName": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "diskCapacityGB": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "nodeSelector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelector"
+          }
+        },
+        "serviceAccountName": {
+          "type": "string"
         }
       }
     },

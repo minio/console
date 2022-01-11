@@ -87,12 +87,14 @@ const KeyPairEdit = ({
         fieldKey: `key-${i.toString()}`,
         required: false,
         value: newValues[i].key,
+        pattern: /^[a-zA-Z0-9-_.]{1,63}$/,
         customPatternMessage: "Invalid key",
       });
       keyPairValidation.push({
         fieldKey: `val-${i.toString()}`,
         required: false,
         value: newValues[i].value,
+        pattern: /^[a-zA-Z0-9-_.]{1,63}$/,
         customPatternMessage: "Invalid value",
       });
     }
