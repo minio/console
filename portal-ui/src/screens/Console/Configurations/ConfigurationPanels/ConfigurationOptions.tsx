@@ -80,50 +80,45 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
 
       <PageLayout>
         <Grid item xs={12}>
-          <Grid item xs={12}>
-            <div className={classes.settingsOptionsContainer}>
-              <ScreenTitle icon={<SettingsIcon />} title={"Configuration:"} />
-              <VerticalTabs
-                selectedTab={selConfigTab}
-                isRouteTabs
-                routes={
-                  <div className={classes.contentSpacer}>
-                    <Router history={history}>
-                      <Switch>
-                        {configurationElements.map((element) => (
-                          <Route
-                            exact
-                            key={`configItem-${element.configuration_label}`}
-                            path={`/settings/${element.configuration_id}`}
-                            component={ConfigurationForm}
-                          />
-                        ))}
-                        <Route exact path="/settings">
-                          <Redirect to="/settings/region" />
-                        </Route>
-                      </Switch>
-                    </Router>
-                  </div>
-                }
-              >
-                {configurationElements.map((element) => {
-                  const { configuration_id, configuration_label, icon } =
-                    element;
-                  return {
-                    tabConfig: {
-                      label: configuration_label,
-                      value: configuration_id,
-                      icon: icon,
-                      component: Link,
-                      to: getRoutePath(configuration_id),
-                    },
-                  };
-                })}
-              </VerticalTabs>
-            </div>
-          </Grid>
+          <div className={classes.settingsOptionsContainer}>
+            <ScreenTitle icon={<SettingsIcon />} title={"Configuration:"} />
+            <VerticalTabs
+              selectedTab={selConfigTab}
+              isRouteTabs
+              routes={
+                <Router history={history}>
+                  <Switch>
+                    {configurationElements.map((element) => (
+                      <Route
+                        exact
+                        key={`configItem-${element.configuration_label}`}
+                        path={`/settings/${element.configuration_id}`}
+                        component={ConfigurationForm}
+                      />
+                    ))}
+                    <Route exact path="/settings">
+                      <Redirect to="/settings/region" />
+                    </Route>
+                  </Switch>
+                </Router>
+              }
+            >
+              {configurationElements.map((element) => {
+                const { configuration_id, configuration_label, icon } = element;
+                return {
+                  tabConfig: {
+                    label: configuration_label,
+                    value: configuration_id,
+                    icon: icon,
+                    component: Link,
+                    to: getRoutePath(configuration_id),
+                  },
+                };
+              })}
+            </VerticalTabs>
+          </div>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ paddingTop: "15px" }}>
           <HelpBox
             title={"Learn more about SETTINGS"}
             iconComponent={<SettingsIcon />}

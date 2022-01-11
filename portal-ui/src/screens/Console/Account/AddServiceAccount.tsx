@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,6 +33,7 @@ import api from "../../../common/api";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { AccountIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -120,6 +121,7 @@ const AddServiceAccount = ({
         closeModalAndRefresh(null);
       }}
       title={`Create Service Account`}
+      titleIcon={<AccountIcon />}
     >
       <form
         noValidate
@@ -128,6 +130,11 @@ const AddServiceAccount = ({
           addServiceAccount(e);
         }}
       >
+        {addSending && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
         <Grid container className={classes.modalFormScrollable}>
           <Grid item xs={12}>
             <div className={classes.infoDetails}>
@@ -136,8 +143,11 @@ const AddServiceAccount = ({
               parent user has membership. You can specify an optional
               JSON-formatted policy below to restrict the Service Account access
               to a subset of actions and resources explicitly allowed for the
-              parent user. You cannot modify the Service Account optional policy
-              after saving.
+              parent user.
+              <Box sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
+                You cannot modify the Service Account optional policy after
+                saving.
+              </Box>
             </div>
           </Grid>
           <Grid item xs={12}>
@@ -223,11 +233,6 @@ const AddServiceAccount = ({
               Create
             </Button>
           </Grid>
-          {addSending && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
         </Grid>
       </form>
     </ModalWrapper>

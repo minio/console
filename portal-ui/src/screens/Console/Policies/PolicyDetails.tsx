@@ -571,6 +571,7 @@ const PolicyDetails = ({
                           onBeforeChange={(editor, data, value) => {
                             setPolicyDefinition(value);
                           }}
+                          editorHeight={"350px"}
                         />
                       </Grid>
                       <Grid item xs={12} className={classes.buttonContainer}>

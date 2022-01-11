@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Box } from "@mui/material";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage } from "../../../actions";
 
@@ -46,6 +46,7 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -190,52 +191,48 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
         open={changePasswordModalOpen}
         closeModal={() => setChangePasswordModalOpen(false)}
       />
-      <PageHeader
-        label="Service Accounts"
-        actions={
-          <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
-            resource={CONSOLE_UI_RESOURCE}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <Tooltip title="Change Password">
-              <IconButton
-                color="primary"
-                aria-label="Change Password"
-                component="span"
-                onClick={() => setChangePasswordModalOpen(true)}
-                size="large"
-              >
-                <LockIcon />
-              </IconButton>
-            </Tooltip>
-          </SecureComponent>
-        }
-      />
+      <PageHeader label="Service Accounts" />
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray}>
+        <Grid item={true} xs={12} className={classes.actionsTray}>
           <SearchBox
             placeholder={"Search Service Accounts"}
             onChange={setFilter}
             overrideClass={classes.searchField}
           />
 
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-              setSelectedServiceAccount(null);
+          <Box
+            sx={{
+              display: "flex",
             }}
           >
-            Create service account
-          </Button>
+            <SecureComponent
+              scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
+              resource={CONSOLE_UI_RESOURCE}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                onClick={() => setChangePasswordModalOpen(true)}
+                text={`Change Password`}
+                icon={<LockIcon />}
+                color={"primary"}
+                variant={"outlined"}
+              />
+            </SecureComponent>
+
+            <RBIconButton
+              onClick={() => {
+                setAddScreenOpen(true);
+                setSelectedServiceAccount(null);
+              }}
+              text={`Create service account`}
+              icon={<AddIcon />}
+              color={"primary"}
+              variant={"contained"}
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
+
         <Grid item xs={12} className={classes.tableBlock}>
           <TableWrapper
             isLoading={loading}
@@ -246,7 +243,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             itemActions={tableActions}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} marginTop={"15px"}>
           <HelpBox
             title={"Learn more about SERVICE ACCOUNTS"}
             iconComponent={<AccountIcon />}

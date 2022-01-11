@@ -44,8 +44,8 @@ interface ICSVMultiSelector {
   onChange: (elements: string) => void;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
+const styles = (theme: Theme) => {
+  return createStyles({
     ...fieldBasic,
     ...tooltipHelper,
     inputWithBorder: {
@@ -55,11 +55,19 @@ const styles = (theme: Theme) =>
       overflowY: "auto",
       position: "relative",
       marginTop: 15,
+      flex: 1,
     },
     inputBoxSpacer: {
       marginBottom: 7,
     },
+    inputLabel: {
+      margin: 0,
+      alignItems: "flex-start",
+      paddingTop: "20px",
+      minWidth: 170,
+    },
   });
+};
 
 const CSVMultiSelector = ({
   elements,
