@@ -321,13 +321,11 @@ const BucketDetails = ({
                         component={BucketReplicationPanel}
                       />
                     )}
-                    {distributedSetup && (
-                      <Route
-                        exact
-                        path="/buckets/:bucketName/admin/lifecycle"
-                        component={BucketLifecyclePanel}
-                      />
-                    )}
+                    <Route
+                      exact
+                      path="/buckets/:bucketName/admin/lifecycle"
+                      component={BucketLifecyclePanel}
+                    />
 
                     <Route
                       exact
@@ -389,12 +387,10 @@ const BucketDetails = ({
                 label: "Lifecycle",
                 value: "lifecycle",
                 component: Link,
-                disabled:
-                  !distributedSetup ||
-                  !hasPermission(bucketName, [
-                    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
-                    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
-                  ]),
+                disabled: !hasPermission(bucketName, [
+                  IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+                  IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                ]),
                 to: getRoutePath("lifecycle"),
               },
             }}
