@@ -50,6 +50,14 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 
 		return operator_api.NewListPVCsForTenantOK().WithPayload(payload)
 	})
+
+	api.OperatorAPIDeletePVCHandler = operator_api.DeletePVCHandlerFunc(func(params operator_api.DeletePVCParams, session *models.Principal) middleware.Responder {
+		err := getDeletePVCResponse(session, params)
+		if err != nil {
+			return operator_api.NewDeletePVCDefault(int(err.Code)).WithPayload(err)
+		}
+		return nil
+	})
 }
 
 func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *models.Error) {
@@ -136,4 +144,21 @@ func getPVCsForTenantResponse(session *models.Principal, params operator_api.Lis
 	}
 
 	return &PVCsResponse, nil
+}
+
+func getDeletePVCResponse(session *models.Principal, params operator_api.DeletePVCParams) *models.Error {
+	ctx := context.Background()
+	// get Kubernetes Client
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+	listOpts := metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", params.Tenant),
+		FieldSelector: fmt.Sprintf("metadata.name=%s", params.PVCName),
+	}
+	if err = clientset.CoreV1().PersistentVolumeClaims(params.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, listOpts); err != nil {
+		return prepareError(err)
+	}
+	return nil
 }
