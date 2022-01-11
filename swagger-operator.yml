@@ -980,6 +980,33 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName}:
+    delete:
+      summary: Delete PVC
+      operationId: DeletePVC
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: PVCName
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /nodes/labels:
     get:
       summary: List node labels

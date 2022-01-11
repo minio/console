@@ -69,6 +69,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPICreateTenantHandler: operator_api.CreateTenantHandlerFunc(func(params operator_api.CreateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.CreateTenant has not yet been implemented")
 		}),
+		OperatorAPIDeletePVCHandler: operator_api.DeletePVCHandlerFunc(func(params operator_api.DeletePVCParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.DeletePVC has not yet been implemented")
+		}),
 		OperatorAPIDeletePodHandler: operator_api.DeletePodHandlerFunc(func(params operator_api.DeletePodParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DeletePod has not yet been implemented")
 		}),
@@ -239,6 +242,8 @@ type OperatorAPI struct {
 	OperatorAPICreateNamespaceHandler operator_api.CreateNamespaceHandler
 	// OperatorAPICreateTenantHandler sets the operation handler for the create tenant operation
 	OperatorAPICreateTenantHandler operator_api.CreateTenantHandler
+	// OperatorAPIDeletePVCHandler sets the operation handler for the delete p v c operation
+	OperatorAPIDeletePVCHandler operator_api.DeletePVCHandler
 	// OperatorAPIDeletePodHandler sets the operation handler for the delete pod operation
 	OperatorAPIDeletePodHandler operator_api.DeletePodHandler
 	// OperatorAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
@@ -403,6 +408,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPICreateTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.CreateTenantHandler")
+	}
+	if o.OperatorAPIDeletePVCHandler == nil {
+		unregistered = append(unregistered, "operator_api.DeletePVCHandler")
 	}
 	if o.OperatorAPIDeletePodHandler == nil {
 		unregistered = append(unregistered, "operator_api.DeletePodHandler")
@@ -627,6 +635,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/tenants"] = operator_api.NewCreateTenant(o.context, o.OperatorAPICreateTenantHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName}"] = operator_api.NewDeletePVC(o.context, o.OperatorAPIDeletePVCHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

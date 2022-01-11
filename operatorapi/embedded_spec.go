@@ -1030,6 +1030,46 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName}": {
+      "delete": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Delete PVC",
+        "operationId": "DeletePVC",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "PVCName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pvcs": {
       "get": {
         "tags": [
@@ -4390,6 +4430,46 @@ func init() {
         ],
         "responses": {
           "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName}": {
+      "delete": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Delete PVC",
+        "operationId": "DeletePVC",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "PVCName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
