@@ -49,6 +49,7 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
+import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -66,6 +67,7 @@ const styles = (theme: Theme) =>
     },
     bucketList: {
       marginTop: 25,
+      height: "calc(100vh - 210px)",
     },
     searchField: {
       ...searchField.searchField,
@@ -172,6 +174,24 @@ const ListBuckets = ({
     }
   };
 
+  const renderItemLine = (index: number) => {
+    const bucket = filteredRecords[index] || null;
+
+    if (bucket) {
+      return (
+        <BucketListItem
+          bucket={bucket}
+          onDelete={confirmDeleteBucket}
+          onSelect={selectListBuckets}
+          selected={selectedBuckets.includes(bucket.name)}
+          bulkSelect={bulkSelect}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <Fragment>
       {deleteOpen && (
@@ -262,18 +282,12 @@ const ListBuckets = ({
         {loading && <LinearProgress />}
         {!loading && (
           <Grid item xs={12} className={classes.bucketList}>
-            {filteredRecords.map((bucket, index) => {
-              return (
-                <BucketListItem
-                  bucket={bucket}
-                  key={`bucketListItem-${index.toString()}`}
-                  onDelete={confirmDeleteBucket}
-                  onSelect={selectListBuckets}
-                  selected={selectedBuckets.includes(bucket.name)}
-                  bulkSelect={bulkSelect}
-                />
-              );
-            })}
+            {filteredRecords.length !== 0 && (
+              <VirtualizedList
+                rowRenderFunction={renderItemLine}
+                totalItems={filteredRecords.length}
+              />
+            )}
             {filteredRecords.length === 0 && filterBuckets !== "" && (
               <Grid
                 container
