@@ -1216,28 +1216,6 @@ paths:
       tags:
         - UserAPI
 
-  /has-permission:
-    post:
-      summary: Checks whether the user can perform a series of actions
-      operationId: HasPermissionTo
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/hasPermissionRequest"
-      responses:
-        201:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/hasPermissionResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - UserAPI
-
   /users:
     get:
       summary: List Users
@@ -3778,30 +3756,6 @@ definitions:
         type: string
       bucket_name:
         type: string
-
-  hasPermissionRequest:
-    type: object
-    properties:
-      actions:
-        type: array
-        items:
-          $ref: "#/definitions/policyArgs"
-
-  permissionAction:
-    type: object
-    properties:
-      id:
-        type: string
-      can:
-        type: boolean
-
-  hasPermissionResponse:
-    type: object
-    properties:
-      permissions:
-        type: array
-        items:
-          $ref: "#/definitions/permissionAction"
 
   tier_s3:
     type: object

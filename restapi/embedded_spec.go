@@ -2326,39 +2326,6 @@ func init() {
         }
       }
     },
-    "/has-permission": {
-      "post": {
-        "tags": [
-          "UserAPI"
-        ],
-        "summary": "Checks whether the user can perform a series of actions",
-        "operationId": "HasPermissionTo",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/hasPermissionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/hasPermissionResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/list-external-buckets": {
       "post": {
         "tags": [
@@ -4235,28 +4202,6 @@ func init() {
         }
       }
     },
-    "hasPermissionRequest": {
-      "type": "object",
-      "properties": {
-        "actions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/policyArgs"
-          }
-        }
-      }
-    },
-    "hasPermissionResponse": {
-      "type": "object",
-      "properties": {
-        "permissions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/permissionAction"
-          }
-        }
-      }
-    },
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
@@ -4872,17 +4817,6 @@ func init() {
         "days",
         "years"
       ]
-    },
-    "permissionAction": {
-      "type": "object",
-      "properties": {
-        "can": {
-          "type": "boolean"
-        },
-        "id": {
-          "type": "string"
-        }
-      }
     },
     "policy": {
       "type": "object",
@@ -8103,39 +8037,6 @@ func init() {
         }
       }
     },
-    "/has-permission": {
-      "post": {
-        "tags": [
-          "UserAPI"
-        ],
-        "summary": "Checks whether the user can perform a series of actions",
-        "operationId": "HasPermissionTo",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/hasPermissionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/hasPermissionResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/list-external-buckets": {
       "post": {
         "tags": [
@@ -10132,28 +10033,6 @@ func init() {
         }
       }
     },
-    "hasPermissionRequest": {
-      "type": "object",
-      "properties": {
-        "actions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/policyArgs"
-          }
-        }
-      }
-    },
-    "hasPermissionResponse": {
-      "type": "object",
-      "properties": {
-        "permissions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/permissionAction"
-          }
-        }
-      }
-    },
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
@@ -10769,17 +10648,6 @@ func init() {
         "days",
         "years"
       ]
-    },
-    "permissionAction": {
-      "type": "object",
-      "properties": {
-        "can": {
-          "type": "boolean"
-        },
-        "id": {
-          "type": "string"
-        }
-      }
     },
     "policy": {
       "type": "object",

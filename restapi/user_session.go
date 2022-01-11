@@ -148,10 +148,9 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	}
 
 	defaultActions := policy.IsAllowedActions("", "", conditionValues)
-	consoleResourceName := "console-ui"
 
 	permissions := map[string]minioIAMPolicy.ActionSet{
-		consoleResourceName: defaultActions,
+		ConsoleResourceName: defaultActions,
 	}
 	deniedActions := map[string]minioIAMPolicy.ActionSet{}
 	for _, statement := range policy.Statements {
