@@ -27,17 +27,24 @@ import {
   searchField,
   tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { IPVCsResponse, IStoragePVCs } from "../../Storage/types";
+import { IStoragePVCs } from "../../Storage/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../../icons/SearchIcon";
+import withSuspense from "../../Common/Components/withSuspense";
+import { setTenantDetailsLoad } from "../actions";
+import { AppState } from "../../../../store";
+
+const DeletePVC = withSuspense(React.lazy(() => import("./DeletePVC")));
 
 interface ITenantVolumesProps {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   match: any;
+  loadingTenant: boolean;
+  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -55,10 +62,13 @@ const TenantVolumes = ({
   classes,
   setErrorSnackMessage,
   match,
+  loadingTenant,
 }: ITenantVolumesProps) => {
   const [records, setRecords] = useState<IStoragePVCs[]>([]);
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedPVC, setSelectedPVC] = useState<any>(null);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -70,7 +80,7 @@ const TenantVolumes = ({
           "GET",
           `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pvcs`
         )
-        .then((res: IPVCsResponse) => {
+        .then((res: IStoragePVCs) => {
           let volumes = get(res, "pvcs", []);
           setRecords(volumes ? volumes : []);
           setLoading(false);
@@ -82,12 +92,40 @@ const TenantVolumes = ({
     }
   }, [loading, setErrorSnackMessage, tenantName, tenantNamespace]);
 
+  const confirmDeletePVC = (pvcItem: IStoragePVCs) => {
+    const delPvc = {
+      ...pvcItem,
+      tenant: tenantName,
+      namespace: tenantNamespace,
+    };
+    setSelectedPVC(delPvc);
+    setDeleteOpen(true);
+  };
+
   const filteredRecords: IStoragePVCs[] = records.filter((elementItem) =>
     elementItem.name.includes(filter)
   );
 
+  const closeDeleteModalAndRefresh = (reloadData: boolean) => {
+    setDeleteOpen(false);
+    setLoading(true);
+  };
+
+  useEffect(() => {
+    if (loadingTenant) {
+      setLoading(true);
+    }
+  }, [loadingTenant]);
+
   return (
     <Fragment>
+      {deleteOpen && (
+        <DeletePVC
+          deleteOpen={deleteOpen}
+          selectedPVC={selectedPVC}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
       <h1 className={classes.sectionTitle}>Volumes</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
@@ -114,7 +152,7 @@ const TenantVolumes = ({
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
-          itemActions={[]}
+          itemActions={[{ type: "delete", onClick: confirmDeletePVC }]}
           columns={[
             {
               label: "Name",
@@ -146,10 +184,14 @@ const TenantVolumes = ({
   );
 };
 
+const mapState = (state: AppState) => ({
+  loadingTenant: state.tenants.tenantDetails.loadingTenant,
+});
+
 const mapDispatchToProps = {
   setErrorSnackMessage,
 };
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapState, mapDispatchToProps);
 
 export default withStyles(styles)(connector(TenantVolumes));
