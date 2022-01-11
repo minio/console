@@ -45,6 +45,8 @@ var (
 
 	// TLSRedirect console tls redirect rule
 	TLSRedirect = "on"
+
+	ConsoleResourceName = "console-ui"
 )
 
 func getMinIOServer() string {
@@ -85,12 +87,6 @@ func GetPort() int {
 		port = 9090
 	}
 	return port
-}
-
-// GetTLSHostname gets console tls hostname set on env variable
-// or default one
-func GetTLSHostname() string {
-	return strings.ToLower(env.Get(ConsoleTLSHostname, Hostname))
 }
 
 // GetTLSPort gets console tls port set on env variable

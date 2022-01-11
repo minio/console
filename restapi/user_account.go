@@ -21,8 +21,6 @@ import (
 	"net/http"
 	"time"
 
-	iampolicy "github.com/minio/pkg/iam/policy"
-
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -43,15 +41,6 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 			http.SetCookie(w, &cookie)
 			user_api.NewLoginNoContent().WriteResponse(w, p)
 		})
-	})
-	// Checks if user can perform an action
-	api.UserAPIHasPermissionToHandler = user_api.HasPermissionToHandlerFunc(func(params user_api.HasPermissionToParams, session *models.Principal) middleware.Responder {
-		hasPermissionRespose, err := getUserHasPermissionsResponse(session, params)
-		if err != nil {
-			return user_api.NewHasPermissionToDefault(500).WithPayload(err)
-		}
-		// Custom response writer to update the session cookies
-		return user_api.NewHasPermissionToCreated().WithPayload(hasPermissionRespose)
 	})
 }
 
@@ -100,51 +89,4 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 		SessionID: *sessionID,
 	}
 	return loginResponse, nil
-}
-
-func getUserHasPermissionsResponse(session *models.Principal, params user_api.HasPermissionToParams) (*models.HasPermissionResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-	defer cancel()
-
-	mAdmin, err := NewMinioAdminClient(session)
-	if err != nil {
-		return nil, prepareError(err)
-	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := AdminClient{Client: mAdmin}
-
-	userPolicy, err := getAccountPolicy(ctx, adminClient)
-	if err != nil {
-		return nil, prepareError(err)
-	}
-
-	var perms []*models.PermissionAction
-
-	for _, p := range params.Body.Actions {
-		canPerform := userCanDo(iampolicy.Args{
-			Action: iampolicy.Action(p.Action),
-		}, userPolicy)
-		perms = append(perms, &models.PermissionAction{
-			Can: canPerform,
-			ID:  p.ID,
-		})
-	}
-
-	return &models.HasPermissionResponse{
-		Permissions: perms,
-	}, nil
-}
-
-func userCanDo(arg iampolicy.Args, userPolicy *iampolicy.Policy) bool {
-	// check in all the statements if any allows the passed action
-	for _, stmt := range userPolicy.Statements {
-		// We only care about actions to match -
-		// if resources match or not we do not
-		// care since those are dynamic entities.
-		if stmt.Actions.Match(arg.Action) {
-			return true
-		}
-	}
-	return false
 }

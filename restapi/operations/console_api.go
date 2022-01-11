@@ -203,9 +203,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
 		}),
-		UserAPIHasPermissionToHandler: user_api.HasPermissionToHandlerFunc(func(params user_api.HasPermissionToParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.HasPermissionTo has not yet been implemented")
-		}),
 		AdminAPIListAUserServiceAccountsHandler: admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListAUserServiceAccounts has not yet been implemented")
 		}),
@@ -515,8 +512,6 @@ type ConsoleAPI struct {
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
-	// UserAPIHasPermissionToHandler sets the operation handler for the has permission to operation
-	UserAPIHasPermissionToHandler user_api.HasPermissionToHandler
 	// AdminAPIListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
 	AdminAPIListAUserServiceAccountsHandler admin_api.ListAUserServiceAccountsHandler
 	// AdminAPIListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
@@ -849,9 +844,6 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGroupInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
-	}
-	if o.UserAPIHasPermissionToHandler == nil {
-		unregistered = append(unregistered, "user_api.HasPermissionToHandler")
 	}
 	if o.AdminAPIListAUserServiceAccountsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListAUserServiceAccountsHandler")
@@ -1301,10 +1293,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/group"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/has-permission"] = user_api.NewHasPermissionTo(o.context, o.UserAPIHasPermissionToHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

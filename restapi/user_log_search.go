@@ -21,19 +21,19 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-openapi/swag"
-
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
 	logsearchServer "github.com/minio/operator/logsearchapi/server"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 	// log search
 	api.UserAPILogSearchHandler = user_api.LogSearchHandlerFunc(func(params user_api.LogSearchParams, session *models.Principal) middleware.Responder {
-		searchResp, err := getLogSearchResponse(params)
+		searchResp, err := getLogSearchResponse(session, params)
 		if err != nil {
 			return user_api.NewLogSearchDefault(int(err.Code)).WithPayload(err)
 		}
@@ -42,7 +42,29 @@ func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 }
 
 // getLogSearchResponse performs a query to Log Search if Enabled
-func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
+func getLogSearchResponse(session *models.Principal, params user_api.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
+	sessionResp, err := getSessionResponse(session)
+	if err != nil {
+		return nil, err
+	}
+	var allowedToQueryLogSearchAPI bool
+	if permissions, ok := sessionResp.Permissions[ConsoleResourceName]; ok {
+		for _, permission := range permissions {
+			if permission == iampolicy.HealthInfoAdminAction {
+				allowedToQueryLogSearchAPI = true
+				break
+			}
+		}
+	}
+
+	if !allowedToQueryLogSearchAPI {
+		return nil, &models.Error{
+			Code:            int32(403),
+			Message:         swag.String("Forbidden"),
+			DetailedMessage: swag.String("The Log Search API not available."),
+		}
+	}
+
 	token := getLogSearchAPIToken()
 	endpoint := fmt.Sprintf("%s/api/query?token=%s&q=reqinfo", getLogSearchURL(), token)
 	for _, fp := range params.Fp {
