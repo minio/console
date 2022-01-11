@@ -300,6 +300,9 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.DASHBOARD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
   ],
+  [IAM_PAGES.METRICS]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
+  ],
   [IAM_PAGES.POLICIES_VIEW]: [
     IAM_SCOPES.ADMIN_DELETE_POLICY,
     IAM_SCOPES.ADMIN_LIST_GROUPS,
