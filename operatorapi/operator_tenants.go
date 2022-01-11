@@ -2157,6 +2157,17 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		storageClassName = *minInst.Spec.Prometheus.StorageClassName
 	}
 
+	var requestedCPU string
+	var requestedMem string
+
+	if minInst.Spec.Prometheus.Resources.Requests != nil {
+
+		requestedCPUQ := minInst.Spec.Prometheus.Resources.Requests["cpu"]
+		requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
+		requestedMemQ := minInst.Spec.Prometheus.Resources.Requests["memory"]
+		requestedMem = strconv.FormatInt(requestedMemQ.Value(), 10)
+	}
+
 	mLabels := []*models.Label{}
 	for k, v := range minInst.Spec.Prometheus.Labels {
 		mLabels = append(mLabels, &models.Label{Key: k, Value: v})
@@ -2172,16 +2183,18 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 	if minInst.Spec.Prometheus != nil {
 		monitoringInfo = &models.TenantMonitoringInfo{
-			PrometheusEnabled:  (true),
-			Annotations:        mAnnotations,
-			DiskCapacityGB:     strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB),
-			Image:              minInst.Spec.Prometheus.Image,
-			InitImage:          minInst.Spec.Prometheus.InitImage,
-			Labels:             mLabels,
-			NodeSelector:       mNodeSelector,
-			ServiceAccountName: minInst.Spec.Prometheus.ServiceAccountName,
-			SidecarImage:       minInst.Spec.Prometheus.SideCarImage,
-			StorageClassName:   storageClassName,
+			PrometheusEnabled:    (true),
+			Annotations:          mAnnotations,
+			DiskCapacityGB:       strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB),
+			Image:                minInst.Spec.Prometheus.Image,
+			InitImage:            minInst.Spec.Prometheus.InitImage,
+			Labels:               mLabels,
+			NodeSelector:         mNodeSelector,
+			ServiceAccountName:   minInst.Spec.Prometheus.ServiceAccountName,
+			SidecarImage:         minInst.Spec.Prometheus.SideCarImage,
+			StorageClassName:     storageClassName,
+			MonitoringCPURequest: requestedCPU,
+			MonitoringMemRequest: requestedMem,
 		}
 		return monitoringInfo, nil
 	}
@@ -2250,6 +2263,22 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		storageClassName = params.Data.StorageClassName
 	}
 
+	monitoringResourceRequest := make(corev1.ResourceList)
+	if &params.Data.MonitoringCPURequest != nil {
+
+		cpuQuantity, err := resource.ParseQuantity(params.Data.MonitoringCPURequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		memQuantity, err := resource.ParseQuantity(params.Data.MonitoringMemRequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		monitoringResourceRequest["cpu"] = cpuQuantity
+		monitoringResourceRequest["memory"] = memQuantity
+	}
+
+	minTenant.Spec.Prometheus.Resources.Requests = monitoringResourceRequest
 	minTenant.Spec.Prometheus.Labels = labels
 	minTenant.Spec.Prometheus.Annotations = annotations
 	minTenant.Spec.Prometheus.NodeSelector = nodeSelector

@@ -160,6 +160,8 @@ const TenantMonitoring = ({
           tenantName={tenantName}
           tenantNamespace={tenantNamespace}
           storageClassName={monitoringInfo?.storageClassName || ""}
+          cpuRequest={monitoringInfo?.monitoringCPURequest || ""}
+          memRequest={monitoringInfo?.monitoringMemRequest|| ""}
         />
       )}
       {confirmOpen && (
@@ -301,22 +303,29 @@ const TenantMonitoring = ({
                                 />
                               </td>
                             </tr>
-                          </>
-                        )}
-                      {monitoringInfo.nodeSelector != null &&
-                        monitoringInfo.nodeSelector.length > 0 && (
+                            </>
+                          )}
+                          {monitoringInfo.monitoringCPURequest != null && (
                           <tr>
-                            <h4>Node Seletor</h4>
                             <td className={classes.titleCol}>
-                              <KeyPairView
-                                records={monitoringInfo.nodeSelector}
-                                recordName="Node Selector"
-                              />
+                              CPU Request:
                             </td>
+                            <td>{monitoringInfo?.monitoringCPURequest}</td>
                           </tr>
                         )}
-                    </Fragment>
-                  )}
+                        {monitoringInfo.monitoringMemRequest != null && (
+                          <tr>
+                            <td className={classes.titleCol}>
+                              Memory Request:
+                            </td>
+                            <td>{monitoringInfo?.monitoringMemRequest}</td>
+                          </tr>
+                        )}
+                        
+                    </Fragment>                      
+                      
+                  )} 
+                  
                 </tbody>
               </table>
             </Grid>

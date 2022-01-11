@@ -33,6 +33,8 @@ interface IEditTenantMonitoringProps {
   tenantName: string;
   tenantNamespace: string;
   storageClassName: string;
+  cpuRequest: string;
+  memRequest: string;
 }
 
 const styles = (theme: Theme) =>
@@ -59,6 +61,8 @@ const EditTenantMonitoringModal = ({
   storageClassName,
   tenantName,
   tenantNamespace,
+  cpuRequest,
+  memRequest,
 }: IEditTenantMonitoringProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
@@ -76,6 +80,8 @@ const EditTenantMonitoringModal = ({
   const [newDiskCapacityGB, setNewDiskCapacityGB] = useState<string>(
     diskCapacityGB.toString()
   );
+  const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
+  const [newMemRequest, setNewMemRequest] = useState<string>(memRequest);
   const [newServiceAccountName, setNewServiceAccountName] =
     useState<string>(serviceAccountName);
   const [newStorageClassName, setNewStorageClassName] =
@@ -130,6 +136,20 @@ const EditTenantMonitoringModal = ({
       customPatternMessage: "Must be an integer between 0 and 10",
     });
     tenantMonitoringValidation.push({
+      fieldKey: `newCPURequest`,
+      required: true,
+      value: newCPURequest as any as string,
+      pattern: /^[0-9]?(10)?$/,
+      customPatternMessage: "Must be an integer between 0 and 10",
+    });
+    tenantMonitoringValidation.push({
+      fieldKey: `newMemRequest`,
+      required: true,
+      value: newMemRequest as any as string,
+      pattern: /^[0-9]?(10)?$/,
+      customPatternMessage: "Must be an integer between 0 and 10",
+    });
+    tenantMonitoringValidation.push({
       fieldKey: `serviceAccountName`,
       required: false,
       value: newServiceAccountName,
@@ -153,6 +173,8 @@ const EditTenantMonitoringModal = ({
     newDiskCapacityGB,
     newServiceAccountName,
     newStorageClassName,
+    newCPURequest,
+    newMemRequest,
     setValidationErrors,
   ]);
 
@@ -191,6 +213,8 @@ const EditTenantMonitoringModal = ({
           diskCapacityGB: newDiskCapacityGB,
           serviceAccountName: newServiceAccountName,
           storageClassName: newStorageClassName,
+          monitoringCPURequest: newCPURequest,
+          monitoringMemRequest: newMemRequest,
         }
       )
       .then(() => {
@@ -253,14 +277,40 @@ const EditTenantMonitoringModal = ({
           label={""}
           placeholder={"Disk Capacity (GB)"}
           name={`diskCapacityGB`}
-          value={newDiskCapacityGB.toString()}
+          value={newDiskCapacityGB}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setNewDiskCapacityGB(event.target.value);
           }}
           key={`diskCapacityGB`}
           error={validationErrors[`diskCapacityGB`] || ""}
         />
-        <h4>Service Account</h4>
+         <h4>Prometheus CPU Request</h4>
+        <InputBoxWrapper
+          id={`cpuRequest`}
+          label={""}
+          placeholder={"CPU Request"}
+          name={`cpuRequest`}
+          value={newCPURequest}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewCPURequest(event.target.value);
+          }}
+          key={`cpuRequest`}
+          error={validationErrors[`cpuRequest`] || ""}
+        />
+         <h4>Prometheus Memory Request</h4>
+        <InputBoxWrapper
+          id={`memRequest`}
+          label={""}
+          placeholder={"Memory request"}
+          name={`memRequest`}
+          value={newMemRequest}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewMemRequest(event.target.value);
+          }}
+          key={`memRequest`}
+          error={validationErrors[`memRequest`] || ""}
+        />
+        <h4>Service Account Name</h4>
         <InputBoxWrapper
           id={`serviceAccountName`}
           label={""}

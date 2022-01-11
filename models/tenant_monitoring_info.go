@@ -51,6 +51,12 @@ type TenantMonitoringInfo struct {
 	// labels
 	Labels []*Label `json:"labels"`
 
+	// monitoring CPU request
+	MonitoringCPURequest string `json:"monitoringCPURequest,omitempty"`
+
+	// monitoring mem request
+	MonitoringMemRequest string `json:"monitoringMemRequest,omitempty"`
+
 	// node selector
 	NodeSelector []*NodeSelector `json:"nodeSelector"`
 
