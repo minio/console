@@ -507,22 +507,7 @@ const TenantDetails = ({
               to: getRoutePath("pods"),
             },
           }}
-          {{
-            tabConfig: {
-              label: "Volumes",
-              value: "volumes",
-              component: Link,
-              to: getRoutePath("volumes"),
-            },
-          }}
-          {{
-            tabConfig: {
-              label: "License",
-              value: "license",
-              component: Link,
-              to: getRoutePath("license"),
-            },
-          }}
+
           {{
             tabConfig: {
               label: "Monitoring",
@@ -537,6 +522,22 @@ const TenantDetails = ({
               value: "logging",
               component: Link,
               to: getRoutePath("logging"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Volumes",
+              value: "volumes",
+              component: Link,
+              to: getRoutePath("volumes"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "License",
+              value: "license",
+              component: Link,
+              to: getRoutePath("license"),
             },
           }}
         </VerticalTabs>

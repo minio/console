@@ -236,6 +236,8 @@ const TenantLogging = ({
         <Paper className={classes.paperContainer}>
           <Grid container>
             <Grid item xs={12}>
+              <h2>Logging API Service Details</h2>
+              <hr className={classes.hrClass} />
               <table width={"100%"}>
                 <tbody>
                   {loadingTenant ? (
@@ -257,9 +259,7 @@ const TenantLogging = ({
                         <td>{logInfo?.diskCapacityGB}</td>
                       </tr>
                       <tr>
-                        <td className={classes.titleCol}>
-                          Service Account Name:
-                        </td>
+                        <td className={classes.titleCol}>Service Account:</td>
                         <td>{logInfo?.serviceAccountName}</td>
                       </tr>
                       <tr>
@@ -317,6 +317,8 @@ const TenantLogging = ({
                   )}
                 </tbody>
               </table>
+
+              <h2>Database Details</h2>
               <hr className={classes.hrClass} />
               <table width={"100%"}>
                 <tbody>
@@ -329,18 +331,16 @@ const TenantLogging = ({
                   ) : (
                     <Fragment>
                       <tr>
-                        <td className={classes.titleCol}>Db Image:</td>
+                        <td className={classes.titleCol}>Postgres Image:</td>
                         <td>{logInfo?.dbImage}</td>
                       </tr>
                       <tr>
-                        <td className={classes.titleCol}>
-                          Db Service Account Name:
-                        </td>
+                        <td className={classes.titleCol}>Service Account:</td>
                         <td>{logInfo?.dbServiceAccountName}</td>
                       </tr>
                       <tr>
                         <td>
-                          <h4>Db Labels</h4>
+                          <h4>Labels</h4>
                         </td>
                       </tr>
                       <tr>
@@ -351,13 +351,13 @@ const TenantLogging = ({
                                 ? logInfo.dbLabels
                                 : []
                             }
-                            recordName="Db Labels"
+                            recordName="labels"
                           />
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <h4>Db Annotations</h4>
+                          <h4>Annotations</h4>
                         </td>
                       </tr>
                       <tr>
@@ -369,13 +369,13 @@ const TenantLogging = ({
                                 ? logInfo.dbAnnotations
                                 : []
                             }
-                            recordName="Db Annotations"
+                            recordName="annotations"
                           />
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <h4>Db Node Selector</h4>
+                          <h4>Node Selector</h4>
                         </td>
                       </tr>
                       <tr>
@@ -387,7 +387,7 @@ const TenantLogging = ({
                                 ? logInfo.dbNodeSelector
                                 : []
                             }
-                            recordName="Db Node Selector"
+                            recordName="node selectors"
                           />
                         </td>
                       </tr>

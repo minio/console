@@ -203,9 +203,11 @@ const EditTenantMonitoringModal = ({
     <ModalWrapper
       onClose={() => onClose(true)}
       modalOpen={open}
-      title="Edit Prometheus Monitoring Configuration"
+      title="Edit Monitoring Configuration"
     >
       <form noValidate autoComplete="off" onSubmit={submitMonitoringInfo}>
+        <h2>Prometheus configuration</h2>
+        <hr className={classes.hrClass} />
         <h4>Image</h4>
         <InputBoxWrapper
           id={`image`}
@@ -258,7 +260,7 @@ const EditTenantMonitoringModal = ({
           key={`diskCapacityGB`}
           error={validationErrors[`diskCapacityGB`] || ""}
         />
-        <h4>Service Account Name</h4>
+        <h4>Service Account</h4>
         <InputBoxWrapper
           id={`serviceAccountName`}
           label={""}

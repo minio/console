@@ -223,54 +223,58 @@ const TenantMonitoring = ({
                       </td>
                     </tr>
                   ) : (
-                    monitoringInfo !== undefined && (
-                      <Fragment>
-                        {monitoringInfo.image != null && (
-                          <tr>
-                            <td className={classes.titleCol}>Image:</td>
-                            <td>{monitoringInfo.image}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.sidecarImage != null && (
-                          <tr>
-                            <td className={classes.titleCol}>Sidecar Image:</td>
-                            <td>{monitoringInfo?.sidecarImage}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.initImage != null && (
-                          <tr>
-                            <td className={classes.titleCol}>Init Image:</td>
-                            <td>{monitoringInfo?.initImage}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.diskCapacityGB != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Disk Capacity (GB):
-                            </td>
-                            <td>{monitoringInfo?.diskCapacityGB}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.serviceAccountName != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Service Account Name:
-                            </td>
-                            <td>{monitoringInfo?.serviceAccountName}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.storageClassName != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Storage Class Name:
-                            </td>
-                            <td>{monitoringInfo?.storageClassName}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.labels != null &&
-                          monitoringInfo.labels.length > 0 && (
+                    <Fragment>
+                      {monitoringInfo.image != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Image:</td>
+                          <td>{monitoringInfo.image}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.sidecarImage != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Sidecar Image:</td>
+                          <td>{monitoringInfo?.sidecarImage}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.initImage != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Init Image:</td>
+                          <td>{monitoringInfo?.initImage}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.diskCapacityGB != null && (
+                        <tr>
+                          <td className={classes.titleCol}>
+                            Disk Capacity (GB):
+                          </td>
+                          <td>{monitoringInfo?.diskCapacityGB}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.serviceAccountName != null && (
+                        <tr>
+                          <td className={classes.titleCol}>
+                            Service Account Name:
+                          </td>
+                          <td>{monitoringInfo?.serviceAccountName}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.storageClassName != null && (
+                        <tr>
+                          <td className={classes.titleCol}>
+                            Storage Class Name:
+                          </td>
+                          <td>{monitoringInfo?.storageClassName}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.labels != null &&
+                        monitoringInfo.labels.length > 0 && (
+                          <>
                             <tr>
-                              <h4>Labels</h4>
+                              <td>
+                                <h4>Labels</h4>
+                              </td>
+                            </tr>
+                            <tr>
                               <td className={classes.titleCol}>
                                 <KeyPairView
                                   records={monitoringInfo.labels}
@@ -278,11 +282,17 @@ const TenantMonitoring = ({
                                 />
                               </td>
                             </tr>
-                          )}
-                        {monitoringInfo.annotations != null &&
-                          monitoringInfo.annotations.length > 0 && (
+                          </>
+                        )}
+                      {monitoringInfo.annotations != null &&
+                        monitoringInfo.annotations.length > 0 && (
+                          <>
                             <tr>
-                              <h4>Annotations</h4>
+                              <td>
+                                <h4>Annotations</h4>
+                              </td>
+                            </tr>
+                            <tr>
                               <td className={classes.titleCol}>
                                 <KeyPairView
                                   records={monitoringInfo.annotations}
@@ -290,21 +300,21 @@ const TenantMonitoring = ({
                                 />
                               </td>
                             </tr>
-                          )}
-                        {monitoringInfo.nodeSelector != null &&
-                          monitoringInfo.nodeSelector.length > 0 && (
-                            <tr>
-                              <h4>Node Seletor</h4>
-                              <td className={classes.titleCol}>
-                                <KeyPairView
-                                  records={monitoringInfo.nodeSelector}
-                                  recordName="Node Selector"
-                                />
-                              </td>
-                            </tr>
-                          )}
-                      </Fragment>
-                    )
+                          </>
+                        )}
+                      {monitoringInfo.nodeSelector != null &&
+                        monitoringInfo.nodeSelector.length > 0 && (
+                          <tr>
+                            <h4>Node Seletor</h4>
+                            <td className={classes.titleCol}>
+                              <KeyPairView
+                                records={monitoringInfo.nodeSelector}
+                                recordName="Node Selector"
+                              />
+                            </td>
+                          </tr>
+                        )}
+                    </Fragment>
                   )}
                 </tbody>
               </table>
