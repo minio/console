@@ -155,3 +155,5 @@ export { default as GoogleTierIcon } from "./GoogleTierIcon";
 export { default as GoogleTierIconXs } from "./GoogleTierIconXs";
 export { default as S3TierIcon } from "./S3TierIcon";
 export { default as S3TierIconXs } from "./S3TierIconXs";
+export { default as EditorThemeSwitchIcon } from "./EditorThemeSwitchIcon";
+export { default as PasswordKeyIcon } from "./PasswordKeyIcon";

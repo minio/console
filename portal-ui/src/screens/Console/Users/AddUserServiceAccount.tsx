@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -139,8 +139,11 @@ const AddUserServiceAccount = ({
               parent user has membership. You can specify an optional
               JSON-formatted policy below to restrict the Service Account access
               to a subset of actions and resources explicitly allowed for the
-              parent user. You cannot modify the Service Account optional policy
-              after saving.
+              parent user.
+              <Box sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
+                You cannot modify the Service Account optional policy after
+                saving.
+              </Box>
             </div>
           </Grid>
           <Grid item xs={12}>

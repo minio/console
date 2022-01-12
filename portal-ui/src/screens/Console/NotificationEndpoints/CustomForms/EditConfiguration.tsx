@@ -20,7 +20,7 @@ import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
@@ -44,6 +44,11 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...settingsCommon,
+    settingsFormContainer: {
+      display: "grid",
+      gridTemplateColumns: "1fr",
+      gridGap: "10px",
+    },
   });
 
 interface IAddNotificationEndpointProps {
@@ -155,44 +160,68 @@ const EditConfiguration = ({
           resetOpen={resetConfigurationOpen}
         />
       )}
-
-      <form noValidate onSubmit={submitForm} className={className}>
-        <Grid item xs={12} className={classes.settingsFormContainer}>
-          {loadingConfig && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
-          <ConfTargetGeneric
-            fields={
-              fieldsConfigurations[selectedConfiguration.configuration_id]
-            }
-            onChange={onValueChange}
-            defaultVals={configValues}
-          />
+      {loadingConfig ? (
+        <Grid item xs={12}>
+          <LinearProgress />
         </Grid>
-        <Grid item xs={12} className={classes.settingsButtonContainer}>
-          <Button
-            type="button"
-            variant="outlined"
-            color="secondary"
-            onClick={() => {
-              setResetConfigurationOpen(true);
+      ) : (
+        <Box
+          sx={{
+            padding: "15px",
+            height: "100%",
+          }}
+        >
+          <form
+            noValidate
+            onSubmit={submitForm}
+            className={className}
+            style={{
+              height: "100%",
+              display: "flex",
+              flexFlow: "column",
             }}
           >
-            Restore Defaults
-          </Button>
-          &nbsp; &nbsp;
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={saving}
-          >
-            Save
-          </Button>
-        </Grid>
-      </form>
+            <Grid item xs={12} className={classes.settingsFormContainer}>
+              <ConfTargetGeneric
+                fields={
+                  fieldsConfigurations[selectedConfiguration.configuration_id]
+                }
+                onChange={onValueChange}
+                defaultVals={configValues}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                paddingTop: "15px ",
+                textAlign: "right" as const,
+                maxHeight: "60px",
+              }}
+            >
+              <Button
+                type="button"
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  setResetConfigurationOpen(true);
+                }}
+              >
+                Restore Defaults
+              </Button>
+              &nbsp; &nbsp;
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={saving}
+              >
+                Save
+              </Button>
+            </Grid>
+          </form>
+        </Box>
+      )}
     </Fragment>
   );
 };

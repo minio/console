@@ -42,8 +42,12 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      marginBottom: 16,
       fontSize: 14,
+      margin: 0,
+      alignItems: "flex-start",
+      paddingTop: "20px",
+      flexWrap: "wrap",
+      display: "flex",
     },
     textBoxContainer: {
       flexGrow: 1,
