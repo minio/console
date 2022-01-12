@@ -30,7 +30,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic } from "../common/styleLibrary";
-import { CopyIcon, PrometheusIcon } from "../../../../../icons";
+import { CopyIcon, EditorThemeSwitchIcon } from "../../../../../icons";
 import RBIconButton from "../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { EditorView } from "@codemirror/view";
@@ -86,6 +86,9 @@ const lightTheme = EditorView.theme(
         color: "#C83B51",
       },
     },
+    "& .ͼb": {
+      color: "#2781B0",
+    },
     ".cm-activeLine": {
       backgroundColor: "#dde1f1",
     },
@@ -127,6 +130,9 @@ const darkTheme = EditorView.theme(
       "& .ͼd, & .ͼc": {
         color: "#8e6cef",
       },
+    },
+    "& .ͼb": {
+      color: "#2781B0",
     },
     ".cm-activeLine": {
       backgroundColor: "#44475a",
@@ -231,7 +237,7 @@ const CodeMirrorWrapper = ({
                 setIsDarkTheme(!isDarkTheme);
               }}
               text={""}
-              icon={<PrometheusIcon />}
+              icon={<EditorThemeSwitchIcon />}
               color={"primary"}
               variant={"outlined"}
             />

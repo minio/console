@@ -24,8 +24,7 @@ import api from "../../../common/api";
 import { Box } from "@mui/material";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage } from "../../../actions";
-
-import { AccountIcon, AddIcon, LockIcon } from "../../../icons";
+import { AccountIcon, AddIcon, PasswordKeyIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -214,7 +213,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
               <RBIconButton
                 onClick={() => setChangePasswordModalOpen(true)}
                 text={`Change Password`}
-                icon={<LockIcon />}
+                icon={<PasswordKeyIcon />}
                 color={"primary"}
                 variant={"outlined"}
               />
