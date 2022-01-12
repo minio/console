@@ -761,6 +761,9 @@ const ListObjects = ({
                 ) {
                   setSnackBarMessage(errorMessage);
                 }
+                if (xhr.status === 413) {
+                  setSnackBarMessage("Error - File size too large");
+                }
                 if (xhr.status === 200) {
                   completeObject(identity);
                   if (files.length === 0) {

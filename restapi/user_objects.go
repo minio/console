@@ -110,6 +110,9 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	// upload object
 	api.UserAPIPostBucketsBucketNameObjectsUploadHandler = user_api.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params user_api.PostBucketsBucketNameObjectsUploadParams, session *models.Principal) middleware.Responder {
 		if err := getUploadObjectResponse(session, params); err != nil {
+			if strings.Contains(*err.DetailedMessage, "413") {
+				return user_api.NewPostBucketsBucketNameObjectsUploadDefault(413).WithPayload(err)
+			}
 			return user_api.NewPostBucketsBucketNameObjectsUploadDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewPostBucketsBucketNameObjectsUploadOK()
