@@ -21,11 +21,11 @@ export interface RwAccess {
 
 export interface Bucket {
   name: string;
-  creation_date: Date;
+  creation_date: string;
   size?: number;
   objects?: number;
   rw_access?: RwAccess;
-  manage: boolean;
+  manage?: boolean;
   details?: Details;
 }
 
@@ -35,7 +35,10 @@ export interface BucketEncryptionInfo {
 }
 
 export interface Details {
-  tags: object;
+  tags?: object;
+  locking?: boolean;
+  quota?: object;
+  versioning?: boolean;
 }
 
 export interface BucketInfo {

@@ -55,7 +55,6 @@ const styles = (theme: Theme) =>
         wordWrap: "break-word",
         overflowWrap: "break-word",
         wordBreak: "break-all",
-        // height: 90,
         font: "normal normal bold 24px/27px Lato",
         color: theme.palette.primary.main,
 

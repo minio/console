@@ -45,6 +45,8 @@ import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import AButton from "../../Common/AButton/AButton";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
+import BucketListItem from "../../Buckets/ListBuckets/BucketListItem";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -93,6 +95,10 @@ const styles = (theme: Theme) =>
     mainActions: {
       textAlign: "right",
       marginBottom: 8,
+    },
+    tenantsList: {
+      marginTop: 25,
+      height: "calc(100vh - 195px)",
     },
   });
 
@@ -157,6 +163,16 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
   useEffect(() => {
     setIsLoading(true);
   }, []);
+
+  const renderItemLine = (index: number) => {
+    const tenant = filteredRecords[index] || null;
+
+    if (tenant) {
+      return <TenantListItem tenant={tenant} />;
+    }
+
+    return null;
+  };
 
   return (
     <Fragment>
@@ -259,13 +275,16 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
               </BoxIconButton>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.tenantsList}>
               {isLoading && <LinearProgress />}
               {!isLoading && (
                 <Fragment>
-                  {filteredRecords.map((t) => {
-                    return <TenantListItem tenant={t} />;
-                  })}
+                  {filteredRecords.length !== 0 && (
+                    <VirtualizedList
+                      rowRenderFunction={renderItemLine}
+                      totalItems={filteredRecords.length}
+                    />
+                  )}
                   {filteredRecords.length === 0 && (
                     <Grid
                       container
