@@ -256,6 +256,8 @@ const EditTenantLogsModal = ({
           }
         }}
       >
+        <h2>Logging API </h2>
+        <hr className={classes.hrClass} />
         <h4>Image</h4>
         <InputBoxWrapper
           id={`image`}
@@ -322,8 +324,9 @@ const EditTenantLogsModal = ({
           error={nodeSelectorError}
           setError={setNodeSelectorError}
         />
+        <h2>Database Configuration </h2>
         <hr className={classes.hrClass} />
-        <h4>Db Image</h4>
+        <h4>Postgres Image</h4>
         <InputBoxWrapper
           id={`dbImage`}
           label={""}
@@ -337,7 +340,7 @@ const EditTenantLogsModal = ({
           key={`dbImage`}
           error={validationErrors[`dbImage`] || ""}
         />
-        <h4>Db Service Account Name</h4>
+        <h4>Service Account</h4>
         <InputBoxWrapper
           id={`dbServiceAccountName`}
           label={""}
@@ -351,7 +354,7 @@ const EditTenantLogsModal = ({
           key={`dbServiceAccountName`}
           error={validationErrors[`dbServiceAccountName`] || ""}
         />
-        <h4>Db Labels</h4>
+        <h4>Labels</h4>
         <KeyPairEdit
           newValues={newDbLabels}
           setNewValues={setNewDbLabels}
@@ -359,7 +362,7 @@ const EditTenantLogsModal = ({
           error={dbLabelsError}
           setError={setDbLabelsError}
         />
-        <h4>Db Annotations</h4>
+        <h4>Annotations</h4>
         <KeyPairEdit
           newValues={newDbAnnotations}
           setNewValues={setNewDbAnnotations}
@@ -367,7 +370,7 @@ const EditTenantLogsModal = ({
           error={dbAnnotationsError}
           setError={setDbAnnotationsError}
         />
-        <h4>Db Node Selector</h4>
+        <h4>Node Selector</h4>
         <KeyPairEdit
           newValues={newDbNodeSelector}
           setNewValues={setNewDbNodeSelector}
