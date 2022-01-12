@@ -96,6 +96,8 @@ func (m *VaultConfiguration) validateApprole(formats strfmt.Registry) error {
 		if err := m.Approle.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("approle")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("approle")
 			}
 			return err
 		}
@@ -122,6 +124,8 @@ func (m *VaultConfiguration) validateStatus(formats strfmt.Registry) error {
 		if err := m.Status.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("status")
 			}
 			return err
 		}
@@ -139,6 +143,8 @@ func (m *VaultConfiguration) validateTLS(formats strfmt.Registry) error {
 		if err := m.TLS.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tls")
 			}
 			return err
 		}
@@ -175,6 +181,8 @@ func (m *VaultConfiguration) contextValidateApprole(ctx context.Context, formats
 		if err := m.Approle.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("approle")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("approle")
 			}
 			return err
 		}
@@ -189,6 +197,8 @@ func (m *VaultConfiguration) contextValidateStatus(ctx context.Context, formats 
 		if err := m.Status.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("status")
 			}
 			return err
 		}
@@ -203,6 +213,8 @@ func (m *VaultConfiguration) contextValidateTLS(ctx context.Context, formats str
 		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tls")
 			}
 			return err
 		}

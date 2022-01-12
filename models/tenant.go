@@ -126,6 +126,8 @@ func (m *Tenant) validateEndpoints(formats strfmt.Registry) error {
 		if err := m.Endpoints.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("endpoints")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("endpoints")
 			}
 			return err
 		}
@@ -148,6 +150,8 @@ func (m *Tenant) validatePools(formats strfmt.Registry) error {
 			if err := m.Pools[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("pools" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -167,6 +171,8 @@ func (m *Tenant) validateStatus(formats strfmt.Registry) error {
 		if err := m.Status.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("status")
 			}
 			return err
 		}
@@ -184,6 +190,8 @@ func (m *Tenant) validateSubnetLicense(formats strfmt.Registry) error {
 		if err := m.SubnetLicense.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subnet_license")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subnet_license")
 			}
 			return err
 		}
@@ -224,6 +232,8 @@ func (m *Tenant) contextValidateEndpoints(ctx context.Context, formats strfmt.Re
 		if err := m.Endpoints.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("endpoints")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("endpoints")
 			}
 			return err
 		}
@@ -240,6 +250,8 @@ func (m *Tenant) contextValidatePools(ctx context.Context, formats strfmt.Regist
 			if err := m.Pools[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("pools" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -256,6 +268,8 @@ func (m *Tenant) contextValidateStatus(ctx context.Context, formats strfmt.Regis
 		if err := m.Status.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("status")
 			}
 			return err
 		}
@@ -270,6 +284,8 @@ func (m *Tenant) contextValidateSubnetLicense(ctx context.Context, formats strfm
 		if err := m.SubnetLicense.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subnet_license")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subnet_license")
 			}
 			return err
 		}

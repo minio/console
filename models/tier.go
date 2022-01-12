@@ -86,6 +86,8 @@ func (m *Tier) validateAzure(formats strfmt.Registry) error {
 		if err := m.Azure.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("azure")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("azure")
 			}
 			return err
 		}
@@ -103,6 +105,8 @@ func (m *Tier) validateGcs(formats strfmt.Registry) error {
 		if err := m.Gcs.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gcs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("gcs")
 			}
 			return err
 		}
@@ -120,6 +124,8 @@ func (m *Tier) validateS3(formats strfmt.Registry) error {
 		if err := m.S3.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("s3")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("s3")
 			}
 			return err
 		}
@@ -204,6 +210,8 @@ func (m *Tier) contextValidateAzure(ctx context.Context, formats strfmt.Registry
 		if err := m.Azure.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("azure")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("azure")
 			}
 			return err
 		}
@@ -218,6 +226,8 @@ func (m *Tier) contextValidateGcs(ctx context.Context, formats strfmt.Registry) 
 		if err := m.Gcs.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gcs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("gcs")
 			}
 			return err
 		}
@@ -232,6 +242,8 @@ func (m *Tier) contextValidateS3(ctx context.Context, formats strfmt.Registry) e
 		if err := m.S3.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("s3")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("s3")
 			}
 			return err
 		}

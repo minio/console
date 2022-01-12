@@ -89,6 +89,8 @@ func (m *UpdateTenantRequest) validateImageRegistry(formats strfmt.Registry) err
 		if err := m.ImageRegistry.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("image_registry")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("image_registry")
 			}
 			return err
 		}
@@ -117,6 +119,8 @@ func (m *UpdateTenantRequest) contextValidateImageRegistry(ctx context.Context, 
 		if err := m.ImageRegistry.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("image_registry")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("image_registry")
 			}
 			return err
 		}

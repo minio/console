@@ -68,6 +68,8 @@ func (m *BucketLifecycleResponse) validateLifecycle(formats strfmt.Registry) err
 			if err := m.Lifecycle[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("lifecycle" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("lifecycle" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -100,6 +102,8 @@ func (m *BucketLifecycleResponse) contextValidateLifecycle(ctx context.Context, 
 			if err := m.Lifecycle[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("lifecycle" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("lifecycle" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

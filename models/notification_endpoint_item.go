@@ -67,6 +67,8 @@ func (m *NotificationEndpointItem) validateService(formats strfmt.Registry) erro
 	if err := m.Service.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("service")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("service")
 		}
 		return err
 	}
@@ -93,6 +95,8 @@ func (m *NotificationEndpointItem) contextValidateService(ctx context.Context, f
 	if err := m.Service.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("service")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("service")
 		}
 		return err
 	}

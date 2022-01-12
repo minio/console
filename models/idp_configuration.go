@@ -78,6 +78,8 @@ func (m *IdpConfiguration) validateActiveDirectory(formats strfmt.Registry) erro
 		if err := m.ActiveDirectory.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("active_directory")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("active_directory")
 			}
 			return err
 		}
@@ -100,6 +102,8 @@ func (m *IdpConfiguration) validateKeys(formats strfmt.Registry) error {
 			if err := m.Keys[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("keys" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -119,6 +123,8 @@ func (m *IdpConfiguration) validateOidc(formats strfmt.Registry) error {
 		if err := m.Oidc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("oidc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("oidc")
 			}
 			return err
 		}
@@ -155,6 +161,8 @@ func (m *IdpConfiguration) contextValidateActiveDirectory(ctx context.Context, f
 		if err := m.ActiveDirectory.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("active_directory")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("active_directory")
 			}
 			return err
 		}
@@ -171,6 +179,8 @@ func (m *IdpConfiguration) contextValidateKeys(ctx context.Context, formats strf
 			if err := m.Keys[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("keys" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -187,6 +197,8 @@ func (m *IdpConfiguration) contextValidateOidc(ctx context.Context, formats strf
 		if err := m.Oidc.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("oidc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("oidc")
 			}
 			return err
 		}

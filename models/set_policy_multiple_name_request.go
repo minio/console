@@ -74,6 +74,8 @@ func (m *SetPolicyMultipleNameRequest) validateGroups(formats strfmt.Registry) e
 		if err := m.Groups[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("groups" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 			}
 			return err
 		}
@@ -93,6 +95,8 @@ func (m *SetPolicyMultipleNameRequest) validateUsers(formats strfmt.Registry) er
 		if err := m.Users[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("users" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("users" + "." + strconv.Itoa(i))
 			}
 			return err
 		}
@@ -127,6 +131,8 @@ func (m *SetPolicyMultipleNameRequest) contextValidateGroups(ctx context.Context
 		if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("groups" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 			}
 			return err
 		}
@@ -143,6 +149,8 @@ func (m *SetPolicyMultipleNameRequest) contextValidateUsers(ctx context.Context,
 		if err := m.Users[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("users" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("users" + "." + strconv.Itoa(i))
 			}
 			return err
 		}

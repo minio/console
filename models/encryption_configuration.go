@@ -241,6 +241,8 @@ func (m *EncryptionConfiguration) validateAws(formats strfmt.Registry) error {
 		if err := m.Aws.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("aws")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("aws")
 			}
 			return err
 		}
@@ -259,6 +261,8 @@ func (m *EncryptionConfiguration) validateAzure(formats strfmt.Registry) error {
 		if err := m.Azure.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("azure")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("azure")
 			}
 			return err
 		}
@@ -277,6 +281,8 @@ func (m *EncryptionConfiguration) validateClient(formats strfmt.Registry) error 
 		if err := m.Client.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("client")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("client")
 			}
 			return err
 		}
@@ -295,6 +301,8 @@ func (m *EncryptionConfiguration) validateGcp(formats strfmt.Registry) error {
 		if err := m.Gcp.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gcp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("gcp")
 			}
 			return err
 		}
@@ -313,6 +321,8 @@ func (m *EncryptionConfiguration) validateGemalto(formats strfmt.Registry) error
 		if err := m.Gemalto.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gemalto")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("gemalto")
 			}
 			return err
 		}
@@ -331,6 +341,8 @@ func (m *EncryptionConfiguration) validateSecurityContext(formats strfmt.Registr
 		if err := m.SecurityContext.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -349,6 +361,8 @@ func (m *EncryptionConfiguration) validateServer(formats strfmt.Registry) error 
 		if err := m.Server.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("server")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("server")
 			}
 			return err
 		}
@@ -367,6 +381,8 @@ func (m *EncryptionConfiguration) validateVault(formats strfmt.Registry) error {
 		if err := m.Vault.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("vault")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("vault")
 			}
 			return err
 		}
@@ -428,6 +444,8 @@ func (m *EncryptionConfiguration) contextValidateAws(ctx context.Context, format
 		if err := m.Aws.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("aws")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("aws")
 			}
 			return err
 		}
@@ -442,6 +460,8 @@ func (m *EncryptionConfiguration) contextValidateAzure(ctx context.Context, form
 		if err := m.Azure.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("azure")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("azure")
 			}
 			return err
 		}
@@ -456,6 +476,8 @@ func (m *EncryptionConfiguration) contextValidateClient(ctx context.Context, for
 		if err := m.Client.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("client")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("client")
 			}
 			return err
 		}
@@ -470,6 +492,8 @@ func (m *EncryptionConfiguration) contextValidateGcp(ctx context.Context, format
 		if err := m.Gcp.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gcp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("gcp")
 			}
 			return err
 		}
@@ -484,6 +508,8 @@ func (m *EncryptionConfiguration) contextValidateGemalto(ctx context.Context, fo
 		if err := m.Gemalto.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gemalto")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("gemalto")
 			}
 			return err
 		}
@@ -498,6 +524,8 @@ func (m *EncryptionConfiguration) contextValidateSecurityContext(ctx context.Con
 		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -512,6 +540,8 @@ func (m *EncryptionConfiguration) contextValidateServer(ctx context.Context, for
 		if err := m.Server.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("server")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("server")
 			}
 			return err
 		}
@@ -526,6 +556,8 @@ func (m *EncryptionConfiguration) contextValidateVault(ctx context.Context, form
 		if err := m.Vault.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("vault")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("vault")
 			}
 			return err
 		}

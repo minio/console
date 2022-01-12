@@ -75,6 +75,8 @@ func (m *AllocatableResourcesResponse) validateCPUPriority(formats strfmt.Regist
 		if err := m.CPUPriority.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cpu_priority")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cpu_priority")
 			}
 			return err
 		}
@@ -92,6 +94,8 @@ func (m *AllocatableResourcesResponse) validateMemPriority(formats strfmt.Regist
 		if err := m.MemPriority.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mem_priority")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mem_priority")
 			}
 			return err
 		}
@@ -124,6 +128,8 @@ func (m *AllocatableResourcesResponse) contextValidateCPUPriority(ctx context.Co
 		if err := m.CPUPriority.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cpu_priority")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cpu_priority")
 			}
 			return err
 		}
@@ -138,6 +144,8 @@ func (m *AllocatableResourcesResponse) contextValidateMemPriority(ctx context.Co
 		if err := m.MemPriority.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mem_priority")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mem_priority")
 			}
 			return err
 		}

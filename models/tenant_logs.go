@@ -121,6 +121,8 @@ func (m *TenantLogs) validateAnnotations(formats strfmt.Registry) error {
 			if err := m.Annotations[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("annotations" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("annotations" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -145,6 +147,8 @@ func (m *TenantLogs) validateDbAnnotations(formats strfmt.Registry) error {
 			if err := m.DbAnnotations[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dbAnnotations" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dbAnnotations" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -169,6 +173,8 @@ func (m *TenantLogs) validateDbLabels(formats strfmt.Registry) error {
 			if err := m.DbLabels[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dbLabels" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dbLabels" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -193,6 +199,8 @@ func (m *TenantLogs) validateDbNodeSelector(formats strfmt.Registry) error {
 			if err := m.DbNodeSelector[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dbNodeSelector" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dbNodeSelector" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -217,6 +225,8 @@ func (m *TenantLogs) validateLabels(formats strfmt.Registry) error {
 			if err := m.Labels[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labels" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("labels" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -241,6 +251,8 @@ func (m *TenantLogs) validateNodeSelector(formats strfmt.Registry) error {
 			if err := m.NodeSelector[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -293,6 +305,8 @@ func (m *TenantLogs) contextValidateAnnotations(ctx context.Context, formats str
 			if err := m.Annotations[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("annotations" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("annotations" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -311,6 +325,8 @@ func (m *TenantLogs) contextValidateDbAnnotations(ctx context.Context, formats s
 			if err := m.DbAnnotations[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dbAnnotations" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dbAnnotations" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -329,6 +345,8 @@ func (m *TenantLogs) contextValidateDbLabels(ctx context.Context, formats strfmt
 			if err := m.DbLabels[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dbLabels" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dbLabels" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -347,6 +365,8 @@ func (m *TenantLogs) contextValidateDbNodeSelector(ctx context.Context, formats 
 			if err := m.DbNodeSelector[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dbNodeSelector" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dbNodeSelector" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -365,6 +385,8 @@ func (m *TenantLogs) contextValidateLabels(ctx context.Context, formats strfmt.R
 			if err := m.Labels[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labels" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("labels" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -383,6 +405,8 @@ func (m *TenantLogs) contextValidateNodeSelector(ctx context.Context, formats st
 			if err := m.NodeSelector[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

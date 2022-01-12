@@ -66,6 +66,8 @@ func (m *TenantSecurityResponse) validateCustomCertificates(formats strfmt.Regis
 		if err := m.CustomCertificates.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customCertificates")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customCertificates")
 			}
 			return err
 		}
@@ -94,6 +96,8 @@ func (m *TenantSecurityResponse) contextValidateCustomCertificates(ctx context.C
 		if err := m.CustomCertificates.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customCertificates")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customCertificates")
 			}
 			return err
 		}
@@ -164,6 +168,8 @@ func (m *TenantSecurityResponseCustomCertificates) validateMinio(formats strfmt.
 			if err := m.Minio[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -188,6 +194,8 @@ func (m *TenantSecurityResponseCustomCertificates) validateMinioCAs(formats strf
 			if err := m.MinioCAs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("customCertificates" + "." + "minioCAs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "minioCAs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -224,6 +232,8 @@ func (m *TenantSecurityResponseCustomCertificates) contextValidateMinio(ctx cont
 			if err := m.Minio[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -242,6 +252,8 @@ func (m *TenantSecurityResponseCustomCertificates) contextValidateMinioCAs(ctx c
 			if err := m.MinioCAs[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("customCertificates" + "." + "minioCAs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "minioCAs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
