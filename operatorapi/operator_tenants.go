@@ -2145,12 +2145,11 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
-	if minInst.Spec.Prometheus == nil {
-		monitoringInfo.PrometheusEnabled = false
-
-		return monitoringInfo, nil
-	} else {
+	if minInst.Spec.Prometheus != nil {
 		monitoringInfo.PrometheusEnabled = true
+	} else {
+		monitoringInfo.PrometheusEnabled = false
+		return monitoringInfo, nil
 	}
 
 	var storageClassName string

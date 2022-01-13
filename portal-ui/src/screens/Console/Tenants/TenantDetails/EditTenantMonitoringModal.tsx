@@ -82,7 +82,9 @@ const EditTenantMonitoringModal = ({
     diskCapacityGB.toString()
   );
   const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
-  const [newMemRequest, setNewMemRequest] = useState<string>(Math.floor(parseInt(memRequest, 10)/1000000000).toString());               
+  const [newMemRequest, setNewMemRequest] = useState<string>(
+    Math.floor(parseInt(memRequest, 10) / 1000000000).toString()
+  );
   const [newServiceAccountName, setNewServiceAccountName] =
     useState<string>(serviceAccountName);
   const [newStorageClassName, setNewStorageClassName] =
@@ -213,9 +215,10 @@ const EditTenantMonitoringModal = ({
           initImage: newInitImage,
           diskCapacityGB: newDiskCapacityGB,
           serviceAccountName: newServiceAccountName,
-          storageClassName: newStorageClassName != null ? newStorageClassName : null,
+          storageClassName:
+            newStorageClassName != null ? newStorageClassName : null,
           monitoringCPURequest: newCPURequest,
-          monitoringMemRequest: newMemRequest+"Gi",
+          monitoringMemRequest: newMemRequest + "Gi",
         }
       )
       .then(() => {
@@ -231,8 +234,7 @@ const EditTenantMonitoringModal = ({
       title="Edit Monitoring Configuration"
     >
       <form noValidate autoComplete="off" onSubmit={submitMonitoringInfo}>
-     
-        <h2>Prometheus configuration</h2>  
+        <h2>Prometheus configuration</h2>
         <hr className={classes.hrClass} />
         <h4>Image</h4>
         <InputBoxWrapper
@@ -286,7 +288,7 @@ const EditTenantMonitoringModal = ({
           key={`diskCapacityGB`}
           error={validationErrors[`diskCapacityGB`] || ""}
         />
-         <h4>Prometheus CPU Request</h4>
+        <h4>Prometheus CPU Request</h4>
         <InputBoxWrapper
           id={`cpuRequest`}
           label={""}
@@ -299,7 +301,7 @@ const EditTenantMonitoringModal = ({
           key={`cpuRequest`}
           error={validationErrors[`cpuRequest`] || ""}
         />
-         <h4>Prometheus Memory Request (Gi)</h4>
+        <h4>Prometheus Memory Request (Gi)</h4>
         <InputBoxWrapper
           id={`memRequest`}
           label={""}

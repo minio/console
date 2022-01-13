@@ -162,7 +162,7 @@ const TenantMonitoring = ({
           tenantNamespace={tenantNamespace}
           storageClassName={monitoringInfo?.storageClassName || ""}
           cpuRequest={monitoringInfo?.monitoringCPURequest || ""}
-          memRequest={monitoringInfo?.monitoringMemRequest|| ""}
+          memRequest={monitoringInfo?.monitoringMemRequest || ""}
         />
       )}
       {confirmOpen && (
@@ -304,25 +304,26 @@ const TenantMonitoring = ({
                                 />
                               </td>
                             </tr>
-                            </>
-                          )}
-                          {monitoringInfo.monitoringCPURequest != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              CPU Request:
-                            </td>
-                            <td>{monitoringInfo?.monitoringCPURequest}</td>
-                          </tr>
+                          </>
                         )}
-                        {monitoringInfo.monitoringMemRequest != null && (
-                          <tr>
-                            <td className={classes.titleCol}>
-                              Memory Request:
-                            </td>
-                            <td>{niceBytes(monitoringInfo?.monitoringMemRequest, true)}</td>
-                          </tr>
-                        )}
-                        {monitoringInfo.nodeSelector != null &&
+                      {monitoringInfo.monitoringCPURequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>CPU Request:</td>
+                          <td>{monitoringInfo?.monitoringCPURequest}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.monitoringMemRequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Memory Request:</td>
+                          <td>
+                            {niceBytes(
+                              monitoringInfo?.monitoringMemRequest,
+                              true
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                      {monitoringInfo.nodeSelector != null &&
                         monitoringInfo.nodeSelector.length > 0 && (
                           <tr>
                             <h4>Node Selector:</h4>
@@ -334,10 +335,8 @@ const TenantMonitoring = ({
                             </td>
                           </tr>
                         )}
-                    </Fragment>                      
-                      
-                  )} 
-                  
+                    </Fragment>
+                  )}
                 </tbody>
               </table>
             </Grid>
