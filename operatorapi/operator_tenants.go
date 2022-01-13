@@ -2271,11 +2271,6 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		}
 	}
 
-	var storageClassName string
-	if &params.Data.StorageClassName != nil {
-		storageClassName = params.Data.StorageClassName
-	}
-
 	monitoringResourceRequest := make(corev1.ResourceList)
 	if &params.Data.MonitoringCPURequest != nil {
 
@@ -2298,9 +2293,12 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	minTenant.Spec.Prometheus.Image = params.Data.Image
 	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
 	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
-	if storageClassName != "" {
-		minTenant.Spec.Prometheus.StorageClassName = &storageClassName
+	if params.Data.StorageClassName == "" {
+		minTenant.Spec.Prometheus.StorageClassName = nil
+	} else {
+		minTenant.Spec.Prometheus.StorageClassName = &params.Data.StorageClassName
 	}
+
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB

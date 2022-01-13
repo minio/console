@@ -16,7 +16,6 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import { setModalErrorSnackMessage } from "../../../../actions";
-import { niceBytes } from "../../../../common/utils";
 
 interface IEditTenantMonitoringProps {
   tenant: ITenant;
@@ -215,8 +214,7 @@ const EditTenantMonitoringModal = ({
           initImage: newInitImage,
           diskCapacityGB: newDiskCapacityGB,
           serviceAccountName: newServiceAccountName,
-          storageClassName:
-            newStorageClassName != null ? newStorageClassName : null,
+          storageClassName: newStorageClassName,
           monitoringCPURequest: newCPURequest,
           monitoringMemRequest: newMemRequest + "Gi",
         }
