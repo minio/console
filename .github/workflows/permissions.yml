@@ -35,7 +35,7 @@ jobs:
 
       - name: Install modules
         working-directory: ./portal-ui
-        run: yarn && npm i -g testcafe
+        run: npm i -g testcafe && yarn
 
       - name: Run permission tests
         run: |
