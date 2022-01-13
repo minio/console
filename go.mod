@@ -23,8 +23,8 @@ require (
 	github.com/minio/madmin-go v1.1.23
 	github.com/minio/mc v0.0.0-20211207230606-23a05f5a17f2
 	github.com/minio/minio-go/v7 v7.0.21
-	github.com/minio/operator v0.0.0-20211011212245-31460bbbc4b7
-	github.com/minio/operator/logsearchapi v0.0.0-20211011212245-31460bbbc4b7
+	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
+	github.com/minio/operator/logsearchapi v0.0.0-20220110040724-a5d59a342b7f
 	github.com/minio/pkg v1.1.14
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -80,6 +80,10 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/jackc/pgconn v1.7.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.0.5 // indirect
+	github.com/jackc/pgtype v1.5.0 // indirect
+	github.com/jackc/puddle v1.1.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
@@ -104,6 +108,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/philhofer/fwd v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
