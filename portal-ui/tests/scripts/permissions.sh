@@ -120,7 +120,7 @@ __init__() {
 }
 
 main() {
-  (yarn start &> /dev/null) & (./console server &> /dev/null) & (sleep 45 && testcafe "chrome:headless" portal-ui/tests/permissions/ --skip-js-errors)
+  (yarn start &> /dev/null) & (./console server &> /dev/null) & (testcafe "chrome:headless" portal-ui/tests/permissions/ -q --skip-js-errors)
   cleanup
 }
 
