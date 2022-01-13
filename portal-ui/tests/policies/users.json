@@ -7,9 +7,14 @@
         "admin:DeleteUser",
         "admin:GetUser",
         "admin:EnableUser",
-        "admin:DisableUser"
+        "admin:DisableUser",
+				"admin:ListUserPolicies",
+				"admin:ListGroups"
 			],
 			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:s3:::*"
+			],
 			"Sid": ""
 		}
 	]

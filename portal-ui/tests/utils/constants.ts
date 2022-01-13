@@ -17,7 +17,6 @@ import { readFileSync } from 'fs';
 
 const data = readFileSync(__dirname + '/../constants/timestamp.txt', 'utf-8');
 const unixTimestamp = data.trim();
-console.log("constants:`" + unixTimestamp + "`");
 
 export const TEST_BUCKET_NAME = "testbucket-" + unixTimestamp;
 export const TEST_GROUP_NAME = "testgroup-" + unixTimestamp;

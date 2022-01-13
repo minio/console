@@ -29,15 +29,15 @@ test("Tiers sidebar item exists", async (t) => {
 });
 
 test("Add Tier button exists", async (t) => {
-  const addTierButtonExists = elements.addTierButton.exists;
+  const createTierButtonExists = elements.createTierButton.exists;
   await t
     .navigateTo("http://localhost:5005/tiers")
-    .expect(addTierButtonExists)
+    .expect(createTierButtonExists)
     .ok();
 });
 
 test("Add Tier button is clickable", async (t) => {
   await t
     .navigateTo("http://localhost:5005/tiers")
-    .click(elements.addTierButton);
+    .click(elements.createTierButton);
 });

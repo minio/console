@@ -20,8 +20,8 @@ import { Selector } from "testcafe";
 //----------------------------------------------------
 // General sidebar element
 //----------------------------------------------------
-export const sidebarItem = Selector(".MuiPaper-root").child("ul").child("a");
-export const logoutItem = Selector(".MuiPaper-root").child("ul").child("div");
+export const sidebarItem = Selector(".MuiPaper-root").find("ul").child("a");
+export const logoutItem = Selector(".MuiPaper-root").find("ul").child("div");
 
 //----------------------------------------------------
 // Specific sidebar elements
@@ -84,8 +84,9 @@ export const configureBucketButton = Selector(
 export const addNotifTargetButton = Selector("button:enabled").withText(
   "Add Notification Target"
 );
-export const addTierButton = Selector("button:enabled").withText("Add Tier");
+export const createTierButton = Selector("button:enabled").withText("Create Tier");
 export const createBucketButton = Selector("button:enabled").withText("Create Bucket");
+export const deleteBucketButton = Selector("button:enabled").withText("Delete Bucket");
 export const createUserButton = Selector("button:enabled").withText("Create User");
 export const createGroupButton = Selector("button:enabled").withText("Create Group");
 export const deleteGroupIconButton = Selector("button:enabled").withAttribute(

@@ -3,7 +3,6 @@ import { Role, Selector } from "testcafe";
 
 const data = readFileSync(__dirname + '/../constants/timestamp.txt', 'utf-8');
 const unixTimestamp = data.trim();
-console.log("roles:`" +unixTimestamp + "`");
 
 const loginUrl = "http://localhost:5005/login";
 // diagnostics/watch/trace need to run in port 9090 (through the server) to work

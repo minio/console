@@ -39,7 +39,7 @@ export const cleanUpBucket = (t) => {
       .click(elements.loginSubmitButton)
       .navigateTo("http://localhost:5005/buckets")
       .click(elements.manageButton)
-      .click(elements.deleteIconButton)
+      .click(elements.deleteBucketButton)
       .click(elements.deleteButton)
       .click(elements.logoutItem)
   );
@@ -58,7 +58,7 @@ export const cleanUpBucketAndUploads = (t) => {
       .click(elements.deleteIconButtonAlt)
       .click(elements.deleteButton)
       .click(elements.configureBucketButton)
-      .click(elements.deleteIconButton)
+      .click(elements.deleteBucketButton)
       .click(elements.deleteButton)
       .click(elements.logoutItem)
   );

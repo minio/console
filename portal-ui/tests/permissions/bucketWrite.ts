@@ -35,8 +35,8 @@ test.before(async (t) => {
 })("Browse button exists", async (t) => {
   const browseExists = elements.browseButton.exists;
   await t
-  // We need to log back in after we use the admin account to create bucket,
-  // using the specific role we use in this module
+    // We need to log back in after we use the admin account to create bucket,
+    // using the specific role we use in this module
     .useRole(roles.bucketWrite)
     .navigateTo("http://localhost:5005/buckets")
     .expect(browseExists)
@@ -69,7 +69,11 @@ test("Object can be uploaded to a bucket", async (t) => {
 
 test("Object list table is disabled", async (t) => {
   const disabledBucketsTableExists = elements.bucketsTableDisabled.exists;
-  await t.click(elements.browseButton).expect(disabledBucketsTableExists).ok();
+  await t
+    .navigateTo("http://localhost:5005/buckets")
+    .click(elements.browseButton)
+    .expect(disabledBucketsTableExists)
+    .ok();
 }).after(async (t) => {
   // Cleanup created bucket and corresponding uploads
   await functions.cleanUpBucketAndUploads(t);

@@ -2,7 +2,8 @@
 	"Version": "2012-10-17",
 	"Statement": [{
 			"Action": [
-        "admin:ConfigUpdate"
+        "admin:ListTier",
+				"admin:SetTier"
 			],
 			"Effect": "Allow",
 			"Sid": ""

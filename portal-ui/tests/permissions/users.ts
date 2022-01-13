@@ -75,7 +75,6 @@ test("Create User modal can be submitted after inputs are entered", async (t) =>
   await t
     .navigateTo("http://localhost:5005/users")
     .click(elements.createUserButton)
-    .click(elements.closeAlertButton) // we shouldn't be seeing the Access Denied error here
     .typeText(elements.usersAccessKeyInput, constants.TEST_USER_NAME)
     .typeText(elements.usersSecretKeyInput, constants.TEST_PASSWORD)
     .click(elements.saveButton);
