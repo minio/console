@@ -24,7 +24,7 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Box, Button, Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import UpdateTenantModal from "./UpdateTenantModal";
@@ -37,6 +37,8 @@ import SummaryUsageBar from "../../Common/UsageBarWrapper/SummaryUsageBar";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import StackRow from "../../Common/UsageBarWrapper/StackRow";
+import { SettingsIcon } from "../../../../icons";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 interface ITenantsSummary {
   classes: any;
@@ -236,20 +238,19 @@ const TenantSummary = ({
           <h3>Details</h3>
         </StackItem>
         <StackItem>
-          <Button
-            size={"small"}
-            color={"primary"}
-            variant="contained"
-            style={{ textDecoration: "none !important" }}
+          <RBIconButton
+            tooltip={"Manage Tenant"}
+            text={"Manage Tenant"}
             onClick={() => {
               history.push(
                 `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
               );
             }}
             disabled={!tenant || !tenantIsOnline(tenant)}
-          >
-            Manage Tenant
-          </Button>
+            icon={<SettingsIcon />}
+            color="primary"
+            variant={"contained"}
+          />
         </StackItem>
       </Stack>
 

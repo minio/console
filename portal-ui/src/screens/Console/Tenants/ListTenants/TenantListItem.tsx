@@ -15,12 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Button } from "@mui/material";
 import { ITenant, ValueUnit } from "./types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../actions";
 import Grid from "@mui/material/Grid";
-import { ArrowRightIcon, CircleIcon } from "../../../../icons";
+import { ArrowRightIcon, CircleIcon, SettingsIcon } from "../../../../icons";
 import history from "../../../../history";
 import TenantsIcon from "../../../../icons/TenantsIcon";
 import { Theme } from "@mui/material/styles";
@@ -29,6 +28,7 @@ import withStyles from "@mui/styles/withStyles";
 import { niceBytes } from "../../../../common/utils";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import { tenantIsOnline } from "./utils";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -176,31 +176,32 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
             </div>
           </Grid>
           <Grid item xs={4} textAlign={"end"}>
-            <Button
-              size={"small"}
-              color={"primary"}
-              variant="outlined"
+            <RBIconButton
+              tooltip={"Manage Tenant"}
+              text={"Manage"}
               disabled={!tenantIsOnline(tenant)}
-              className={classes.manageButton}
               onClick={() => {
                 history.push(
                   `/namespaces/${tenant.namespace}/tenants/${tenant.name}/hop`
                 );
               }}
-            >
-              Manage
-            </Button>
-            <Button
-              endIcon={<ArrowRightIcon />}
-              variant="contained"
+              icon={<SettingsIcon />}
+              color="primary"
+              variant={"outlined"}
+            />
+            <RBIconButton
+              tooltip={"View Tenant"}
+              text={"View"}
+              disabled={!tenantIsOnline(tenant)}
               onClick={() => {
                 history.push(
                   `/namespaces/${tenant.namespace}/tenants/${tenant.name}`
                 );
               }}
-            >
-              View
-            </Button>
+              icon={<ArrowRightIcon />}
+              color="primary"
+              variant={"contained"}
+            />
           </Grid>
           <Grid item xs={12}>
             <hr />

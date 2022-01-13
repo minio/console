@@ -17,9 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -37,15 +35,16 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import history from "../../../../history";
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import TenantListItem from "./TenantListItem";
 import HelpBox from "../../../../common/HelpBox";
-import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import AButton from "../../Common/AButton/AButton";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import SearchBox from "../../Common/SearchBox";
+import PageLayout from "../../Common/Layout/PageLayout";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -98,6 +97,11 @@ const styles = (theme: Theme) =>
     tenantsList: {
       marginTop: 25,
       height: "calc(100vh - 195px)",
+    },
+    searchField: {
+      ...searchField.searchField,
+      marginRight: "auto",
+      maxWidth: 380,
     },
   });
 
@@ -188,141 +192,91 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
       <PageHeader
         label="Tenants"
         actions={
-          <Fragment>
-            <Grid
-              container
-              direction="row"
-              justifyContent="flex-end"
-              alignItems="center"
-              className={classes.actionHeaderItems}
-            >
-              <Box display={{ xs: "none", sm: "none", md: "block" }}>
-                <Grid item>
-                  <div className={classes.theaderSearchLabel}>
-                    Filter Tenants:
-                  </div>
-                </Grid>
-              </Box>
-              <Box display={{ xs: "block", sm: "block", md: "none" }}>
-                <TextField
-                  className={classes.theaderSearch}
-                  variant={"outlined"}
-                  id="search-resource"
-                  placeholder={"Filter Tenants"}
-                  onChange={(val) => {
-                    setFilterTenants(val.target.value);
-                  }}
-                  inputProps={{
-                    disableUnderline: true,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-              <Box display={{ xs: "none", sm: "none", md: "block" }}>
-                <TextField
-                  className={classes.theaderSearch}
-                  variant={"outlined"}
-                  id="search-resource"
-                  onChange={(val) => {
-                    setFilterTenants(val.target.value);
-                  }}
-                  inputProps={{
-                    disableUnderline: true,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
+          <Grid
+            item
+            xs={12}
+            className={classes.actionsTray}
+            marginRight={"30px"}
+          >
+            <SearchBox
+              placeholder={"Filter Tenants"}
+              onChange={(val) => {
+                setFilterTenants(val);
+              }}
+              overrideClass={classes.searchField}
+            />
 
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  endIcon={<AddIcon />}
-                  onClick={() => {
-                    history.push("/tenants/add");
-                  }}
-                  className={classes.addTenant}
-                >
-                  Create Tenant
-                </Button>
-              </Grid>
-            </Grid>
-          </Fragment>
+            <RBIconButton
+              tooltip={"Refresh Tenant List"}
+              text={""}
+              onClick={() => {
+                setIsLoading(true);
+              }}
+              icon={<RefreshIcon />}
+              color="primary"
+              variant={"outlined"}
+            />
+            <RBIconButton
+              tooltip={"Create Tenant"}
+              text={"Create Tenant"}
+              onClick={() => {
+                history.push("/tenants/add");
+              }}
+              icon={<AddIcon />}
+              color="primary"
+              variant={"contained"}
+            />
+          </Grid>
         }
       />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid container>
-            <Grid item xs={12} className={classes.mainActions}>
-              <BoxIconButton
-                color="primary"
-                aria-label="Refresh Tenant List"
-                onClick={() => {
-                  setIsLoading(true);
-                }}
-                size="large"
-              >
-                <RefreshIcon />
-              </BoxIconButton>
-            </Grid>
-
-            <Grid item xs={12} className={classes.tenantsList}>
-              {isLoading && <LinearProgress />}
-              {!isLoading && (
-                <Fragment>
-                  {filteredRecords.length !== 0 && (
-                    <VirtualizedList
-                      rowRenderFunction={renderItemLine}
-                      totalItems={filteredRecords.length}
-                    />
-                  )}
-                  {filteredRecords.length === 0 && (
-                    <Grid
-                      container
-                      justifyContent={"center"}
-                      alignContent={"center"}
-                      alignItems={"center"}
-                    >
-                      <Grid item xs={8}>
-                        <HelpBox
-                          iconComponent={<TenantsIcon />}
-                          title={"Tenants"}
-                          help={
-                            <Fragment>
-                              Tenant is the logical structure to represent a
-                              MinIO deployment. A tenant can have different size
-                              and configurations from other tenants, even a
-                              different storage class.
-                              <br />
-                              <br />
-                              To get started,&nbsp;
-                              <AButton
-                                onClick={() => {
-                                  history.push("/tenants/add");
-                                }}
-                              >
-                                Create a Tenant.
-                              </AButton>
-                            </Fragment>
-                          }
-                        />
-                      </Grid>
-                    </Grid>
-                  )}
-                </Fragment>
+      <PageLayout>
+        <Grid item xs={12} className={classes.tenantsList}>
+          {isLoading && <LinearProgress />}
+          {!isLoading && (
+            <Fragment>
+              {filteredRecords.length !== 0 && (
+                <VirtualizedList
+                  rowRenderFunction={renderItemLine}
+                  totalItems={filteredRecords.length}
+                />
               )}
-            </Grid>
-          </Grid>
+              {filteredRecords.length === 0 && (
+                <Grid
+                  container
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Grid item xs={8}>
+                    <HelpBox
+                      iconComponent={<TenantsIcon />}
+                      title={"Tenants"}
+                      help={
+                        <Fragment>
+                          Tenant is the logical structure to represent a MinIO
+                          deployment. A tenant can have different size and
+                          configurations from other tenants, even a different
+                          storage class.
+                          <br />
+                          <br />
+                          To get started,&nbsp;
+                          <AButton
+                            onClick={() => {
+                              history.push("/tenants/add");
+                            }}
+                          >
+                            Create a Tenant.
+                          </AButton>
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              )}
+            </Fragment>
+          )}
         </Grid>
-      </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

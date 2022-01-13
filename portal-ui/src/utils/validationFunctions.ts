@@ -53,7 +53,6 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
     if (field.pattern && field.customPatternMessage) {
       const rgx = new RegExp(field.pattern, "g");
 
-      console.log(field);
       if (
         field.value &&
         field.value.trim() !== "" &&

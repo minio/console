@@ -35,8 +35,8 @@ import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon } from "../../../icons";
-import Button from "@mui/material/Button";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -166,19 +166,20 @@ const UserServiceAccountsPanel = ({
       )}
       <div className={classes.actionsTray}>
         <PanelTitle>Service Accounts</PanelTitle>
-        <Button
+
+        <RBIconButton
+          tooltip={"Create service account"}
+          text={"Create service account"}
           variant="contained"
           color="primary"
-          endIcon={<AddIcon />}
+          icon={<AddIcon />}
           onClick={() => {
             setAddScreenOpen(true);
             setAddScreenOpen(true);
             setSelectedServiceAccount(null);
           }}
           disabled={!hasPolicy}
-        >
-          Create service account
-        </Button>
+        />
       </div>
       <div className={classes.tableBlock}>
         <TableWrapper

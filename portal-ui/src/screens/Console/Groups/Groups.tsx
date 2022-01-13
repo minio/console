@@ -20,7 +20,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { AddIcon, GroupsIcon, UsersIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
@@ -49,6 +49,7 @@ import SecureComponent, {
 } from "../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const AddGroup = withSuspense(React.lazy(() => import("../Groups/AddGroup")));
@@ -221,17 +222,17 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <Button
+            <RBIconButton
+              tooltip={"Create Group"}
+              text={"Create Group"}
               variant="contained"
               color="primary"
-              endIcon={<AddIcon />}
+              icon={<AddIcon />}
               onClick={() => {
                 setSelectedGroup(null);
                 setGroupOpen(true);
               }}
-            >
-              Create Group
-            </Button>
+            />
           </SecureComponent>
         </Grid>
         {loading && <LinearProgress />}

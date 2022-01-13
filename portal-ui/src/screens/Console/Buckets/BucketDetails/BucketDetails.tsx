@@ -274,14 +274,14 @@ const BucketDetails = ({
                   errorProps={{ disabled: true }}
                 >
                   <RBIconButton
-                    classes={{
-                      root: classes.deleteBtn,
-                    }}
+                    tooltip={"Delete Bucket"}
                     onClick={() => {
                       setDeleteOpen(true);
                     }}
-                    text={`Delete Bucket`}
+                    text={"Delete Bucket"}
                     icon={<TrashIcon />}
+                    color={"secondary"}
+                    variant={"outlined"}
                   />
                 </SecureComponent>
                 <RBIconButton

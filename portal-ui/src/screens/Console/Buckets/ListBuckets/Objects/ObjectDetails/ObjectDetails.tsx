@@ -74,13 +74,13 @@ import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import VerticalTabs from "../../../../Common/VerticalTabs/VerticalTabs";
-import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import SecureComponent from "../../../../../../common/SecureComponent/SecureComponent";
 import {
   completeObject,
   setNewObject,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
+import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 
 const RecoverIcon = React.lazy(
   () => import("../../../../../../icons/RecoverIcon")
@@ -551,18 +551,36 @@ const ObjectDetails = ({
                 }
                 actions={
                   <Fragment>
-                    <BoxIconButton
+                    <SecureComponent
+                      scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+                      resource={bucketName}
+                      matchAll
+                      errorProps={{ disabled: true }}
+                    >
+                      <RBIconButton
+                        tooltip={"Delete Object"}
+                        onClick={() => {
+                          setDeleteOpen(true);
+                        }}
+                        text={""}
+                        icon={<DeleteIcon />}
+                        color="secondary"
+                        disabled={actualInfo.is_delete_marker}
+                        variant={"outlined"}
+                      />
+                    </SecureComponent>
+
+                    <RBIconButton
                       tooltip={"Share"}
-                      color="primary"
-                      aria-label="share"
                       onClick={() => {
                         shareObject();
                       }}
+                      text={""}
+                      icon={<ShareIcon />}
+                      color="primary"
                       disabled={actualInfo.is_delete_marker}
-                      size="large"
-                    >
-                      <ShareIcon />
-                    </BoxIconButton>
+                      variant={"outlined"}
+                    />
 
                     {downloadingFiles.includes(
                       `${bucketName}/${actualInfo.name}`
@@ -575,38 +593,18 @@ const ObjectDetails = ({
                         />
                       </div>
                     ) : (
-                      <BoxIconButton
+                      <RBIconButton
                         tooltip={"Download"}
+                        text={""}
+                        icon={<DownloadIcon />}
                         color="primary"
-                        aria-label="download"
                         onClick={() => {
                           downloadObject(actualInfo);
                         }}
                         disabled={actualInfo.is_delete_marker}
-                        size="large"
-                      >
-                        <DownloadIcon />
-                      </BoxIconButton>
+                        variant={"outlined"}
+                      />
                     )}
-                    <SecureComponent
-                      scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-                      resource={bucketName}
-                      matchAll
-                      errorProps={{ disabled: true }}
-                    >
-                      <BoxIconButton
-                        tooltip={"Delete Object"}
-                        color="primary"
-                        aria-label="delete"
-                        onClick={() => {
-                          setDeleteOpen(true);
-                        }}
-                        disabled={actualInfo.is_delete_marker}
-                        size="large"
-                      >
-                        <DeleteIcon />
-                      </BoxIconButton>
-                    </SecureComponent>
                   </Fragment>
                 }
               />

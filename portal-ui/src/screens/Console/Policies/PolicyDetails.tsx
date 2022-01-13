@@ -46,7 +46,6 @@ import TrashIcon from "../../../icons/TrashIcon";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
@@ -57,6 +56,7 @@ import SecureComponent, {
 
 import withSuspense from "../Common/Components/withSuspense";
 import { AppState } from "../../../store";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -355,29 +355,28 @@ const PolicyDetails = ({
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
+                  <RBIconButton
                     tooltip={"Delete Policy"}
-                    color="primary"
-                    aria-label="Delete Policy"
+                    text={"Delete Policy"}
+                    variant="outlined"
+                    color="secondary"
+                    icon={<TrashIcon />}
                     onClick={deletePolicy}
-                  >
-                    <TrashIcon />
-                  </BoxIconButton>
+                  />
                 </SecureComponent>
 
-                <BoxIconButton
+                <RBIconButton
                   tooltip={"Refresh"}
+                  text={"Refresh"}
+                  variant="outlined"
                   color="primary"
-                  aria-label="Refresh List"
+                  icon={<RefreshIcon />}
                   onClick={() => {
                     setLoadingUsers(true);
                     setLoadingGroups(true);
                     setLoadingPolicy(true);
                   }}
-                  size="large"
-                >
-                  <RefreshIcon />
-                </BoxIconButton>
+                />
               </Fragment>
             }
           />

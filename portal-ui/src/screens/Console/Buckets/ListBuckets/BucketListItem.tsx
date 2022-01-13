@@ -25,7 +25,7 @@ import {
   TotalObjectsIcon,
 } from "../../../../icons";
 import { Bucket } from "../types";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { niceBytes, prettyNumber } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import { Link } from "react-router-dom";
@@ -34,6 +34,7 @@ import {
   IAM_ROLES,
 } from "../../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -244,26 +245,28 @@ const BucketListItem = ({
                 to={`/buckets/${bucket.name}/admin`}
                 style={{ textDecoration: "none" }}
               >
-                <Button
+                <RBIconButton
+                  tooltip={"Manage"}
+                  onClick={() => {}}
+                  text={"Manage"}
+                  icon={<SettingsIcon />}
+                  color={"primary"}
                   variant={"outlined"}
-                  endIcon={<SettingsIcon />}
-                  className={classes.manageButton}
-                >
-                  Manage
-                </Button>
+                />
               </Link>
             </SecureComponent>
             <Link
               to={`/buckets/${bucket.name}/browse`}
               style={{ textDecoration: "none" }}
             >
-              <Button
-                variant="contained"
-                endIcon={<ArrowRightIcon />}
-                className={classes.viewButton}
-              >
-                Browse
-              </Button>
+              <RBIconButton
+                tooltip={"Browse"}
+                onClick={() => {}}
+                text={"Browse"}
+                icon={<ArrowRightIcon />}
+                color={"primary"}
+                variant={"contained"}
+              />
             </Link>
             <Box display={{ xs: "none", sm: "block" }}>
               <div style={{ marginBottom: 10 }} />
