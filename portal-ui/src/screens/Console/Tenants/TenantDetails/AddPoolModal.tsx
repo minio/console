@@ -168,7 +168,7 @@ const AddPoolModal = ({
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNumberOfNodes(parseInt(e.target.value));
             }}
-            label="Number o Nodes"
+            label="Number of Nodes"
             value={numberOfNodes.toString(10)}
           />
         </Grid>

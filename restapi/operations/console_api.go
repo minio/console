@@ -182,6 +182,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
 		}),
+		UserAPIGetBucketReplicationRuleHandler: user_api.GetBucketReplicationRuleHandlerFunc(func(params user_api.GetBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketReplicationRule has not yet been implemented")
+		}),
 		UserAPIGetBucketRetentionConfigHandler: user_api.GetBucketRetentionConfigHandlerFunc(func(params user_api.GetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketRetentionConfig has not yet been implemented")
 		}),
@@ -359,6 +362,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
 		}),
+		UserAPIUpdateMultiBucketReplicationHandler: user_api.UpdateMultiBucketReplicationHandlerFunc(func(params user_api.UpdateMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.UpdateMultiBucketReplication has not yet been implemented")
+		}),
 		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
 		}),
@@ -498,6 +504,8 @@ type ConsoleAPI struct {
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
 	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
+	// UserAPIGetBucketReplicationRuleHandler sets the operation handler for the get bucket replication rule operation
+	UserAPIGetBucketReplicationRuleHandler user_api.GetBucketReplicationRuleHandler
 	// UserAPIGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
 	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
 	// UserAPIGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
@@ -616,6 +624,8 @@ type ConsoleAPI struct {
 	UserAPIUpdateBucketLifecycleHandler user_api.UpdateBucketLifecycleHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
+	// UserAPIUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
+	UserAPIUpdateMultiBucketReplicationHandler user_api.UpdateMultiBucketReplicationHandler
 	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
 	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
@@ -824,6 +834,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIGetBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
 	}
+	if o.UserAPIGetBucketReplicationRuleHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketReplicationRuleHandler")
+	}
 	if o.UserAPIGetBucketRetentionConfigHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketRetentionConfigHandler")
 	}
@@ -1000,6 +1013,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
+	}
+	if o.UserAPIUpdateMultiBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.UpdateMultiBucketReplicationHandler")
 	}
 	if o.AdminAPIUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
@@ -1268,6 +1284,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewGetBucketReplicationRule(o.context, o.UserAPIGetBucketReplicationRuleHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/buckets/{bucket_name}/retention"] = user_api.NewGetBucketRetentionConfig(o.context, o.UserAPIGetBucketRetentionConfigHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1501,6 +1521,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/group"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewUpdateMultiBucketReplication(o.context, o.UserAPIUpdateMultiBucketReplicationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

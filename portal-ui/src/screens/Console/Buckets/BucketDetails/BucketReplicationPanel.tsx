@@ -47,6 +47,7 @@ import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
+import EditReplicationModal from "./EditReplicationModal";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -86,6 +87,8 @@ const BucketReplicationPanel = ({
   const [deleteReplicationModal, setDeleteReplicationModal] =
     useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
+  const [editReplicationModal, setEditReplicationModal] =
+    useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
@@ -107,6 +110,9 @@ const BucketReplicationPanel = ({
           .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
           .then((res: BucketReplication) => {
             const r = res.rules ? res.rules : [];
+
+            r.sort((a, b) => a.priority - b.priority);
+
             setReplicationRules(r);
             setLoadingReplication(false);
           })
@@ -142,9 +148,22 @@ const BucketReplicationPanel = ({
     }
   };
 
+  const closeEditReplication = (refresh: boolean) => {
+    setEditReplicationModal(false);
+
+    if (refresh) {
+      setLoadingReplication(true);
+    }
+  };
+
   const confirmDeleteReplication = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
     setDeleteReplicationModal(true);
+  };
+
+  const editReplicationRule = (replication: BucketReplicationRule) => {
+    setSelectedRRule(replication.id);
+    setEditReplicationModal(true);
   };
 
   const ruleDestDisplay = (events: BucketReplicationDestination) => {
@@ -160,6 +179,11 @@ const BucketReplicationPanel = ({
       type: "delete",
       onClick: confirmDeleteReplication,
       disableButtonFunction: () => replicationRules.length === 1,
+    },
+    {
+      type: "view",
+      onClick: editReplicationRule,
+      disableButtonFunction: !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION], true),
     },
   ];
 
@@ -180,6 +204,15 @@ const BucketReplicationPanel = ({
           selectedBucket={bucketName}
           closeDeleteModalAndRefresh={closeReplicationModalDelete}
           ruleToDelete={selectedRRule}
+        />
+      )}
+
+      {editReplicationModal && (
+        <EditReplicationModal
+          closeModalAndRefresh={closeEditReplication}
+          open={editReplicationModal}
+          bucketName={bucketName}
+          ruleID={selectedRRule}
         />
       )}
       <Grid container>
@@ -215,6 +248,8 @@ const BucketReplicationPanel = ({
                 {
                   label: "Priority",
                   elementKey: "priority",
+                  width: 55,
+                  contentTextAlign: "center",
                 },
                 {
                   label: "Destination",
@@ -224,19 +259,22 @@ const BucketReplicationPanel = ({
                 {
                   label: "Prefix",
                   elementKey: "prefix",
+                  width: 200,
                 },
                 {
                   label: "Tags",
                   elementKey: "tags",
                   renderFunction: tagDisplay,
+                  width: 60,
                 },
-                { label: "Status", elementKey: "status" },
+                { label: "Status", elementKey: "status", width: 100 },
               ]}
               isLoading={loadingReplication}
               records={replicationRules}
               entityName="Replication Rules"
               idField="id"
               customPaperHeight={classes.twHeight}
+              textSelectable
             />
           </SecureComponent>
         </Grid>
