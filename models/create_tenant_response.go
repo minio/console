@@ -71,6 +71,8 @@ func (m *CreateTenantResponse) validateConsole(formats strfmt.Registry) error {
 			if err := m.Console[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("console" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("console" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -103,6 +105,8 @@ func (m *CreateTenantResponse) contextValidateConsole(ctx context.Context, forma
 			if err := m.Console[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("console" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("console" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

@@ -71,6 +71,8 @@ func (m *StartProfilingList) validateStartResults(formats strfmt.Registry) error
 			if err := m.StartResults[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("startResults" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("startResults" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -103,6 +105,8 @@ func (m *StartProfilingList) contextValidateStartResults(ctx context.Context, fo
 			if err := m.StartResults[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("startResults" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("startResults" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

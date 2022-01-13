@@ -163,6 +163,8 @@ func (m *CreateTenantRequest) validateEncryption(formats strfmt.Registry) error 
 		if err := m.Encryption.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("encryption")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("encryption")
 			}
 			return err
 		}
@@ -180,6 +182,8 @@ func (m *CreateTenantRequest) validateIdp(formats strfmt.Registry) error {
 		if err := m.Idp.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("idp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("idp")
 			}
 			return err
 		}
@@ -197,6 +201,8 @@ func (m *CreateTenantRequest) validateImageRegistry(formats strfmt.Registry) err
 		if err := m.ImageRegistry.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("image_registry")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("image_registry")
 			}
 			return err
 		}
@@ -214,6 +220,8 @@ func (m *CreateTenantRequest) validateLogSearchConfiguration(formats strfmt.Regi
 		if err := m.LogSearchConfiguration.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("logSearchConfiguration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("logSearchConfiguration")
 			}
 			return err
 		}
@@ -259,6 +267,8 @@ func (m *CreateTenantRequest) validatePools(formats strfmt.Registry) error {
 			if err := m.Pools[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("pools" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -278,6 +288,8 @@ func (m *CreateTenantRequest) validatePrometheusConfiguration(formats strfmt.Reg
 		if err := m.PrometheusConfiguration.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("prometheusConfiguration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("prometheusConfiguration")
 			}
 			return err
 		}
@@ -295,6 +307,8 @@ func (m *CreateTenantRequest) validateTLS(formats strfmt.Registry) error {
 		if err := m.TLS.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tls")
 			}
 			return err
 		}
@@ -347,6 +361,8 @@ func (m *CreateTenantRequest) contextValidateEncryption(ctx context.Context, for
 		if err := m.Encryption.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("encryption")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("encryption")
 			}
 			return err
 		}
@@ -361,6 +377,8 @@ func (m *CreateTenantRequest) contextValidateIdp(ctx context.Context, formats st
 		if err := m.Idp.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("idp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("idp")
 			}
 			return err
 		}
@@ -375,6 +393,8 @@ func (m *CreateTenantRequest) contextValidateImageRegistry(ctx context.Context, 
 		if err := m.ImageRegistry.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("image_registry")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("image_registry")
 			}
 			return err
 		}
@@ -389,6 +409,8 @@ func (m *CreateTenantRequest) contextValidateLogSearchConfiguration(ctx context.
 		if err := m.LogSearchConfiguration.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("logSearchConfiguration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("logSearchConfiguration")
 			}
 			return err
 		}
@@ -405,6 +427,8 @@ func (m *CreateTenantRequest) contextValidatePools(ctx context.Context, formats 
 			if err := m.Pools[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("pools" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -421,6 +445,8 @@ func (m *CreateTenantRequest) contextValidatePrometheusConfiguration(ctx context
 		if err := m.PrometheusConfiguration.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("prometheusConfiguration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("prometheusConfiguration")
 			}
 			return err
 		}
@@ -435,6 +461,8 @@ func (m *CreateTenantRequest) contextValidateTLS(ctx context.Context, formats st
 		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tls")
 			}
 			return err
 		}

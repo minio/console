@@ -68,6 +68,8 @@ func (m *FormatDirectCSIDrivesResponse) validateFormatIssuesList(formats strfmt.
 			if err := m.FormatIssuesList[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("formatIssuesList" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("formatIssuesList" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -100,6 +102,8 @@ func (m *FormatDirectCSIDrivesResponse) contextValidateFormatIssuesList(ctx cont
 			if err := m.FormatIssuesList[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("formatIssuesList" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("formatIssuesList" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

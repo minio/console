@@ -72,6 +72,8 @@ func (m *SetBucketPolicyRequest) validateAccess(formats strfmt.Registry) error {
 		if err := m.Access.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("access")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("access")
 			}
 			return err
 		}
@@ -100,6 +102,8 @@ func (m *SetBucketPolicyRequest) contextValidateAccess(ctx context.Context, form
 		if err := m.Access.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("access")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("access")
 			}
 			return err
 		}

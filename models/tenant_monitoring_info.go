@@ -106,6 +106,8 @@ func (m *TenantMonitoringInfo) validateAnnotations(formats strfmt.Registry) erro
 			if err := m.Annotations[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("annotations" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("annotations" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -130,6 +132,8 @@ func (m *TenantMonitoringInfo) validateLabels(formats strfmt.Registry) error {
 			if err := m.Labels[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labels" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("labels" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -154,6 +158,8 @@ func (m *TenantMonitoringInfo) validateNodeSelector(formats strfmt.Registry) err
 			if err := m.NodeSelector[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -194,6 +200,8 @@ func (m *TenantMonitoringInfo) contextValidateAnnotations(ctx context.Context, f
 			if err := m.Annotations[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("annotations" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("annotations" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -212,6 +220,8 @@ func (m *TenantMonitoringInfo) contextValidateLabels(ctx context.Context, format
 			if err := m.Labels[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labels" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("labels" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -230,6 +240,8 @@ func (m *TenantMonitoringInfo) contextValidateNodeSelector(ctx context.Context, 
 			if err := m.NodeSelector[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeSelector" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

@@ -93,6 +93,8 @@ func (m *MakeBucketRequest) validateQuota(formats strfmt.Registry) error {
 		if err := m.Quota.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("quota")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("quota")
 			}
 			return err
 		}
@@ -110,6 +112,8 @@ func (m *MakeBucketRequest) validateRetention(formats strfmt.Registry) error {
 		if err := m.Retention.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("retention")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("retention")
 			}
 			return err
 		}
@@ -142,6 +146,8 @@ func (m *MakeBucketRequest) contextValidateQuota(ctx context.Context, formats st
 		if err := m.Quota.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("quota")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("quota")
 			}
 			return err
 		}
@@ -156,6 +162,8 @@ func (m *MakeBucketRequest) contextValidateRetention(ctx context.Context, format
 		if err := m.Retention.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("retention")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("retention")
 			}
 			return err
 		}

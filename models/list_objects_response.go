@@ -71,6 +71,8 @@ func (m *ListObjectsResponse) validateObjects(formats strfmt.Registry) error {
 			if err := m.Objects[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("objects" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("objects" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -103,6 +105,8 @@ func (m *ListObjectsResponse) contextValidateObjects(ctx context.Context, format
 			if err := m.Objects[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("objects" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("objects" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

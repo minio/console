@@ -77,6 +77,8 @@ func (m *PrometheusConfiguration) validateSecurityContext(formats strfmt.Registr
 		if err := m.SecurityContext.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -105,6 +107,8 @@ func (m *PrometheusConfiguration) contextValidateSecurityContext(ctx context.Con
 		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}

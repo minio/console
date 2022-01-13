@@ -89,6 +89,8 @@ func (m *ServerProperties) validateDrives(formats strfmt.Registry) error {
 			if err := m.Drives[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("drives" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("drives" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -121,6 +123,8 @@ func (m *ServerProperties) contextValidateDrives(ctx context.Context, formats st
 			if err := m.Drives[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("drives" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("drives" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

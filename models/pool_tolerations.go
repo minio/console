@@ -49,6 +49,8 @@ func (m PoolTolerations) Validate(formats strfmt.Registry) error {
 			if err := m[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName(strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName(strconv.Itoa(i))
 				}
 				return err
 			}
@@ -72,6 +74,8 @@ func (m PoolTolerations) ContextValidate(ctx context.Context, formats strfmt.Reg
 			if err := m[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName(strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName(strconv.Itoa(i))
 				}
 				return err
 			}
@@ -129,6 +133,8 @@ func (m *PoolTolerationsItems0) validateTolerationSeconds(formats strfmt.Registr
 		if err := m.TolerationSeconds.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tolerationSeconds")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tolerationSeconds")
 			}
 			return err
 		}
@@ -157,6 +163,8 @@ func (m *PoolTolerationsItems0) contextValidateTolerationSeconds(ctx context.Con
 		if err := m.TolerationSeconds.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tolerationSeconds")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tolerationSeconds")
 			}
 			return err
 		}

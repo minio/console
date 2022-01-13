@@ -85,6 +85,8 @@ func (m *PutBucketRetentionRequest) validateMode(formats strfmt.Registry) error 
 		if err := m.Mode.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mode")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mode")
 			}
 			return err
 		}
@@ -107,6 +109,8 @@ func (m *PutBucketRetentionRequest) validateUnit(formats strfmt.Registry) error 
 		if err := m.Unit.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("unit")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("unit")
 			}
 			return err
 		}
@@ -148,6 +152,8 @@ func (m *PutBucketRetentionRequest) contextValidateMode(ctx context.Context, for
 		if err := m.Mode.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mode")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mode")
 			}
 			return err
 		}
@@ -162,6 +168,8 @@ func (m *PutBucketRetentionRequest) contextValidateUnit(ctx context.Context, for
 		if err := m.Unit.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("unit")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("unit")
 			}
 			return err
 		}

@@ -87,6 +87,8 @@ func (m *AdminInfoResponse) validateServers(formats strfmt.Registry) error {
 			if err := m.Servers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("servers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("servers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -111,6 +113,8 @@ func (m *AdminInfoResponse) validateWidgets(formats strfmt.Registry) error {
 			if err := m.Widgets[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("widgets" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("widgets" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -147,6 +151,8 @@ func (m *AdminInfoResponse) contextValidateServers(ctx context.Context, formats 
 			if err := m.Servers[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("servers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("servers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -165,6 +171,8 @@ func (m *AdminInfoResponse) contextValidateWidgets(ctx context.Context, formats 
 			if err := m.Widgets[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("widgets" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("widgets" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

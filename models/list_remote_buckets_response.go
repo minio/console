@@ -71,6 +71,8 @@ func (m *ListRemoteBucketsResponse) validateBuckets(formats strfmt.Registry) err
 			if err := m.Buckets[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("buckets" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("buckets" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -103,6 +105,8 @@ func (m *ListRemoteBucketsResponse) contextValidateBuckets(ctx context.Context, 
 			if err := m.Buckets[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("buckets" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("buckets" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

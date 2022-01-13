@@ -65,6 +65,8 @@ func (m *GemaltoConfiguration) validateKeysecure(formats strfmt.Registry) error 
 		if err := m.Keysecure.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keysecure")
 			}
 			return err
 		}
@@ -93,6 +95,8 @@ func (m *GemaltoConfiguration) contextValidateKeysecure(ctx context.Context, for
 		if err := m.Keysecure.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keysecure")
 			}
 			return err
 		}
@@ -168,6 +172,8 @@ func (m *GemaltoConfigurationKeysecure) validateCredentials(formats strfmt.Regis
 		if err := m.Credentials.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keysecure" + "." + "credentials")
 			}
 			return err
 		}
@@ -194,6 +200,8 @@ func (m *GemaltoConfigurationKeysecure) validateTLS(formats strfmt.Registry) err
 		if err := m.TLS.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure" + "." + "tls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keysecure" + "." + "tls")
 			}
 			return err
 		}
@@ -226,6 +234,8 @@ func (m *GemaltoConfigurationKeysecure) contextValidateCredentials(ctx context.C
 		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keysecure" + "." + "credentials")
 			}
 			return err
 		}
@@ -240,6 +250,8 @@ func (m *GemaltoConfigurationKeysecure) contextValidateTLS(ctx context.Context, 
 		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure" + "." + "tls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keysecure" + "." + "tls")
 			}
 			return err
 		}

@@ -65,6 +65,8 @@ func (m *AzureConfiguration) validateKeyvault(formats strfmt.Registry) error {
 		if err := m.Keyvault.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keyvault")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keyvault")
 			}
 			return err
 		}
@@ -93,6 +95,8 @@ func (m *AzureConfiguration) contextValidateKeyvault(ctx context.Context, format
 		if err := m.Keyvault.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keyvault")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keyvault")
 			}
 			return err
 		}
@@ -159,6 +163,8 @@ func (m *AzureConfigurationKeyvault) validateCredentials(formats strfmt.Registry
 		if err := m.Credentials.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keyvault" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keyvault" + "." + "credentials")
 			}
 			return err
 		}
@@ -196,6 +202,8 @@ func (m *AzureConfigurationKeyvault) contextValidateCredentials(ctx context.Cont
 		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keyvault" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("keyvault" + "." + "credentials")
 			}
 			return err
 		}
