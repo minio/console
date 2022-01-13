@@ -269,7 +269,7 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 	return bucketARN, err
 }
 
-func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, destinationARN string, repDelMark, repDels, repMeta bool, tags string) error {
+func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, destinationARN string, repDelMark, repDels, repMeta bool, tags string, priority int32) error {
 	// we will tolerate this call failing
 	cfg, err := minClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
@@ -278,12 +278,17 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 
 	// add rule
 	maxPrio := 0
-	for _, r := range cfg.Rules {
-		if r.Priority > maxPrio {
-			maxPrio = r.Priority
+
+	if priority <= 0 { // We pick next priority by default
+		for _, r := range cfg.Rules {
+			if r.Priority > maxPrio {
+				maxPrio = r.Priority
+			}
 		}
+		maxPrio++
+	} else { // User picked priority, we try to set this manually
+		maxPrio = int(priority)
 	}
-	maxPrio++
 
 	s3Client, err := newS3BucketClient(session, bucketName, prefix)
 	if err != nil {
@@ -366,7 +371,8 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 					params.Body.ReplicateDeleteMarkers,
 					params.Body.ReplicateDeletes,
 					params.Body.ReplicateMetadata,
-					params.Body.Tags)
+					params.Body.Tags,
+					params.Body.Priority)
 			}
 
 			var errorReturn = ""

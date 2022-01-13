@@ -56,6 +56,9 @@ type MultiBucketReplication struct {
 	// prefix
 	Prefix string `json:"prefix,omitempty"`
 
+	// priority
+	Priority int32 `json:"priority,omitempty"`
+
 	// region
 	Region string `json:"region,omitempty"`
 

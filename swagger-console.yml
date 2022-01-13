@@ -2967,6 +2967,10 @@ definitions:
         type: boolean
       replicateMetadata:
         type: boolean
+      priority:
+        type: integer
+        format: int32
+        default: 0
       bucketsRelation:
         type: array
         minLength: 1

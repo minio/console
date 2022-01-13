@@ -159,7 +159,7 @@ const BucketReplicationPanel = ({
     {
       type: "delete",
       onClick: confirmDeleteReplication,
-      disableButtonFunction: () => replicationRules.length > 1,
+      disableButtonFunction: () => replicationRules.length === 1,
     },
   ];
 
@@ -170,6 +170,7 @@ const BucketReplicationPanel = ({
           closeModalAndRefresh={closeAddReplication}
           open={openSetReplication}
           bucketName={bucketName}
+          setReplicationRules={replicationRules}
         />
       )}
 
