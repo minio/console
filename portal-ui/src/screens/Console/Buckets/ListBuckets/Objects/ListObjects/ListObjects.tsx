@@ -1202,7 +1202,7 @@ const ListObjects = ({
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <>
+                  <Fragment>
                     <RBIconButton
                       tooltip={"Upload folder"}
                       onClick={() => {
@@ -1223,7 +1223,7 @@ const ListObjects = ({
                       style={{ display: "none" }}
                       ref={folderUpload}
                     />
-                  </>
+                  </Fragment>
                 </SecureComponent>
 
                 <SecureComponent
