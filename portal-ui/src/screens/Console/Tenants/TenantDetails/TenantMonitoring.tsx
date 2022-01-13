@@ -38,6 +38,7 @@ import { EditIcon } from "../../../../icons";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
+import { niceBytes } from "../../../../common/utils";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
@@ -318,7 +319,7 @@ const TenantMonitoring = ({
                             <td className={classes.titleCol}>
                               Memory Request:
                             </td>
-                            <td>{monitoringInfo?.monitoringMemRequest}</td>
+                            <td>{niceBytes(monitoringInfo?.monitoringMemRequest, true)}</td>
                           </tr>
                         )}
                         {monitoringInfo.nodeSelector != null &&

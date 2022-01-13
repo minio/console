@@ -16,6 +16,7 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { niceBytes } from "../../../../common/utils";
 
 interface IEditTenantMonitoringProps {
   tenant: ITenant;
@@ -81,7 +82,7 @@ const EditTenantMonitoringModal = ({
     diskCapacityGB.toString()
   );
   const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
-  const [newMemRequest, setNewMemRequest] = useState<string>(memRequest);
+  const [newMemRequest, setNewMemRequest] = useState<string>(Math.floor(parseInt(memRequest, 10)/1000000000).toString());               
   const [newServiceAccountName, setNewServiceAccountName] =
     useState<string>(serviceAccountName);
   const [newStorageClassName, setNewStorageClassName] =
@@ -137,14 +138,14 @@ const EditTenantMonitoringModal = ({
     });
     tenantMonitoringValidation.push({
       fieldKey: `newCPURequest`,
-      required: true,
+      required: false,
       value: newCPURequest as any as string,
       pattern: /^[0-9]?(10)?$/,
       customPatternMessage: "Must be an integer between 0 and 10",
     });
     tenantMonitoringValidation.push({
       fieldKey: `newMemRequest`,
-      required: true,
+      required: false,
       value: newMemRequest as any as string,
       pattern: /^[0-9]?(10)?$/,
       customPatternMessage: "Must be an integer between 0 and 10",
@@ -212,9 +213,9 @@ const EditTenantMonitoringModal = ({
           initImage: newInitImage,
           diskCapacityGB: newDiskCapacityGB,
           serviceAccountName: newServiceAccountName,
-          storageClassName: newStorageClassName,
+          storageClassName: newStorageClassName != null ? newStorageClassName : null,
           monitoringCPURequest: newCPURequest,
-          monitoringMemRequest: newMemRequest,
+          monitoringMemRequest: newMemRequest+"Gi",
         }
       )
       .then(() => {
@@ -230,7 +231,8 @@ const EditTenantMonitoringModal = ({
       title="Edit Monitoring Configuration"
     >
       <form noValidate autoComplete="off" onSubmit={submitMonitoringInfo}>
-        <h2>Prometheus configuration</h2>
+     
+        <h2>Prometheus configuration</h2>  
         <hr className={classes.hrClass} />
         <h4>Image</h4>
         <InputBoxWrapper
@@ -297,7 +299,7 @@ const EditTenantMonitoringModal = ({
           key={`cpuRequest`}
           error={validationErrors[`cpuRequest`] || ""}
         />
-         <h4>Prometheus Memory Request (GB)</h4>
+         <h4>Prometheus Memory Request (Gi)</h4>
         <InputBoxWrapper
           id={`memRequest`}
           label={""}
