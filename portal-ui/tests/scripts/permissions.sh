@@ -8,21 +8,21 @@ add_alias() {
 }
 
 create_policies() {
-  mc admin policy add minio bucketassignpolicy-$TIMESTAMP $(PWD)/portal-ui/tests/policies/bucketAssignPolicy.json
-  mc admin policy add minio bucketread-$TIMESTAMP $(PWD)/portal-ui/tests/policies/bucketRead.json
-  mc admin policy add minio bucketwrite-$TIMESTAMP $(PWD)/portal-ui/tests/policies/bucketWrite.json
-  mc admin policy add minio dashboard-$TIMESTAMP $(PWD)/portal-ui/tests/policies/dashboard.json
-  mc admin policy add minio diagnostics-$TIMESTAMP $(PWD)/portal-ui/tests/policies/diagnostics.json
-  mc admin policy add minio groups-$TIMESTAMP $(PWD)/portal-ui/tests/policies/groups.json
-  mc admin policy add minio heal-$TIMESTAMP $(PWD)/portal-ui/tests/policies/heal.json
-  mc admin policy add minio iampolicies-$TIMESTAMP $(PWD)/portal-ui/tests/policies/iamPolicies.json
-  mc admin policy add minio logs-$TIMESTAMP $(PWD)/portal-ui/tests/policies/logs.json
-  mc admin policy add minio notificationendpoints-$TIMESTAMP $(PWD)/portal-ui/tests/policies/notificationEndpoints.json
-  mc admin policy add minio settings-$TIMESTAMP $(PWD)/portal-ui/tests/policies/settings.json
-  mc admin policy add minio tiers-$TIMESTAMP $(PWD)/portal-ui/tests/policies/tiers.json
-  mc admin policy add minio trace-$TIMESTAMP $(PWD)/portal-ui/tests/policies/trace.json
-  mc admin policy add minio users-$TIMESTAMP $(PWD)/portal-ui/tests/policies/users.json
-  mc admin policy add minio watch-$TIMESTAMP $(PWD)/portal-ui/tests/policies/watch.json
+  mc admin policy add minio bucketassignpolicy-$TIMESTAMP portal-ui/tests/policies/bucketAssignPolicy.json
+  mc admin policy add minio bucketread-$TIMESTAMP portal-ui/tests/policies/bucketRead.json
+  mc admin policy add minio bucketwrite-$TIMESTAMP portal-ui/tests/policies/bucketWrite.json
+  mc admin policy add minio dashboard-$TIMESTAMP portal-ui/tests/policies/dashboard.json
+  mc admin policy add minio diagnostics-$TIMESTAMP portal-ui/tests/policies/diagnostics.json
+  mc admin policy add minio groups-$TIMESTAMP portal-ui/tests/policies/groups.json
+  mc admin policy add minio heal-$TIMESTAMP portal-ui/tests/policies/heal.json
+  mc admin policy add minio iampolicies-$TIMESTAMP portal-ui/tests/policies/iamPolicies.json
+  mc admin policy add minio logs-$TIMESTAMP portal-ui/tests/policies/logs.json
+  mc admin policy add minio notificationendpoints-$TIMESTAMP portal-ui/tests/policies/notificationEndpoints.json
+  mc admin policy add minio settings-$TIMESTAMP portal-ui/tests/policies/settings.json
+  mc admin policy add minio tiers-$TIMESTAMP portal-ui/tests/policies/tiers.json
+  mc admin policy add minio trace-$TIMESTAMP portal-ui/tests/policies/trace.json
+  mc admin policy add minio users-$TIMESTAMP portal-ui/tests/policies/users.json
+  mc admin policy add minio watch-$TIMESTAMP portal-ui/tests/policies/watch.json
 }
 
 create_users() {
