@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
 import { AddIcon, BucketsIcon } from "../../../../icons";
@@ -37,7 +37,6 @@ import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import HelpBox from "../../../../common/HelpBox";
 import { ISessionResponse } from "../../types";
-import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
 import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
@@ -50,6 +49,7 @@ import {
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
+import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -226,55 +226,55 @@ const ListBuckets = ({
             alignItems={"center"}
             justifyContent={"flex-end"}
           >
-            <BoxIconButton
-              variant={bulkSelect ? "contained" : "outlined"}
-              tooltip={"Select Multiple"}
+            <RBIconButton
+              tooltip={bulkSelect ? "Un Select All" : "Select Multiple"}
               onClick={() => {
                 setBulkSelect(!bulkSelect);
               }}
-              size={"small"}
-              className={classes.bulkSelect}
-            >
-              <SelectMultipleIcon />
-            </BoxIconButton>
-            <BoxIconButton
-              variant="outlined"
+              text={""}
+              icon={<SelectMultipleIcon />}
+              color={"primary"}
+              variant={bulkSelect ? "contained" : "outlined"}
+            />
+
+            <RBIconButton
               tooltip={"Set Replication"}
               onClick={() => {
                 setReplicationModalOpen(true);
               }}
+              text={""}
+              icon={<MultipleBucketsIcon />}
               disabled={selectedBuckets.length === 0}
-              size={"small"}
-            >
-              <MultipleBucketsIcon />
-            </BoxIconButton>
-            <BoxIconButton
-              color="primary"
-              aria-label="Refresh"
+              color={"primary"}
+              variant={"outlined"}
+            />
+
+            <RBIconButton
               tooltip={"Refresh"}
               onClick={() => {
                 setLoading(true);
               }}
-              size="large"
-            >
-              <RefreshIcon />
-            </BoxIconButton>
+              text={""}
+              icon={<RefreshIcon />}
+              color={"primary"}
+              variant={"outlined"}
+            />
+
             <SecureComponent
               scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
               resource={CONSOLE_UI_RESOURCE}
               errorProps={{ disabled: true }}
             >
-              <Button
-                variant="contained"
-                color="primary"
-                endIcon={<AddIcon />}
+              <RBIconButton
+                tooltip={"Create Bucket"}
                 onClick={() => {
                   history.push("/add-bucket");
                 }}
-                className={classes.addBucket}
-              >
-                Create Bucket
-              </Button>
+                text={"Create Bucket"}
+                icon={<AddIcon />}
+                color={"primary"}
+                variant={"contained"}
+              />
             </SecureComponent>
           </Grid>
         </Grid>

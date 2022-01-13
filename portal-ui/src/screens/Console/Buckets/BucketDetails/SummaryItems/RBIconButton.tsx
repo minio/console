@@ -16,10 +16,9 @@
 
 import React from "react";
 import BoxIconButton from "../../../Common/BoxIconButton/BoxIconButton";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { IconButtonProps } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Theme } from "@mui/material/styles";
 
 type DeleteButtonProps = {
   onClick: (e: any) => void;
@@ -32,29 +31,57 @@ type DeleteButtonProps = {
   [x: string]: any;
 };
 
-const styles = (theme: Theme) =>
-  createStyles({
+type RBIconProps = Partial<IconButtonProps> & DeleteButtonProps;
+
+const useStyles = makeStyles((theme: Theme) => {
+  const getButtonColor = (props: RBIconProps) => {
+    const { variant, color } = props;
+
+    let tgtColor = theme.palette.primary.main;
+
+    if (color === "primary" && variant === "contained") {
+      tgtColor = theme.palette.primary.contrastText;
+    } else if (color === "primary" && variant === "outlined") {
+      tgtColor = theme.palette.primary.main;
+    } else if (color === "secondary") {
+      tgtColor = theme.palette.secondary.main;
+    }
+
+    return tgtColor;
+  };
+
+  return {
     root: {
-      "& .min-icon": {
+      padding: "7px",
+      color: (props: RBIconProps) => getButtonColor(props),
+      borderColor: (props: RBIconProps) =>
+        props.color === "secondary"
+          ? theme.palette.secondary.main
+          : theme.palette.primary.main,
+      "& svg.min-icon": {
         width: 12,
-        marginLeft: "5px",
+        marginLeft: (props: RBIconProps) => (props.text ? "5px" : "0px"),
         "@media (max-width: 900px)": {
           width: 16,
-          marginLeft: 0,
+          marginLeft: "0px !important",
         },
       },
     },
-  });
+  };
+});
 
-const RBIconButton = ({
-  onClick,
-  text = "",
-  disabled = false,
-  tooltip,
-  classes,
-  icon = null,
-  ...restProps
-}: Partial<IconButtonProps> & DeleteButtonProps) => {
+const RBIconButton = (props: RBIconProps) => {
+  const classes = useStyles(props);
+
+  const {
+    onClick,
+    text = "",
+    disabled = false,
+    tooltip,
+    icon = null,
+    ...restProps
+  } = props;
+
   return (
     <BoxIconButton
       classes={classes}
@@ -79,4 +106,4 @@ const RBIconButton = ({
     </BoxIconButton>
   );
 };
-export default withStyles(styles)(RBIconButton);
+export default RBIconButton;

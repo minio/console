@@ -26,7 +26,7 @@ import {
   searchField,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, CircularProgress, DialogContentText } from "@mui/material";
+import { CircularProgress, DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -39,6 +39,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import { ITenantMonitoringStruct } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 interface ITenantMonitoring {
   classes: any;
@@ -198,16 +199,16 @@ const TenantMonitoring = ({
           description=""
         />
         {prometheusMonitoringEnabled && (
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
+          <RBIconButton
+            tooltip={"Edit Monitoring configuration"}
+            text={"Edit"}
             onClick={() => {
               setEdit(true);
             }}
-          >
-            Edit
-          </Button>
+            icon={<EditIcon />}
+            color="primary"
+            variant={"contained"}
+          />
         )}
       </div>
       {prometheusMonitoringEnabled && monitoringInfo !== undefined && (

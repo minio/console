@@ -21,11 +21,11 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import {
   AddIcon,
   IAMPoliciesIcon,
-  LockIcon,
+  PasswordKeyIcon,
   TrashIcon,
   UsersIcon,
 } from "../../../icons";
@@ -51,12 +51,12 @@ import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import BackLink from "../../../common/BackLink";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -261,24 +261,23 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   switchOnly
                 />
 
-                <BoxIconButton
-                  color="primary"
-                  aria-label="Delete User"
+                <RBIconButton
+                  tooltip={"Delete User"}
+                  text={""}
                   onClick={deleteUser}
-                  size="large"
-                >
-                  <TrashIcon />
-                </BoxIconButton>
+                  icon={<TrashIcon />}
+                  color="secondary"
+                  variant={"outlined"}
+                />
 
-                <BoxIconButton
+                <RBIconButton
                   tooltip={"Change Password"}
-                  color="primary"
-                  aria-label="Change Password"
+                  text={""}
                   onClick={changeUserPassword}
-                  size="large"
-                >
-                  <LockIcon />
-                </BoxIconButton>
+                  icon={<PasswordKeyIcon />}
+                  color="primary"
+                  variant={"outlined"}
+                />
               </Fragment>
             }
           />
@@ -294,17 +293,16 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <React.Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Groups</PanelTitle>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      endIcon={<AddIcon />}
-                      size="medium"
+                    <RBIconButton
+                      tooltip={"Add to Groups"}
+                      text={"Add to Groups"}
                       onClick={() => {
                         setAddGroupOpen(true);
                       }}
-                    >
-                      Add to Groups
-                    </Button>
+                      icon={<AddIcon />}
+                      color="primary"
+                      variant={"contained"}
+                    />
                   </div>
                   <div className={classes.tableBlock}>
                     <TableWrapper
@@ -338,17 +336,17 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <React.Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Policies</PanelTitle>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      endIcon={<IAMPoliciesIcon />}
-                      size="medium"
+
+                    <RBIconButton
+                      tooltip={"Assign Policies"}
+                      text={"Assign Policies"}
                       onClick={() => {
                         setPolicyOpen(true);
                       }}
-                    >
-                      Assign Policies
-                    </Button>
+                      icon={<IAMPoliciesIcon />}
+                      color="primary"
+                      variant={"contained"}
+                    />
                   </div>
                   <div className={classes.tableBlock}>
                     <TableWrapper

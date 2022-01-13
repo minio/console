@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Paper } from "@mui/material";
+import { Paper } from "@mui/material";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ISessionResponse } from "../../types";
@@ -44,6 +44,7 @@ import SecureComponent, {
 } from "../../../../common/SecureComponent/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import RBIconButton from "./SummaryItems/RBIconButton";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
@@ -226,18 +227,16 @@ const AccessRule = ({
           matchAll
           errorProps={{ disabled: true }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
-            component="label"
+          <RBIconButton
+            tooltip={"Add Access Rule"}
             onClick={() => {
               setAddAccessRuleOpen(true);
             }}
-            className={classes.listButton}
-          >
-            Add Access Rule
-          </Button>
+            text={"Add Access Rule"}
+            icon={<AddIcon />}
+            color="primary"
+            variant={"contained"}
+          />
         </SecureComponent>
       </Grid>
       <Paper className={classes.tableBlock}>

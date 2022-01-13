@@ -26,7 +26,7 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, CircularProgress, DialogContentText } from "@mui/material";
+import { CircularProgress, DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
@@ -39,6 +39,7 @@ import KeyPairView from "./KeyPairView";
 import { ITenantLogsStruct } from "../ListTenants/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 interface ITenantLogs {
   classes: any;
@@ -220,16 +221,16 @@ const TenantLogging = ({
           indicatorLabels={["Enabled", "Disabled"]}
         />
         {!disabled && !loadingTenantLogs && (
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
+          <RBIconButton
+            tooltip={"Edit Logging configuration"}
+            text={"Edit"}
             onClick={() => {
               setEdit(true);
             }}
-          >
-            Edit
-          </Button>
+            icon={<EditIcon />}
+            color="primary"
+            variant={"contained"}
+          />
         )}
       </div>
       {!disabled && !loadingTenantLogs && (

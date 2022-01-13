@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import AddIcon from "../../../../icons/AddIcon";
 import BucketsIcon from "../../../../icons/BucketsIcon";
@@ -47,6 +46,7 @@ import SecureComponent, {
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import RBIconButton from "./SummaryItems/RBIconButton";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -190,17 +190,16 @@ const BucketReplicationPanel = ({
             matchAll
             errorProps={{ disabled: true }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<AddIcon />}
-              size="medium"
+            <RBIconButton
+              tooltip={"Add Replication Rule"}
               onClick={() => {
                 setOpenReplicationOpen(true);
               }}
-            >
-              Add Replication Rule
-            </Button>
+              text={"Add Replication Rule"}
+              icon={<AddIcon />}
+              color="primary"
+              variant={"contained"}
+            />
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>

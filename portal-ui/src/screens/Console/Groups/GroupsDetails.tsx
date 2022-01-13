@@ -15,9 +15,14 @@ import {
 } from "../../../actions";
 import { connect } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid, Tooltip } from "@mui/material";
+import { Grid } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import { IAMPoliciesIcon, TrashIcon, GroupsIcon } from "../../../icons";
+import {
+  IAMPoliciesIcon,
+  TrashIcon,
+  GroupsIcon,
+  AddIcon,
+} from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import history from "../../../history";
 import api from "../../../common/api";
@@ -30,7 +35,6 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import PageLayout from "../Common/Layout/PageLayout";
 import BackLink from "../../../common/BackLink";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import SearchBox from "../Common/SearchBox";
 import {
   CONSOLE_UI_RESOURCE,
@@ -40,6 +44,7 @@ import SecureComponent, {
   hasPermission,
 } from "../../../common/SecureComponent/SecureComponent";
 import GroupDetailsHeader from "./GroupDetailsHeader";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -191,17 +196,16 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
           errorProps={{ disabled: true }}
         >
-          <Button
+          <RBIconButton
+            tooltip={memberActionText}
+            text={memberActionText}
             variant="contained"
             color="primary"
-            endIcon={<GroupsIcon />}
-            size="medium"
+            icon={<AddIcon />}
             onClick={() => {
               setUsersOpen(true);
             }}
-          >
-            {memberActionText}
-          </Button>
+          />
         </SecureComponent>
       </div>
 
@@ -236,17 +240,17 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
     <React.Fragment>
       <div className={classes.actionsTray}>
         <PanelTitle>Policies</PanelTitle>
-        <Button
+
+        <RBIconButton
+          tooltip={`Set Policies`}
+          text={`Set Policies`}
           variant="contained"
           color="primary"
-          endIcon={<IAMPoliciesIcon />}
-          size="medium"
+          icon={<IAMPoliciesIcon />}
           onClick={() => {
             setPolicyOpen(true);
           }}
-        >
-          Set Policies
-        </Button>
+        />
       </div>
       <div className={classes.tableBlock}>
         <TableWrapper
@@ -315,20 +319,18 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
                   errorProps={{ disabled: true }}
                 >
-                  <Tooltip title="Delete Group">
-                    <div className={classes.spacerLeft}>
-                      <BoxIconButton
-                        color="primary"
-                        aria-label="Delete Group"
-                        onClick={() => {
-                          setDeleteOpen(true);
-                        }}
-                        size="large"
-                      >
-                        <TrashIcon />
-                      </BoxIconButton>
-                    </div>
-                  </Tooltip>
+                  <div className={classes.spacerLeft}>
+                    <RBIconButton
+                      tooltip={`Delete Group`}
+                      text={``}
+                      variant="outlined"
+                      color="secondary"
+                      icon={<TrashIcon />}
+                      onClick={() => {
+                        setDeleteOpen(true);
+                      }}
+                    />
+                  </div>
                 </SecureComponent>
               </Fragment>
             }
