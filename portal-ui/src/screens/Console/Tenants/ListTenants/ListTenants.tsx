@@ -46,7 +46,6 @@ import AButton from "../../Common/AButton/AButton";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
-import BucketListItem from "../../Buckets/ListBuckets/BucketListItem";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
