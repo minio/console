@@ -297,7 +297,7 @@ const EditTenantMonitoringModal = ({
           key={`cpuRequest`}
           error={validationErrors[`cpuRequest`] || ""}
         />
-         <h4>Prometheus Memory Request</h4>
+         <h4>Prometheus Memory Request (GB)</h4>
         <InputBoxWrapper
           id={`memRequest`}
           label={""}

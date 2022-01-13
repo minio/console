@@ -321,7 +321,18 @@ const TenantMonitoring = ({
                             <td>{monitoringInfo?.monitoringMemRequest}</td>
                           </tr>
                         )}
-                        
+                        {monitoringInfo.nodeSelector != null &&
+                        monitoringInfo.nodeSelector.length > 0 && (
+                          <tr>
+                            <h4>Node Selector:</h4>
+                            <td className={classes.titleCol}>
+                              <KeyPairView
+                                records={monitoringInfo.nodeSelector}
+                                recordName="Node Selector"
+                              />
+                            </td>
+                          </tr>
+                        )}
                     </Fragment>                      
                       
                   )} 
