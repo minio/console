@@ -2299,7 +2299,9 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	minTenant.Spec.Prometheus.Image = params.Data.Image
 	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
 	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
-	minTenant.Spec.Prometheus.StorageClassName = &storageClassName
+	if storageClassName != "" {
+		minTenant.Spec.Prometheus.StorageClassName = &storageClassName
+	}
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
