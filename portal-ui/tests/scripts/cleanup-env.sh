@@ -1,3 +1,12 @@
+add_alias() {
+    for i in $(seq 1 4); do
+        echo "... attempting to add alias $i"
+        until (mc alias set minio http://127.0.0.1:9000 minioadmin minioadmin); do
+            echo "...waiting... for 5secs" && sleep 5
+        done
+    done
+}
+
 remove_users() {
   mc admin user remove minio bucketassignpolicy-$TIMESTAMP
   mc admin user remove minio bucketread-$TIMESTAMP
@@ -34,10 +43,19 @@ remove_policies() {
   mc admin policy remove minio watch-$TIMESTAMP
 }
 
-main() {
+__init__() {
   export TIMESTAMP="$(cat portal-ui/tests/constants/timestamp.txt)"
+  export GOPATH=/tmp/gopath
+  export PATH=${PATH}:${GOPATH}/bin
+
+  go install github.com/minio/mc@latest
+
+  add_alias
+}
+
+main() {
   remove_users
   remove_policies
 }
 
-( main "$@" )
+( __init__ "$@" && main "$@" )
