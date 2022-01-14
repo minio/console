@@ -16,6 +16,7 @@
 
 import { LicenseInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
+import { NodeMaxAllocatableResources } from "../types";
 
 export interface IEvent {
   namespace: string;
@@ -141,6 +142,8 @@ export interface ITenantMonitoringStruct {
   diskCapacityGB: string;
   serviceAccountName: string;
   prometheusEnabled: boolean;
+  monitoringCPURequest: string;
+  monitoringMemRequest: string;
 }
 
 export interface IKeyValue {

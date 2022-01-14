@@ -2589,6 +2589,10 @@ definitions:
         type: string  
       storageClassName:
         type: string    
+      monitoringCPURequest:
+        type: string       
+      monitoringMemRequest:
+        type: string          
  
   label:
     type: object

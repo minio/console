@@ -3360,6 +3360,12 @@ func init() {
             "$ref": "#/definitions/label"
           }
         },
+        "monitoringCPURequest": {
+          "type": "string"
+        },
+        "monitoringMemRequest": {
+          "type": "string"
+        },
         "nodeSelector": {
           "type": "array",
           "items": {
@@ -7561,6 +7567,12 @@ func init() {
           "items": {
             "$ref": "#/definitions/label"
           }
+        },
+        "monitoringCPURequest": {
+          "type": "string"
+        },
+        "monitoringMemRequest": {
+          "type": "string"
         },
         "nodeSelector": {
           "type": "array",
