@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -28,7 +28,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { BulkReplicationResponse } from "../types";
+import { BucketReplicationRule, BulkReplicationResponse } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -46,6 +46,7 @@ interface IReplicationModal {
   classes: any;
   bucketName: string;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
+  setReplicationRules: BucketReplicationRule[];
 }
 
 const styles = (theme: Theme) =>
@@ -81,8 +82,10 @@ const AddReplicationModal = ({
   classes,
   bucketName,
   setModalErrorSnackMessage,
+  setReplicationRules,
 }: IReplicationModal) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [priority, setPriority] = useState<string>("1");
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [targetURL, setTargetURL] = useState<string>("");
@@ -98,6 +101,23 @@ const AddReplicationModal = ({
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
   const [healthCheck, setHealthCheck] = useState<string>("60");
+
+  useEffect(() => {
+    if (setReplicationRules.length === 0) {
+      setPriority("1");
+      return;
+    }
+
+    const greatestValue = setReplicationRules.reduce((prevAcc, currValue) => {
+      if (currValue.priority > prevAcc) {
+        return currValue.priority;
+      }
+      return prevAcc;
+    }, 0);
+
+    const nextPriority = greatestValue + 1;
+    setPriority(nextPriority.toString());
+  }, [setReplicationRules]);
 
   const addRecord = () => {
     const replicate = [
@@ -127,6 +147,7 @@ const AddReplicationModal = ({
       tags: tags,
       replicateDeleteMarkers: repDeleteMarker,
       replicateDeletes: repDelete,
+      priority: parseInt(priority),
     };
 
     api
@@ -184,6 +205,20 @@ const AddReplicationModal = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id="priority"
+                name="priority"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.validity.valid) {
+                    setPriority(e.target.value);
+                  }
+                }}
+                label="Priority"
+                value={priority}
+                pattern={"[0-9]*"}
+              />
+            </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="targetURL"
