@@ -138,7 +138,7 @@ export const bucketsAccessReadWriteInput = Selector(
 ).withText("Readwrite");
 export const uploadInput = Selector("#file-input");
 export const createPolicyName = Selector("#policy-name");
-export const createPolicyTextfield = Selector(".CodeMirror");
+export const createPolicyTextfield = Selector(".cm-content");
 export const usersAccessKeyInput = Selector("#accesskey-input");
 export const usersSecretKeyInput = Selector("#standard-multiline-static");
 export const groupNameInput = Selector("#group-name");
