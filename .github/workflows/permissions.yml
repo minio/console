@@ -33,6 +33,11 @@ jobs:
         run: |
           make console
 
+      - name: Start front-end app
+        working-directory: ./portal-ui
+        run: |
+          yarn && yarn start && sleep 60
+
       - name: Initialize users & policies
         run: |
           make initialize-permissions
