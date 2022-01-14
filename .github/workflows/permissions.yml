@@ -35,7 +35,7 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server && sleep 150) & (cd portal-ui && yarn && yarn start && sleep 150) & (make initialize-permissions && sleep 150)
+          (./console server && sleep 180) & (cd portal-ui && yarn && yarn start && sleep 180) & (make initialize-permissions && sleep 180)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
