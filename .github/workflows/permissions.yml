@@ -33,14 +33,9 @@ jobs:
         run: |
           make console
 
-      - name: Start front-end app
-        working-directory: ./portal-ui
+      - name: Start front-end app & initialize users & policies
         run: |
-          yarn && yarn start && sleep 60
-
-      - name: Initialize users & policies
-        run: |
-          make initialize-permissions
+          (cd portal-ui && yarn && yarn start && sleep 60) & (make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
