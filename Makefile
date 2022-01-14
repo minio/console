@@ -73,6 +73,12 @@ test-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh)
 	@(docker stop minio)
 
+initialize-permissions:
+	@(env bash $(PWD)/portal-ui/tests/scripts/initialize-env.sh)
+
+cleanup-permissions:
+	@(env bash $(PWD)/portal-ui/tests/scripts/cleanup-env.sh)
+
 test:
 	@(GO111MODULE=on go test -race -v github.com/minio/console/restapi/...)
 

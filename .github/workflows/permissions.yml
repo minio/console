@@ -33,10 +33,15 @@ jobs:
         run: |
           make console
 
-      - name: Install modules
-        working-directory: ./portal-ui
-        run: npm i -g testcafe && yarn
+      - name: Initialize users & policies
+        run: |
+          make initialize-permissions
+
+      - name: Run TestCafe Tests
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors'
 
       - name: Run permission tests
         run: |
-          make test-permissions
+          make cleanup-permissions
