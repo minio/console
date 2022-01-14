@@ -2521,6 +2521,15 @@ definitions:
         type: string
       disabled:
         type: boolean
+      logCPURequest:
+        type: string
+      logMemRequest:
+        type: string 
+      logDBCPURequest:
+        type: string
+      logDBMemRequest:
+        type: string    
+     
 
   listPVCsResponse:
     type: object

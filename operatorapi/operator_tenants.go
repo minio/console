@@ -1789,14 +1789,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		minTenant.Spec.Log.Audit = &miniov2.AuditConfig{DiskCapacityGB: swag.Int(0)}
 	}
 
-	/*if minTenant.Spec.Log.Image == "" {
-		minTenant.Spec.Log.Image = miniov2.DefaultLogSearchAPIImage
-	}
-
-	if minTenant.Spec.Log.Db.Image == "" {
-		minTenant.Spec.Log.Db.Image = miniov2.LogPgImage
-	}*/
-
 	retval := &models.TenantLogs{
 		Image:                minTenant.Spec.Log.Image,
 		DiskCapacityGB:       fmt.Sprintf("%d", *minTenant.Spec.Log.Audit.DiskCapacityGB),
@@ -1811,6 +1803,35 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		DbServiceAccountName: minTenant.Spec.Log.Db.ServiceAccountName,
 		Disabled:             false,
 	}
+
+	var requestedCPU string
+	var requestedMem string
+	var requestedDBCPU string
+	var requestedDBMem string
+	if minTenant.Spec.Log.Resources.Requests != nil {
+		requestedCPUQ := minTenant.Spec.Log.Resources.Requests["cpu"]
+		requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
+		requestedMemQ := minTenant.Spec.Log.Resources.Requests["memory"]
+		requestedMem = strconv.FormatInt(requestedMemQ.Value(), 10)
+
+		requestedDBCPUQ := minTenant.Spec.Log.Db.Resources.Requests["cpu"]
+		requestedDBCPU = strconv.FormatInt(requestedDBCPUQ.Value(), 10)
+		requestedDBMemQ := minTenant.Spec.Log.Db.Resources.Requests["memory"]
+		requestedDBMem = strconv.FormatInt(requestedDBMemQ.Value(), 10)
+
+		retval.LogCPURequest = requestedCPU
+		retval.LogMemRequest = requestedMem
+		retval.LogDBCPURequest = requestedDBCPU
+		retval.LogDBMemRequest = requestedDBMem
+	}
+	/*if minTenant.Spec.Log.Image == "" {
+		minTenant.Spec.Log.Image = miniov2.DefaultLogSearchAPIImage
+	}
+
+	if minTenant.Spec.Log.Db.Image == "" {
+		minTenant.Spec.Log.Db.Image = miniov2.LogPgImage
+	}*/
+
 	return retval, nil
 }
 
@@ -1879,6 +1900,41 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 		}
 		modified = true
 	}
+
+	logResourceRequest := make(corev1.ResourceList)
+	if &params.Data.LogCPURequest != nil {
+		cpuQuantity, err := resource.ParseQuantity(params.Data.LogCPURequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		logResourceRequest["cpu"] = cpuQuantity
+	}
+	if &params.Data.LogMemRequest != nil {
+		memQuantity, err := resource.ParseQuantity(params.Data.LogMemRequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		logResourceRequest["memory"] = memQuantity
+	}
+
+	logDBResourceRequest := make(corev1.ResourceList)
+	if &params.Data.LogDBCPURequest != nil {
+		cpuQuantity, err := resource.ParseQuantity(params.Data.LogDBCPURequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		logDBResourceRequest["cpu"] = cpuQuantity
+	}
+	if &params.Data.LogDBMemRequest != nil {
+		memQuantity, err := resource.ParseQuantity(params.Data.LogDBMemRequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		logDBResourceRequest["memory"] = memQuantity
+	}
+	minTenant.Spec.Log.Resources.Requests = logResourceRequest
+	minTenant.Spec.Log.Db.Resources.Requests = logDBResourceRequest
+
 	minTenant.Spec.Log.Image = params.Data.Image
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {

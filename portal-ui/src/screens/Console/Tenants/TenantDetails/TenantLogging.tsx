@@ -40,6 +40,7 @@ import { ITenantLogsStruct } from "../ListTenants/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { niceBytes } from "../../../../common/utils";
 
 interface ITenantLogs {
   classes: any;
@@ -199,6 +200,10 @@ const TenantLogging = ({
           dbAnnotations={logInfo.dbAnnotations}
           dbNodeSelector={logInfo.dbNodeSelector}
           dbServiceAccountName={logInfo.dbServiceAccountName}
+          cpuRequest={logInfo.logCPURequest}
+          memRequest={logInfo.logMemRequest}
+          dbCPURequest={logInfo.logDBCPURequest} 
+          dbMemRequest={logInfo.logDBMemRequest}
         />
       )}
       <h1 className={classes.sectionTitle}>Logging</h1>
@@ -249,6 +254,26 @@ const TenantLogging = ({
                     </tr>
                   ) : (
                     <Fragment>
+{logInfo?.logCPURequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>CPU Request:</td>
+                          <td>{logInfo?.logCPURequest}</td>
+                        </tr>
+                      )}
+                      {logInfo?.logMemRequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Memory Request:</td>
+                          <td>
+                            {niceBytes(
+                              logInfo?.logMemRequest,
+                              true
+                            )}
+                          </td>
+                        </tr>
+                      )}
+
+
+
                       <tr>
                         <td className={classes.titleCol}>Image:</td>
                         <td>{logInfo?.image}</td>
@@ -268,6 +293,7 @@ const TenantLogging = ({
                           <h4>Labels</h4>
                         </td>
                       </tr>
+                      
                       <tr>
                         <td>
                           <KeyPairView
@@ -331,6 +357,23 @@ const TenantLogging = ({
                     </tr>
                   ) : (
                     <Fragment>
+                      {logInfo?.logDBCPURequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>DB CPU Request:</td>
+                          <td>{logInfo?.logDBCPURequest}</td>
+                        </tr>
+                      )}
+                      {logInfo?.logDBMemRequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>DB Memory Request:</td>
+                          <td>
+                            {niceBytes(
+                              logInfo?.logDBMemRequest,
+                              true
+                            )}
+                          </td>
+                        </tr>
+                      )}
                       <tr>
                         <td className={classes.titleCol}>Postgres Image:</td>
                         <td>{logInfo?.dbImage}</td>
@@ -392,6 +435,7 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
+                     
                     </Fragment>
                   )}
                 </tbody>
