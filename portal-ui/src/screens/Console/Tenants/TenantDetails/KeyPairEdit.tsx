@@ -63,6 +63,7 @@ const styles = (theme: Theme) =>
       gridTemplateColumns: "auto auto 20px 20px",
       display: "grid",
       gridGap: 20,
+      paddingRight: 20,
     },
     ...modalBasic,
   });
