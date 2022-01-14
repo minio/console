@@ -43,19 +43,24 @@ test("Bucket access is set to R", async (t) => {
   await t.expect(elements.bucketAccessText.innerText).eql("Access: R");
 });
 
-test.before(async (t) => {
-  await t
-    .useRole(roles.admin)
-    .navigateTo("http://localhost:5005/buckets")
-    .click(elements.browseButton)
-    // Upload object to bucket
-    .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
-    .click(elements.logoutItem)
-})
-("Object list table is enabled", async (t) => {
-  const bucketsTableExists = elements.table.exists;
-  await t.useRole(roles.bucketRead).click(elements.browseButton).expect(bucketsTableExists).ok();
-}).after(async (t) => {
-  // Cleanup created bucket and corresponding uploads
-  await functions.cleanUpBucketAndUploads(t);
-});
+test
+  .before(async (t) => {
+    await t
+      .useRole(roles.admin)
+      .navigateTo("http://localhost:5005/buckets")
+      .click(elements.browseButton)
+      // Upload object to bucket
+      .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
+      .click(elements.logoutItem);
+  })("Object list table is enabled", async (t) => {
+    const bucketsTableExists = elements.table.exists;
+    await t
+      .useRole(roles.bucketRead)
+      .click(elements.browseButton)
+      .expect(bucketsTableExists)
+      .ok();
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t);
+  });

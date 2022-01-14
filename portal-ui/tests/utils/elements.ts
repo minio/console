@@ -89,13 +89,12 @@ export const createBucketButton = Selector("button:enabled").withText("Create Bu
 export const deleteBucketButton = Selector("button:enabled").withText("Delete Bucket");
 export const createUserButton = Selector("button:enabled").withText("Create User");
 export const createGroupButton = Selector("button:enabled").withText("Create Group");
-export const deleteGroupIconButton = Selector("button:enabled").withAttribute(
-  "aria-label",
-  "Delete Group"
-);
+export const deleteGroupIconButton = Selector("span")
+  .withAttribute("aria-label", "Delete Group")
+  .find("button:enabled");
 export const editMembersButton = Selector("button:enabled").withText("Edit Members");
 export const addAccessRuleButton =
-  Selector("label").withText("Add Access Rule");
+  Selector("button:enabled").withText("Add Access Rule");
 export const startDiagnosticButton =
   Selector("button:enabled").withText("Start Diagnostic");
 export const startNewDiagnosticButton = Selector("button:enabled").withText(
@@ -136,7 +135,7 @@ export const bucketsAccessWriteOnlyInput = Selector(
 export const bucketsAccessReadWriteInput = Selector(
   'li[class*="MuiMenuItem-root"]'
 ).withText("Readwrite");
-export const uploadInput = Selector("#file-input");
+export const uploadInput = Selector("input").withAttribute("type", "file");
 export const createPolicyName = Selector("#policy-name");
 export const createPolicyTextfield = Selector(".cm-content");
 export const usersAccessKeyInput = Selector("#accesskey-input");
