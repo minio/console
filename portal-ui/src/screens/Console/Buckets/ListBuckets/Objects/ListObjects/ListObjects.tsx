@@ -1202,26 +1202,28 @@ const ListObjects = ({
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <RBIconButton
-                    tooltip={"Upload folder"}
-                    onClick={() => {
-                      if (folderUpload && folderUpload.current) {
-                        folderUpload.current.click();
-                      }
-                    }}
-                    text={""}
-                    icon={<UploadFolderIcon />}
-                    color="primary"
-                    disabled={rewindEnabled}
-                    variant={"outlined"}
-                  />
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleUploadButton}
-                    style={{ display: "none" }}
-                    ref={folderUpload}
-                  />
+                  <Fragment>
+                    <RBIconButton
+                      tooltip={"Upload folder"}
+                      onClick={() => {
+                        if (folderUpload && folderUpload.current) {
+                          folderUpload.current.click();
+                        }
+                      }}
+                      text={""}
+                      icon={<UploadFolderIcon />}
+                      color="primary"
+                      disabled={rewindEnabled}
+                      variant={"outlined"}
+                    />
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleUploadButton}
+                      style={{ display: "none" }}
+                      ref={folderUpload}
+                    />
+                  </Fragment>
                 </SecureComponent>
 
                 <SecureComponent
