@@ -29,10 +29,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// SubnetOrganisation subnet organisation
+// SubnetOrganization subnet organization
 //
-// swagger:model subnetOrganisation
-type SubnetOrganisation struct {
+// swagger:model subnetOrganization
+type SubnetOrganization struct {
 
 	// account Id
 	AccountID int64 `json:"accountId,omitempty"`
@@ -53,18 +53,18 @@ type SubnetOrganisation struct {
 	UserID int64 `json:"userId,omitempty"`
 }
 
-// Validate validates this subnet organisation
-func (m *SubnetOrganisation) Validate(formats strfmt.Registry) error {
+// Validate validates this subnet organization
+func (m *SubnetOrganization) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this subnet organisation based on context it is used
-func (m *SubnetOrganisation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this subnet organization based on context it is used
+func (m *SubnetOrganization) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *SubnetOrganisation) MarshalBinary() ([]byte, error) {
+func (m *SubnetOrganization) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -72,8 +72,8 @@ func (m *SubnetOrganisation) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *SubnetOrganisation) UnmarshalBinary(b []byte) error {
-	var res SubnetOrganisation
+func (m *SubnetOrganization) UnmarshalBinary(b []byte) error {
+	var res SubnetOrganization
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

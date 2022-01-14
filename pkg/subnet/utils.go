@@ -20,29 +20,23 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/minio/console/cluster"
-	"github.com/minio/madmin-go"
-	mc "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/pkg/env"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/minio/console/cluster"
+	"github.com/minio/madmin-go"
+	mc "github.com/minio/mc/cmd"
+	"github.com/minio/pkg/env"
 )
 
 const (
-	subnetRespBodyLimit  = 1 << 20 // 1 MiB
-	minioSubscriptionURL = "https://min.io/subscription"
+	subnetRespBodyLimit = 1 << 20 // 1 MiB
 )
 
 func subnetBaseURL() string {
 	return env.Get(ConsoleSubnetURL, "https://subnet.min.io")
-}
-
-func subnetHealthUploadURL() string {
-	return subnetBaseURL() + "/api/health/upload"
 }
 
 func subnetRegisterURL() string {
@@ -59,22 +53,6 @@ func subnetOrgsURL() string {
 
 func subnetMFAURL() string {
 	return subnetBaseURL() + "/api/auth/mfa-login"
-}
-
-func checkURLReachable(client cluster.HTTPClientI, url string) *probe.Error {
-	req, e := http.NewRequest(http.MethodHead, url, nil)
-	if e != nil {
-		return probe.NewError(e).Trace(url)
-	}
-	resp, e := client.Do(req)
-	if e != nil {
-		return probe.NewError(e).Trace(url)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return probe.NewError(errors.New(resp.Status)).Trace(url)
-	}
-	return nil
 }
 
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {

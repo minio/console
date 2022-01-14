@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: []
+  - key: [ ]
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
     post:
@@ -55,7 +55,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
   /login/oauth2/auth:
@@ -75,7 +75,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -2051,8 +2051,8 @@ paths:
       responses:
         200:
           description: A successful response.
-#          schema:
-#            $ref: "#/definitions/subnetRegisterResponse"
+        #          schema:
+        #            $ref: "#/definitions/subnetRegisterResponse"
         default:
           description: Generic error response.
           schema:
@@ -2406,7 +2406,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [timeDesc, timeAsc]
+          enum: [ timeDesc, timeAsc ]
           default: timeDesc
         - name: timeStart
           in: query
@@ -3138,7 +3138,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account]
+        enum: [ form, redirect, service-account ]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -3224,7 +3224,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ok]
+        enum: [ ok ]
       operator:
         type: boolean
       distributedMode:
@@ -3245,7 +3245,7 @@ definitions:
           type: string
       values:
         type: array
-        items: {}
+        items: { }
   resultTarget:
     type: object
     properties:
@@ -3525,7 +3525,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [replication]
+        enum: [ replication ]
       syncMode:
         type: string
       bandwidth:
@@ -4008,10 +4008,10 @@ definitions:
     properties:
       access_token:
         type: string
-      organisations:
+      organizations:
         type: array
         items:
-          $ref: "#/definitions/subnetOrganisation"
+          $ref: "#/definitions/subnetOrganization"
       mfa_token:
         type: string
       registered:
@@ -4058,7 +4058,7 @@ definitions:
       regToken:
         type: string
 
-  subnetOrganisation:
+  subnetOrganization:
     type: object
     properties:
       userId:

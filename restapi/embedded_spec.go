@@ -5583,10 +5583,10 @@ func init() {
         "mfa_token": {
           "type": "string"
         },
-        "organisations": {
+        "organizations": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/subnetOrganisation"
+            "$ref": "#/definitions/subnetOrganization"
           }
         },
         "registered": {
@@ -5594,7 +5594,7 @@ func init() {
         }
       }
     },
-    "subnetOrganisation": {
+    "subnetOrganization": {
       "type": "object",
       "properties": {
         "accountId": {
@@ -11637,10 +11637,10 @@ func init() {
         "mfa_token": {
           "type": "string"
         },
-        "organisations": {
+        "organizations": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/subnetOrganisation"
+            "$ref": "#/definitions/subnetOrganization"
           }
         },
         "registered": {
@@ -11648,7 +11648,7 @@ func init() {
         }
       }
     },
-    "subnetOrganisation": {
+    "subnetOrganization": {
       "type": "object",
       "properties": {
         "accountId": {

@@ -31,7 +31,7 @@ import (
 )
 
 func LoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp string) (*LoginResp, error) {
-	mfaLoginReq := SubnetMFAReq{Username: username, OTP: otp, Token: mfaToken}
+	mfaLoginReq := MfaReq{Username: username, OTP: otp, Token: mfaToken}
 	resp, err := subnetPostReq(client, subnetMFAURL(), mfaLoginReq, nil)
 	if err != nil {
 		return nil, err
@@ -67,18 +67,18 @@ func Login(client cluster.HTTPClientI, username, password string) (*LoginResp, e
 	return nil, errors.New("access token not found in response")
 }
 
-func GetOrganisations(client cluster.HTTPClientI, token string) ([]*models.SubnetOrganisation, error) {
+func GetOrganizations(client cluster.HTTPClientI, token string) ([]*models.SubnetOrganization, error) {
 	headers := subnetAuthHeaders(token)
 	respStr, err := subnetGetReq(client, subnetOrgsURL(), headers)
 	if err != nil {
 		return nil, err
 	}
-	var organisations []*models.SubnetOrganisation
-	err = json.Unmarshal([]byte(respStr), &organisations)
+	var organizations []*models.SubnetOrganization
+	err = json.Unmarshal([]byte(respStr), &organizations)
 	if err != nil {
 		log.Println(err)
 	}
-	return organisations, nil
+	return organizations, nil
 }
 
 func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (string, error) {

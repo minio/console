@@ -28,7 +28,7 @@ import {
   SubnetLoginRequest,
   SubnetLoginResponse,
   SubnetLoginWithMFARequest,
-  SubnetOrganisation,
+  SubnetOrganization,
   SubnetRegisterRequest,
   SubnetRegTokenResponse,
 } from "./types";
@@ -95,8 +95,8 @@ const ActivationModal = ({
   const [selectedSubnetOrganisation, setSelectedSubnetOrganisation] =
     useState<string>("");
   const [subnetRegToken, setSubnetRegToken] = useState<string>("");
-  const [subnetOrganisations, setSubnetOrganisations] = useState<
-    SubnetOrganisation[]
+  const [subnetOrganizations, setSubnetOrganizations] = useState<
+    SubnetOrganization[]
   >([]);
   const [onlineActivation, setOnlineActivation] = useState<boolean>(true);
 
@@ -167,11 +167,11 @@ const ActivationModal = ({
       .invoke("POST", "/api/v1/subnet/login/mfa", request)
       .then((resp: SubnetLoginResponse) => {
         setLoading(false);
-        if (resp && resp.access_token && resp.organisations.length > 0) {
+        if (resp && resp.access_token && resp.organizations.length > 0) {
           setSubnetAccessToken(resp.access_token);
-          setSubnetOrganisations(resp.organisations);
+          setSubnetOrganizations(resp.organizations);
           setSelectedSubnetOrganisation(
-            resp.organisations[0].accountId.toString()
+            resp.organizations[0].accountId.toString()
           );
         }
       })
@@ -201,11 +201,11 @@ const ActivationModal = ({
           closeModal();
         } else if (resp && resp.mfa_token) {
           setSubnetMFAToken(resp.mfa_token);
-        } else if (resp && resp.access_token && resp.organisations.length > 0) {
+        } else if (resp && resp.access_token && resp.organizations.length > 0) {
           setSubnetAccessToken(resp.access_token);
-          setSubnetOrganisations(resp.organisations);
+          setSubnetOrganizations(resp.organizations);
           setSelectedSubnetOrganisation(
-            resp.organisations[0].accountId.toString()
+            resp.organizations[0].accountId.toString()
           );
         }
       })
@@ -217,7 +217,7 @@ const ActivationModal = ({
   };
 
   let clusterRegistrationForm: JSX.Element;
-  if (subnetAccessToken && subnetOrganisations.length > 0) {
+  if (subnetAccessToken && subnetOrganizations.length > 0) {
     clusterRegistrationForm = (
       <Fragment>
         <Grid item xs={12}>
@@ -235,7 +235,7 @@ const ActivationModal = ({
             onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
               setSelectedSubnetOrganisation(e.target.value as string);
             }}
-            selectorOptions={subnetOrganisations.map((organisation) => ({
+            selectorOptions={subnetOrganizations.map((organisation) => ({
               value: organisation.accountId.toString(),
               label: organisation.company,
             }))}

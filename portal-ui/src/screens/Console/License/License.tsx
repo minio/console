@@ -306,6 +306,19 @@ interface ILicenseProps {
 }
 
 const License = ({ classes, operatorMode }: ILicenseProps) => {
+  const [activateProductModal, setActivateProductModal] =
+    useState<boolean>(false);
+
+  const [licenseModal, setLicenseModal] = useState<boolean>(false);
+
+  const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
+  const [currentPlanID, setCurrentPlanID] = useState<number>(0);
+  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
+  const [initialLicenseLoading, setInitialLicenseLoading] =
+    useState<boolean>(true);
+  const [loadingRefreshLicense, setLoadingRefreshLicense] =
+    useState<boolean>(false);
+
   const getSubnetInfo = hasPermission(
     CONSOLE_UI_RESOURCE,
     IAM_PAGES_PERMISSIONS[IAM_PAGES.LICENSE],
@@ -317,7 +330,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
     fetchLicenseInfo();
   };
 
-  const fetchLicenseInfo = () => {
+  const fetchLicenseInfo = useCallback(() => {
     if (loadingLicenseInfo) {
       return;
     }
@@ -344,7 +357,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
     } else {
       setLoadingLicenseInfo(false);
     }
-  };
+  }, [loadingLicenseInfo, getSubnetInfo]);
 
   const refreshLicense = () => {
     setLoadingRefreshLicense(true);
@@ -368,20 +381,12 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       });
   };
 
-  const [activateProductModal, setActivateProductModal] =
-    useState<boolean>(false);
-
-  const [licenseModal, setLicenseModal] = useState<boolean>(false);
-
-  const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
-  const [currentPlanID, setCurrentPlanID] = useState<number>(0);
-  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
-  const [loadingRefreshLicense, setLoadingRefreshLicense] =
-    useState<boolean>(false);
-
   useEffect(() => {
-    fetchLicenseInfo();
-  }, []);
+    if (initialLicenseLoading) {
+      fetchLicenseInfo();
+      setInitialLicenseLoading(false);
+    }
+  }, [fetchLicenseInfo, initialLicenseLoading, setInitialLicenseLoading]);
 
   if (loadingLicenseInfo) {
     return (

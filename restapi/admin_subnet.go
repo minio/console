@@ -20,6 +20,7 @@ package restapi
 import (
 	"context"
 	"errors"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
@@ -72,7 +73,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-func SubnetRegisterWithApiKey(ctx context.Context, minioClient MinioAdmin, apiKey string) (bool, error) {
+func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKey string) (bool, error) {
 	serverInfo, err := minioClient.serverInfo(ctx)
 	if err != nil {
 		return false, err
@@ -118,31 +119,30 @@ func GetSubnetLoginResponse(session *models.Principal, params admin_api.SubnetLo
 	minioClient := AdminClient{Client: mAdmin}
 	apiKey := params.Body.APIKey
 	if apiKey != "" {
-		registered, err := SubnetRegisterWithApiKey(ctx, minioClient, apiKey)
+		registered, err := SubnetRegisterWithAPIKey(ctx, minioClient, apiKey)
 		if err != nil {
 			return nil, prepareError(err)
 		}
 		return &models.SubnetLoginResponse{
 			Registered:    registered,
-			Organisations: []*models.SubnetOrganisation{},
-		}, nil
-	} else {
-		token, mfa, err := SubnetLogin(httpClient, params.Body.Username, params.Body.Password)
-		if err != nil {
-			return nil, prepareError(err)
-		}
-		return &models.SubnetLoginResponse{
-			MfaToken:      mfa,
-			AccessToken:   token,
-			Organisations: []*models.SubnetOrganisation{},
+			Organizations: []*models.SubnetOrganization{},
 		}, nil
 	}
+	token, mfa, err := SubnetLogin(httpClient, params.Body.Username, params.Body.Password)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return &models.SubnetLoginResponse{
+		MfaToken:      mfa,
+		AccessToken:   token,
+		Organizations: []*models.SubnetOrganization{},
+	}, nil
 }
 
 type SubnetRegistration struct {
 	AccessToken   string
 	MFAToken      string
-	Organisations []models.SubnetOrganisation
+	Organizations []models.SubnetOrganization
 }
 
 func SubnetLoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp string) (*models.SubnetLoginResponse, error) {
@@ -151,13 +151,13 @@ func SubnetLoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp stri
 		return nil, err
 	}
 	if tokens.AccessToken != "" {
-		organisations, errOrg := subnet.GetOrganisations(client, tokens.AccessToken)
+		organizations, errOrg := subnet.GetOrganizations(client, tokens.AccessToken)
 		if errOrg != nil {
 			return nil, errOrg
 		}
 		return &models.SubnetLoginResponse{
 			AccessToken:   tokens.AccessToken,
-			Organisations: organisations,
+			Organizations: organizations,
 		}, nil
 	}
 	return nil, errors.New("something went wrong")

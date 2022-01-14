@@ -34,7 +34,7 @@ export interface SubnetRegisterRequest {
   account_id: string;
 }
 
-export interface SubnetOrganisation {
+export interface SubnetOrganization {
   userId: number;
   accountId: number;
   subscriptionStatus: string;
@@ -47,7 +47,7 @@ export interface SubnetLoginResponse {
   registered: boolean;
   mfa_token: string;
   access_token: string;
-  organisations: SubnetOrganisation[];
+  organizations: SubnetOrganization[];
 }
 
 export interface SubnetLoginWithMFARequest {
