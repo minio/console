@@ -4578,6 +4578,11 @@ func init() {
         "prefix": {
           "type": "string"
         },
+        "priority": {
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
         "region": {
           "type": "string"
         },
@@ -10408,6 +10413,11 @@ func init() {
         },
         "prefix": {
           "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32",
+          "default": 0
         },
         "region": {
           "type": "string"
