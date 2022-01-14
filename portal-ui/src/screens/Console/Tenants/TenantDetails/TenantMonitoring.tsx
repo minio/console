@@ -38,6 +38,7 @@ import { EditIcon } from "../../../../icons";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
+import { niceBytes } from "../../../../common/utils";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
@@ -160,6 +161,8 @@ const TenantMonitoring = ({
           tenantName={tenantName}
           tenantNamespace={tenantNamespace}
           storageClassName={monitoringInfo?.storageClassName || ""}
+          cpuRequest={monitoringInfo?.monitoringCPURequest || ""}
+          memRequest={monitoringInfo?.monitoringMemRequest || ""}
         />
       )}
       {confirmOpen && (
@@ -303,10 +306,27 @@ const TenantMonitoring = ({
                             </tr>
                           </>
                         )}
+                      {monitoringInfo.monitoringCPURequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>CPU Request:</td>
+                          <td>{monitoringInfo?.monitoringCPURequest}</td>
+                        </tr>
+                      )}
+                      {monitoringInfo.monitoringMemRequest != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Memory Request:</td>
+                          <td>
+                            {niceBytes(
+                              monitoringInfo?.monitoringMemRequest,
+                              true
+                            )}
+                          </td>
+                        </tr>
+                      )}
                       {monitoringInfo.nodeSelector != null &&
                         monitoringInfo.nodeSelector.length > 0 && (
                           <tr>
-                            <h4>Node Seletor</h4>
+                            <h4>Node Selector:</h4>
                             <td className={classes.titleCol}>
                               <KeyPairView
                                 records={monitoringInfo.nodeSelector}

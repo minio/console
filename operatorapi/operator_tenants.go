@@ -2143,49 +2143,75 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		return nil, prepareError(err)
 	}
 
-	var storageClassName string
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
-	if minInst.Spec.Prometheus == nil {
-		monitoringInfo := &models.TenantMonitoringInfo{
-			PrometheusEnabled: (false),
-		}
+	if minInst.Spec.Prometheus != nil {
+		monitoringInfo.PrometheusEnabled = true
+	} else {
+		monitoringInfo.PrometheusEnabled = false
 		return monitoringInfo, nil
 	}
 
+	var storageClassName string
 	if minInst.Spec.Prometheus.StorageClassName != nil {
 		storageClassName = *minInst.Spec.Prometheus.StorageClassName
+		monitoringInfo.StorageClassName = storageClassName
 	}
 
-	mLabels := []*models.Label{}
-	for k, v := range minInst.Spec.Prometheus.Labels {
-		mLabels = append(mLabels, &models.Label{Key: k, Value: v})
-	}
-	mAnnotations := []*models.Annotation{}
-	for k, v := range minInst.Spec.Prometheus.Annotations {
-		mAnnotations = append(mAnnotations, &models.Annotation{Key: k, Value: v})
-	}
-	mNodeSelector := []*models.NodeSelector{}
-	for k, v := range minInst.Spec.Prometheus.NodeSelector {
-		mNodeSelector = append(mNodeSelector, &models.NodeSelector{Key: k, Value: v})
+	var requestedCPU string
+	var requestedMem string
+
+	if minInst.Spec.Prometheus.Resources.Requests != nil {
+		requestedCPUQ := minInst.Spec.Prometheus.Resources.Requests["cpu"]
+		requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
+		requestedMemQ := minInst.Spec.Prometheus.Resources.Requests["memory"]
+		requestedMem = strconv.FormatInt(requestedMemQ.Value(), 10)
+		monitoringInfo.MonitoringCPURequest = requestedCPU
+		monitoringInfo.MonitoringMemRequest = requestedMem
 	}
 
-	if minInst.Spec.Prometheus != nil {
-		monitoringInfo = &models.TenantMonitoringInfo{
-			PrometheusEnabled:  (true),
-			Annotations:        mAnnotations,
-			DiskCapacityGB:     strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB),
-			Image:              minInst.Spec.Prometheus.Image,
-			InitImage:          minInst.Spec.Prometheus.InitImage,
-			Labels:             mLabels,
-			NodeSelector:       mNodeSelector,
-			ServiceAccountName: minInst.Spec.Prometheus.ServiceAccountName,
-			SidecarImage:       minInst.Spec.Prometheus.SideCarImage,
-			StorageClassName:   storageClassName,
+	if len(minInst.Spec.Prometheus.Labels) != 0 && minInst.Spec.Prometheus.Labels != nil {
+		mLabels := []*models.Label{}
+		for k, v := range minInst.Spec.Prometheus.Labels {
+			mLabels = append(mLabels, &models.Label{Key: k, Value: v})
 		}
-		return monitoringInfo, nil
+		monitoringInfo.Labels = mLabels
 	}
+
+	if len(minInst.Spec.Prometheus.Annotations) != 0 && minInst.Spec.Prometheus.Annotations != nil {
+		mAnnotations := []*models.Annotation{}
+		for k, v := range minInst.Spec.Prometheus.Annotations {
+			mAnnotations = append(mAnnotations, &models.Annotation{Key: k, Value: v})
+		}
+		monitoringInfo.Annotations = mAnnotations
+	}
+
+	if len(minInst.Spec.Prometheus.NodeSelector) != 0 && minInst.Spec.Prometheus.NodeSelector != nil {
+		mNodeSelector := []*models.NodeSelector{}
+		for k, v := range minInst.Spec.Prometheus.NodeSelector {
+			mNodeSelector = append(mNodeSelector, &models.NodeSelector{Key: k, Value: v})
+		}
+		monitoringInfo.NodeSelector = mNodeSelector
+	}
+
+	if *minInst.Spec.Prometheus.DiskCapacityDB != 0 {
+		monitoringInfo.DiskCapacityGB = strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB)
+	}
+	if len(minInst.Spec.Prometheus.Image) != 0 {
+		monitoringInfo.Image = minInst.Spec.Prometheus.Image
+	}
+	if len(minInst.Spec.Prometheus.InitImage) != 0 {
+		monitoringInfo.InitImage = minInst.Spec.Prometheus.InitImage
+	}
+	if len(minInst.Spec.Prometheus.ServiceAccountName) != 0 {
+		monitoringInfo.ServiceAccountName = minInst.Spec.Prometheus.ServiceAccountName
+	}
+	if len(minInst.Spec.Prometheus.SideCarImage) != 0 {
+		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
+	}
+
 	return monitoringInfo, nil
+
 }
 
 //sets tenant Prometheus monitoring cofiguration fields to values provided
@@ -2245,18 +2271,34 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		}
 	}
 
-	var storageClassName string
-	if &params.Data.StorageClassName != nil {
-		storageClassName = params.Data.StorageClassName
+	monitoringResourceRequest := make(corev1.ResourceList)
+	if &params.Data.MonitoringCPURequest != nil {
+
+		cpuQuantity, err := resource.ParseQuantity(params.Data.MonitoringCPURequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		memQuantity, err := resource.ParseQuantity(params.Data.MonitoringMemRequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		monitoringResourceRequest["cpu"] = cpuQuantity
+		monitoringResourceRequest["memory"] = memQuantity
 	}
 
+	minTenant.Spec.Prometheus.Resources.Requests = monitoringResourceRequest
 	minTenant.Spec.Prometheus.Labels = labels
 	minTenant.Spec.Prometheus.Annotations = annotations
 	minTenant.Spec.Prometheus.NodeSelector = nodeSelector
 	minTenant.Spec.Prometheus.Image = params.Data.Image
 	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
 	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
-	minTenant.Spec.Prometheus.StorageClassName = &storageClassName
+	if params.Data.StorageClassName == "" {
+		minTenant.Spec.Prometheus.StorageClassName = nil
+	} else {
+		minTenant.Spec.Prometheus.StorageClassName = &params.Data.StorageClassName
+	}
+
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
