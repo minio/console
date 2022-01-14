@@ -42,6 +42,6 @@ jobs:
         with:
           args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors'
 
-      - name: Run permission tests
+      - name: Clean up users & policies
         run: |
           make cleanup-permissions
