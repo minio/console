@@ -1,0 +1,15 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+        "admin:GetPolicy",
+        "admin:DeletePolicy",
+        "admin:CreatePolicy",
+        "admin:AttachUserOrGroupPolicy",
+        "admin:ListUserPolicies"
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		}
+	]
+}

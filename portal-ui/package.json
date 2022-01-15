@@ -58,6 +58,7 @@
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.3.1",
     "superagent": "^6.1.0",
+    "testcafe": "^1.17.1",
     "typeface-roboto": "^0.0.75",
     "use-debounce": "^5.0.1",
     "websocket": "^1.0.31"
