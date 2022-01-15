@@ -8,7 +8,7 @@ import {
   modalBasic,
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, Grid } from "@mui/material";
+import { Button } from "@mui/material";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
