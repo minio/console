@@ -271,29 +271,32 @@ const TenantLogging = ({
                           </td>
                         </tr>
                       )}
-
-
-
+                       {logInfo?.image != null && (
                       <tr>
                         <td className={classes.titleCol}>Image:</td>
                         <td>{logInfo?.image}</td>
                       </tr>
+                      )}
+                      {logInfo?.diskCapacityGB != null && (
                       <tr>
                         <td className={classes.titleCol}>
                           Disk Capacity (GB):
                         </td>
                         <td>{logInfo?.diskCapacityGB}</td>
                       </tr>
+                      )}
+                      {logInfo?.serviceAccountName != null && (
                       <tr>
                         <td className={classes.titleCol}>Service Account:</td>
                         <td>{logInfo?.serviceAccountName}</td>
                       </tr>
+                      )}
+                      {logInfo?.labels != null && logInfo.labels.length > 0 && (<Fragment>
                       <tr>
                         <td>
                           <h4>Labels</h4>
                         </td>
-                      </tr>
-                      
+                      </tr>                      
                       <tr>
                         <td>
                           <KeyPairView
@@ -306,6 +309,9 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
+                      </Fragment>
+                      )}
+                      {logInfo?.annotations != null && logInfo.annotations.length > 0 && (<Fragment>
                       <tr>
                         <td>
                           <h4>Annotations</h4>
@@ -323,6 +329,9 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
+                      </Fragment>
+                      )}
+                    {logInfo?.nodeSelector != null && logInfo.nodeSelector.length > 0 &&(<Fragment>
                       <tr>
                         <td>
                           <h4>Node Selector</h4>
@@ -340,6 +349,8 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
+                      </Fragment>
+                    )}
                     </Fragment>
                   )}
                 </tbody>
@@ -374,19 +385,24 @@ const TenantLogging = ({
                           </td>
                         </tr>
                       )}
+                      {logInfo?.dbImage != null && (
                       <tr>
                         <td className={classes.titleCol}>Postgres Image:</td>
                         <td>{logInfo?.dbImage}</td>
                       </tr>
+                      )}
+                      {logInfo?.dbServiceAccountName != null && (
                       <tr>
                         <td className={classes.titleCol}>Service Account:</td>
                         <td>{logInfo?.dbServiceAccountName}</td>
-                      </tr>
-                      <tr>
+                      </tr>                      
+                      )}
+                       {logInfo?.dbLabels != null && logInfo.dbLabels.length > 0 &&(<Fragment><tr>
                         <td>
                           <h4>Labels</h4>
                         </td>
                       </tr>
+                     
                       <tr>
                         <td>
                           <KeyPairView
@@ -399,6 +415,9 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
+                      </Fragment>
+                      )}
+                      {logInfo?.annotations != null && logInfo.dbAnnotations.length > 0 &&(<Fragment>
                       <tr>
                         <td>
                           <h4>Annotations</h4>
@@ -417,9 +436,12 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
+                      </Fragment>
+                      )}
+                    {logInfo?.nodeSelector != null && logInfo.dbNodeSelector.length > 0 &&(<Fragment>
                       <tr>
                         <td>
-                          <h4>Node Selector</h4>
+                          <h4>Node Selector </h4>
                         </td>
                       </tr>
                       <tr>
@@ -435,7 +457,8 @@ const TenantLogging = ({
                           />
                         </td>
                       </tr>
-                     
+                     </Fragment>
+                     )}
                     </Fragment>
                   )}
                 </tbody>
