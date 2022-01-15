@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"net/http"
 	"strconv"
@@ -215,9 +214,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		}
 		go wsS3Client.watch(wOptions)
 	case strings.HasPrefix(wsPath, `/speedtest`):
-		fmt.Println("Speedtest init")
 		speedtestOpts, err := getSpeedtestOptionsFromReq(req)
-
 		if err != nil {
 			LogError("error getting speedtest options: %v", err)
 			closeWsConn(conn)

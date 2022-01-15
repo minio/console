@@ -3,8 +3,12 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { Button } from "@mui/material";
+import {
+  formFieldStyles,
+  modalBasic,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
+import { Button, Grid } from "@mui/material";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -43,6 +47,8 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
   });
 
 const EditTenantMonitoringModal = ({
@@ -134,21 +140,21 @@ const EditTenantMonitoringModal = ({
       fieldKey: `diskCapacityGB`,
       required: true,
       value: newDiskCapacityGB as any as string,
-      pattern: /^[0-9]?(10)?$/,
+      pattern: /^[0-9]*$/,
       customPatternMessage: "Must be an integer between 0 and 10",
     });
     tenantMonitoringValidation.push({
       fieldKey: `newCPURequest`,
       required: false,
       value: newCPURequest as any as string,
-      pattern: /^[0-9]?(10)?$/,
+      pattern: /^[0-9]*$/,
       customPatternMessage: "Must be an integer between 0 and 10",
     });
     tenantMonitoringValidation.push({
       fieldKey: `newMemRequest`,
       required: false,
       value: newMemRequest as any as string,
-      pattern: /^[0-9]?(10)?$/,
+      pattern: /^[0-9]*$/,
       customPatternMessage: "Must be an integer between 0 and 10",
     });
     tenantMonitoringValidation.push({
@@ -232,147 +238,162 @@ const EditTenantMonitoringModal = ({
       title="Edit Monitoring Configuration"
     >
       <form noValidate autoComplete="off" onSubmit={submitMonitoringInfo}>
-        <h2>Prometheus configuration</h2>
-        <hr className={classes.hrClass} />
-        <h4>Image</h4>
-        <InputBoxWrapper
-          id={`image`}
-          label={""}
-          placeholder={"Image"}
-          name={`image`}
-          value={newImage}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewImage(event.target.value);
-          }}
-          key={`image`}
-          error={validationErrors[`image`] || ""}
-        />
-        <h4>Sidecar Image</h4>
-        <InputBoxWrapper
-          id={`sidecarImage`}
-          label={""}
-          placeholder={"Sidecar Image"}
-          name={`sidecarImage`}
-          value={newSidecarImage}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewSidecarImage(event.target.value);
-          }}
-          key={`sidecarImage`}
-          error={validationErrors[`sidecarImage`] || ""}
-        />
-        <h4>Init Image</h4>
-        <InputBoxWrapper
-          id={`initImage`}
-          label={""}
-          placeholder={"Init Image"}
-          name={`initImage`}
-          value={newInitImage}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewInitImage(event.target.value);
-          }}
-          key={`initImage`}
-          error={validationErrors[`initImage`] || ""}
-        />
-        <h4>Disk Capacity (GB)</h4>
-        <InputBoxWrapper
-          id={`diskCapacityGB`}
-          label={""}
-          placeholder={"Disk Capacity (GB)"}
-          name={`diskCapacityGB`}
-          value={newDiskCapacityGB}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewDiskCapacityGB(event.target.value);
-          }}
-          key={`diskCapacityGB`}
-          error={validationErrors[`diskCapacityGB`] || ""}
-        />
-        <h4>Prometheus CPU Request</h4>
-        <InputBoxWrapper
-          id={`cpuRequest`}
-          label={""}
-          placeholder={"CPU Request"}
-          name={`cpuRequest`}
-          value={newCPURequest}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewCPURequest(event.target.value);
-          }}
-          key={`cpuRequest`}
-          error={validationErrors[`cpuRequest`] || ""}
-        />
-        <h4>Prometheus Memory Request (Gi)</h4>
-        <InputBoxWrapper
-          id={`memRequest`}
-          label={""}
-          placeholder={"Memory request"}
-          name={`memRequest`}
-          value={newMemRequest}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewMemRequest(event.target.value);
-          }}
-          key={`memRequest`}
-          error={validationErrors[`memRequest`] || ""}
-        />
-        <h4>Service Account Name</h4>
-        <InputBoxWrapper
-          id={`serviceAccountName`}
-          label={""}
-          placeholder={"Service Account Name"}
-          name={`serviceAccountName`}
-          value={newServiceAccountName}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewServiceAccountName(event.target.value);
-          }}
-          key={`serviceAccountName`}
-          error={validationErrors[`serviceAccountName`] || ""}
-        />
-        <h4>Storage Class Name</h4>
-        <InputBoxWrapper
-          id={`storageClassName`}
-          label={""}
-          placeholder={"Storage Class Name"}
-          name={`storageClassName`}
-          value={newStorageClassName}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewStorageClassName(event.target.value);
-          }}
-          key={`storageClassName`}
-          error={validationErrors[`storageClassName`] || ""}
-        />
-        <h4>Labels</h4>
-        <KeyPairEdit
-          newValues={newLabels}
-          setNewValues={setNewLabels}
-          paramName={"Labels"}
-          error={labelsError}
-          setError={setLabelsError}
-        />
-        <h4>Annotations</h4>
-        <KeyPairEdit
-          newValues={newAnnotations}
-          setNewValues={setNewAnnotations}
-          paramName={"Annotations"}
-          error={annotationsError}
-          setError={setAnnotationsError}
-        />
-        <h4>Node Selector</h4>
-        <KeyPairEdit
-          newValues={newNodeSelector}
-          setNewValues={setNewNodeSelector}
-          paramName={"Node Selector"}
-          error={nodeSelectorError}
-          setError={setNodeSelectorError}
-        />
-
-        <div className={classes.buttonContainer}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!checkValid()}
-          >
-            Save
-          </Button>
-        </div>
+        <Grid container>
+          <Grid xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`image`}
+                label={"Image"}
+                placeholder={"Image"}
+                name={`image`}
+                value={newImage}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewImage(event.target.value);
+                }}
+                key={`image`}
+                error={validationErrors[`image`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`sidecarImage`}
+                label={"Sidecar Image"}
+                placeholder={"Sidecar Image"}
+                name={`sidecarImage`}
+                value={newSidecarImage}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewSidecarImage(event.target.value);
+                }}
+                key={`sidecarImage`}
+                error={validationErrors[`sidecarImage`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`initImage`}
+                label={"Init Image"}
+                placeholder={"Init Image"}
+                name={`initImage`}
+                value={newInitImage}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewInitImage(event.target.value);
+                }}
+                key={`initImage`}
+                error={validationErrors[`initImage`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`diskCapacityGB`}
+                label={"Disk Capacity (GB)"}
+                placeholder={"Disk Capacity (GB)"}
+                name={`diskCapacityGB`}
+                value={newDiskCapacityGB}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewDiskCapacityGB(event.target.value);
+                }}
+                key={`diskCapacityGB`}
+                error={validationErrors[`diskCapacityGB`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`cpuRequest`}
+                label={"CPU Request"}
+                placeholder={"CPU Request"}
+                name={`cpuRequest`}
+                value={newCPURequest}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewCPURequest(event.target.value);
+                }}
+                key={`cpuRequest`}
+                error={validationErrors[`cpuRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`memRequest`}
+                label={"Memory Request (Gi)"}
+                placeholder={"Memory request"}
+                name={`memRequest`}
+                value={newMemRequest}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewMemRequest(event.target.value);
+                }}
+                key={`memRequest`}
+                error={validationErrors[`memRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`serviceAccountName`}
+                label={"Service Account"}
+                placeholder={"Service Account Name"}
+                name={`serviceAccountName`}
+                value={newServiceAccountName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewServiceAccountName(event.target.value);
+                }}
+                key={`serviceAccountName`}
+                error={validationErrors[`serviceAccountName`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`storageClassName`}
+                label={"Storage Class"}
+                placeholder={"Storage Class Name"}
+                name={`storageClassName`}
+                value={newStorageClassName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setNewStorageClassName(event.target.value);
+                }}
+                key={`storageClassName`}
+                error={validationErrors[`storageClassName`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Labels</span>
+              <KeyPairEdit
+                newValues={newLabels}
+                setNewValues={setNewLabels}
+                paramName={"Labels"}
+                error={labelsError}
+                setError={setLabelsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Annotations</span>
+              <KeyPairEdit
+                newValues={newAnnotations}
+                setNewValues={setNewAnnotations}
+                paramName={"Annotations"}
+                error={annotationsError}
+                setError={setAnnotationsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Node Selector</span>
+              <KeyPairEdit
+                newValues={newNodeSelector}
+                setNewValues={setNewNodeSelector}
+                paramName={"Node Selector"}
+                error={nodeSelectorError}
+                setError={setNodeSelectorError}
+              />
+            </Grid>
+          </Grid>
+          <Grid xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!checkValid()}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Grid>
       </form>
     </ModalWrapper>
   );

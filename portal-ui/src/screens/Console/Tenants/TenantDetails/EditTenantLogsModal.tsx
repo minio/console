@@ -3,8 +3,12 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { Button } from "@mui/material";
+import {
+  formFieldStyles,
+  modalBasic,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
+import { Button, Grid } from "@mui/material";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -78,6 +82,8 @@ const styles = (theme: Theme) =>
       gridGap: 20,
     },
     ...modalBasic,
+    ...modalStyleUtils,
+    ...formFieldStyles,
   });
 
 const EditTenantLogsModal = ({
@@ -169,7 +175,7 @@ const EditTenantLogsModal = ({
       fieldKey: `diskCapacityGB`,
       required: true,
       value: newDiskCapacityGB as any as string,
-      pattern: /^[0-9]?(10)?$/,
+      pattern: /^[0-9]*$/,
       customPatternMessage: "Must be an integer between 0 and 10",
     });
     tenantLogValidation.push({
@@ -256,139 +262,161 @@ const EditTenantLogsModal = ({
           }
         }}
       >
-        <h2>Logging API </h2>
-        <hr className={classes.hrClass} />
-        <h4>Image</h4>
-        <InputBoxWrapper
-          id={`image`}
-          label={""}
-          placeholder={"Image"}
-          name={`image`}
-          value={newImage}
-          onChange={(e) => {
-            setNewImage(e.target.value);
-            cleanValidation(`image`);
-          }}
-          key={`image`}
-          error={validationErrors[`image`] || ""}
-        />
-        <h4>Disk Capacity (GB)</h4>
-        <InputBoxWrapper
-          id={`diskCapacityGB`}
-          label={""}
-          placeholder={"Disk Capacity (GB)"}
-          name={`diskCapacityGB`}
-          value={newDiskCapacityGB as any as string}
-          onChange={(e) => {
-            setNewDiskCapacityGB(e.target.value as any as number);
-            cleanValidation(`diskCapacityGB`);
-          }}
-          key={`diskCapacityGB`}
-          error={validationErrors[`diskCapacityGB`] || ""}
-        />
-        <h4>Service Account Name</h4>
-        <InputBoxWrapper
-          id={`serviceAccountName`}
-          label={""}
-          placeholder={"Service Account Name"}
-          name={`serviceAccountName`}
-          value={newServiceAccountName}
-          onChange={(e) => {
-            setNewServiceAccountName(e.target.value);
-            cleanValidation(`serviceAccountName`);
-          }}
-          key={`serviceAccountName`}
-          error={validationErrors[`serviceAccountName`] || ""}
-        />
-        <h4>Labels</h4>
-        <KeyPairEdit
-          newValues={newLabels}
-          setNewValues={setNewLabels}
-          paramName={"Labels"}
-          error={labelsError}
-          setError={setLabelsError}
-        />
-        <h4>Annotations</h4>
-        <KeyPairEdit
-          newValues={newAnnotations}
-          setNewValues={setNewAnnotations}
-          paramName={"Annotations"}
-          error={annotationsError}
-          setError={setAnnotationsError}
-        />
-        <h4>Node Selector</h4>
-        <KeyPairEdit
-          newValues={newNodeSelector}
-          setNewValues={setNewNodeSelector}
-          paramName={"Node Selector"}
-          error={nodeSelectorError}
-          setError={setNodeSelectorError}
-        />
-        <h2>Database Configuration </h2>
-        <hr className={classes.hrClass} />
-        <h4>Postgres Image</h4>
-        <InputBoxWrapper
-          id={`dbImage`}
-          label={""}
-          placeholder={"Db Image"}
-          name={`dbImage`}
-          value={newDbImage}
-          onChange={(e) => {
-            setNewDbImage(e.target.value);
-            cleanValidation(`dbImage`);
-          }}
-          key={`dbImage`}
-          error={validationErrors[`dbImage`] || ""}
-        />
-        <h4>Service Account</h4>
-        <InputBoxWrapper
-          id={`dbServiceAccountName`}
-          label={""}
-          placeholder={"Db Service Account Name"}
-          name={`dbServiceAccountName`}
-          value={newDbServiceAccountName}
-          onChange={(e) => {
-            setNewDbServiceAccountName(e.target.value);
-            cleanValidation(`dbServiceAccountName`);
-          }}
-          key={`dbServiceAccountName`}
-          error={validationErrors[`dbServiceAccountName`] || ""}
-        />
-        <h4>Labels</h4>
-        <KeyPairEdit
-          newValues={newDbLabels}
-          setNewValues={setNewDbLabels}
-          paramName={"Db Labels"}
-          error={dbLabelsError}
-          setError={setDbLabelsError}
-        />
-        <h4>Annotations</h4>
-        <KeyPairEdit
-          newValues={newDbAnnotations}
-          setNewValues={setNewDbAnnotations}
-          paramName={"Db Annotations"}
-          error={dbAnnotationsError}
-          setError={setDbAnnotationsError}
-        />
-        <h4>Node Selector</h4>
-        <KeyPairEdit
-          newValues={newDbNodeSelector}
-          setNewValues={setNewDbNodeSelector}
-          paramName={"DbNode Selector"}
-          error={dbNodeSelectorError}
-          setError={setDbNodeSelectorError}
-        />
-        <br />
-        <div className={classes.buttonContainer}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!checkValid()}
-          >
-            Save
-          </Button>
-        </div>
+        <Grid container>
+          <Grid xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <h4>Logging API </h4>
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`image`}
+                label={"Image"}
+                placeholder={"Image"}
+                name={`image`}
+                value={newImage}
+                onChange={(e) => {
+                  setNewImage(e.target.value);
+                  cleanValidation(`image`);
+                }}
+                key={`image`}
+                error={validationErrors[`image`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`diskCapacityGB`}
+                label={"Disk Capacity (GB)"}
+                placeholder={"Disk Capacity (GB)"}
+                name={`diskCapacityGB`}
+                value={newDiskCapacityGB as any as string}
+                onChange={(e) => {
+                  setNewDiskCapacityGB(e.target.value as any as number);
+                  cleanValidation(`diskCapacityGB`);
+                }}
+                key={`diskCapacityGB`}
+                error={validationErrors[`diskCapacityGB`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`serviceAccountName`}
+                label={"Service Account"}
+                placeholder={"Service Account Name"}
+                name={`serviceAccountName`}
+                value={newServiceAccountName}
+                onChange={(e) => {
+                  setNewServiceAccountName(e.target.value);
+                  cleanValidation(`serviceAccountName`);
+                }}
+                key={`serviceAccountName`}
+                error={validationErrors[`serviceAccountName`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Labels</span>
+              <KeyPairEdit
+                newValues={newLabels}
+                setNewValues={setNewLabels}
+                paramName={"Labels"}
+                error={labelsError}
+                setError={setLabelsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Annotations</span>
+              <KeyPairEdit
+                newValues={newAnnotations}
+                setNewValues={setNewAnnotations}
+                paramName={"Annotations"}
+                error={annotationsError}
+                setError={setAnnotationsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Node Selector</span>
+              <KeyPairEdit
+                newValues={newNodeSelector}
+                setNewValues={setNewNodeSelector}
+                paramName={"Node Selector"}
+                error={nodeSelectorError}
+                setError={setNodeSelectorError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <h4>Database Configuration </h4>
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbImage`}
+                label={"Postgres Image"}
+                placeholder={"Db Image"}
+                name={`dbImage`}
+                value={newDbImage}
+                onChange={(e) => {
+                  setNewDbImage(e.target.value);
+                  cleanValidation(`dbImage`);
+                }}
+                key={`dbImage`}
+                error={validationErrors[`dbImage`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbServiceAccountName`}
+                label={"Service Account"}
+                placeholder={"Db Service Account Name"}
+                name={`dbServiceAccountName`}
+                value={newDbServiceAccountName}
+                onChange={(e) => {
+                  setNewDbServiceAccountName(e.target.value);
+                  cleanValidation(`dbServiceAccountName`);
+                }}
+                key={`dbServiceAccountName`}
+                error={validationErrors[`dbServiceAccountName`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Labels</span>
+              <KeyPairEdit
+                newValues={newDbLabels}
+                setNewValues={setNewDbLabels}
+                paramName={"Db Labels"}
+                error={dbLabelsError}
+                setError={setDbLabelsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Annotations</span>
+              <KeyPairEdit
+                newValues={newDbAnnotations}
+                setNewValues={setNewDbAnnotations}
+                paramName={"Db Annotations"}
+                error={dbAnnotationsError}
+                setError={setDbAnnotationsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Node Selector</span>
+              <KeyPairEdit
+                newValues={newDbNodeSelector}
+                setNewValues={setNewDbNodeSelector}
+                paramName={"DbNode Selector"}
+                error={dbNodeSelectorError}
+                setError={setDbNodeSelectorError}
+              />
+            </Grid>
+          </Grid>
+          <Grid xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!checkValid()}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Grid>
       </form>
     </ModalWrapper>
   );
