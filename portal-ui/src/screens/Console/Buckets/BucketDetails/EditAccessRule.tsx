@@ -95,7 +95,7 @@ const EditAccessRule = ({
     <React.Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
-        title={`Edit Access Rule for ${toEdit}`}
+        title={`Edit Access Rule for ${`${bucket}/${toEdit || ""}`}`}
         onClose={onClose}
         titleIcon={<AddAccessRuleIcon />}
       >
