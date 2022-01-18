@@ -1044,6 +1044,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			},
 		},
 	}
+
 	var tenantExternalIDPConfigured bool
 	if tenantReq.Idp != nil {
 		// Enable IDP (Active Directory) for MinIO
@@ -1454,7 +1455,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		return nil, prepareError(err)
 	}
 
-	_, err = opClient.MinioV2().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
+	thisTenant, err := opClient.MinioV2().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
 		restapi.LogError("Creating new tenant failed with: %v", err)
 		return nil, prepareError(err)
@@ -1467,9 +1468,13 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			return nil, prepareError(err)
 		}
 	}
+
 	response = &models.CreateTenantResponse{
 		ExternalIDP: tenantExternalIDPConfigured,
+		URL:         GetTenantServiceURL((thisTenant)),
+		Mountpoint:  minInst.Spec.Mountpath,
 	}
+
 	if tenantReq.Idp != nil && !tenantExternalIDPConfigured {
 		for _, credential := range tenantReq.Idp.Keys {
 			response.Console = append(response.Console, &models.TenantResponseItem{

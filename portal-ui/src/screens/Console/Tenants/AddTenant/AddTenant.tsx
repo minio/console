@@ -644,6 +644,8 @@ const AddTenant = ({
           let newSrvAcc: NewServiceAccount = {
             idp: get(res, "externalIDP", false),
             console: [],
+            url : res.url,
+            mountpoint : res.mountpoint,
           };
 
           if (consoleSAList) {
@@ -654,17 +656,21 @@ const AddTenant = ({
                   secretKey: consoleKey.secret_key,
                 };
               });
-
               newSrvAcc.console = consoleItem;
+              newSrvAcc.url = res.url;
+              newSrvAcc.mountpoint = res.mountpoint;
             } else {
               newSrvAcc = {
                 console: {
                   accessKey: res.console.access_key,
                   secretKey: res.console.secret_key,
-                },
+                },        
+                url : res.url,
+            mountpoint : res.mountpoint,
               };
             }
           }
+          
           setAddSending(false);
           setShowNewCredentials(true);
           setCreatedAccount(newSrvAcc);
@@ -759,6 +765,7 @@ const AddTenant = ({
 
   return (
     <Fragment>
+     
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={createdAccount}
@@ -769,7 +776,7 @@ const AddTenant = ({
           entity="Tenant"
         />
       )}
-      <PageHeader label={"Create New Tenant"} />
+      <PageHeader label={"Create New Tenant"} /> 
       <BackLink to={"/tenants"} label={"Return to Tenant List"} />
       <PageLayout>
         {addSending && (

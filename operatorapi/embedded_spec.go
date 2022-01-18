@@ -1930,6 +1930,12 @@ func init() {
         },
         "externalIDP": {
           "type": "boolean"
+        },
+        "mountpoint": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -6285,6 +6291,12 @@ func init() {
         },
         "externalIDP": {
           "type": "boolean"
+        },
+        "mountpoint": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },

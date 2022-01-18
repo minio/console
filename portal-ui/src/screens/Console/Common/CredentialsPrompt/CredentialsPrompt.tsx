@@ -107,7 +107,6 @@ const CredentialsPrompt = ({
 
   const consoleCreds = get(newServiceAccount, "console", null);
   const idp = get(newServiceAccount, "idp", false);
-
   return (
     <ModalWrapper
       modalOpen={open}
@@ -137,11 +136,13 @@ const CredentialsPrompt = ({
                         <CredentialItem
                           label="Access Key"
                           value={credentialsPair.accessKey}
+                          key={index+"accessKey"}
                         />
                         <CredentialItem
                           label="Secret Key"
                           value={credentialsPair.secretKey}
-                        />
+                          key={index+"secretKey"}
+                        />                       
                       </>
                     );
                   })}
@@ -155,8 +156,18 @@ const CredentialsPrompt = ({
                       label="Secret Key"
                       value={consoleCreds.secretKey}
                     />
-                  </>
+                   </>
                 )}
+                <>
+                 <CredentialItem
+                          label="Tenant URL"
+                          value={newServiceAccount.url ||""}
+                        />
+                        <CredentialItem
+                          label="Tenant Mountpath"
+                          value={newServiceAccount.mountpoint ||""}
+                        />
+                </>        
               </Grid>
             </React.Fragment>
           )}
@@ -211,6 +222,8 @@ const CredentialsPrompt = ({
 
                     consoleExtras = {
                       console: [...cCreds],
+                      url: newServiceAccount.url,
+                      mountpath: newServiceAccount.mountpoint
                     };
                   }
                 }

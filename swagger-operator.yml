@@ -1825,20 +1825,24 @@ definitions:
   createTenantResponse:
     type: object
     properties:
+      url:
+        type: string
+      mountpoint:
+        type: string  
       externalIDP:
         type: boolean
       console:
         type: array
         items:
           $ref: "#/definitions/tenantResponseItem"
-
+      
   tenantResponseItem:
     type: object
     properties:
       access_key:
         type: string
       secret_key:
-        type: string
+        type: string     
 
   tenantPod:
     type: object

@@ -41,6 +41,12 @@ type CreateTenantResponse struct {
 
 	// external ID p
 	ExternalIDP bool `json:"externalIDP,omitempty"`
+
+	// mountpoint
+	Mountpoint string `json:"mountpoint,omitempty"`
+
+	// url
+	URL string `json:"url,omitempty"`
 }
 
 // Validate validates this create tenant response
