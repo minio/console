@@ -192,7 +192,6 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
             <RBIconButton
               tooltip={"View Tenant"}
               text={"View"}
-              disabled={!tenantIsOnline(tenant)}
               onClick={() => {
                 history.push(
                   `/namespaces/${tenant.namespace}/tenants/${tenant.name}`
