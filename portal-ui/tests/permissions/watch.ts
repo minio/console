@@ -38,19 +38,21 @@ test("Watch page can be opened", async (t) => {
   await t.navigateTo("http://localhost:9090/tools/watch");
 });
 
-test.before(async (t) => {
-  // Create a bucket
-  await functions.setUpBucket(t);
-})("Start button can be clicked", async (t) => {
-  await t
-  // We need to log back in after we use the admin account to create bucket,
-  // using the specific role we use in this module
-    .useRole(roles.watch)
-    .navigateTo("http://localhost:9090/tools/watch")
-    .click(elements.bucketNameInput)
-    .click(elements.bucketDropdownOption)
-    .click(elements.startButton);
-}).after(async (t) => {
-  // Cleanup created bucket
-  await functions.cleanUpBucket(t);
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t);
+  })("Start button can be clicked", async (t) => {
+    await t
+      // We need to log back in after we use the admin account to create bucket,
+      // using the specific role we use in this module
+      .useRole(roles.watch)
+      .navigateTo("http://localhost:9090/tools/watch")
+      .click(elements.bucketNameInput)
+      .click(elements.bucketDropdownOption)
+      .click(elements.startButton);
+  })
+  .after(async (t) => {
+    // Cleanup created bucket
+    await functions.cleanUpBucket(t);
+  });

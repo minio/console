@@ -69,11 +69,13 @@ test("Start Diagnostic button can be clicked", async (t) => {
 // });
 
 test("Start New Diagnostic button exists after Diagnostic is completed", async (t) => {
-  const startNewDiagnosticButtonExists = elements.startNewDiagnosticButton.exists;
+  const startNewDiagnosticButtonExists =
+    elements.startNewDiagnosticButton.exists;
   await t
     .navigateTo("http://localhost:9090/tools/diagnostics")
     .click(elements.startDiagnosticButton)
-    .expect(startNewDiagnosticButtonExists).ok();
+    .expect(startNewDiagnosticButtonExists)
+    .ok();
 });
 
 test("Start New Diagnostic button is clickable after Diagnostic is completed", async (t) => {

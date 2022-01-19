@@ -34,8 +34,7 @@ test("Logs link exists in Tools page", async (t) => {
 });
 
 test("Logs page can be opened", async (t) => {
-  await t
-    .navigateTo("http://localhost:5005/tools/logs");
+  await t.navigateTo("http://localhost:5005/tools/logs");
 });
 
 test("Log window exists in Logs page", async (t) => {

@@ -34,8 +34,7 @@ test("Trace link exists in Tools page", async (t) => {
 });
 
 test("Trace page can be opened", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/tools/trace");
+  await t.navigateTo("http://localhost:9090/tools/trace");
 });
 
 test("Start button can be clicked", async (t) => {
@@ -49,7 +48,8 @@ test("Stop button appears after Start button has been clicked", async (t) => {
   await t
     .navigateTo("http://localhost:9090/tools/trace")
     .click(elements.startButton)
-    .expect(stopButtonExists).ok();
+    .expect(stopButtonExists)
+    .ok();
 });
 
 test("Stop button can be clicked after Start button has been clicked", async (t) => {
