@@ -1,3 +1,19 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import createStyles from "@mui/styles/createStyles";
@@ -8,7 +24,7 @@ import {
   modalBasic,
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -136,14 +152,6 @@ const EditTenantLogsModal = ({
   const [newDbNodeSelector, setNewDbNodeSelector] = useState<IKeyValue[]>(
     dbNodeSelector.length > 0 ? [...dbNodeSelector] : [{ key: "", value: "" }]
   );
-  const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
-  const [newMemRequest, setNewMemRequest] = useState<string>( memRequest ?
-    Math.floor(parseInt(memRequest, 10) / 1000000000).toString() : "0"
-  );
-  const [newDBCPURequest, setNewDBCPURequest] = useState<string>(dbCPURequest);
-  const [newDBMemRequest, setNewDBMemRequest] = useState<string>(dbMemRequest ?
-    Math.floor(parseInt(dbMemRequest, 10) / 1000000000).toString() : "0"
-  );
   const [newDbImage, setNewDbImage] = useState<string>(dbImage);
   const [newDbServiceAccountName, setNewDbServiceAccountName] =
     useState<string>(dbServiceAccountName != null ? dbServiceAccountName : "");
@@ -153,6 +161,14 @@ const EditTenantLogsModal = ({
   const [dbLabelsError, setDbLabelsError] = useState<any>({});
   const [dbAnnotationsError, setDbAnnotationsError] = useState<any>({});
   const [dbNodeSelectorError, setDbNodeSelectorError] = useState<any>({});
+  const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
+  const [newMemRequest, setNewMemRequest] = useState<string>( memRequest ?
+    Math.floor(parseInt(memRequest, 10) / 1000000000).toString() : "0"
+  );
+  const [newDBCPURequest, setNewDBCPURequest] = useState<string>(dbCPURequest);
+  const [newDBMemRequest, setNewDBMemRequest] = useState<string>(dbMemRequest ?
+    Math.floor(parseInt(dbMemRequest, 10) / 1000000000).toString() : "0"
+  );
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
@@ -208,7 +224,6 @@ const EditTenantLogsModal = ({
       pattern: /^[a-zA-Z0-9-.]{1,253}$/,
       customPatternMessage: "Invalid service account name",
     });
-
     tenantLogValidation.push({
       fieldKey: `cpuRequest`,
       required: true,
@@ -246,10 +261,6 @@ const EditTenantLogsModal = ({
     newDiskCapacityGB,
     newServiceAccountName,
     newDbServiceAccountName,
-    newCPURequest,
-    newMemRequest,
-    newDBCPURequest,
-    newDBMemRequest,
     setValidationErrors,
   ]);
 
@@ -315,193 +326,223 @@ const EditTenantLogsModal = ({
           }
         }}
       >
-        <h2>Logging API </h2>
-        <hr className={classes.hrClass} />
-        <h4>Image</h4>
-        <InputBoxWrapper
-          id={`image`}
-          label={""}
-          placeholder={"Image"}
-          name={`image`}
-          value={newImage}
-          onChange={(e) => {
-            setNewImage(e.target.value);
-            cleanValidation(`image`);
-          }}
-          key={`image`}
-          error={validationErrors[`image`] || ""}
-        />
-        <h4>Disk Capacity (GB)</h4>
-        <InputBoxWrapper
-          id={`diskCapacityGB`}
-          label={""}
-          placeholder={"Disk Capacity (GB)"}
-          name={`diskCapacityGB`}
-          value={newDiskCapacityGB as any as string}
-          onChange={(e) => {
-            setNewDiskCapacityGB(e.target.value as any as number);
-            cleanValidation(`diskCapacityGB`);
-          }}
-          key={`diskCapacityGB`}
-          error={validationErrors[`diskCapacityGB`] || ""}
-        />
-        <h4>Service Account Name</h4>
-        <InputBoxWrapper
-          id={`serviceAccountName`}
-          label={""}
-          placeholder={"Service Account Name"}
-          name={`serviceAccountName`}
-          value={newServiceAccountName}
-          onChange={(e) => {
-            setNewServiceAccountName(e.target.value);
-            cleanValidation(`serviceAccountName`);
-          }}
-          key={`serviceAccountName`}
-          error={validationErrors[`serviceAccountName`] || ""}
-        />
-        <h4>Logging CPU Request</h4>
-        <InputBoxWrapper
-          id={`cpuRequest`}
-          label={""}
-          placeholder={"CPU Request"}
-          name={`cpuRequest`}
-          value={newCPURequest}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewCPURequest(event.target.value);
-          }}
-          key={`cpuRequest`}
-          error={validationErrors[`cpuRequest`] || ""}
-        />
-        <h4>Logging Memory Request (Gi)</h4>
-        <InputBoxWrapper
-          id={`memRequest`}
-          label={""}
-          placeholder={"Memory request"}
-          name={`memRequest`}
-          value={newMemRequest}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewMemRequest(event.target.value);
-          }}
-          key={`memRequest`}
-          error={validationErrors[`memRequest`] || ""}
-        />
-        
-        <h4>Labels</h4>
-        <KeyPairEdit
-          newValues={newLabels}
-          setNewValues={setNewLabels}
-          paramName={"Labels"}
-          error={labelsError}
-          setError={setLabelsError}
-        />
-        <h4>Annotations</h4>
-        <KeyPairEdit
-          newValues={newAnnotations}
-          setNewValues={setNewAnnotations}
-          paramName={"Annotations"}
-          error={annotationsError}
-          setError={setAnnotationsError}
-        />
-        <h4>Node Selector</h4>
-        <KeyPairEdit
-          newValues={newNodeSelector}
-          setNewValues={setNewNodeSelector}
-          paramName={"Node Selector"}
-          error={nodeSelectorError}
-          setError={setNodeSelectorError}
-        />
-        <h2>Database Configuration </h2>
-        <hr className={classes.hrClass} />
-        <h4>Postgres Image</h4>
-        <InputBoxWrapper
-          id={`dbImage`}
-          label={""}
-          placeholder={"Db Image"}
-          name={`dbImage`}
-          value={newDbImage}
-          onChange={(e) => {
-            setNewDbImage(e.target.value);
-            cleanValidation(`dbImage`);
-          }}
-          key={`dbImage`}
-          error={validationErrors[`dbImage`] || ""}
-        />
-        <h4>Service Account</h4>
-        <InputBoxWrapper
-          id={`dbServiceAccountName`}
-          label={""}
-          placeholder={"Db Service Account Name"}
-          name={`dbServiceAccountName`}
-          value={newDbServiceAccountName}
-          onChange={(e) => {
-            setNewDbServiceAccountName(e.target.value);
-            cleanValidation(`dbServiceAccountName`);
-          }}
-          key={`dbServiceAccountName`}
-          error={validationErrors[`dbServiceAccountName`] || ""}
-        />
-         <h4>Logging DB CPU Request</h4>
-        <InputBoxWrapper
-          id={`dbCpuRequest`}
-          label={""}
-          placeholder={"DB CPU Request"}
-          name={`dbCpuRequest`}
-          value={newDBCPURequest}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewDBCPURequest(event.target.value);
-          }}
-          key={`cpuRequest`}
-          error={validationErrors[`dbCPURequest`] || ""}
-        />
-        <h4>Logging DB Memory Request (Gi)</h4>
-        <InputBoxWrapper
-          id={`dbMemRequest`}
-          label={""}
-          placeholder={"DB Memory request"}
-          name={`dbMemRequest`}
-          value={newDBMemRequest}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewDBMemRequest(event.target.value);
-          }}
-          key={`memRequest`}
-          error={validationErrors[`dbMemRequest`] || ""}
-        />
-        <h4>Labels</h4>
-        <KeyPairEdit
-          newValues={newDbLabels}
-          setNewValues={setNewDbLabels}
-          paramName={"Db Labels"}
-          error={dbLabelsError}
-          setError={setDbLabelsError}
-        />
-        <h4>Annotations</h4>
-        <KeyPairEdit
-          newValues={newDbAnnotations}
-          setNewValues={setNewDbAnnotations}
-          paramName={"Db Annotations"}
-          error={dbAnnotationsError}
-          setError={setDbAnnotationsError}
-        />
-        <h4>Node Selector</h4>
-        <KeyPairEdit
-          newValues={newDbNodeSelector}
-          setNewValues={setNewDbNodeSelector}
-          paramName={"DbNode Selector"}
-          error={dbNodeSelectorError}
-          setError={setDbNodeSelectorError}
-        />
-        
-        <br />
-        <div className={classes.buttonContainer}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!checkValid()}
-          >
-            Save
-          </Button>
-        </div>
+        <Grid container>
+          <Grid xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <h4>Logging API </h4>
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`image`}
+                label={"Image"}
+                placeholder={"Image"}
+                name={`image`}
+                value={newImage}
+                onChange={(e) => {
+                  setNewImage(e.target.value);
+                  cleanValidation(`image`);
+                }}
+                key={`image`}
+                error={validationErrors[`image`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`diskCapacityGB`}
+                label={"Disk Capacity (GB)"}
+                placeholder={"Disk Capacity (GB)"}
+                name={`diskCapacityGB`}
+                value={newDiskCapacityGB as any as string}
+                onChange={(e) => {
+                  setNewDiskCapacityGB(e.target.value as any as number);
+                  cleanValidation(`diskCapacityGB`);
+                }}
+                key={`diskCapacityGB`}
+                error={validationErrors[`diskCapacityGB`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`serviceAccountName`}
+                label={"Service Account"}
+                placeholder={"Service Account Name"}
+                name={`serviceAccountName`}
+                value={newServiceAccountName}
+                onChange={(e) => {
+                  setNewServiceAccountName(e.target.value);
+                  cleanValidation(`serviceAccountName`);
+                }}
+                key={`serviceAccountName`}
+                error={validationErrors[`serviceAccountName`] || ""}
+              />
+            </Grid>
+
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`cpuRequest`}
+                label={"CPU Request"}
+                placeholder={"CPU Request"}
+                name={`cpuRequest`}
+                value={newCPURequest as any as string}
+                onChange={(e) => {
+                  setNewCPURequest(e.target.value as any as string);
+                  cleanValidation(`cpuRequest`);
+                }}
+                key={`cpuRequest`}
+                error={validationErrors[`cpuRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`memRequest`}
+                label={"Memory request"}
+                placeholder={"Memory request"}
+                name={`memRequest`}
+                value={newMemRequest}
+                onChange={(e) => {
+                  setNewMemRequest(e.target.value as any as string);
+                  cleanValidation(`memRequest`);
+                }}
+                key={`memRequest`}
+                error={validationErrors[`memRequest`] || ""}
+              />
+            </Grid>
+
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Labels</span>
+              <KeyPairEdit
+                newValues={newLabels}
+                setNewValues={setNewLabels}
+                paramName={"Labels"}
+                error={labelsError}
+                setError={setLabelsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Annotations</span>
+              <KeyPairEdit
+                newValues={newAnnotations}
+                setNewValues={setNewAnnotations}
+                paramName={"Annotations"}
+                error={annotationsError}
+                setError={setAnnotationsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Node Selector</span>
+              <KeyPairEdit
+                newValues={newNodeSelector}
+                setNewValues={setNewNodeSelector}
+                paramName={"Node Selector"}
+                error={nodeSelectorError}
+                setError={setNodeSelectorError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <h4>Database Configuration </h4>
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbImage`}
+                label={"Postgres Image"}
+                placeholder={"Db Image"}
+                name={`dbImage`}
+                value={newDbImage}
+                onChange={(e) => {
+                  setNewDbImage(e.target.value);
+                  cleanValidation(`dbImage`);
+                }}
+                key={`dbImage`}
+                error={validationErrors[`dbImage`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbServiceAccountName`}
+                label={"Service Account"}
+                placeholder={"Db Service Account Name"}
+                name={`dbServiceAccountName`}
+                value={newDbServiceAccountName}
+                onChange={(e) => {
+                  setNewDbServiceAccountName(e.target.value);
+                  cleanValidation(`dbServiceAccountName`);
+                }}
+                key={`dbServiceAccountName`}
+                error={validationErrors[`dbServiceAccountName`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbCpuRequest`}
+                label={"DB CPU Request"}
+                placeholder={"DB CPU Request"}
+                name={`dbCpuRequest`}
+                value={newDBCPURequest as any as string}
+                onChange={(e) => {
+                  setNewDBCPURequest(e.target.value as any as string);
+                  cleanValidation(`dbCpuRequest`);
+                }}
+                key={`dbCpuRequest`}
+                error={validationErrors[`dbCpuRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbMemRequest`}
+                label={"DB Memory request"}
+                placeholder={"DB Memory request"}
+                name={`dbMemRequest`}
+                value={newDBMemRequest}
+                onChange={(e) => {
+                  setNewDBMemRequest(e.target.value as any as string);
+                  cleanValidation(`dbMemRequest`);
+                }}
+                key={`dbMemRequest`}
+                error={validationErrors[`dbMemRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Labels</span>
+              <KeyPairEdit
+                newValues={newDbLabels}
+                setNewValues={setNewDbLabels}
+                paramName={"Db Labels"}
+                error={dbLabelsError}
+                setError={setDbLabelsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Annotations</span>
+              <KeyPairEdit
+                newValues={newDbAnnotations}
+                setNewValues={setNewDbAnnotations}
+                paramName={"Db Annotations"}
+                error={dbAnnotationsError}
+                setError={setDbAnnotationsError}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>Node Selector</span>
+              <KeyPairEdit
+                newValues={newDbNodeSelector}
+                setNewValues={setNewDbNodeSelector}
+                paramName={"DbNode Selector"}
+                error={dbNodeSelectorError}
+                setError={setDbNodeSelectorError}
+              />
+            </Grid>
+          </Grid>
+          <Grid xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!checkValid()}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Grid>
       </form>
     </ModalWrapper>
   );
