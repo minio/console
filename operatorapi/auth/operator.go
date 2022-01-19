@@ -18,11 +18,14 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	"github.com/minio/console/cluster"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 )
+
+var errInvalidCredentials = errors.New("invalid Login")
 
 // operatorCredentialsProvider is an struct to hold the JWT (service account token)
 type operatorCredentialsProvider struct {

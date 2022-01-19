@@ -50,12 +50,6 @@ VERSION:
   {{.Version}}
 `
 
-var appCmds = []cli.Command{
-	serverCmd,
-	updateCmd,
-	operatorCmd,
-}
-
 func newApp(name string) *cli.App {
 	// Collection of console commands currently supported are.
 	var commands []cli.Command

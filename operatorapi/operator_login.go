@@ -30,6 +30,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
+	opauth "github.com/minio/console/operatorapi/auth"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/user_api"
 	"github.com/minio/console/pkg/auth"
@@ -159,7 +160,7 @@ func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthReque
 }
 
 func newConsoleCredentials(secretKey string) (*credentials.Credentials, error) {
-	creds, err := auth.GetConsoleCredentialsForOperator(secretKey)
+	creds, err := opauth.GetConsoleCredentialsForOperator(secretKey)
 	if err != nil {
 		return nil, err
 	}
