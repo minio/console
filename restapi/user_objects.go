@@ -592,6 +592,11 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 	if params.AllVersions != nil {
 		allVersions = *params.AllVersions
 	}
+	minClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	client2 := minioClient{client: minClient}
 	for i := 0; i < len(params.Files); i++ {
 		if params.Files[i].VersionID != "" {
 			version = params.Files[i].VersionID
@@ -604,11 +609,6 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		mcClient := mcClient{client: s3Client}
-		minClient, err := newMinioClient(session)
-		if err != nil {
-			return prepareError(err)
-		}
-		client2 := minioClient{client: minClient}
 		err = deleteObjects(ctx, mcClient, client2, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions)
 		if err != nil {
 			return prepareError(err)
