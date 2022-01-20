@@ -878,6 +878,57 @@ paths:
         - UserAPI
 
   /buckets/{bucket_name}/replication/{rule_id}:
+    get:
+      summary: Bucket Replication
+      operationId: GetBucketReplicationRule
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: rule_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketReplicationRule"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+    put:
+      summary: Update Replication rule
+      operationId: UpdateMultiBucketReplication
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: rule_id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/multiBucketReplicationEdit"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    
     delete:
       summary: Bucket Replication Rule Delete
       operationId: DeleteBucketReplicationRule
@@ -2884,11 +2935,15 @@ definitions:
         type: boolean
       deletes_replication:
         type: boolean
+      existingObjects:
+        type: boolean
       metadata_replication:
         type: boolean
       prefix:
         type: string
       tags:
+        type: string
+      storageClass:
         type: string
       destination:
         $ref: "#/definitions/bucketReplicationDestination"
@@ -2971,11 +3026,41 @@ definitions:
         type: integer
         format: int32
         default: 0
+      storageClass:
+        type: string
+        default: ""
       bucketsRelation:
         type: array
         minLength: 1
         items:
           $ref: "#/definitions/multiBucketsRelation"
+
+  multiBucketReplicationEdit:
+    properties:
+      ruleState:
+        type: boolean
+      arn:
+        type: string
+      prefix:
+        type: string
+      tags:
+        type: string
+        default: ""
+      replicateDeleteMarkers:
+        type: boolean
+      replicateDeletes:
+        type: boolean
+      replicateMetadata:
+        type: boolean
+      replicateExistingObjects:
+        type: boolean
+      priority:
+        type: integer
+        format: int32
+        default: 0
+      storageClass:
+        type: string
+        default: ""
 
   multiBucketsRelation:
     type: object
