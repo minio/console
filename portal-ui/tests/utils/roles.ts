@@ -1,7 +1,7 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 import { Role, Selector } from "testcafe";
 
-const data = readFileSync(__dirname + '/../constants/timestamp.txt', 'utf-8');
+const data = readFileSync(__dirname + "/../constants/timestamp.txt", "utf-8");
 const unixTimestamp = data.trim();
 
 const loginUrl = "http://localhost:5005/login";

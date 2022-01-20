@@ -35,8 +35,8 @@ test.before(async (t) => {
   await functions.setUpBucket(t);
 })("A readonly policy can be assigned to a bucket", async (t) => {
   await t
-  // We need to log back in after we use the admin account to create bucket,
-  // using the specific role we use in this module
+    // We need to log back in after we use the admin account to create bucket,
+    // using the specific role we use in this module
     .useRole(roles.bucketAssignPolicy)
     .navigateTo("http://localhost:5005/buckets")
     .click(elements.manageButton)
