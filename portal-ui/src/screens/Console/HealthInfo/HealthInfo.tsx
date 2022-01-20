@@ -48,6 +48,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import BackLink from "../../../common/BackLink";
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -233,7 +234,7 @@ const HealthInfo = ({
   return (
     <Fragment>
       <PageHeader label="Diagnostic" />
-      <BackLink to="/tools" label="Return to Tools" />
+      <BackLink to={IAM_PAGES.TOOLS} label="Return to Support" />
 
       <PageLayout>
         <Grid item xs={12} className={classes.boxy}>

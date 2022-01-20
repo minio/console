@@ -48,6 +48,7 @@ import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -166,7 +167,7 @@ const ListNotificationEndpoints = ({
               color="primary"
               icon={<AddIcon />}
               onClick={() => {
-                history.push("/notification-endpoints/add");
+                history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
               }}
             />
           </div>
@@ -246,7 +247,7 @@ const ListNotificationEndpoints = ({
                         To get started,{" "}
                         <AButton
                           onClick={() => {
-                            history.push("/notification-endpoints/add");
+                            history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
                           }}
                         >
                           Add a Notification Target

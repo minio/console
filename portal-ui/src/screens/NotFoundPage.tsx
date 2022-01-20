@@ -15,25 +15,47 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import Copyright from "../common/Copyright";
+import PageLayout from "./Console/Common/Layout/PageLayout";
 
 const NotFound: React.FC = () => {
   return (
-    <Container component="main">
-      <CssBaseline />
-      <div>
-        <Typography variant="h1" component="h1">
-          404 Not Found
-        </Typography>
-      </div>
-      <Box mt={5}>
-        <Copyright />
+    <PageLayout>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          textAlign: "center",
+          margin: "auto",
+          flexFlow: "column",
+        }}
+      >
+        <Box
+          sx={{
+            fontSize: "110%",
+            margin: "0 0 0.25rem",
+            color: "#909090",
+          }}
+        >
+          404 Error
+        </Box>
+        <Box
+          sx={{
+            fontStyle: "normal",
+            fontSize: "clamp(2rem,calc(2rem + 1.2vw),3rem)",
+            fontWeight: 700,
+          }}
+        >
+          Sorry, the page could not be found.
+        </Box>
+        <Box mt={5}>
+          <Copyright />
+        </Box>
       </Box>
-    </Container>
+    </PageLayout>
   );
 };
 

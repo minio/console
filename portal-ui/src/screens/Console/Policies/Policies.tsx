@@ -9,6 +9,7 @@ import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 import withSuspense from "../Common/Components/withSuspense";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 const ListPolicies = withSuspense(React.lazy(() => import("./ListPolicies")));
 const PolicyDetails = withSuspense(React.lazy(() => import("./PolicyDetails")));
 
@@ -22,8 +23,12 @@ const Users = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/policies/" exact={true} component={ListPolicies} />
-        <Route path="/policies/*" component={PolicyDetails} />
+        <Route
+          path={IAM_PAGES.POLICIES}
+          exact={true}
+          component={ListPolicies}
+        />
+        <Route path={`"${IAM_PAGES.POLICIES}/*"`} component={PolicyDetails} />
         <Route path="/" component={ListPolicies} />
         <Route component={NotFoundPage} />
       </Switch>

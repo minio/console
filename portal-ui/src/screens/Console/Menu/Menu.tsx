@@ -34,31 +34,45 @@ import api from "../../../common/api";
 
 import { resetSession } from "../actions";
 import {
-  AccountIcon,
-  BucketsIcon,
-  DashboardIcon,
   DocumentationIcon,
-  GroupsIcon,
-  IAMPoliciesIcon,
   LambdaIcon,
   LicenseIcon,
-  SettingsIcon,
   StorageIcon,
   TenantsOutlineIcon,
   TiersIcon,
-  ToolsIcon,
-  UsersIcon,
 } from "../../../icons";
+
+import {
+  UsersMenuIcon,
+  BucketsMenuIcon,
+  IdentityMenuIcon,
+  MonitoringMenuIcon,
+  HealthMenuIcon,
+  GroupsMenuIcon,
+  AccountsMenuIcon,
+  MetricsMenuIcon,
+  LogsMenuIcon,
+  AuditLogsMenuIcon,
+  TraceMenuIcon,
+  DrivesMenuIcon,
+  AccessMenuIcon,
+  SupportMenuIcon,
+  PerformanceMenuIcon,
+  InspectMenuIcon,
+  ProfileMenuIcon,
+} from "../../../icons/SidebarMenus/MenuIcons";
 import {
   CONSOLE_UI_RESOURCE,
-  IAM_PAGES_PERMISSIONS,
   IAM_PAGES,
   S3_ALL_RESOURCES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
-import MenuList from "./MenuList";
 import MenuToggle from "./MenuToggle";
+import ConsoleMenuList from "./ConsoleMenuList";
+import RegisterMenuIcon from "../../../icons/SidebarMenus/RegisterMenuIcon";
+import DiagnosticsMenuIcon from "../../../icons/SidebarMenus/DiagnosticsMenuIcon";
+import CallHomeMenuIcon from "../../../icons/SidebarMenus/CallHomeMenuIcon";
 
 const drawerWidth = 245;
 
@@ -131,124 +145,185 @@ const Menu = ({
   };
 
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
-  let menuConsoleAdmin: IMenuItem[] = [
+
+  let consoleMenus = [
     {
-      group: "common",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.DASHBOARD,
-      name: "Dashboard",
-      icon: DashboardIcon,
-    },
-    {
-      group: "common",
-      type: "item",
+      name: "Buckets",
+      id: "buckets",
       component: NavLink,
       to: IAM_PAGES.BUCKETS,
-      name: "Buckets",
-      icon: BucketsIcon,
+      icon: BucketsMenuIcon,
       forceDisplay: true,
+      children: [],
     },
     {
-      group: "common",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.USERS,
-      customPermissionFnc: () =>
-        hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_LIST_USERS]) ||
-        hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
-      name: "Users",
-      icon: UsersIcon,
-      fsHidden: ldapIsEnabled,
+      name: "Identity",
+      id: "identity",
+      icon: IdentityMenuIcon,
+      children: [
+        {
+          component: NavLink,
+          id: "users",
+          to: IAM_PAGES.USERS,
+          customPermissionFnc: () =>
+            hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_LIST_USERS]) ||
+            hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
+          name: "Users",
+          icon: UsersMenuIcon,
+          fsHidden: ldapIsEnabled,
+        },
+        {
+          component: NavLink,
+          id: "groups",
+          to: IAM_PAGES.GROUPS,
+          name: "Groups",
+          icon: GroupsMenuIcon,
+          fsHidden: ldapIsEnabled,
+        },
+        {
+          component: NavLink,
+          id: "serviceaccounts",
+          to: IAM_PAGES.ACCOUNT,
+          name: "Service Accounts",
+          icon: AccountsMenuIcon,
+          forceDisplay: true,
+        },
+      ],
     },
     {
-      group: "common",
-      type: "item",
+      name: "Access",
       component: NavLink,
-      to: IAM_PAGES.GROUPS,
-      name: "Groups",
-      icon: GroupsIcon,
-      fsHidden: ldapIsEnabled,
-    },
-    {
-      group: "common",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.ACCOUNT,
-      name: "Service Accounts",
-      icon: AccountIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "common",
-      type: "item",
-      component: NavLink,
+      id: "access",
       to: IAM_PAGES.POLICIES,
-      name: "IAM Policies",
-      icon: IAMPoliciesIcon,
+      icon: AccessMenuIcon,
+      forceDisplay: true,
+      children: [],
     },
     {
-      group: "common",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.SETTINGS,
-      name: "Settings",
-      icon: SettingsIcon,
-    },
-    {
-      group: "common",
-      type: "item",
       component: NavLink,
       to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
       name: "Notification Endpoints",
       icon: LambdaIcon,
+      id: "lambda",
     },
     {
-      group: "common",
-      type: "item",
       component: NavLink,
       to: IAM_PAGES.TIERS,
       name: "Tiers",
       icon: TiersIcon,
+      id: "tiers",
     },
     {
-      group: "common",
-      type: "item",
+      name: "Monitoring",
+      id: "tools",
+      icon: MonitoringMenuIcon,
+      children: [
+        {
+          name: "Metrics",
+          id: "monitorMetrics",
+          to: IAM_PAGES.DASHBOARD,
+          icon: MetricsMenuIcon,
+          component: NavLink,
+        },
+        {
+          name: "Logs ",
+          id: "monitorLogs",
+          to: IAM_PAGES.TOOLS_LOGS,
+          icon: LogsMenuIcon,
+          component: NavLink,
+        },
+        {
+          name: "Audit",
+          id: "monitorAudit",
+          to: IAM_PAGES.TOOLS_AUDITLOGS,
+          icon: AuditLogsMenuIcon,
+          component: NavLink,
+        },
+        {
+          name: "Trace",
+          id: "monitorTrace",
+          to: IAM_PAGES.TOOLS_TRACE,
+          icon: TraceMenuIcon,
+          component: NavLink,
+        },
+
+        {
+          name: "Drives",
+          id: "monitorDrives",
+          to: IAM_PAGES.TOOLS_HEAL,
+          icon: DrivesMenuIcon,
+          component: NavLink,
+        },
+      ],
+    },
+    {
+      name: "Health",
+      id: "health",
       component: NavLink,
-      to: IAM_PAGES.TOOLS,
-      name: "Tools",
-      icon: ToolsIcon,
+      icon: HealthMenuIcon,
+      to: IAM_PAGES.HEALTH,
+      children: [],
     },
     {
-      group: "License",
-      type: "item",
+      name: "Support",
+      id: "support",
+      icon: SupportMenuIcon,
+      children: [
+        {
+          name: "Register",
+          id: "register",
+          component: NavLink,
+          icon: RegisterMenuIcon,
+          to: IAM_PAGES.REGISTER_SUPPORT,
+        },
+        {
+          name: "Diagnostic",
+          id: "diagnostics",
+          component: NavLink,
+          icon: DiagnosticsMenuIcon,
+          to: IAM_PAGES.TOOLS_DIAGNOSTICS,
+        },
+        {
+          name: "Performance",
+          id: "diagnostics",
+          component: NavLink,
+          icon: PerformanceMenuIcon,
+          to: IAM_PAGES.TOOLS_SPEEDTEST,
+        },
+        {
+          name: "Call Home",
+          id: "callhome",
+          component: NavLink,
+          icon: CallHomeMenuIcon,
+          to: IAM_PAGES.CALL_HOME,
+        },
+        {
+          name: "Inspect",
+          id: "inspsect",
+          component: NavLink,
+          icon: InspectMenuIcon,
+          to: IAM_PAGES.INSPECT,
+        },
+        {
+          name: "Profile",
+          id: "profile",
+          component: NavLink,
+          icon: ProfileMenuIcon,
+          to: IAM_PAGES.PROFILE,
+        },
+      ],
+    },
+    {
       component: NavLink,
       to: IAM_PAGES.LICENSE,
       name: "License",
+      id: "license",
       icon: LicenseIcon,
       forceDisplay: true,
     },
-    {
-      group: "License",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.DOCUMENTATION,
-      name: "Documentation",
-      icon: DocumentationIcon,
-      forceDisplay: true,
-      onClick: (
-        e:
-          | React.MouseEvent<HTMLLIElement>
-          | React.MouseEvent<HTMLAnchorElement>
-          | React.MouseEvent<HTMLDivElement>
-      ) => {
-        e.preventDefault();
-        window.open("https://docs.min.io/?ref=con", "_blank");
-      },
-    },
   ];
 
-  let menuOperatorConsole: IMenuItem[] = [
+  let operatorMenus: IMenuItem[] = [
     {
       group: "Operator",
       type: "item",
@@ -296,18 +371,6 @@ const Menu = ({
     },
   ];
 
-  const allowedItems = (
-    operatorMode ? menuOperatorConsole : menuConsoleAdmin
-  ).filter(
-    (item: any) =>
-      ((item.customPermissionFnc
-        ? item.customPermissionFnc()
-        : hasPermission(CONSOLE_UI_RESOURCE, IAM_PAGES_PERMISSIONS[item.to])) ||
-        item.forceDisplay ||
-        item.type !== "item") &&
-      !item.fsHidden
-  );
-
   return (
     <Drawer
       variant="permanent"
@@ -330,8 +393,8 @@ const Menu = ({
         isOpen={sidebarOpen}
       />
 
-      <MenuList
-        menuItems={allowedItems}
+      <ConsoleMenuList
+        menuItems={operatorMode ? operatorMenus : consoleMenus}
         isOpen={sidebarOpen}
         onLogoutClick={logout}
       />

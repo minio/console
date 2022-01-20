@@ -19,12 +19,71 @@ import { Route, Router, Switch } from "react-router-dom";
 import history from "../../../history";
 import NotFoundPage from "../../NotFoundPage";
 import ToolsList from "./ToolsPanel/ToolsList";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
+import { SupportMenuIcon } from "../../../icons/SidebarMenus/MenuIcons";
 
 const Tools = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/tools" exact component={ToolsList} />
+        <Route path={IAM_PAGES.TOOLS} exact component={ToolsList} />
+        <Route
+          path={IAM_PAGES.REGISTER_SUPPORT}
+          exact
+          render={() => {
+            return (
+              <FeatureNotAvailablePage
+                icon={<SupportMenuIcon />}
+                pageHeaderText={"Register"}
+                title={"Product registration"}
+                message={<div>This feature is currently not available.</div>}
+              />
+            );
+          }}
+        />
+        <Route
+          path={IAM_PAGES.CALL_HOME}
+          exact
+          render={() => {
+            return (
+              <FeatureNotAvailablePage
+                icon={<SupportMenuIcon />}
+                pageHeaderText={"Support"}
+                title={"Call Home"}
+                message={<div>This feature is currently not available.</div>}
+              />
+            );
+          }}
+        />
+        <Route
+          path={IAM_PAGES.INSPECT}
+          exact
+          render={() => {
+            return (
+              <FeatureNotAvailablePage
+                icon={<SupportMenuIcon />}
+                pageHeaderText={"Support"}
+                title={"Inspect"}
+                message={<div>This feature is currently not available.</div>}
+              />
+            );
+          }}
+        />
+        <Route
+          path={IAM_PAGES.PROFILE}
+          exact
+          render={() => {
+            return (
+              <FeatureNotAvailablePage
+                icon={<SupportMenuIcon />}
+                pageHeaderText={"Support"}
+                title={"Profile"}
+                message={<div>This feature is currently not available.</div>}
+              />
+            );
+          }}
+        />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>

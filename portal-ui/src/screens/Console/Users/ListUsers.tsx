@@ -43,6 +43,7 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
   S3_ALL_RESOURCES,
 } from "../../../common/SecureComponent/permissions";
@@ -170,7 +171,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   };
 
   const viewAction = (selectionElement: any): void => {
-    history.push(`/users/${encodeURI(selectionElement.accessKey)}`);
+    history.push(`${IAM_PAGES.USERS}/${encodeURI(selectionElement.accessKey)}`);
   };
 
   const deleteAction = (selectionElement: any): void => {

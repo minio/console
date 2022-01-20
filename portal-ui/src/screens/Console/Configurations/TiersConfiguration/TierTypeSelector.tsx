@@ -22,6 +22,7 @@ import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import { Box } from "@mui/material";
 import TierTypeCard from "./TierTypeCard";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 interface ITypeTiersConfig {
   history: any;
@@ -29,13 +30,13 @@ interface ITypeTiersConfig {
 
 const TierTypeSelector = ({ history }: ITypeTiersConfig) => {
   const typeSelect = (selectName: string) => {
-    history.push(`/tiers/add/${selectName}`);
+    history.push(`${IAM_PAGES.TIERS_ADD}/${selectName}`);
   };
 
   return (
     <Fragment>
       <PageHeader label="Tier Configuration" />
-      <BackLink to="/tiers" label="Return to Configured Tiers" />
+      <BackLink to={IAM_PAGES.TIERS} label="Return to Configured Tiers" />
 
       <PageLayout>
         <Box

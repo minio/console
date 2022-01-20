@@ -48,6 +48,7 @@ import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent, {
@@ -285,11 +286,11 @@ const PolicyDetails = ({
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
-    history.push(`/policies`);
+    history.push(IAM_PAGES.POLICIES);
   };
 
   const userViewAction = (user: any) => {
-    history.push(`/users/${user}`);
+    history.push(`${IAM_PAGES.USERS}/${user}`);
   };
   const userTableActions = [
     {
@@ -304,7 +305,7 @@ const PolicyDetails = ({
   );
 
   const groupViewAction = (group: any) => {
-    history.push(`/groups/${group}`);
+    history.push(`${IAM_PAGES.GROUPS}/${group}`);
   };
 
   const groupTableActions = [
@@ -331,13 +332,13 @@ const PolicyDetails = ({
       <PageHeader
         label={
           <Fragment>
-            <Link to={"/policies"} className={classes.breadcrumLink}>
+            <Link to={IAM_PAGES.POLICIES} className={classes.breadcrumLink}>
               Policy
             </Link>
           </Fragment>
         }
       />
-      <BackLink to={"/policies"} label={"Return to Policies"} />
+      <BackLink to={IAM_PAGES.POLICIES} label={"Return to Policies"} />
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle

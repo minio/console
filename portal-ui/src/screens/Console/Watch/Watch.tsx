@@ -45,6 +45,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -184,7 +185,7 @@ const Watch = ({
   return (
     <React.Fragment>
       <PageHeader label="Watch" />
-      <BackLink to="/tools" label="Return to Tools" />
+      <BackLink to={IAM_PAGES.TOOLS} label="Return to Support" />
       <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
