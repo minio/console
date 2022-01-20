@@ -96,6 +96,7 @@ const AddReplicationModal = ({
   const [useTLS, setUseTLS] = useState<boolean>(true);
   const [repDeleteMarker, setRepDeleteMarker] = useState<boolean>(true);
   const [repDelete, setRepDelete] = useState<boolean>(true);
+  const [metadataSync, setMetadataSync] = useState<boolean>(true);
   const [tags, setTags] = useState<string>("");
   const [replicationMode, setReplicationMode] = useState<string>("async");
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
@@ -148,6 +149,8 @@ const AddReplicationModal = ({
       replicateDeleteMarkers: repDeleteMarker,
       replicateDeletes: repDelete,
       priority: parseInt(priority),
+      storageClass: targetStorageClass,
+      replicateMetadata: metadataSync,
     };
 
     api
@@ -343,6 +346,22 @@ const AddReplicationModal = ({
                 value={healthCheck}
               />
             </Grid>
+            <Grid
+              item
+              xs={12}
+              className={`${classes.spacerTop} ${classes.formFieldRow}`}
+            >
+              <InputBoxWrapper
+                id="storageClass"
+                name="storageClass"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetStorageClass(e.target.value);
+                }}
+                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
+                label="Storage Class"
+                value={targetStorageClass}
+              />
+            </Grid>
             <Grid item xs={12}>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
@@ -375,29 +394,23 @@ const AddReplicationModal = ({
                 </Grid>
               </fieldset>
             </Grid>
-
-            <Grid
-              item
-              xs={12}
-              className={`${classes.spacerTop} ${classes.formFieldRow}`}
-            >
-              <InputBoxWrapper
-                id="storageClass"
-                name="storageClass"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetStorageClass(e.target.value);
-                }}
-                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
-                label="Storage Class"
-                value={targetStorageClass}
-              />
-            </Grid>
             <Grid item xs={12}>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
                   Replication Options
                 </legend>
                 <Grid item xs={12} className={classes.formFieldRow}>
+                  <FormSwitchWrapper
+                    checked={metadataSync}
+                    id="metadatataSync"
+                    name="metadatataSync"
+                    label="Metadata Sync"
+                    onChange={(e) => {
+                      setMetadataSync(e.target.checked);
+                    }}
+                    value={metadataSync}
+                    description={"Metadata Sync"}
+                  />
                   <FormSwitchWrapper
                     checked={repDeleteMarker}
                     id="deleteMarker"

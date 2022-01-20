@@ -76,7 +76,9 @@ test("Create Policy modal can be submitted after inputs are entered", async (t) 
     .navigateTo("http://localhost:5005/policies")
     .click(elements.createPolicyButton)
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
-    .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, { paste: true })
+    .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {
+      paste: true,
+    })
     .click(elements.saveButton);
 }).after(async (t) => {
   // Clean up created policy
@@ -93,7 +95,9 @@ test("Created Policy can be viewed and deleted", async (t) => {
     .navigateTo("http://localhost:5005/policies")
     .click(elements.createPolicyButton)
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
-    .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, { paste: true })
+    .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {
+      paste: true,
+    })
     .click(elements.saveButton)
     .typeText(elements.searchResourceInput, constants.TEST_IAM_POLICY_NAME)
     .expect(iamPolicyListItemExists)

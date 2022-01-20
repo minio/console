@@ -121,10 +121,6 @@ const NameTenantMain = ({
   // Storage classes retrieval
   const getNamespaceInformation = useCallback(() => {
     setShowCreateButton(false);
-    updateField("selectedStorageClass", "");
-
-    setStorageClassesList([]);
-
     // Empty tenantValidation
     api
       .invoke("GET", `/api/v1/namespaces/${namespace}/tenants`)
@@ -157,14 +153,24 @@ const NameTenantMain = ({
             });
 
             setStorageClassesList(newStorage);
-            if (newStorage.length > 0) {
+
+            const stExists = newStorage.findIndex(
+              (storageClass) => storageClass.value === selectedStorageClass
+            );
+
+            if (newStorage.length > 0 && stExists === -1) {
               updateField("selectedStorageClass", newStorage[0].value);
+            } else if (newStorage.length === 0) {
+              updateField("selectedStorageClass", "");
+              setStorageClassesList([]);
             }
             setLoadingNamespaceInfo(false);
           })
           .catch((err: ErrorResponseHandler) => {
             setLoadingNamespaceInfo(false);
             setShowCreateButton(true);
+            updateField("selectedStorageClass", "");
+            setStorageClassesList([]);
             console.error("Namespace error: ", err);
           });
       })
@@ -180,6 +186,7 @@ const NameTenantMain = ({
     setModalErrorSnackMessage,
     setStorageClassesList,
     updateField,
+    selectedStorageClass,
   ]);
 
   const debounceNamespace = useMemo(
