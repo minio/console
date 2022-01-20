@@ -302,7 +302,7 @@ const Images = ({
             label="MinIO's Image"
             value={imageName}
             error={validationErrors["image"] || ""}
-            placeholder="E.g. minio/minio:RELEASE.2021-08-20T18-32-01Z"
+            placeholder="E.g. minio/minio:RELEASE.2022-01-08T03-11-54Z"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>

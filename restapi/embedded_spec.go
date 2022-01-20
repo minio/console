@@ -1636,6 +1636,81 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/replication/{rule_id}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplicationRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationRule"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Update Replication rule",
+        "operationId": "UpdateMultiBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/multiBucketReplicationEdit"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "UserAPI"
@@ -3966,6 +4041,9 @@ func init() {
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
         },
+        "existingObjects": {
+          "type": "boolean"
+        },
         "healthCheckPeriod": {
           "type": "integer"
         },
@@ -3988,6 +4066,9 @@ func init() {
             "Enabled",
             "Disabled"
           ]
+        },
+        "storageClass": {
+          "type": "string"
         },
         "syncMode": {
           "type": "string",
@@ -4609,6 +4690,10 @@ func init() {
           "type": "string",
           "minLength": 8
         },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
         "syncMode": {
           "type": "string",
           "default": "async",
@@ -4622,6 +4707,44 @@ func init() {
         },
         "targetURL": {
           "type": "string"
+        }
+      }
+    },
+    "multiBucketReplicationEdit": {
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateExistingObjects": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
+        },
+        "ruleState": {
+          "type": "boolean"
+        },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "tags": {
+          "type": "string",
+          "default": ""
         }
       }
     },
@@ -7362,6 +7485,81 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/replication/{rule_id}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplicationRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationRule"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Update Replication rule",
+        "operationId": "UpdateMultiBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/multiBucketReplicationEdit"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "UserAPI"
@@ -9812,6 +10010,9 @@ func init() {
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
         },
+        "existingObjects": {
+          "type": "boolean"
+        },
         "healthCheckPeriod": {
           "type": "integer"
         },
@@ -9834,6 +10035,9 @@ func init() {
             "Enabled",
             "Disabled"
           ]
+        },
+        "storageClass": {
+          "type": "string"
         },
         "syncMode": {
           "type": "string",
@@ -10455,6 +10659,10 @@ func init() {
           "type": "string",
           "minLength": 8
         },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
         "syncMode": {
           "type": "string",
           "default": "async",
@@ -10468,6 +10676,44 @@ func init() {
         },
         "targetURL": {
           "type": "string"
+        }
+      }
+    },
+    "multiBucketReplicationEdit": {
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateExistingObjects": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
+        },
+        "ruleState": {
+          "type": "boolean"
+        },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "tags": {
+          "type": "string",
+          "default": ""
         }
       }
     },

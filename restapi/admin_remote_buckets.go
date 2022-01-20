@@ -108,6 +108,15 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 
 		return user_api.NewDeleteBucketReplicationRuleNoContent()
 	})
+
+	//update local bucket replication config item
+	api.UserAPIUpdateMultiBucketReplicationHandler = user_api.UpdateMultiBucketReplicationHandlerFunc(func(params user_api.UpdateMultiBucketReplicationParams, session *models.Principal) middleware.Responder {
+		err := updateBucketReplicationResponse(session, params)
+		if err != nil {
+			return user_api.NewUpdateMultiBucketReplicationDefault(500).WithPayload(err)
+		}
+		return user_api.NewUpdateMultiBucketReplicationCreated()
+	})
 }
 
 func getListRemoteBucketsResponse(session *models.Principal) (*models.ListRemoteBucketsResponse, error) {
@@ -269,7 +278,7 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 	return bucketARN, err
 }
 
-func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, destinationARN string, repDelMark, repDels, repMeta bool, tags string, priority int32) error {
+func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, destinationARN string, repDelMark, repDels, repMeta bool, tags string, priority int32, storageClass string) error {
 	// we will tolerate this call failing
 	cfg, err := minClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
@@ -324,11 +333,79 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 		ReplicateDeleteMarkers:  repDelMarkStatus,
 		ReplicateDeletes:        repDelsStatus,
 		ReplicaSync:             repMetaStatus,
+		StorageClass:            storageClass,
 	}
 
 	err2 := mcClient.setReplication(ctx, &cfg, opts)
 	if err2 != nil {
 		LogError("error creating replication for bucket:", err2.Cause)
+		return err2.Cause
+	}
+	return nil
+}
+
+func editBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, ruleID, bucketName, prefix, destinationARN string, ruleStatus, repDelMark, repDels, repMeta, existingObjectRep bool, tags string, priority int32, storageClass string) error {
+	// we will tolerate this call failing
+	cfg, err := minClient.getBucketReplication(ctx, bucketName)
+	if err != nil {
+		LogError("error fetching replication configuration for bucket %s: %v", bucketName, err)
+	}
+
+	maxPrio := int(priority)
+
+	s3Client, err := newS3BucketClient(session, bucketName, prefix)
+	if err != nil {
+		LogError("error creating S3Client: %v", err)
+		return err
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+
+	ruleState := "disable"
+	if ruleStatus {
+		ruleState = "enable"
+	}
+
+	repDelMarkStatus := "disable"
+	if repDelMark {
+		repDelMarkStatus = "enable"
+	}
+
+	repDelsStatus := "disable"
+	if repDels {
+		repDelsStatus = "enable"
+	}
+
+	repMetaStatus := "disable"
+	if repMeta {
+		repMetaStatus = "enable"
+	}
+
+	existingRepStatus := "disable"
+	if existingObjectRep {
+		existingRepStatus = "enable"
+	}
+
+	opts := replication.Options{
+		ID:                      ruleID,
+		Priority:                fmt.Sprintf("%d", maxPrio),
+		RuleStatus:              ruleState,
+		DestBucket:              destinationARN,
+		Op:                      replication.SetOption,
+		TagString:               tags,
+		IsTagSet:                true,
+		ExistingObjectReplicate: existingRepStatus,
+		ReplicateDeleteMarkers:  repDelMarkStatus,
+		ReplicateDeletes:        repDelsStatus,
+		ReplicaSync:             repMetaStatus,
+		StorageClass:            storageClass,
+		IsSCSet:                 true,
+	}
+
+	err2 := mcClient.setReplication(ctx, &cfg, opts)
+	if err2 != nil {
+		LogError("error modifying replication for bucket:", err2.Cause)
 		return err2.Cause
 	}
 	return nil
@@ -372,7 +449,8 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 					params.Body.ReplicateDeletes,
 					params.Body.ReplicateMetadata,
 					params.Body.Tags,
-					params.Body.Priority)
+					params.Body.Priority,
+					params.Body.StorageClass)
 			}
 
 			var errorReturn = ""
@@ -521,5 +599,41 @@ func deleteReplicationRuleResponse(session *models.Principal, params user_api.De
 	if err != nil {
 		return prepareError(err)
 	}
+	return nil
+}
+
+func updateBucketReplicationResponse(session *models.Principal, params user_api.UpdateMultiBucketReplicationParams) *models.Error {
+	ctx := context.Background()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		LogError("error creating MinIO Client:", err)
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minClient := minioClient{client: mClient}
+
+	err = editBucketReplicationItem(
+		ctx,
+		session,
+		minClient,
+		params.RuleID,
+		params.BucketName,
+		params.Body.Prefix,
+		params.Body.Arn,
+		params.Body.RuleState,
+		params.Body.ReplicateDeleteMarkers,
+		params.Body.ReplicateDeletes,
+		params.Body.ReplicateMetadata,
+		params.Body.ReplicateExistingObjects,
+		params.Body.Tags,
+		params.Body.Priority,
+		params.Body.StorageClass)
+
+	if err != nil {
+		return prepareError(err)
+	}
+
 	return nil
 }

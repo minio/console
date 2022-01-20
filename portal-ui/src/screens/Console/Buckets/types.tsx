@@ -101,6 +101,8 @@ export interface BucketReplicationRule {
   tags?: string;
   destination: BucketReplicationDestination;
   syncMode: string;
+  storageClass?: string;
+  existingObjects?: boolean;
 }
 
 export interface BucketReplication {

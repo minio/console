@@ -26,7 +26,6 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-	logsearchServer "github.com/minio/operator/logsearchapi/server"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
@@ -103,7 +102,7 @@ func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
 		}
 	}
 
-	var results []logsearchServer.ReqInfoRow
+	var results []map[string]interface{}
 	if err = json.NewDecoder(resp.Body).Decode(&results); err != nil {
 		return nil, prepareError(err)
 	}

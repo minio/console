@@ -1,3 +1,6 @@
+//go:build operator
+// +build operator
+
 // This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //

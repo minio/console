@@ -49,6 +49,9 @@ type BucketReplicationRule struct {
 	// destination
 	Destination *BucketReplicationDestination `json:"destination,omitempty"`
 
+	// existing objects
+	ExistingObjects bool `json:"existingObjects,omitempty"`
+
 	// health check period
 	HealthCheckPeriod int64 `json:"healthCheckPeriod,omitempty"`
 
@@ -67,6 +70,9 @@ type BucketReplicationRule struct {
 	// status
 	// Enum: [Enabled Disabled]
 	Status string `json:"status,omitempty"`
+
+	// storage class
+	StorageClass string `json:"storageClass,omitempty"`
 
 	// sync mode
 	// Enum: [async sync]

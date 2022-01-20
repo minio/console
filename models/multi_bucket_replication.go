@@ -76,6 +76,9 @@ type MultiBucketReplication struct {
 	// Min Length: 8
 	SecretKey *string `json:"secretKey"`
 
+	// storage class
+	StorageClass string `json:"storageClass,omitempty"`
+
 	// sync mode
 	// Enum: [async sync]
 	SyncMode *string `json:"syncMode,omitempty"`
