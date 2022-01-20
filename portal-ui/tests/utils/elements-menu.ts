@@ -33,6 +33,9 @@ export const monitoringChildren = Selector("#tools-children");
 export const dashboardElement = monitoringChildren
   .find("a")
   .withAttribute("href", "/tools/dashboard");
+export const drivesElement = monitoringChildren
+  .find("a")
+  .withAttribute("href", "/tools/heal");
 
 export const bucketsElement = sidebarItem.withAttribute("href", "/buckets");
 
