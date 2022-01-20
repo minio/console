@@ -170,9 +170,8 @@ export const IAM_PAGES = {
   TOOLS_DIAGNOSTICS: "/support/diagnostics",
   TOOLS_SPEEDTEST: "/support/speedtest",
   CALL_HOME: "/support/call-home",
-  INSPECT: "/support/inspect",
   PROFILE: "/support/profile",
-  TOOLS_WATCH: "/support/watch",
+  TOOLS_WATCH: "/support/inspect",
 
   /** License **/
   LICENSE: "/license",
@@ -389,7 +388,6 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.TOOLS_SPEEDTEST]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.REGISTER_SUPPORT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.CALL_HOME]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
-  [IAM_PAGES.INSPECT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.PROFILE]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.HEALTH]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
 };

@@ -18,30 +18,31 @@ import * as roles from "./roles";
 import * as elements from "./elements";
 import * as constants from "./constants";
 import { Selector } from "testcafe";
+import { logoutItem } from "./elements-menu";
 
 export const setUpBucket = (t) => {
   return t
     .useRole(roles.admin)
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .click(elements.createBucketButton)
     .typeText(elements.bucketNameInput, constants.TEST_BUCKET_NAME)
     .click(elements.createBucketButton)
-    .click(elements.logoutItem);
+    .click(logoutItem);
 };
 
 export const cleanUpBucket = (t) => {
   return (
     t
       // useRole doesn't work here so we would need to enter the commands manually
-      .navigateTo("http://localhost:5005/login")
+      .navigateTo("http://localhost:9090/login")
       .typeText("#accessKey", "minioadmin")
       .typeText("#secretKey", "minioadmin")
       .click(elements.loginSubmitButton)
-      .navigateTo("http://localhost:5005/buckets")
+      .navigateTo("http://localhost:9090/buckets")
       .click(elements.manageButton)
       .click(elements.deleteBucketButton)
       .click(elements.deleteButton)
-      .click(elements.logoutItem)
+      .click(logoutItem)
   );
 };
 
@@ -49,25 +50,25 @@ export const cleanUpBucketAndUploads = (t) => {
   return (
     t
       // useRole doesn't work here so we would need to enter the commands manually
-      .navigateTo("http://localhost:5005/login")
+      .navigateTo("http://localhost:9090/login")
       .typeText("#accessKey", "minioadmin")
       .typeText("#secretKey", "minioadmin")
       .click(elements.loginSubmitButton)
-      .navigateTo("http://localhost:5005/buckets")
-      .click(elements.browseButton)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(elements.testBucketBrowseButton)
       .click(elements.deleteIconButtonAlt)
       .click(elements.deleteButton)
       .click(elements.configureBucketButton)
       .click(elements.deleteBucketButton)
       .click(elements.deleteButton)
-      .click(elements.logoutItem)
+      .click(logoutItem)
   );
 };
 
 export const createUser = (t) => {
   return t
     .useRole(roles.admin)
-    .navigateTo("http://localhost:5005/users")
+    .navigateTo("http://localhost:9090/identity/users")
     .click(elements.createUserButton)
     .typeText(elements.usersAccessKeyInput, constants.TEST_USER_NAME)
     .typeText(elements.usersSecretKeyInput, constants.TEST_PASSWORD)
@@ -86,7 +87,7 @@ export const cleanUpUser = (t) => {
 
   return t
     .useRole(roles.admin)
-    .navigateTo("http://localhost:5005/users")
+    .navigateTo("http://localhost:9090/identity/users")
     .click(userDeleteIconButton)
     .click(elements.deleteButton);
 };

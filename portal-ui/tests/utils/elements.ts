@@ -18,36 +18,6 @@ import * as constants from "./constants";
 import { Selector } from "testcafe";
 
 //----------------------------------------------------
-// General sidebar element
-//----------------------------------------------------
-export const sidebarItem = Selector(".MuiPaper-root").find("ul").child("a");
-export const logoutItem = Selector(".MuiPaper-root").find("ul").child("div");
-
-//----------------------------------------------------
-// Specific sidebar elements
-//----------------------------------------------------
-export const dashboardElement = sidebarItem.withAttribute("href", "/dashboard");
-export const bucketsElement = sidebarItem.withAttribute("href", "/buckets");
-export const usersElement = sidebarItem.withAttribute("href", "/users");
-export const groupsElement = sidebarItem.withAttribute("href", "/groups");
-export const serviceAcctsElement = sidebarItem.withAttribute(
-  "href",
-  "/account"
-);
-export const iamPoliciesElement = sidebarItem.withAttribute(
-  "href",
-  "/policies"
-);
-export const settingsElement = sidebarItem.withAttribute("href", "/settings");
-export const notificationEndpointsElement = sidebarItem.withAttribute(
-  "href",
-  "/notification-endpoints"
-);
-export const tiersElement = sidebarItem.withAttribute("href", "/tiers");
-export const toolsElement = sidebarItem.withAttribute("href", "/tools");
-export const licenseElement = sidebarItem.withAttribute("href", "/license");
-
-//----------------------------------------------------
 // Buttons
 //----------------------------------------------------
 export const loginSubmitButton = Selector("form button");
@@ -59,7 +29,7 @@ export const manageButton = Selector("h1")
   .parent(4)
   .find("button:enabled")
   .withText("Manage");
-export const browseButton = Selector("h1")
+export const testBucketBrowseButton = Selector("h1")
   .withText(constants.TEST_BUCKET_NAME)
   .parent(4)
   .find("button:enabled")

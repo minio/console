@@ -30,7 +30,12 @@ import {
 import { DocumentationIcon, SettingsIcon } from "../../../icons";
 import MenuItem from "./MenuItem";
 import { NavLink, useLocation } from "react-router-dom";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 
 const ConsoleMenuList = ({
   menuItems,
@@ -106,6 +111,7 @@ const ConsoleMenuList = ({
                   stateClsName={stateClsName}
                   page={menuGroup}
                   key={menuGroup.id}
+                  id={menuGroup.id}
                   onExpand={setOpenGroup}
                   expandedValue={openGroup}
                   pathValue={pathname}
@@ -131,34 +137,39 @@ const ConsoleMenuList = ({
         }}
         className={`${stateClsName} group-wrapper bottom-list`}
       >
-        <ListItem
-          key={IAM_PAGES.SETTINGS}
-          button
-          to={IAM_PAGES.SETTINGS}
-          disableRipple
-          component={NavLink}
-          className={`$ ${stateClsName} bottom-menu-item`}
-          sx={{
-            ...menuItemContainerStyles,
-            ...menuItemMiniStyles,
-            marginBottom: "3px",
-          }}
+        <SecureComponent
+          scopes={[IAM_SCOPES.ADMIN_CONFIG_UPDATE]}
+          resource={CONSOLE_UI_RESOURCE}
         >
-          <ListItemIcon
+          <ListItem
+            key={IAM_PAGES.SETTINGS}
+            button
+            to={IAM_PAGES.SETTINGS}
+            disableRipple
+            component={NavLink}
+            className={`$ ${stateClsName} bottom-menu-item`}
             sx={{
-              ...menuItemIconStyles,
+              ...menuItemContainerStyles,
+              ...menuItemMiniStyles,
+              marginBottom: "3px",
             }}
           >
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Settings"
-            sx={{
-              ...menuItemTextStyles,
-            }}
-            className={stateClsName}
-          />
-        </ListItem>
+            <ListItemIcon
+              sx={{
+                ...menuItemIconStyles,
+              }}
+            >
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Settings"
+              sx={{
+                ...menuItemTextStyles,
+              }}
+              className={stateClsName}
+            />
+          </ListItem>
+        </SecureComponent>
 
         <ListItem
           button

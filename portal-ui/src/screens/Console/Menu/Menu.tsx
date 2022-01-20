@@ -43,36 +43,35 @@ import {
 } from "../../../icons";
 
 import {
-  UsersMenuIcon,
-  BucketsMenuIcon,
-  IdentityMenuIcon,
-  MonitoringMenuIcon,
-  HealthMenuIcon,
-  GroupsMenuIcon,
-  AccountsMenuIcon,
-  MetricsMenuIcon,
-  LogsMenuIcon,
-  AuditLogsMenuIcon,
-  TraceMenuIcon,
-  DrivesMenuIcon,
   AccessMenuIcon,
-  SupportMenuIcon,
+  AccountsMenuIcon,
+  AuditLogsMenuIcon,
+  BucketsMenuIcon,
+  DrivesMenuIcon,
+  GroupsMenuIcon,
+  HealthMenuIcon,
+  IdentityMenuIcon,
+  LogsMenuIcon,
+  MetricsMenuIcon,
+  MonitoringMenuIcon,
   PerformanceMenuIcon,
-  InspectMenuIcon,
-  ProfileMenuIcon,
+  SupportMenuIcon,
+  TraceMenuIcon,
+  UsersMenuIcon,
 } from "../../../icons/SidebarMenus/MenuIcons";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
-  S3_ALL_RESOURCES,
+  IAM_PAGES_PERMISSIONS,
   IAM_SCOPES,
+  S3_ALL_RESOURCES,
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import RegisterMenuIcon from "../../../icons/SidebarMenus/RegisterMenuIcon";
 import DiagnosticsMenuIcon from "../../../icons/SidebarMenus/DiagnosticsMenuIcon";
-import CallHomeMenuIcon from "../../../icons/SidebarMenus/CallHomeMenuIcon";
+import InspectMenuIcon from "../../../icons/SidebarMenus/InspectMenuIcon";
 
 const drawerWidth = 245;
 
@@ -146,7 +145,7 @@ const Menu = ({
 
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
 
-  let consoleMenus = [
+  let consoleMenus: IMenuItem[] = [
     {
       name: "Buckets",
       id: "buckets",
@@ -196,8 +195,6 @@ const Menu = ({
       id: "access",
       to: IAM_PAGES.POLICIES,
       icon: AccessMenuIcon,
-      forceDisplay: true,
-      children: [],
     },
     {
       component: NavLink,
@@ -290,27 +287,27 @@ const Menu = ({
           icon: PerformanceMenuIcon,
           to: IAM_PAGES.TOOLS_SPEEDTEST,
         },
-        {
-          name: "Call Home",
-          id: "callhome",
-          component: NavLink,
-          icon: CallHomeMenuIcon,
-          to: IAM_PAGES.CALL_HOME,
-        },
+        // {
+        //   name: "Call Home",
+        //   id: "callhome",
+        //   component: NavLink,
+        //   icon: CallHomeMenuIcon,
+        //   to: IAM_PAGES.CALL_HOME,
+        // },
         {
           name: "Inspect",
-          id: "inspsect",
+          id: "inspect",
           component: NavLink,
           icon: InspectMenuIcon,
-          to: IAM_PAGES.INSPECT,
+          to: IAM_PAGES.TOOLS_WATCH,
         },
-        {
-          name: "Profile",
-          id: "profile",
-          component: NavLink,
-          icon: ProfileMenuIcon,
-          to: IAM_PAGES.PROFILE,
-        },
+        // {
+        //   name: "Profile",
+        //   id: "profile",
+        //   component: NavLink,
+        //   icon: ProfileMenuIcon,
+        //   to: IAM_PAGES.PROFILE,
+        // },
       ],
     },
     {
@@ -371,8 +368,40 @@ const Menu = ({
     },
   ];
 
+  const allowedItems = (operatorMode ? operatorMenus : consoleMenus).filter(
+    (item: IMenuItem) => {
+      if (item.children && item.children.length > 0) {
+        const c = item.children?.filter((childItem: IMenuItem) => {
+          return (
+            ((childItem.customPermissionFnc
+              ? childItem.customPermissionFnc()
+              : hasPermission(
+                  CONSOLE_UI_RESOURCE,
+                  IAM_PAGES_PERMISSIONS[childItem.to ?? ""]
+                )) ||
+              childItem.forceDisplay) &&
+            !childItem.fsHidden
+          );
+        });
+        return c.length > 0;
+      }
+
+      const res =
+        ((item.customPermissionFnc
+          ? item.customPermissionFnc()
+          : hasPermission(
+              CONSOLE_UI_RESOURCE,
+              IAM_PAGES_PERMISSIONS[item.to ?? ""]
+            )) ||
+          item.forceDisplay) &&
+        !item.fsHidden;
+      return res;
+    }
+  );
+
   return (
     <Drawer
+      id="app-menu"
       variant="permanent"
       className={clsx(classes.drawer, {
         [classes.drawerOpen]: sidebarOpen,
@@ -394,7 +423,7 @@ const Menu = ({
       />
 
       <ConsoleMenuList
-        menuItems={operatorMode ? operatorMenus : consoleMenus}
+        menuItems={allowedItems}
         isOpen={sidebarOpen}
         onLogoutClick={logout}
       />

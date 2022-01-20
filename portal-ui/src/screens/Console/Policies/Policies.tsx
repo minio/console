@@ -19,7 +19,7 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, { setMenuOpen });
 
-const Users = () => {
+const Policies = () => {
   return (
     <Router history={history}>
       <Switch>
@@ -28,7 +28,7 @@ const Users = () => {
           exact={true}
           component={ListPolicies}
         />
-        <Route path={`"${IAM_PAGES.POLICIES}/*"`} component={PolicyDetails} />
+        <Route path={`${IAM_PAGES.POLICIES}/*`} component={PolicyDetails} />
         <Route path="/" component={ListPolicies} />
         <Route component={NotFoundPage} />
       </Switch>
@@ -36,4 +36,4 @@ const Users = () => {
   );
 };
 
-export default withRouter(connector(Users));
+export default withRouter(connector(Policies));
