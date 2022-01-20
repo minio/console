@@ -43,6 +43,7 @@ import {
 } from "./utils";
 import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -184,7 +185,7 @@ const AddTierConfiguration = ({
         .then(() => {
           setSaving(false);
 
-          history.push("/tiers");
+          history.push(IAM_PAGES.TIERS_ADD);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -309,7 +310,7 @@ const AddTierConfiguration = ({
     <Fragment>
       <PageHeader label="Tiers" />
 
-      <BackLink to="/tiers/add" label="Back To Tier Type Selection" />
+      <BackLink to={IAM_PAGES.TIERS_ADD} label="Back To Tier Type Selection" />
 
       <PageLayout>
         <Grid

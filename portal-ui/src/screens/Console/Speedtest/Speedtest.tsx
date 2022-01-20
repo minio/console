@@ -36,6 +36,7 @@ import { AppState } from "../../../store";
 import { SpeedtestIcon } from "../../../icons";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import STResults from "./STResults";
@@ -195,7 +196,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
   return (
     <Fragment>
       <PageHeader label="Speedtest" />
-      <BackLink to="/tools" label="Return to Tools" />
+      <BackLink to={IAM_PAGES.TOOLS} label="Return to Support" />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly

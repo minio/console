@@ -45,6 +45,7 @@ import history from "../../../history";
 import withSuspense from "../Common/Components/withSuspense";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -132,7 +133,7 @@ const AddNotificationEndpoint = ({
         .then(() => {
           setSaving(false);
           serverNeedsRestart(true);
-          history.push("/notification-endpoints");
+          history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);

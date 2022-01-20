@@ -57,6 +57,7 @@ import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import BackLink from "../../../common/BackLink";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -232,7 +233,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           closeModal={() => setChangeUserPasswordModalOpen(false)}
         />
       )}
-      <BackLink label={"Return to Users"} to={"/users"} />
+      <BackLink label={"Return to Users"} to={IAM_PAGES.USERS} />
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
@@ -354,7 +355,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                         {
                           type: "view",
                           onClick: (policy: IPolicyItem) => {
-                            history.push(`/policies/${policy.policy}`);
+                            history.push(
+                              `${IAM_PAGES.POLICIES}/${policy.policy}`
+                            );
                           },
                         },
                       ]}
