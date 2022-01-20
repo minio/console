@@ -33,6 +33,12 @@ export const monitoringChildren = Selector("#tools-children");
 export const dashboardElement = monitoringChildren
   .find("a")
   .withAttribute("href", "/tools/dashboard");
+export const logsElement = monitoringChildren
+  .find("a")
+  .withAttribute("href", "/tools/logs");
+export const traceElement = monitoringChildren
+  .find("a")
+  .withAttribute("href", "/tools/trace");
 export const drivesElement = monitoringChildren
   .find("a")
   .withAttribute("href", "/tools/heal");

@@ -16,7 +16,11 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import { monitoringElement, supportElement } from "../utils/elements-menu";
+import {
+  logsElement,
+  monitoringElement,
+  supportElement,
+} from "../utils/elements-menu";
 
 fixture("For user with Logs permissions")
   .page("http://localhost:9090")
@@ -25,8 +29,7 @@ fixture("For user with Logs permissions")
   });
 
 test("Tools sidebar item exists", async (t) => {
-  const toolsExist = supportElement.exists;
-  await t.expect(toolsExist).ok();
+  await t.expect(monitoringElement.exists).ok();
 });
 
 test("Logs link exists in Tools page", async (t) => {
@@ -34,18 +37,18 @@ test("Logs link exists in Tools page", async (t) => {
     .expect(monitoringElement.exists)
     .ok()
     .click(monitoringElement)
-    .expect(elements.logsLink.exists)
+    .expect(logsElement.exists)
     .ok();
 });
 
 test("Logs page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/support/logs");
+  await t.navigateTo("http://localhost:9090/tools/logs");
 });
 
 test("Log window exists in Logs page", async (t) => {
   const logWindowExists = elements.logWindow.exists;
   await t
-    .navigateTo("http://localhost:9090/support/logs")
+    .navigateTo("http://localhost:9090/tools/logs")
     .expect(logWindowExists)
     .ok();
 });

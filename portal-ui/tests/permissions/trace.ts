@@ -16,7 +16,11 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import { monitoringElement, supportElement } from "../utils/elements-menu";
+import {
+  monitoringElement,
+  supportElement,
+  traceElement,
+} from "../utils/elements-menu";
 
 fixture("For user with Trace permissions")
   .page("http://localhost:9090")
@@ -24,18 +28,16 @@ fixture("For user with Trace permissions")
     await t.useRole(roles.trace);
   });
 
-test("Tools sidebar item exists", async (t) => {
-  const toolsExist = supportElement.exists;
-  await t.expect(toolsExist).ok();
+test("Monitoring sidebar item exists", async (t) => {
+  await t.expect(monitoringElement.exists).ok();
 });
 
-test("Trace link exists in Tools page", async (t) => {
-  const traceLinkExists = elements.traceLink.exists;
+test("Trace link exists in Monitoring menu", async (t) => {
   await t
     .expect(monitoringElement.exists)
     .ok()
     .click(monitoringElement)
-    .expect(traceLinkExists)
+    .expect(traceElement.exists)
     .ok();
 });
 
