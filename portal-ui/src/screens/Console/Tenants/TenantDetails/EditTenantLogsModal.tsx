@@ -261,6 +261,10 @@ const EditTenantLogsModal = ({
     newDiskCapacityGB,
     newServiceAccountName,
     newDbServiceAccountName,
+    newCPURequest,
+    newMemRequest,
+    newDBCPURequest,
+    newDBMemRequest,
     setValidationErrors,
   ]);
 
