@@ -145,15 +145,15 @@ export const bucketAccessText = Selector("h1")
   .parent(1)
   .find("p")
   .nth(-1);
-export const groupStatusText = Selector('span[class*="statusValue-"]');
+export const groupStatusText = Selector("#group-status");
 
 //----------------------------------------------------
 // Tables, table headers and content
 //----------------------------------------------------
 export const table = Selector(".ReactVirtualized__Table");
-export const bucketsTableDisabled = Selector(
-  'div[class*="TableWrapper-disabled"]'
-);
+export const bucketsTableDisabled = Selector("#object-list-wrapper")
+  .find(".MuiPaper-root")
+  .withText("This location is empty, please try uploading a new file");
 export const createGroupUserTable = Selector(
   ".MuiDialog-container .ReactVirtualized__Table"
 );
@@ -167,9 +167,7 @@ export const bucketAccessRulesTab =
 //----------------------------------------------------
 // Settings window
 //----------------------------------------------------
-export const settingsWindow = Selector(
-  'div[class*="ConfigurationOptions-settingsOptionsContainer"]'
-);
+export const settingsWindow = Selector("#settings-container");
 
 //----------------------------------------------------
 // Settings page vertical tabs
@@ -222,4 +220,4 @@ export const settingsAuditWebhookTab = Selector(".MuiTab-root").withAttribute(
 //----------------------------------------------------
 // Log window
 //----------------------------------------------------
-export const logWindow = Selector('div[class*="logList"]');
+export const logWindow = Selector("#logs-container");
