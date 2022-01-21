@@ -562,13 +562,22 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	mcClient := mcClient{client: s3Client}
 	var rec bool
 	var version string
+	var allVersions bool
 	if params.Recursive != nil {
 		rec = *params.Recursive
 	}
 	if params.VersionID != nil {
 		version = *params.VersionID
 	}
-	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec)
+	if params.AllVersions != nil {
+		allVersions = *params.AllVersions
+	}
+	minClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	client2 := minioClient{client: minClient}
+	err = deleteObjects(ctx, mcClient, client2, params.BucketName, prefix, version, rec, allVersions)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -579,6 +588,15 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.DeleteMultipleObjectsParams) *models.Error {
 	ctx := context.Background()
 	var version string
+	var allVersions bool
+	if params.AllVersions != nil {
+		allVersions = *params.AllVersions
+	}
+	minClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	client2 := minioClient{client: minClient}
 	for i := 0; i < len(params.Files); i++ {
 		if params.Files[i].VersionID != "" {
 			version = params.Files[i].VersionID
@@ -591,7 +609,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		mcClient := mcClient{client: s3Client}
-		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive)
+		err = deleteObjects(ctx, mcClient, client2, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -600,9 +618,26 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 }
 
 // deleteObjects deletes either a single object or multiple objects based on recursive flag
-func deleteObjects(ctx context.Context, client MCClient, bucket, path string, versionID string, recursive bool) error {
+func deleteObjects(ctx context.Context, client MCClient, client2 MinioClient, bucket string, path string, versionID string, recursive bool, allVersions bool) error {
+	if allVersions {
+		if recursive {
+			if err := deleteMultipleObjects(ctx, client, recursive, true); err != nil {
+				return err
+			}
+		} else {
+			objects, err := listBucketObjects(ctx, client2, bucket, path, recursive, true, false)
+			if err != nil {
+				return err
+			}
+			for i := range objects {
+				if err := deleteSingleObject(ctx, client, bucket, path, objects[i].VersionID); err != nil {
+					return err
+				}
+			}
+		}
+	}
 	if recursive {
-		if err := deleteMultipleObjects(ctx, client, recursive); err != nil {
+		if err := deleteMultipleObjects(ctx, client, recursive, false); err != nil {
 			return err
 		}
 	} else {
@@ -616,11 +651,11 @@ func deleteObjects(ctx context.Context, client MCClient, bucket, path string, ve
 // deleteMultipleObjects uses listing before removal, it can list recursively or not,
 //   Use cases:
 //      * Remove objects recursively
-func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool) error {
+func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool, allVersions bool) error {
 	isRemoveBucket := false
 	isIncomplete := false
 	isBypass := false
-	listOpts := mc.ListOptions{Recursive: recursive, Incomplete: isIncomplete, ShowDir: mc.DirNone}
+	listOpts := mc.ListOptions{Recursive: recursive, Incomplete: isIncomplete, ShowDir: mc.DirNone, WithOlderVersions: allVersions, WithDeleteMarkers: allVersions}
 	// TODO: support older Versions
 	contentCh := make(chan *mc.ClientContent, 1)
 

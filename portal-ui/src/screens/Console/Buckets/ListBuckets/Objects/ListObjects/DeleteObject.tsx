@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../../../../actions";
@@ -23,6 +23,7 @@ import { decodeFileName } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
+import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -30,6 +31,7 @@ interface IDeleteObjectProps {
   selectedObject: string;
   selectedBucket: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  versioning: boolean;
 }
 
 const DeleteObject = ({
@@ -38,12 +40,14 @@ const DeleteObject = ({
   selectedBucket,
   selectedObject,
   setErrorSnackMessage,
+  versioning,
 }: IDeleteObjectProps) => {
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [deleteVersions, setDeleteVersions] = useState<boolean>(false);
 
   if (!selectedObject) {
     return null;
@@ -53,7 +57,7 @@ const DeleteObject = ({
     const recursive = decodedSelectedObject.endsWith("/");
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&recursive=${recursive}`
+      `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&recursive=${recursive}&all_versions=${deleteVersions}`
     );
   };
 
@@ -69,7 +73,21 @@ const DeleteObject = ({
       confirmationContent={
         <DialogContentText>
           Are you sure you want to delete:{" "}
-          <b>{decodeFileName(selectedObject)}</b>?{" "}
+          <b>{decodeFileName(selectedObject)}</b>? <br />
+          {versioning && (
+            <FormSwitchWrapper
+              label={"Delete All Versions"}
+              indicatorLabels={["Yes", "No"]}
+              checked={deleteVersions}
+              value={"delete_versions"}
+              id="delete-versions"
+              name="delete-versions"
+              onChange={(e) => {
+                setDeleteVersions(!deleteVersions);
+              }}
+              description=""
+            />
+          )}
         </DialogContentText>
       }
     />
