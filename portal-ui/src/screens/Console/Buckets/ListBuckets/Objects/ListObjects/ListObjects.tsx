@@ -1098,6 +1098,7 @@ const ListObjects = ({
           selectedBucket={bucketName}
           selectedObject={encodeFileName(selectedObject)}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+          versioning={isVersioned}
         />
       )}
       {deleteMultipleOpen && (
@@ -1106,6 +1107,7 @@ const ListObjects = ({
           selectedBucket={bucketName}
           selectedObjects={selectedObjects}
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
+          versioning={isVersioned}
         />
       )}
       {createFolderOpen && (
