@@ -82,6 +82,10 @@ const styles = (theme: Theme) =>
         top: 5,
       },
     },
+    inputLabel: {
+      ...fieldBasic.inputLabel,
+      fontWeight: "normal",
+    },
   });
 
 const inputStyles = makeStyles((theme: Theme) =>

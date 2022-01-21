@@ -23,11 +23,12 @@ const inputLabelBase = {
   color: "#07193E",
   textAlign: "left" as const,
   overflow: "hidden",
+  alignItems: "center",
+  display: "flex",
   "& span": {
     display: "flex",
     alignItems: "center",
   },
-  display: "flex",
 };
 
 export const fieldBasic: any = {
@@ -46,6 +47,9 @@ export const fieldBasic: any = {
     position: "relative" as const,
     display: "flex" as const,
     flexWrap: "wrap",
+    "@media (max-width: 600px)": {
+      flexFlow: "column",
+    },
   },
   tooltipContainer: {
     marginLeft: 5,
