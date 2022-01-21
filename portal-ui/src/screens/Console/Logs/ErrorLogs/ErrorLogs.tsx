@@ -334,7 +334,9 @@ const ErrorLogs = ({
             <SearchBox placeholder="Highlight Line" onChange={setHighlight} />
           </Grid>
           <Grid item xs={12}>
-            <div className={classes.logList}>{renderLines}</div>
+            <div id="logs-container" className={classes.logList}>
+              {renderLines}
+            </div>
           </Grid>
         </Grid>
       </PageLayout>

@@ -17,15 +17,16 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
+import { bucketsElement } from "../utils/elements-menu";
 
 fixture("For user with Bucket Write permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.bucketWrite);
   });
 
 test("Buckets sidebar item exists", async (t) => {
-  const bucketsExist = elements.bucketsElement.with({ boundTestRun: t }).exists;
+  const bucketsExist = bucketsElement.with({ boundTestRun: t }).exists;
   await t.expect(bucketsExist).ok();
 });
 
@@ -33,19 +34,19 @@ test.before(async (t) => {
   // Create a bucket
   await functions.setUpBucket(t);
 })("Browse button exists", async (t) => {
-  const browseExists = elements.browseButton.exists;
+  const browseExists = elements.testBucketBrowseButton.exists;
   await t
     // We need to log back in after we use the admin account to create bucket,
     // using the specific role we use in this module
     .useRole(roles.bucketWrite)
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .expect(browseExists)
     .ok();
 });
 
 test("Bucket access is set to W", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .expect(elements.bucketAccessText.innerText)
     .eql("Access: W");
 });
@@ -53,16 +54,16 @@ test("Bucket access is set to W", async (t) => {
 test("Upload button exists", async (t) => {
   const uploadExists = elements.uploadButton.exists;
   await t
-    .navigateTo("http://localhost:5005/buckets")
-    .click(elements.browseButton)
+    .navigateTo("http://localhost:9090/buckets")
+    .click(elements.testBucketBrowseButton)
     .expect(uploadExists)
     .ok();
 });
 
 test("Object can be uploaded to a bucket", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/buckets")
-    .click(elements.browseButton)
+    .navigateTo("http://localhost:9090/buckets")
+    .click(elements.testBucketBrowseButton)
     // Upload object to bucket
     .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
 });
@@ -70,8 +71,8 @@ test("Object can be uploaded to a bucket", async (t) => {
 test("Object list table is disabled", async (t) => {
   const disabledBucketsTableExists = elements.bucketsTableDisabled.exists;
   await t
-    .navigateTo("http://localhost:5005/buckets")
-    .click(elements.browseButton)
+    .navigateTo("http://localhost:9090/buckets")
+    .click(elements.testBucketBrowseButton)
     .expect(disabledBucketsTableExists)
     .ok();
 }).after(async (t) => {

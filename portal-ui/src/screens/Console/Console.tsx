@@ -322,7 +322,7 @@ const Console = ({
     },
     {
       component: Tools,
-      path: IAM_PAGES.INSPECT,
+      path: IAM_PAGES.TOOLS_WATCH,
     },
     {
       component: Tools,

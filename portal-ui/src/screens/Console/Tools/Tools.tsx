@@ -57,7 +57,7 @@ const Tools = () => {
           }}
         />
         <Route
-          path={IAM_PAGES.INSPECT}
+          path={IAM_PAGES.TOOLS_WATCH}
           exact
           render={() => {
             return (
