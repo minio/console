@@ -37,12 +37,10 @@ import { AppState } from "../../../store";
 import { SpeedtestIcon } from "../../../icons";
 import {
   CONSOLE_UI_RESOURCE,
-  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import STResults from "./STResults";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import BackLink from "../../../common/BackLink";
 import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
 import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
@@ -200,8 +198,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
 
   return (
     <Fragment>
-      <PageHeader label="Speedtest" />
-      <BackLink to={IAM_PAGES.TOOLS} label="Return to Support" />
+      <PageHeader label="Performance" />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly
@@ -245,7 +242,9 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                       "Speedtest in progress..."
                     ) : (
                       <Fragment>
-                        {currStatus && !start ? "Done!" : "Start a new test"}
+                        {currStatus && !start
+                          ? "Done!"
+                          : "Start a new speed test"}
                       </Fragment>
                     )}
                     &nbsp;&nbsp;&nbsp;{start && <CircularProgress size={15} />}

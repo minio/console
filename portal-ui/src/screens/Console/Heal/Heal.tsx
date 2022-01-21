@@ -255,7 +255,7 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
 
   return (
     <Fragment>
-      <PageHeader label="Heal" />
+      <PageHeader label="Drives" />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly entity={"Heal"} iconComponent={<HealIcon />} />
