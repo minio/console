@@ -478,6 +478,7 @@ const ObjectDetails = ({
           selectedBucket={bucketName}
           selectedObject={internalPaths}
           closeDeleteModalAndRefresh={closeDeleteModal}
+          versioning={distributedSetup}
         />
       )}
       {tagModalOpen && actualInfo && (

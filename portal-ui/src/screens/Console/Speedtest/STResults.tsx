@@ -166,7 +166,7 @@ const styles = (theme: Theme) =>
 const STResults = ({ classes, results, start, autotune }: ISTResults) => {
   const [jsonView, setJsonView] = useState<boolean>(false);
 
-  const finalRes = results[results.length - 1];
+  const finalRes = results[results.length - 1] || [];
 
   const getServers: STServer[] = get(finalRes, "GETStats.servers", []) || [];
   const putServers: STServer[] = get(finalRes, "PUTStats.servers", []) || [];
@@ -188,14 +188,22 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
   }) => {
     const avg = calculateBytes(throughput);
 
+    let total = "--";
+    let unit = "";
+
+    if (avg.total !== 0) {
+      total = avg.total.toString();
+      unit = `${avg.unit}/S`;
+    }
+
     return (
       <Grid container>
         <Grid item xs={12} className={classes.objectGeneralTitle}>
           {title}
         </Grid>
         <Grid item xs={12} md={6} className={classes.metricValContainer}>
-          <span className={classes.testUnitRes}>{avg.total}</span>
-          <span className={classes.generalUnit}>{avg.unit}/S</span>
+          <span className={classes.testUnitRes}>{total}</span>
+          <span className={classes.generalUnit}>{unit}</span>
         </Grid>
       </Grid>
     );
@@ -271,86 +279,78 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
 
   return (
     <Fragment>
-      {clnMetrics.length <= 1 && (
-        <Grid container>
-          <Grid item xs={12} className={classes.initialResults}>
-            Please wait while we get {autotune ? "the initial" : "the system"}{" "}
-            results...
-          </Grid>
+      <Grid container className={classes.objectGeneral}>
+        <Grid item xs={12} md={6} lg={4}>
+          <ObjectGeneral
+            title={
+              <div className={classes.download}>
+                <DownloadStatIcon />
+                &nbsp; GET
+              </div>
+            }
+            throughput={getThroughput}
+            objects={getObjects}
+          />
         </Grid>
-      )}
+        <Grid item xs={12} md={6} lg={4}>
+          <ObjectGeneral
+            title={
+              <div className={classes.upload}>
+                <UploadStatIcon />
+                &nbsp; PUT
+              </div>
+            }
+            throughput={putThroughput}
+            objects={putObjects}
+          />
+        </Grid>
+        <Grid item xs={12} md={12} lg={4}>
+          <ResponsiveContainer width="99%">
+            <AreaChart data={clnMetrics}>
+              <defs>
+                <linearGradient id="colorPut" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#2781B0" stopOpacity={0.9} />
+                  <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorGet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#4CCB92" stopOpacity={0.9} />
+                  <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+
+              <CartesianGrid
+                strokeDasharray={"0 0"}
+                strokeWidth={1}
+                strokeOpacity={0.5}
+                stroke={"#F1F1F1"}
+                vertical={false}
+              />
+
+              <Area
+                type="monotone"
+                dataKey={"get"}
+                stroke={"#4CCB92"}
+                fill={"url(#colorGet)"}
+                fillOpacity={0.3}
+                strokeWidth={2}
+                dot={false}
+              />
+              <Area
+                type="monotone"
+                dataKey={"put"}
+                stroke={"#2781B0"}
+                fill={"url(#colorPut)"}
+                fillOpacity={0.3}
+                strokeWidth={2}
+                dot={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Grid>
+      </Grid>
+      <br />
       {clnMetrics.length > 1 && (
         <Fragment>
-          <Grid container className={classes.objectGeneral}>
-            <Grid item xs={12} md={6} lg={4}>
-              <ObjectGeneral
-                title={
-                  <div className={classes.download}>
-                    <DownloadStatIcon />
-                    &nbsp; GET
-                  </div>
-                }
-                throughput={getThroughput}
-                objects={getObjects}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <ObjectGeneral
-                title={
-                  <div className={classes.upload}>
-                    <UploadStatIcon />
-                    &nbsp; PUT
-                  </div>
-                }
-                throughput={putThroughput}
-                objects={putObjects}
-              />
-            </Grid>
-            <Grid item xs={12} md={12} lg={4}>
-              <ResponsiveContainer width="99%">
-                <AreaChart data={clnMetrics}>
-                  <defs>
-                    <linearGradient id="colorPut" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#2781B0" stopOpacity={0.9} />
-                      <stop offset="95%" stopColor="#fff" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="colorGet" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4CCB92" stopOpacity={0.9} />
-                      <stop offset="95%" stopColor="#fff" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-
-                  <CartesianGrid
-                    strokeDasharray={"0 0"}
-                    strokeWidth={1}
-                    strokeOpacity={0.5}
-                    stroke={"#F1F1F1"}
-                    vertical={false}
-                  />
-
-                  <Area
-                    type="monotone"
-                    dataKey={"get"}
-                    stroke={"#4CCB92"}
-                    fill={"url(#colorGet)"}
-                    fillOpacity={0.3}
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey={"put"}
-                    stroke={"#2781B0"}
-                    fill={"url(#colorPut)"}
-                    fillOpacity={0.3}
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Grid>
-          </Grid>
-          <br />
           <Grid container>
             <Grid item xs={12} md={6} className={classes.descriptorLabel}>
               {start ? (
