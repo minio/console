@@ -19,40 +19,45 @@ import * as elements from "../utils/elements";
 import * as constants from "../utils/constants";
 import * as functions from "../utils/functions";
 import { Selector } from "testcafe";
+import { groupsElement, identityElement } from "../utils/elements-menu";
 
 const groupsListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
   constants.TEST_GROUP_NAME
 );
 
 fixture("For user with Groups permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.groups);
   });
 
 test("Groups sidebar item exists", async (t) => {
-  const groupsExist = elements.groupsElement.exists;
-  await t.expect(groupsExist).ok();
+  await t
+    .expect(identityElement.exists)
+    .ok()
+    .click(identityElement)
+    .expect(groupsElement.exists)
+    .ok();
 });
 
 test("Create Group button exists", async (t) => {
   const createGroupButtonExists = elements.createGroupButton.exists;
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .expect(createGroupButtonExists)
     .ok();
 });
 
 test("Create Group button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .click(elements.createGroupButton);
 });
 
 test("Group Name input exists in the Create Group modal", async (t) => {
   const groupNameInputExists = elements.groupNameInput.exists;
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .click(elements.createGroupButton)
     .expect(groupNameInputExists)
     .ok();
@@ -61,7 +66,7 @@ test("Group Name input exists in the Create Group modal", async (t) => {
 test("Users table exists in the Create Group modal", async (t) => {
   const createGroupUserTableExists = elements.table.exists;
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .click(elements.createGroupButton)
     .expect(createGroupUserTableExists)
     .ok();
@@ -77,7 +82,7 @@ test.before(async (t) => {
     // using the specific role we use in this module
     await t
       .useRole(roles.groups)
-      .navigateTo("http://localhost:5005/groups")
+      .navigateTo("http://localhost:9090/identity/groups")
       .click(elements.createGroupButton)
       .typeText(elements.groupNameInput, constants.TEST_GROUP_NAME)
       .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
@@ -89,14 +94,14 @@ test.before(async (t) => {
 test("Groups table exists", async (t) => {
   const groupsTableExists = elements.table.exists;
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .expect(groupsTableExists)
     .ok();
 });
 
 test("Created Group can be disabled and enabled back", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .click(groupsListItem)
     .click(elements.switchInput)
     .expect(elements.groupStatusText.innerText)
@@ -108,7 +113,7 @@ test("Created Group can be disabled and enabled back", async (t) => {
 
 test("Created Group can be viewed and deleted", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/groups")
+    .navigateTo("http://localhost:9090/identity/groups")
     .click(groupsListItem)
     .click(elements.editMembersButton)
     .typeText(elements.filterUserInput, constants.TEST_USER_NAME)

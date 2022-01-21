@@ -14,18 +14,23 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '17'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Make assets
+        run: |
+          make assets
       - name: Build Console on ${{ matrix.os }}
         env:
           GO111MODULE: on
@@ -35,12 +40,12 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server && sleep 180) & (cd portal-ui && yarn && yarn start && sleep 180) & (make initialize-permissions && sleep 180)
+          (./console server && sleep 180) & (make initialize-permissions && sleep 180)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors'
+          args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors '
 
       - name: Clean up users & policies
         run: |

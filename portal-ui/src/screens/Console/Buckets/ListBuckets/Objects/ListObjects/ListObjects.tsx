@@ -1318,7 +1318,10 @@ const ListObjects = ({
         <Grid item xs={12}>
           <br />
         </Grid>
-        <div {...getRootProps({ style: { ...dndStyles } })}>
+        <div
+          id="object-list-wrapper"
+          {...getRootProps({ style: { ...dndStyles } })}
+        >
           <input {...getInputProps()} />
           <Grid item xs={12} className={classes.tableBlock}>
             <SecureComponent

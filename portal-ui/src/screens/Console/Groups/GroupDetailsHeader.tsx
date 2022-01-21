@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,7 +23,7 @@ const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
     <PageHeader
       label={
         <Fragment>
-          <Link to={"/groups"} className={classes.breadcrumLink}>
+          <Link to={IAM_PAGES.GROUPS} className={classes.breadcrumLink}>
             Groups
           </Link>
         </Fragment>

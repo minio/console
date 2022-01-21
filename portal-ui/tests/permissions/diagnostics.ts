@@ -16,6 +16,7 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
+import { diagnosticsElement, supportElement } from "../utils/elements-menu";
 
 fixture("For user with Diagnostics permissions")
   .page("http://localhost:9090")
@@ -23,31 +24,39 @@ fixture("For user with Diagnostics permissions")
     await t.useRole(roles.diagnostics);
   });
 
-test("Tools sidebar item exists", async (t) => {
-  const toolsExist = elements.toolsElement.exists;
-  await t.expect(toolsExist).ok();
+test("Support sidebar item exists", async (t) => {
+  await t
+    .expect(supportElement.exists)
+    .ok()
+    .click(supportElement)
+    .expect(supportElement.exists)
+    .ok();
 });
 
 test("Diagnostics link exists in Tools page", async (t) => {
-  const diagnosticsLinkExists = elements.diagnosticsLink.exists;
-  await t.click(elements.toolsElement).expect(diagnosticsLinkExists).ok();
+  await t
+    .expect(supportElement.exists)
+    .ok()
+    .click(supportElement)
+    .expect(diagnosticsElement.exists)
+    .ok();
 });
 
 test("Diagnostics page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/tools/diagnostics");
+  await t.navigateTo("http://localhost:9090/support/diagnostics");
 });
 
 test("Start Diagnostic button exists", async (t) => {
   const startDiagnosticExists = elements.startDiagnosticButton.exists;
   await t
-    .navigateTo("http://localhost:9090/tools/diagnostics")
+    .navigateTo("http://localhost:9090/support/diagnostics")
     .expect(startDiagnosticExists)
     .ok();
 });
 
 test("Start Diagnostic button can be clicked", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/tools/diagnostics")
+    .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton);
 });
 
@@ -56,14 +65,14 @@ test("Start Diagnostic button can be clicked", async (t) => {
 // test("Download button exists after Diagnostic is completed", async (t) => {
 //   const downloadExists = elements.downloadButton.exists;
 //   await t
-//     .navigateTo("http://localhost:9090/tools/diagnostics")
+//     .navigateTo("http://localhost:9090/support/diagnostics")
 //     .click(elements.startDiagnosticButton)
 //     .expect(downloadExists).ok();
 // });
 
 // test("Download button is clickable after Diagnostic is completed", async (t) => {
 //   await t
-//     .navigateTo("http://localhost:9090/tools/diagnostics")
+//     .navigateTo("http://localhost:9090/support/diagnostics")
 //     .click(elements.startDiagnosticButton)
 //     .click(elements.downloadButton);
 // });
@@ -72,7 +81,7 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
   const startNewDiagnosticButtonExists =
     elements.startNewDiagnosticButton.exists;
   await t
-    .navigateTo("http://localhost:9090/tools/diagnostics")
+    .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
     .expect(startNewDiagnosticButtonExists)
     .ok();
@@ -80,7 +89,7 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
 
 test("Start New Diagnostic button is clickable after Diagnostic is completed", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/tools/diagnostics")
+    .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
     .click(elements.startNewDiagnosticButton);
 });

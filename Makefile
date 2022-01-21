@@ -76,9 +76,14 @@ test-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh)
 	@(docker stop minio)
 
-initialize-permissions:
-	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+test-apply-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/initialize-env.sh)
+
+test-start-docker-minio:
+	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+
+initialize-permissions: test-start-docker-minio test-apply-permissions
+	@echo "Done initializing permissions test"
 
 cleanup-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/cleanup-env.sh)

@@ -27,6 +27,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../history";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -58,7 +59,7 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
                 className={classes.lambdaNotif}
                 onClick={() => {
                   history.push(
-                    `/notification-endpoints/add/${item.actionTrigger}`
+                    `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
                   );
                 }}
               >

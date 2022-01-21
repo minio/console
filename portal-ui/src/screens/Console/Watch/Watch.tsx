@@ -43,7 +43,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
-import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
@@ -183,8 +182,7 @@ const Watch = ({
 
   return (
     <React.Fragment>
-      <PageHeader label="Watch" />
-      <BackLink to="/tools" label="Return to Tools" />
+      <PageHeader label="Inspect" />
       <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
