@@ -1232,7 +1232,7 @@ export const createTenantCommon: any = {
     paddingTop: 15,
   },
   descriptionText: {
-    fontSize: 16,
+    fontSize: 14,
   },
 };
 
