@@ -16,28 +16,29 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
+import { tiersElement } from "../utils/elements-menu";
 
 fixture("For user with Tiers permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.tiers);
   });
 
 test("Tiers sidebar item exists", async (t) => {
-  const tiersExist = elements.tiersElement.exists;
+  const tiersExist = tiersElement.exists;
   await t.expect(tiersExist).ok();
 });
 
 test("Add Tier button exists", async (t) => {
   const createTierButtonExists = elements.createTierButton.exists;
   await t
-    .navigateTo("http://localhost:5005/tiers")
+    .navigateTo("http://localhost:9090/tiers")
     .expect(createTierButtonExists)
     .ok();
 });
 
 test("Add Tier button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/tiers")
+    .navigateTo("http://localhost:9090/tiers")
     .click(elements.createTierButton);
 });

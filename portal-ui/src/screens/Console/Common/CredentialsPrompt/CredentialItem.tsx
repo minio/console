@@ -22,6 +22,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { CopyIcon } from "../../../../icons";
+import { fieldBasic } from "../FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,8 +51,8 @@ const styles = (theme: Theme) =>
       },
     },
     inputLabel: {
+      ...fieldBasic.inputLabel,
       fontSize: ".8rem",
-      fontWeight: 600,
     },
   });
 

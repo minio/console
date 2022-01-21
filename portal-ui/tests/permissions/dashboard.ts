@@ -16,16 +16,22 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
+import { dashboardElement, monitoringElement } from "../utils/elements-menu";
 
 fixture("For user with Dashboard permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.dashboard);
   });
 
 test("Dashboard sidebar item exists", async (t) => {
-  const dashboardExists = elements.dashboardElement.exists;
-  await t.expect(dashboardExists).ok();
+  const dashboardExists = dashboardElement.exists;
+  await t
+    .expect(monitoringElement.exists)
+    .ok()
+    .click(monitoringElement)
+    .expect(dashboardExists)
+    .ok();
 });
 
 // TODO: Display extended metrics

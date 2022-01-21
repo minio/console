@@ -61,10 +61,11 @@ const styles = (theme: Theme) => {
       marginBottom: 7,
     },
     inputLabel: {
+      ...fieldBasic.inputLabel,
       margin: 0,
       alignItems: "flex-start",
       paddingTop: "20px",
-      minWidth: 170,
+      minWidth: 162,
     },
   });
 };

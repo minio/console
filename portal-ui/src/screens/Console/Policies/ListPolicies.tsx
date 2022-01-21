@@ -40,6 +40,7 @@ import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent, {
@@ -157,7 +158,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   };
 
   const viewAction = (policy: any) => {
-    history.push(`/policies/${policy.name}`);
+    history.push(`${IAM_PAGES.POLICIES}/${policy.name}`);
   };
 
   const tableActions = [

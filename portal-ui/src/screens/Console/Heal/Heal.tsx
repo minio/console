@@ -50,7 +50,6 @@ import { HealIcon } from "../../../icons";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
-import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
@@ -257,7 +256,6 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
   return (
     <Fragment>
       <PageHeader label="Heal" />
-      <BackLink to="/tools" label="Return to Tools" />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly entity={"Heal"} iconComponent={<HealIcon />} />

@@ -16,31 +16,39 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
+import {
+  logsElement,
+  monitoringElement,
+  supportElement,
+} from "../utils/elements-menu";
 
 fixture("For user with Logs permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.logs);
   });
 
 test("Tools sidebar item exists", async (t) => {
-  const toolsExist = elements.toolsElement.exists;
-  await t.expect(toolsExist).ok();
+  await t.expect(monitoringElement.exists).ok();
 });
 
 test("Logs link exists in Tools page", async (t) => {
-  const logsLinkExists = elements.logsLink.exists;
-  await t.click(elements.toolsElement).expect(logsLinkExists).ok();
+  await t
+    .expect(monitoringElement.exists)
+    .ok()
+    .click(monitoringElement)
+    .expect(logsElement.exists)
+    .ok();
 });
 
 test("Logs page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:5005/tools/logs");
+  await t.navigateTo("http://localhost:9090/tools/logs");
 });
 
 test("Log window exists in Logs page", async (t) => {
   const logWindowExists = elements.logWindow.exists;
   await t
-    .navigateTo("http://localhost:5005/tools/logs")
+    .navigateTo("http://localhost:9090/tools/logs")
     .expect(logWindowExists)
     .ok();
 });

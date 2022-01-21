@@ -16,22 +16,23 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
+import { settingsElement } from "../utils/elements-menu";
 
 fixture("For user with Settings permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.settings);
   });
 
 test("Settings sidebar item exists", async (t) => {
-  const settingsExist = elements.settingsElement.exists;
+  const settingsExist = settingsElement.exists;
   await t.expect(settingsExist).ok();
 });
 
 test("Settings window exists in Settings page", async (t) => {
   const settingsWindowExists = elements.settingsWindow.exists;
   await t
-    .navigateTo("http://localhost:5005/settings")
+    .navigateTo("http://localhost:9090/settings")
     .expect(settingsWindowExists)
     .ok();
 });
@@ -50,7 +51,7 @@ test("All vertical tab items exist", async (t) => {
     elements.settingsLoggerWebhookTab.exists;
   const settingsAuditWebhookTabExists = elements.settingsAuditWebhookTab.exists;
   await t
-    .navigateTo("http://localhost:5005/settings")
+    .navigateTo("http://localhost:9090/settings")
     .expect(settingsRegionTabExists)
     .ok()
     .expect(settingsCacheTabExists)

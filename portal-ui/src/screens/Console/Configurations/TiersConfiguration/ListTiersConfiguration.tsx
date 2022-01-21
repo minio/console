@@ -49,6 +49,7 @@ import { AppState } from "../../../../store";
 import DistributedOnly from "../../Common/DistributedOnly/DistributedOnly";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
@@ -142,7 +143,7 @@ const ListTiersConfiguration = ({
   });
 
   const addTier = () => {
-    history.push("/tiers/add");
+    history.push(IAM_PAGES.TIERS_ADD);
   };
 
   const renderTierName = (item: ITierElement) => {

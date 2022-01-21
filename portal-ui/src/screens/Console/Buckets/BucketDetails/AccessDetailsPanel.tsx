@@ -32,6 +32,7 @@ import history from "../../../../history";
 import { BucketInfo } from "../types";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
@@ -120,7 +121,7 @@ const AccessDetails = ({
       type: "view",
       disableButtonFunction: () => !viewPolicy,
       onClick: (policy: any) => {
-        history.push(`/policies/${policy.name}`);
+        history.push(`${IAM_PAGES.POLICIES}/${policy.name}`);
       },
     },
   ];
@@ -130,7 +131,7 @@ const AccessDetails = ({
       type: "view",
       disableButtonFunction: () => !viewUser,
       onClick: (user: any) => {
-        history.push(`/users/${user}`);
+        history.push(`${IAM_PAGES.USERS}/${user}`);
       },
     },
   ];
