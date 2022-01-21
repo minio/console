@@ -60,22 +60,20 @@ test("Start Diagnostic button can be clicked", async (t) => {
     .click(elements.startDiagnosticButton);
 });
 
-// TODO: Fix test failing sporadically on GitHub Actions
+test("Download button exists after Diagnostic is completed", async (t) => {
+  const downloadExists = elements.downloadButton.exists;
+  await t
+    .navigateTo("http://localhost:9090/support/diagnostics")
+    .click(elements.startDiagnosticButton)
+    .expect(downloadExists).ok();
+});
 
-// test("Download button exists after Diagnostic is completed", async (t) => {
-//   const downloadExists = elements.downloadButton.exists;
-//   await t
-//     .navigateTo("http://localhost:9090/support/diagnostics")
-//     .click(elements.startDiagnosticButton)
-//     .expect(downloadExists).ok();
-// });
-
-// test("Download button is clickable after Diagnostic is completed", async (t) => {
-//   await t
-//     .navigateTo("http://localhost:9090/support/diagnostics")
-//     .click(elements.startDiagnosticButton)
-//     .click(elements.downloadButton);
-// });
+test("Download button is clickable after Diagnostic is completed", async (t) => {
+  await t
+    .navigateTo("http://localhost:9090/support/diagnostics")
+    .click(elements.startDiagnosticButton)
+    .click(elements.downloadButton);
+});
 
 test("Start New Diagnostic button exists after Diagnostic is completed", async (t) => {
   const startNewDiagnosticButtonExists =
