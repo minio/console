@@ -16,17 +16,19 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
+
 import * as functions from "../utils/functions";
+import { bucketsElement, logoutItem } from "../utils/elements-menu";
 
 fixture("For user with Bucket Assign Policy permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.bucketAssignPolicy);
   });
 
 // Bucket assign policy permissions
 test("Buckets sidebar item exists", async (t) => {
-  const bucketsExist = elements.bucketsElement.exists;
+  const bucketsExist = bucketsElement.exists;
   await t.expect(bucketsExist).ok();
 });
 
@@ -38,7 +40,7 @@ test.before(async (t) => {
     // We need to log back in after we use the admin account to create bucket,
     // using the specific role we use in this module
     .useRole(roles.bucketAssignPolicy)
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .click(elements.manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.addAccessRuleButton)
@@ -50,7 +52,7 @@ test.before(async (t) => {
 
 test("A writeonly policy can be assigned to a bucket", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .click(elements.manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.addAccessRuleButton)
@@ -62,7 +64,7 @@ test("A writeonly policy can be assigned to a bucket", async (t) => {
 
 test("A readwrite policy can be assigned to a bucket", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .click(elements.manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.addAccessRuleButton)
@@ -74,12 +76,12 @@ test("A readwrite policy can be assigned to a bucket", async (t) => {
 
 test("Previously assigned policy to a bucket can be deleted", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/buckets")
+    .navigateTo("http://localhost:9090/buckets")
     .click(elements.manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.deleteIconButtonAlt)
     .click(elements.deleteButton)
-    .click(elements.logoutItem);
+    .click(logoutItem);
 }).after(async (t) => {
   // Cleanup created bucket
   await functions.cleanUpBucket(t);

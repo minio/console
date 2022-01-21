@@ -17,15 +17,16 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
+import { bucketsElement, logoutItem } from "../utils/elements-menu";
 
 fixture("For user with Bucket Read permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.bucketRead);
   });
 
 test("Buckets sidebar item exists", async (t) => {
-  const bucketsExist = elements.bucketsElement.exists;
+  const bucketsExist = bucketsElement.exists;
   await t.expect(bucketsExist).ok();
 });
 
@@ -33,7 +34,7 @@ test.before(async (t) => {
   // Create a bucket
   await functions.setUpBucket(t);
 })("Browse button exists", async (t) => {
-  const browseExists = elements.browseButton.exists;
+  const browseExists = elements.testBucketBrowseButton.exists;
   // We need to log back in after we use the admin account to create bucket,
   // using the specific role we use in this module
   await t.useRole(roles.bucketRead).expect(browseExists).ok();
@@ -47,16 +48,16 @@ test
   .before(async (t) => {
     await t
       .useRole(roles.admin)
-      .navigateTo("http://localhost:5005/buckets")
-      .click(elements.browseButton)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(elements.testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
-      .click(elements.logoutItem);
+      .click(logoutItem);
   })("Object list table is enabled", async (t) => {
     const bucketsTableExists = elements.table.exists;
     await t
       .useRole(roles.bucketRead)
-      .click(elements.browseButton)
+      .click(elements.testBucketBrowseButton)
       .expect(bucketsTableExists)
       .ok();
   })

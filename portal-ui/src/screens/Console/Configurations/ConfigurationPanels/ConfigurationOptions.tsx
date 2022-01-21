@@ -80,7 +80,10 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
 
       <PageLayout>
         <Grid item xs={12}>
-          <div className={classes.settingsOptionsContainer}>
+          <div
+            id="settings-container"
+            className={classes.settingsOptionsContainer}
+          >
             <ScreenTitle icon={<SettingsIcon />} title={"Configuration:"} />
             <VerticalTabs
               selectedTab={selConfigTab}

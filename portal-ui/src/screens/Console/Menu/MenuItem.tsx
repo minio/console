@@ -45,12 +45,14 @@ const MenuItem = ({
   onExpand,
   expandedValue,
   pathValue = "",
+  id = `${Math.random()}`,
 }: {
   page: any;
   stateClsName?: string;
   onExpand?: (id: any) => void;
   expandedValue?: any;
   pathValue?: string;
+  id?: string;
 }) => {
   const childrenMenuList = page?.children?.filter(
     (item: any) =>
@@ -88,6 +90,7 @@ const MenuItem = ({
         onClick={onClickHandler}
         component={page.component}
         to={page.to}
+        id={id}
         className={`${activeClsName} ${stateClsName} main-menu-item `}
         disableRipple
         sx={{
@@ -132,7 +135,13 @@ const MenuItem = ({
       </ListItem>
 
       {hasChildren ? (
-        <Collapse key={page.id} in={isActiveGroup} timeout="auto" unmountOnExit>
+        <Collapse
+          key={page.id}
+          id={`${page.id}-children`}
+          in={isActiveGroup}
+          timeout="auto"
+          unmountOnExit
+        >
           <List
             component="div"
             disablePadding

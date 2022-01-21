@@ -18,6 +18,7 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as constants from "../utils/constants";
 import { Selector } from "testcafe";
+import { iamPoliciesElement } from "../utils/elements-menu";
 
 const iamPolicyListItem = Selector(
   ".ReactVirtualized__Table__rowColumn"
@@ -29,34 +30,34 @@ const iamPolicyDelete = iamPolicyListItem
   .withAttribute("aria-label", "delete");
 
 fixture("For user with IAM Policies permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.iamPolicies);
   });
 
 test("IAM Policies sidebar item exists", async (t) => {
-  const iamPoliciesExist = elements.iamPoliciesElement.exists;
+  const iamPoliciesExist = iamPoliciesElement.exists;
   await t.expect(iamPoliciesExist).ok();
 });
 
 test("Create Policy button exists", async (t) => {
   const createPolicyButtonExists = elements.createPolicyButton.exists;
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .expect(createPolicyButtonExists)
     .ok();
 });
 
 test("Create Policy button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .click(elements.createPolicyButton);
 });
 
 test("Policy Name input exists in the Create Policy modal", async (t) => {
   const policyNameInputExists = elements.createPolicyName.exists;
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .click(elements.createPolicyButton)
     .expect(policyNameInputExists)
     .ok();
@@ -65,7 +66,7 @@ test("Policy Name input exists in the Create Policy modal", async (t) => {
 test("Policy textfield exists in the Create Policy modal", async (t) => {
   const policyTextfieldExists = elements.createPolicyTextfield.exists;
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .click(elements.createPolicyButton)
     .expect(policyTextfieldExists)
     .ok();
@@ -73,7 +74,7 @@ test("Policy textfield exists in the Create Policy modal", async (t) => {
 
 test("Create Policy modal can be submitted after inputs are entered", async (t) => {
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .click(elements.createPolicyButton)
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
     .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {
@@ -83,7 +84,7 @@ test("Create Policy modal can be submitted after inputs are entered", async (t) 
 }).after(async (t) => {
   // Clean up created policy
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .typeText(elements.searchResourceInput, constants.TEST_IAM_POLICY_NAME)
     .click(iamPolicyDelete)
     .click(elements.deleteButton);
@@ -92,7 +93,7 @@ test("Create Policy modal can be submitted after inputs are entered", async (t) 
 test("Created Policy can be viewed and deleted", async (t) => {
   const iamPolicyListItemExists = iamPolicyListItem.exists;
   await t
-    .navigateTo("http://localhost:5005/policies")
+    .navigateTo("http://localhost:9090/access/policies")
     .click(elements.createPolicyButton)
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
     .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {

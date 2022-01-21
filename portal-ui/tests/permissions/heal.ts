@@ -17,6 +17,11 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
+import {
+  drivesElement,
+  monitoringElement,
+  supportElement,
+} from "../utils/elements-menu";
 
 fixture("For user with Heal permissions")
   .page("http://localhost:9090")
@@ -24,14 +29,17 @@ fixture("For user with Heal permissions")
     await t.useRole(roles.heal);
   });
 
-test("Tools sidebar item exists", async (t) => {
-  const toolsExist = elements.toolsElement.exists;
-  await t.expect(toolsExist).ok();
+test("Monitoring sidebar item exists", async (t) => {
+  await t.expect(monitoringElement.exists).ok();
 });
 
-test("Heal link exists in Tools page", async (t) => {
-  const healLinkExists = elements.healLink.exists;
-  await t.click(elements.toolsElement).expect(healLinkExists).ok();
+test("Heal menu exists in Monitoring page", async (t) => {
+  await t
+    .expect(monitoringElement.exists)
+    .ok()
+    .click(monitoringElement)
+    .expect(drivesElement.exists)
+    .ok();
 });
 
 test("Heal page can be opened", async (t) => {

@@ -290,7 +290,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             actions={
               <Fragment>
                 <span className={classes.statusLabel}>Group Status:</span>
-                <span className={classes.statusValue}>
+                <span id="group-status" className={classes.statusValue}>
                   {isGroupEnabled ? "Enabled" : "Disabled"}
                 </span>
                 <SecureComponent
