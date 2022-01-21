@@ -94,6 +94,8 @@ func (m *SetPolicyNameRequest) validateEntityType(formats strfmt.Registry) error
 		if err := m.EntityType.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("entityType")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("entityType")
 			}
 			return err
 		}
@@ -131,6 +133,8 @@ func (m *SetPolicyNameRequest) contextValidateEntityType(ctx context.Context, fo
 		if err := m.EntityType.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("entityType")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("entityType")
 			}
 			return err
 		}

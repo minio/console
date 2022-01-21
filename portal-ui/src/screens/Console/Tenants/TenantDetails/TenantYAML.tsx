@@ -45,9 +45,6 @@ const styles = (theme: Theme) =>
     codeMirrorContainer: {
       marginBottom: 20,
       paddingLeft: 15,
-      "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
-        border: "1px solid #EAEAEA",
-      },
       "& label": {
         marginBottom: ".5rem",
       },
@@ -161,6 +158,7 @@ const TenantYAML = ({
                 onBeforeChange={(editor, data, value) => {
                   setTenantYaml(value);
                 }}
+                editorHeight={"550px"}
               />
             </Grid>
             <Grid item xs={12} className={classes.modalButtonBar}>

@@ -25,7 +25,7 @@ import {
   tableStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { AddIcon } from "../../../../icons";
 import { IPool, ITenant } from "../ListTenants/types";
@@ -36,6 +36,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
 import SearchIcon from "../../../../icons/SearchIcon";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 interface IPoolsSummary {
   classes: any;
@@ -117,16 +118,17 @@ const PoolsSummary = ({
             }}
             variant="standard"
           />
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<AddIcon />}
+
+          <RBIconButton
+            tooltip={"Expand Tenant"}
+            text={"Expand Tenant"}
             onClick={() => {
               setAddPool(true);
             }}
-          >
-            Expand Tenant
-          </Button>
+            icon={<AddIcon />}
+            color="primary"
+            variant={"contained"}
+          />
         </Grid>
         <Grid item xs={12}>
           <br />

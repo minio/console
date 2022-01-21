@@ -20,7 +20,6 @@ import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Policy, PolicyList } from "./types";
 import { AddIcon, IAMPoliciesIcon } from "../../../icons";
@@ -41,6 +40,7 @@ import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent, {
@@ -49,6 +49,7 @@ import SecureComponent, {
 import SearchBox from "../Common/SearchBox";
 
 import withSuspense from "../Common/Components/withSuspense";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const AddPolicy = withSuspense(React.lazy(() => import("./AddPolicy")));
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
@@ -157,7 +158,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   };
 
   const viewAction = (policy: any) => {
-    history.push(`/policies/${policy.name}`);
+    history.push(`${IAM_PAGES.POLICIES}/${policy.name}`);
   };
 
   const tableActions = [
@@ -208,17 +209,17 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             resource={CONSOLE_UI_RESOURCE}
             errorProps={{ disabled: true }}
           >
-            <Button
+            <RBIconButton
+              tooltip={"Create Policy"}
+              text={"Create Policy"}
               variant="contained"
               color="primary"
-              endIcon={<AddIcon />}
+              icon={<AddIcon />}
               onClick={() => {
                 setAddScreenOpen(true);
                 setPolicyEdit(null);
               }}
-            >
-              Create Policy
-            </Button>
+            />
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>

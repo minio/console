@@ -63,6 +63,7 @@ const styles = (theme: Theme) =>
       gridTemplateColumns: "auto auto 20px 20px",
       display: "grid",
       gridGap: 20,
+      paddingRight: 20,
     },
     ...modalBasic,
   });
@@ -87,12 +88,14 @@ const KeyPairEdit = ({
         fieldKey: `key-${i.toString()}`,
         required: false,
         value: newValues[i].key,
+        pattern: /^[a-zA-Z0-9-_.]{1,63}$/,
         customPatternMessage: "Invalid key",
       });
       keyPairValidation.push({
         fieldKey: `val-${i.toString()}`,
         required: false,
         value: newValues[i].value,
+        pattern: /^[a-zA-Z0-9-_.]{1,63}$/,
         customPatternMessage: "Invalid value",
       });
     }

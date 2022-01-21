@@ -65,6 +65,8 @@ func (m *AwsConfiguration) validateSecretsmanager(formats strfmt.Registry) error
 		if err := m.Secretsmanager.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretsmanager")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretsmanager")
 			}
 			return err
 		}
@@ -93,6 +95,8 @@ func (m *AwsConfiguration) contextValidateSecretsmanager(ctx context.Context, fo
 		if err := m.Secretsmanager.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretsmanager")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretsmanager")
 			}
 			return err
 		}
@@ -172,6 +176,8 @@ func (m *AwsConfigurationSecretsmanager) validateCredentials(formats strfmt.Regi
 		if err := m.Credentials.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretsmanager" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretsmanager" + "." + "credentials")
 			}
 			return err
 		}
@@ -218,6 +224,8 @@ func (m *AwsConfigurationSecretsmanager) contextValidateCredentials(ctx context.
 		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretsmanager" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretsmanager" + "." + "credentials")
 			}
 			return err
 		}

@@ -71,6 +71,8 @@ func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
 			if err := m.Minio[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("minio" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -103,6 +105,8 @@ func (m *TLSConfiguration) contextValidateMinio(ctx context.Context, formats str
 			if err := m.Minio[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("minio" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

@@ -30,7 +30,7 @@ const inputLabelBase = {
   display: "flex",
 };
 
-export const fieldBasic = {
+export const fieldBasic: any = {
   inputLabel: {
     ...inputLabelBase,
     minWidth: 160,
@@ -45,6 +45,7 @@ export const fieldBasic = {
     marginBottom: 20,
     position: "relative" as const,
     display: "flex" as const,
+    flexWrap: "wrap",
   },
   tooltipContainer: {
     marginLeft: 5,
@@ -1048,9 +1049,6 @@ export const serviceAccountStyles: any = {
   codeMirrorContainer: {
     marginBottom: 20,
     paddingLeft: 15,
-    "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
-      border: "1px solid #EAEAEA",
-    },
     "& label": {
       marginBottom: ".5rem",
     },

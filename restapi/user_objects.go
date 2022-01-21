@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -109,6 +110,9 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	// upload object
 	api.UserAPIPostBucketsBucketNameObjectsUploadHandler = user_api.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params user_api.PostBucketsBucketNameObjectsUploadParams, session *models.Principal) middleware.Responder {
 		if err := getUploadObjectResponse(session, params); err != nil {
+			if strings.Contains(*err.DetailedMessage, "413") {
+				return user_api.NewPostBucketsBucketNameObjectsUploadDefault(413).WithPayload(err)
+			}
 			return user_api.NewPostBucketsBucketNameObjectsUploadDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewPostBucketsBucketNameObjectsUploadOK()
@@ -395,6 +399,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 				filename = prefixElements[len(prefixElements)-1]
 			}
 		}
+		escapedName := url.PathEscape(filename)
 
 		// indicate object size & content type
 		stat, err := resp.Stat()
@@ -411,11 +416,11 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		}
 
 		if isPreview {
-			rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
+			rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", escapedName))
 			rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
 			rw.Header().Set("X-XSS-Protection", "1")
 		} else {
-			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", escapedName))
 		}
 
 		rw.Header().Set("Last-Modified", stat.LastModified.UTC().Format(http.TimeFormat))
@@ -424,7 +429,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		if isPreview {
 			// In case content type was uploaded as octet-stream, we double verify content type
 			if stat.ContentType == "application/octet-stream" {
-				contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+				contentType = mimedb.TypeByExtension(filepath.Ext(escapedName))
 			}
 		}
 		rw.Header().Set("Content-Type", contentType)
@@ -523,8 +528,9 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 				filename = prefixElements[len(prefixElements)-1]
 			}
 		}
+		escapedName := url.PathEscape(filename)
 
-		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", filename))
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", escapedName))
 		rw.Header().Set("Content-Type", "application/zip")
 
 		// Copy the stream

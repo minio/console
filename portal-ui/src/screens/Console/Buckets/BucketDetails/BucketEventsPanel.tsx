@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import AddIcon from "../../../../icons/AddIcon";
@@ -43,6 +42,7 @@ import SecureComponent, {
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import RBIconButton from "./SummaryItems/RBIconButton";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -162,17 +162,16 @@ const BucketEventsPanel = ({
             matchAll
             errorProps={{ disabled: true }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<AddIcon />}
-              size="medium"
+            <RBIconButton
+              tooltip={"Subscribe to Event"}
               onClick={() => {
                 setAddEventScreenOpen(true);
               }}
-            >
-              Subscribe to Event
-            </Button>
+              text={"Subscribe to Event"}
+              icon={<AddIcon />}
+              color="primary"
+              variant={"contained"}
+            />
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>

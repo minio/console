@@ -68,6 +68,8 @@ func (m *NotifEndpointResponse) validateNotificationEndpoints(formats strfmt.Reg
 			if err := m.NotificationEndpoints[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -100,6 +102,8 @@ func (m *NotifEndpointResponse) contextValidateNotificationEndpoints(ctx context
 			if err := m.NotificationEndpoints[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

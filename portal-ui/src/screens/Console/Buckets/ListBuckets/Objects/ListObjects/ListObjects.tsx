@@ -54,7 +54,7 @@ import {
   searchField,
   tableStyles,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { Badge, Button, Typography } from "@mui/material";
+import { Badge, Typography } from "@mui/material";
 import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
@@ -80,7 +80,6 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
-import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import SecureComponent, {
@@ -91,6 +90,7 @@ import SearchBox from "../../../../Common/SearchBox";
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
 import { DownloadIcon, UploadFolderIcon } from "../../../../../../icons";
+import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -761,6 +761,9 @@ const ListObjects = ({
                 ) {
                   setSnackBarMessage(errorMessage);
                 }
+                if (xhr.status === 413) {
+                  setSnackBarMessage("Error - File size too large");
+                }
                 if (xhr.status === 200) {
                   completeObject(identity);
                   if (files.length === 0) {
@@ -1156,44 +1159,41 @@ const ListObjects = ({
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
+                  <RBIconButton
                     tooltip={"Choose or create a new path"}
-                    color="primary"
-                    aria-label="Add a new folder"
                     onClick={() => {
                       setCreateFolderOpen(true);
                     }}
+                    text={""}
+                    icon={<AddFolderIcon />}
+                    color="primary"
                     disabled={rewindEnabled}
-                    size="large"
-                  >
-                    <AddFolderIcon />
-                  </BoxIconButton>
+                    variant={"outlined"}
+                  />
                 </SecureComponent>
                 <SecureComponent
                   resource={bucketName}
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
+                  <RBIconButton
                     tooltip={"Upload file"}
-                    color="primary"
-                    aria-label="Upload File"
                     onClick={() => {
                       if (fileUpload && fileUpload.current) {
                         fileUpload.current.click();
                       }
                     }}
+                    text={""}
+                    icon={<UploadIcon />}
+                    color="primary"
                     disabled={rewindEnabled}
-                    size="large"
-                  >
-                    <UploadIcon />
-                  </BoxIconButton>
+                    variant={"outlined"}
+                  />
                 </SecureComponent>
                 <input
                   type="file"
                   multiple
                   onChange={handleUploadButton}
-                  id="file-input"
                   style={{ display: "none" }}
                   ref={fileUpload}
                 />
@@ -1202,37 +1202,30 @@ const ListObjects = ({
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
-                    tooltip={"Upload folder"}
-                    color="primary"
-                    aria-label="Upload Folder"
-                    onClick={() => {
-                      if (folderUpload && folderUpload.current) {
-                        folderUpload.current.click();
-                      }
-                    }}
-                    disabled={rewindEnabled}
-                    size="large"
-                  >
-                    <UploadFolderIcon />
-                  </BoxIconButton>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleUploadButton}
-                    id="file-input"
-                    style={{ display: "none" }}
-                    ref={folderUpload}
-                  />
+                  <Fragment>
+                    <RBIconButton
+                      tooltip={"Upload folder"}
+                      onClick={() => {
+                        if (folderUpload && folderUpload.current) {
+                          folderUpload.current.click();
+                        }
+                      }}
+                      text={""}
+                      icon={<UploadFolderIcon />}
+                      color="primary"
+                      disabled={rewindEnabled}
+                      variant={"outlined"}
+                    />
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleUploadButton}
+                      style={{ display: "none" }}
+                      ref={folderUpload}
+                    />
+                  </Fragment>
                 </SecureComponent>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleUploadButton}
-                  id="file-input"
-                  style={{ display: "none" }}
-                  ref={folderUpload}
-                />
+
                 <SecureComponent
                   resource={bucketName}
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
@@ -1245,18 +1238,17 @@ const ListObjects = ({
                     invisible={!rewindEnabled}
                     className={classes.badgeOverlap}
                   >
-                    <BoxIconButton
+                    <RBIconButton
                       tooltip={"Rewind"}
-                      color="primary"
-                      aria-label="Rewind"
                       onClick={() => {
                         setRewindSelect(true);
                       }}
+                      text={""}
+                      icon={<HistoryIcon />}
+                      color="primary"
                       disabled={!isVersioned}
-                      size="large"
-                    >
-                      <HistoryIcon />
-                    </BoxIconButton>
+                      variant={"outlined"}
+                    />
                   </Badge>
                 </SecureComponent>
                 <SecureComponent
@@ -1264,19 +1256,17 @@ const ListObjects = ({
                   resource={bucketName}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
+                  <RBIconButton
                     tooltip={"Refresh list"}
-                    color="primary"
-                    aria-label="Refresh List"
                     onClick={() => {
                       setLoading(true);
                     }}
+                    text={""}
+                    icon={<RefreshIcon />}
+                    color="primary"
                     disabled={rewindEnabled}
-                    size="large"
                     variant={"contained"}
-                  >
-                    <RefreshIcon />
-                  </BoxIconButton>
+                  />
                 </SecureComponent>
               </Fragment>
             }
@@ -1295,38 +1285,41 @@ const ListObjects = ({
             />
           </SecureComponent>
           <div>
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<DownloadIcon />}
-              onClick={downloadSelected}
-              disabled={selectedObjects.length === 0}
-            >
-              Download Selected
-            </Button>
             <SecureComponent
               scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
               resource={bucketName}
               errorProps={{ disabled: true }}
             >
-              <Button
-                variant="contained"
-                color="primary"
-                endIcon={<DeleteIcon />}
+              <RBIconButton
+                tooltip={"Delete Selected"}
                 onClick={() => {
                   setDeleteMultipleOpen(true);
                 }}
+                text={"Delete Selected"}
+                icon={<DeleteIcon />}
+                color="secondary"
                 disabled={selectedObjects.length === 0}
-              >
-                Delete Selected
-              </Button>
+                variant={"outlined"}
+              />
             </SecureComponent>
+            <RBIconButton
+              tooltip={"Download Selected"}
+              onClick={downloadSelected}
+              text={"Download Selected"}
+              icon={<DownloadIcon />}
+              color="primary"
+              disabled={selectedObjects.length === 0}
+              variant={"contained"}
+            />
           </div>
         </Grid>
         <Grid item xs={12}>
           <br />
         </Grid>
-        <div {...getRootProps({ style: { ...dndStyles } })}>
+        <div
+          id="object-list-wrapper"
+          {...getRootProps({ style: { ...dndStyles } })}
+        >
           <input {...getInputProps()} />
           <Grid item xs={12} className={classes.tableBlock}>
             <SecureComponent

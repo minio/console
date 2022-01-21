@@ -6,13 +6,13 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/dustin/go-humanize v1.0.0
-	github.com/go-openapi/errors v0.19.9
-	github.com/go-openapi/loads v0.20.2
-	github.com/go-openapi/runtime v0.19.24
-	github.com/go-openapi/spec v0.20.3
-	github.com/go-openapi/strfmt v0.20.0
-	github.com/go-openapi/swag v0.19.14
-	github.com/go-openapi/validate v0.20.2
+	github.com/go-openapi/errors v0.20.1
+	github.com/go-openapi/loads v0.21.0
+	github.com/go-openapi/runtime v0.21.0
+	github.com/go-openapi/spec v0.20.4
+	github.com/go-openapi/strfmt v0.21.1
+	github.com/go-openapi/swag v0.19.15
+	github.com/go-openapi/validate v0.20.3
 	github.com/golang-jwt/jwt/v4 v4.1.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
@@ -22,9 +22,8 @@ require (
 	github.com/minio/kes v0.11.0
 	github.com/minio/madmin-go v1.1.23
 	github.com/minio/mc v0.0.0-20211207230606-23a05f5a17f2
-	github.com/minio/minio-go/v7 v7.0.20
-	github.com/minio/operator v0.0.0-20211011212245-31460bbbc4b7
-	github.com/minio/operator/logsearchapi v0.0.0-20211011212245-31460bbbc4b7
+	github.com/minio/minio-go/v7 v7.0.21
+	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
 	github.com/minio/pkg v1.1.14
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -60,12 +59,11 @@ require (
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/georgysavva/scany v0.2.7 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/go-openapi/analysis v0.20.0 // indirect
+	github.com/go-openapi/analysis v0.20.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
-	github.com/go-openapi/jsonreference v0.19.5 // indirect
+	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/goccy/go-json v0.7.9 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -104,6 +102,8 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/nxadm/tail v1.4.8 // indirect
+	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/philhofer/fwd v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/profile v1.6.0 // indirect
@@ -118,7 +118,6 @@ require (
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/shirou/gopsutil/v3 v3.21.8 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/tidwall/gjson v1.10.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
@@ -128,7 +127,7 @@ require (
 	go.etcd.io/etcd/api/v3 v3.5.0 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.0 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.0 // indirect
-	go.mongodb.org/mongo-driver v1.4.6 // indirect
+	go.mongodb.org/mongo-driver v1.7.5 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect

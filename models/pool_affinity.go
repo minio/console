@@ -78,6 +78,8 @@ func (m *PoolAffinity) validateNodeAffinity(formats strfmt.Registry) error {
 		if err := m.NodeAffinity.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nodeAffinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nodeAffinity")
 			}
 			return err
 		}
@@ -95,6 +97,8 @@ func (m *PoolAffinity) validatePodAffinity(formats strfmt.Registry) error {
 		if err := m.PodAffinity.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAffinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAffinity")
 			}
 			return err
 		}
@@ -112,6 +116,8 @@ func (m *PoolAffinity) validatePodAntiAffinity(formats strfmt.Registry) error {
 		if err := m.PodAntiAffinity.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAntiAffinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAntiAffinity")
 			}
 			return err
 		}
@@ -148,6 +154,8 @@ func (m *PoolAffinity) contextValidateNodeAffinity(ctx context.Context, formats 
 		if err := m.NodeAffinity.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nodeAffinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nodeAffinity")
 			}
 			return err
 		}
@@ -162,6 +170,8 @@ func (m *PoolAffinity) contextValidatePodAffinity(ctx context.Context, formats s
 		if err := m.PodAffinity.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAffinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAffinity")
 			}
 			return err
 		}
@@ -176,6 +186,8 @@ func (m *PoolAffinity) contextValidatePodAntiAffinity(ctx context.Context, forma
 		if err := m.PodAntiAffinity.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAntiAffinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAntiAffinity")
 			}
 			return err
 		}
@@ -246,6 +258,8 @@ func (m *PoolAffinityNodeAffinity) validatePreferredDuringSchedulingIgnoredDurin
 			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -265,6 +279,8 @@ func (m *PoolAffinityNodeAffinity) validateRequiredDuringSchedulingIgnoredDuring
 		if err := m.RequiredDuringSchedulingIgnoredDuringExecution.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution")
 			}
 			return err
 		}
@@ -299,6 +315,8 @@ func (m *PoolAffinityNodeAffinity) contextValidatePreferredDuringSchedulingIgnor
 			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -315,6 +333,8 @@ func (m *PoolAffinityNodeAffinity) contextValidateRequiredDuringSchedulingIgnore
 		if err := m.RequiredDuringSchedulingIgnoredDuringExecution.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution")
 			}
 			return err
 		}
@@ -383,6 +403,8 @@ func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 		if err := m.Preference.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("preference")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("preference")
 			}
 			return err
 		}
@@ -420,6 +442,8 @@ func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 		if err := m.Preference.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("preference")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("preference")
 			}
 			return err
 		}
@@ -485,6 +509,8 @@ func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 			if err := m.NodeSelectorTerms[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + "nodeSelectorTerms" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + "nodeSelectorTerms" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -517,6 +543,8 @@ func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 			if err := m.NodeSelectorTerms[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + "nodeSelectorTerms" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + "nodeSelectorTerms" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -589,6 +617,8 @@ func (m *PoolAffinityPodAffinity) validatePreferredDuringSchedulingIgnoredDuring
 			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -613,6 +643,8 @@ func (m *PoolAffinityPodAffinity) validateRequiredDuringSchedulingIgnoredDuringE
 			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -649,6 +681,8 @@ func (m *PoolAffinityPodAffinity) contextValidatePreferredDuringSchedulingIgnore
 			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -667,6 +701,8 @@ func (m *PoolAffinityPodAffinity) contextValidateRequiredDuringSchedulingIgnored
 			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -737,6 +773,8 @@ func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 		if err := m.PodAffinityTerm.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAffinityTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAffinityTerm")
 			}
 			return err
 		}
@@ -774,6 +812,8 @@ func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 		if err := m.PodAffinityTerm.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAffinityTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAffinityTerm")
 			}
 			return err
 		}
@@ -844,6 +884,8 @@ func (m *PoolAffinityPodAntiAffinity) validatePreferredDuringSchedulingIgnoredDu
 			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAntiAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAntiAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -868,6 +910,8 @@ func (m *PoolAffinityPodAntiAffinity) validateRequiredDuringSchedulingIgnoredDur
 			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAntiAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAntiAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -904,6 +948,8 @@ func (m *PoolAffinityPodAntiAffinity) contextValidatePreferredDuringSchedulingIg
 			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAntiAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAntiAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -922,6 +968,8 @@ func (m *PoolAffinityPodAntiAffinity) contextValidateRequiredDuringSchedulingIgn
 			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAntiAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("podAntiAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -992,6 +1040,8 @@ func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 		if err := m.PodAffinityTerm.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAffinityTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAffinityTerm")
 			}
 			return err
 		}
@@ -1029,6 +1079,8 @@ func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 		if err := m.PodAffinityTerm.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAffinityTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("podAffinityTerm")
 			}
 			return err
 		}

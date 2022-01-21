@@ -114,6 +114,8 @@ func (m *Pool) validateAffinity(formats strfmt.Registry) error {
 		if err := m.Affinity.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("affinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("affinity")
 			}
 			return err
 		}
@@ -131,6 +133,8 @@ func (m *Pool) validateResources(formats strfmt.Registry) error {
 		if err := m.Resources.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resources")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("resources")
 			}
 			return err
 		}
@@ -148,6 +152,8 @@ func (m *Pool) validateSecurityContext(formats strfmt.Registry) error {
 		if err := m.SecurityContext.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -173,6 +179,8 @@ func (m *Pool) validateTolerations(formats strfmt.Registry) error {
 	if err := m.Tolerations.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("tolerations")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("tolerations")
 		}
 		return err
 	}
@@ -190,6 +198,8 @@ func (m *Pool) validateVolumeConfiguration(formats strfmt.Registry) error {
 		if err := m.VolumeConfiguration.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("volume_configuration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("volume_configuration")
 			}
 			return err
 		}
@@ -243,6 +253,8 @@ func (m *Pool) contextValidateAffinity(ctx context.Context, formats strfmt.Regis
 		if err := m.Affinity.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("affinity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("affinity")
 			}
 			return err
 		}
@@ -257,6 +269,8 @@ func (m *Pool) contextValidateResources(ctx context.Context, formats strfmt.Regi
 		if err := m.Resources.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resources")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("resources")
 			}
 			return err
 		}
@@ -271,6 +285,8 @@ func (m *Pool) contextValidateSecurityContext(ctx context.Context, formats strfm
 		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -284,6 +300,8 @@ func (m *Pool) contextValidateTolerations(ctx context.Context, formats strfmt.Re
 	if err := m.Tolerations.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("tolerations")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("tolerations")
 		}
 		return err
 	}
@@ -297,6 +315,8 @@ func (m *Pool) contextValidateVolumeConfiguration(ctx context.Context, formats s
 		if err := m.VolumeConfiguration.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("volume_configuration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("volume_configuration")
 			}
 			return err
 		}

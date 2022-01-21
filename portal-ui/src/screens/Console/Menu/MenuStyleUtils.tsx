@@ -20,10 +20,10 @@ export const menuItemContainerStyles: any = {
   "&.active div:nth-of-type(1)": {
     border: "2px solid #ffffff",
   },
-  "&:hover": {
+  "&:hover, &:focus": {
     background: "none",
     "& div:nth-of-type(1)": {
-      background: "#073052",
+      background: "none",
       "& svg": {
         fill: "#ffffff",
       },
@@ -57,5 +57,23 @@ export const menuItemTextStyles: any = {
   },
   "&.mini": {
     display: "none",
+  },
+};
+
+export const menuItemMiniStyles: any = {
+  "&.mini": {
+    padding: 0,
+    //margin: "auto",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    "& .group-icon": {
+      display: "none",
+    },
+  },
+
+  "&.bottom-menu-item": {
+    marginBottom: "5px",
   },
 };

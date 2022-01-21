@@ -56,6 +56,7 @@ const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
 const TenantLicense = withSuspense(React.lazy(() => import("./TenantLicense")));
 const PoolsSummary = withSuspense(React.lazy(() => import("./PoolsSummary")));
 const PodsSummary = withSuspense(React.lazy(() => import("./PodsSummary")));
+const TenantLogging = withSuspense(React.lazy(() => import("./TenantLogging")));
 const VolumesSummary = withSuspense(
   React.lazy(() => import("./VolumesSummary"))
 );
@@ -450,6 +451,10 @@ const TenantDetails = ({
                     component={TenantMonitoring}
                   />
                   <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/logging"
+                    component={TenantLogging}
+                  />
+                  <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName"
                     component={() => (
                       <Redirect
@@ -502,6 +507,23 @@ const TenantDetails = ({
               to: getRoutePath("pods"),
             },
           }}
+
+          {{
+            tabConfig: {
+              label: "Monitoring",
+              value: "monitoring",
+              component: Link,
+              to: getRoutePath("monitoring"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Logging",
+              value: "logging",
+              component: Link,
+              to: getRoutePath("logging"),
+            },
+          }}
           {{
             tabConfig: {
               label: "Volumes",
@@ -510,22 +532,12 @@ const TenantDetails = ({
               to: getRoutePath("volumes"),
             },
           }}
-
           {{
             tabConfig: {
               label: "License",
               value: "license",
               component: Link,
               to: getRoutePath("license"),
-            },
-          }}
-
-          {{
-            tabConfig: {
-              label: "Monitoring",
-              value: "monitoring",
-              component: Link,
-              to: getRoutePath("monitoring"),
             },
           }}
         </VerticalTabs>

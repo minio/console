@@ -84,6 +84,8 @@ func (m *LogSearchConfiguration) validatePostgresSecurityContext(formats strfmt.
 		if err := m.PostgresSecurityContext.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("postgres_securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("postgres_securityContext")
 			}
 			return err
 		}
@@ -101,6 +103,8 @@ func (m *LogSearchConfiguration) validateSecurityContext(formats strfmt.Registry
 		if err := m.SecurityContext.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -133,6 +137,8 @@ func (m *LogSearchConfiguration) contextValidatePostgresSecurityContext(ctx cont
 		if err := m.PostgresSecurityContext.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("postgres_securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("postgres_securityContext")
 			}
 			return err
 		}
@@ -147,6 +153,8 @@ func (m *LogSearchConfiguration) contextValidateSecurityContext(ctx context.Cont
 		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}

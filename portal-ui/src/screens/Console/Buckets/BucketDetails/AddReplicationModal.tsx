@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -28,7 +28,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { BulkReplicationResponse } from "../types";
+import { BucketReplicationRule, BulkReplicationResponse } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -46,6 +46,7 @@ interface IReplicationModal {
   classes: any;
   bucketName: string;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
+  setReplicationRules: BucketReplicationRule[];
 }
 
 const styles = (theme: Theme) =>
@@ -81,8 +82,10 @@ const AddReplicationModal = ({
   classes,
   bucketName,
   setModalErrorSnackMessage,
+  setReplicationRules,
 }: IReplicationModal) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [priority, setPriority] = useState<string>("1");
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [targetURL, setTargetURL] = useState<string>("");
@@ -93,11 +96,29 @@ const AddReplicationModal = ({
   const [useTLS, setUseTLS] = useState<boolean>(true);
   const [repDeleteMarker, setRepDeleteMarker] = useState<boolean>(true);
   const [repDelete, setRepDelete] = useState<boolean>(true);
+  const [metadataSync, setMetadataSync] = useState<boolean>(true);
   const [tags, setTags] = useState<string>("");
   const [replicationMode, setReplicationMode] = useState<string>("async");
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
   const [healthCheck, setHealthCheck] = useState<string>("60");
+
+  useEffect(() => {
+    if (setReplicationRules.length === 0) {
+      setPriority("1");
+      return;
+    }
+
+    const greatestValue = setReplicationRules.reduce((prevAcc, currValue) => {
+      if (currValue.priority > prevAcc) {
+        return currValue.priority;
+      }
+      return prevAcc;
+    }, 0);
+
+    const nextPriority = greatestValue + 1;
+    setPriority(nextPriority.toString());
+  }, [setReplicationRules]);
 
   const addRecord = () => {
     const replicate = [
@@ -127,6 +148,9 @@ const AddReplicationModal = ({
       tags: tags,
       replicateDeleteMarkers: repDeleteMarker,
       replicateDeletes: repDelete,
+      priority: parseInt(priority),
+      storageClass: targetStorageClass,
+      replicateMetadata: metadataSync,
     };
 
     api
@@ -184,6 +208,20 @@ const AddReplicationModal = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.modalFormScrollable}>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id="priority"
+                name="priority"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.validity.valid) {
+                    setPriority(e.target.value);
+                  }
+                }}
+                label="Priority"
+                value={priority}
+                pattern={"[0-9]*"}
+              />
+            </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id="targetURL"
@@ -308,6 +346,22 @@ const AddReplicationModal = ({
                 value={healthCheck}
               />
             </Grid>
+            <Grid
+              item
+              xs={12}
+              className={`${classes.spacerTop} ${classes.formFieldRow}`}
+            >
+              <InputBoxWrapper
+                id="storageClass"
+                name="storageClass"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetStorageClass(e.target.value);
+                }}
+                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
+                label="Storage Class"
+                value={targetStorageClass}
+              />
+            </Grid>
             <Grid item xs={12}>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
@@ -340,29 +394,23 @@ const AddReplicationModal = ({
                 </Grid>
               </fieldset>
             </Grid>
-
-            <Grid
-              item
-              xs={12}
-              className={`${classes.spacerTop} ${classes.formFieldRow}`}
-            >
-              <InputBoxWrapper
-                id="storageClass"
-                name="storageClass"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetStorageClass(e.target.value);
-                }}
-                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
-                label="Storage Class"
-                value={targetStorageClass}
-              />
-            </Grid>
             <Grid item xs={12}>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
                   Replication Options
                 </legend>
                 <Grid item xs={12} className={classes.formFieldRow}>
+                  <FormSwitchWrapper
+                    checked={metadataSync}
+                    id="metadatataSync"
+                    name="metadatataSync"
+                    label="Metadata Sync"
+                    onChange={(e) => {
+                      setMetadataSync(e.target.checked);
+                    }}
+                    value={metadataSync}
+                    description={"Metadata Sync"}
+                  />
                   <FormSwitchWrapper
                     checked={repDeleteMarker}
                     id="deleteMarker"

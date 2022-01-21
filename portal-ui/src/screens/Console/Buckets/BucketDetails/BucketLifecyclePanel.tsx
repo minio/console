@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button } from "@mui/material";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import Grid from "@mui/material/Grid";
@@ -42,6 +41,7 @@ import SecureComponent, {
   hasPermission,
 } from "../../../../common/SecureComponent/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+import RBIconButton from "./SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -213,17 +213,16 @@ const BucketLifecyclePanel = ({
             matchAll
             errorProps={{ disabled: true }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<AddIcon />}
-              size="medium"
+            <RBIconButton
+              tooltip={"Add Lifecycle Rule"}
               onClick={() => {
                 setAddLifecycleOpen(true);
               }}
-            >
-              Add Lifecycle Rule
-            </Button>
+              text={"Add Lifecycle Rule"}
+              icon={<AddIcon />}
+              color="primary"
+              variant={"contained"}
+            />
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>

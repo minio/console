@@ -24,7 +24,6 @@ import { Button } from "@mui/material";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import Grid from "@mui/material/Grid";
 import CredentialItem from "./CredentialItem";
-import NewAccountIcon from "../../../../icons/NewAccountIcon";
 import WarnIcon from "../../../../icons/WarnIcon";
 import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
 
@@ -117,9 +116,6 @@ const CredentialsPrompt = ({
       }}
       title={
         <div className={classes.promptTitle}>
-          <div className={classes.promptIcon}>
-            <NewAccountIcon />
-          </div>{" "}
           <div>New {entity} Created</div>
         </div>
       }

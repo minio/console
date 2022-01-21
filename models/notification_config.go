@@ -91,6 +91,8 @@ func (m *NotificationConfig) validateEvents(formats strfmt.Registry) error {
 		if err := m.Events[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("events" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("events" + "." + strconv.Itoa(i))
 			}
 			return err
 		}
@@ -121,6 +123,8 @@ func (m *NotificationConfig) contextValidateEvents(ctx context.Context, formats 
 		if err := m.Events[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("events" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("events" + "." + strconv.Itoa(i))
 			}
 			return err
 		}

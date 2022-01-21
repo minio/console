@@ -17,6 +17,7 @@ var (
 	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
 	errForbidden               = errors.New("403 Forbidden")
+	errFileTooLarge            = errors.New("413 File too Large")
 	errorGenericInvalidSession = errors.New("invalid session")
 	// ErrorGenericNotFound Generic error for not found
 	ErrorGenericNotFound = errors.New("not found")
@@ -171,6 +172,10 @@ func prepareError(err ...error) *models.Error {
 		}
 		if err[0].Error() == errRemoteInvalidCredentials.Error() {
 			errorCode = 403
+			errorMessage = err[0].Error()
+		}
+		if err[0].Error() == errFileTooLarge.Error() {
+			errorCode = 413
 			errorMessage = err[0].Error()
 		}
 		// bucket already exists

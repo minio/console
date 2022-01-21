@@ -38,6 +38,7 @@ import (
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
 	"github.com/minio/minio-go/v7/pkg/policy"
+	"github.com/minio/minio-go/v7/pkg/replication"
 	minioIAMPolicy "github.com/minio/pkg/iam/policy"
 )
 
@@ -114,6 +115,15 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewGetBucketReplicationOK().WithPayload(getBucketReplication)
 	})
+	// get single bucket replication rule
+	api.UserAPIGetBucketReplicationRuleHandler = user_api.GetBucketReplicationRuleHandlerFunc(func(params user_api.GetBucketReplicationRuleParams, session *models.Principal) middleware.Responder {
+		getBucketReplicationRule, err := getBucketReplicationRuleResponse(session, params.BucketName, params.RuleID)
+		if err != nil {
+			return user_api.NewGetBucketReplicationRuleDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewGetBucketReplicationRuleOK().WithPayload(getBucketReplicationRule)
+	})
+
 	// enable bucket encryption
 	api.UserAPIEnableBucketEncryptionHandler = user_api.EnableBucketEncryptionHandlerFunc(func(params user_api.EnableBucketEncryptionParams, session *models.Principal) middleware.Responder {
 		if err := enableBucketEncryptionResponse(session, params); err != nil {
@@ -248,6 +258,7 @@ func getBucketReplicationResponse(session *models.Principal, bucketName string) 
 			ID:                      rule.ID,
 			Priority:                int32(rule.Priority),
 			Status:                  string(rule.Status),
+			StorageClass:            rule.Destination.StorageClass,
 		})
 	}
 
@@ -256,6 +267,75 @@ func getBucketReplicationResponse(session *models.Principal, bucketName string) 
 		Rules: rules,
 	}
 	return bucketRResponse, nil
+}
+
+func getBucketReplicationRuleResponse(session *models.Principal, bucketName, ruleID string) (*models.BucketReplicationRule, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		LogError("error creating MinIO Client: %v", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	replicationRules, err := minioClient.getBucketReplication(ctx, bucketName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var foundRule replication.Rule
+	found := false
+
+	for i := range replicationRules.Rules {
+		if replicationRules.Rules[i].ID == ruleID {
+			foundRule = replicationRules.Rules[i]
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return nil, errors.New("no rule is set with this ID")
+	}
+
+	repDelMarkerStatus := false
+	if foundRule.DeleteMarkerReplication.Status == "Enabled" {
+		repDelMarkerStatus = true
+	}
+	repDelStatus := false
+	if foundRule.DeleteReplication.Status == "Enabled" {
+		repDelStatus = true
+	}
+	existingObjects := false
+	if foundRule.ExistingObjectReplication.Status == "Enabled" {
+		existingObjects = true
+	}
+	metadataModifications := false
+	if foundRule.SourceSelectionCriteria.ReplicaModifications.Status == "Enabled" {
+		metadataModifications = true
+	}
+
+	returnRule := &models.BucketReplicationRule{
+		DeleteMarkerReplication: repDelMarkerStatus,
+		DeletesReplication:      repDelStatus,
+		Destination:             &models.BucketReplicationDestination{Bucket: foundRule.Destination.Bucket},
+		Tags:                    foundRule.Tags(),
+		Prefix:                  foundRule.Prefix(),
+		ID:                      foundRule.ID,
+		Priority:                int32(foundRule.Priority),
+		Status:                  string(foundRule.Status),
+		StorageClass:            foundRule.Destination.StorageClass,
+		ExistingObjects:         existingObjects,
+		MetadataReplication:     metadataModifications,
+	}
+
+	return returnRule, nil
 }
 
 func getBucketVersionedResponse(session *models.Principal, bucketName string) (*models.BucketVersioningResponse, error) {

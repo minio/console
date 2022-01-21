@@ -46,9 +46,9 @@ import TrashIcon from "../../../icons/TrashIcon";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent, {
@@ -57,6 +57,7 @@ import SecureComponent, {
 
 import withSuspense from "../Common/Components/withSuspense";
 import { AppState } from "../../../store";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -285,11 +286,11 @@ const PolicyDetails = ({
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
-    history.push(`/policies`);
+    history.push(IAM_PAGES.POLICIES);
   };
 
   const userViewAction = (user: any) => {
-    history.push(`/users/${user}`);
+    history.push(`${IAM_PAGES.USERS}/${user}`);
   };
   const userTableActions = [
     {
@@ -304,7 +305,7 @@ const PolicyDetails = ({
   );
 
   const groupViewAction = (group: any) => {
-    history.push(`/groups/${group}`);
+    history.push(`${IAM_PAGES.GROUPS}/${group}`);
   };
 
   const groupTableActions = [
@@ -331,13 +332,13 @@ const PolicyDetails = ({
       <PageHeader
         label={
           <Fragment>
-            <Link to={"/policies"} className={classes.breadcrumLink}>
+            <Link to={IAM_PAGES.POLICIES} className={classes.breadcrumLink}>
               Policy
             </Link>
           </Fragment>
         }
       />
-      <BackLink to={"/policies"} label={"Return to Policies"} />
+      <BackLink to={IAM_PAGES.POLICIES} label={"Return to Policies"} />
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
@@ -355,29 +356,28 @@ const PolicyDetails = ({
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <BoxIconButton
+                  <RBIconButton
                     tooltip={"Delete Policy"}
-                    color="primary"
-                    aria-label="Delete Policy"
+                    text={"Delete Policy"}
+                    variant="outlined"
+                    color="secondary"
+                    icon={<TrashIcon />}
                     onClick={deletePolicy}
-                  >
-                    <TrashIcon />
-                  </BoxIconButton>
+                  />
                 </SecureComponent>
 
-                <BoxIconButton
+                <RBIconButton
                   tooltip={"Refresh"}
+                  text={"Refresh"}
+                  variant="outlined"
                   color="primary"
-                  aria-label="Refresh List"
+                  icon={<RefreshIcon />}
                   onClick={() => {
                     setLoadingUsers(true);
                     setLoadingGroups(true);
                     setLoadingPolicy(true);
                   }}
-                  size="large"
-                >
-                  <RefreshIcon />
-                </BoxIconButton>
+                />
               </Fragment>
             }
           />
@@ -571,6 +571,7 @@ const PolicyDetails = ({
                           onBeforeChange={(editor, data, value) => {
                             setPolicyDefinition(value);
                           }}
+                          editorHeight={"350px"}
                         />
                       </Grid>
                       <Grid item xs={12} className={classes.buttonContainer}>

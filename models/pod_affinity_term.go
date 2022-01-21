@@ -75,6 +75,8 @@ func (m *PodAffinityTerm) validateLabelSelector(formats strfmt.Registry) error {
 		if err := m.LabelSelector.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("labelSelector")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("labelSelector")
 			}
 			return err
 		}
@@ -112,6 +114,8 @@ func (m *PodAffinityTerm) contextValidateLabelSelector(ctx context.Context, form
 		if err := m.LabelSelector.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("labelSelector")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("labelSelector")
 			}
 			return err
 		}
@@ -178,6 +182,8 @@ func (m *PodAffinityTermLabelSelector) validateMatchExpressions(formats strfmt.R
 			if err := m.MatchExpressions[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labelSelector" + "." + "matchExpressions" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("labelSelector" + "." + "matchExpressions" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -210,6 +216,8 @@ func (m *PodAffinityTermLabelSelector) contextValidateMatchExpressions(ctx conte
 			if err := m.MatchExpressions[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labelSelector" + "." + "matchExpressions" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("labelSelector" + "." + "matchExpressions" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

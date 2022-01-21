@@ -20,11 +20,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
-import { Button, Grid, LinearProgress } from "@mui/material";
-import GroupIcon from "@mui/icons-material/Group";
+import { Grid, LinearProgress } from "@mui/material";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { AddIcon, UsersIcon } from "../../../icons";
+import { GroupsIcon, AddIcon, UsersIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,
@@ -44,12 +43,14 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
   S3_ALL_RESOURCES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent, {
   hasPermission,
 } from "../../../common/SecureComponent/SecureComponent";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const AddUser = withSuspense(React.lazy(() => import("./AddUser")));
 const SetPolicy = withSuspense(
@@ -170,7 +171,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   };
 
   const viewAction = (selectionElement: any): void => {
-    history.push(`/users/${encodeURI(selectionElement.accessKey)}`);
+    history.push(`${IAM_PAGES.USERS}/${encodeURI(selectionElement.accessKey)}`);
   };
 
   const deleteAction = (selectionElement: any): void => {
@@ -249,19 +250,19 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             resource={CONSOLE_UI_RESOURCE}
             errorProps={{ disabled: true }}
           >
-            <Button
-              variant="outlined"
+            <RBIconButton
+              tooltip={"Add to Group"}
+              text={"Add to Group"}
+              icon={<GroupsIcon />}
               color="primary"
-              endIcon={<GroupIcon />}
               disabled={checkedUsers.length <= 0}
               onClick={() => {
                 if (checkedUsers.length > 0) {
                   setAddGroupOpen(true);
                 }
               }}
-            >
-              Add to Group
-            </Button>
+              variant={"outlined"}
+            />
           </SecureComponent>
           <SecureComponent
             scopes={[
@@ -273,17 +274,17 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <Button
-              variant="contained"
+            <RBIconButton
+              tooltip={"Create User"}
+              text={"Create User"}
+              icon={<AddIcon />}
               color="primary"
-              endIcon={<AddIcon />}
               onClick={() => {
                 setAddScreenOpen(true);
                 setSelectedUser(null);
               }}
-            >
-              Create User
-            </Button>
+              variant={"contained"}
+            />
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>

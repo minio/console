@@ -56,6 +56,9 @@ type MultiBucketReplication struct {
 	// prefix
 	Prefix string `json:"prefix,omitempty"`
 
+	// priority
+	Priority int32 `json:"priority,omitempty"`
+
 	// region
 	Region string `json:"region,omitempty"`
 
@@ -72,6 +75,9 @@ type MultiBucketReplication struct {
 	// Required: true
 	// Min Length: 8
 	SecretKey *string `json:"secretKey"`
+
+	// storage class
+	StorageClass string `json:"storageClass,omitempty"`
 
 	// sync mode
 	// Enum: [async sync]
@@ -143,6 +149,8 @@ func (m *MultiBucketReplication) validateBucketsRelation(formats strfmt.Registry
 			if err := m.BucketsRelation[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("bucketsRelation" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("bucketsRelation" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -239,6 +247,8 @@ func (m *MultiBucketReplication) contextValidateBucketsRelation(ctx context.Cont
 			if err := m.BucketsRelation[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("bucketsRelation" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("bucketsRelation" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

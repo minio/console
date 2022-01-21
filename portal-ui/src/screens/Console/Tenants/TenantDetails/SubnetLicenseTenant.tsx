@@ -20,13 +20,14 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { niceBytes } from "../../../../common/utils";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import { LicenseInfo } from "../../License/types";
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 interface ISubnetLicenseTenant {
   classes: any;
@@ -229,25 +230,24 @@ const SubnetLicenseTenant = ({
                 }}
                 className={classes.noUnderLine}
               >
-                <Button
-                  className={classes.licenseButton}
-                  variant="contained"
+                <RBIconButton
+                  tooltip={"Activate Product"}
+                  text={"Activate Product"}
+                  onClick={() => false}
                   color="primary"
-                >
-                  Activate Product
-                </Button>
+                  variant={"contained"}
+                />
               </Link>
             )}
             {licenseInfo && tenant && (
-              <Button
+              <RBIconButton
                 disabled={loadingActivateProduct}
-                className={classes.licenseButton}
-                variant="contained"
-                color="primary"
+                tooltip={"Attach License"}
+                text={"Attach License"}
                 onClick={() => activateProduct(tenant.namespace, tenant.name)}
-              >
-                Attach License
-              </Button>
+                color="primary"
+                variant={"contained"}
+              />
             )}
           </Grid>
         )

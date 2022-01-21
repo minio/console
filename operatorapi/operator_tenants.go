@@ -177,6 +177,40 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewGetTenantUsageOK().WithPayload(payload)
 	})
 
+	// Get Tenant Logs
+	api.OperatorAPIGetTenantLogsHandler = operator_api.GetTenantLogsHandlerFunc(func(params operator_api.GetTenantLogsParams, session *models.Principal) middleware.Responder {
+		payload, err := getTenantLogsResponse(session, params)
+		if err != nil {
+			return operator_api.NewGetTenantLogsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetTenantLogsOK().WithPayload(payload)
+	})
+
+	api.OperatorAPISetTenantLogsHandler = operator_api.SetTenantLogsHandlerFunc(func(params operator_api.SetTenantLogsParams, session *models.Principal) middleware.Responder {
+		payload, err := setTenantLogsResponse(session, params)
+		if err != nil {
+			return operator_api.NewSetTenantLogsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewSetTenantLogsOK().WithPayload(payload)
+	})
+
+	// Get Tenant Logs
+	api.OperatorAPIEnableTenantLoggingHandler = operator_api.EnableTenantLoggingHandlerFunc(func(params operator_api.EnableTenantLoggingParams, session *models.Principal) middleware.Responder {
+		payload, err := enableTenantLoggingResponse(session, params)
+		if err != nil {
+			return operator_api.NewEnableTenantLoggingDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewEnableTenantLoggingOK().WithPayload(payload)
+	})
+
+	api.OperatorAPIDisableTenantLoggingHandler = operator_api.DisableTenantLoggingHandlerFunc(func(params operator_api.DisableTenantLoggingParams, session *models.Principal) middleware.Responder {
+		payload, err := disableTenantLoggingResponse(session, params)
+		if err != nil {
+			return operator_api.NewDisableTenantLoggingDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewDisableTenantLoggingOK().WithPayload(payload)
+	})
+
 	api.OperatorAPIGetTenantPodsHandler = operator_api.GetTenantPodsHandlerFunc(func(params operator_api.GetTenantPodsParams, session *models.Principal) middleware.Responder {
 		payload, err := getTenantPodsResponse(session, params)
 		if err != nil {
@@ -1715,6 +1749,307 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 	return info, nil
 }
 
+// getTenantLogsResponse returns the logs of a tenant
+func getTenantLogsResponse(session *models.Principal, params operator_api.GetTenantLogsParams) (*models.TenantLogs, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err, errorUnableToGetTenantLogs)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return nil, prepareError(err, errorUnableToGetTenantLogs)
+	}
+	if minTenant.Spec.Log == nil {
+		retval := &models.TenantLogs{
+			Disabled: true,
+		}
+		return retval, nil
+	}
+	annotations := []*models.Annotation{}
+	for k, v := range minTenant.Spec.Log.Annotations {
+		annotations = append(annotations, &models.Annotation{Key: k, Value: v})
+	}
+	labels := []*models.Label{}
+	for k, v := range minTenant.Spec.Log.Labels {
+		labels = append(labels, &models.Label{Key: k, Value: v})
+	}
+	nodeSelector := []*models.NodeSelector{}
+	for k, v := range minTenant.Spec.Log.NodeSelector {
+		nodeSelector = append(nodeSelector, &models.NodeSelector{Key: k, Value: v})
+	}
+
+	if minTenant.Spec.Log.Db == nil {
+		minTenant.Spec.Log.Db = &miniov2.LogDbConfig{}
+	}
+
+	dbAnnotations := []*models.Annotation{}
+	for k, v := range minTenant.Spec.Log.Db.Annotations {
+		dbAnnotations = append(dbAnnotations, &models.Annotation{Key: k, Value: v})
+	}
+	dbLabels := []*models.Label{}
+	for k, v := range minTenant.Spec.Log.Db.Labels {
+		dbLabels = append(dbLabels, &models.Label{Key: k, Value: v})
+	}
+	dbNodeSelector := []*models.NodeSelector{}
+	for k, v := range minTenant.Spec.Log.Db.NodeSelector {
+		dbNodeSelector = append(dbNodeSelector, &models.NodeSelector{Key: k, Value: v})
+	}
+
+	if minTenant.Spec.Log.Audit == nil || minTenant.Spec.Log.Audit.DiskCapacityGB == nil {
+		minTenant.Spec.Log.Audit = &miniov2.AuditConfig{DiskCapacityGB: swag.Int(0)}
+	}
+
+	/*if minTenant.Spec.Log.Image == "" {
+		minTenant.Spec.Log.Image = miniov2.DefaultLogSearchAPIImage
+	}
+
+	if minTenant.Spec.Log.Db.Image == "" {
+		minTenant.Spec.Log.Db.Image = miniov2.LogPgImage
+	}*/
+
+	retval := &models.TenantLogs{
+		Image:                minTenant.Spec.Log.Image,
+		DiskCapacityGB:       fmt.Sprintf("%d", *minTenant.Spec.Log.Audit.DiskCapacityGB),
+		Annotations:          annotations,
+		Labels:               labels,
+		NodeSelector:         nodeSelector,
+		ServiceAccountName:   minTenant.Spec.Log.ServiceAccountName,
+		DbImage:              minTenant.Spec.Log.Db.Image,
+		DbAnnotations:        dbAnnotations,
+		DbLabels:             dbLabels,
+		DbNodeSelector:       dbNodeSelector,
+		DbServiceAccountName: minTenant.Spec.Log.Db.ServiceAccountName,
+		Disabled:             false,
+	}
+	return retval, nil
+}
+
+// setTenantLogsResponse returns the logs of a tenant
+func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	var labels = make(map[string]string)
+	for i := 0; i < len(params.Data.Labels); i++ {
+		if params.Data.Labels[i] != nil {
+			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
+		}
+	}
+	minTenant.Spec.Log.Labels = labels
+	var annotations = make(map[string]string)
+	for i := 0; i < len(params.Data.Annotations); i++ {
+		if params.Data.Annotations[i] != nil {
+			annotations[params.Data.Annotations[i].Key] = params.Data.Annotations[i].Value
+		}
+	}
+	minTenant.Spec.Log.Annotations = annotations
+	var nodeSelector = make(map[string]string)
+	for i := 0; i < len(params.Data.NodeSelector); i++ {
+		if params.Data.NodeSelector[i] != nil {
+			nodeSelector[params.Data.NodeSelector[i].Key] = params.Data.NodeSelector[i].Value
+		}
+	}
+	minTenant.Spec.Log.NodeSelector = nodeSelector
+	modified := false
+	if minTenant.Spec.Log.Db != nil {
+		modified = true
+	}
+	var dbLabels = make(map[string]string)
+	for i := 0; i < len(params.Data.DbLabels); i++ {
+		if params.Data.DbLabels[i] != nil {
+			dbLabels[params.Data.DbLabels[i].Key] = params.Data.DbLabels[i].Value
+		}
+		modified = true
+	}
+	var dbAnnotations = make(map[string]string)
+	for i := 0; i < len(params.Data.DbAnnotations); i++ {
+		if params.Data.DbAnnotations[i] != nil {
+			dbAnnotations[params.Data.DbAnnotations[i].Key] = params.Data.DbAnnotations[i].Value
+		}
+		modified = true
+	}
+	var dbNodeSelector = make(map[string]string)
+	for i := 0; i < len(params.Data.DbNodeSelector); i++ {
+		if params.Data.DbNodeSelector[i] != nil {
+			dbNodeSelector[params.Data.DbNodeSelector[i].Key] = params.Data.DbNodeSelector[i].Value
+		}
+		modified = true
+	}
+	minTenant.Spec.Log.Image = params.Data.Image
+	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
+	if err == nil {
+		if minTenant.Spec.Log.Audit != nil && minTenant.Spec.Log.Audit.DiskCapacityGB != nil {
+			*minTenant.Spec.Log.Audit.DiskCapacityGB = diskCapacityGB
+		} else {
+			minTenant.Spec.Log.Audit = &miniov2.AuditConfig{DiskCapacityGB: swag.Int(diskCapacityGB)}
+		}
+	}
+	minTenant.Spec.Log.ServiceAccountName = params.Data.ServiceAccountName
+	if params.Data.DbImage != "" || params.Data.DbServiceAccountName != "" {
+		modified = true
+	}
+	if modified {
+		if minTenant.Spec.Log.Db == nil {
+			//Default class name for Log search
+			diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
+			logSearchStorageClass := "standard"
+
+			logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
+
+			minTenant.Spec.Log.Db = &miniov2.LogDbConfig{
+				VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: params.Tenant + "-log",
+					},
+					Spec: corev1.PersistentVolumeClaimSpec{
+						AccessModes: []corev1.PersistentVolumeAccessMode{
+							corev1.ReadWriteOnce,
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceStorage: *logSearchDiskSpace,
+							},
+						},
+						StorageClassName: &logSearchStorageClass,
+					},
+				},
+				Labels:             dbLabels,
+				Annotations:        dbAnnotations,
+				NodeSelector:       dbNodeSelector,
+				Image:              params.Data.DbImage,
+				ServiceAccountName: params.Data.DbServiceAccountName,
+			}
+		} else {
+			minTenant.Spec.Log.Db.Labels = dbLabels
+			minTenant.Spec.Log.Db.Annotations = dbAnnotations
+			minTenant.Spec.Log.Db.NodeSelector = dbNodeSelector
+			minTenant.Spec.Log.Db.Image = params.Data.DbImage
+			minTenant.Spec.Log.Db.ServiceAccountName = params.Data.DbServiceAccountName
+		}
+	}
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+	return true, nil
+}
+
+// enableTenantLoggingResponse enables Tenant Logging
+func enableTenantLoggingResponse(session *models.Principal, params operator_api.EnableTenantLoggingParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	minTenant.EnsureDefaults()
+
+	//Default class name for Log search
+	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
+	logSearchStorageClass := "standard"
+
+	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
+
+	auditMaxCap := 10
+	if (diskSpaceFromAPI / humanize.GiByte) < int64(auditMaxCap) {
+		auditMaxCap = int(diskSpaceFromAPI / humanize.GiByte)
+	}
+
+	minTenant.Spec.Log = &miniov2.LogConfig{
+		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(auditMaxCap)},
+		Db: &miniov2.LogDbConfig{
+			VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: params.Tenant + "-log",
+				},
+				Spec: corev1.PersistentVolumeClaimSpec{
+					AccessModes: []corev1.PersistentVolumeAccessMode{
+						corev1.ReadWriteOnce,
+					},
+					Resources: corev1.ResourceRequirements{
+						Requests: corev1.ResourceList{
+							corev1.ResourceStorage: *logSearchDiskSpace,
+						},
+					},
+					StorageClassName: &logSearchStorageClass,
+				},
+			},
+		},
+	}
+
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+	return true, nil
+}
+
+// disableTenantLoggingResponse disables Tenant Logging
+func disableTenantLoggingResponse(session *models.Principal, params operator_api.DisableTenantLoggingParams) (bool, *models.Error) {
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return false, prepareError(err, errorUnableToGetTenantUsage)
+	}
+	minTenant.EnsureDefaults()
+	minTenant.Spec.Log = nil
+
+	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return false, prepareError(err)
+	}
+	return true, nil
+}
+
 func getTenantPodsResponse(session *models.Principal, params operator_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {
 	ctx := context.Background()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
@@ -1808,49 +2143,75 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		return nil, prepareError(err)
 	}
 
-	var storageClassName string
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
-	if minInst.Spec.Prometheus == nil {
-		monitoringInfo := &models.TenantMonitoringInfo{
-			PrometheusEnabled: (false),
-		}
+	if minInst.Spec.Prometheus != nil {
+		monitoringInfo.PrometheusEnabled = true
+	} else {
+		monitoringInfo.PrometheusEnabled = false
 		return monitoringInfo, nil
 	}
 
+	var storageClassName string
 	if minInst.Spec.Prometheus.StorageClassName != nil {
 		storageClassName = *minInst.Spec.Prometheus.StorageClassName
+		monitoringInfo.StorageClassName = storageClassName
 	}
 
-	mLabels := []*models.Label{}
-	for k, v := range minInst.Spec.Prometheus.Labels {
-		mLabels = append(mLabels, &models.Label{Key: k, Value: v})
-	}
-	mAnnotations := []*models.Annotation{}
-	for k, v := range minInst.Spec.Prometheus.Annotations {
-		mAnnotations = append(mAnnotations, &models.Annotation{Key: k, Value: v})
-	}
-	mNodeSelector := []*models.NodeSelector{}
-	for k, v := range minInst.Spec.Prometheus.NodeSelector {
-		mNodeSelector = append(mNodeSelector, &models.NodeSelector{Key: k, Value: v})
+	var requestedCPU string
+	var requestedMem string
+
+	if minInst.Spec.Prometheus.Resources.Requests != nil {
+		requestedCPUQ := minInst.Spec.Prometheus.Resources.Requests["cpu"]
+		requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
+		requestedMemQ := minInst.Spec.Prometheus.Resources.Requests["memory"]
+		requestedMem = strconv.FormatInt(requestedMemQ.Value(), 10)
+		monitoringInfo.MonitoringCPURequest = requestedCPU
+		monitoringInfo.MonitoringMemRequest = requestedMem
 	}
 
-	if minInst.Spec.Prometheus != nil {
-		monitoringInfo = &models.TenantMonitoringInfo{
-			PrometheusEnabled:  (true),
-			Annotations:        mAnnotations,
-			DiskCapacityGB:     strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB),
-			Image:              minInst.Spec.Prometheus.Image,
-			InitImage:          minInst.Spec.Prometheus.InitImage,
-			Labels:             mLabels,
-			NodeSelector:       mNodeSelector,
-			ServiceAccountName: minInst.Spec.Prometheus.ServiceAccountName,
-			SidecarImage:       minInst.Spec.Prometheus.SideCarImage,
-			StorageClassName:   storageClassName,
+	if len(minInst.Spec.Prometheus.Labels) != 0 && minInst.Spec.Prometheus.Labels != nil {
+		mLabels := []*models.Label{}
+		for k, v := range minInst.Spec.Prometheus.Labels {
+			mLabels = append(mLabels, &models.Label{Key: k, Value: v})
 		}
-		return monitoringInfo, nil
+		monitoringInfo.Labels = mLabels
 	}
+
+	if len(minInst.Spec.Prometheus.Annotations) != 0 && minInst.Spec.Prometheus.Annotations != nil {
+		mAnnotations := []*models.Annotation{}
+		for k, v := range minInst.Spec.Prometheus.Annotations {
+			mAnnotations = append(mAnnotations, &models.Annotation{Key: k, Value: v})
+		}
+		monitoringInfo.Annotations = mAnnotations
+	}
+
+	if len(minInst.Spec.Prometheus.NodeSelector) != 0 && minInst.Spec.Prometheus.NodeSelector != nil {
+		mNodeSelector := []*models.NodeSelector{}
+		for k, v := range minInst.Spec.Prometheus.NodeSelector {
+			mNodeSelector = append(mNodeSelector, &models.NodeSelector{Key: k, Value: v})
+		}
+		monitoringInfo.NodeSelector = mNodeSelector
+	}
+
+	if *minInst.Spec.Prometheus.DiskCapacityDB != 0 {
+		monitoringInfo.DiskCapacityGB = strconv.Itoa(*minInst.Spec.Prometheus.DiskCapacityDB)
+	}
+	if len(minInst.Spec.Prometheus.Image) != 0 {
+		monitoringInfo.Image = minInst.Spec.Prometheus.Image
+	}
+	if len(minInst.Spec.Prometheus.InitImage) != 0 {
+		monitoringInfo.InitImage = minInst.Spec.Prometheus.InitImage
+	}
+	if len(minInst.Spec.Prometheus.ServiceAccountName) != 0 {
+		monitoringInfo.ServiceAccountName = minInst.Spec.Prometheus.ServiceAccountName
+	}
+	if len(minInst.Spec.Prometheus.SideCarImage) != 0 {
+		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
+	}
+
 	return monitoringInfo, nil
+
 }
 
 //sets tenant Prometheus monitoring cofiguration fields to values provided
@@ -1910,18 +2271,34 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		}
 	}
 
-	var storageClassName string
-	if &params.Data.StorageClassName != nil {
-		storageClassName = params.Data.StorageClassName
+	monitoringResourceRequest := make(corev1.ResourceList)
+	if &params.Data.MonitoringCPURequest != nil {
+
+		cpuQuantity, err := resource.ParseQuantity(params.Data.MonitoringCPURequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		memQuantity, err := resource.ParseQuantity(params.Data.MonitoringMemRequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		monitoringResourceRequest["cpu"] = cpuQuantity
+		monitoringResourceRequest["memory"] = memQuantity
 	}
 
+	minTenant.Spec.Prometheus.Resources.Requests = monitoringResourceRequest
 	minTenant.Spec.Prometheus.Labels = labels
 	minTenant.Spec.Prometheus.Annotations = annotations
 	minTenant.Spec.Prometheus.NodeSelector = nodeSelector
 	minTenant.Spec.Prometheus.Image = params.Data.Image
 	minTenant.Spec.Prometheus.SideCarImage = params.Data.SidecarImage
 	minTenant.Spec.Prometheus.InitImage = params.Data.InitImage
-	minTenant.Spec.Prometheus.StorageClassName = &storageClassName
+	if params.Data.StorageClassName == "" {
+		minTenant.Spec.Prometheus.StorageClassName = nil
+	} else {
+		minTenant.Spec.Prometheus.StorageClassName = &params.Data.StorageClassName
+	}
+
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB

@@ -86,6 +86,8 @@ func (m *ObjectBucketLifecycle) validateExpiration(formats strfmt.Registry) erro
 		if err := m.Expiration.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("expiration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("expiration")
 			}
 			return err
 		}
@@ -108,6 +110,8 @@ func (m *ObjectBucketLifecycle) validateTags(formats strfmt.Registry) error {
 			if err := m.Tags[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -127,6 +131,8 @@ func (m *ObjectBucketLifecycle) validateTransition(formats strfmt.Registry) erro
 		if err := m.Transition.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("transition")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("transition")
 			}
 			return err
 		}
@@ -163,6 +169,8 @@ func (m *ObjectBucketLifecycle) contextValidateExpiration(ctx context.Context, f
 		if err := m.Expiration.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("expiration")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("expiration")
 			}
 			return err
 		}
@@ -179,6 +187,8 @@ func (m *ObjectBucketLifecycle) contextValidateTags(ctx context.Context, formats
 			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -195,6 +205,8 @@ func (m *ObjectBucketLifecycle) contextValidateTransition(ctx context.Context, f
 		if err := m.Transition.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("transition")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("transition")
 			}
 			return err
 		}

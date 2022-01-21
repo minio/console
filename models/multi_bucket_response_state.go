@@ -68,6 +68,8 @@ func (m *MultiBucketResponseState) validateReplicationState(formats strfmt.Regis
 			if err := m.ReplicationState[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("replicationState" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("replicationState" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -100,6 +102,8 @@ func (m *MultiBucketResponseState) contextValidateReplicationState(ctx context.C
 			if err := m.ReplicationState[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("replicationState" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("replicationState" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

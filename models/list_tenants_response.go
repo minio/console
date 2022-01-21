@@ -71,6 +71,8 @@ func (m *ListTenantsResponse) validateTenants(formats strfmt.Registry) error {
 			if err := m.Tenants[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tenants" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tenants" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -103,6 +105,8 @@ func (m *ListTenantsResponse) contextValidateTenants(ctx context.Context, format
 			if err := m.Tenants[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tenants" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tenants" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

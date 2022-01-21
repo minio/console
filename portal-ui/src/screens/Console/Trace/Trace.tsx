@@ -42,7 +42,6 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import moment from "moment/moment";
-import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 
 const styles = (theme: Theme) =>
@@ -201,7 +200,6 @@ const Trace = ({
   return (
     <Fragment>
       <PageHeader label={"Trace"} />
-      <BackLink to="/tools" label="Return to Tools" />
       <PageLayout>
         <Grid xs={12} className={classes.formBox}>
           <Grid item xs={12} className={classes.actionsTray}>

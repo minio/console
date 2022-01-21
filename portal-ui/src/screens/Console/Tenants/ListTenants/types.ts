@@ -16,6 +16,7 @@
 
 import { LicenseInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
+import { NodeMaxAllocatableResources } from "../types";
 
 export interface IEvent {
   namespace: string;
@@ -141,6 +142,8 @@ export interface ITenantMonitoringStruct {
   diskCapacityGB: string;
   serviceAccountName: string;
   prometheusEnabled: boolean;
+  monitoringCPURequest: string;
+  monitoringMemRequest: string;
 }
 
 export interface IKeyValue {
@@ -161,9 +164,19 @@ export interface ITenantMonitoringStruct {
   prometheusEnabled: boolean;
 }
 
-export interface IKeyValue {
-  key: string;
-  value: string;
+export interface ITenantLogsStruct {
+  image: string;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
+  diskCapacityGB: number;
+  serviceAccountName: string;
+  dbImage: string;
+  dbLabels: IKeyValue[];
+  dbAnnotations: IKeyValue[];
+  dbNodeSelector: IKeyValue[];
+  dbServiceAccountName: string;
+  disabled: boolean;
 }
 
 export interface ValueUnit {

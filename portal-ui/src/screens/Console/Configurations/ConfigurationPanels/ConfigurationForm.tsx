@@ -37,7 +37,20 @@ const ConfigurationsList = ({ match, history }: IConfigurationForm) => {
   );
   const containerClassName = `${configName}`;
   return (
-    <Grid item xs={12}>
+    <Grid
+      item
+      xs={12}
+      sx={{
+        height: "100%",
+        //LDAP and api forms have longer labels
+        "& .identity_ldap, .api": {
+          "& label": {
+            minWidth: 220,
+            marginRight: 0,
+          },
+        },
+      }}
+    >
       {validActiveConfig && (
         <EditConfiguration
           className={`${containerClassName}`}

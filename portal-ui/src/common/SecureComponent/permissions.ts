@@ -139,35 +139,57 @@ export const IAM_SCOPES = {
 };
 
 export const IAM_PAGES = {
-  POLICIES: "/policies",
-  POLICIES_VIEW: "/policies/*",
-  DASHBOARD: "/dashboard",
-  METRICS: "/metrics",
-  ADD_BUCKETS: "/add-bucket",
+  /* Buckets */
   BUCKETS: "/buckets",
+  ADD_BUCKETS: "/add-bucket",
   BUCKETS_ADMIN_VIEW: "/buckets/:bucketName/admin*",
   BUCKETS_BROWSE_VIEW: "/buckets/:bucketName/browse*",
-  TOOLS_WATCH: "/tools/watch",
-  TOOLS_SPEEDTEST: "/tools/speedtest",
-  USERS: "/users",
-  USERS_VIEW: "/users/:userName+",
-  GROUPS: "/groups",
-  GROUPS_VIEW: "/groups/:groupName+",
-  TOOLS_HEAL: "/tools/heal",
-  TOOLS_TRACE: "/tools/trace",
-  TOOLS_DIAGNOSTICS: "/tools/diagnostics",
+  /* Identity */
+  IDENTITY: "/identity",
+  USERS: "/identity/users",
+  USERS_VIEW: "/identity/users/:userName+",
+  GROUPS: "/identity/groups",
+  GROUPS_VIEW: "/identity/groups/:groupName+",
+  ACCOUNT: "/identity/account",
+  /* Access */
+  POLICIES: "/access/policies",
+  POLICIES_VIEW: "/access/policies/*",
+  /* Monitoring */
   TOOLS_LOGS: "/tools/logs",
   TOOLS_AUDITLOGS: "/tools/audit-logs",
-  TOOLS: "/tools",
+  TOOLS_TRACE: "/tools/trace",
+  METRICS: "/tools/metrics",
+  DASHBOARD: "/tools/dashboard",
+  TOOLS_HEAL: "/tools/heal",
+  /* Health */
+  HEALTH: "/health",
+
+  /* Support */
+  TOOLS: "/support",
+  REGISTER_SUPPORT: "/support/register",
+  TOOLS_DIAGNOSTICS: "/support/diagnostics",
+  TOOLS_SPEEDTEST: "/support/speedtest",
+  CALL_HOME: "/support/call-home",
+  PROFILE: "/support/profile",
+  TOOLS_WATCH: "/support/inspect",
+
+  /** License **/
+  LICENSE: "/license",
+  /* Settings **/
   SETTINGS: "/settings",
   SETTINGS_VIEW: "/settings/:option",
-  NOTIFICATIONS_ENDPOINTS_ADD: "/notification-endpoints/add",
-  NOTIFICATIONS_ENDPOINTS_ADD_SERVICE: "/notification-endpoints/add/:service",
-  NOTIFICATIONS_ENDPOINTS: "/notification-endpoints",
+  /* Documentation **/
+  DOCUMENTATION: "/documentation",
+  /* TBD ? */
+  NOTIFICATIONS_ENDPOINTS: "/lambda/notification-endpoints",
+  NOTIFICATIONS_ENDPOINTS_ADD: "/lambda/notification-endpoints/add",
+  NOTIFICATIONS_ENDPOINTS_ADD_SERVICE:
+    "/lambda/notification-endpoints/add/:service",
   TIERS: "/tiers",
   TIERS_ADD: "/tiers/add",
   TIERS_ADD_SERVICE: "/tiers/add/:service",
-  ACCOUNT: "/account",
+
+  /* Operator */
   TENANTS: "/tenants",
   TENANTS_ADD: "/tenants/add",
   STORAGE: "/storage",
@@ -193,8 +215,8 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/security",
   NAMESPACE_TENANT_MONITORING:
     "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring",
-  LICENSE: "/license",
-  DOCUMENTATION: "/documentation",
+  NAMESPACE_TENANT_LOGGING:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/logging",
 };
 
 // roles
@@ -364,6 +386,10 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_SERVER_INFO,
   ],
   [IAM_PAGES.TOOLS_SPEEDTEST]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.REGISTER_SUPPORT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.CALL_HOME]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.PROFILE]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.HEALTH]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";

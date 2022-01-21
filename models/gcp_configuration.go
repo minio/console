@@ -65,6 +65,8 @@ func (m *GcpConfiguration) validateSecretmanager(formats strfmt.Registry) error 
 		if err := m.Secretmanager.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretmanager")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretmanager")
 			}
 			return err
 		}
@@ -93,6 +95,8 @@ func (m *GcpConfiguration) contextValidateSecretmanager(ctx context.Context, for
 		if err := m.Secretmanager.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretmanager")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretmanager")
 			}
 			return err
 		}
@@ -162,6 +166,8 @@ func (m *GcpConfigurationSecretmanager) validateCredentials(formats strfmt.Regis
 		if err := m.Credentials.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretmanager" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretmanager" + "." + "credentials")
 			}
 			return err
 		}
@@ -199,6 +205,8 @@ func (m *GcpConfigurationSecretmanager) contextValidateCredentials(ctx context.C
 		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretmanager" + "." + "credentials")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("secretmanager" + "." + "credentials")
 			}
 			return err
 		}

@@ -106,6 +106,8 @@ func (m *SetNotificationEndpointResponse) validateService(formats strfmt.Registr
 		if err := m.Service.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("service")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("service")
 			}
 			return err
 		}
@@ -134,6 +136,8 @@ func (m *SetNotificationEndpointResponse) contextValidateService(ctx context.Con
 		if err := m.Service.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("service")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("service")
 			}
 			return err
 		}

@@ -23,7 +23,6 @@ import { LinearProgress } from "@mui/material";
 import { red } from "@mui/material/colors";
 import Grid from "@mui/material/Grid";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import Button from "@mui/material/Button";
 import {
   NotificationEndpointItem,
   NotificationEndpointsList,
@@ -45,10 +44,11 @@ import api from "../../../common/api";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import history from "../../../history";
 import HelpBox from "../../../common/HelpBox";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -68,6 +68,7 @@ const styles = (theme: Theme) =>
     },
     rightActionItems: {
       display: "flex",
+      alignItems: "center",
       "& button": {
         whiteSpace: "nowrap",
       },
@@ -148,26 +149,27 @@ const ListNotificationEndpoints = ({
             overrideClass={classes.searchField}
           />
           <div className={classes.rightActionItems}>
-            <BoxIconButton
+            <RBIconButton
+              tooltip={"Refresh List"}
+              text={"Refresh"}
+              variant="outlined"
               color="primary"
-              aria-label="Refresh List"
+              icon={<RefreshIcon />}
               onClick={() => {
                 setIsLoading(true);
               }}
-              size="large"
-            >
-              <RefreshIcon />
-            </BoxIconButton>
-            <Button
+            />
+
+            <RBIconButton
+              tooltip={"Add Notification Target"}
+              text={" Add Notification Target"}
               variant="contained"
               color="primary"
-              endIcon={<AddIcon />}
+              icon={<AddIcon />}
               onClick={() => {
-                history.push("/notification-endpoints/add");
+                history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
               }}
-            >
-              Add Notification Target
-            </Button>
+            />
           </div>
         </Grid>
         {isLoading && <LinearProgress />}
@@ -245,7 +247,7 @@ const ListNotificationEndpoints = ({
                         To get started,{" "}
                         <AButton
                           onClick={() => {
-                            history.push("/notification-endpoints/add");
+                            history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
                           }}
                         >
                           Add a Notification Target

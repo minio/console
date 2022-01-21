@@ -42,9 +42,6 @@ const styles = (theme: Theme) =>
     codeMirrorContainer: {
       marginBottom: 20,
       marginTop: 20,
-      "&:nth-child(2) .MuiGrid-root:nth-child(3)": {
-        border: "1px solid #EAEAEA",
-      },
       "& label": {
         marginBottom: ".5rem",
       },
@@ -153,6 +150,7 @@ const AddPolicy = ({
                 onBeforeChange={(editor, data, value) => {
                   setPolicyDefinition(value);
                 }}
+                editorHeight={"350px"}
               />
             </Grid>
           </Grid>
