@@ -197,12 +197,21 @@ const EditConfiguration = ({
                 paddingTop: "15px ",
                 textAlign: "right" as const,
                 maxHeight: "60px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
               }}
             >
               <Button
                 type="button"
                 variant="outlined"
                 color="secondary"
+                sx={{
+                  padding: {
+                    xs: "3px", //avoid wrapping on smaller screens
+                    md: "20px",
+                  },
+                }}
                 onClick={() => {
                   setResetConfigurationOpen(true);
                 }}
