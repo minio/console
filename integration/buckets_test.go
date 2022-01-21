@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -206,6 +207,109 @@ func TestAddBucket(t *testing.T) {
 	if response != nil {
 		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
+}
+
+func TestAddBucketLocking(t *testing.T) {
+	/*
+		This function is to test that locking can't be activated if versioning
+		is not enabled.
+		Then, locking will be activated because versioning is activated as well.
+	*/
+	assert := assert.New(t)
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	/*
+		This is invalid, versioning has to be true for locking to be true, but
+		test will see and make sure this is not allowed and that we get proper
+		error for this scenario.
+	*/
+	requestDataAdd := map[string]interface{}{
+		"name":       "test1",
+		"versioning": false,
+		"locking":    true,
+	}
+
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	// create an object locking bucket without versioning flag
+	request, err := http.NewRequest(
+		"POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if response != nil {
+		assert.Equal(400, response.StatusCode, "400 is expected for this test")
+	}
+
+	msg := "TestAddBucketLocking(): Valid scenario versioning true locking true"
+	fmt.Println(msg)
+
+	/*
+		This is valid, versioning is true, then locking can be true as well.
+	*/
+	requestDataAdd = map[string]interface{}{
+		"name":       "thujan",
+		"versioning": true,
+		"locking":    true,
+	}
+
+	requestDataJSON, _ = json.Marshal(requestDataAdd)
+
+	requestDataBody = bytes.NewReader(requestDataJSON)
+
+	// create an object locking bucket with versioning flag
+	request, err = http.NewRequest(
+		"POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err = client.Do(request)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// Verification part, bucket should be created with versioning enabled and
+	// locking enabled, we expect 201 when created.
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "201 is expected for this test")
+	}
+
+	defer response.Body.Close()
+
+	/*
+		To convert an HTTP response body to a string in Go, so you can read the
+		error from the API in case the bucket is invalid for some reason
+	*/
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(string(b))
+
 }
 
 func TestGetBucket(t *testing.T) {
