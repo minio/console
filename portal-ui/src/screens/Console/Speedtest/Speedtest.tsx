@@ -28,6 +28,7 @@ import {
   actionsTray,
   advancedFilterToggleStyles,
   containerForHeader,
+  formFieldStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -79,9 +80,13 @@ const styles = (theme: Theme) =>
     advancedOption: {
       marginTop: 20,
     },
+    advancedAutotune: {
+      marginTop: 10,
+    },
     ...advancedFilterToggleStyles,
     ...actionsTray,
     ...searchField,
+    ...formFieldStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -280,82 +285,119 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                 }`}
               >
                 <Grid item xs={12}>
-                  <CheckboxWrapper
-                    checked={autotune}
-                    onChange={(e) => setAutotune(e.target.checked)}
-                    id={"autotune"}
-                    name={"autotune"}
-                    label={"Enable Autotune"}
-                    tooltip={
-                      "Autotune gets the maximum stats for the system by running with multiple configurations at once. \
-                  This configuration is enabled by default and disables the rest of available options"
-                    }
-                    value="true"
-                    disabled={start}
-                  />
+                  <Grid
+                    container
+                    direction="row"
+                    justifyContent="space-around"
+                    alignItems="center"
+                  >
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      className={classes.advancedOption}
+                    >
+                      <InputBoxWrapper
+                        id={"size"}
+                        name={"size"}
+                        label={"Object Size"}
+                        onChange={(e) => {
+                          setSize(e.target.value);
+                        }}
+                        value={size}
+                        disabled={start}
+                        overlayObject={
+                          <InputUnitMenu
+                            id={"size-unit"}
+                            onUnitChange={setSizeUnit}
+                            unitSelected={sizeUnit}
+                            unitsList={[
+                              { label: "KB", value: "KB" },
+                              { label: "MB", value: "MB" },
+                              { label: "GB", value: "GB" },
+                            ]}
+                            disabled={start}
+                          />
+                        }
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      className={classes.advancedAutotune}
+                    >
+                      <CheckboxWrapper
+                        checked={autotune}
+                        onChange={(e) => setAutotune(e.target.checked)}
+                        id={"autotune"}
+                        name={"autotune"}
+                        label={"Enable Autotune"}
+                        tooltip={
+                          "Autotune gets the maximum stats for the system by testing multiple configurations at once. This configuration is enabled by default and overrides duration & concurrent requests options"
+                        }
+                        value="true"
+                        disabled={start}
+                      />
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={3} className={classes.advancedOption}>
-                  <InputBoxWrapper
-                    id={"duration"}
-                    name={"duration"}
-                    label={"Duration"}
-                    onChange={(e) => {
-                      setDuration(e.target.value);
-                    }}
-                    value={duration}
-                    disabled={start || autotune}
-                    overlayObject={
-                      <InputUnitMenu
-                        id={"duration-unit"}
-                        onUnitChange={setDurationUnit}
-                        unitSelected={durationUnit}
-                        unitsList={[
-                          { label: "miliseconds", value: "ms" },
-                          { label: "seconds", value: "s" },
-                        ]}
+                <Grid item xs={12}>
+                  <Grid
+                    container
+                    direction="row"
+                    justifyContent="space-around"
+                    alignItems="center"
+                  >
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      className={classes.advancedOption}
+                    >
+                      <InputBoxWrapper
+                        id={"duration"}
+                        name={"duration"}
+                        label={"Duration"}
+                        onChange={(e) => {
+                          setDuration(e.target.value);
+                        }}
+                        value={duration}
+                        disabled={start || autotune}
+                        overlayObject={
+                          <InputUnitMenu
+                            id={"duration-unit"}
+                            onUnitChange={setDurationUnit}
+                            unitSelected={durationUnit}
+                            unitsList={[
+                              { label: "miliseconds", value: "ms" },
+                              { label: "seconds", value: "s" },
+                            ]}
+                            disabled={start || autotune}
+                          />
+                        }
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      className={classes.advancedOption}
+                    >
+                      <InputBoxWrapper
+                        type="number"
+                        min="0"
+                        id={"concurrent"}
+                        name={"concurrent"}
+                        label={"Concurrent Requests"}
+                        onChange={(e) => {
+                          setConcurrent(e.target.value);
+                        }}
+                        value={concurrent}
                         disabled={start || autotune}
                       />
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} md={3} className={classes.advancedOption}>
-                  <InputBoxWrapper
-                    id={"size"}
-                    name={"size"}
-                    label={"Object Size"}
-                    onChange={(e) => {
-                      setSize(e.target.value);
-                    }}
-                    value={size}
-                    disabled={start || autotune}
-                    overlayObject={
-                      <InputUnitMenu
-                        id={"size-unit"}
-                        onUnitChange={setSizeUnit}
-                        unitSelected={sizeUnit}
-                        unitsList={[
-                          { label: "KB", value: "KB" },
-                          { label: "MB", value: "MB" },
-                          { label: "GB", value: "GB" },
-                        ]}
-                        disabled={start || autotune}
-                      />
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} md={3} className={classes.advancedOption}>
-                  <InputBoxWrapper
-                    type="number"
-                    min="0"
-                    id={"concurrent"}
-                    name={"concurrent"}
-                    label={"Concurrent Requests"}
-                    onChange={(e) => {
-                      setConcurrent(e.target.value);
-                    }}
-                    value={concurrent}
-                    disabled={start || autotune}
-                  />
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid container className={classes.multiModule}>

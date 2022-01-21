@@ -27,11 +27,15 @@ import (
 	"net/url"
 	golangswaggerpaths "path"
 	"strings"
+
+	"github.com/go-openapi/swag"
 )
 
 // DeleteMultipleObjectsURL generates an URL for the delete multiple objects operation
 type DeleteMultipleObjectsURL struct {
 	BucketName string
+
+	AllVersions *bool
 
 	_basePath string
 	// avoid unkeyed usage
@@ -71,6 +75,18 @@ func (o *DeleteMultipleObjectsURL) Build() (*url.URL, error) {
 		_basePath = "/api/v1"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var allVersionsQ string
+	if o.AllVersions != nil {
+		allVersionsQ = swag.FormatBool(*o.AllVersions)
+	}
+	if allVersionsQ != "" {
+		qs.Set("all_versions", allVersionsQ)
+	}
+
+	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

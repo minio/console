@@ -51,6 +51,10 @@ type DeleteObjectParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
+	  In: query
+	*/
+	AllVersions *bool
+	/*
 	  Required: true
 	  In: path
 	*/
@@ -81,6 +85,11 @@ func (o *DeleteObjectParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	qs := runtime.Values(r.URL.Query())
 
+	qAllVersions, qhkAllVersions, _ := qs.GetOK("all_versions")
+	if err := o.bindAllVersions(qAllVersions, qhkAllVersions, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
@@ -103,6 +112,29 @@ func (o *DeleteObjectParams) BindRequest(r *http.Request, route *middleware.Matc
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindAllVersions binds and validates parameter AllVersions from query.
+func (o *DeleteObjectParams) bindAllVersions(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("all_versions", "query", "bool", raw)
+	}
+	o.AllVersions = &value
+
 	return nil
 }
 
