@@ -936,9 +936,26 @@ func testPrometheusURL(url string) bool {
 	response, err := GetConsoleHTTPClient().Do(req)
 
 	if err != nil {
-		LogError("Non reachable Prometheus URL: (%v)", err)
-		return false
+		LogError("Default Prometheus URL not reachable, trying root testing: (%v)", err)
 
+		newTestURL := req.URL.Scheme + "://" + req.URL.Host + "/-/healthy"
+
+		req2, err := http.NewRequestWithContext(ctx, http.MethodGet, newTestURL, nil)
+
+		if err != nil {
+			LogError("Error Building Root Request: (%v)", err)
+			return false
+		}
+
+		rootResponse, err := GetConsoleHTTPClient().Do(req2)
+
+		if err != nil {
+			// URL & Root tests didn't work. Prometheus not reachable
+			LogError("Root Prometheus URL not reachable: (%v)", err)
+			return false
+		}
+
+		return rootResponse.StatusCode == http.StatusOK
 	}
 
 	return response.StatusCode == http.StatusOK
