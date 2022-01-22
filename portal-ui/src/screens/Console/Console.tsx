@@ -49,6 +49,7 @@ import {
 } from "../../common/SecureComponent/permissions";
 import { hasPermission } from "../../common/SecureComponent/SecureComponent";
 import { IRouteRule } from "./Menu/types";
+import LoadingComponent from "../../common/LoadingComponent";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -566,7 +567,7 @@ const Console = ({
                 }}
               />
             </div>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <ObjectManager />
             </Suspense>
             <Router history={history}>
@@ -577,14 +578,14 @@ const Console = ({
                     exact
                     path={route.path}
                     children={(routerProps) => (
-                      <Suspense fallback={<div>Loading...</div>}>
+                      <Suspense fallback={<LoadingComponent />}>
                         <route.component {...routerProps} {...route.props} />
                       </Suspense>
                     )}
                   />
                 ))}
                 <Route key={"/icons"} exact path={"/icons"}>
-                  <Suspense fallback={<div>Loading...</div>}>
+                  <Suspense fallback={<LoadingComponent />}>
                     <IconsScreen />
                   </Suspense>
                 </Route>

@@ -21,6 +21,7 @@ import history from "./history";
 import Console from "./screens/Console/Console";
 import { hot } from "react-hot-loader/root";
 import ProtectedRoute from "./ProtectedRoutes";
+import LoadingComponent from "./common/LoadingComponent";
 
 const Login = React.lazy(() => import("./screens/LoginPage/LoginPage"));
 const LoginCallback = React.lazy(
@@ -35,7 +36,7 @@ const Routes = () => {
           exact
           path="/oauth_callback"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <LoginCallback />
             </Suspense>
           )}
@@ -44,7 +45,7 @@ const Routes = () => {
           exact
           path="/login"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <Login />
             </Suspense>
           )}
