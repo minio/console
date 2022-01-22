@@ -68,7 +68,7 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
 
   return (
     <Fragment>
-      <PageHeader label="Dashboard" />
+      <PageHeader label="Metrics" />
       {loading ? (
         <Grid container>
           <Grid item xs={12} className={classes.container}>
