@@ -63,7 +63,7 @@ func AddUser(accessKey string, secretKey string, groups []string, policies []str
 	return response, err
 }
 
-func DeleteUser(bucketName string) (*http.Response, error) {
+func DeleteUser(userName string) (*http.Response, error) {
 	/*
 		This is an atomic function to delete user and can be reused across
 		different functions.
@@ -73,7 +73,7 @@ func DeleteUser(bucketName string) (*http.Response, error) {
 	}
 	fmt.Println("...................................TestAddUser(): Remove user")
 	request, err := http.NewRequest(
-		"DELETE", "http://localhost:9090/api/v1/user?name="+bucketName, nil)
+		"DELETE", "http://localhost:9090/api/v1/user?name="+userName, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -105,6 +105,27 @@ func ListUsers(offset string, limit string) (*http.Response, error) {
 	request.Header.Add("Content-Type", "application/json")
 
 	fmt.Println("...............................TestAddUser(): Make the DELETE")
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetUserInformation(userName string) (*http.Response, error) {
+	/*
+		Helper function to get user information via API:
+		{{baseUrl}}/user?name=proident velit
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/user?name="+userName,
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
 	response, err := client.Do(request)
 	return response, err
 }
@@ -237,4 +258,49 @@ func TestListUsers(t *testing.T) {
 				response.StatusCode, "has to be 204 when delete user")
 		}
 	}
+}
+
+func TestGetUserInfo(t *testing.T) {
+	/*
+		Test to get the user information via API.
+	*/
+
+	// 1. Create the user
+	fmt.Println("TestGetUserInfo(): 1. Create the user")
+	assert := assert.New(t)
+	var groups = []string{}
+	var policies = []string{}
+	response, err := AddUser("accessKey", "secretKey", groups, policies)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		fmt.Println("POST StatusCode:", response.StatusCode)
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Get user information
+	fmt.Println("TestGetUserInfo(): 2. Get user information")
+	response, err = GetUserInformation("accessKey")
+	if err != nil {
+		log.Println(err)
+		assert.Fail("There was an error in the response")
+		return
+	}
+
+	// 3. Verify user information
+	fmt.Println("TestGetUserInfo(): 3. Verify user information")
+	if response != nil {
+		fmt.Println("POST StatusCode:", response.StatusCode)
+		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
+	}
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(string(b))
+	expected := "{\"accessKey\":\"accessKey\",\"memberOf\":null,\"policy\":[],\"status\":\"enabled\"}\n"
+	obtained := string(b)
+	assert.Equal(expected, obtained, "User Information is wrong")
 }
