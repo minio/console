@@ -64,6 +64,16 @@ const styles = (theme: Theme) =>
       },
     },
     ...fileInputStyles,
+    inputLabel: {
+      ...fieldBasic.inputLabel,
+      fontWeight: "normal",
+    },
+    textBoxContainer: {
+      ...fieldBasic.textBoxContainer,
+      maxWidth: "100%",
+      border: "1px solid #eaeaea",
+      paddingLeft: "15px",
+    },
   });
 
 const FileSelector = ({

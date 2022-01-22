@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -169,34 +170,40 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestAddBucket(t *testing.T) {
-	assert := assert.New(t)
-
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-
+func AddBucket(BucketName string, Versioning bool, Locking bool) (*http.Response, error) {
+	/*
+	   This is an atomic function that we can re-use to create a bucket on any
+	   desired test.
+	*/
+	// Needed Parameters for API Call
 	requestDataAdd := map[string]interface{}{
-		"name":       "test1",
-		"versioning": false,
-		"locking":    false,
+		"name":       BucketName,
+		"versioning": Versioning,
+		"locking":    Locking,
 	}
 
+	// Creating the Call by adding the URL and Headers
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
-
 	requestDataBody := bytes.NewReader(requestDataJSON)
-
-	// get list of buckets
 	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
 	if err != nil {
 		log.Println(err)
-		return
 	}
-
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
 	response, err := client.Do(request)
+	return response, err
+}
+
+func TestAddBucket(t *testing.T) {
+	assert := assert.New(t)
+
+	response, err := AddBucket("test1", false, false)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -208,6 +215,63 @@ func TestAddBucket(t *testing.T) {
 	}
 }
 
+func TestAddBucketLocking(t *testing.T) {
+	/*
+		This function is to test that locking can't be activated if versioning
+		is not enabled.
+		Then, locking will be activated because versioning is activated as well.
+	*/
+	assert := assert.New(t)
+
+	/*
+		This is invalid, versioning has to be true for locking to be true, but
+		test will see and make sure this is not allowed and that we get proper
+		error for this scenario.
+	*/
+	response, err := AddBucket("test1", false, true)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if response != nil {
+		assert.Equal(400, response.StatusCode, "400 is expected for this test")
+	}
+
+	msg := "TestAddBucketLocking(): Valid scenario versioning true locking true"
+	fmt.Println(msg)
+
+	/*
+		This is valid, versioning is true, then locking can be true as well.
+	*/
+	response, err = AddBucket("thujun", true, true)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// Verification part, bucket should be created with versioning enabled and
+	// locking enabled, we expect 201 when created.
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "201 is expected for this test")
+	}
+
+	defer response.Body.Close()
+
+	/*
+		To convert an HTTP response body to a string in Go, so you can read the
+		error from the API in case the bucket is invalid for some reason
+	*/
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(string(b))
+
+}
+
 func TestGetBucket(t *testing.T) {
 	assert := assert.New(t)
 
@@ -215,27 +279,7 @@ func TestGetBucket(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	requestDataAdd := map[string]interface{}{
-		"name":       "test3",
-		"versioning": false,
-		"locking":    false,
-	}
-
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-
-	requestDataBody := bytes.NewReader(requestDataJSON)
-
-	// put bucket
-	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	response, err := client.Do(request)
+	response, err := AddBucket("test3", false, false)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -243,7 +287,7 @@ func TestGetBucket(t *testing.T) {
 	}
 
 	// get bucket
-	request, err = http.NewRequest("GET", "http://localhost:9090/api/v1/buckets/test3", nil)
+	request, err := http.NewRequest("GET", "http://localhost:9090/api/v1/buckets/test3", nil)
 	if err != nil {
 		log.Println(err)
 		return
@@ -271,28 +315,8 @@ func TestSetBucketTags(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	requestDataAdd := map[string]interface{}{
-		"name":       "test4",
-		"versioning": false,
-		"locking":    false,
-	}
-
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-
-	requestDataBody := bytes.NewReader(requestDataJSON)
-
 	// put bucket
-	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
-	request.Close = true
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	response, err := client.Do(request)
+	response, err := AddBucket("test4", false, false)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -309,7 +333,7 @@ func TestSetBucketTags(t *testing.T) {
 
 	requestTagsBody := bytes.NewBuffer(requestTagsJSON)
 
-	request, err = http.NewRequest(http.MethodPut, "http://localhost:9090/api/v1/buckets/test4/tags", requestTagsBody)
+	request, err := http.NewRequest(http.MethodPut, "http://localhost:9090/api/v1/buckets/test4/tags", requestTagsBody)
 	request.Close = true
 	if err != nil {
 		log.Println(err)
@@ -402,16 +426,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	requestDataBody := bytes.NewReader(requestDataJSON)
 
-	request, err = http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	response, err = client.Do(request)
+	response, err = AddBucket("test2", true, false)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -425,9 +440,9 @@ func TestBucketVersioning(t *testing.T) {
 		assert.NotEqual(201, response.StatusCode, "Versioning test Status Code is incorrect -  versioned bucket created on non-distributed system")
 	}
 
-	request, err = http.NewRequest("DELETE", "http://localhost:9090/api/v1/buckets/test2", requestDataBody)
-	if err != nil {
-		log.Println(err)
+	request, error := http.NewRequest("DELETE", "http://localhost:9090/api/v1/buckets/test2", requestDataBody)
+	if error != nil {
+		log.Println(error)
 		return
 	}
 

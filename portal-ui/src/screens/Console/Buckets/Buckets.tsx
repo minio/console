@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
+import LoadingComponent from "../../../common/LoadingComponent";
 
 const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
 const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
@@ -42,7 +43,7 @@ const Buckets = () => {
         <Route
           path="/add-bucket"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <AddBucket />
             </Suspense>
           )}
@@ -50,7 +51,7 @@ const Buckets = () => {
         <Route
           path="/buckets/:bucketName/admin/*"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <BucketDetails {...routerProps} />
             </Suspense>
           )}
@@ -58,7 +59,7 @@ const Buckets = () => {
         <Route
           path="/buckets/:bucketName/admin"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <BucketDetails {...routerProps} />
             </Suspense>
           )}
@@ -66,7 +67,7 @@ const Buckets = () => {
         <Route
           path="/buckets/:bucketName/browse/:subpaths+"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <BrowserHandler {...routerProps} />
             </Suspense>
           )}
@@ -74,7 +75,7 @@ const Buckets = () => {
         <Route
           path="/buckets/:bucketName/browse"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <BrowserHandler {...routerProps} />
             </Suspense>
           )}
@@ -86,14 +87,14 @@ const Buckets = () => {
         <Route
           path="/"
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <ListBuckets {...routerProps} />
             </Suspense>
           )}
         />
         <Route
           children={(routerProps) => (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <NotFoundPage />
             </Suspense>
           )}

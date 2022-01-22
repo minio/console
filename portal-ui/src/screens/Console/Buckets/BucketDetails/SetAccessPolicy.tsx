@@ -22,6 +22,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import {
+  formFieldStyles,
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
@@ -37,7 +38,6 @@ const styles = (theme: Theme) =>
   createStyles({
     codeMirrorContainer: {
       marginBottom: 20,
-      paddingLeft: 15,
       "& label": {
         marginBottom: ".5rem",
       },
@@ -45,6 +45,7 @@ const styles = (theme: Theme) =>
         display: "none",
       },
     },
+    ...formFieldStyles,
     ...modalStyleUtils,
     ...spacingUtils,
   });

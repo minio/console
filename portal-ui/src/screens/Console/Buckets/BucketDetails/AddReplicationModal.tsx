@@ -64,6 +64,9 @@ const styles = (theme: Theme) =>
       },
       "& div:first-child": {
         marginBottom: 0,
+        "@media (max-width: 600px)": {
+          marginTop: "7px",
+        },
       },
     },
     ...spacingUtils,
