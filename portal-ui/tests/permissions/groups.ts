@@ -21,9 +21,25 @@ import * as functions from "../utils/functions";
 import { Selector } from "testcafe";
 import { groupsElement, identityElement } from "../utils/elements-menu";
 
-const groupsListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
-  constants.TEST_GROUP_NAME
-);
+const groupsListItemFor = (modifier) => {
+  return Selector(".ReactVirtualized__Table__rowColumn").withText(
+    `${constants.TEST_GROUP_NAME}-${modifier}`
+  );
+};
+
+const createGroup = async (t, modifier) => {
+  await t
+    .useRole(roles.groups)
+    .navigateTo("http://localhost:9090/identity/groups")
+    .click(elements.createGroupButton)
+    .typeText(
+      elements.groupNameInput,
+      `${constants.TEST_GROUP_NAME}-${modifier}`
+    )
+    .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
+    .click(elements.groupUserCheckbox)
+    .click(elements.saveButton);
+};
 
 fixture("For user with Groups permissions")
   .page("http://localhost:9090")
@@ -55,11 +71,10 @@ test("Create Group button is clickable", async (t) => {
 });
 
 test("Group Name input exists in the Create Group modal", async (t) => {
-  const groupNameInputExists = elements.groupNameInput.exists;
   await t
     .navigateTo("http://localhost:9090/identity/groups")
     .click(elements.createGroupButton)
-    .expect(groupNameInputExists)
+    .expect(elements.groupNameInput.exists)
     .ok();
 });
 
@@ -92,17 +107,19 @@ test.before(async (t) => {
 );
 
 test("Groups table exists", async (t) => {
-  const groupsTableExists = elements.table.exists;
   await t
     .navigateTo("http://localhost:9090/identity/groups")
-    .expect(groupsTableExists)
+    .expect(elements.table.exists)
     .ok();
 });
 
-test("Created Group can be disabled and enabled back", async (t) => {
+test.before(async (t) => {
+  // A user must be created as we need to choose a user from the dropdown
+  await createGroup(t, "disable-enable");
+})("Created Group can be disabled and enabled back", async (t) => {
   await t
     .navigateTo("http://localhost:9090/identity/groups")
-    .click(groupsListItem)
+    .click(groupsListItemFor("disable-enable"))
     .click(elements.switchInput)
     .expect(elements.groupStatusText.innerText)
     .eql("Disabled")
@@ -111,10 +128,13 @@ test("Created Group can be disabled and enabled back", async (t) => {
     .eql("Enabled");
 });
 
-test("Created Group can be viewed and deleted", async (t) => {
+test.before(async (t) => {
+  // A user must be created as we need to choose a user from the dropdown
+  await createGroup(t, "view-delete");
+})("Created Group can be viewed and deleted", async (t) => {
   await t
     .navigateTo("http://localhost:9090/identity/groups")
-    .click(groupsListItem)
+    .click(groupsListItemFor("view-delete"))
     .click(elements.editMembersButton)
     .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
     .click(elements.groupUserCheckbox)

@@ -16,7 +16,20 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements-menu";
-import { monitoringElement, supportElement } from "../utils/elements-menu";
+import {
+  bucketsElement,
+  dashboardElement,
+  groupsElement,
+  iamPoliciesElement,
+  identityElement,
+  monitoringElement,
+  notificationEndpointsElement,
+  serviceAcctsElement,
+  settingsElement,
+  supportElement,
+  tiersElement,
+  usersElement,
+} from "../utils/elements-menu";
 
 fixture("For user with Admin permissions")
   .page("http://localhost:9090")
@@ -25,45 +38,32 @@ fixture("For user with Admin permissions")
   });
 
 test("All sidebar items exist", async (t) => {
-  const monitoring = elements.monitoringElement;
-  const identity = elements.identityElement;
-
-  const dashboardExists = elements.dashboardElement.exists;
-  const bucketsExist = elements.bucketsElement.exists;
-  const usersExist = elements.usersElement.exists;
-  const groupsExist = elements.groupsElement.exists;
-  const serviceAcctsExist = elements.serviceAcctsElement.exists;
-  const iamPoliciesExist = elements.iamPoliciesElement.exists;
-  const settingsExist = elements.settingsElement.exists;
-  const notificationEndpointsExist =
-    elements.notificationEndpointsElement.exists;
-  const tiersExist = elements.tiersElement.exists;
-  const toolsExist = elements.supportElement.exists;
   const licenseExists = elements.licenseElement.exists;
   await t
-    .expect(monitoring.exists)
+    .expect(monitoringElement.exists)
     .ok()
-    .click(monitoring)
-    .expect(dashboardExists)
+    .click(monitoringElement)
+    .expect(dashboardElement.exists)
     .ok()
-    .expect(bucketsExist)
+    .expect(bucketsElement.exists)
     .ok()
-    .expect(identity.exists)
+    .expect(identityElement.exists)
     .ok()
-    .click(identity)
-    .expect(usersExist)
+    .click(identityElement)
+    .expect(usersElement.exists)
     .ok()
-    .expect(groupsExist)
+    .expect(groupsElement.exists)
     .ok()
-    .expect(serviceAcctsExist)
+    .expect(serviceAcctsElement.exists)
     .ok()
-    .expect(iamPoliciesExist)
+    .expect(iamPoliciesElement.exists)
     .ok()
-    .expect(settingsExist)
+    .expect(settingsElement.exists)
     .ok()
-    .expect(notificationEndpointsExist)
+    .click(settingsElement)
+    .expect(notificationEndpointsElement.exists)
     .ok()
-    .expect(tiersExist)
+    .expect(tiersElement.exists)
     .ok()
     .expect(supportElement.exists)
     .ok()

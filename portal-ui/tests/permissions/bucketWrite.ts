@@ -18,6 +18,7 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { bucketsElement } from "../utils/elements-menu";
+import { testBucketBrowseButtonFor } from "../utils/functions";
 
 fixture("For user with Bucket Write permissions")
   .page("http://localhost:9090")
@@ -32,9 +33,10 @@ test("Buckets sidebar item exists", async (t) => {
 
 test.before(async (t) => {
   // Create a bucket
-  await functions.setUpBucket(t);
+  await functions.setUpBucket(t, "bucketwrite");
 })("Browse button exists", async (t) => {
-  const browseExists = elements.testBucketBrowseButton.exists;
+  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
+  const browseExists = testBucketBrowseButton.exists;
   await t
     // We need to log back in after we use the admin account to create bucket,
     // using the specific role we use in this module
@@ -53,29 +55,32 @@ test("Bucket access is set to W", async (t) => {
 
 test("Upload button exists", async (t) => {
   const uploadExists = elements.uploadButton.exists;
+  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
   await t
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.testBucketBrowseButton)
+    .click(testBucketBrowseButton)
     .expect(uploadExists)
     .ok();
 });
 
 test("Object can be uploaded to a bucket", async (t) => {
+  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
   await t
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.testBucketBrowseButton)
+    .click(testBucketBrowseButton)
     // Upload object to bucket
     .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
 });
 
 test("Object list table is disabled", async (t) => {
   const disabledBucketsTableExists = elements.bucketsTableDisabled.exists;
+  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
   await t
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.testBucketBrowseButton)
+    .click(testBucketBrowseButton)
     .expect(disabledBucketsTableExists)
     .ok();
 }).after(async (t) => {
   // Cleanup created bucket and corresponding uploads
-  await functions.cleanUpBucketAndUploads(t);
+  await functions.cleanUpBucketAndUploads(t, "bucketwrite");
 });
