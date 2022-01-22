@@ -1266,3 +1266,12 @@ export const textStyleUtils: any = {
     color: "#8399AB",
   },
 };
+
+// These classes are meant to be used as React.CSSProperties for TableWrapper
+export const TableRowPredefStyles: any = {
+  deleted: {
+    color: "#ACACAC",
+    backgroundColor: "#FDFDFD",
+    fontStyle: "italic",
+  }
+}
