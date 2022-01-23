@@ -38,6 +38,7 @@ import history from "../../../../history";
 import {
   checkboxIcons,
   radioIcons,
+  TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
 
 //Interfaces for table Items
@@ -104,6 +105,11 @@ interface TableWrapperProps {
   sortConfig?: ISortConfig;
   disabled?: boolean;
   onSelectAll?: () => void;
+  rowStyle?: ({
+    index,
+  }: {
+    index: number;
+  }) => "deleted" | "" | React.CSSProperties;
 }
 
 const borderColor = "#9c9c9c80";
@@ -458,6 +464,7 @@ const TableWrapper = ({
   autoScrollToBottom = false,
   disabled = false,
   onSelectAll,
+  rowStyle,
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -637,6 +644,19 @@ const TableWrapper = ({
                       scrollToIndex={
                         autoScrollToBottom ? records.length - 1 : -1
                       }
+                      rowStyle={(r) => {
+                        if (rowStyle) {
+                          const returnElement = rowStyle(r);
+
+                          if (typeof returnElement === "string") {
+                            return get(TableRowPredefStyles, returnElement, {});
+                          }
+
+                          return returnElement;
+                        }
+
+                        return {};
+                      }}
                     >
                       {hasSelect && (
                         <Column
