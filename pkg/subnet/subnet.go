@@ -18,8 +18,11 @@
 package subnet
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/minio/pkg/licverifier"
 	"log"
 
 	"github.com/minio/console/models"
@@ -81,7 +84,12 @@ func GetOrganizations(client cluster.HTTPClientI, token string) ([]*models.Subne
 	return organizations, nil
 }
 
-func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (string, error) {
+type LicenseTokenConfig struct {
+	APIKey  string
+	License string
+}
+
+func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (*LicenseTokenConfig, error) {
 	var headers map[string]string
 	regInfo := GetClusterRegInfo(admInfo)
 	regURL := subnetRegisterURL()
@@ -89,23 +97,70 @@ func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, to
 		regURL += "?api_key=" + apiKey
 	} else {
 		if accountID == "" || token == "" {
-			return "", errors.New("missing accountID or authentication token")
+			return nil, errors.New("missing accountID or authentication token")
 		}
 		headers = subnetAuthHeaders(token)
 		regURL += "?aid=" + accountID
 	}
 	regToken, err := GenerateRegToken(regInfo)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	reqPayload := mc.ClusterRegistrationReq{Token: regToken}
 	resp, err := subnetPostReq(client, regURL, reqPayload, headers)
 	if err != nil {
+		return nil, err
+	}
+	respJson := gjson.Parse(resp)
+	subnetAPIKey := respJson.Get("api_key").String()
+	licenseJwt := respJson.Get("license").String()
+
+	if subnetAPIKey != "" {
+		return &LicenseTokenConfig{
+			APIKey:  subnetAPIKey,
+			License: licenseJwt,
+		}, nil
+	}
+	return nil, errors.New("subnet api key not found")
+}
+
+const publicKey = "/downloads/license-pubkey.pem"
+
+// downloadSubnetPublicKey will download the current subnet public key.
+func downloadSubnetPublicKey(client cluster.HTTPClientI) (string, error) {
+	// Get the public key directly from Subnet
+	url := fmt.Sprintf("%s%s", subnetBaseURL(), publicKey)
+	resp, err := client.Get(url)
+	if err != nil {
 		return "", err
 	}
-	subnetAPIKey := gjson.Parse(resp).Get("api_key").String()
-	if subnetAPIKey != "" {
-		return subnetAPIKey, nil
+	defer resp.Body.Close()
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(resp.Body)
+	if err != nil {
+		return "", err
 	}
-	return "", errors.New("subnet api key not found")
+	return buf.String(), err
+}
+
+func ParseLicense(client cluster.HTTPClientI, license string) (*licverifier.LicenseInfo, error) {
+	var publicKeys []string
+
+	subnetPubKey, err := downloadSubnetPublicKey(client)
+	if err != nil {
+		log.Print(err)
+		// there was an issue getting the subnet public key
+		// use hardcoded public keys instead
+		publicKeys = OfflinePublicKeys
+	} else {
+		publicKeys = append(publicKeys, subnetPubKey)
+	}
+
+	licenseInfo, err := GetLicenseInfoFromJWT(license, publicKeys)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return licenseInfo, nil
 }

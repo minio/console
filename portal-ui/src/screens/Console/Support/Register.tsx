@@ -18,8 +18,8 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
-  searchField,
   containerForHeader,
+  searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { Button, Grid, Link, Typography } from "@mui/material";
@@ -30,7 +30,6 @@ import { CopyIcon, UsersIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import OnlineRegistrationIcon from "../../../icons/OnlineRegistrationIcon";
-import OfflineRegistrationBackIcon from "../../../icons/OfflineRegistrationBackIcon";
 import OfflineRegistrationIcon from "../../../icons/OfflineRegistrationIcon";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import clsx from "clsx";
@@ -55,9 +54,11 @@ import {
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
 } from "../../../common/SecureComponent/permissions";
-import VerifiedIcon from "../../../icons/VerifiedIcon";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../actions";
+import HelpBox from "../../../common/HelpBox";
+import SettingsIcon from "../../../icons/SettingsIcon";
+import RegisterStatus from "./RegisterStatus";
 
 interface IRegister {
   classes: any;
@@ -201,7 +202,9 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
           setLoadingLicenseInfo(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          if (err.errorMessage !== "License not found") {
+            displayErrorMessage(err);
+          }
           setClusterRegistered(false);
           setLoadingLicenseInfo(false);
         });
@@ -224,6 +227,7 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
         }
       })
       .catch((err: ErrorResponseHandler) => {
+        console.log(err);
         displayErrorMessage(err);
         setLoading(false);
       });
@@ -440,7 +444,7 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
               target="_blank"
               href="https://min.io/product/subnet"
             >
-              Learn more about SUBNET
+              Learn more about SUBNET.
             </Link>
           </Grid>
           <br />
@@ -563,33 +567,14 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
       <PageHeader label="Register" />
       <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
-          {clusterRegistered && (
-            <Grid container>
-              <Grid item xs={12} className={classes.registeredStatus}>
-                Register Status:
-                <VerifiedIcon />
-                <span>Registered</span>
-              </Grid>
-            </Grid>
-          )}
+          {clusterRegistered && <RegisterStatus />}
           <Grid container>
             <Grid item xs={6} className={classes.registerActivationIcon}>
               {title}
             </Grid>
             <Grid item xs={6} className={classes.registerActivationMode}>
               {onlineActivation ? (
-                <Fragment>
-                  <OfflineRegistrationBackIcon />
-                  <Link
-                    className={classes.link}
-                    onClick={() => {
-                      fetchSubnetRegToken();
-                      setOnlineActivation(!onlineActivation);
-                    }}
-                  >
-                    Offline Activation
-                  </Link>
-                </Fragment>
+                <Fragment />
               ) : (
                 <Fragment>
                   <OnlineRegistrationBackIcon />
@@ -606,6 +591,32 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
 
           {clusterRegistrationForm}
         </Grid>
+        {onlineActivation && (
+          <Grid item xs={12} marginTop={"15px"}>
+            <HelpBox
+              title={"Proxy Configuration"}
+              iconComponent={<SettingsIcon />}
+              help={
+                <Fragment>
+                  For airgap/firewalled environments it is possible to configure
+                  a proxy to connect to Subnet.
+                  <br />
+                  <br />
+                  Alternatively you can try{" "}
+                  <Link
+                    className={classes.link}
+                    onClick={() => {
+                      fetchSubnetRegToken();
+                      setOnlineActivation(!onlineActivation);
+                    }}
+                  >
+                    Offline Activation.
+                  </Link>
+                </Fragment>
+              }
+            />
+          </Grid>
+        )}
       </PageLayout>
     </Fragment>
   );
