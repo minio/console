@@ -242,7 +242,6 @@ func GetSubnetRegisterResponse(session *models.Principal, params admin_api.Subne
 }
 
 func GetSubnetInfoResponse(session *models.Principal, client cluster.HTTPClientI) (*models.License, *models.Error) {
-	fmt.Println("quack")
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
