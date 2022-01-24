@@ -22,6 +22,7 @@ import {
   monitoringElement,
   supportElement,
 } from "../utils/elements-menu";
+import { bucketDropdownOptionFor } from "../utils/elements";
 
 fixture("For user with Heal permissions")
   .page("http://localhost:9090")
@@ -46,25 +47,35 @@ test("Heal page can be opened", async (t) => {
   await t.navigateTo("http://localhost:9090/tools/heal");
 });
 
-test.before(async (t) => {
-  // Create a bucket
-  await functions.setUpBucket(t);
-})("Start button exists", async (t) => {
-  const startButtonExists = elements.startButton.exists;
-  await t
-    .useRole(roles.heal)
-    .navigateTo("http://localhost:9090/tools/heal")
-    .expect(startButtonExists)
-    .ok();
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "heal");
+  })("Start button exists", async (t) => {
+    const startButtonExists = elements.startButton.exists;
+    await t
+      .useRole(roles.heal)
+      .navigateTo("http://localhost:9090/tools/heal")
+      .expect(startButtonExists)
+      .ok();
+  })
+  .after(async (t) => {
+    // Cleanup created bucket
+    await functions.cleanUpBucket(t, "heal");
+  });
 
-test("Start button can be clicked", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/tools/heal")
-    .click(elements.bucketNameInput)
-    .click(elements.bucketDropdownOption)
-    .click(elements.startButton);
-}).after(async (t) => {
-  // Cleanup created bucket
-  await functions.cleanUpBucket(t);
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "heal2");
+  })("Start button can be clicked", async (t) => {
+    await t
+      .navigateTo("http://localhost:9090/tools/heal")
+      .click(elements.bucketNameInput)
+      .click(bucketDropdownOptionFor("heal"))
+      .click(elements.startButton);
+  })
+  .after(async (t) => {
+    // Cleanup created bucket
+    await functions.cleanUpBucket(t, "heal2");
+  });

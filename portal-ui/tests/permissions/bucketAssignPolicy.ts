@@ -19,6 +19,9 @@ import * as elements from "../utils/elements";
 
 import * as functions from "../utils/functions";
 import { bucketsElement, logoutItem } from "../utils/elements-menu";
+import { Selector } from "testcafe";
+import * as constants from "../utils/constants";
+import { manageButtonFor } from "../utils/functions";
 
 fixture("For user with Bucket Assign Policy permissions")
   .page("http://localhost:9090")
@@ -34,14 +37,15 @@ test("Buckets sidebar item exists", async (t) => {
 
 test.before(async (t) => {
   // Create a bucket
-  await functions.setUpBucket(t);
+  await functions.setUpBucket(t, "bucketassign");
 })("A readonly policy can be assigned to a bucket", async (t) => {
+  const manageButton = manageButtonFor("bucketassign");
   await t
     // We need to log back in after we use the admin account to create bucket,
     // using the specific role we use in this module
     .useRole(roles.bucketAssignPolicy)
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.manageButton)
+    .click(manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.addAccessRuleButton)
     .typeText(elements.bucketsPrefixInput, "readonlytest")
@@ -51,9 +55,10 @@ test.before(async (t) => {
 });
 
 test("A writeonly policy can be assigned to a bucket", async (t) => {
+  const manageButton = manageButtonFor("bucketassign");
   await t
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.manageButton)
+    .click(manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.addAccessRuleButton)
     .typeText(elements.bucketsPrefixInput, "writeonlytest")
@@ -63,9 +68,10 @@ test("A writeonly policy can be assigned to a bucket", async (t) => {
 });
 
 test("A readwrite policy can be assigned to a bucket", async (t) => {
+  const manageButton = manageButtonFor("bucketassign");
   await t
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.manageButton)
+    .click(manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.addAccessRuleButton)
     .typeText(elements.bucketsPrefixInput, "readwritetest")
@@ -75,14 +81,12 @@ test("A readwrite policy can be assigned to a bucket", async (t) => {
 });
 
 test("Previously assigned policy to a bucket can be deleted", async (t) => {
+  const manageButton = manageButtonFor("bucketassign");
   await t
     .navigateTo("http://localhost:9090/buckets")
-    .click(elements.manageButton)
+    .click(manageButton)
     .click(elements.bucketAccessRulesTab)
     .click(elements.deleteIconButtonAlt)
     .click(elements.deleteButton)
     .click(logoutItem);
-}).after(async (t) => {
-  // Cleanup created bucket
-  await functions.cleanUpBucket(t);
 });

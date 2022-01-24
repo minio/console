@@ -231,7 +231,7 @@ const HealthInfo = ({
 
   return (
     <Fragment>
-      <PageHeader label="Diagnostic" />
+      <PageHeader label="Health" />
       <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
           <TestWrapper title={title} advancedVisible={false}>
@@ -286,6 +286,7 @@ const HealthInfo = ({
                       )}
                       <Grid item xs={12} className={classes.diagNew}>
                         <Button
+                          id="start-new-diagnostic"
                           type="submit"
                           variant="contained"
                           color="primary"

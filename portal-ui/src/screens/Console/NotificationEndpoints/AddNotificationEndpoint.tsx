@@ -187,7 +187,7 @@ const AddNotificationEndpoint = ({
 
   return (
     <Fragment>
-      <PageHeader label="Notification Endpoints" />
+      <PageHeader label="Notifications" />
       <BackLink
         to="/notification-endpoints/add"
         label={" Back To Supported Services"}

@@ -20,17 +20,35 @@ import * as constants from "./constants";
 import { Selector } from "testcafe";
 import { logoutItem } from "./elements-menu";
 
-export const setUpBucket = (t) => {
+export const setUpBucket = (t, modifier) => {
+  if (!modifier) {
+    modifier = "a";
+  }
   return t
     .useRole(roles.admin)
     .navigateTo("http://localhost:9090/buckets")
     .click(elements.createBucketButton)
-    .typeText(elements.bucketNameInput, constants.TEST_BUCKET_NAME)
+    .typeText(
+      elements.bucketNameInput,
+      `${constants.TEST_BUCKET_NAME}-${modifier}`
+    )
     .click(elements.createBucketButton)
     .click(logoutItem);
 };
 
-export const cleanUpBucket = (t) => {
+export const manageButtonFor = (modifier) => {
+  return Selector("h1")
+    .withText(`${constants.TEST_BUCKET_NAME}-${modifier}`)
+    .parent(4)
+    .find("button:enabled")
+    .withText("Manage");
+};
+
+export const cleanUpBucket = (t, modifier) => {
+  if (!modifier) {
+    modifier = "a";
+  }
+  const manageButton = manageButtonFor(modifier);
   return (
     t
       // useRole doesn't work here so we would need to enter the commands manually
@@ -39,14 +57,30 @@ export const cleanUpBucket = (t) => {
       .typeText("#secretKey", "minioadmin")
       .click(elements.loginSubmitButton)
       .navigateTo("http://localhost:9090/buckets")
-      .click(elements.manageButton)
+
+      .click(manageButton)
       .click(elements.deleteBucketButton)
       .click(elements.deleteButton)
       .click(logoutItem)
   );
 };
 
-export const cleanUpBucketAndUploads = (t) => {
+export const testBucketBrowseButtonFor = (modifier) => {
+  if (!modifier) {
+    modifier = "a";
+  }
+  return Selector("h1")
+    .withText(`${constants.TEST_BUCKET_NAME}-${modifier}`)
+    .parent(4)
+    .find("button:enabled")
+    .withText("Browse");
+};
+
+export const cleanUpBucketAndUploads = (t, modifier) => {
+  if (!modifier) {
+    modifier = "a";
+  }
+  const testBucketBrowseButton = testBucketBrowseButtonFor(modifier);
   return (
     t
       // useRole doesn't work here so we would need to enter the commands manually
@@ -55,7 +89,7 @@ export const cleanUpBucketAndUploads = (t) => {
       .typeText("#secretKey", "minioadmin")
       .click(elements.loginSubmitButton)
       .navigateTo("http://localhost:9090/buckets")
-      .click(elements.testBucketBrowseButton)
+      .click(testBucketBrowseButton)
       .click(elements.deleteIconButtonAlt)
       .click(elements.deleteButton)
       .click(elements.configureBucketButton)

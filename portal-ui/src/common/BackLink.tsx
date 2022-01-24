@@ -27,7 +27,7 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
       textDecoration: "none",
-      maxWidth: "250px",
+      maxWidth: "300px",
       padding: "2rem 2rem 0rem 2rem",
       color: theme.palette.primary.light,
       fontSize: ".8rem",

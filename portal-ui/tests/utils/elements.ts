@@ -24,16 +24,7 @@ export const loginSubmitButton = Selector("form button");
 export const closeAlertButton = Selector(
   'button[class*="ModalError-closeButton"]'
 );
-export const manageButton = Selector("h1")
-  .withText(constants.TEST_BUCKET_NAME)
-  .parent(4)
-  .find("button:enabled")
-  .withText("Manage");
-export const testBucketBrowseButton = Selector("h1")
-  .withText(constants.TEST_BUCKET_NAME)
-  .parent(4)
-  .find("button:enabled")
-  .withText("Browse");
+
 export const uploadButton = Selector("span")
   .withAttribute("aria-label", "Upload file")
   .child("button:enabled");
@@ -74,9 +65,7 @@ export const addAccessRuleButton =
   Selector("button:enabled").withText("Add Access Rule");
 export const startDiagnosticButton =
   Selector("button:enabled").withText("Start Diagnostic");
-export const startNewDiagnosticButton = Selector("button:enabled").withText(
-  "Start New Diagnostic"
-);
+export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
 export const downloadButton = Selector("button:enabled").withText("Download");
 export const startButton = Selector("button:enabled").withText("Start");
 export const stopButton = Selector("button:enabled").withText("Stop");
@@ -132,10 +121,12 @@ export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row span")
 //----------------------------------------------------
 // Dropdowns and options
 //----------------------------------------------------
-export const bucketDropdownOption = Selector("li").withAttribute(
-  "data-value",
-  constants.TEST_BUCKET_NAME
-);
+export const bucketDropdownOptionFor = (modifier) => {
+  return Selector("li").withAttribute(
+    "data-value",
+    `${constants.TEST_BUCKET_NAME}-${modifier}`
+  );
+};
 
 //----------------------------------------------------
 // Text
@@ -174,47 +165,47 @@ export const settingsWindow = Selector("#settings-container");
 //----------------------------------------------------
 export const settingsRegionTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/region"
+  "/settings/configurations/region"
 );
 export const settingsCacheTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/cache"
+  "/settings/configurations/cache"
 );
 export const settingsCompressionTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/compression"
+  "/settings/configurations/compression"
 );
 export const settingsApiTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/api"
+  "/settings/configurations/api"
 );
 export const settingsHealTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/heal"
+  "/settings/configurations/heal"
 );
 export const settingsScannerTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/scanner"
+  "/settings/configurations/scanner"
 );
 export const settingsEtcdTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/etcd"
+  "/settings/configurations/etcd"
 );
 export const settingsOpenIdTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/identity_openid"
+  "/settings/configurations/identity_openid"
 );
 export const settingsLdapTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/identity_ldap"
+  "/settings/configurations/identity_ldap"
 );
 export const settingsLoggerWebhookTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/logger_webhook"
+  "/settings/configurations/logger_webhook"
 );
 export const settingsAuditWebhookTab = Selector(".MuiTab-root").withAttribute(
   "href",
-  "/settings/audit_webhook"
+  "/settings/configurations/audit_webhook"
 );
 
 //----------------------------------------------------
