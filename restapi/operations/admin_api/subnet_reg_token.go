@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// SubscriptionInfoHandlerFunc turns a function with the right signature into a subscription info handler
-type SubscriptionInfoHandlerFunc func(SubscriptionInfoParams, *models.Principal) middleware.Responder
+// SubnetRegTokenHandlerFunc turns a function with the right signature into a subnet reg token handler
+type SubnetRegTokenHandlerFunc func(SubnetRegTokenParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn SubscriptionInfoHandlerFunc) Handle(params SubscriptionInfoParams, principal *models.Principal) middleware.Responder {
+func (fn SubnetRegTokenHandlerFunc) Handle(params SubnetRegTokenParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// SubscriptionInfoHandler interface for that can handle valid subscription info params
-type SubscriptionInfoHandler interface {
-	Handle(SubscriptionInfoParams, *models.Principal) middleware.Responder
+// SubnetRegTokenHandler interface for that can handle valid subnet reg token params
+type SubnetRegTokenHandler interface {
+	Handle(SubnetRegTokenParams, *models.Principal) middleware.Responder
 }
 
-// NewSubscriptionInfo creates a new http.Handler for the subscription info operation
-func NewSubscriptionInfo(ctx *middleware.Context, handler SubscriptionInfoHandler) *SubscriptionInfo {
-	return &SubscriptionInfo{Context: ctx, Handler: handler}
+// NewSubnetRegToken creates a new http.Handler for the subnet reg token operation
+func NewSubnetRegToken(ctx *middleware.Context, handler SubnetRegTokenHandler) *SubnetRegToken {
+	return &SubnetRegToken{Context: ctx, Handler: handler}
 }
 
-/* SubscriptionInfo swagger:route GET /subscription/info AdminAPI subscriptionInfo
+/* SubnetRegToken swagger:route GET /subnet/registration-token AdminAPI subnetRegToken
 
-Subscription info
+Subnet registraton token
 
 */
-type SubscriptionInfo struct {
+type SubnetRegToken struct {
 	Context *middleware.Context
-	Handler SubscriptionInfoHandler
+	Handler SubnetRegTokenHandler
 }
 
-func (o *SubscriptionInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *SubnetRegToken) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewSubscriptionInfoParams()
+	var Params = NewSubnetRegTokenParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { LicenseInfo } from "../../License/types";
+import { SubnetInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
 import { NodeMaxAllocatableResources } from "../types";
 
@@ -114,7 +114,7 @@ export interface ITenant {
   capacity_usage?: number;
   // computed
   total_capacity: string;
-  subnet_license: LicenseInfo;
+  subnet_license: SubnetInfo;
   total_instances?: number;
   total_volumes?: number;
 }

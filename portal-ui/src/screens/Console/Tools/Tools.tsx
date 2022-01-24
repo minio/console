@@ -19,6 +19,7 @@ import { Route, Router, Switch } from "react-router-dom";
 import history from "../../../history";
 import NotFoundPage from "../../NotFoundPage";
 import ToolsList from "./ToolsPanel/ToolsList";
+import Register from "../Support/Register";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
 import { SupportMenuIcon } from "../../../icons/SidebarMenus/MenuIcons";
@@ -28,20 +29,7 @@ const Tools = () => {
     <Router history={history}>
       <Switch>
         <Route path={IAM_PAGES.TOOLS} exact component={ToolsList} />
-        <Route
-          path={IAM_PAGES.REGISTER_SUPPORT}
-          exact
-          render={() => {
-            return (
-              <FeatureNotAvailablePage
-                icon={<SupportMenuIcon />}
-                pageHeaderText={"Register"}
-                title={"Product registration"}
-                message={<div>This feature is currently not available.</div>}
-              />
-            );
-          }}
-        />
+        <Route path={IAM_PAGES.REGISTER_SUPPORT} exact component={Register} />
         <Route
           path={IAM_PAGES.CALL_HOME}
           exact

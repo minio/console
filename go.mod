@@ -30,6 +30,7 @@ require (
 	github.com/rs/xid v1.3.0
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.7.0
+	github.com/tidwall/gjson v1.10.2
 	github.com/unrolled/secure v1.0.9
 	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
@@ -118,7 +119,6 @@ require (
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/shirou/gopsutil/v3 v3.21.8 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/tidwall/gjson v1.10.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tinylib/msgp v1.1.6 // indirect

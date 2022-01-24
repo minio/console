@@ -26,15 +26,15 @@ import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
-import { LicenseInfo } from "../../License/types";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { SubnetInfo } from "../../License/types";
 
 interface ISubnetLicenseTenant {
   classes: any;
   tenant: ITenant | null;
   loadingActivateProduct: any;
   loadingLicenseInfo: boolean;
-  licenseInfo: LicenseInfo | undefined;
+  licenseInfo: SubnetInfo | undefined;
   activateProduct: any;
 }
 
