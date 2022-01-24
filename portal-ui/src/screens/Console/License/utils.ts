@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export const planDetails = [
+export interface IPlanDetails {
+  id: number;
+  title: string;
+  price: string;
+  capacityMax: string;
+  capacityMin?: string;
+}
+
+export const planDetails: IPlanDetails[] = [
   {
     id: 0,
     title: "Community",
-    price: "N/A",
-    capacityMax: "Open Source",
+    price: "Open Source",
+    capacityMax: "",
   },
   {
     id: 1,
@@ -37,113 +45,221 @@ export const planDetails = [
   },
 ];
 
-export const planItems = [
+export interface IPlanItemValue {
+  label: string;
+  detail?: string;
+  link?: boolean;
+}
+
+export interface IPlanItemValues {
+  [index: string]: IPlanItemValue;
+}
+export interface IPlanItem {
+  id: number;
+  field: string;
+  plans: IPlanItemValues;
+}
+
+export const planItems: IPlanItem[] = [
   {
     id: 0,
     field: "License",
-    community: "GNU AGPL v3",
-    communityLink: true,
-    communityDetail: "",
-    standard: "Commercial License",
-    standardDetail: "",
-    enterprise: "Commercial License",
-    enterpriseDetail: "",
+    plans: {
+      Community: {
+        label: "GNU AGPL v3",
+        detail: "",
+        link: true,
+      },
+      Standard: {
+        label: "Commercial License",
+      },
+      Enterprise: {
+        label: "Commercial License",
+      },
+    },
   },
   {
     id: 1,
     field: "Software Release",
-    community: "Upstream",
-    standard: "1 Year Long Term Support",
-    enterprise: "5 Years Long Term Support",
+    plans: {
+      Community: {
+        label: "Upstream",
+      },
+      Standard: {
+        label: "1 Year Long Term Support",
+      },
+      Enterprise: {
+        label: "5 Years Long Term Support",
+      },
+    },
   },
   {
     id: 2,
     field: "SLA",
-    community: "No SLA",
-    standard: "<48 Hours (Local Business Hours)",
-    enterprise: "<1 hour",
+    plans: {
+      Community: {
+        label: "No SLA",
+      },
+      Standard: {
+        label: "<48 Hours (Local Business Hours)",
+      },
+      Enterprise: {
+        label: "<1 hour",
+      },
+    },
   },
   {
     id: 3,
     field: "Support",
-    community: "Community:",
-    communityDetail: "Public Slack Channel + Github Issues",
-    standard: "L4 Direct Engineering",
-    standardDetail: " support via SUBNET",
-    enterprise: "L4 Direct Engineering",
-    enterpriseDetail: "support via SUBNET",
+    plans: {
+      Community: {
+        label: "Community:",
+        detail: "Public Slack Channel + Github Issues",
+      },
+      Standard: {
+        label: "L4 Direct Engineering",
+        detail: " support via SUBNET",
+      },
+      Enterprise: {
+        label: "L4 Direct Engineering",
+        detail: "support via SUBNET",
+      },
+    },
   },
   {
     id: 4,
     field: "Security Updates & Critical Bugs",
-    community: "Self Update",
-    standard: "Continuous Scan and Alert",
-    enterprise: "Continuous Scan and Alert",
+    plans: {
+      Community: {
+        label: "Self Update",
+      },
+      Standard: {
+        label: "Continuous Scan and Alert",
+      },
+      Enterprise: {
+        label: "Continuous Scan and Alert",
+      },
+    },
   },
   {
     id: 5,
     field: "Panic Button",
-    community: "N/A",
-    standard: "1 per year",
-    enterprise: "Unlimited",
+    plans: {
+      Community: {
+        label: "N/A",
+      },
+      Standard: {
+        label: "1 per year",
+      },
+      Enterprise: {
+        label: "Unlimited",
+      },
+    },
   },
   {
     id: 6,
     field: "Health Diagnostics",
-    community: "N/A",
-    standard: "24/7/365",
-    enterprise: "24/7/365",
+    plans: {
+      Community: {
+        label: "N/A",
+      },
+      Standard: {
+        label: "24/7/365",
+      },
+      Enterprise: {
+        label: "24/7/365",
+      },
+    },
   },
   {
     id: 6,
     field: "Annual Architecture Review",
-    community: "N/A",
-    standard: "N/A",
-    enterprise: "Yes",
+    plans: {
+      Community: {
+        label: "N/A",
+      },
+      Standard: {
+        label: "N/A",
+      },
+      Enterprise: {
+        label: "Yes",
+      },
+    },
   },
   {
     id: 7,
     field: "Annual Performance Review",
-    community: "N/A",
-    standard: "N/A",
-    enterprise: "Yes",
+    plans: {
+      Community: {
+        label: "N/A",
+      },
+      Standard: {
+        label: "N/A",
+      },
+      Enterprise: {
+        label: "Yes",
+      },
+    },
   },
   {
     id: 8,
     field: "Indemnification",
-    community: "N/A",
-    standard: "N/A",
-    enterprise: "Yes",
+    plans: {
+      Community: {
+        label: "N/A",
+      },
+      Standard: {
+        label: "N/A",
+      },
+      Enterprise: {
+        label: "Yes",
+      },
+    },
   },
   {
     id: 9,
     field: "Security + Policy Review",
-    community: "N/A",
-    standard: "N/A",
-    enterprise: "Yes",
+    plans: {
+      Community: {
+        label: "N/A",
+      },
+      Standard: {
+        label: "N/A",
+      },
+      Enterprise: {
+        label: "Yes",
+      },
+    },
   },
 ];
 
-export const planButtons = [
+export interface IPlanButton {
+  id: number;
+  text: string;
+  text2: string;
+  link: string;
+  plan: string;
+}
+export const planButtons: IPlanButton[] = [
   {
     id: 0,
     text: "Join Slack",
     text2: "",
     link: "https://slack.min.io",
-    plan: "community",
+    plan: "Community",
   },
   {
     id: 1,
     text: "Subscribe",
     text2: "Sign up",
     link: "https://subnet.min.io/subscription",
-    plan: "standard",
+    plan: "Standard",
   },
   {
     id: 2,
     text: "Subscribe",
     text2: "Sign up",
     link: "https://subnet.min.io/subscription",
-    plan: "enterprise",
+    plan: "Enterprise",
   },
 ];

@@ -20,6 +20,7 @@ package restapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
@@ -57,11 +58,14 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 	// Get subnet info
 	api.AdminAPISubnetInfoHandler = admin_api.SubnetInfoHandlerFunc(func(params admin_api.SubnetInfoParams, session *models.Principal) middleware.Responder {
-		err := GetSubnetInfoResponse(session)
+		client := &cluster.HTTPClient{
+			Client: GetConsoleHTTPClient(),
+		}
+		resp, err := GetSubnetInfoResponse(session, client)
 		if err != nil {
 			return admin_api.NewSubnetInfoDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewSubnetInfoOK()
+		return admin_api.NewSubnetInfoOK().WithPayload(resp)
 	})
 	// Get subnet registration token
 	api.AdminAPISubnetRegTokenHandler = admin_api.SubnetRegTokenHandlerFunc(func(params admin_api.SubnetRegTokenParams, session *models.Principal) middleware.Responder {
@@ -78,11 +82,11 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 	if err != nil {
 		return false, err
 	}
-	subnetAPIKey, err := subnet.Register(httpClient, serverInfo, apiKey, "", "")
+	registerResult, err := subnet.Register(httpClient, serverInfo, apiKey, "", "")
 	if err != nil {
 		return false, err
 	}
-	configStr := "subnet license= api_key=" + subnetAPIKey
+	configStr := fmt.Sprintf("subnet license=%s api_key=%s", registerResult.License, registerResult.APIKey)
 	_, err = minioClient.setConfigKV(ctx, configStr)
 	if err != nil {
 		return false, err
@@ -179,26 +183,28 @@ func GetSubnetLoginWithMFAResponse(params admin_api.SubnetLoginMFAParams) (*mode
 	return resp, nil
 }
 
-func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin, key string) (string, error) {
+func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin) (*subnet.LicenseTokenConfig, error) {
 	sh, err := minioClient.helpConfigKV(ctx, "subnet", "", false)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	buf, err := minioClient.getConfigKV(ctx, "subnet")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	tgt, err := madmin.ParseSubSysTarget(buf, sh)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-
+	res := subnet.LicenseTokenConfig{}
 	for _, kv := range tgt.KVS {
-		if kv.Key == key {
-			return kv.Value, nil
+		if kv.Key == "api_key" {
+			res.APIKey = kv.Value
+		} else if kv.Key == "license" {
+			res.License = kv.Value
 		}
 	}
-	return "", errors.New("")
+	return &res, nil
 }
 
 func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient cluster.HTTPClientI, params admin_api.SubnetRegisterParams) error {
@@ -206,11 +212,11 @@ func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient c
 	if err != nil {
 		return err
 	}
-	subnetAPIKey, err := subnet.Register(httpClient, serverInfo, "", *params.Body.Token, *params.Body.AccountID)
+	registerResult, err := subnet.Register(httpClient, serverInfo, "", *params.Body.Token, *params.Body.AccountID)
 	if err != nil {
 		return err
 	}
-	configStr := "subnet license= api_key=" + subnetAPIKey
+	configStr := fmt.Sprintf("subnet license=%s api_key=%s", registerResult.License, registerResult.APIKey)
 	_, err = minioClient.setConfigKV(ctx, configStr)
 	if err != nil {
 		return err
@@ -235,21 +241,35 @@ func GetSubnetRegisterResponse(session *models.Principal, params admin_api.Subne
 	return nil
 }
 
-func GetSubnetInfoResponse(session *models.Principal) *models.Error {
+func GetSubnetInfoResponse(session *models.Principal, client cluster.HTTPClientI) (*models.License, *models.Error) {
+	fmt.Println("quack")
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return nil, prepareError(err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	apiKey, err := GetSubnetKeyFromMinIOConfig(ctx, adminClient, "api_key")
+	subnetTokens, err := GetSubnetKeyFromMinIOConfig(ctx, adminClient)
 	if err != nil {
-		return prepareError(err)
+		return nil, prepareError(err)
 	}
-	if apiKey == "" {
-		return prepareError(errLicenseNotFound)
+	if subnetTokens.APIKey == "" {
+		return nil, prepareError(errLicenseNotFound)
 	}
-	return nil
+	licenseInfo, err := subnet.ParseLicense(client, subnetTokens.License)
+	if err != nil {
+		fmt.Println(err)
+	}
+	license := &models.License{
+		Email:           licenseInfo.Email,
+		AccountID:       licenseInfo.AccountID,
+		StorageCapacity: licenseInfo.StorageCapacity,
+		Plan:            licenseInfo.Plan,
+		ExpiresAt:       licenseInfo.ExpiresAt.String(),
+		Organization:    licenseInfo.Organization,
+	}
+	return license, nil
+
 }
 
 func GetSubnetRegToken(ctx context.Context, minioClient MinioAdmin) (string, error) {
