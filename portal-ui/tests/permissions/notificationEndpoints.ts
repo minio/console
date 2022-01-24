@@ -16,7 +16,10 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import { notificationEndpointsElement } from "../utils/elements-menu";
+import {
+  notificationEndpointsElement,
+  settingsElement,
+} from "../utils/elements-menu";
 
 fixture("For user with Notification Endpoints permissions")
   .page("http://localhost:9090")
@@ -25,20 +28,24 @@ fixture("For user with Notification Endpoints permissions")
   });
 
 test("Notification Endpoints sidebar item exists", async (t) => {
-  const notificationEndpointsExist = notificationEndpointsElement.exists;
-  await t.expect(notificationEndpointsExist).ok();
+  await t
+    .expect(settingsElement.exists)
+    .ok()
+    .click(settingsElement)
+    .expect(notificationEndpointsElement.exists)
+    .ok();
 });
 
 test("Add Notification Target button exists", async (t) => {
   const addNotifTargetButtonExists = elements.addNotifTargetButton.exists;
   await t
-    .navigateTo("http://localhost:9090/lambda/notification-endpoints")
+    .navigateTo("http://localhost:9090/settings/notification-endpoints")
     .expect(addNotifTargetButtonExists)
     .ok();
 });
 
 test("Add Notification Target button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/lambda/notification-endpoints")
+    .navigateTo("http://localhost:9090/settings/notification-endpoints")
     .click(elements.addNotifTargetButton);
 });

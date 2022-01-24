@@ -16,7 +16,7 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import { tiersElement } from "../utils/elements-menu";
+import { settingsElement, tiersElement } from "../utils/elements-menu";
 
 fixture("For user with Tiers permissions")
   .page("http://localhost:9090")
@@ -25,20 +25,24 @@ fixture("For user with Tiers permissions")
   });
 
 test("Tiers sidebar item exists", async (t) => {
-  const tiersExist = tiersElement.exists;
-  await t.expect(tiersExist).ok();
+  await t
+    .expect(settingsElement.exists)
+    .ok()
+    .click(settingsElement)
+    .expect(tiersElement.exists)
+    .ok();
 });
 
 test("Add Tier button exists", async (t) => {
   const createTierButtonExists = elements.createTierButton.exists;
   await t
-    .navigateTo("http://localhost:9090/tiers")
+    .navigateTo("http://localhost:9090/settings/tiers")
     .expect(createTierButtonExists)
     .ok();
 });
 
 test("Add Tier button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/tiers")
+    .navigateTo("http://localhost:9090/settings/tiers")
     .click(elements.createTierButton);
 });

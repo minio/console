@@ -35,6 +35,7 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
+import clsx from "clsx";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -195,7 +196,7 @@ const BucketListItem = ({
   };
 
   return (
-    <Grid container className={classes.root}>
+    <Grid container className={clsx(classes.root, "bucket-item")}>
       <Grid item xs={12}>
         <Grid container justifyContent={"space-between"}>
           <Grid item xs={12} sm={7}>

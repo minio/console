@@ -1273,5 +1273,5 @@ export const TableRowPredefStyles: any = {
     color: "#ACACAC",
     backgroundColor: "#FDFDFD",
     fontStyle: "italic",
-  }
-}
+  },
+};

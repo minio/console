@@ -70,8 +70,8 @@ import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import RegisterMenuIcon from "../../../icons/SidebarMenus/RegisterMenuIcon";
-import DiagnosticsMenuIcon from "../../../icons/SidebarMenus/DiagnosticsMenuIcon";
-import InspectMenuIcon from "../../../icons/SidebarMenus/InspectMenuIcon";
+import SettingsIcon from "../../../icons/SettingsIcon";
+import WatchIcon from "../../../icons/WatchIcon";
 
 const drawerWidth = 245;
 
@@ -196,20 +196,7 @@ const Menu = ({
       to: IAM_PAGES.POLICIES,
       icon: AccessMenuIcon,
     },
-    {
-      component: NavLink,
-      to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
-      name: "Notification Endpoints",
-      icon: LambdaIcon,
-      id: "lambda",
-    },
-    {
-      component: NavLink,
-      to: IAM_PAGES.TIERS,
-      name: "Tiers",
-      icon: TiersIcon,
-      id: "tiers",
-    },
+
     {
       name: "Monitoring",
       id: "tools",
@@ -243,7 +230,13 @@ const Menu = ({
           icon: TraceMenuIcon,
           component: NavLink,
         },
-
+        {
+          name: "Watch",
+          id: "watch",
+          component: NavLink,
+          icon: WatchIcon,
+          to: IAM_PAGES.TOOLS_WATCH,
+        },
         {
           name: "Drives",
           id: "monitorDrives",
@@ -252,14 +245,6 @@ const Menu = ({
           component: NavLink,
         },
       ],
-    },
-    {
-      name: "Health",
-      id: "health",
-      component: NavLink,
-      icon: HealthMenuIcon,
-      to: IAM_PAGES.HEALTH,
-      children: [],
     },
     {
       name: "Support",
@@ -274,10 +259,10 @@ const Menu = ({
           to: IAM_PAGES.REGISTER_SUPPORT,
         },
         {
-          name: "Diagnostic",
+          name: "Health",
           id: "diagnostics",
           component: NavLink,
-          icon: DiagnosticsMenuIcon,
+          icon: HealthMenuIcon,
           to: IAM_PAGES.TOOLS_DIAGNOSTICS,
         },
         {
@@ -287,6 +272,7 @@ const Menu = ({
           icon: PerformanceMenuIcon,
           to: IAM_PAGES.TOOLS_SPEEDTEST,
         },
+
         // {
         //   name: "Call Home",
         //   id: "callhome",
@@ -294,13 +280,13 @@ const Menu = ({
         //   icon: CallHomeMenuIcon,
         //   to: IAM_PAGES.CALL_HOME,
         // },
-        {
-          name: "Inspect",
-          id: "inspect",
-          component: NavLink,
-          icon: InspectMenuIcon,
-          to: IAM_PAGES.TOOLS_WATCH,
-        },
+        // {
+        //   name: "Inspect",
+        //   id: "inspect",
+        //   component: NavLink,
+        //   icon: InspectMenuIcon,
+        //   to: IAM_PAGES.TOOLS_WATCH,
+        // },
         // {
         //   name: "Profile",
         //   id: "profile",
@@ -317,6 +303,34 @@ const Menu = ({
       id: "license",
       icon: LicenseIcon,
       forceDisplay: true,
+    },
+    {
+      name: "Settings",
+      id: "settings",
+      icon: SettingsIcon,
+      children: [
+        {
+          component: NavLink,
+          to: IAM_PAGES.SETTINGS,
+          name: "Configurations",
+          id: "configurations",
+          icon: SettingsIcon,
+        },
+        {
+          component: NavLink,
+          to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
+          name: "Notifications",
+          icon: LambdaIcon,
+          id: "lambda",
+        },
+        {
+          component: NavLink,
+          to: IAM_PAGES.TIERS,
+          name: "Tiers",
+          icon: TiersIcon,
+          id: "tiers",
+        },
+      ],
     },
   ];
 

@@ -182,7 +182,7 @@ const Watch = ({
 
   return (
     <React.Fragment>
-      <PageHeader label="Inspect" />
+      <PageHeader label="Watch" />
       <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>

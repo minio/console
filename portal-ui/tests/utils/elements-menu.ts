@@ -42,6 +42,9 @@ export const traceElement = monitoringChildren
 export const drivesElement = monitoringChildren
   .find("a")
   .withAttribute("href", "/tools/heal");
+export const watchElement = monitoringChildren
+  .find("a")
+  .withAttribute("href", "/tools/watch");
 
 export const bucketsElement = sidebarItem.withAttribute("href", "/buckets");
 
@@ -64,12 +67,21 @@ export const iamPoliciesElement = sidebarItem.withAttribute(
   "href",
   "/access/policies"
 );
-export const settingsElement = sidebarItem.withAttribute("href", "/settings");
-export const notificationEndpointsElement = sidebarItem.withAttribute(
-  "href",
-  "/lambda/notification-endpoints"
-);
-export const tiersElement = sidebarItem.withAttribute("href", "/tiers");
+
+export const settingsElement = Selector(".MuiPaper-root")
+  .find("ul")
+  .child("#settings");
+export const settingsChildren = Selector("#settings-children");
+
+export const configurationsElement = settingsChildren
+  .find("a")
+  .withAttribute("href", "/settings/configurations");
+export const notificationEndpointsElement = settingsChildren
+  .find("a")
+  .withAttribute("href", "/settings/notification-endpoints");
+export const tiersElement = settingsChildren
+  .find("a")
+  .withAttribute("href", "/settings/tiers");
 
 export const supportElement = Selector(".MuiPaper-root")
   .find("ul")
@@ -88,9 +100,6 @@ export const performanceElement = supportChildren
 export const callHomeElement = supportChildren
   .find("a")
   .withAttribute("href", "/support/call-home");
-export const inspectElement = supportChildren
-  .find("a")
-  .withAttribute("href", "/support/inspect");
 export const profileElement = supportChildren
   .find("a")
   .withAttribute("href", "/support/profile");
