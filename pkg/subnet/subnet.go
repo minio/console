@@ -18,209 +18,94 @@
 package subnet
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
+
+	"github.com/minio/console/models"
+	"github.com/minio/madmin-go"
+	mc "github.com/minio/mc/cmd"
+	"github.com/tidwall/gjson"
 
 	"github.com/minio/console/cluster"
-	"github.com/minio/pkg/licverifier"
 )
 
-// subnetLoginRequest body request for subnet login
-type subnetLoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+func LoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp string) (*LoginResp, error) {
+	mfaLoginReq := MfaReq{Username: username, OTP: otp, Token: mfaToken}
+	resp, err := subnetPostReq(client, subnetMFAURL(), mfaLoginReq, nil)
+	if err != nil {
+		return nil, err
+	}
+	token := gjson.Get(resp, "token_info.access_token")
+	if token.Exists() {
+		return &LoginResp{AccessToken: token.String(), MfaToken: ""}, nil
+	}
+	return nil, errors.New("access token not found in response")
 }
 
-// tokenInfo
-type tokenInfo struct {
-	AccessToken string  `json:"access_token"`
-	ExpiresIn   float64 `json:"expires_in"`
-	TokenType   string  `json:"token_type"`
-}
-
-// subnetLoginResponse body resonse from subnet after login
-type subnetLoginResponse struct {
-	HasMembership bool      `json:"has_memberships"`
-	TokenInfo     tokenInfo `json:"token_info"`
-}
-
-// LicenseMetadata claims in subnet license
-type LicenseMetadata struct {
-	Email       string `json:"email"`
-	Issuer      string `json:"issuer"`
-	TeamName    string `json:"teamName"`
-	ServiceType string `json:"serviceType"`
-	RequestedAt string `json:"requestedAt"`
-	ExpiresAt   string `json:"expiresAt"`
-	AccountID   int64  `json:"accountId"`
-	Capacity    int64  `json:"capacity"`
-}
-
-// subnetLicenseResponse body response returned by subnet license endpoint
-type subnetLicenseResponse struct {
-	License  string          `json:"license"`
-	Metadata LicenseMetadata `json:"metadata"`
-}
-
-// subnetLoginRequest body request for subnet login
-type subnetRefreshRequest struct {
-	License string `json:"license"`
-}
-
-// getNewLicenseFromExistingLicense will perform license refresh based on the provided license key
-func getNewLicenseFromExistingLicense(client cluster.HTTPClientI, licenseKey string) (string, error) {
-	request := subnetRefreshRequest{
-		License: licenseKey,
+func Login(client cluster.HTTPClientI, username, password string) (*LoginResp, error) {
+	loginReq := map[string]string{
+		"username": username,
+		"password": password,
 	}
-	// http body for login request
-	payloadBytes, err := json.Marshal(request)
+	respStr, err := subnetPostReq(client, subnetLoginURL(), loginReq, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	subnetURL := GetSubnetURL()
-	url := fmt.Sprintf("%s%s", subnetURL, refreshLicenseKeyEndpoint)
-	resp, err := client.Post(url, "application/json", bytes.NewReader(payloadBytes))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	subnetLicense := &subnetLicenseResponse{}
-	// Parse subnet login response
-	err = json.Unmarshal(bodyBytes, subnetLicense)
-	if err != nil {
-		return "", err
-	}
-	return subnetLicense.License, nil
-}
-
-// getLicenseFromCredentials will perform authentication against subnet using
-// user provided credentials and return the current subnet license key
-func getLicenseFromCredentials(client cluster.HTTPClientI, username, password string) (string, error) {
-	request := subnetLoginRequest{
-		Username: username,
-		Password: password,
-	}
-	// http body for login request
-	payloadBytes, err := json.Marshal(request)
-	if err != nil {
-		return "", err
-	}
-	subnetURL := GetSubnetURL()
-	url := fmt.Sprintf("%s%s", subnetURL, loginEndpoint)
-	// Authenticate against subnet using email/password provided by user
-	resp, err := client.Post(url, "application/json", bytes.NewReader(payloadBytes))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	subnetSession := &subnetLoginResponse{}
-	// Parse subnet login response
-	err = json.Unmarshal(bodyBytes, subnetSession)
-	if err != nil {
-		return "", err
-	}
-
-	// Get license key using session token
-	token := subnetSession.TokenInfo.AccessToken
-	url = fmt.Sprintf("%s%s", subnetURL, licenseKeyEndpoint)
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-	resp, err = client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	bodyBytes, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return "", fmt.Errorf("subnet served returned status %d code", resp.StatusCode)
-	}
-	userLicense := &subnetLicenseResponse{}
-	// Parse subnet license response
-	err = json.Unmarshal(bodyBytes, userLicense)
-	if err != nil {
-		return "", err
-	}
-	return userLicense.License, nil
-}
-
-// downloadSubnetPublicKey will download the current subnet public key.
-func downloadSubnetPublicKey(client cluster.HTTPClientI) (string, error) {
-	// Get the public key directly from Subnet
-	url := fmt.Sprintf("%s%s", GetSubnetURL(), publicKey)
-	resp, err := client.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), err
-}
-
-// ValidateLicense will download the current subnet public key, if the public key its not available for license
-// verification then console will fall back to verification with hardcoded public keys
-func ValidateLicense(client cluster.HTTPClientI, licenseKey, email, password string) (licInfo *licverifier.LicenseInfo, license string, err error) {
-	var publicKeys []string
-	if email != "" && password != "" {
-		// fetch subnet license key using user credentials
-		license, err = getLicenseFromCredentials(client, email, password)
-		if err != nil {
-			return nil, "", err
+	mfaRequired := gjson.Get(respStr, "mfa_required").Bool()
+	if mfaRequired {
+		mfaToken := gjson.Get(respStr, "mfa_token").String()
+		if mfaToken == "" {
+			return nil, errors.New("missing mfa token")
 		}
-	} else if licenseKey != "" {
-		license = licenseKey
+		return &LoginResp{AccessToken: "", MfaToken: mfaToken}, nil
+	}
+	token := gjson.Get(respStr, "token_info.access_token")
+	if token.Exists() {
+		return &LoginResp{AccessToken: token.String(), MfaToken: ""}, nil
+	}
+	return nil, errors.New("access token not found in response")
+}
+
+func GetOrganizations(client cluster.HTTPClientI, token string) ([]*models.SubnetOrganization, error) {
+	headers := subnetAuthHeaders(token)
+	respStr, err := subnetGetReq(client, subnetOrgsURL(), headers)
+	if err != nil {
+		return nil, err
+	}
+	var organizations []*models.SubnetOrganization
+	err = json.Unmarshal([]byte(respStr), &organizations)
+	if err != nil {
+		log.Println(err)
+	}
+	return organizations, nil
+}
+
+func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (string, error) {
+	var headers map[string]string
+	regInfo := GetClusterRegInfo(admInfo)
+	regURL := subnetRegisterURL()
+	if apiKey != "" {
+		regURL += "?api_key=" + apiKey
 	} else {
-		return nil, "", errors.New("invalid license")
-	}
-	subnetPubKey, err := downloadSubnetPublicKey(client)
-	if err != nil {
-		log.Print(err)
-		// there was an issue getting the subnet public key
-		// use hardcoded public keys instead
-		publicKeys = OfflinePublicKeys
-	} else {
-		publicKeys = append(publicKeys, subnetPubKey)
-	}
-	licInfo, err = GetLicenseInfoFromJWT(license, publicKeys)
-	if err != nil {
-		return nil, "", err
-	}
-	return licInfo, license, nil
-}
-
-func RefreshLicense(client cluster.HTTPClientI, licenseKey string) (licInfo *licverifier.LicenseInfo, license string, err error) {
-	if licenseKey != "" {
-		license, err = getNewLicenseFromExistingLicense(client, licenseKey)
-		if err != nil {
-			return nil, "", err
+		if accountID == "" || token == "" {
+			return "", errors.New("missing accountID or authentication token")
 		}
-		licenseInfo, rawLicense, err := ValidateLicense(client, license, "", "")
-		if err != nil {
-			return nil, "", err
-		}
-		return licenseInfo, rawLicense, nil
+		headers = subnetAuthHeaders(token)
+		regURL += "?aid=" + accountID
 	}
-	return nil, "", errors.New("invalid license")
+	regToken, err := GenerateRegToken(regInfo)
+	if err != nil {
+		return "", err
+	}
+	reqPayload := mc.ClusterRegistrationReq{Token: regToken}
+	resp, err := subnetPostReq(client, regURL, reqPayload, headers)
+	if err != nil {
+		return "", err
+	}
+	subnetAPIKey := gjson.Parse(resp).Get("api_key").String()
+	if subnetAPIKey != "" {
+		return subnetAPIKey, nil
+	}
+	return "", errors.New("subnet api key not found")
 }

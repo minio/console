@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: []
+  - key: [ ]
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
     post:
@@ -55,7 +55,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
   /login/oauth2/auth:
@@ -75,7 +75,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -2067,16 +2067,95 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-
-  /subscription/info:
+  /subnet/registration-token:
     get:
-      summary: Subscription info
-      operationId: SubscriptionInfo
+      summary: Subnet registraton token
+      operationId: SubnetRegToken
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/SubnetRegTokenResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /subnet/info:
+    get:
+      summary: Subnet info
+      operationId: SubnetInfo
       responses:
         200:
           description: A successful response.
           schema:
             $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /subnet/register:
+    post:
+      summary: Register cluster with Subnet
+      operationId: SubnetRegister
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subnetRegisterRequest"
+      responses:
+        200:
+          description: A successful response.
+        #          schema:
+        #            $ref: "#/definitions/subnetRegisterResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /subnet/login:
+    post:
+      summary: Login to subnet
+      operationId: SubnetLogin
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subnetLoginRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/subnetLoginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /subnet/login/mfa:
+    post:
+      summary: Login to subnet using mfa
+      operationId: SubnetLoginMFA
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subnetLoginMFARequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/subnetLoginResponse"
         default:
           description: Generic error response.
           schema:
@@ -2386,7 +2465,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [timeDesc, timeAsc]
+          enum: [ timeDesc, timeAsc ]
           default: timeDesc
         - name: timeStart
           in: query
@@ -3152,7 +3231,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account]
+        enum: [ form, redirect, service-account ]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -3238,7 +3317,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ok]
+        enum: [ ok ]
       operator:
         type: boolean
       distributedMode:
@@ -3259,7 +3338,7 @@ definitions:
           type: string
       values:
         type: array
-        items: {}
+        items: { }
   resultTarget:
     type: object
     properties:
@@ -3539,7 +3618,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [replication]
+        enum: [ replication ]
       syncMode:
         type: string
       bandwidth:
@@ -4016,3 +4095,74 @@ definitions:
       objectMetadata:
         type: object
         additionalProperties: true
+
+  subnetLoginResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+      organizations:
+        type: array
+        items:
+          $ref: "#/definitions/subnetOrganization"
+      mfa_token:
+        type: string
+      registered:
+        type: boolean
+
+  subnetLoginRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      apiKey:
+        type: string
+
+  subnetLoginMFARequest:
+    type: object
+    required:
+      - username
+      - otp
+      - mfa_token
+    properties:
+      username:
+        type: string
+      otp:
+        type: string
+      mfa_token:
+        type: string
+
+  subnetRegisterRequest:
+    type: object
+    required:
+      - token
+      - account_id
+    properties:
+      token:
+        type: string
+      account_id:
+        type: string
+
+  SubnetRegTokenResponse:
+    type: object
+    properties:
+      regToken:
+        type: string
+
+  subnetOrganization:
+    type: object
+    properties:
+      userId:
+        type: integer
+      accountId:
+        type: integer
+      subscriptionStatus:
+        type: string
+      isAccountOwner:
+        type: boolean
+      company:
+        type: string
+      shortName:
+        type: string

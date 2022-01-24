@@ -29,19 +29,19 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// NewSubscriptionInfoParams creates a new SubscriptionInfoParams object
+// NewSubnetRegTokenParams creates a new SubnetRegTokenParams object
 //
 // There are no default values defined in the spec.
-func NewSubscriptionInfoParams() SubscriptionInfoParams {
+func NewSubnetRegTokenParams() SubnetRegTokenParams {
 
-	return SubscriptionInfoParams{}
+	return SubnetRegTokenParams{}
 }
 
-// SubscriptionInfoParams contains all the bound params for the subscription info operation
+// SubnetRegTokenParams contains all the bound params for the subnet reg token operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters SubscriptionInfo
-type SubscriptionInfoParams struct {
+// swagger:parameters SubnetRegToken
+type SubnetRegTokenParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -50,8 +50,8 @@ type SubscriptionInfoParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewSubscriptionInfoParams() beforehand.
-func (o *SubscriptionInfoParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewSubnetRegTokenParams() beforehand.
+func (o *SubnetRegTokenParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

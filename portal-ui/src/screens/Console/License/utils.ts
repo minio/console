@@ -135,14 +135,14 @@ export const planButtons = [
   {
     id: 1,
     text: "Subscribe",
-    text2: "Upgrade",
+    text2: "Sign up",
     link: "https://subnet.min.io/subscription",
     plan: "standard",
   },
   {
     id: 2,
     text: "Subscribe",
-    text2: "Upgrade",
+    text2: "Sign up",
     link: "https://subnet.min.io/subscription",
     plan: "enterprise",
   },

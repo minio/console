@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,7 +26,7 @@ import Button from "@mui/material/Button";
 import Moment from "react-moment";
 import Typography from "@mui/material/Typography";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { LicenseInfo } from "./types";
+import { SubnetInfo } from "./types";
 import { AppState } from "../../../store";
 import { niceBytes } from "../../../common/utils";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -37,6 +37,12 @@ import ActivationModal from "./ActivationModal";
 import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
 import { LicenseIcon } from "../../../icons";
+import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
+  IAM_PAGES_PERMISSIONS,
+} from "../../../common/SecureComponent/permissions";
 
 const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
@@ -55,7 +61,6 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       "& ul": {
         listStyleType: "square",
-        // listStyleType: "none",
         "& li": {
           float: "left",
           fontSize: 14,
@@ -301,36 +306,64 @@ interface ILicenseProps {
 }
 
 const License = ({ classes, operatorMode }: ILicenseProps) => {
+  const [activateProductModal, setActivateProductModal] =
+    useState<boolean>(false);
+
+  const [licenseModal, setLicenseModal] = useState<boolean>(false);
+
+  const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
+  const [currentPlanID, setCurrentPlanID] = useState<number>(0);
+  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
+  const [initialLicenseLoading, setInitialLicenseLoading] =
+    useState<boolean>(true);
+  const [loadingRefreshLicense, setLoadingRefreshLicense] =
+    useState<boolean>(false);
+
+  const getSubnetInfo = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    IAM_PAGES_PERMISSIONS[IAM_PAGES.LICENSE],
+    true
+  );
+
   const closeModalAndFetchLicenseInfo = () => {
     setActivateProductModal(false);
     fetchLicenseInfo();
   };
-  const fetchLicenseInfo = () => {
-    setLoadingLicenseInfo(true);
-    api
-      .invoke("GET", `/api/v1/subscription/info`)
-      .then((res: LicenseInfo) => {
-        if (res) {
-          if (res.plan === "STANDARD") {
-            setCurrentPlanID(1);
-          } else if (res.plan === "ENTERPRISE") {
-            setCurrentPlanID(2);
-          } else {
-            setCurrentPlanID(1);
+
+  const fetchLicenseInfo = useCallback(() => {
+    if (loadingLicenseInfo) {
+      return;
+    }
+    if (getSubnetInfo) {
+      setLoadingLicenseInfo(true);
+      api
+        .invoke("GET", `/api/v1/subnet/info`)
+        .then((res: SubnetInfo) => {
+          if (res) {
+            if (res.plan === "STANDARD") {
+              setCurrentPlanID(1);
+            } else if (res.plan === "ENTERPRISE") {
+              setCurrentPlanID(2);
+            } else {
+              setCurrentPlanID(1);
+            }
+            setLicenseInfo(res);
           }
-          setLicenseInfo(res);
-        }
-        setLoadingLicenseInfo(false);
-      })
-      .catch(() => {
-        setLoadingLicenseInfo(false);
-      });
-  };
+          setLoadingLicenseInfo(false);
+        })
+        .catch(() => {
+          setLoadingLicenseInfo(false);
+        });
+    } else {
+      setLoadingLicenseInfo(false);
+    }
+  }, [loadingLicenseInfo, getSubnetInfo]);
+
   const refreshLicense = () => {
     setLoadingRefreshLicense(true);
     api
       .invoke("POST", `/api/v1/subscription/refresh`, {})
-      .then((res: LicenseInfo) => {
+      .then((res: SubnetInfo) => {
         if (res) {
           if (res.plan === "STANDARD") {
             setCurrentPlanID(1);
@@ -348,20 +381,12 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       });
   };
 
-  const [activateProductModal, setActivateProductModal] =
-    useState<boolean>(false);
-
-  const [licenseModal, setLicenseModal] = useState<boolean>(false);
-
-  const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
-  const [currentPlanID, setCurrentPlanID] = useState<number>(0);
-  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
-  const [loadingRefreshLicense, setLoadingRefreshLicense] =
-    useState<boolean>(false);
-
   useEffect(() => {
-    fetchLicenseInfo();
-  }, []);
+    if (initialLicenseLoading) {
+      fetchLicenseInfo();
+      setInitialLicenseLoading(false);
+    }
+  }, [fetchLicenseInfo, initialLicenseLoading, setInitialLicenseLoading]);
 
   if (loadingLicenseInfo) {
     return (
@@ -653,14 +678,8 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
               <br />
             </Grid>
             <Grid item xs={12}>
-              <b>Pricing</b>
+              Are you already a customer?
             </Grid>
-            <Grid item xs={12}>
-              The MinIO Subscription Network provides exclusive benefits across
-              licensing, operations and support. See the pricing table below for
-              more information.
-            </Grid>
-
             <Grid item xs={12}>
               <br />
             </Grid>
@@ -669,12 +688,10 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
             </Grid>
             <Grid item xs={12} className={clsx(classes.planItemsPadding)}>
               <Grid container>
-                {operatorMode ? (
-                  <ActivationModal
-                    open={activateProductModal}
-                    closeModal={() => closeModalAndFetchLicenseInfo()}
-                  />
-                ) : null}
+                <ActivationModal
+                  open={activateProductModal}
+                  closeModal={() => closeModalAndFetchLicenseInfo()}
+                />
                 <Grid container item xs={12} className={classes.tableContainer}>
                   <Grid container item xs={12}>
                     <Grid item xs={3} className={classes.detailsContainer} />
@@ -892,8 +909,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                                 : button.text}
                             </Button>
                           </Grid>
-                          {operatorMode &&
-                            button.text === "Subscribe" &&
+                          {button.text === "Subscribe" &&
                             !(
                               licenseInfo &&
                               licenseInfo.plan.toLowerCase() ===
@@ -907,7 +923,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                                     setActivateProductModal(true);
                                   }}
                                 >
-                                  Activate
+                                  Register
                                 </button>
                               </Grid>
                             )}
