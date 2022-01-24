@@ -49,6 +49,7 @@ import {
 } from "../../common/SecureComponent/permissions";
 import { hasPermission } from "../../common/SecureComponent/SecureComponent";
 import { IRouteRule } from "./Menu/types";
+import LoadingComponent from "../../common/LoadingComponent";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -90,7 +91,7 @@ const LogsSearchMain = React.lazy(
 const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
 
 const Tools = React.lazy(() => import("./Tools/Tools"));
-
+const Health = React.lazy(() => import("./Health"));
 const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
 
 const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
@@ -203,6 +204,11 @@ const Console = ({
 
   const consoleAdminRoutes: IRouteRule[] = [
     {
+      component: Buckets,
+      path: IAM_PAGES.BUCKETS,
+      forceDisplay: true,
+    },
+    {
       component: Dashboard,
       path: IAM_PAGES.DASHBOARD,
     },
@@ -213,11 +219,6 @@ const Console = ({
     {
       component: Buckets,
       path: IAM_PAGES.ADD_BUCKETS,
-    },
-    {
-      component: Buckets,
-      path: IAM_PAGES.BUCKETS,
-      forceDisplay: true,
     },
     {
       component: Buckets,
@@ -309,8 +310,24 @@ const Console = ({
       path: IAM_PAGES.TOOLS_AUDITLOGS,
     },
     {
+      component: Health,
+      path: IAM_PAGES.HEALTH,
+    },
+    {
       component: Tools,
-      path: IAM_PAGES.TOOLS,
+      path: IAM_PAGES.REGISTER_SUPPORT,
+    },
+    {
+      component: Tools,
+      path: IAM_PAGES.CALL_HOME,
+    },
+    {
+      component: Tools,
+      path: IAM_PAGES.TOOLS_WATCH,
+    },
+    {
+      component: Tools,
+      path: IAM_PAGES.PROFILE,
     },
     {
       component: ConfigurationOptions,
@@ -484,7 +501,7 @@ const Console = ({
   const location = useLocation();
 
   let hideMenu = false;
-  if (location.pathname === "/metrics") {
+  if (location.pathname === IAM_PAGES.METRICS) {
     hideMenu = true;
   } else if (location.pathname.endsWith("/hop")) {
     hideMenu = true;
@@ -550,7 +567,7 @@ const Console = ({
                 }}
               />
             </div>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent />}>
               <ObjectManager />
             </Suspense>
             <Router history={history}>
@@ -561,14 +578,14 @@ const Console = ({
                     exact
                     path={route.path}
                     children={(routerProps) => (
-                      <Suspense fallback={<div>Loading...</div>}>
+                      <Suspense fallback={<LoadingComponent />}>
                         <route.component {...routerProps} {...route.props} />
                       </Suspense>
                     )}
                   />
                 ))}
                 <Route key={"/icons"} exact path={"/icons"}>
-                  <Suspense fallback={<div>Loading...</div>}>
+                  <Suspense fallback={<LoadingComponent />}>
                     <IconsScreen />
                   </Suspense>
                 </Route>

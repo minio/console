@@ -23,11 +23,12 @@ const inputLabelBase = {
   color: "#07193E",
   textAlign: "left" as const,
   overflow: "hidden",
+  alignItems: "center",
+  display: "flex",
   "& span": {
     display: "flex",
     alignItems: "center",
   },
-  display: "flex",
 };
 
 export const fieldBasic: any = {
@@ -46,6 +47,9 @@ export const fieldBasic: any = {
     position: "relative" as const,
     display: "flex" as const,
     flexWrap: "wrap",
+    "@media (max-width: 600px)": {
+      flexFlow: "column",
+    },
   },
   tooltipContainer: {
     marginLeft: 5,
@@ -1232,7 +1236,7 @@ export const createTenantCommon: any = {
     paddingTop: 15,
   },
   descriptionText: {
-    fontSize: 16,
+    fontSize: 14,
   },
 };
 
@@ -1262,3 +1266,12 @@ export const textStyleUtils: any = {
     color: "#8399AB",
   },
 };
+
+// These classes are meant to be used as React.CSSProperties for TableWrapper
+export const TableRowPredefStyles: any = {
+  deleted: {
+    color: "#ACACAC",
+    backgroundColor: "#FDFDFD",
+    fontStyle: "italic",
+  }
+}

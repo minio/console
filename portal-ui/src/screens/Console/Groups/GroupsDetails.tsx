@@ -38,6 +38,7 @@ import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import SearchBox from "../Common/SearchBox";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent, {
@@ -220,7 +221,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               {
                 type: "view",
                 onClick: (userName) => {
-                  history.push(`/users/${userName}`);
+                  history.push(`${IAM_PAGES.USERS_VIEW}/${userName}`);
                 },
               },
             ]}
@@ -258,7 +259,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             {
               type: "view",
               onClick: (policy) => {
-                history.push(`/policies/${policy}`);
+                history.push(`${IAM_PAGES.POLICIES}/${policy}`);
               },
             },
           ]}
@@ -274,7 +275,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   return (
     <React.Fragment>
       <GroupDetailsHeader />
-      <BackLink to={"/groups"} label={"Return to Groups"} />
+      <BackLink to={IAM_PAGES.GROUPS} label={"Return to Groups"} />
 
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
@@ -289,7 +290,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             actions={
               <Fragment>
                 <span className={classes.statusLabel}>Group Status:</span>
-                <span className={classes.statusValue}>
+                <span id="group-status" className={classes.statusValue}>
                   {isGroupEnabled ? "Enabled" : "Disabled"}
                 </span>
                 <SecureComponent
@@ -385,7 +386,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           closeDeleteModalAndRefresh={(isDelSuccess: boolean) => {
             setDeleteOpen(false);
             if (isDelSuccess) {
-              history.push("/groups");
+              history.push(IAM_PAGES.GROUPS);
             }
           }}
         />

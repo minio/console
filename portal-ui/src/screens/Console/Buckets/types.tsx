@@ -101,6 +101,8 @@ export interface BucketReplicationRule {
   tags?: string;
   destination: BucketReplicationDestination;
   syncMode: string;
+  storageClass?: string;
+  existingObjects?: boolean;
 }
 
 export interface BucketReplication {
@@ -140,12 +142,6 @@ export interface ChangePasswordRequest {
 export interface ChangeUserPasswordRequest {
   selectedUser: string;
   newSecretKey: string;
-}
-
-export interface SubscriptionActivateRequest {
-  license: string;
-  email: string;
-  password: string;
 }
 
 export interface IRemoteBucket {

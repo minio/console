@@ -45,7 +45,6 @@ import { Button, Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
 import CircularProgress from "@mui/material/CircularProgress";
-import BackLink from "../../../common/BackLink";
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
 
@@ -233,8 +232,6 @@ const HealthInfo = ({
   return (
     <Fragment>
       <PageHeader label="Diagnostic" />
-      <BackLink to="/tools" label="Return to Tools" />
-
       <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
           <TestWrapper title={title} advancedVisible={false}>

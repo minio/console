@@ -33,7 +33,6 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 
@@ -329,14 +328,15 @@ const ErrorLogs = ({
   return (
     <Fragment>
       <PageHeader label="Logs" />
-      <BackLink to="/tools" label="Return to Tools" />
       <PageLayout>
         <Grid xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox placeholder="Highlight Line" onChange={setHighlight} />
           </Grid>
           <Grid item xs={12}>
-            <div className={classes.logList}>{renderLines}</div>
+            <div id="logs-container" className={classes.logList}>
+              {renderLines}
+            </div>
           </Grid>
         </Grid>
       </PageLayout>

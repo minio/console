@@ -182,6 +182,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
 		}),
+		UserAPIGetBucketReplicationRuleHandler: user_api.GetBucketReplicationRuleHandlerFunc(func(params user_api.GetBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketReplicationRule has not yet been implemented")
+		}),
 		UserAPIGetBucketRetentionConfigHandler: user_api.GetBucketRetentionConfigHandlerFunc(func(params user_api.GetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketRetentionConfig has not yet been implemented")
 		}),
@@ -347,8 +350,20 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
-		AdminAPISubscriptionInfoHandler: admin_api.SubscriptionInfoHandlerFunc(func(params admin_api.SubscriptionInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubscriptionInfo has not yet been implemented")
+		AdminAPISubnetInfoHandler: admin_api.SubnetInfoHandlerFunc(func(params admin_api.SubnetInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetInfo has not yet been implemented")
+		}),
+		AdminAPISubnetLoginHandler: admin_api.SubnetLoginHandlerFunc(func(params admin_api.SubnetLoginParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetLogin has not yet been implemented")
+		}),
+		AdminAPISubnetLoginMFAHandler: admin_api.SubnetLoginMFAHandlerFunc(func(params admin_api.SubnetLoginMFAParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetLoginMFA has not yet been implemented")
+		}),
+		AdminAPISubnetRegTokenHandler: admin_api.SubnetRegTokenHandlerFunc(func(params admin_api.SubnetRegTokenParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetRegToken has not yet been implemented")
+		}),
+		AdminAPISubnetRegisterHandler: admin_api.SubnetRegisterHandlerFunc(func(params admin_api.SubnetRegisterParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubnetRegister has not yet been implemented")
 		}),
 		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
@@ -358,6 +373,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
+		}),
+		UserAPIUpdateMultiBucketReplicationHandler: user_api.UpdateMultiBucketReplicationHandlerFunc(func(params user_api.UpdateMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.UpdateMultiBucketReplication has not yet been implemented")
 		}),
 		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
@@ -498,6 +516,8 @@ type ConsoleAPI struct {
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
 	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
+	// UserAPIGetBucketReplicationRuleHandler sets the operation handler for the get bucket replication rule operation
+	UserAPIGetBucketReplicationRuleHandler user_api.GetBucketReplicationRuleHandler
 	// UserAPIGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
 	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
 	// UserAPIGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
@@ -608,14 +628,24 @@ type ConsoleAPI struct {
 	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
-	// AdminAPISubscriptionInfoHandler sets the operation handler for the subscription info operation
-	AdminAPISubscriptionInfoHandler admin_api.SubscriptionInfoHandler
+	// AdminAPISubnetInfoHandler sets the operation handler for the subnet info operation
+	AdminAPISubnetInfoHandler admin_api.SubnetInfoHandler
+	// AdminAPISubnetLoginHandler sets the operation handler for the subnet login operation
+	AdminAPISubnetLoginHandler admin_api.SubnetLoginHandler
+	// AdminAPISubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
+	AdminAPISubnetLoginMFAHandler admin_api.SubnetLoginMFAHandler
+	// AdminAPISubnetRegTokenHandler sets the operation handler for the subnet reg token operation
+	AdminAPISubnetRegTokenHandler admin_api.SubnetRegTokenHandler
+	// AdminAPISubnetRegisterHandler sets the operation handler for the subnet register operation
+	AdminAPISubnetRegisterHandler admin_api.SubnetRegisterHandler
 	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
 	AdminAPITiersListHandler admin_api.TiersListHandler
 	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
 	UserAPIUpdateBucketLifecycleHandler user_api.UpdateBucketLifecycleHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
+	// UserAPIUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
+	UserAPIUpdateMultiBucketReplicationHandler user_api.UpdateMultiBucketReplicationHandler
 	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
 	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
@@ -824,6 +854,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIGetBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
 	}
+	if o.UserAPIGetBucketReplicationRuleHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketReplicationRuleHandler")
+	}
 	if o.UserAPIGetBucketRetentionConfigHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketRetentionConfigHandler")
 	}
@@ -989,8 +1022,20 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
 	}
-	if o.AdminAPISubscriptionInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubscriptionInfoHandler")
+	if o.AdminAPISubnetInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetInfoHandler")
+	}
+	if o.AdminAPISubnetLoginHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetLoginHandler")
+	}
+	if o.AdminAPISubnetLoginMFAHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetLoginMFAHandler")
+	}
+	if o.AdminAPISubnetRegTokenHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetRegTokenHandler")
+	}
+	if o.AdminAPISubnetRegisterHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubnetRegisterHandler")
 	}
 	if o.AdminAPITiersListHandler == nil {
 		unregistered = append(unregistered, "admin_api.TiersListHandler")
@@ -1000,6 +1045,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
+	}
+	if o.UserAPIUpdateMultiBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.UpdateMultiBucketReplicationHandler")
 	}
 	if o.AdminAPIUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
@@ -1268,6 +1316,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewGetBucketReplicationRule(o.context, o.UserAPIGetBucketReplicationRuleHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/buckets/{bucket_name}/retention"] = user_api.NewGetBucketRetentionConfig(o.context, o.UserAPIGetBucketRetentionConfigHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1488,7 +1540,23 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/subscription/info"] = admin_api.NewSubscriptionInfo(o.context, o.AdminAPISubscriptionInfoHandler)
+	o.handlers["GET"]["/subnet/info"] = admin_api.NewSubnetInfo(o.context, o.AdminAPISubnetInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/login"] = admin_api.NewSubnetLogin(o.context, o.AdminAPISubnetLoginHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/login/mfa"] = admin_api.NewSubnetLoginMFA(o.context, o.AdminAPISubnetLoginMFAHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subnet/registration-token"] = admin_api.NewSubnetRegToken(o.context, o.AdminAPISubnetRegTokenHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/register"] = admin_api.NewSubnetRegister(o.context, o.AdminAPISubnetRegisterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1501,6 +1569,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/group"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewUpdateMultiBucketReplication(o.context, o.UserAPIUpdateMultiBucketReplicationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

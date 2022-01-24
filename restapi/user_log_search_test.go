@@ -17,48 +17,46 @@
 package restapi
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
-	"time"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
-	logsearchServer "github.com/minio/operator/logsearchapi/server"
 	asrt "github.com/stretchr/testify/assert"
 )
 
 func TestLogSearch(t *testing.T) {
-	responseItem := []logsearchServer.ReqInfoRow{
+	responseItem := []map[string]interface{}{
 		{
-			Time:                  time.Time{},
-			APIName:               "GetConfigKV",
-			Bucket:                "",
-			Object:                "",
-			TimeToResponseNs:      45254653,
-			RemoteHost:            "10.116.1.94",
-			RequestID:             "16595A4E30CCFE79",
-			UserAgent:             "MinIO (linux; amd64) madmin-go/0.0.1",
-			ResponseStatus:        "OK",
-			ResponseStatusCode:    200,
-			RequestContentLength:  nil,
-			ResponseContentLength: nil,
+			"time":                    "2006-01-02T15:04:05Z",
+			"api_time":                "GetConfigKV",
+			"bucket":                  "",
+			"object":                  "",
+			"time_to_response_ns":     float64(452546530),
+			"remote_host":             "10.116.1.94",
+			"request_id":              "16595A4E30CCFE79",
+			"user_agent":              "MinIO (linux; amd64) madmin-go/0.0.1",
+			"response_status":         "OK",
+			"response_status_code":    200,
+			"request_content_length":  nil,
+			"response_content_length": nil,
 		}, {
-			Time:                  time.Time{},
-			APIName:               "AssumeRole",
-			Bucket:                "",
-			Object:                "",
-			TimeToResponseNs:      307423794,
-			RemoteHost:            "127.0.0.1",
-			RequestID:             "16595A4DA906FBA9",
-			UserAgent:             "Go-http-client/1.1",
-			ResponseStatus:        "OK",
-			ResponseStatusCode:    200,
-			RequestContentLength:  nil,
-			ResponseContentLength: nil,
+			"time":                    "2006-01-02T15:04:05Z",
+			"api_time":                "AssumeRole",
+			"bucket":                  "",
+			"object":                  "",
+			"time_to_response_ns":     float64(307423794),
+			"remote_host":             "127.0.0.1",
+			"request_id":              "16595A4DA906FBA9",
+			"user_agent":              "Go-http-client/1.1",
+			"response_status":         "OK",
+			"response_status_code":    200,
+			"request_content_length":  nil,
+			"response_content_length": nil,
 		},
 	}
 
@@ -83,7 +81,7 @@ func TestLogSearch(t *testing.T) {
 		{
 			name: "200 Success response",
 			args: args{
-				apiResponse:     fmt.Sprintf("%s\n", response),
+				apiResponse:     string(response),
 				apiResponseCode: 200,
 			},
 			expectedResponse: successfulResponse,
@@ -115,14 +113,24 @@ func TestLogSearch(t *testing.T) {
 			resp, err := logSearch(testRequest.URL)
 
 			if tt.expectedError != nil {
-				fmt.Println(t.Name())
 				assert.Equal(tt.expectedError.Code, err.Code, fmt.Sprintf("logSearch() error code: `%v`, wantErr: `%v`", err.Code, tt.expectedError))
 				assert.Equal(tt.expectedError.Message, err.Message, fmt.Sprintf("logSearch() error message: `%v`, wantErr: `%v`", err.Message, tt.expectedError))
 			} else {
 				assert.Nil(err, fmt.Sprintf("logSearch() error: %v, wantErr: %v", err, tt.expectedError))
-				if !reflect.DeepEqual(resp, tt.expectedResponse) {
+				buf1, err1 := tt.expectedResponse.MarshalBinary()
+				buf2, err2 := resp.MarshalBinary()
+				if err1 != err2 {
 					t.Errorf("logSearch() resp: %v, expectedResponse: %v", resp, tt.expectedResponse)
 					return
+				}
+				h := sha256.New()
+				h.Write(buf1)
+				checkSum1 := fmt.Sprintf("%x\n", h.Sum(nil))
+				h.Reset()
+				h.Write(buf2)
+				checkSum2 := fmt.Sprintf("%x\n", h.Sum(nil))
+				if checkSum1 != checkSum2 {
+					t.Errorf("logSearch() resp: %v, expectedResponse: %v", resp, tt.expectedResponse)
 				}
 			}
 		})

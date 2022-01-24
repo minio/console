@@ -18,36 +18,6 @@ import * as constants from "./constants";
 import { Selector } from "testcafe";
 
 //----------------------------------------------------
-// General sidebar element
-//----------------------------------------------------
-export const sidebarItem = Selector(".MuiPaper-root").find("ul").child("a");
-export const logoutItem = Selector(".MuiPaper-root").find("ul").child("div");
-
-//----------------------------------------------------
-// Specific sidebar elements
-//----------------------------------------------------
-export const dashboardElement = sidebarItem.withAttribute("href", "/dashboard");
-export const bucketsElement = sidebarItem.withAttribute("href", "/buckets");
-export const usersElement = sidebarItem.withAttribute("href", "/users");
-export const groupsElement = sidebarItem.withAttribute("href", "/groups");
-export const serviceAcctsElement = sidebarItem.withAttribute(
-  "href",
-  "/account"
-);
-export const iamPoliciesElement = sidebarItem.withAttribute(
-  "href",
-  "/policies"
-);
-export const settingsElement = sidebarItem.withAttribute("href", "/settings");
-export const notificationEndpointsElement = sidebarItem.withAttribute(
-  "href",
-  "/notification-endpoints"
-);
-export const tiersElement = sidebarItem.withAttribute("href", "/tiers");
-export const toolsElement = sidebarItem.withAttribute("href", "/tools");
-export const licenseElement = sidebarItem.withAttribute("href", "/license");
-
-//----------------------------------------------------
 // Buttons
 //----------------------------------------------------
 export const loginSubmitButton = Selector("form button");
@@ -59,7 +29,7 @@ export const manageButton = Selector("h1")
   .parent(4)
   .find("button:enabled")
   .withText("Manage");
-export const browseButton = Selector("h1")
+export const testBucketBrowseButton = Selector("h1")
   .withText(constants.TEST_BUCKET_NAME)
   .parent(4)
   .find("button:enabled")
@@ -67,7 +37,8 @@ export const browseButton = Selector("h1")
 export const uploadButton = Selector("span")
   .withAttribute("aria-label", "Upload file")
   .child("button:enabled");
-export const createPolicyButton = Selector("button:enabled").withText("Create Policy");
+export const createPolicyButton =
+  Selector("button:enabled").withText("Create Policy");
 export const saveButton = Selector("button:enabled").withText("Save");
 export const deleteButton = Selector("button:enabled").withExactText("Delete");
 export const deleteIconButton = Selector("button:enabled").withAttribute(
@@ -84,15 +55,21 @@ export const configureBucketButton = Selector(
 export const addNotifTargetButton = Selector("button:enabled").withText(
   "Add Notification Target"
 );
-export const createTierButton = Selector("button:enabled").withText("Create Tier");
-export const createBucketButton = Selector("button:enabled").withText("Create Bucket");
-export const deleteBucketButton = Selector("button:enabled").withText("Delete Bucket");
-export const createUserButton = Selector("button:enabled").withText("Create User");
-export const createGroupButton = Selector("button:enabled").withText("Create Group");
+export const createTierButton =
+  Selector("button:enabled").withText("Create Tier");
+export const createBucketButton =
+  Selector("button:enabled").withText("Create Bucket");
+export const deleteBucketButton =
+  Selector("button:enabled").withText("Delete Bucket");
+export const createUserButton =
+  Selector("button:enabled").withText("Create User");
+export const createGroupButton =
+  Selector("button:enabled").withText("Create Group");
 export const deleteGroupIconButton = Selector("span")
   .withAttribute("aria-label", "Delete Group")
   .find("button:enabled");
-export const editMembersButton = Selector("button:enabled").withText("Edit Members");
+export const editMembersButton =
+  Selector("button:enabled").withText("Edit Members");
 export const addAccessRuleButton =
   Selector("button:enabled").withText("Add Access Rule");
 export const startDiagnosticButton =
@@ -142,7 +119,10 @@ export const usersAccessKeyInput = Selector("#accesskey-input");
 export const usersSecretKeyInput = Selector("#standard-multiline-static");
 export const groupNameInput = Selector("#group-name");
 export const searchResourceInput = Selector("#search-resource");
-export const filterUserInput = searchResourceInput.withAttribute("placeholder", "Filter Users");
+export const filterUserInput = searchResourceInput.withAttribute(
+  "placeholder",
+  "Filter Users"
+);
 export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row span")
   .withText(constants.TEST_USER_NAME)
   .parent(1)
@@ -165,15 +145,15 @@ export const bucketAccessText = Selector("h1")
   .parent(1)
   .find("p")
   .nth(-1);
-export const groupStatusText = Selector('span[class*="statusValue-"]');
+export const groupStatusText = Selector("#group-status");
 
 //----------------------------------------------------
 // Tables, table headers and content
 //----------------------------------------------------
 export const table = Selector(".ReactVirtualized__Table");
-export const bucketsTableDisabled = Selector(
-  'div[class*="TableWrapper-disabled"]'
-);
+export const bucketsTableDisabled = Selector("#object-list-wrapper")
+  .find(".MuiPaper-root")
+  .withText("This location is empty, please try uploading a new file");
 export const createGroupUserTable = Selector(
   ".MuiDialog-container .ReactVirtualized__Table"
 );
@@ -187,9 +167,7 @@ export const bucketAccessRulesTab =
 //----------------------------------------------------
 // Settings window
 //----------------------------------------------------
-export const settingsWindow = Selector(
-  'div[class*="ConfigurationOptions-settingsOptionsContainer"]'
-);
+export const settingsWindow = Selector("#settings-container");
 
 //----------------------------------------------------
 // Settings page vertical tabs
@@ -242,4 +220,4 @@ export const settingsAuditWebhookTab = Selector(".MuiTab-root").withAttribute(
 //----------------------------------------------------
 // Log window
 //----------------------------------------------------
-export const logWindow = Selector('div[class*="logList"]');
+export const logWindow = Selector("#logs-container");

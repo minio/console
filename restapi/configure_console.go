@@ -118,8 +118,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerAdminBucketRemoteHandlers(api)
 	// Register admin log search
 	registerLogSearchHandlers(api)
-	// Register admin subscription handlers
-	registerSubscriptionHandlers(api)
+	// Register admin subnet handlers
+	registerSubnetHandlers(api)
 	// Register Account handlers
 	registerAdminTiersHandlers(api)
 

@@ -14,11 +14,48 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface LicenseInfo {
+export interface SubnetInfo {
   account_id: number;
   email: string;
   expires_at: string;
   plan: string;
   storage_capacity: number;
   organization: string;
+}
+
+export interface SubnetLoginRequest {
+  username?: string;
+  password?: string;
+  apiKey?: string;
+}
+
+export interface SubnetRegisterRequest {
+  token: string;
+  account_id: string;
+}
+
+export interface SubnetOrganization {
+  userId: number;
+  accountId: number;
+  subscriptionStatus: string;
+  isAccountOwner: boolean;
+  shortName: string;
+  company: string;
+}
+
+export interface SubnetLoginResponse {
+  registered: boolean;
+  mfa_token: string;
+  access_token: string;
+  organizations: SubnetOrganization[];
+}
+
+export interface SubnetLoginWithMFARequest {
+  username: string;
+  otp: string;
+  mfa_token: string;
+}
+
+export interface SubnetRegTokenResponse {
+  regToken: string;
 }

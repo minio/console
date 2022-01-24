@@ -732,6 +732,11 @@ func init() {
             "required": true
           },
           {
+            "type": "boolean",
+            "name": "all_versions",
+            "in": "query"
+          },
+          {
             "name": "files",
             "in": "body",
             "required": true,
@@ -1186,6 +1191,11 @@ func init() {
             "type": "boolean",
             "name": "recursive",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "all_versions",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1626,6 +1636,81 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/replication/{rule_id}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplicationRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationRule"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Update Replication rule",
+        "operationId": "UpdateMultiBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/multiBucketReplicationEdit"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "UserAPI"
@@ -3127,18 +3212,137 @@ func init() {
         }
       }
     },
-    "/subscription/info": {
+    "/subnet/info": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Subscription info",
-        "operationId": "SubscriptionInfo",
+        "summary": "Subnet info",
+        "operationId": "SubnetInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet",
+        "operationId": "SubnetLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login/mfa": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet using mfa",
+        "operationId": "SubnetLoginMFA",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/register": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Register cluster with Subnet",
+        "operationId": "SubnetRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/registration-token": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Subnet registraton token",
+        "operationId": "SubnetRegToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SubnetRegTokenResponse"
             }
           },
           "default": {
@@ -3490,6 +3694,14 @@ func init() {
     }
   },
   "definitions": {
+    "SubnetRegTokenResponse": {
+      "type": "object",
+      "properties": {
+        "regToken": {
+          "type": "string"
+        }
+      }
+    },
     "accessRule": {
       "type": "object",
       "properties": {
@@ -3956,6 +4168,9 @@ func init() {
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
         },
+        "existingObjects": {
+          "type": "boolean"
+        },
         "healthCheckPeriod": {
           "type": "integer"
         },
@@ -3978,6 +4193,9 @@ func init() {
             "Enabled",
             "Disabled"
           ]
+        },
+        "storageClass": {
+          "type": "string"
         },
         "syncMode": {
           "type": "string",
@@ -4599,6 +4817,10 @@ func init() {
           "type": "string",
           "minLength": 8
         },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
         "syncMode": {
           "type": "string",
           "default": "async",
@@ -4612,6 +4834,44 @@ func init() {
         },
         "targetURL": {
           "type": "string"
+        }
+      }
+    },
+    "multiBucketReplicationEdit": {
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateExistingObjects": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
+        },
+        "ruleState": {
+          "type": "boolean"
+        },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "tags": {
+          "type": "string",
+          "default": ""
         }
       }
     },
@@ -5411,6 +5671,97 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
+        }
+      }
+    },
+    "subnetLoginMFARequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "otp",
+        "mfa_token"
+      ],
+      "properties": {
+        "mfa_token": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginRequest": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "mfa_token": {
+          "type": "string"
+        },
+        "organizations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subnetOrganization"
+          }
+        },
+        "registered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "subnetOrganization": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "integer"
+        },
+        "company": {
+          "type": "string"
+        },
+        "isAccountOwner": {
+          "type": "boolean"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "subscriptionStatus": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "subnetRegisterRequest": {
+      "type": "object",
+      "required": [
+        "token",
+        "account_id"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -6448,6 +6799,11 @@ func init() {
             "required": true
           },
           {
+            "type": "boolean",
+            "name": "all_versions",
+            "in": "query"
+          },
+          {
             "name": "files",
             "in": "body",
             "required": true,
@@ -6902,6 +7258,11 @@ func init() {
             "type": "boolean",
             "name": "recursive",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "all_versions",
+            "in": "query"
           }
         ],
         "responses": {
@@ -7342,6 +7703,81 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/replication/{rule_id}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplicationRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationRule"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Update Replication rule",
+        "operationId": "UpdateMultiBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/multiBucketReplicationEdit"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "UserAPI"
@@ -8843,18 +9279,137 @@ func init() {
         }
       }
     },
-    "/subscription/info": {
+    "/subnet/info": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Subscription info",
-        "operationId": "SubscriptionInfo",
+        "summary": "Subnet info",
+        "operationId": "SubnetInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet",
+        "operationId": "SubnetLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login/mfa": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Login to subnet using mfa",
+        "operationId": "SubnetLoginMFA",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetLoginMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/register": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Register cluster with Subnet",
+        "operationId": "SubnetRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subnetRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/registration-token": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Subnet registraton token",
+        "operationId": "SubnetRegToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SubnetRegTokenResponse"
             }
           },
           "default": {
@@ -9269,6 +9824,14 @@ func init() {
         },
         "write": {
           "type": "boolean"
+        }
+      }
+    },
+    "SubnetRegTokenResponse": {
+      "type": "object",
+      "properties": {
+        "regToken": {
+          "type": "string"
         }
       }
     },
@@ -9792,6 +10355,9 @@ func init() {
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
         },
+        "existingObjects": {
+          "type": "boolean"
+        },
         "healthCheckPeriod": {
           "type": "integer"
         },
@@ -9814,6 +10380,9 @@ func init() {
             "Enabled",
             "Disabled"
           ]
+        },
+        "storageClass": {
+          "type": "string"
         },
         "syncMode": {
           "type": "string",
@@ -10435,6 +11004,10 @@ func init() {
           "type": "string",
           "minLength": 8
         },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
         "syncMode": {
           "type": "string",
           "default": "async",
@@ -10448,6 +11021,44 @@ func init() {
         },
         "targetURL": {
           "type": "string"
+        }
+      }
+    },
+    "multiBucketReplicationEdit": {
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateExistingObjects": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
+        },
+        "ruleState": {
+          "type": "boolean"
+        },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "tags": {
+          "type": "string",
+          "default": ""
         }
       }
     },
@@ -11247,6 +11858,97 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
+        }
+      }
+    },
+    "subnetLoginMFARequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "otp",
+        "mfa_token"
+      ],
+      "properties": {
+        "mfa_token": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginRequest": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "subnetLoginResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "mfa_token": {
+          "type": "string"
+        },
+        "organizations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subnetOrganization"
+          }
+        },
+        "registered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "subnetOrganization": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "integer"
+        },
+        "company": {
+          "type": "string"
+        },
+        "isAccountOwner": {
+          "type": "boolean"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "subscriptionStatus": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "subnetRegisterRequest": {
+      "type": "object",
+      "required": [
+        "token",
+        "account_id"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },

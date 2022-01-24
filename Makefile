@@ -11,7 +11,7 @@ default: console
 .PHONY: console
 console:
 	@echo "Building Console binary to './console'"
-	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue --ldflags "-s -w" -o console ./cmd/console)
+	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue,operator --ldflags "-s -w" -o console ./cmd/console)
 
 k8sdev:
 	@docker build -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' .
@@ -76,9 +76,14 @@ test-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh)
 	@(docker stop minio)
 
-initialize-permissions:
-	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+test-apply-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/initialize-env.sh)
+
+test-start-docker-minio:
+	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+
+initialize-permissions: test-start-docker-minio test-apply-permissions
+	@echo "Done initializing permissions test"
 
 cleanup-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/cleanup-env.sh)

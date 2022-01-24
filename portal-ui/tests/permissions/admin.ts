@@ -15,15 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as roles from "../utils/roles";
-import * as elements from "../utils/elements";
+import * as elements from "../utils/elements-menu";
+import { monitoringElement, supportElement } from "../utils/elements-menu";
 
 fixture("For user with Admin permissions")
-  .page("http://localhost:5005")
+  .page("http://localhost:9090")
   .beforeEach(async (t) => {
     await t.useRole(roles.admin);
   });
 
 test("All sidebar items exist", async (t) => {
+  const monitoring = elements.monitoringElement;
+  const identity = elements.identityElement;
+
   const dashboardExists = elements.dashboardElement.exists;
   const bucketsExist = elements.bucketsElement.exists;
   const usersExist = elements.usersElement.exists;
@@ -34,13 +38,19 @@ test("All sidebar items exist", async (t) => {
   const notificationEndpointsExist =
     elements.notificationEndpointsElement.exists;
   const tiersExist = elements.tiersElement.exists;
-  const toolsExist = elements.toolsElement.exists;
+  const toolsExist = elements.supportElement.exists;
   const licenseExists = elements.licenseElement.exists;
   await t
+    .expect(monitoring.exists)
+    .ok()
+    .click(monitoring)
     .expect(dashboardExists)
     .ok()
     .expect(bucketsExist)
     .ok()
+    .expect(identity.exists)
+    .ok()
+    .click(identity)
     .expect(usersExist)
     .ok()
     .expect(groupsExist)
@@ -55,7 +65,14 @@ test("All sidebar items exist", async (t) => {
     .ok()
     .expect(tiersExist)
     .ok()
-    .expect(toolsExist)
+    .expect(supportElement.exists)
+    .ok()
+    .click(supportElement)
+    .expect(elements.registerElement.exists)
+    .ok()
+    .expect(elements.diagnosticsElement.exists)
+    .ok()
+    .expect(elements.performanceElement.exists)
     .ok()
     .expect(licenseExists)
     .ok();

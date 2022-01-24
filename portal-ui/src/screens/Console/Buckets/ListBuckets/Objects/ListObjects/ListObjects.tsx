@@ -1098,6 +1098,7 @@ const ListObjects = ({
           selectedBucket={bucketName}
           selectedObject={encodeFileName(selectedObject)}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+          versioning={isVersioned}
         />
       )}
       {deleteMultipleOpen && (
@@ -1106,6 +1107,7 @@ const ListObjects = ({
           selectedBucket={bucketName}
           selectedObjects={selectedObjects}
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
+          versioning={isVersioned}
         />
       )}
       {createFolderOpen && (
@@ -1316,7 +1318,10 @@ const ListObjects = ({
         <Grid item xs={12}>
           <br />
         </Grid>
-        <div {...getRootProps({ style: { ...dndStyles } })}>
+        <div
+          id="object-list-wrapper"
+          {...getRootProps({ style: { ...dndStyles } })}
+        >
           <input {...getInputProps()} />
           <Grid item xs={12} className={classes.tableBlock}>
             <SecureComponent

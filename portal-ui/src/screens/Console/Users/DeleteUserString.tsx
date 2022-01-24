@@ -23,6 +23,7 @@ import history from "../../../history";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -38,7 +39,7 @@ const DeleteUserString = ({
   setErrorSnackMessage,
 }: IDeleteUserProps) => {
   const onDelSuccess = () => {
-    history.push(`/users/`);
+    history.push(IAM_PAGES.USERS);
   };
   const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
   const onClose = () => closeDeleteModalAndRefresh(false);
