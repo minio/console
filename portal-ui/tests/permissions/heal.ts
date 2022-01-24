@@ -70,9 +70,10 @@ test
     await functions.setUpBucket(t, "heal2");
   })("Start button can be clicked", async (t) => {
     await t
+      .useRole(roles.heal)
       .navigateTo("http://localhost:9090/tools/heal")
       .click(elements.bucketNameInput)
-      .click(bucketDropdownOptionFor("heal"))
+      .click(bucketDropdownOptionFor("heal2"))
       .click(elements.startButton);
   })
   .after(async (t) => {

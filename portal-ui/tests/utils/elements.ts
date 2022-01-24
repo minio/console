@@ -131,11 +131,6 @@ export const bucketDropdownOptionFor = (modifier) => {
 //----------------------------------------------------
 // Text
 //----------------------------------------------------
-export const bucketAccessText = Selector("h1")
-  .withText(constants.TEST_BUCKET_NAME)
-  .parent(1)
-  .find("p")
-  .nth(-1);
 export const groupStatusText = Selector("#group-status");
 
 //----------------------------------------------------
