@@ -19,68 +19,106 @@ import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { bucketsElement } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
+import { Selector } from "testcafe";
+import * as constants from "../utils/constants";
 
-fixture("For user with Bucket Write permissions")
-  .page("http://localhost:9090")
-  .beforeEach(async (t) => {
-    await t.useRole(roles.bucketWrite);
-  });
+fixture("For user with Bucket Write permissions").page("http://localhost:9090");
 
 test("Buckets sidebar item exists", async (t) => {
   const bucketsExist = bucketsElement.with({ boundTestRun: t }).exists;
-  await t.expect(bucketsExist).ok();
+  await t.useRole(roles.bucketWrite).expect(bucketsExist).ok();
 });
 
-test.before(async (t) => {
-  // Create a bucket
-  await functions.setUpBucket(t, "bucketwrite");
-})("Browse button exists", async (t) => {
-  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
-  const browseExists = testBucketBrowseButton.exists;
-  await t
-    // We need to log back in after we use the admin account to create bucket,
-    // using the specific role we use in this module
-    .useRole(roles.bucketWrite)
-    .navigateTo("http://localhost:9090/buckets")
-    .expect(browseExists)
-    .ok();
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketwrite1");
+  })("Browse button exists", async (t) => {
+    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite1");
+    await t
+      .useRole(roles.bucketWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .expect(testBucketBrowseButton.exists)
+      .ok();
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t, "bucketwrite1");
+  });
 
-test("Bucket access is set to W", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/buckets")
-    .expect(elements.bucketAccessText.innerText)
-    .eql("Access: W");
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketwritew");
+  })("Bucket access is set to W", async (t) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await t
+      .useRole(roles.bucketWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .expect(
+        Selector("h1")
+          .withText(`${constants.TEST_BUCKET_NAME}-bucketwritew`)
+          .parent(1)
+          .find("p")
+          .nth(-1).innerText
+      )
+      .eql("Access: W");
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t, "bucketwritew");
+  });
 
-test("Upload button exists", async (t) => {
-  const uploadExists = elements.uploadButton.exists;
-  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
-  await t
-    .navigateTo("http://localhost:9090/buckets")
-    .click(testBucketBrowseButton)
-    .expect(uploadExists)
-    .ok();
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketwrite2");
+  })("Upload button exists", async (t) => {
+    const uploadExists = elements.uploadButton.exists;
+    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite2");
+    await t
+      .useRole(roles.bucketWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButton)
+      .expect(uploadExists)
+      .ok();
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t, "bucketwrite2");
+  });
 
-test("Object can be uploaded to a bucket", async (t) => {
-  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
-  await t
-    .navigateTo("http://localhost:9090/buckets")
-    .click(testBucketBrowseButton)
-    // Upload object to bucket
-    .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketwrite3");
+  })("Object can be uploaded to a bucket", async (t) => {
+    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite3");
+    await t
+      .useRole(roles.bucketWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButton)
+      // Upload object to bucket
+      .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t, "bucketwrite3");
+  });
 
-test("Object list table is disabled", async (t) => {
-  const disabledBucketsTableExists = elements.bucketsTableDisabled.exists;
-  const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite");
-  await t
-    .navigateTo("http://localhost:9090/buckets")
-    .click(testBucketBrowseButton)
-    .expect(disabledBucketsTableExists)
-    .ok();
-}).after(async (t) => {
-  // Cleanup created bucket and corresponding uploads
-  await functions.cleanUpBucketAndUploads(t, "bucketwrite");
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketwrite4");
+  })("Object list table is disabled", async (t) => {
+    await t
+      .useRole(roles.bucketWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButtonFor("bucketwrite4"))
+      .expect(elements.bucketsTableDisabled.exists)
+      .ok();
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t, "bucketwrite4");
+  });

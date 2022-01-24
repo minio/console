@@ -20,20 +20,23 @@ import * as constants from "./constants";
 import { Selector } from "testcafe";
 import { logoutItem } from "./elements-menu";
 
+import * as Minio from "minio";
+
 export const setUpBucket = (t, modifier) => {
-  if (!modifier) {
-    modifier = "a";
-  }
-  return t
-    .useRole(roles.admin)
-    .navigateTo("http://localhost:9090/buckets")
-    .click(elements.createBucketButton)
-    .typeText(
-      elements.bucketNameInput,
-      `${constants.TEST_BUCKET_NAME}-${modifier}`
-    )
-    .click(elements.createBucketButton)
-    .click(logoutItem);
+  const minioClient = new Minio.Client({
+    endPoint: "localhost",
+    port: 9000,
+    useSSL: false,
+    accessKey: "minioadmin",
+    secretKey: "minioadmin",
+  });
+
+  return new Promise((resolve, reject) => {
+    minioClient
+      .makeBucket(`${constants.TEST_BUCKET_NAME}-${modifier}`, "us-east-1")
+      .then(resolve)
+      .catch(resolve);
+  });
 };
 
 export const manageButtonFor = (modifier) => {
@@ -45,30 +48,18 @@ export const manageButtonFor = (modifier) => {
 };
 
 export const cleanUpBucket = (t, modifier) => {
-  if (!modifier) {
-    modifier = "a";
-  }
-  const manageButton = manageButtonFor(modifier);
-  return (
-    t
-      // useRole doesn't work here so we would need to enter the commands manually
-      .navigateTo("http://localhost:9090/login")
-      .typeText("#accessKey", "minioadmin")
-      .typeText("#secretKey", "minioadmin")
-      .click(elements.loginSubmitButton)
-      .navigateTo("http://localhost:9090/buckets")
+  const minioClient = new Minio.Client({
+    endPoint: "localhost",
+    port: 9000,
+    useSSL: false,
+    accessKey: "minioadmin",
+    secretKey: "minioadmin",
+  });
 
-      .click(manageButton)
-      .click(elements.deleteBucketButton)
-      .click(elements.deleteButton)
-      .click(logoutItem)
-  );
+  return minioClient.removeBucket(`${constants.TEST_BUCKET_NAME}-${modifier}`);
 };
 
 export const testBucketBrowseButtonFor = (modifier) => {
-  if (!modifier) {
-    modifier = "a";
-  }
   return Selector("h1")
     .withText(`${constants.TEST_BUCKET_NAME}-${modifier}`)
     .parent(4)
@@ -77,26 +68,30 @@ export const testBucketBrowseButtonFor = (modifier) => {
 };
 
 export const cleanUpBucketAndUploads = (t, modifier) => {
-  if (!modifier) {
-    modifier = "a";
-  }
-  const testBucketBrowseButton = testBucketBrowseButtonFor(modifier);
-  return (
-    t
-      // useRole doesn't work here so we would need to enter the commands manually
-      .navigateTo("http://localhost:9090/login")
-      .typeText("#accessKey", "minioadmin")
-      .typeText("#secretKey", "minioadmin")
-      .click(elements.loginSubmitButton)
-      .navigateTo("http://localhost:9090/buckets")
-      .click(testBucketBrowseButton)
-      .click(elements.deleteIconButtonAlt)
-      .click(elements.deleteButton)
-      .click(elements.configureBucketButton)
-      .click(elements.deleteBucketButton)
-      .click(elements.deleteButton)
-      .click(logoutItem)
-  );
+  const bucket = `${constants.TEST_BUCKET_NAME}-${modifier}`;
+
+  return new Promise((resolve, reject) => {
+    const minioClient = new Minio.Client({
+      endPoint: "localhost",
+      port: 9000,
+      useSSL: false,
+      accessKey: "minioadmin",
+      secretKey: "minioadmin",
+    });
+
+    var stream = minioClient.listObjects(bucket, "", true);
+
+    let proms = [];
+    stream.on("data", function (obj) {
+      proms.push(minioClient.removeObject(bucket, obj.name));
+    });
+
+    stream.on("end", () => {
+      Promise.all(proms).then(() => {
+        minioClient.removeBucket(bucket).then(resolve).catch(resolve);
+      });
+    });
+  });
 };
 
 export const createUser = (t) => {
