@@ -21,6 +21,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"

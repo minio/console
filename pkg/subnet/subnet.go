@@ -22,8 +22,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/minio/pkg/licverifier"
 	"log"
+
+	"github.com/minio/pkg/licverifier"
 
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go"
@@ -111,9 +112,9 @@ func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, to
 	if err != nil {
 		return nil, err
 	}
-	respJson := gjson.Parse(resp)
-	subnetAPIKey := respJson.Get("api_key").String()
-	licenseJwt := respJson.Get("license").String()
+	respJSON := gjson.Parse(resp)
+	subnetAPIKey := respJSON.Get("api_key").String()
+	licenseJwt := respJSON.Get("license").String()
 
 	if subnetAPIKey != "" {
 		return &LicenseTokenConfig{
@@ -143,6 +144,7 @@ func downloadSubnetPublicKey(client cluster.HTTPClientI) (string, error) {
 	return buf.String(), err
 }
 
+// ParseLicense parses the license with the bundle public key and return it's information
 func ParseLicense(client cluster.HTTPClientI, license string) (*licverifier.LicenseInfo, error) {
 	var publicKeys []string
 
