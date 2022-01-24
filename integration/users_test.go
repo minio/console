@@ -24,6 +24,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -121,6 +122,39 @@ func GetUserInformation(userName string) (*http.Response, error) {
 		"GET",
 		"http://localhost:9090/api/v1/user?name="+userName,
 		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
+func UpdateUserInformation(name string, status string, groups []string) (*http.Response, error) {
+	/*
+		Helper function to update user information:
+		PUT: {{baseUrl}}/user?name=proident velit
+		Body:
+		{
+			"status": "nisi voluptate amet ea",
+			"groups": [
+				"ipsum eu cupidatat",
+				"aliquip non nulla"
+			]
+		}
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	requestDataAdd := map[string]interface{}{
+		"status": status,
+		"groups": groups,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT", "http://localhost:9090/api/v1/user?name="+name, requestDataBody)
 	if err != nil {
 		log.Println(err)
 	}
@@ -303,4 +337,94 @@ func TestGetUserInfo(t *testing.T) {
 	expected := "{\"accessKey\":\"accessKey\",\"memberOf\":null,\"policy\":[],\"status\":\"enabled\"}\n"
 	obtained := string(b)
 	assert.Equal(expected, obtained, "User Information is wrong")
+}
+
+func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
+	/*
+		Update User Information Test with Successful Response
+	*/
+
+	assert := assert.New(t)
+
+	// 1. Create an active user
+	var groups = []string{}
+	var policies = []string{}
+	addUserResponse, addUserError := AddUser(
+		"updateuser", "secretKey", groups, policies)
+	if addUserError != nil {
+		log.Println(addUserError)
+		return
+	}
+	if addUserResponse != nil {
+		fmt.Println("StatusCode:", addUserResponse.StatusCode)
+		assert.Equal(
+			201, addUserResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Deactivate the user
+	// '{"status":"disabled","groups":[]}'
+	updateUserResponse, UpdateUserError := UpdateUserInformation(
+		"updateuser", "disabled", groups)
+
+	// 3. Verify user got deactivated
+	if UpdateUserError != nil {
+		log.Println(UpdateUserError)
+		return
+	}
+	if updateUserResponse != nil {
+		fmt.Println("StatusCode:", updateUserResponse.StatusCode)
+		assert.Equal(
+			200, updateUserResponse.StatusCode, "Status Code is incorrect")
+	}
+	b, err := io.ReadAll(updateUserResponse.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	assert.True(strings.Contains(string(b), "disabled"))
+
+}
+
+func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
+	/*
+		Update User Information Test with Generic Error Response
+	*/
+
+	assert := assert.New(t)
+
+	// 1. Create an active user
+	var groups = []string{}
+	var policies = []string{}
+	addUserResponse, addUserError := AddUser(
+		"updateusererror", "secretKey", groups, policies)
+	if addUserError != nil {
+		log.Println(addUserError)
+		return
+	}
+	if addUserResponse != nil {
+		fmt.Println("StatusCode:", addUserResponse.StatusCode)
+		assert.Equal(
+			201, addUserResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Deactivate the user with wrong status
+	updateUserResponse, UpdateUserError := UpdateUserInformation(
+		"updateusererror", "inactive", groups)
+
+	// 3. Verify user got deactivated
+	if UpdateUserError != nil {
+		log.Println(UpdateUserError)
+		assert.Fail("There was an error while updating user info")
+		return
+	}
+	if updateUserResponse != nil {
+		fmt.Println("StatusCode:", updateUserResponse.StatusCode)
+		assert.Equal(
+			500, updateUserResponse.StatusCode, "Status Code is incorrect")
+	}
+	b, err := io.ReadAll(updateUserResponse.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	assert.True(strings.Contains(string(b), "status not valid"))
+
 }
