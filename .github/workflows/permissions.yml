@@ -1,4 +1,4 @@
-name: "Front-End Permission Tests"
+name: "UI"
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   permissions:
-    name: Front-End Permission Tests
+    name: Permissions Tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

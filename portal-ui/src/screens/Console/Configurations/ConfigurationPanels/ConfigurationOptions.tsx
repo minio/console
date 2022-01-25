@@ -37,6 +37,7 @@ import get from "lodash/get";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 
 import withSuspense from "../../Common/Components/withSuspense";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 const ConfigurationForm = withSuspense(
   React.lazy(() => import("./ConfigurationForm"))
@@ -64,7 +65,7 @@ const styles = (theme: Theme) =>
   });
 
 const getRoutePath = (path: string) => {
-  return `/settings/${path}`;
+  return `${IAM_PAGES.SETTINGS}/${path}`;
 };
 
 const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
@@ -95,12 +96,12 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
                       <Route
                         exact
                         key={`configItem-${element.configuration_label}`}
-                        path={`/settings/${element.configuration_id}`}
+                        path={`${IAM_PAGES.SETTINGS}/${element.configuration_id}`}
                         component={ConfigurationForm}
                       />
                     ))}
-                    <Route exact path="/settings">
-                      <Redirect to="/settings/region" />
+                    <Route exact path={IAM_PAGES.SETTINGS}>
+                      <Redirect to={`${IAM_PAGES.SETTINGS}/region`} />
                     </Route>
                   </Switch>
                 </Router>

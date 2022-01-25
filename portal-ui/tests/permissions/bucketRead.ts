@@ -18,6 +18,9 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { bucketsElement, logoutItem } from "../utils/elements-menu";
+import { testBucketBrowseButtonFor } from "../utils/functions";
+import { Selector } from "testcafe";
+import * as constants from "../utils/constants";
 
 fixture("For user with Bucket Read permissions")
   .page("http://localhost:9090")
@@ -30,38 +33,67 @@ test("Buckets sidebar item exists", async (t) => {
   await t.expect(bucketsExist).ok();
 });
 
-test.before(async (t) => {
-  // Create a bucket
-  await functions.setUpBucket(t);
-})("Browse button exists", async (t) => {
-  const browseExists = elements.testBucketBrowseButton.exists;
-  // We need to log back in after we use the admin account to create bucket,
-  // using the specific role we use in this module
-  await t.useRole(roles.bucketRead).expect(browseExists).ok();
-});
-
-test("Bucket access is set to R", async (t) => {
-  await t.expect(elements.bucketAccessText.innerText).eql("Access: R");
-});
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketread1");
+  })("Browse button exists", async (t) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await t
+      .useRole(roles.bucketRead)
+      .navigateTo("http://localhost:9090/buckets")
+      .expect(testBucketBrowseButtonFor("bucketread1").exists)
+      .ok();
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucket(t, "bucketread1");
+  });
 
 test
   .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketread2");
+  })("Bucket access is set to R", async (t) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await t
+      .useRole(roles.bucketRead)
+      .navigateTo("http://localhost:9090/buckets")
+      .expect(
+        Selector("h1")
+          .withText(`${constants.TEST_BUCKET_NAME}-bucketread2`)
+          .parent(1)
+          .find("p")
+          .nth(-1).innerText
+      )
+      .eql("Access: R");
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucket(t, "bucketread2");
+  });
+
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketread3");
     await t
       .useRole(roles.admin)
       .navigateTo("http://localhost:9090/buckets")
-      .click(elements.testBucketBrowseButton)
+      .click(testBucketBrowseButtonFor("bucketread3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .click(logoutItem);
   })("Object list table is enabled", async (t) => {
     const bucketsTableExists = elements.table.exists;
+    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketread3");
     await t
       .useRole(roles.bucketRead)
-      .click(elements.testBucketBrowseButton)
+      .click(testBucketBrowseButton)
       .expect(bucketsTableExists)
       .ok();
   })
   .after(async (t) => {
     // Cleanup created bucket and corresponding uploads
-    await functions.cleanUpBucketAndUploads(t);
+    await functions.cleanUpBucketAndUploads(t, "bucketread3");
   });

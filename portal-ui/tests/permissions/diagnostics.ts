@@ -25,12 +25,7 @@ fixture("For user with Diagnostics permissions")
   });
 
 test("Support sidebar item exists", async (t) => {
-  await t
-    .expect(supportElement.exists)
-    .ok()
-    .click(supportElement)
-    .expect(supportElement.exists)
-    .ok();
+  await t.expect(supportElement.exists).ok();
 });
 
 test("Diagnostics link exists in Tools page", async (t) => {
@@ -65,7 +60,8 @@ test("Download button exists after Diagnostic is completed", async (t) => {
   await t
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
-    .expect(downloadExists).ok();
+    .expect(downloadExists)
+    .ok();
 });
 
 test("Download button is clickable after Diagnostic is completed", async (t) => {
@@ -76,12 +72,10 @@ test("Download button is clickable after Diagnostic is completed", async (t) => 
 });
 
 test("Start New Diagnostic button exists after Diagnostic is completed", async (t) => {
-  const startNewDiagnosticButtonExists =
-    elements.startNewDiagnosticButton.exists;
   await t
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
-    .expect(startNewDiagnosticButtonExists)
+    .expect(elements.startNewDiagnosticButton.exists)
     .ok();
 });
 

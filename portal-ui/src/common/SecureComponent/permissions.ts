@@ -161,6 +161,7 @@ export const IAM_PAGES = {
   METRICS: "/tools/metrics",
   DASHBOARD: "/tools/dashboard",
   TOOLS_HEAL: "/tools/heal",
+  TOOLS_WATCH: "/tools/watch",
   /* Health */
   HEALTH: "/health",
 
@@ -171,23 +172,22 @@ export const IAM_PAGES = {
   TOOLS_SPEEDTEST: "/support/speedtest",
   CALL_HOME: "/support/call-home",
   PROFILE: "/support/profile",
-  TOOLS_WATCH: "/support/inspect",
 
   /** License **/
   LICENSE: "/license",
   /* Settings **/
-  SETTINGS: "/settings",
-  SETTINGS_VIEW: "/settings/:option",
+  SETTINGS: "/settings/configurations",
+  SETTINGS_VIEW: "/settings/configurations/:option",
   /* Documentation **/
   DOCUMENTATION: "/documentation",
   /* TBD ? */
-  NOTIFICATIONS_ENDPOINTS: "/lambda/notification-endpoints",
-  NOTIFICATIONS_ENDPOINTS_ADD: "/lambda/notification-endpoints/add",
+  NOTIFICATIONS_ENDPOINTS: "/settings/notification-endpoints",
+  NOTIFICATIONS_ENDPOINTS_ADD: "/settings/notification-endpoints/add",
   NOTIFICATIONS_ENDPOINTS_ADD_SERVICE:
-    "/lambda/notification-endpoints/add/:service",
-  TIERS: "/tiers",
-  TIERS_ADD: "/tiers/add",
-  TIERS_ADD_SERVICE: "/tiers/add/:service",
+    "/settings/notification-endpoints/add/:service",
+  TIERS: "/settings/tiers",
+  TIERS_ADD: "/settings/tiers/add",
+  TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
 
   /* Operator */
   TENANTS: "/tenants",
@@ -386,10 +386,17 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_SERVER_INFO,
   ],
   [IAM_PAGES.TOOLS_SPEEDTEST]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
-  [IAM_PAGES.REGISTER_SUPPORT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.REGISTER_SUPPORT]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
   [IAM_PAGES.CALL_HOME]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.PROFILE]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.HEALTH]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.LICENSE]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";

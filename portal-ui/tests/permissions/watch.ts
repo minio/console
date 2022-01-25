@@ -18,10 +18,11 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import {
-  inspectElement,
+  watchElement,
   monitoringElement,
   supportElement,
 } from "../utils/elements-menu";
+import { bucketDropdownOptionFor } from "../utils/elements";
 
 fixture("For user with Watch permissions")
   .page("http://localhost:9090")
@@ -29,38 +30,38 @@ fixture("For user with Watch permissions")
     await t.useRole(roles.watch);
   });
 
-test("Support sidebar item exists", async (t) => {
-  await t.expect(supportElement.exists).ok();
+test("Monitoring sidebar item exists", async (t) => {
+  await t.expect(monitoringElement.exists).ok();
 });
 
 test("Watch link exists in Support page", async (t) => {
   await t
-    .expect(supportElement.exists)
+    .expect(monitoringElement.exists)
     .ok()
-    .click(supportElement)
-    .expect(inspectElement.exists)
+    .click(monitoringElement)
+    .expect(watchElement.exists)
     .ok();
 });
 
 test("Watch page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/support/inspect");
+  await t.navigateTo("http://localhost:9090/tools/watch");
 });
 
 test
   .before(async (t) => {
     // Create a bucket
-    await functions.setUpBucket(t);
+    await functions.setUpBucket(t, "watch");
   })("Start button can be clicked", async (t) => {
     await t
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.watch)
-      .navigateTo("http://localhost:9090/support/inspect")
+      .navigateTo("http://localhost:9090/tools/watch")
       .click(elements.bucketNameInput)
-      .click(elements.bucketDropdownOption)
+      .click(bucketDropdownOptionFor("watch"))
       .click(elements.startButton);
   })
   .after(async (t) => {
     // Cleanup created bucket
-    await functions.cleanUpBucket(t);
+    await functions.cleanUpBucket(t, "watch");
   });
