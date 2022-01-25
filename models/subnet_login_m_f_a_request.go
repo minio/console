@@ -44,6 +44,9 @@ type SubnetLoginMFARequest struct {
 	// Required: true
 	Otp *string `json:"otp"`
 
+	// proxy
+	Proxy string `json:"proxy,omitempty"`
+
 	// username
 	// Required: true
 	Username *string `json:"username"`

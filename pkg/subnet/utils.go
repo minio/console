@@ -69,9 +69,6 @@ func subnetAuthHeaders(authToken string) map[string]string {
 }
 
 func httpDo(client cluster.HTTPClientI, req *http.Request) (*http.Response, error) {
-	//if globalSubnetProxyURL != nil {
-	//	client.Transport.(*http.Transport).Proxy = http.ProxyURL(globalSubnetProxyURL)
-	//}
 	return client.Do(req)
 }
 
