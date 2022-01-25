@@ -87,6 +87,21 @@ const styles = (theme: Theme) =>
       "& .MuiPaper-root": {
         backgroundColor: "inherit",
       },
+      "& ::-webkit-scrollbar": {
+        width: "5px",
+      },
+      "& ::-webkit-scrollbar-track": {
+        background: "#F0F0F0",
+        borderRadius: 0,
+        boxShadow: "inset 0px 0px 0px 0px #F0F0F0",
+      },
+      "& ::-webkit-scrollbar-thumb": {
+        background: "#5A6375",
+        borderRadius: 0,
+      },
+      "& ::-webkit-scrollbar-thumb:hover": {
+        background: "#081C42",
+      },
     },
     drawerOpen: {
       width: drawerWidth,
