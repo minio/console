@@ -63,7 +63,6 @@ export const menuItemTextStyles: any = {
 export const menuItemMiniStyles: any = {
   "&.mini": {
     padding: 0,
-    //margin: "auto",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -71,9 +70,44 @@ export const menuItemMiniStyles: any = {
     "& .group-icon": {
       display: "none",
     },
+
+    "&.active": {
+      ".menu-icon": {
+        border: "none",
+      },
+    },
   },
 
   "&.bottom-menu-item": {
     marginBottom: "5px",
+  },
+};
+
+export const menuItemStyle: any = {
+  paddingLeft: "8px",
+  paddingRight: "5px",
+  paddingBottom: "8px",
+  borderRadius: "2px",
+  marginTop: "2px",
+  "&.active": {
+    backgroundColor: "hsla(0,0%,100%,.1)",
+    ".menu-icon": {
+      border: "1px solid hsla(0,0%,100%,.1)",
+      borderRadius: "50%",
+    },
+  },
+  "& .menu-icon": {
+    padding: "5px",
+    maxWidth: "28px",
+    minWidth: "28px",
+    height: "28px",
+    background: "none",
+  },
+  "&:hover, &:focus": {
+    background: "hsla(0,0%,100%,.25)",
+
+    "& .menu-icon svg": {
+      fill: "#c7c3c3",
+    },
   },
 };
