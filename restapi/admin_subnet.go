@@ -257,7 +257,7 @@ func GetSubnetInfoResponse(session *models.Principal, client cluster.HTTPClientI
 	}
 	licenseInfo, err := subnet.ParseLicense(client, subnetTokens.License)
 	if err != nil {
-		fmt.Println(err)
+		return nil, prepareError(err)
 	}
 	license := &models.License{
 		Email:           licenseInfo.Email,
