@@ -1261,6 +1261,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/events": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Events for PVC",
+        "operationId": "GetPVCEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "PVCName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/security": {
       "get": {
         "tags": [
@@ -4880,6 +4923,49 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/listPVCsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/events": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Events for PVC",
+        "operationId": "GetPVCEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "PVCName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
             }
           },
           "default": {

@@ -19,6 +19,7 @@ package operatorapi
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	miniov1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 
@@ -58,6 +59,17 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 		}
 		return nil
 	})
+
+	api.OperatorAPIGetPVCEventsHandler = operator_api.GetPVCEventsHandlerFunc(func(params operator_api.GetPVCEventsParams, session *models.Principal) middleware.Responder {
+		payload, err := getPVCEventsResponse(session, params)
+
+		if err != nil {
+			return operator_api.NewGetPVCEventsDefault(int(err.Code)).WithPayload(err)
+		}
+
+		return operator_api.NewGetPVCEventsOK().WithPayload(payload)
+	})
+
 }
 
 func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *models.Error) {
@@ -161,4 +173,34 @@ func getDeletePVCResponse(session *models.Principal, params operator_api.DeleteP
 		return prepareError(err)
 	}
 	return nil
+}
+
+func getPVCEventsResponse(session *models.Principal, params operator_api.GetPVCEventsParams) (models.EventListWrapper, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	PVC, err := clientset.CoreV1().PersistentVolumeClaims(params.Namespace).Get(ctx, params.PVCName, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", PVC.UID)})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	retval := models.EventListWrapper{}
+	for i := 0; i < len(events.Items); i++ {
+		retval = append(retval, &models.EventListElement{
+			Namespace: events.Items[i].Namespace,
+			LastSeen:  events.Items[i].LastTimestamp.Unix(),
+			Message:   events.Items[i].Message,
+			EventType: events.Items[i].Type,
+			Reason:    events.Items[i].Reason,
+		})
+	}
+	sort.SliceStable(retval, func(i int, j int) bool {
+		return retval[i].LastSeen < retval[j].LastSeen
+	})
+	return retval, nil
 }
