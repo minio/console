@@ -1,6 +1,3 @@
-//go:build !operator
-// +build !operator
-
 // This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //
@@ -16,6 +13,9 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+//go:build !operator
+// +build !operator
 
 package main
 
