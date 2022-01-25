@@ -20,14 +20,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/minio/pkg/env"
 	"github.com/minio/pkg/licverifier"
 )
-
-// GetSubnetURL
-func GetSubnetURL() string {
-	return env.Get(ConsoleSubnetURL, "https://subnet.min.io")
-}
 
 // GetLicenseInfoFromJWT will return license metadata from a jwt string license
 func GetLicenseInfoFromJWT(license string, publicKeys []string) (*licverifier.LicenseInfo, error) {

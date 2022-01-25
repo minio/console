@@ -89,8 +89,9 @@ import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
-import { DownloadIcon, UploadFolderIcon } from "../../../../../../icons";
+import { DownloadIcon } from "../../../../../../icons";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
+import UploadFilesButton from "../../UploadFilesButton";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -103,9 +104,6 @@ const FolderIcon = React.lazy(
 );
 const RefreshIcon = React.lazy(
   () => import("../../../../../../icons/RefreshIcon")
-);
-const UploadIcon = React.lazy(
-  () => import("../../../../../../icons/UploadIcon")
 );
 
 const DeleteIcon = React.lazy(
@@ -791,7 +789,6 @@ const ListObjects = ({
 
               xhr.onerror = () => {
                 setSnackBarMessage(errorMessage);
-                console.log("GONNA REJECT");
                 reject(errorMessage);
               };
               xhr.onloadend = () => {
@@ -812,10 +809,10 @@ const ListObjects = ({
           if (nextFile) {
             uploadPromise(nextFile!)
               .then(() => {
-                console.log("done uploading file!");
+                console.info("done uploading file");
               })
               .catch((err) => {
-                console.log("error uploading file!", err);
+                console.error("error uploading file,", err);
               });
           }
         }
@@ -1161,113 +1158,34 @@ const ListObjects = ({
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <RBIconButton
-                    tooltip={"Choose or create a new path"}
-                    onClick={() => {
-                      setCreateFolderOpen(true);
-                    }}
-                    text={""}
-                    icon={<AddFolderIcon />}
-                    color="primary"
-                    disabled={rewindEnabled}
-                    variant={"outlined"}
-                  />
-                </SecureComponent>
-                <SecureComponent
-                  resource={bucketName}
-                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-                  errorProps={{ disabled: true }}
-                >
-                  <RBIconButton
-                    tooltip={"Upload file"}
-                    onClick={() => {
+                  <UploadFilesButton
+                    uploadFileFunction={(closeMenu) => {
                       if (fileUpload && fileUpload.current) {
                         fileUpload.current.click();
                       }
+                      closeMenu();
                     }}
-                    text={""}
-                    icon={<UploadIcon />}
-                    color="primary"
-                    disabled={rewindEnabled}
-                    variant={"outlined"}
+                    uploadFolderFunction={(closeMenu) => {
+                      if (folderUpload && folderUpload.current) {
+                        folderUpload.current.click();
+                      }
+                      closeMenu();
+                    }}
                   />
-                </SecureComponent>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleUploadButton}
-                  style={{ display: "none" }}
-                  ref={fileUpload}
-                />
-                <SecureComponent
-                  resource={bucketName}
-                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-                  errorProps={{ disabled: true }}
-                >
-                  <Fragment>
-                    <RBIconButton
-                      tooltip={"Upload folder"}
-                      onClick={() => {
-                        if (folderUpload && folderUpload.current) {
-                          folderUpload.current.click();
-                        }
-                      }}
-                      text={""}
-                      icon={<UploadFolderIcon />}
-                      color="primary"
-                      disabled={rewindEnabled}
-                      variant={"outlined"}
-                    />
-                    <input
-                      type="file"
-                      multiple
-                      onChange={handleUploadButton}
-                      style={{ display: "none" }}
-                      ref={folderUpload}
-                    />
-                  </Fragment>
-                </SecureComponent>
 
-                <SecureComponent
-                  resource={bucketName}
-                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-                  errorProps={{ disabled: true }}
-                >
-                  <Badge
-                    badgeContent=" "
-                    color="secondary"
-                    variant="dot"
-                    invisible={!rewindEnabled}
-                    className={classes.badgeOverlap}
-                  >
-                    <RBIconButton
-                      tooltip={"Rewind"}
-                      onClick={() => {
-                        setRewindSelect(true);
-                      }}
-                      text={""}
-                      icon={<HistoryIcon />}
-                      color="primary"
-                      disabled={!isVersioned}
-                      variant={"outlined"}
-                    />
-                  </Badge>
-                </SecureComponent>
-                <SecureComponent
-                  scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
-                  resource={bucketName}
-                  errorProps={{ disabled: true }}
-                >
-                  <RBIconButton
-                    tooltip={"Refresh list"}
-                    onClick={() => {
-                      setLoading(true);
-                    }}
-                    text={""}
-                    icon={<RefreshIcon />}
-                    color="primary"
-                    disabled={rewindEnabled}
-                    variant={"contained"}
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    style={{ display: "none" }}
+                    ref={fileUpload}
+                  />
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    style={{ display: "none" }}
+                    ref={folderUpload}
                   />
                 </SecureComponent>
               </Fragment>
@@ -1314,6 +1232,69 @@ const ListObjects = ({
               variant={"contained"}
             />
           </div>
+        </Grid>
+        <Grid item xs={12}>
+          <Fragment>
+            <SecureComponent
+              resource={bucketName}
+              scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Choose or create a new path"}
+                onClick={() => {
+                  setCreateFolderOpen(true);
+                }}
+                text={""}
+                icon={<AddFolderIcon />}
+                color="primary"
+                disabled={rewindEnabled}
+                variant={"outlined"}
+              />
+            </SecureComponent>
+            <SecureComponent
+              resource={bucketName}
+              scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+              errorProps={{ disabled: true }}
+            >
+              <Badge
+                badgeContent=" "
+                color="secondary"
+                variant="dot"
+                invisible={!rewindEnabled}
+                className={classes.badgeOverlap}
+              >
+                <RBIconButton
+                  tooltip={"Rewind"}
+                  onClick={() => {
+                    setRewindSelect(true);
+                  }}
+                  text={""}
+                  icon={<HistoryIcon />}
+                  color="primary"
+                  disabled={!isVersioned}
+                  variant={"outlined"}
+                />
+              </Badge>
+            </SecureComponent>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+              resource={bucketName}
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Refresh list"}
+                onClick={() => {
+                  setLoading(true);
+                }}
+                text={""}
+                icon={<RefreshIcon />}
+                color="primary"
+                disabled={rewindEnabled}
+                variant={"contained"}
+              />
+            </SecureComponent>
+          </Fragment>
         </Grid>
         <Grid item xs={12}>
           <br />
