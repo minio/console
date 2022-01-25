@@ -42,17 +42,22 @@ const ConsoleMenuList = ({
 }) => {
   const stateClsName = isOpen ? "wide" : "mini";
   const { pathname = "" } = useLocation();
-  let expandedGroup = pathname.slice(1, pathname.length); //single path
-  if (expandedGroup.indexOf("/") !== -1) {
-    expandedGroup = expandedGroup.slice(0, expandedGroup.indexOf("/")); //nested path
+  let selectedMenuGroup = pathname.slice(1, pathname.length); //single path
+  if (selectedMenuGroup.indexOf("/") !== -1) {
+    selectedMenuGroup = selectedMenuGroup.slice(
+      0,
+      selectedMenuGroup.indexOf("/")
+    ); //nested path
   }
 
-  const [openGroup, setOpenGroup] = useState<any>(expandedGroup);
+  const [openGroup, setOpenGroup] = useState<string>(selectedMenuGroup);
+
+  const [expandedGroup, setExpandedGroup] = useState<string>(selectedMenuGroup);
 
   useEffect(() => {
     //in case of redirects.
-    setOpenGroup(expandedGroup);
-  }, [expandedGroup]);
+    setOpenGroup(selectedMenuGroup);
+  }, [selectedMenuGroup]);
 
   return (
     <Box
@@ -106,9 +111,11 @@ const ConsoleMenuList = ({
                   page={menuGroup}
                   key={menuGroup.id}
                   id={menuGroup.id}
-                  onExpand={setOpenGroup}
-                  expandedValue={openGroup}
+                  selectedMenuGroup={openGroup}
+                  setSelectedMenuGroup={setOpenGroup}
                   pathValue={pathname}
+                  onExpand={setExpandedGroup}
+                  expandedGroup={expandedGroup}
                 />
               );
             }
