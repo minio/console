@@ -89,8 +89,7 @@ import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
-import { DownloadIcon } from "../../../../../../icons";
-import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
+import { DownloadIcon, PreviewIcon, ShareIcon } from "../../../../../../icons";
 import UploadFilesButton from "../../UploadFilesButton";
 
 const AddFolderIcon = React.lazy(
@@ -119,7 +118,6 @@ const ShareFile = withSuspense(
   React.lazy(() => import("../ObjectDetails/ShareFile"))
 );
 const RewindEnable = withSuspense(React.lazy(() => import("./RewindEnable")));
-const DeleteObject = withSuspense(React.lazy(() => import("./DeleteObject")));
 const PreviewFileModal = withSuspense(
   React.lazy(() => import("../Preview/PreviewFileModal"))
 );
@@ -140,8 +138,11 @@ const styles = (theme: Theme) =>
 
     badgeOverlap: {
       "& .MuiBadge-badge": {
-        top: 35,
-        right: 10,
+        top: 10,
+        right: 1,
+        width: 5,
+        height: 5,
+        minWidth: 5
       },
     },
     screenTitle: {
@@ -233,7 +234,6 @@ const ListObjects = ({
   classes,
   match,
   history,
-  downloadingFiles,
   rewindEnabled,
   rewindDate,
   bucketToRewind,
@@ -254,10 +254,8 @@ const ListObjects = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [rewind, setRewind] = useState<RewindObject[]>([]);
   const [loadingRewind, setLoadingRewind] = useState<boolean>(false);
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
-  const [selectedObject, setSelectedObject] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
@@ -276,6 +274,8 @@ const ListObjects = ({
   >("ASC");
   const [currentSortField, setCurrentSortField] = useState<string>("name");
   const [iniLoad, setIniLoad] = useState<boolean>(false);
+  const [canShareFile, setCanShareFile] = useState<boolean>(false);
+  const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -289,6 +289,27 @@ const ListObjects = ({
       folderUpload.current.setAttribute("webkitdirectory", "");
     }
   }, [folderUpload]);
+
+  useEffect(() => {
+    if (selectedObjects.length === 1) {
+      const objectName = selectedObjects[0];
+
+      if (extensionPreview(objectName) !== "none") {
+        setCanPreviewFile(true);
+      } else {
+        setCanPreviewFile(false);
+      }
+
+      if (objectName.endsWith("/")) {
+        setCanShareFile(false);
+      } else {
+        setCanShareFile(true);
+      }
+    } else {
+      setCanShareFile(false);
+      setCanPreviewFile(false);
+    }
+  }, [selectedObjects]);
 
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
@@ -575,15 +596,6 @@ const ListObjects = ({
     setErrorSnackMessage,
   ]);
 
-  const closeDeleteModalAndRefresh = (refresh: boolean) => {
-    setDeleteOpen(false);
-
-    if (refresh) {
-      setSnackBarMessage(`Object '${selectedObject}' deleted successfully.`);
-      setLoading(true);
-    }
-  };
-
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
 
@@ -628,11 +640,6 @@ const ListObjects = ({
       return "";
     }
     return niceBytes(String(object.size));
-  };
-
-  const confirmDeleteObject = (object: BucketObject) => {
-    setDeleteOpen(true);
-    setSelectedObject(object.name);
   };
 
   const displayDeleteFlag = (state: boolean) => {
@@ -856,14 +863,36 @@ const ListObjects = ({
     [isDragActive, isDragAccept]
   );
 
-  const openPreview = (fileObject: BucketObject) => {
-    setSelectedPreview(fileObject);
-    setPreviewOpen(true);
+  const openPreview = () => {
+    if (selectedObjects.length === 1) {
+      let fileObject: BucketObject | undefined;
+
+      const findFunction = (currValue: BucketObject | RewindObject) =>
+        selectedObjects.includes(currValue.name);
+
+      fileObject = filteredRecords.find(findFunction);
+
+      if (fileObject) {
+        setSelectedPreview(fileObject);
+        setPreviewOpen(true);
+      }
+    }
   };
 
-  const openShare = (fileObject: BucketObject) => {
-    setSelectedPreview(fileObject);
-    setShareFileModalOpen(true);
+  const openShare = () => {
+    if (selectedObjects.length === 1) {
+      let fileObject: BucketObject | undefined;
+
+      const findFunction = (currValue: BucketObject | RewindObject) =>
+        selectedObjects.includes(currValue.name);
+
+      fileObject = filteredRecords.find(findFunction);
+
+      if (fileObject) {
+        setSelectedPreview(fileObject);
+        setShareFileModalOpen(true);
+      }
+    }
   };
 
   const closeShareModal = () => {
@@ -878,49 +907,7 @@ const ListObjects = ({
       onClick: openPath,
       sendOnlyId: true,
     },
-    {
-      type: "preview",
-      label: "Preview",
-      onClick: openPreview,
-      disableButtonFunction: (item: string) =>
-        extensionPreview(item) === "none",
-    },
-    {
-      type: "share",
-      label: "Share",
-      onClick: openShare,
-      disableButtonFunction: (item: string) => item.endsWith("/"),
-    },
-    {
-      type: "download",
-      label: "Download",
-      onClick: downloadObject,
-      showLoaderFunction: (item: string) =>
-        downloadingFiles.includes(`${match.params["bucket"]}/${item}`),
-      disableButtonFunction: (item: string) => {
-        if (rewindEnabled) {
-          const element = rewind.find((elm) => elm.name === item);
-
-          if (element && element.delete_flag) {
-            return true;
-          }
-        }
-        return false;
-      },
-      sendOnlyId: false,
-    },
   ];
-
-  if (displayDeleteObject) {
-    tableActions.push({
-      type: "delete",
-      label: "Delete",
-      onClick: confirmDeleteObject,
-      disableButtonFunction: () => {
-        return rewindEnabled;
-      },
-    });
-  }
 
   const filteredRecords = records.filter((b: BucketObject) => {
     if (filterObjects === "") {
@@ -1089,15 +1076,6 @@ const ListObjects = ({
           }}
         />
       )}
-      {deleteOpen && (
-        <DeleteObject
-          deleteOpen={deleteOpen}
-          selectedBucket={bucketName}
-          selectedObject={encodeFileName(selectedObject)}
-          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
-          versioning={isVersioned}
-        />
-      )}
       {deleteMultipleOpen && (
         <DeleteMultipleObjects
           deleteOpen={deleteMultipleOpen}
@@ -1173,7 +1151,6 @@ const ListObjects = ({
                         closeMenu();
                       }}
                     />
-
                     <input
                       type="file"
                       multiple
@@ -1206,97 +1183,6 @@ const ListObjects = ({
               overrideClass={classes.searchField}
             />
           </SecureComponent>
-          <div>
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-              resource={bucketName}
-              errorProps={{ disabled: true }}
-            >
-              <RBIconButton
-                tooltip={"Delete Selected"}
-                onClick={() => {
-                  setDeleteMultipleOpen(true);
-                }}
-                text={"Delete Selected"}
-                icon={<DeleteIcon />}
-                color="secondary"
-                disabled={selectedObjects.length === 0}
-                variant={"outlined"}
-              />
-            </SecureComponent>
-            <RBIconButton
-              tooltip={"Download Selected"}
-              onClick={downloadSelected}
-              text={"Download Selected"}
-              icon={<DownloadIcon />}
-              color="primary"
-              disabled={selectedObjects.length === 0}
-              variant={"contained"}
-            />
-          </div>
-        </Grid>
-        <Grid item xs={12}>
-          <Fragment>
-            <SecureComponent
-              resource={bucketName}
-              scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-              errorProps={{ disabled: true }}
-            >
-              <RBIconButton
-                tooltip={"Choose or create a new path"}
-                onClick={() => {
-                  setCreateFolderOpen(true);
-                }}
-                text={""}
-                icon={<AddFolderIcon />}
-                color="primary"
-                disabled={rewindEnabled}
-                variant={"outlined"}
-              />
-            </SecureComponent>
-            <SecureComponent
-              resource={bucketName}
-              scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-              errorProps={{ disabled: true }}
-            >
-              <Badge
-                badgeContent=" "
-                color="secondary"
-                variant="dot"
-                invisible={!rewindEnabled}
-                className={classes.badgeOverlap}
-              >
-                <RBIconButton
-                  tooltip={"Rewind"}
-                  onClick={() => {
-                    setRewindSelect(true);
-                  }}
-                  text={""}
-                  icon={<HistoryIcon />}
-                  color="primary"
-                  disabled={!isVersioned}
-                  variant={"outlined"}
-                />
-              </Badge>
-            </SecureComponent>
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
-              resource={bucketName}
-              errorProps={{ disabled: true }}
-            >
-              <RBIconButton
-                tooltip={"Refresh list"}
-                onClick={() => {
-                  setLoading(true);
-                }}
-                text={""}
-                icon={<RefreshIcon />}
-                color="primary"
-                disabled={rewindEnabled}
-                variant={"contained"}
-              />
-            </SecureComponent>
-          </Fragment>
         </Grid>
         <Grid item xs={12}>
           <br />
@@ -1332,6 +1218,88 @@ const ListObjects = ({
                   triggerSort: sortChange,
                 }}
                 onSelectAll={selectAllItems}
+                actionButtons={[
+                  {
+                    action: downloadSelected,
+                    label: "Download",
+                    disabled: selectedObjects.length === 0,
+                    icon: <DownloadIcon />,
+                    tooltip: "Download Selected",
+                  },
+                  {
+                    action: openShare,
+                    label: "Share",
+                    disabled: selectedObjects.length !== 1 || !canShareFile,
+                    icon: <ShareIcon />,
+                    tooltip: "Share Selected File",
+                  },
+                  {
+                    action: openPreview,
+                    label: "Preview",
+                    disabled: selectedObjects.length !== 1 || !canPreviewFile,
+                    icon: <PreviewIcon />,
+                    tooltip: "Preview Selected File",
+                  },
+                  {
+                    action: () => {
+                      setDeleteMultipleOpen(true);
+                    },
+                    label: "Delete",
+                    icon: <DeleteIcon />,
+                    disabled:
+                      !hasPermission(bucketName, [
+                        IAM_SCOPES.S3_DELETE_OBJECT,
+                      ]) ||
+                      selectedObjects.length === 0 ||
+                      !displayDeleteObject,
+                    tooltip: "Delete Selected Files",
+                  },
+                  {
+                    action: () => {
+                      setRewindSelect(true);
+                    },
+                    label: "Rewind",
+                    disabled:
+                      !isVersioned ||
+                      !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]),
+                    icon: (
+                      <Badge
+                        badgeContent=" "
+                        color="secondary"
+                        variant="dot"
+                        invisible={!rewindEnabled}
+                        className={classes.badgeOverlap}
+                      >
+                        <HistoryIcon />
+                      </Badge>
+                    ),
+                    tooltip: "Rewind Bucket",
+                  },
+                  {
+                    action: () => {
+                      setCreateFolderOpen(true);
+                    },
+                    label: "New Path",
+                    icon: <AddFolderIcon />,
+                    disabled:
+                      rewindEnabled ||
+                      !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]),
+                    tooltip: "Choose or create a new path",
+                  },
+                ]}
+                globalActions={[
+                  {
+                    action: () => {
+                      setLoading(true);
+                    },
+                    label: "Reload",
+                    icon: <RefreshIcon />,
+                    disabled:
+                      !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
+                      rewindEnabled,
+                    tooltip: "Reload List",
+                  },
+                ]}
               />
             </SecureComponent>
           </Grid>
