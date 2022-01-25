@@ -73,6 +73,7 @@ const PodsSummary = ({
 
   const closeDeleteModalAndRefresh = (reloadData: boolean) => {
     setDeleteOpen(false);
+    setLoadingPods(true);
   };
 
   const confirmDeletePod = (pod: IPodListElement) => {
