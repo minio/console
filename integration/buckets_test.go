@@ -239,6 +239,54 @@ func ListBuckets() (*http.Response, error) {
 	return response, err
 }
 
+func BucketInfo(name string) (*http.Response, error) {
+	/*
+		Helper function to test Bucket Info End Point
+		GET: {{baseUrl}}/buckets/:name
+	*/
+	bucketInformationRequest, bucketInformationError := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/buckets/"+name, nil)
+	if bucketInformationError != nil {
+		log.Println(bucketInformationError)
+	}
+	bucketInformationRequest.Header.Add("Cookie",
+		fmt.Sprintf("token=%s", token))
+	bucketInformationRequest.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(bucketInformationRequest)
+	return response, err
+}
+
+func PutBucketsTags(bucketName string, tags map[string]string) (*http.Response, error) {
+	/*
+		Helper function to put bucket's tags.
+		PUT: {{baseUrl}}/buckets/:bucket_name/tags
+		{
+			"tags": {}
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"tags": tags,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest("PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/tags",
+		requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 
@@ -591,4 +639,111 @@ func TestListBuckets(t *testing.T) {
 		assert.True(strings.Contains(string(b),
 			"testlistbuckets"+strconv.Itoa(i)))
 	}
+}
+
+func TestBucketInformationSuccessfulResponse(t *testing.T) {
+	/*
+		Test Bucket Info End Point with a Successful Response.
+	*/
+
+	// 1. Create the bucket
+	assert := assert.New(t)
+	response, err := AddBucket("bucketinformation1", false, false)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add a tag to the bucket
+	tags := make(map[string]string)
+	tags["tag1"] = "tag1"
+	putBucketTagResponse, putBucketTagError := PutBucketsTags(
+		"bucketinformation1", tags)
+	if putBucketTagError != nil {
+		log.Println(putBucketTagError)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if putBucketTagResponse != nil {
+		assert.Equal(
+			200, putBucketTagResponse.StatusCode,
+			inspectHTTPResponse(putBucketTagResponse))
+	}
+
+	// 3. Get the information
+	bucketInfoResponse, bucketInfoError := BucketInfo("bucketinformation1")
+	if bucketInfoError != nil {
+		log.Println(bucketInfoError)
+		assert.Fail("Error getting the bucket information")
+		return
+	}
+	debugResponse := inspectHTTPResponse(bucketInfoResponse) // call it once
+	if bucketInfoResponse != nil {
+		assert.Equal(200, bucketInfoResponse.StatusCode,
+			debugResponse)
+	}
+	printMessage(debugResponse)
+
+	// 4. Verify the information
+	assert.True(
+		strings.Contains(debugResponse, "bucketinformation1"),
+		inspectHTTPResponse(bucketInfoResponse))
+	assert.True(
+		strings.Contains(debugResponse, "tag1"),
+		inspectHTTPResponse(bucketInfoResponse))
+}
+
+func TestBucketInformationGenericErrorResponse(t *testing.T) {
+	/*
+		Test Bucket Info End Point with a Generic Error Response.
+	*/
+	// 1. Create the bucket
+	assert := assert.New(t)
+	response, err := AddBucket("bucketinformation2", false, false)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add a tag to the bucket
+	tags := make(map[string]string)
+	tags["tag2"] = "tag2"
+	putBucketTagResponse, putBucketTagError := PutBucketsTags(
+		"bucketinformation2", tags)
+	if putBucketTagError != nil {
+		log.Println(putBucketTagError)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if putBucketTagResponse != nil {
+		assert.Equal(
+			200, putBucketTagResponse.StatusCode,
+			inspectHTTPResponse(putBucketTagResponse))
+	}
+
+	// 3. Get the information
+	bucketInfoResponse, bucketInfoError := BucketInfo("bucketinformation3")
+	if bucketInfoError != nil {
+		log.Println(bucketInfoError)
+		assert.Fail("Error getting the bucket information")
+		return
+	}
+	finalResponse := inspectHTTPResponse(bucketInfoResponse)
+	if bucketInfoResponse != nil {
+		assert.Equal(200, bucketInfoResponse.StatusCode)
+	}
+
+	// 4. Verify the information
+	// Since bucketinformation3 hasn't been created, then it is expected that
+	// tag2 is not part of the response, this is why assert.False is used.
+	assert.False(strings.Contains(finalResponse, "tag2"), finalResponse)
 }
