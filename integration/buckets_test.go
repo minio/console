@@ -722,26 +722,6 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 		return
 	}
 	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
-	}
-
-	// 2. Delete the bucket
-	deleteBucketResponse, deleteBucketError := DeleteBucket("testdeletebucket1")
-	assert.Nil(deleteBucketError)
-	if deleteBucketError != nil {
-		log.Println(deleteBucketError)
-		return
-	}
-	if deleteBucketResponse != nil {
-		assert.Equal(
-			204, deleteBucketResponse.StatusCode, "Status Code is incorrect")
-	}
-
-	// 3. Verify the bucket is gone by trying to put a tag
-	tags := make(map[string]string)
-	tags["tag1"] = "tag1"
-	putBucketTagResponse, putBucketTagError := PutBucketsTags(
-		"testdeletebucket1", tags)
 		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
