@@ -50,6 +50,7 @@ import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
+import PVCDetails from "./PVCDetails";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -437,6 +438,10 @@ const TenantDetails = ({
                   <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName/pods"
                     component={PodsSummary}
+                  />
+                  <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pvcs/:PVCName"
+                    component={PVCDetails}
                   />
                   <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"

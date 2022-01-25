@@ -418,6 +418,11 @@ const Console = ({
     },
     {
       component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_PVCS,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_SUMMARY,
       forceDisplay: true,
     },

@@ -199,6 +199,8 @@ export const IAM_PAGES = {
   NAMESPACE_TENANT_HOP: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
   NAMESPACE_TENANT_PODS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
+  NAMESPACE_TENANT_PVCS:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/pvcs/:PVCName",
   NAMESPACE_TENANT_PODS_LIST:
     "/namespaces/:tenantNamespace/tenants/:tenantName/pods",
   NAMESPACE_TENANT_SUMMARY:

@@ -33,6 +33,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../../icons/SearchIcon";
+import { IPodListElement } from "../ListTenants/types";
 import withSuspense from "../../Common/Components/withSuspense";
 import { setTenantDetailsLoad } from "../actions";
 import { AppState } from "../../../../store";
@@ -42,6 +43,7 @@ const DeletePVC = withSuspense(React.lazy(() => import("./DeletePVC")));
 interface ITenantVolumesProps {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  history: any;
   match: any;
   loadingTenant: boolean;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
@@ -61,6 +63,7 @@ const styles = (theme: Theme) =>
 const TenantVolumes = ({
   classes,
   setErrorSnackMessage,
+  history,
   match,
   loadingTenant,
 }: ITenantVolumesProps) => {
@@ -105,6 +108,13 @@ const TenantVolumes = ({
   const filteredRecords: IStoragePVCs[] = records.filter((elementItem) =>
     elementItem.name.includes(filter)
   );
+
+  const PVCViewAction = (PVC: IPodListElement) => {
+    history.push(
+      `/namespaces/${tenantNamespace}/tenants/${tenantName}/pvcs/${PVC.name}`
+    );
+    return;
+  };
 
   const closeDeleteModalAndRefresh = (reloadData: boolean) => {
     setDeleteOpen(false);
@@ -152,7 +162,7 @@ const TenantVolumes = ({
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
-          itemActions={[{ type: "delete", onClick: confirmDeletePVC }]}
+          itemActions={[{ type: "view", onClick: PVCViewAction }, { type: "delete", onClick: confirmDeletePVC }]}
           columns={[
             {
               label: "Name",
