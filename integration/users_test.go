@@ -164,6 +164,25 @@ func UpdateUserInformation(name string, status string, groups []string) (*http.R
 	return response, err
 }
 
+func RemoveUser(name string) (*http.Response, error) {
+	/*
+		Helper function to remove user.
+		DELETE: {{baseUrl}}/user?name=proident velit
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/user?name="+name, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddUser(t *testing.T) {
 	/*
 		This is an API Test to add a user via api/v1/users, the intention
@@ -426,5 +445,58 @@ func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "status not valid"))
+
+}
+
+func TestRemoveUserSuccessfulResponse(t *testing.T) {
+	/*
+		To test removing a user from API
+	*/
+	assert := assert.New(t)
+
+	// 1. Create an active user
+	var groups = []string{}
+	var policies = []string{}
+	addUserResponse, addUserError := AddUser(
+		"testremoveuser1", "secretKey", groups, policies)
+	if addUserError != nil {
+		log.Println(addUserError)
+		return
+	}
+	if addUserResponse != nil {
+		fmt.Println("StatusCode:", addUserResponse.StatusCode)
+		assert.Equal(
+			201, addUserResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Remove the user
+	removeUserResponse, removeUserError := RemoveUser("testremoveuser1")
+	if removeUserError != nil {
+		log.Println(removeUserError)
+		return
+	}
+	if removeUserResponse != nil {
+		fmt.Println("StatusCode:", removeUserResponse.StatusCode)
+		assert.Equal(
+			204, removeUserResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Verify the user got removed
+	getUserInfoResponse, getUserInfoError := GetUserInformation(
+		"testremoveuser1")
+	if getUserInfoError != nil {
+		log.Println(getUserInfoError)
+		assert.Fail("There was an error in the response")
+		return
+	}
+	if getUserInfoResponse != nil {
+		fmt.Println("StatusCode:", getUserInfoResponse.StatusCode)
+		assert.Equal(
+			404, getUserInfoResponse.StatusCode, "Status Code is incorrect")
+	}
+	finalResponse := inspectHTTPResponse(getUserInfoResponse)
+	printMessage(finalResponse)
+	assert.True(strings.Contains(
+		finalResponse, "The specified user does not exist"), finalResponse)
 
 }
