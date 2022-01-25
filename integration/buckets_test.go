@@ -41,6 +41,24 @@ import (
 
 var token string
 
+func inspectHTTPResponse(httpResponse *http.Response) string {
+	/*
+		Helper function to inspect the content of a HTTP response.
+	*/
+	b, err := io.ReadAll(httpResponse.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return "Http Response: " + string(b)
+}
+
+func printMessage(message string) {
+	/*
+		Helper function to print HTTP response.
+	*/
+	fmt.Println(message)
+}
+
 func initConsoleServer() (*restapi.Server, error) {
 
 	//os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")

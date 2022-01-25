@@ -33,6 +33,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../icons/SearchIcon";
+import DeletePVC from "../Tenants/TenantDetails/DeletePVC";
 
 interface IStorageVolumesProps {
   classes: any;
@@ -56,6 +57,8 @@ const StorageVolumes = ({
   const [records, setRecords] = useState<IStoragePVCs[]>([]);
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedPVC, setSelectedPVC] = useState<any>(null);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (loading) {
@@ -77,6 +80,16 @@ const StorageVolumes = ({
     elementItem.name.includes(filter)
   );
 
+  const confirmDeletePVC = (pvcItem: IStoragePVCs) => {
+    const delPvc = {
+      ...pvcItem,
+      tenant: pvcItem.tenant,
+      namespace: pvcItem.namespace,
+    };
+    setSelectedPVC(delPvc);
+    setDeleteOpen(true);
+  };
+
   const tableActions = [
     {
       type: "view",
@@ -86,10 +99,23 @@ const StorageVolumes = ({
         );
       },
     },
+    { type: "delete", onClick: confirmDeletePVC },
   ];
+
+  const closeDeleteModalAndRefresh = (reloadData: boolean) => {
+    setDeleteOpen(false);
+    setLoading(true);
+  };
 
   return (
     <Fragment>
+      {deleteOpen && (
+        <DeletePVC
+          deleteOpen={deleteOpen}
+          selectedPVC={selectedPVC}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
       <h1 className={classes.sectionTitle}>Persistent Volumes Claims</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
