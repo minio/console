@@ -33,10 +33,12 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../../icons/SearchIcon";
+import { IPodListElement } from "../ListTenants/types";
 
 interface ITenantVolumesProps {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  history: any;
   match: any;
 }
 
@@ -54,6 +56,7 @@ const styles = (theme: Theme) =>
 const TenantVolumes = ({
   classes,
   setErrorSnackMessage,
+  history,
   match,
 }: ITenantVolumesProps) => {
   const [records, setRecords] = useState<IStoragePVCs[]>([]);
@@ -86,6 +89,13 @@ const TenantVolumes = ({
     elementItem.name.includes(filter)
   );
 
+  const PVCViewAction = (PVC: IPodListElement) => {
+    history.push(
+      `/namespaces/${tenantNamespace}/tenants/${tenantName}/pvcs/${PVC.name}`
+    );
+    return;
+  };
+
   return (
     <Fragment>
       <h1 className={classes.sectionTitle}>Volumes</h1>
@@ -114,7 +124,7 @@ const TenantVolumes = ({
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
-          itemActions={[]}
+          itemActions={[{ type: "view", onClick: PVCViewAction }]}
           columns={[
             {
               label: "Name",
