@@ -36,7 +36,7 @@ const styles = (theme: Theme) =>
     listUploadIcons: {
       "& .min-icon": {
         width: 18,
-        fill: "rgba(0,0,0,0.87)"
+        fill: "rgba(0,0,0,0.87)",
       },
     },
   });

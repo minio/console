@@ -85,12 +85,12 @@ test
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .click(logoutItem);
   })("Object list table is enabled", async (t) => {
-    const bucketsTableExists = elements.table.exists;
-    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketread3");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .click(testBucketBrowseButton)
-      .expect(bucketsTableExists)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButtonFor("bucketread3"))
+      .expect(elements.table.exists)
       .ok();
   })
   .after(async (t) => {

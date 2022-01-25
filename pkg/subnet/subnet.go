@@ -160,7 +160,6 @@ func ParseLicense(client cluster.HTTPClientI, license string) (*licverifier.Lice
 
 	licenseInfo, err := GetLicenseInfoFromJWT(license, publicKeys)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 

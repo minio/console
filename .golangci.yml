@@ -19,9 +19,17 @@ linters:
     - unparam
     - unused
     - structcheck
+    - goheader
+
+linters-settings:
+  goheader:
+    values:
+      regexp:
+        copyright-holder: Copyright \(c\) (20\d\d\-20\d\d)|2021|({{year}})
+    template-path: .license.tmpl
 
 service:
-  golangci-lint-version: 1.27.0 # use the fixed version to not introduce new linters unexpectedly
+  golangci-lint-version: 1.43.0 # use the fixed version to not introduce new linters unexpectedly
 
 issues:
   exclude-use-default: false
@@ -36,3 +44,4 @@ issues:
 run:
   skip-dirs:
     - pkg/clientgen
+    - pkg/apis/networking.gke.io

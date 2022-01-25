@@ -1,5 +1,3 @@
-// This file is safe to edit. Once it exists it will not be overwritten
-
 // This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //
