@@ -34,6 +34,7 @@ import OfflineRegistrationIcon from "../../../icons/OfflineRegistrationIcon";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import clsx from "clsx";
 import OnlineRegistrationBackIcon from "../../../icons/OnlineRegistrationBackIcon";
+import OfflineRegistrationBackIcon from "../../../icons/OfflineRegistrationBackIcon";
 import api from "../../../common/api";
 
 import {
@@ -142,6 +143,7 @@ const styles = (theme: Theme) =>
     },
     link: {
       color: "#2781B0",
+      cursor: "pointer",
     },
     ...actionsTray,
     ...searchField,
@@ -444,7 +446,7 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
               target="_blank"
               href="https://min.io/product/subnet"
             >
-              Learn more about SUBNET.
+              Learn more about SUBNET →.
             </Link>
           </Grid>
           <br />
@@ -602,7 +604,7 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
                   a proxy to connect to Subnet.
                   <br />
                   <br />
-                  Alternatively you can try{" "}
+                  Alternatively you can try <OfflineRegistrationBackIcon />
                   <Link
                     className={classes.link}
                     onClick={() => {
