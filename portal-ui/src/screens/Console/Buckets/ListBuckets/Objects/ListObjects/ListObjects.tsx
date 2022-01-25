@@ -1158,35 +1158,37 @@ const ListObjects = ({
                   scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
                   errorProps={{ disabled: true }}
                 >
-                  <UploadFilesButton
-                    uploadFileFunction={(closeMenu) => {
-                      if (fileUpload && fileUpload.current) {
-                        fileUpload.current.click();
-                      }
-                      closeMenu();
-                    }}
-                    uploadFolderFunction={(closeMenu) => {
-                      if (folderUpload && folderUpload.current) {
-                        folderUpload.current.click();
-                      }
-                      closeMenu();
-                    }}
-                  />
+                  <Fragment>
+                    <UploadFilesButton
+                      uploadFileFunction={(closeMenu) => {
+                        if (fileUpload && fileUpload.current) {
+                          fileUpload.current.click();
+                        }
+                        closeMenu();
+                      }}
+                      uploadFolderFunction={(closeMenu) => {
+                        if (folderUpload && folderUpload.current) {
+                          folderUpload.current.click();
+                        }
+                        closeMenu();
+                      }}
+                    />
 
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleUploadButton}
-                    style={{ display: "none" }}
-                    ref={fileUpload}
-                  />
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleUploadButton}
-                    style={{ display: "none" }}
-                    ref={folderUpload}
-                  />
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleUploadButton}
+                      style={{ display: "none" }}
+                      ref={fileUpload}
+                    />
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleUploadButton}
+                      style={{ display: "none" }}
+                      ref={folderUpload}
+                    />
+                  </Fragment>
                 </SecureComponent>
               </Fragment>
             }
