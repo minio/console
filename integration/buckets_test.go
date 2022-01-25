@@ -791,14 +791,6 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 		assert.Fail("Error creating the bucket")
 		return
 	}
-	finalResponse := inspectHTTPResponse(putBucketTagResponse)
-	if putBucketTagResponse != nil {
-		assert.Equal(
-			500, putBucketTagResponse.StatusCode,
-			finalResponse)
-	}
-	assert.True(
-		strings.Contains(finalResponse, "The specified bucket does not exist"))
 	if putBucketTagResponse != nil {
 		assert.Equal(
 			200, putBucketTagResponse.StatusCode,
