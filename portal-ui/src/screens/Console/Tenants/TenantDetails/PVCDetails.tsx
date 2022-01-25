@@ -91,6 +91,7 @@ const PVCDetails = ({
         </h1>
       </Grid>
       <Grid container>
+        <h1 className={classes.sectionTitle}>Events</h1>
         <TableWrapper
           itemActions={[]}
           columns={[
