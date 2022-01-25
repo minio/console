@@ -2050,9 +2050,13 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 		if len(pod.Status.ContainerStatuses) > 0 {
 			restarts = int64(pod.Status.ContainerStatuses[0].RestartCount)
 		}
+		status := string(pod.Status.Phase)
+		if pod.DeletionTimestamp != nil {
+			status = "Terminating"
+		}
 		retval = append(retval, &models.TenantPod{
 			Name:        swag.String(pod.Name),
-			Status:      string(pod.Status.Phase),
+			Status:      status,
 			TimeCreated: pod.CreationTimestamp.Unix(),
 			PodIP:       pod.Status.PodIP,
 			Restarts:    restarts,

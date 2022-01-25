@@ -26,7 +26,7 @@ export const closeAlertButton = Selector(
 );
 
 export const uploadButton = Selector("span")
-  .withAttribute("aria-label", "Upload file")
+  .withAttribute("aria-label", "Upload Files")
   .child("button:enabled");
 export const createPolicyButton =
   Selector("button:enabled").withText("Create Policy");

@@ -95,12 +95,16 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 	var ListPVCs []*models.PvcsListResponse
 
 	for _, pvc := range listAllPvcs.Items {
+		status := string(pvc.Status.Phase)
+		if pvc.DeletionTimestamp != nil {
+			status = "Terminating"
+		}
 		pvcResponse := models.PvcsListResponse{
 			Name:         pvc.Name,
 			Age:          pvc.CreationTimestamp.String(),
 			Capacity:     pvc.Status.Capacity.Storage().String(),
 			Namespace:    pvc.Namespace,
-			Status:       string(pvc.Status.Phase),
+			Status:       status,
 			StorageClass: *pvc.Spec.StorageClassName,
 			Volume:       pvc.Spec.VolumeName,
 			Tenant:       pvc.Labels["v1.min.io/tenant"],
@@ -138,12 +142,16 @@ func getPVCsForTenantResponse(session *models.Principal, params operator_api.Lis
 	var ListPVCs []*models.PvcsListResponse
 
 	for _, pvc := range listAllPvcs.Items {
+		status := string(pvc.Status.Phase)
+		if pvc.DeletionTimestamp != nil {
+			status = "Terminating"
+		}
 		pvcResponse := models.PvcsListResponse{
 			Name:         pvc.Name,
 			Age:          pvc.CreationTimestamp.String(),
 			Capacity:     pvc.Status.Capacity.Storage().String(),
 			Namespace:    pvc.Namespace,
-			Status:       string(pvc.Status.Phase),
+			Status:       status,
 			StorageClass: *pvc.Spec.StorageClassName,
 			Volume:       pvc.Spec.VolumeName,
 			Tenant:       pvc.Labels["v1.min.io/tenant"],

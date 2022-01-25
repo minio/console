@@ -26,6 +26,7 @@ import {
   menuItemContainerStyles,
   menuItemIconStyles,
   menuItemMiniStyles,
+  menuItemStyle,
   menuItemTextStyles,
 } from "./MenuStyleUtils";
 import List from "@mui/material/List";
@@ -43,15 +44,19 @@ const MenuItem = ({
   page,
   stateClsName = "",
   onExpand,
-  expandedValue,
+  selectedMenuGroup,
   pathValue = "",
+  expandedGroup = "",
+  setSelectedMenuGroup,
   id = `${Math.random()}`,
 }: {
   page: any;
   stateClsName?: string;
   onExpand?: (id: any) => void;
-  expandedValue?: any;
+  selectedMenuGroup?: any;
   pathValue?: string;
+  expandedGroup?: string;
+  setSelectedMenuGroup?: (value: string) => void;
   id?: string;
 }) => {
   const childrenMenuList = page?.children?.filter(
@@ -67,8 +72,10 @@ const MenuItem = ({
 
   const expandCollapseHandler = (e: any) => {
     e.preventDefault();
-    if (expandedValue === page.id) {
+    if (page.id === selectedMenuGroup && selectedMenuGroup === expandedGroup) {
       onExpand && onExpand(null);
+    } else if (page.id === selectedMenuGroup) {
+      onExpand && onExpand(selectedMenuGroup);
     } else {
       onExpand && onExpand(page.id);
     }
@@ -77,17 +84,22 @@ const MenuItem = ({
   const onClickHandler = hasChildren ? expandCollapseHandler : page.onClick;
 
   const activeClsName =
-    pathValue.includes(expandedValue) && page.id === expandedValue
+    pathValue.includes(selectedMenuGroup) && page.id === selectedMenuGroup
       ? "active"
       : "";
 
-  const isActiveGroup = expandedValue === page.id;
+  const isActiveGroup =
+    selectedMenuGroup === page.id || expandedGroup === page.id;
   return (
     <React.Fragment>
       <ListItem
         key={page.to}
         button
-        onClick={onClickHandler}
+        onClick={(e: any) => {
+          onExpand && onExpand(null);
+          onClickHandler && onClickHandler(e);
+          setSelectedMenuGroup && setSelectedMenuGroup(selectedMenuGroup);
+        }}
         component={page.component}
         to={page.to}
         id={id}
@@ -138,7 +150,7 @@ const MenuItem = ({
         <Collapse
           key={page.id}
           id={`${page.id}-children`}
-          in={isActiveGroup}
+          in={expandedGroup === page.id}
           timeout="auto"
           unmountOnExit
         >
@@ -163,27 +175,10 @@ const MenuItem = ({
                   to={item.to}
                   disableRipple
                   sx={{
-                    paddingLeft: "8px",
-                    paddingRight: "5px",
-                    paddingBottom: "8px",
-                    "&.active div:nth-of-type(1)": {
-                      border: "none",
-                    },
-                    "& .menu-icon": {
-                      padding: "5px",
-                      maxWidth: "28px",
-                      minWidth: "28px",
-                      height: "28px",
-                      background: "none",
-                    },
-                    "&:hover, &:focus": {
-                      background: "none",
-
-                      "& .menu-icon svg": {
-                        fill: "#c7c3c3",
-                      },
-                    },
+                    ...menuItemStyle,
+                    ...menuItemMiniStyles,
                   }}
+                  className={`${stateClsName}`}
                 >
                   {item.icon && (
                     <Tooltip title={`${item.name}`} placement="right">
