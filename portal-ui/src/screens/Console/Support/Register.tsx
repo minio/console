@@ -62,10 +62,12 @@ import HelpBox from "../../../common/HelpBox";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import RegisterStatus from "./RegisterStatus";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { AppState } from "../../../store";
 
 interface IRegister {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
+  operatorMode: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -84,6 +86,11 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       textAlign: "center",
       marginBottom: 10,
+    },
+    headerStyle: {
+      color: theme.palette.primary.main,
+      fontSize: 16,
+      fontWeight: "bold",
     },
     registerActivationIcon: {
       color: theme.palette.primary.main,
@@ -111,9 +118,6 @@ const styles = (theme: Theme) =>
       "& span": {
         fontWeight: "bold",
       },
-    },
-    subnetLoginInputBoxWrapper: {
-      paddingRight: 20,
     },
     registeredStatus: {
       border: "1px solid #E2E2E2",
@@ -147,12 +151,22 @@ const styles = (theme: Theme) =>
       color: "#2781B0",
       cursor: "pointer",
     },
+    smallBoxy: {
+      border: "#E5E5E5 1px solid",
+      borderRadius: 2,
+      padding: 20,
+      backgroundColor: "#fff",
+    },
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Register = ({ classes, displayErrorMessage }: IRegister) => {
+const Register = ({
+  classes,
+  displayErrorMessage,
+  operatorMode,
+}: IRegister) => {
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");
   const [subnetEmail, setSubnetEmail] = useState<string>("");
@@ -355,12 +369,12 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
   const title = onlineActivation ? (
     <Fragment>
       <OnlineRegistrationIcon />
-      Online Activation SUBNET License
+      Register with MinIO Subscription Network
     </Fragment>
   ) : (
     <Fragment>
       <OfflineRegistrationIcon />
-      Offline Activating SUBNET License
+      Offline Activation of SUBNET License
     </Fragment>
   );
 
@@ -444,67 +458,95 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
       clusterRegistrationForm = (
         <Fragment>
           <Grid item xs={12} className={classes.subnetDescription}>
-            The MinIO Subscription Network (SUBNET for short) is a simple, yet
-            powerful software stack that ensures commercial customers are
-            getting the very best out of their MinIO instances. SUBNET is priced
-            on capacity - just like cloud storage and comes in two
-            configurations, Standard and Enterprise.
-          </Grid>
-          <br />
-          <Grid item xs={12} className={classes.subnetDescription}>
-            You can use your credentials from SUBNET to register.{" "}
-            <Link
-              className={classes.link}
-              color="inherit"
-              target="_blank"
-              href="https://min.io/product/subnet"
-            >
-              Learn more about SUBNET →.
-            </Link>
+            Use your MinIO Subscription Network login credentials to register
+            this cluster.
           </Grid>
           <br />
           <Grid item xs={12} className={clsx(classes.actionsTray)}>
-            <InputBoxWrapper
-              className={classes.subnetLoginInputBoxWrapper}
-              id="subnet-email"
-              name="subnet-email"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSubnetEmail(event.target.value)
-              }
-              label="Email"
-              value={subnetEmail}
-              noLabelMinWidth
-              overlayIcon={<UsersIcon />}
-            />
-            <InputBoxWrapper
-              className={classes.subnetLoginInputBoxWrapper}
-              id="subnet-password"
-              name="subnet-password"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSubnetPassword(event.target.value)
-              }
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              value={subnetPassword}
-              noLabelMinWidth
-              overlayIcon={
-                showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-              }
-              overlayAction={() => setShowPassword(!showPassword)}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={
-                loading ||
-                subnetEmail.trim().length === 0 ||
-                subnetPassword.trim().length === 0
-              }
-              onClick={() => subnetLogin()}
+            <Grid
+              container
+              justifyContent={"center"}
+              item
+              xs={4}
+              style={{ margin: "auto" }}
             >
-              Register
-            </Button>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="subnet-email"
+                  name="subnet-email"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setSubnetEmail(event.target.value)
+                  }
+                  label="Email"
+                  value={subnetEmail}
+                  overlayIcon={<UsersIcon />}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                {" "}
+                <InputBoxWrapper
+                  id="subnet-password"
+                  name="subnet-password"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setSubnetPassword(event.target.value)
+                  }
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  value={subnetPassword}
+                  overlayIcon={
+                    showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+                  }
+                  overlayAction={() => setShowPassword(!showPassword)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12} textAlign={"center"}>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(
+                      `https://min.io/signup?ref=${
+                        operatorMode ? "op" : "con"
+                      }`,
+                      "_blank"
+                    );
+                  }}
+                >
+                  Sign up
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={
+                    loading ||
+                    subnetEmail.trim().length === 0 ||
+                    subnetPassword.trim().length === 0
+                  }
+                  onClick={() => subnetLogin()}
+                >
+                  Register
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} className={classes.subnetDescription}>
+            <div className={classes.smallBoxy}>
+              <h1 className={classes.headerStyle}>Why should I register?</h1>
+              Registering this cluster with the MinIO Subscription Network
+              (SUBNET) provides the following benefits in addition to the
+              commercial license and SLA backed support:
+              <br />
+              <ul>
+                <li>Call Home Monitoring</li>
+                <li>Health Diagnostics</li>
+                <li>Performance Analysis</li>
+              </ul>
+            </div>
           </Grid>
         </Fragment>
       );
@@ -517,10 +559,7 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
         </Grid>
         <Grid item xs={12} className={clsx(classes.actionsTray)}>
           <InputBoxWrapper
-            className={clsx(
-              classes.subnetLoginInputBoxWrapper,
-              classes.copyInputBox
-            )}
+            className={clsx(classes.copyInputBox)}
             id="registration-token"
             name="registration-token"
             placeholder=""
@@ -551,7 +590,6 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
         </Grid>
         <Grid item xs={12} className={clsx(classes.actionsTray)}>
           <InputBoxWrapper
-            className={classes.subnetLoginInputBoxWrapper}
             value={license}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setLicense(event.target.value)
@@ -667,7 +705,11 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  operatorMode: state.system.operatorMode,
+});
+
+const connector = connect(mapState, {
   displayErrorMessage: setErrorSnackMessage,
 });
 
