@@ -189,16 +189,18 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func AddBucket(BucketName string, Versioning bool, Locking bool) (*http.Response, error) {
+func AddBucket(name string, locking bool, versioning bool, quota map[string]interface{}, retention map[string]interface{}) (*http.Response, error) {
 	/*
 	   This is an atomic function that we can re-use to create a bucket on any
 	   desired test.
 	*/
 	// Needed Parameters for API Call
 	requestDataAdd := map[string]interface{}{
-		"name":       BucketName,
-		"versioning": Versioning,
-		"locking":    Locking,
+		"name":       name,
+		"locking":    locking,
+		"versioning": versioning,
+		"quota":      quota,
+		"retention":  retention,
 	}
 
 	// Creating the Call by adding the URL and Headers
@@ -287,10 +289,61 @@ func PutBucketsTags(bucketName string, tags map[string]string) (*http.Response, 
 	return response, err
 }
 
+func SetBucketRetention(bucketName string, mode string, unit string, validity int) (*http.Response, error) {
+	/*
+		Helper function to set bucket's retention
+		PUT: {{baseUrl}}/buckets/:bucket_name/retention
+		{
+			"mode":"compliance",
+			"unit":"years",
+			"validity":2
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"mode":     mode,
+		"unit":     unit,
+		"validity": validity,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest("PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
+		requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetBucketRetention(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to get the bucket's retention
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 
-	response, err := AddBucket("test1", false, false)
+	response, err := AddBucket("test1", false, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -315,7 +368,7 @@ func TestAddBucketLocking(t *testing.T) {
 		test will see and make sure this is not allowed and that we get proper
 		error for this scenario.
 	*/
-	response, err := AddBucket("test1", false, true)
+	response, err := AddBucket("test1", true, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -332,7 +385,7 @@ func TestAddBucketLocking(t *testing.T) {
 	/*
 		This is valid, versioning is true, then locking can be true as well.
 	*/
-	response, err = AddBucket("thujun", true, true)
+	response, err = AddBucket("thujun", true, true, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -366,7 +419,7 @@ func TestGetBucket(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	response, err := AddBucket("test3", false, false)
+	response, err := AddBucket("test3", false, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -403,7 +456,7 @@ func TestSetBucketTags(t *testing.T) {
 	}
 
 	// put bucket
-	response, err := AddBucket("test4", false, false)
+	response, err := AddBucket("test4", false, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -513,7 +566,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	requestDataBody := bytes.NewReader(requestDataJSON)
 
-	response, err = AddBucket("test2", true, false)
+	response, err = AddBucket("test2", true, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -599,7 +652,7 @@ func TestListBuckets(t *testing.T) {
 	var numberOfBuckets = 3
 	for i := 1; i <= numberOfBuckets; i++ {
 		response, err := AddBucket(
-			"testlistbuckets"+strconv.Itoa(i), false, false)
+			"testlistbuckets"+strconv.Itoa(i), false, false, nil, nil)
 		assert.Nil(err)
 		if err != nil {
 			log.Println(err)
@@ -648,7 +701,7 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 
 	// 1. Create the bucket
 	assert := assert.New(t)
-	response, err := AddBucket("bucketinformation1", false, false)
+	response, err := AddBucket("bucketinformation1", false, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -703,7 +756,7 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 	*/
 	// 1. Create the bucket
 	assert := assert.New(t)
-	response, err := AddBucket("bucketinformation2", false, false)
+	response, err := AddBucket("bucketinformation2", false, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -746,4 +799,78 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 	// Since bucketinformation3 hasn't been created, then it is expected that
 	// tag2 is not part of the response, this is why assert.False is used.
 	assert.False(strings.Contains(finalResponse, "tag2"), finalResponse)
+}
+
+func TestBucketRetention(t *testing.T) {
+	/*
+		To test bucket retention feature
+	*/
+	// 1. Create the bucket with 2 years validity retention
+	assert := assert.New(t)
+	/*
+		{
+			"name":"setbucketretention1",
+			"versioning":true,
+			"locking":true,
+			"retention":
+				{
+					"mode":"compliance",
+					"unit":"years",
+					"validity":2
+				}
+		}
+	*/
+	retention := make(map[string]interface{})
+	retention["mode"] = "compliance"
+	retention["unit"] = "years"
+	retention["validity"] = 2
+	response, err := AddBucket("setbucketretention1", true, true, nil, retention)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Set the bucket's retention from 2 years to 3 years
+	setBucketRetentionResponse, setBucketRetentionError := SetBucketRetention(
+		"setbucketretention1",
+		"compliance",
+		"years",
+		3,
+	)
+	assert.Nil(setBucketRetentionError)
+	if setBucketRetentionError != nil {
+		log.Println(setBucketRetentionError)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if setBucketRetentionResponse != nil {
+		assert.Equal(200, setBucketRetentionResponse.StatusCode,
+			inspectHTTPResponse(setBucketRetentionResponse))
+	}
+
+	// 3. Verify the bucket's retention was properly set.
+	getBucketRetentionResponse, getBucketRetentionError := GetBucketRetention(
+		"setbucketretention1",
+	)
+	assert.Nil(getBucketRetentionError)
+	if getBucketRetentionError != nil {
+		log.Println(getBucketRetentionError)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	finalResponse := inspectHTTPResponse(getBucketRetentionResponse)
+	if getBucketRetentionResponse != nil {
+		assert.Equal(
+			200,
+			getBucketRetentionResponse.StatusCode,
+			finalResponse,
+		)
+	}
+	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
+	assert.Equal(expected, finalResponse, finalResponse)
 }
