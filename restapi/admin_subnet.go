@@ -21,6 +21,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
@@ -58,10 +60,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 	// Get subnet info
 	api.AdminAPISubnetInfoHandler = admin_api.SubnetInfoHandlerFunc(func(params admin_api.SubnetInfoParams, session *models.Principal) middleware.Responder {
-		client := &cluster.HTTPClient{
-			Client: GetConsoleHTTPClient(),
-		}
-		resp, err := GetSubnetInfoResponse(session, client)
+		resp, err := GetSubnetInfoResponse(session)
 		if err != nil {
 			return admin_api.NewSubnetInfoDefault(int(err.Code)).WithPayload(err)
 		}
@@ -113,8 +112,9 @@ func SubnetLogin(client cluster.HTTPClientI, username, password string) (string,
 
 func GetSubnetLoginResponse(session *models.Principal, params admin_api.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
 	ctx := context.Background()
-	httpClient := &cluster.HTTPClient{
-		Client: GetConsoleHTTPClient(),
+	subnetHTTPClient, err := GetSubnetHTTPClient(params.Body.Proxy)
+	if err != nil {
+		return nil, prepareError(err)
 	}
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -135,7 +135,7 @@ func GetSubnetLoginResponse(session *models.Principal, params admin_api.SubnetLo
 	username := params.Body.Username
 	password := params.Body.Password
 	if username != "" && password != "" {
-		token, mfa, err := SubnetLogin(httpClient, username, password)
+		token, mfa, err := SubnetLogin(subnetHTTPClient, username, password)
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -172,11 +172,34 @@ func SubnetLoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp stri
 	return nil, errors.New("something went wrong")
 }
 
-func GetSubnetLoginWithMFAResponse(params admin_api.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
-	client := &cluster.HTTPClient{
-		Client: GetConsoleHTTPClient(),
+// GetSubnetHTTPClient will return a client with proxy if configured, otherwise will return the default console http client
+func GetSubnetHTTPClient(proxy string) (*cluster.HTTPClient, error) {
+	var subnetHTTPClient *http.Client
+	if proxy != "" {
+		transport := prepareSTSClientTransport(false)
+		subnetHTTPClient = &http.Client{
+			Transport: transport,
+		}
+		subnetProxyURL, err := url.Parse(proxy)
+		if err != nil {
+			return nil, err
+		}
+		subnetHTTPClient.Transport.(*http.Transport).Proxy = http.ProxyURL(subnetProxyURL)
+	} else {
+		subnetHTTPClient = GetConsoleHTTPClient()
 	}
-	resp, err := SubnetLoginWithMFA(client, *params.Body.Username, *params.Body.MfaToken, *params.Body.Otp)
+	clientI := &cluster.HTTPClient{
+		Client: subnetHTTPClient,
+	}
+	return clientI, nil
+}
+
+func GetSubnetLoginWithMFAResponse(params admin_api.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
+	subnetHTTPClient, err := GetSubnetHTTPClient(params.Body.Proxy)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	resp, err := SubnetLoginWithMFA(subnetHTTPClient, *params.Body.Username, *params.Body.MfaToken, *params.Body.Otp)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -231,17 +254,18 @@ func GetSubnetRegisterResponse(session *models.Principal, params admin_api.Subne
 		return prepareError(err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	client := &cluster.HTTPClient{
-		Client: GetConsoleHTTPClient(),
+	subnetHTTPClient, err := GetSubnetHTTPClient(params.Body.Proxy)
+	if err != nil {
+		return prepareError(err)
 	}
-	err = GetSubnetRegister(ctx, adminClient, client, params)
+	err = GetSubnetRegister(ctx, adminClient, subnetHTTPClient, params)
 	if err != nil {
 		return prepareError(err)
 	}
 	return nil
 }
 
-func GetSubnetInfoResponse(session *models.Principal, client cluster.HTTPClientI) (*models.License, *models.Error) {
+func GetSubnetInfoResponse(session *models.Principal) (*models.License, *models.Error) {
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -254,6 +278,9 @@ func GetSubnetInfoResponse(session *models.Principal, client cluster.HTTPClientI
 	}
 	if subnetTokens.APIKey == "" {
 		return nil, prepareError(errLicenseNotFound)
+	}
+	client := &cluster.HTTPClient{
+		Client: GetConsoleHTTPClient(),
 	}
 	licenseInfo, err := subnet.ParseLicense(client, subnetTokens.License)
 	if err != nil {

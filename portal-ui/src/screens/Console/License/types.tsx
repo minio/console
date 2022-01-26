@@ -27,11 +27,13 @@ export interface SubnetLoginRequest {
   username?: string;
   password?: string;
   apiKey?: string;
+  proxy?: string;
 }
 
 export interface SubnetRegisterRequest {
   token: string;
   account_id: string;
+  proxy?: string;
 }
 
 export interface SubnetOrganization {
@@ -54,6 +56,7 @@ export interface SubnetLoginWithMFARequest {
   username: string;
   otp: string;
   mfa_token: string;
+  proxy?: string;
 }
 
 export interface SubnetRegTokenResponse {

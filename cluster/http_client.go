@@ -47,7 +47,7 @@ func (c *HTTPClient) Post(url, contentType string, body io.Reader) (resp *http.R
 	return c.Client.Post(url, contentType, body)
 }
 
-// Do implements http.Client.Do()
+// Do implement http.Client.Do()
 func (c *HTTPClient) Do(req *http.Request) (*http.Response, error) {
 	return c.Client.Do(req)
 }
