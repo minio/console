@@ -5688,6 +5688,9 @@ func init() {
         "otp": {
           "type": "string"
         },
+        "proxy": {
+          "type": "string"
+        },
         "username": {
           "type": "string"
         }
@@ -5700,6 +5703,9 @@ func init() {
           "type": "string"
         },
         "password": {
+          "type": "string"
+        },
+        "proxy": {
           "type": "string"
         },
         "username": {
@@ -5758,6 +5764,9 @@ func init() {
       ],
       "properties": {
         "account_id": {
+          "type": "string"
+        },
+        "proxy": {
           "type": "string"
         },
         "token": {
@@ -11875,6 +11884,9 @@ func init() {
         "otp": {
           "type": "string"
         },
+        "proxy": {
+          "type": "string"
+        },
         "username": {
           "type": "string"
         }
@@ -11887,6 +11899,9 @@ func init() {
           "type": "string"
         },
         "password": {
+          "type": "string"
+        },
+        "proxy": {
           "type": "string"
         },
         "username": {
@@ -11945,6 +11960,9 @@ func init() {
       ],
       "properties": {
         "account_id": {
+          "type": "string"
+        },
+        "proxy": {
           "type": "string"
         },
         "token": {

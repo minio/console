@@ -29,6 +29,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { CopyIcon, UsersIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import DnsIcon from "@mui/icons-material/Dns";
 import OnlineRegistrationIcon from "../../../icons/OnlineRegistrationIcon";
 import OfflineRegistrationIcon from "../../../icons/OfflineRegistrationIcon";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -60,6 +61,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import HelpBox from "../../../common/HelpBox";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import RegisterStatus from "./RegisterStatus";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IRegister {
   classes: any;
@@ -170,6 +172,8 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
   const [clusterRegistered, setClusterRegistered] = useState<boolean>(false);
   const [initialLicenseLoading, setInitialLicenseLoading] =
     useState<boolean>(true);
+  const [subnetProxy, setSubnetProxy] = useState<string>("");
+  const [displaySubnetProxy, setDisplaySubnetProxy] = useState<boolean>(false);
 
   const clearForm = () => {
     setSubnetAccessToken("");
@@ -240,6 +244,9 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
       token: token,
       account_id: account_id,
     };
+    if (displaySubnetProxy) {
+      request.proxy = subnetProxy;
+    }
     api
       .invoke("POST", "/api/v1/subnet/register", request)
       .then(() => {
@@ -272,6 +279,9 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
       otp: subnetOTP,
       mfa_token: subnetMFAToken,
     };
+    if (displaySubnetProxy) {
+      request.proxy = subnetProxy;
+    }
     api
       .invoke("POST", "/api/v1/subnet/login/mfa", request)
       .then((resp: SubnetLoginResponse) => {
@@ -308,6 +318,9 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
       password: subnetPassword,
       apiKey: license,
     };
+    if (displaySubnetProxy) {
+      request.proxy = subnetProxy;
+    }
     api
       .invoke("POST", "/api/v1/subnet/login", request)
       .then((resp: SubnetLoginResponse) => {
@@ -604,6 +617,36 @@ const Register = ({ classes, displayErrorMessage }: IRegister) => {
                   a proxy to connect to Subnet.
                   <br />
                   <br />
+                  <Grid container>
+                    <Grid item xs={12} className={clsx(classes.actionsTray)}>
+                      <FormSwitchWrapper
+                        value="enableProxy"
+                        id="enableProxy"
+                        name="enableProxy"
+                        checked={displaySubnetProxy}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          setDisplaySubnetProxy(event.target.checked);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6} className={clsx(classes.actionsTray)}>
+                      {displaySubnetProxy && (
+                        <InputBoxWrapper
+                          overlayIcon={<DnsIcon />}
+                          id="subnetProxy"
+                          name="subnetProxy"
+                          onChange={(
+                            event: React.ChangeEvent<HTMLInputElement>
+                          ) => setSubnetProxy(event.target.value)}
+                          placeholder="https://192.168.1.3:3128"
+                          label=""
+                          value={subnetProxy}
+                        />
+                      )}
+                    </Grid>
+                  </Grid>
                   Alternatively you can try <OfflineRegistrationBackIcon />
                   <Link
                     className={classes.link}
