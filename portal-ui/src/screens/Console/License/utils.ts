@@ -252,14 +252,14 @@ export const planButtons: IPlanButton[] = [
     id: 1,
     text: "Subscribe",
     text2: "Sign up",
-    link: "https://subnet.min.io/subscription",
+    link: "https://min.io/signup",
     plan: "Standard",
   },
   {
     id: 2,
     text: "Subscribe",
     text2: "Sign up",
-    link: "https://subnet.min.io/subscription",
+    link: "https://min.io/signup",
     plan: "Enterprise",
   },
 ];
