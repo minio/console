@@ -183,6 +183,39 @@ func RemoveUser(name string) (*http.Response, error) {
 	return response, err
 }
 
+func UpdateGroupsForAUser(userName string, groups []string) (*http.Response, error) {
+	/*
+		Helper function to update groups for a user
+		PUT: {{baseUrl}}/user/groups?name=username
+		{
+			"groups":[
+				"groupone",
+				"grouptwo"
+			]
+		}
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	requestDataAdd := map[string]interface{}{
+		"groups": groups,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/user/groups?name="+userName,
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddUser(t *testing.T) {
 	/*
 		This is an API Test to add a user via api/v1/users, the intention
@@ -499,4 +532,59 @@ func TestRemoveUserSuccessfulResponse(t *testing.T) {
 	assert.True(strings.Contains(
 		finalResponse, "The specified user does not exist"), finalResponse)
 
+}
+
+func TestUpdateGroupsForAUser(t *testing.T) {
+	/*
+		To test Update Groups For a User End Point.
+	*/
+	// 1. Create the user
+	numberOfGroups := 3
+	groupName := "updategroupforausergroup"
+	userName := "updategroupsforauser1"
+	assert := assert.New(t)
+	var groups = []string{}
+	var policies = []string{}
+	response, err := AddUser(userName, "secretKey", groups, policies)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		fmt.Println("StatusCode:", response.StatusCode)
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Update the groups of the created user with newGroups
+	var newGroups = make([]string, 3)
+	for i := 0; i < numberOfGroups; i++ {
+		newGroups[i] = groupName + strconv.Itoa(i)
+	}
+	response, err = UpdateGroupsForAUser(userName, newGroups)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		fmt.Println("StatusCode:", response.StatusCode)
+		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Verify the newGroups were updated accordingly
+	getUserInfoResponse, getUserInfoErr := GetUserInformation(userName)
+	if getUserInfoErr != nil {
+		log.Println(getUserInfoErr)
+		assert.Fail("There was an error in the response")
+		return
+	}
+	if getUserInfoResponse != nil {
+		fmt.Println("StatusCode:", getUserInfoResponse.StatusCode)
+		assert.Equal(
+			200, getUserInfoResponse.StatusCode, "Status Code is incorrect")
+	}
+	finalResponse := inspectHTTPResponse(getUserInfoResponse)
+	for i := 0; i < numberOfGroups; i++ {
+		assert.True(strings.Contains(
+			finalResponse, groupName+strconv.Itoa(i)), finalResponse)
+	}
 }
