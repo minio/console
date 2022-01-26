@@ -162,7 +162,10 @@ const TenantVolumes = ({
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
-          itemActions={[{ type: "view", onClick: PVCViewAction }, { type: "delete", onClick: confirmDeletePVC }]}
+          itemActions={[
+            { type: "view", onClick: PVCViewAction },
+            { type: "delete", onClick: confirmDeletePVC },
+          ]}
           columns={[
             {
               label: "Name",
