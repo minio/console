@@ -66,7 +66,7 @@ const styles = (theme: Theme) =>
     },
     currPlan: {
       color: "white",
-      backgroundColor: "#4CCB92",
+      backgroundColor: "#2781B0",
     },
     planHeader: {
       padding: 8,
