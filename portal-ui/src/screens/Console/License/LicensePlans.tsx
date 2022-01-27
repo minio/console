@@ -351,9 +351,7 @@ const LicensePlans = ({
                         onClick={(e) => {
                           e.preventDefault();
                           window.open(
-                            `${button.link}/?ref=${
-                              operatorMode ? "op" : "con"
-                            }`,
+                            `${button.link}?ref=${operatorMode ? "op" : "con"}`,
                             "_blank"
                           );
                         }}
