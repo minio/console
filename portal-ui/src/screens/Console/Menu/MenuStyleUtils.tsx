@@ -94,6 +94,7 @@ export const menuItemStyle: any = {
     ".menu-icon": {
       border: "1px solid hsla(0,0%,100%,.1)",
       borderRadius: "50%",
+      background: "#072549",
     },
   },
   "& .menu-icon": {
@@ -105,9 +106,12 @@ export const menuItemStyle: any = {
   },
   "&:hover, &:focus": {
     background: "hsla(0,0%,100%,.25)",
-
-    "& .menu-icon svg": {
-      fill: "#c7c3c3",
+    "& .menu-icon": {
+      background: "#072549",
+      borderRadius: "50%",
+      "& svg": {
+        fill: "#c7c3c3",
+      },
     },
   },
 };
