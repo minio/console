@@ -78,9 +78,8 @@ func GetOrganizations(client cluster.HTTPClientI, token string) ([]*models.Subne
 		return nil, err
 	}
 	var organizations []*models.SubnetOrganization
-	err = json.Unmarshal([]byte(respStr), &organizations)
-	if err != nil {
-		log.Println(err)
+	if err = json.Unmarshal([]byte(respStr), &organizations); err != nil {
+		return nil, err
 	}
 	return organizations, nil
 }
