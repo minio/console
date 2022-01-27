@@ -28,6 +28,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -237,6 +238,7 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 
 	//Get tenant monitoring info
 	api.OperatorAPIGetTenantMonitoringHandler = operator_api.GetTenantMonitoringHandlerFunc(func(params operator_api.GetTenantMonitoringParams, session *models.Principal) middleware.Responder {
+
 		payload, err := getTenantMonitoringResponse(session, params)
 		if err != nil {
 			return operator_api.NewGetTenantMonitoringDefault(int(err.Code)).WithPayload(err)
@@ -1837,6 +1839,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 
 // setTenantLogsResponse returns the logs of a tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
+
 	// 30 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -1854,6 +1857,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if err != nil {
 		return false, prepareError(err, errorUnableToGetTenantUsage)
 	}
+
 	var labels = make(map[string]string)
 	for i := 0; i < len(params.Data.Labels); i++ {
 		if params.Data.Labels[i] != nil {
@@ -1875,6 +1879,26 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 		}
 	}
 	minTenant.Spec.Log.NodeSelector = nodeSelector
+	logResourceRequest := make(corev1.ResourceList)
+
+	if reflect.TypeOf(params.Data.LogCPURequest).Kind() == reflect.String && params.Data.LogCPURequest != "0Gi" && params.Data.LogCPURequest != "" {
+		cpuQuantity, err := resource.ParseQuantity(params.Data.LogCPURequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+		logResourceRequest["cpu"] = cpuQuantity
+		minTenant.Spec.Log.Resources.Requests = logResourceRequest
+	}
+	if reflect.TypeOf(params.Data.LogMemRequest).Kind() == reflect.String {
+		memQuantity, err := resource.ParseQuantity(params.Data.LogMemRequest)
+		if err != nil {
+			return false, prepareError(err)
+		}
+
+		logResourceRequest["memory"] = memQuantity
+		minTenant.Spec.Log.Resources.Requests = logResourceRequest
+	}
+
 	modified := false
 	if minTenant.Spec.Log.Db != nil {
 		modified = true
@@ -1901,40 +1925,23 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 		modified = true
 	}
 
-	logResourceRequest := make(corev1.ResourceList)
-	if &params.Data.LogCPURequest != nil {
-		cpuQuantity, err := resource.ParseQuantity(params.Data.LogCPURequest)
-		if err != nil {
-			return false, prepareError(err)
-		}
-		logResourceRequest["cpu"] = cpuQuantity
-	}
-	if &params.Data.LogMemRequest != nil {
-		memQuantity, err := resource.ParseQuantity(params.Data.LogMemRequest)
-		if err != nil {
-			return false, prepareError(err)
-		}
-		logResourceRequest["memory"] = memQuantity
-	}
-
 	logDBResourceRequest := make(corev1.ResourceList)
-	if &params.Data.LogDBCPURequest != nil {
-		cpuQuantity, err := resource.ParseQuantity(params.Data.LogDBCPURequest)
+	if reflect.TypeOf(params.Data.LogDBCPURequest).Kind() == reflect.String && params.Data.LogDBCPURequest != "0Gi" && params.Data.LogDBCPURequest != "" {
+		dbCPUQuantity, err := resource.ParseQuantity(params.Data.LogDBCPURequest)
 		if err != nil {
 			return false, prepareError(err)
 		}
-		logDBResourceRequest["cpu"] = cpuQuantity
+		logDBResourceRequest["cpu"] = dbCPUQuantity
+		minTenant.Spec.Log.Db.Resources.Requests = logDBResourceRequest
 	}
-	if &params.Data.LogDBMemRequest != nil {
-		memQuantity, err := resource.ParseQuantity(params.Data.LogDBMemRequest)
+	if reflect.TypeOf(params.Data.LogDBMemRequest).Kind() == reflect.String {
+		dbMemQuantity, err := resource.ParseQuantity(params.Data.LogDBMemRequest)
 		if err != nil {
 			return false, prepareError(err)
 		}
-		logDBResourceRequest["memory"] = memQuantity
+		logDBResourceRequest["memory"] = dbMemQuantity
+		minTenant.Spec.Log.Db.Resources.Requests = logDBResourceRequest
 	}
-	minTenant.Spec.Log.Resources.Requests = logResourceRequest
-	minTenant.Spec.Log.Db.Resources.Requests = logDBResourceRequest
-
 	minTenant.Spec.Log.Image = params.Data.Image
 	diskCapacityGB, err := strconv.Atoi(params.Data.DiskCapacityGB)
 	if err == nil {
@@ -1978,6 +1985,9 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 				NodeSelector:       dbNodeSelector,
 				Image:              params.Data.DbImage,
 				ServiceAccountName: params.Data.DbServiceAccountName,
+				Resources: corev1.ResourceRequirements{
+					Requests: minTenant.Spec.Log.Db.Resources.Requests,
+				},
 			}
 		} else {
 			minTenant.Spec.Log.Db.Labels = dbLabels
@@ -1987,6 +1997,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 			minTenant.Spec.Log.Db.ServiceAccountName = params.Data.DbServiceAccountName
 		}
 	}
+
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, prepareError(err)
