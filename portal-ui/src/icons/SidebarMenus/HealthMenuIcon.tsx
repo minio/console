@@ -22,38 +22,15 @@ const HealthMenuIcon = (props: SVGProps<SVGSVGElement>) => (
     xmlns="http://www.w3.org/2000/svg"
     className={`min-icon`}
     fill={"currentcolor"}
-    viewBox="0 0 16 13.597"
+    viewBox="0 0 256 256"
     {...props}
   >
-    <defs>
-      <clipPath id="clip-path-health-menu">
-        <rect
-          id="Rectángulo_1588"
-          data-name="Rectángulo 1588"
-          width="16"
-          height="13.597"
-          fill="#8399ab"
-        />
-      </clipPath>
-    </defs>
-    <g
-      id="Grupo_2444"
-      data-name="Grupo 2444"
-      clipPath="url(#clip-path-health-menu)"
-    >
+    <g id="health-icon" transform="translate(-7440.898 -155.188)">
       <path
-        id="Trazado_7105"
-        data-name="Trazado 7105"
-        d="M271.044,465.92"
-        transform="translate(-263.134 -452.323)"
-        fill="#8399ab"
-      />
-      <path
-        id="Trazado_7106"
-        data-name="Trazado 7106"
-        d="M16,4.462A4.35,4.35,0,0,0,11.768,0,4.2,4.2,0,0,0,7.992,2.484,4.2,4.2,0,0,0,4.217,0,4.326,4.326,0,0,0,0,4.462c0,5.9,7.91,9.136,7.91,9.136S16,10.329,16,4.462M10.886,8.084a.653.653,0,0,1-.653.653H9.146V9.824a.653.653,0,0,1-.653.653H7.508a.653.653,0,0,1-.653-.653V8.737H5.768a.653.653,0,0,1-.653-.653V7.1a.653.653,0,0,1,.653-.653H6.855V5.359a.653.653,0,0,1,.653-.653h.986a.653.653,0,0,1,.653.653V6.446h1.087a.653.653,0,0,1,.653.653Z"
-        transform="translate(0 0)"
-        fill="#8399ab"
+        id="Unión_51"
+        data-name="Unión 51"
+        d="M29.764,256A29.756,29.756,0,0,1,0,226.113V74.364H32.285V223.717H181.242V256Zm189.61-6.664V219.62h29.721v29.716Zm4.342-68.343V32.283H74.76V0H226.227A29.815,29.815,0,0,1,256,29.713v151.28Zm-72.251-.018V151.259h29.8v29.716Zm-76.706,0V151.259h29.8v29.716Zm76.706-76.9V74.364h29.8V104.08Zm-76.649,0V74.364h29.72V104.08ZM6.9,36.867V7.151h29.72V36.867Z"
+        transform="translate(7440.898 155.188)"
       />
     </g>
   </svg>
