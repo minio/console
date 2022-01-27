@@ -21,29 +21,33 @@ import ActionLink from "./ActionLink";
 import { Box } from "@mui/material";
 import EditActionButton from "./EditActionButton";
 
-type PolicyItemProps = {
+type EditablePropertyItemProps = {
   isLoading: boolean;
   resourceName: string;
   iamScopes: string[];
   property: any;
   value: any;
   onEdit: () => void;
+  secureCmpProps?: Record<any, any>;
 };
 
 const SecureAction = ({
   resourceName,
   iamScopes,
+  secureCmpProps = {},
   children,
 }: {
   resourceName: string;
   iamScopes: string[];
   children: any;
+  secureCmpProps?: Record<any, any>;
 }) => {
   return (
     <SecureComponent
       scopes={iamScopes}
       resource={resourceName}
       errorProps={{ disabled: true }}
+      {...secureCmpProps}
     >
       {children}
     </SecureComponent>
@@ -54,10 +58,11 @@ const EditablePropertyItem = ({
   isLoading = true,
   resourceName = "",
   iamScopes,
+  secureCmpProps = {},
   property = null,
   value = null,
   onEdit,
-}: PolicyItemProps) => {
+}: EditablePropertyItemProps) => {
   return (
     <Box
       sx={{
@@ -69,12 +74,20 @@ const EditablePropertyItem = ({
       <LabelValuePair
         label={property}
         value={
-          <SecureAction resourceName={resourceName} iamScopes={iamScopes}>
+          <SecureAction
+            resourceName={resourceName}
+            iamScopes={iamScopes}
+            secureCmpProps={secureCmpProps}
+          >
             <ActionLink isLoading={isLoading} onClick={onEdit} label={value} />
           </SecureAction>
         }
       />
-      <SecureAction resourceName={resourceName} iamScopes={iamScopes}>
+      <SecureAction
+        resourceName={resourceName}
+        iamScopes={iamScopes}
+        secureCmpProps={secureCmpProps}
+      >
         <EditActionButton
           onClick={onEdit}
           sx={{
