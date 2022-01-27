@@ -18,6 +18,7 @@ package integration
 
 import (
 	"bytes"
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -40,6 +41,14 @@ import (
 )
 
 var token string
+
+func encodeBase64(fileName string) string {
+	/*
+		Helper function to encode in base64 the file name so we can get the path
+	*/
+	path := b64.StdEncoding.EncodeToString([]byte(fileName))
+	return path
+}
 
 func inspectHTTPResponse(httpResponse *http.Response) string {
 	/*
@@ -328,6 +337,126 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	request, err := http.NewRequest("GET",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
 		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteMultipleObjects(bucketName string, files []map[string]interface{}) (*http.Response, error) {
+	/*
+		Helper function to delete multiple objects in a container.
+		POST: /buckets/{bucket_name}/delete-objects
+		files: [
+			{
+				"path": "veniam tempor in",
+				"versionID": "ea dolor Duis",
+				"recursive": false
+			},
+			{
+				"path": "proident eu esse",
+				"versionID": "eiusmod amet commodo",
+				"recursive": true
+		    }
+		]
+	*/
+	requestDataAdd := map[string]interface{}{
+		"files": files,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-objects",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func UploadAnObject(bucketName string, fileName string) (*http.Response, error) {
+	/*
+		Helper function to upload a file to a bucket for testing.
+		POST {{baseUrl}}/buckets/:bucket_name/objects/upload
+	*/
+	boundary := "WebKitFormBoundaryWtayBM7t9EUQb8q3"
+	boundaryStart := "------" + boundary + "\r\n"
+	contentDispositionOne := "Content-Disposition: form-data; name=\"2\"; "
+	contentDispositionTwo := "filename=\"" + fileName + "\"\r\n"
+	contenType := "Content-Type: text/plain\r\n\r\na\n\r\n"
+	boundaryEnd := "------" + boundary + "--\r\n"
+	file := boundaryStart + contentDispositionOne + contentDispositionTwo +
+		contenType + boundaryEnd
+	arrayOfBytes := []byte(file)
+	requestDataBody := bytes.NewReader(arrayOfBytes)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/upload",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add(
+		"Content-Type",
+		"multipart/form-data; boundary=----"+boundary,
+	)
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ListObjects(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to list objects in a bucket.
+		GET: {{baseUrl}}/buckets/:bucket_name/objects
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects",
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteObject(bucketName string, path string, recursive bool, allVersions bool) (*http.Response, error) {
+	/*
+		Helper function to delete an object from a given bucket.
+		DELETE:
+		{{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
+	*/
+	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
+		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
+		strconv.FormatBool(allVersions)
+	request, err := http.NewRequest(
+		"DELETE",
+		url,
+		nil,
+	)
 	if err != nil {
 		log.Println(err)
 	}
@@ -872,5 +1001,76 @@ func TestBucketRetention(t *testing.T) {
 		)
 	}
 	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
+	assert.Equal(expected, finalResponse, finalResponse)
+}
+
+func TestDeleteMultipleObjects(t *testing.T) {
+	/*
+		Function to test the deletion of multiple objects from a given bucket.
+	*/
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testdeletemultipleobjsbucket1"
+	numberOfFiles := 5
+	fileName := "testdeletemultipleobjs"
+
+	// 1. Create a bucket for this particular test
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Add couple of objects to this bucket
+	for i := 1; i <= numberOfFiles; i++ {
+		uploadResponse, uploadError := UploadAnObject(
+			bucketName, fileName+strconv.Itoa(i)+".txt")
+		assert.Nil(uploadError)
+		if uploadError != nil {
+			log.Println(uploadError)
+			return
+		}
+		if uploadResponse != nil {
+			assert.Equal(200, uploadResponse.StatusCode,
+				inspectHTTPResponse(uploadResponse))
+		}
+	}
+
+	// 3. Delete these objects
+	for i := 1; i <= numberOfFiles; i++ {
+		deleteResponse, deleteError := DeleteObject(
+			bucketName, encodeBase64(
+				fileName+strconv.Itoa(i)+".txt"), false, false)
+		assert.Nil(deleteError)
+		if deleteError != nil {
+			log.Println(deleteError)
+			return
+		}
+		if deleteResponse != nil {
+			assert.Equal(200, deleteResponse.StatusCode,
+				inspectHTTPResponse(deleteResponse))
+		}
+	}
+
+	// 4. List the objects, empty list is expected!
+	listResponse, listError := ListObjects(bucketName)
+	assert.Nil(listError)
+	if listError != nil {
+		log.Println(listError)
+		return
+	}
+	finalResponse := inspectHTTPResponse(listResponse)
+	if listResponse != nil {
+		assert.Equal(200, listResponse.StatusCode,
+			finalResponse)
+	}
+
+	// 5. Verify empty list is obtained as we deleted all the objects
+	expected := "Http Response: {\"objects\":null}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
 }
