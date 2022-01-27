@@ -15,38 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
-import clsx from "clsx";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  CircularProgress,
-  LinearProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@mui/material";
+import { Box, CircularProgress, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import Chip from "@mui/material/Chip";
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
 import ShareFile from "./ShareFile";
 import {
   actionsTray,
   buttonsStyles,
   containerForHeader,
   hrClass,
-  searchField,
+  tableStyles,
+  spacingUtils,
+  textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo, MetadataResponse } from "./types";
+import { IFileInfo } from "./types";
 import { download, extensionPreview } from "../utils";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
@@ -54,7 +40,6 @@ import api from "../../../../../../common/api";
 import TableWrapper, {
   ItemActions,
 } from "../../../../Common/TableWrapper/TableWrapper";
-import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import {
   setErrorSnackMessage,
@@ -81,6 +66,14 @@ import {
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
+import SearchBox from "../../../../Common/SearchBox";
+import ObjectTags from "./ObjectTags";
+import { AppState } from "../../../../../../store";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { withStyles } from "@mui/styles";
+import { DisabledIcon } from "../../../../../../icons";
+import LabelWithIcon from "../../../BucketDetails/SummaryItems/LabelWithIcon";
 
 const RecoverIcon = React.lazy(
   () => import("../../../../../../icons/RecoverIcon")
@@ -92,12 +85,16 @@ const DownloadIcon = React.lazy(
 const DeleteIcon = React.lazy(
   () => import("../../../../../../icons/DeleteIcon")
 );
-const EditIcon = React.lazy(() => import("../../../../../../icons/EditIcon"));
-const SearchIcon = React.lazy(
-  () => import("../../../../../../icons/SearchIcon")
-);
+
 const ObjectBrowserIcon = React.lazy(
   () => import("../../../../../../icons/ObjectBrowserIcon")
+);
+const ObjectMetaData = React.lazy(() => import("./ObjectMetaData"));
+const EditablePropertyItem = React.lazy(
+  () => import("../../../BucketDetails/SummaryItems/EditablePropertyItem")
+);
+const LabelValuePair = React.lazy(
+  () => import("../../../../Common/UsageBarWrapper/LabelValuePair")
 );
 
 const styles = (theme: Theme) =>
@@ -161,7 +158,9 @@ const styles = (theme: Theme) =>
     ...hrClass,
     ...buttonsStyles,
     ...actionsTray,
-    ...searchField,
+    ...tableStyles,
+    ...spacingUtils,
+    ...textStyleUtils,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -192,6 +191,12 @@ const emptyFile: IFileInfo = {
   version_id: null,
 };
 
+const twoColCssGridLayoutConfig = {
+  display: "grid",
+  gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
+  gridAutoFlow: { xs: "dense", sm: "row" },
+  gap: 2,
+};
 const ObjectDetails = ({
   classes,
   downloadingFiles,
@@ -218,8 +223,6 @@ const ObjectDetails = ({
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [metadataLoad, setMetadataLoad] = useState<boolean>(true);
-  const [metadata, setMetadata] = useState<any>({});
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
   const [restoreVersion, setRestoreVersion] = useState<string>("");
 
@@ -270,25 +273,6 @@ const ObjectDetails = ({
     setErrorSnackMessage,
     distributedSetup,
   ]);
-
-  useEffect(() => {
-    if (metadataLoad && internalPaths !== "") {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
-        )
-        .then((res: MetadataResponse) => {
-          let metadata = get(res, "objectMetadata", {});
-
-          setMetadata(metadata);
-          setMetadataLoad(false);
-        })
-        .catch((error: ErrorResponseHandler) => {
-          setMetadataLoad(false);
-        });
-    }
-  }, [bucketName, metadataLoad, internalPaths]);
 
   let tagKeys: string[] = [];
 
@@ -421,7 +405,6 @@ const ObjectDetails = ({
 
   const closeAddTagModal = (reloadObjectData: boolean) => {
     setTagModalOpen(false);
-
     if (reloadObjectData) {
       setLoadObjectData(true);
     }
@@ -429,7 +412,6 @@ const ObjectDetails = ({
 
   const closeLegalholdModal = (reload: boolean) => {
     setLegalholdOpen(false);
-
     if (reload) {
       setLoadObjectData(true);
     }
@@ -437,7 +419,6 @@ const ObjectDetails = ({
 
   const closeDeleteTagModal = (reloadObjectData: boolean) => {
     setDeleteTagModalOpen(false);
-
     if (reloadObjectData) {
       setLoadObjectData(true);
     }
@@ -449,7 +430,6 @@ const ObjectDetails = ({
 
     if (reloadObjectData) {
       setLoadObjectData(true);
-      setMetadataLoad(true);
     }
   };
 
@@ -625,190 +605,131 @@ const ObjectDetails = ({
                       <h1 className={classes.sectionTitle}>Details</h1>
                     </div>
                     <br />
-                    <Grid item xs={12}>
-                      <table width={"100%"}>
-                        <tbody>
-                          <SecureComponent
-                            scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
-                            resource={bucketName}
-                          >
-                            <tr>
-                              <td className={classes.titleCol}>Legal Hold:</td>
-                              <td className={classes.capitalizeFirst}>
-                                {actualInfo.version_id &&
-                                actualInfo.version_id !== "null" ? (
-                                  <Fragment>
-                                    {actualInfo.legal_hold_status
-                                      ? actualInfo.legal_hold_status.toLowerCase()
-                                      : "Off"}
-                                    <SecureComponent
-                                      scopes={[
-                                        IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
-                                      ]}
-                                      resource={bucketName}
-                                      matchAll
-                                      errorProps={{
-                                        disabled: true,
-                                        onClick: null,
-                                      }}
-                                    >
-                                      <IconButton
-                                        color="primary"
-                                        aria-label="legal-hold"
-                                        size="small"
-                                        className={classes.propertiesIcon}
-                                        onClick={() => {
-                                          setLegalholdOpen(true);
-                                        }}
-                                      >
-                                        <EditIcon />
-                                      </IconButton>
-                                    </SecureComponent>
-                                  </Fragment>
-                                ) : (
-                                  "Disabled"
-                                )}
-                              </td>
-                            </tr>
-                          </SecureComponent>
-                          <SecureComponent
-                            scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
-                            resource={bucketName}
-                          >
-                            <tr>
-                              <td className={classes.titleCol}>Retention:</td>
-                              <td className={classes.capitalizeFirst}>
-                                {actualInfo.retention_mode
-                                  ? actualInfo.retention_mode.toLowerCase()
-                                  : "None"}
-                                <SecureComponent
-                                  scopes={[IAM_SCOPES.S3_PUT_OBJECT_RETENTION]}
-                                  resource={bucketName}
-                                  matchAll
-                                >
-                                  <IconButton
-                                    color="primary"
-                                    aria-label="retention"
-                                    size="small"
-                                    className={classes.propertiesIcon}
-                                    onClick={() => {
-                                      openRetentionModal();
-                                    }}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </SecureComponent>
-                              </td>
-                            </tr>
-                          </SecureComponent>
-                          <SecureComponent
-                            scopes={[IAM_SCOPES.S3_GET_OBJECT_TAGGING]}
-                            resource={bucketName}
-                          >
-                            <tr>
-                              <td className={classes.titleCol}>Tags:</td>
-                              <td>
-                                {tagKeys &&
-                                  tagKeys.map((tagKey, index) => {
-                                    const tag = get(
-                                      actualInfo,
-                                      `tags.${tagKey}`,
-                                      ""
-                                    );
-                                    if (tag !== "") {
-                                      return (
-                                        <SecureComponent
-                                          scopes={[
-                                            IAM_SCOPES.S3_DELETE_OBJECT_TAGGING,
-                                          ]}
-                                          resource={bucketName}
-                                          matchAll
-                                          errorProps={{
-                                            deleteIcon: null,
-                                            onDelete: null,
-                                          }}
-                                        >
-                                          <Chip
-                                            key={`chip-${index}`}
-                                            className={classes.tag}
-                                            size="small"
-                                            label={`${tagKey} : ${tag}`}
-                                            color="primary"
-                                            deleteIcon={<CloseIcon />}
-                                            onDelete={() => {
-                                              deleteTag(tagKey, tag);
-                                            }}
-                                          />
-                                        </SecureComponent>
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                                <SecureComponent
-                                  scopes={[IAM_SCOPES.S3_PUT_OBJECT_TAGGING]}
-                                  resource={bucketName}
-                                  matchAll
-                                  errorProps={{ disabled: true, onClick: null }}
-                                >
-                                  <Chip
-                                    className={classes.tag}
-                                    icon={<AddIcon />}
-                                    clickable
-                                    size="small"
-                                    label="Add tag"
-                                    color="primary"
-                                    variant="outlined"
-                                    onClick={() => {
-                                      setTagModalOpen(true);
-                                    }}
-                                  />
-                                </SecureComponent>
-                              </td>
-                            </tr>
-                          </SecureComponent>
-                        </tbody>
-                      </table>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid item xs={12}>
-                        <h2>Object Metadata</h2>
-                        <hr className={classes.hr} />
-                      </Grid>
 
-                      <Grid item xs={12}>
-                        <Table
-                          className={classes.table}
-                          aria-label="simple table"
+                    <Box sx={{ ...twoColCssGridLayoutConfig }}>
+                      <Box sx={{ ...twoColCssGridLayoutConfig }}>
+                        <SecureComponent
+                          scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
+                          resource={bucketName}
                         >
-                          <TableBody>
-                            {Object.keys(metadata).map((element, index) => {
-                              const renderItem = Array.isArray(
-                                metadata[element]
+                          <LabelValuePair
+                            label={""}
+                            value={
+                              actualInfo.version_id &&
+                              actualInfo.version_id !== "null" ? (
+                                <EditablePropertyItem
+                                  iamScopes={[
+                                    IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
+                                  ]}
+                                  secureCmpProps={{
+                                    matchAll: false,
+                                    errorProps: {
+                                      disabled: true,
+                                      onClick: null,
+                                    },
+                                  }}
+                                  resourceName={bucketName}
+                                  property={"Legal Hold:"}
+                                  value={
+                                    actualInfo.legal_hold_status
+                                      ? actualInfo.legal_hold_status.toLowerCase()
+                                      : "Off"
+                                  }
+                                  onEdit={() => {
+                                    setLegalholdOpen(true);
+                                  }}
+                                  isLoading={false}
+                                />
+                              ) : (
+                                <LabelValuePair
+                                  label={"Legal Hold:"}
+                                  value={
+                                    <LabelWithIcon
+                                      icon={<DisabledIcon />}
+                                      label={
+                                        <label className={classes.textMuted}>
+                                          Disabled
+                                        </label>
+                                      }
+                                    />
+                                  }
+                                />
                               )
-                                ? metadata[element]
-                                    .map(decodeURIComponent)
-                                    .join(", ")
-                                : decodeURIComponent(metadata[element]);
+                            }
+                          />
+                        </SecureComponent>
 
-                              return (
-                                <TableRow key={`tRow-${index.toString()}`}>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    className={classes.titleItem}
-                                  >
-                                    {element}
-                                  </TableCell>
-                                  <TableCell align="right">
-                                    {renderItem}
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })}
-                          </TableBody>
-                        </Table>
-                      </Grid>
-                    </Grid>
+                        <SecureComponent
+                          scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
+                          resource={bucketName}
+                        >
+                          <LabelValuePair
+                            label={""}
+                            value={
+                              actualInfo.version_id &&
+                              actualInfo.version_id !== "null" ? (
+                                <EditablePropertyItem
+                                  iamScopes={[
+                                    IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+                                  ]}
+                                  secureCmpProps={{
+                                    matchAll: false,
+                                  }}
+                                  resourceName={bucketName}
+                                  property={"Retention:"}
+                                  value={
+                                    actualInfo.retention_mode
+                                      ? actualInfo.retention_mode.toLowerCase()
+                                      : "None"
+                                  }
+                                  onEdit={openRetentionModal}
+                                  isLoading={false}
+                                />
+                              ) : (
+                                <LabelValuePair
+                                  label={"Retention:"}
+                                  value={
+                                    <LabelWithIcon
+                                      icon={<DisabledIcon />}
+                                      label={
+                                        <label className={classes.textMuted}>
+                                          Disabled
+                                        </label>
+                                      }
+                                    />
+                                  }
+                                />
+                              )
+                            }
+                          />
+                        </SecureComponent>
+                      </Box>
+                    </Box>
+
+                    <Box className={classes.spacerTop}>
+                      <LabelValuePair
+                        label={"Tags:"}
+                        value={
+                          <ObjectTags
+                            objectInfo={actualInfo}
+                            tagKeys={tagKeys}
+                            bucketName={bucketName}
+                            onDeleteTag={deleteTag}
+                            onAddTagClick={() => {
+                              setTagModalOpen(true);
+                            }}
+                          />
+                        }
+                      />
+                    </Box>
+
+                    {actualInfo ? (
+                      <ObjectMetaData
+                        bucketName={bucketName}
+                        internalPaths={internalPaths}
+                        actualInfo={actualInfo}
+                      />
+                    ) : null}
                   </React.Fragment>
                 ),
               }}
@@ -828,30 +749,13 @@ const ObjectDetails = ({
                     <Grid item xs={12} className={classes.actionsTray}>
                       {actualInfo.version_id &&
                         actualInfo.version_id !== "null" && (
-                          <TextField
+                          <SearchBox
                             placeholder={`Search ${currentItem}`}
-                            className={clsx(
-                              classes.search,
-                              classes.searchField
-                            )}
-                            id="search-resource"
-                            label=""
-                            onChange={(val) => {
-                              setFilterVersion(val.target.value);
-                            }}
-                            InputProps={{
-                              disableUnderline: true,
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <SearchIcon />
-                                </InputAdornment>
-                              ),
-                            }}
-                            variant="standard"
+                            onChange={setFilterVersion}
                           />
                         )}
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.tableBlock}>
                       {actualInfo.version_id &&
                         actualInfo.version_id !== "null" && (
                           <TableWrapper
