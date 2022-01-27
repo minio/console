@@ -34,6 +34,7 @@ interface IUploadFilesButton {
 const styles = (theme: Theme) =>
   createStyles({
     listUploadIcons: {
+      height: 20,
       "& .min-icon": {
         width: 18,
         fill: "rgba(0,0,0,0.87)",
