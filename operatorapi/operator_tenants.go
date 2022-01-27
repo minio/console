@@ -1826,14 +1826,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		retval.LogDBCPURequest = requestedDBCPU
 		retval.LogDBMemRequest = requestedDBMem
 	}
-	/*if minTenant.Spec.Log.Image == "" {
-		minTenant.Spec.Log.Image = miniov2.DefaultLogSearchAPIImage
-	}
-
-	if minTenant.Spec.Log.Db.Image == "" {
-		minTenant.Spec.Log.Db.Image = miniov2.LogPgImage
-	}*/
-
 	return retval, nil
 }
 
