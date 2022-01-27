@@ -94,8 +94,8 @@ const AddTagModal = ({
         { tags: newTagList }
       )
       .then((res: any) => {
-        setIsSending(false);
         onCloseAndUpdate(true);
+        setIsSending(false);
       })
       .catch((error: ErrorResponseHandler) => {
         setModalErrorSnackMessage(error);
@@ -109,7 +109,7 @@ const AddTagModal = ({
         modalOpen={modalOpen}
         title="Add New Tag to the Object"
         onClose={() => {
-          onCloseAndUpdate(false);
+          onCloseAndUpdate(true);
         }}
         titleIcon={<AddNewTagIcon />}
       >
