@@ -58,12 +58,12 @@ const SecureComponent = ({
   resource,
 }: ISecureComponentProps) => {
   const permissionGranted = hasPermission(resource, scopes, matchAll);
+  const childComponent = <>{children}</>;
   if (!permissionGranted && !errorProps) return <RenderError />;
   if (!permissionGranted && errorProps) {
-    return cloneElement(children, { ...errorProps });
+    return cloneElement(childComponent, { ...errorProps });
   }
-
-  return <>{children}</>;
+  return childComponent;
 };
 
 export default SecureComponent;
