@@ -442,14 +442,20 @@ func DeleteMultipleObjects(bucketName string, files []map[string]interface{}) (*
 	return response, err
 }
 
-func ListObjects(bucketName string) (*http.Response, error) {
+func DeleteObject(bucketName string, path string, recursive bool, allVersions bool) (*http.Response, error) {
 	/*
-		Helper function to list objects in a bucket.
-		GET: {{baseUrl}}/buckets/:bucket_name/objects
+	   Helper function to delete an object from a given bucket.
+	   DELETE:
+	   {{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
 	*/
-	request, err := http.NewRequest("GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects",
-		nil)
+	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
+		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
+		strconv.FormatBool(allVersions)
+	request, err := http.NewRequest(
+		"DELETE",
+		url,
+		nil,
+	)
 	if err != nil {
 		log.Println(err)
 	}
@@ -462,20 +468,14 @@ func ListObjects(bucketName string) (*http.Response, error) {
 	return response, err
 }
 
-func DeleteObject(bucketName string, path string, recursive bool, allVersions bool) (*http.Response, error) {
+func ListObjects(bucketName string) (*http.Response, error) {
 	/*
-		Helper function to delete an object from a given bucket.
-		DELETE:
-		{{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
+	   Helper function to list objects in a bucket.
+	   GET: {{baseUrl}}/buckets/:bucket_name/objects
 	*/
-	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
-		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
-		strconv.FormatBool(allVersions)
-	request, err := http.NewRequest(
-		"DELETE",
-		url,
-		nil,
-	)
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects",
+		nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -1176,4 +1176,79 @@ func TestUploadObjectToBucket(t *testing.T) {
 	if uploadResponse != nil {
 		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
 	}
+}
+
+func TestDeleteObject(t *testing.T) {
+	/*
+	   Test to delete an object from a given bucket.
+	*/
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testdeleteobjectbucket1"
+	fileName := "testdeleteobjectfile"
+	path := "dGVzdGRlbGV0ZW9iamVjdGZpbGUxLnR4dA==" // fileName encoded base64
+	numberOfFiles := 2
+
+	// 1. Create bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add two objects to the bucket created.
+	for i := 1; i <= numberOfFiles; i++ {
+		uploadResponse, uploadError := UploadAnObject(
+			bucketName, fileName+strconv.Itoa(i)+".txt")
+		assert.Nil(uploadError)
+		if uploadError != nil {
+			log.Println(uploadError)
+			return
+		}
+		if uploadResponse != nil {
+			assert.Equal(200, uploadResponse.StatusCode,
+				inspectHTTPResponse(uploadResponse))
+		}
+	}
+
+	// 3. Delete only one object from the bucket.
+	deleteResponse, deleteError := DeleteObject(bucketName, path, false, false)
+	assert.Nil(deleteError)
+	if deleteError != nil {
+		log.Println(deleteError)
+		return
+	}
+	if deleteResponse != nil {
+		assert.Equal(200, deleteResponse.StatusCode,
+			inspectHTTPResponse(deleteResponse))
+	}
+
+	// 4. List the objects in the bucket and make sure the object is gone
+	listResponse, listError := ListObjects(bucketName)
+	assert.Nil(listError)
+	if listError != nil {
+		log.Println(listError)
+		return
+	}
+	finalResponse := inspectHTTPResponse(listResponse)
+	if listResponse != nil {
+		assert.Equal(200, listResponse.StatusCode,
+			finalResponse)
+	}
+	// Expected only one file: "testdeleteobjectfile2.txt"
+	// "testdeleteobjectfile1.txt" should be gone by now.
+	assert.True(
+		strings.Contains(
+			finalResponse,
+			"testdeleteobjectfile2.txt"), finalResponse) // Still there
+	assert.False(
+		strings.Contains(
+			finalResponse,
+			"testdeleteobjectfile1.txt"), finalResponse) // Gone
 }
