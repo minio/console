@@ -20,12 +20,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	iampolicy "github.com/minio/pkg/iam/policy"
 	"log"
 	"net/http"
 	"testing"
 	"time"
 
+	iampolicy "github.com/minio/pkg/iam/policy"
 	"github.com/stretchr/testify/assert"
 )
 
