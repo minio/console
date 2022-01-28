@@ -359,6 +359,26 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	return response, err
 }
 
+func ListObjects(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to list objects in a bucket.
+		GET: {{baseUrl}}/buckets/:bucket_name/objects
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects",
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func UploadAnObject(bucketName string, fileName string) (*http.Response, error) {
 	/*
 		Helper function to upload a file to a bucket for testing.
@@ -1011,4 +1031,56 @@ func TestUploadObjectToBucket(t *testing.T) {
 	if uploadResponse != nil {
 		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
 	}
+}
+
+func TestListObjects(t *testing.T) {
+	/*
+	   To test list objects end point.
+	*/
+
+	// Test's variables
+	assert := assert.New(t)
+	bucketName := "testlistobjecttobucket1"
+	fileName := "testlistobjecttobucket1.txt"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	if uploadResponse != nil {
+		assert.Equal(200, uploadResponse.StatusCode,
+			inspectHTTPResponse(uploadResponse))
+	}
+
+	// 3. List the object
+	listResponse, listError := ListObjects(bucketName)
+	assert.Nil(listError)
+	if listError != nil {
+		log.Println(listError)
+		return
+	}
+	finalResponse := inspectHTTPResponse(listResponse)
+	if listResponse != nil {
+		assert.Equal(200, listResponse.StatusCode,
+			finalResponse)
+	}
+
+	// 4. Verify the object was listed
+	assert.True(
+		strings.Contains(finalResponse, "testlistobjecttobucket1"),
+		finalResponse)
 }
