@@ -250,6 +250,25 @@ func ListBuckets() (*http.Response, error) {
 	return response, err
 }
 
+func DeleteBucket(name string) (*http.Response, error) {
+	/*
+		Helper function to delete bucket.
+		DELETE: {{baseUrl}}/buckets/:name
+	*/
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/buckets/"+name, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func BucketInfo(name string) (*http.Response, error) {
 	/*
 		Helper function to test Bucket Info End Point
@@ -349,45 +368,6 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	return response, err
 }
 
-func DeleteMultipleObjects(bucketName string, files []map[string]interface{}) (*http.Response, error) {
-	/*
-		Helper function to delete multiple objects in a container.
-		POST: /buckets/{bucket_name}/delete-objects
-		files: [
-			{
-				"path": "veniam tempor in",
-				"versionID": "ea dolor Duis",
-				"recursive": false
-			},
-			{
-				"path": "proident eu esse",
-				"versionID": "eiusmod amet commodo",
-				"recursive": true
-		    }
-		]
-	*/
-	requestDataAdd := map[string]interface{}{
-		"files": files,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"POST",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-objects",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
 func UploadAnObject(bucketName string, fileName string) (*http.Response, error) {
 	/*
 		Helper function to upload a file to a bucket for testing.
@@ -416,6 +396,45 @@ func UploadAnObject(bucketName string, fileName string) (*http.Response, error) 
 		"Content-Type",
 		"multipart/form-data; boundary=----"+boundary,
 	)
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteMultipleObjects(bucketName string, files []map[string]interface{}) (*http.Response, error) {
+	/*
+	   Helper function to delete multiple objects in a container.
+	   POST: /buckets/{bucket_name}/delete-objects
+	   files: [
+	     {
+	       "path": "veniam tempor in",
+	       "versionID": "ea dolor Duis",
+	       "recursive": false
+	     },
+	     {
+	       "path": "proident eu esse",
+	       "versionID": "eiusmod amet commodo",
+	       "recursive": true
+	       }
+	   ]
+	*/
+	requestDataAdd := map[string]interface{}{
+		"files": files,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-objects",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
 	client := &http.Client{
 		Timeout: 2 * time.Second,
 	}
@@ -823,6 +842,54 @@ func TestListBuckets(t *testing.T) {
 	}
 }
 
+func TestDeleteBucket(t *testing.T) {
+	/*
+		Test to delete a bucket
+	*/
+	// 1. Create the bucket
+	assert := assert.New(t)
+	response, err := AddBucket("testdeletebucket1", false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Delete the bucket
+	deleteBucketResponse, deleteBucketError := DeleteBucket("testdeletebucket1")
+	assert.Nil(deleteBucketError)
+	if deleteBucketError != nil {
+		log.Println(deleteBucketError)
+		return
+	}
+	if deleteBucketResponse != nil {
+		assert.Equal(
+			204, deleteBucketResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Verify the bucket is gone by trying to put a tag
+	tags := make(map[string]string)
+	tags["tag1"] = "tag1"
+	putBucketTagResponse, putBucketTagError := PutBucketsTags(
+		"testdeletebucket1", tags)
+	if putBucketTagError != nil {
+		log.Println(putBucketTagError)
+		assert.Fail("Error adding a tag to the bucket")
+		return
+	}
+	finalResponse := inspectHTTPResponse(putBucketTagResponse)
+	if putBucketTagResponse != nil {
+		assert.Equal(
+			500, putBucketTagResponse.StatusCode,
+			finalResponse)
+	}
+	assert.True(
+		strings.Contains(finalResponse, "The specified bucket does not exist"))
+}
+
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	/*
 		Test Bucket Info End Point with a Successful Response.
@@ -1006,7 +1073,7 @@ func TestBucketRetention(t *testing.T) {
 
 func TestDeleteMultipleObjects(t *testing.T) {
 	/*
-		Function to test the deletion of multiple objects from a given bucket.
+	   Function to test the deletion of multiple objects from a given bucket.
 	*/
 
 	// Variables
@@ -1073,4 +1140,40 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	// 5. Verify empty list is obtained as we deleted all the objects
 	expected := "Http Response: {\"objects\":null}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
+}
+
+func TestUploadObjectToBucket(t *testing.T) {
+	/*
+		Function to test the upload of an object to a bucket.
+	*/
+
+	// Test's variables
+	assert := assert.New(t)
+	bucketName := "testuploadobjecttobucket1"
+	fileName := "sample.txt"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+
+	// 3. Verify the object was uploaded
+	finalResponse := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
+	}
 }
