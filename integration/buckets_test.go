@@ -241,6 +241,25 @@ func ListBuckets() (*http.Response, error) {
 	return response, err
 }
 
+func DeleteBucket(name string) (*http.Response, error) {
+	/*
+		Helper function to delete bucket.
+		DELETE: {{baseUrl}}/buckets/:name
+	*/
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/buckets/"+name, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func BucketInfo(name string) (*http.Response, error) {
 	/*
 		Helper function to test Bucket Info End Point
@@ -377,9 +396,9 @@ func UploadAnObject(bucketName string, fileName string) (*http.Response, error) 
 
 func DeleteObject(bucketName string, path string, recursive bool, allVersions bool) (*http.Response, error) {
 	/*
-		Helper function to delete an object from a given bucket.
-		DELETE:
-		{{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
+	   Helper function to delete an object from a given bucket.
+	   DELETE:
+	   {{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
 	*/
 	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
 		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
@@ -403,8 +422,8 @@ func DeleteObject(bucketName string, path string, recursive bool, allVersions bo
 
 func ListObjects(bucketName string) (*http.Response, error) {
 	/*
-		Helper function to list objects in a bucket.
-		GET: {{baseUrl}}/buckets/:bucket_name/objects
+	   Helper function to list objects in a bucket.
+	   GET: {{baseUrl}}/buckets/:bucket_name/objects
 	*/
 	request, err := http.NewRequest("GET",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects",
@@ -775,6 +794,54 @@ func TestListBuckets(t *testing.T) {
 	}
 }
 
+func TestDeleteBucket(t *testing.T) {
+	/*
+		Test to delete a bucket
+	*/
+	// 1. Create the bucket
+	assert := assert.New(t)
+	response, err := AddBucket("testdeletebucket1", false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Delete the bucket
+	deleteBucketResponse, deleteBucketError := DeleteBucket("testdeletebucket1")
+	assert.Nil(deleteBucketError)
+	if deleteBucketError != nil {
+		log.Println(deleteBucketError)
+		return
+	}
+	if deleteBucketResponse != nil {
+		assert.Equal(
+			204, deleteBucketResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Verify the bucket is gone by trying to put a tag
+	tags := make(map[string]string)
+	tags["tag1"] = "tag1"
+	putBucketTagResponse, putBucketTagError := PutBucketsTags(
+		"testdeletebucket1", tags)
+	if putBucketTagError != nil {
+		log.Println(putBucketTagError)
+		assert.Fail("Error adding a tag to the bucket")
+		return
+	}
+	finalResponse := inspectHTTPResponse(putBucketTagResponse)
+	if putBucketTagResponse != nil {
+		assert.Equal(
+			500, putBucketTagResponse.StatusCode,
+			finalResponse)
+	}
+	assert.True(
+		strings.Contains(finalResponse, "The specified bucket does not exist"))
+}
+
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	/*
 		Test Bucket Info End Point with a Successful Response.
@@ -956,9 +1023,45 @@ func TestBucketRetention(t *testing.T) {
 	assert.Equal(expected, finalResponse, finalResponse)
 }
 
+func TestUploadObjectToBucket(t *testing.T) {
+	/*
+		Function to test the upload of an object to a bucket.
+	*/
+
+	// Test's variables
+	assert := assert.New(t)
+	bucketName := "testuploadobjecttobucket1"
+	fileName := "sample.txt"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+
+	// 3. Verify the object was uploaded
+	finalResponse := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
+	}
+}
+
 func TestDeleteObject(t *testing.T) {
 	/*
-		Test to delete an object from a given bucket.
+	   Test to delete an object from a given bucket.
 	*/
 
 	// Variables
