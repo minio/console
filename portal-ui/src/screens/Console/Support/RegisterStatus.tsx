@@ -51,7 +51,7 @@ function RegisterStatus({ classes }: IRegisterStatus) {
   return (
     <Grid container>
       <Grid item xs={12} className={classes.registeredStatus}>
-        Register Status:
+        Registration Status:
         <VerifiedIcon />
         <span>Registered</span>
       </Grid>

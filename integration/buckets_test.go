@@ -1107,3 +1107,39 @@ func TestPutObjectTag(t *testing.T) {
 		strings.Contains(finalResponse, tags["tag"]),
 		finalResponse)
 }
+
+func TestUploadObjectToBucket(t *testing.T) {
+	/*
+		Function to test the upload of an object to a bucket.
+	*/
+
+	// Test's variables
+	assert := assert.New(t)
+	bucketName := "testuploadobjecttobucket1"
+	fileName := "sample.txt"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+
+	// 3. Verify the object was uploaded
+	finalResponse := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
+	}
+}
