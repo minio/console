@@ -18,6 +18,7 @@ package integration
 
 import (
 	"bytes"
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -40,6 +41,14 @@ import (
 )
 
 var token string
+
+func encodeBase64(fileName string) string {
+	/*
+		Helper function to encode in base64 the file name so we can get the path
+	*/
+	path := b64.StdEncoding.EncodeToString([]byte(fileName))
+	return path
+}
 
 func inspectHTTPResponse(httpResponse *http.Response) string {
 	/*
@@ -346,6 +355,92 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	*/
 	request, err := http.NewRequest("GET",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func PutObjectTags(bucketName string, prefix string, tags map[string]string, versionID string) (*http.Response, error) {
+	/*
+		Helper function to put object's tags.
+		PUT: /buckets/{bucket_name}/objects/tags?prefix=prefix
+		{
+			"tags": {}
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"tags": tags,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/buckets/"+
+			bucketName+"/objects/tags?prefix="+prefix+"&version_id="+versionID,
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func UploadAnObject(bucketName string, fileName string) (*http.Response, error) {
+	/*
+		Helper function to upload a file to a bucket for testing.
+		POST {{baseUrl}}/buckets/:bucket_name/objects/upload
+	*/
+	boundary := "WebKitFormBoundaryWtayBM7t9EUQb8q3"
+	boundaryStart := "------" + boundary + "\r\n"
+	contentDispositionOne := "Content-Disposition: form-data; name=\"2\"; "
+	contentDispositionTwo := "filename=\"" + fileName + "\"\r\n"
+	contenType := "Content-Type: text/plain\r\n\r\na\n\r\n"
+	boundaryEnd := "------" + boundary + "--\r\n"
+	file := boundaryStart + contentDispositionOne + contentDispositionTwo +
+		contenType + boundaryEnd
+	arrayOfBytes := []byte(file)
+	requestDataBody := bytes.NewReader(arrayOfBytes)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/upload",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add(
+		"Content-Type",
+		"multipart/form-data; boundary=----"+boundary,
+	)
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ListObjects(bucketName string, prefix string) (*http.Response, error) {
+	/*
+		Helper function to list objects in a bucket.
+		GET: {{baseUrl}}/buckets/:bucket_name/objects
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects?prefix="+prefix,
 		nil)
 	if err != nil {
 		log.Println(err)
@@ -940,4 +1035,75 @@ func TestBucketRetention(t *testing.T) {
 	}
 	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
+}
+
+func TestPutObjectTag(t *testing.T) {
+	/*
+		Test to put a tag to an object
+	*/
+
+	// Vars
+	assert := assert.New(t)
+	bucketName := "testputobjecttagbucketone"
+	fileName := "testputobjecttagbucketone.txt"
+	path := encodeBase64(fileName)
+	tags := make(map[string]string)
+	tags["tag"] = "testputobjecttagbucketonetagone"
+	versionID := "null"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			inspectHTTPResponse(uploadResponse),
+		)
+	}
+
+	// 3. Put a tag to the object
+	putTagResponse, putTagError := PutObjectTags(
+		bucketName, path, tags, versionID)
+	assert.Nil(putTagError)
+	if putTagError != nil {
+		log.Println(putTagError)
+		return
+	}
+	putObjectTagresult := inspectHTTPResponse(putTagResponse)
+	if putTagResponse != nil {
+		assert.Equal(
+			200, putTagResponse.StatusCode, putObjectTagresult)
+	}
+
+	// 4. Verify the object's tag is set
+	listResponse, listError := ListObjects(bucketName, path)
+	assert.Nil(listError)
+	if listError != nil {
+		log.Println(listError)
+		return
+	}
+	finalResponse := inspectHTTPResponse(listResponse)
+	if listResponse != nil {
+		assert.Equal(200, listResponse.StatusCode,
+			finalResponse)
+	}
+	assert.True(
+		strings.Contains(finalResponse, tags["tag"]),
+		finalResponse)
 }
