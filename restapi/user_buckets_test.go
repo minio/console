@@ -904,14 +904,14 @@ func Test_getAccountBuckets(t *testing.T) {
 			want: []*models.Bucket{
 				{
 					Name:         swag.String("bucket-1"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details:      &models.BucketDetails{},
 					RwAccess:     &models.BucketRwAccess{},
 					Size:         1024,
 				},
 				{
 					Name:         swag.String("bucket-2"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details:      &models.BucketDetails{},
 					RwAccess:     &models.BucketRwAccess{},
 				},
@@ -963,7 +963,7 @@ func Test_getAccountBuckets(t *testing.T) {
 			want: []*models.Bucket{
 				{
 					Name:         swag.String("bucket-1"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details: &models.BucketDetails{
 						Locking:             false,
 						Quota:               nil,
@@ -977,7 +977,7 @@ func Test_getAccountBuckets(t *testing.T) {
 				},
 				{
 					Name:         swag.String("bucket-2"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details:      &models.BucketDetails{},
 					RwAccess:     &models.BucketRwAccess{},
 				},
@@ -1031,7 +1031,7 @@ func Test_getAccountBuckets(t *testing.T) {
 			want: []*models.Bucket{
 				{
 					Name:         swag.String("bucket-1"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details: &models.BucketDetails{
 						Locking:     false,
 						Quota:       nil,
@@ -1047,7 +1047,7 @@ func Test_getAccountBuckets(t *testing.T) {
 				},
 				{
 					Name:         swag.String("bucket-2"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details:      &models.BucketDetails{},
 					RwAccess:     &models.BucketRwAccess{},
 				},
@@ -1102,7 +1102,7 @@ func Test_getAccountBuckets(t *testing.T) {
 			want: []*models.Bucket{
 				{
 					Name:         swag.String("bucket-1"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details: &models.BucketDetails{
 						Locking: false,
 						Quota: &models.BucketDetailsQuota{
@@ -1119,7 +1119,7 @@ func Test_getAccountBuckets(t *testing.T) {
 				},
 				{
 					Name:         swag.String("bucket-2"),
-					CreationDate: tm.Format("2006-01-02T15:04:05-08:00"),
+					CreationDate: tm.Format(time.RFC3339),
 					Details:      &models.BucketDetails{},
 					RwAccess:     &models.BucketRwAccess{},
 				},
