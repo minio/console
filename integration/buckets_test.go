@@ -359,6 +359,41 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	return response, err
 }
 
+func UploadAnObject(bucketName string, fileName string) (*http.Response, error) {
+	/*
+		Helper function to upload a file to a bucket for testing.
+		POST {{baseUrl}}/buckets/:bucket_name/objects/upload
+	*/
+	boundary := "WebKitFormBoundaryWtayBM7t9EUQb8q3"
+	boundaryStart := "------" + boundary + "\r\n"
+	contentDispositionOne := "Content-Disposition: form-data; name=\"2\"; "
+	contentDispositionTwo := "filename=\"" + fileName + "\"\r\n"
+	contenType := "Content-Type: text/plain\r\n\r\na\n\r\n"
+	boundaryEnd := "------" + boundary + "--\r\n"
+	file := boundaryStart + contentDispositionOne + contentDispositionTwo +
+		contenType + boundaryEnd
+	arrayOfBytes := []byte(file)
+	requestDataBody := bytes.NewReader(arrayOfBytes)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/upload",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add(
+		"Content-Type",
+		"multipart/form-data; boundary=----"+boundary,
+	)
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 
@@ -940,4 +975,40 @@ func TestBucketRetention(t *testing.T) {
 	}
 	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
+}
+
+func TestUploadObjectToBucket(t *testing.T) {
+	/*
+		Function to test the upload of an object to a bucket.
+	*/
+
+	// Test's variables
+	assert := assert.New(t)
+	bucketName := "testuploadobjecttobucket1"
+	fileName := "sample.txt"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+
+	// 3. Verify the object was uploaded
+	finalResponse := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
+	}
 }
