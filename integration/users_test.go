@@ -216,6 +216,58 @@ func UpdateGroupsForAUser(userName string, groups []string) (*http.Response, err
 	return response, err
 }
 
+func CreateServiceAccountForUser(userName string, policy string) (*http.Response, error) {
+	/*
+		Helper function to Create Service Account for user
+		POST: api/v1/user/username/service-accounts
+		{
+			"policy": "ad magna"
+		}
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	requestDataAdd := map[string]interface{}{
+		"policy": policy,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/user/"+userName+"/service-accounts",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ReturnsAListOfServiceAccountsForAUser(userName string) (*http.Response, error) {
+	/*
+		Helper function to return a list of service accounts for a user.
+		GET: {{baseUrl}}/user/:name/service-accounts
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/user/"+userName+"/service-accounts",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddUser(t *testing.T) {
 	/*
 		This is an API Test to add a user via api/v1/users, the intention
@@ -587,4 +639,64 @@ func TestUpdateGroupsForAUser(t *testing.T) {
 		assert.True(strings.Contains(
 			finalResponse, groupName+strconv.Itoa(i)), finalResponse)
 	}
+}
+
+func TestCreateServiceAccountForUser(t *testing.T) {
+	/*
+		To test creation of service account for a user.
+	*/
+
+	// Test's variables
+	userName := "testcreateserviceaccountforuser1"
+	assert := assert.New(t)
+	policy := ""
+	serviceAccountLengthInBytes := 40 // As observed, update as needed
+
+	// 1. Create the user
+	var groups = []string{}
+	var policies = []string{}
+	response, err := AddUser(userName, "secretKey", groups, policies)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		fmt.Println("StatusCode:", response.StatusCode)
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Create the service account for the user
+	createServiceAccountResponse,
+		createServiceAccountError := CreateServiceAccountForUser(
+		userName,
+		policy,
+	)
+	if createServiceAccountError != nil {
+		log.Println(createServiceAccountError)
+		assert.Fail("Error in createServiceAccountError")
+	}
+	if createServiceAccountResponse != nil {
+		fmt.Println("StatusCode:", createServiceAccountResponse.StatusCode)
+		assert.Equal(
+			201, createServiceAccountResponse.StatusCode,
+			inspectHTTPResponse(createServiceAccountResponse),
+		)
+	}
+
+	// 3. Verify the service account for the user
+	listOfAccountsResponse,
+		listOfAccountsError := ReturnsAListOfServiceAccountsForAUser(userName)
+	if listOfAccountsError != nil {
+		log.Println(listOfAccountsError)
+		assert.Fail("Error in listOfAccountsError")
+	}
+	finalResponse := inspectHTTPResponse(listOfAccountsResponse)
+	if listOfAccountsResponse != nil {
+		fmt.Println("StatusCode:", listOfAccountsResponse.StatusCode)
+		assert.Equal(
+			200, listOfAccountsResponse.StatusCode,
+			finalResponse,
+		)
+	}
+	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
 }

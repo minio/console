@@ -241,6 +241,25 @@ func ListBuckets() (*http.Response, error) {
 	return response, err
 }
 
+func DeleteBucket(name string) (*http.Response, error) {
+	/*
+		Helper function to delete bucket.
+		DELETE: {{baseUrl}}/buckets/:name
+	*/
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/buckets/"+name, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func BucketInfo(name string) (*http.Response, error) {
 	/*
 		Helper function to test Bucket Info End Point
@@ -749,6 +768,54 @@ func TestListBuckets(t *testing.T) {
 	}
 }
 
+func TestDeleteBucket(t *testing.T) {
+	/*
+		Test to delete a bucket
+	*/
+	// 1. Create the bucket
+	assert := assert.New(t)
+	response, err := AddBucket("testdeletebucket1", false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Delete the bucket
+	deleteBucketResponse, deleteBucketError := DeleteBucket("testdeletebucket1")
+	assert.Nil(deleteBucketError)
+	if deleteBucketError != nil {
+		log.Println(deleteBucketError)
+		return
+	}
+	if deleteBucketResponse != nil {
+		assert.Equal(
+			204, deleteBucketResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Verify the bucket is gone by trying to put a tag
+	tags := make(map[string]string)
+	tags["tag1"] = "tag1"
+	putBucketTagResponse, putBucketTagError := PutBucketsTags(
+		"testdeletebucket1", tags)
+	if putBucketTagError != nil {
+		log.Println(putBucketTagError)
+		assert.Fail("Error adding a tag to the bucket")
+		return
+	}
+	finalResponse := inspectHTTPResponse(putBucketTagResponse)
+	if putBucketTagResponse != nil {
+		assert.Equal(
+			500, putBucketTagResponse.StatusCode,
+			finalResponse)
+	}
+	assert.True(
+		strings.Contains(finalResponse, "The specified bucket does not exist"))
+}
+
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	/*
 		Test Bucket Info End Point with a Successful Response.
@@ -930,15 +997,15 @@ func TestBucketRetention(t *testing.T) {
 	assert.Equal(expected, finalResponse, finalResponse)
 }
 
-func TestListObjects(t *testing.T) {
+func TestUploadObjectToBucket(t *testing.T) {
 	/*
-		To test list objects end point.
+		Function to test the upload of an object to a bucket.
 	*/
 
 	// Test's variables
 	assert := assert.New(t)
-	bucketName := "testlistobjecttobucket1"
-	fileName := "testlistobjecttobucket1.txt"
+	bucketName := "testuploadobjecttobucket1"
+	fileName := "sample.txt"
 
 	// 1. Create the bucket
 	response, err := AddBucket(bucketName, false, false, nil, nil)
@@ -958,26 +1025,62 @@ func TestListObjects(t *testing.T) {
 		log.Println(uploadError)
 		return
 	}
+
+	// 3. Verify the object was uploaded
+	finalResponse := inspectHTTPResponse(uploadResponse)
 	if uploadResponse != nil {
-		assert.Equal(200, uploadResponse.StatusCode,
-			inspectHTTPResponse(uploadResponse))
+		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
 	}
+}
 
-	// 3. List the object
-	listResponse, listError := ListObjects(bucketName)
-	assert.Nil(listError)
-	if listError != nil {
-		log.Println(listError)
-		return
-	}
-	finalResponse := inspectHTTPResponse(listResponse)
-	if listResponse != nil {
-		assert.Equal(200, listResponse.StatusCode,
-			finalResponse)
-	}
+func TestListObjects(t *testing.T) {
+  /*
+    To test list objects end point.
+  */
 
-	// 4. Verify the object was listed
-	assert.True(
-		strings.Contains(finalResponse, "testlistobjecttobucket1"),
-		finalResponse)
+  // Test's variables
+  assert := assert.New(t)
+  bucketName := "testlistobjecttobucket1"
+  fileName := "testlistobjecttobucket1.txt"
+
+  // 1. Create the bucket
+  response, err := AddBucket(bucketName, false, false, nil, nil)
+  assert.Nil(err)
+  if err != nil {
+    log.Println(err)
+    return
+  }
+  if response != nil {
+    assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+  }
+
+  // 2. Upload the object to the bucket
+  uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+  assert.Nil(uploadError)
+  if uploadError != nil {
+    log.Println(uploadError)
+    return
+  }
+  if uploadResponse != nil {
+    assert.Equal(200, uploadResponse.StatusCode,
+      inspectHTTPResponse(uploadResponse))
+  }
+
+  // 3. List the object
+  listResponse, listError := ListObjects(bucketName)
+  assert.Nil(listError)
+  if listError != nil {
+    log.Println(listError)
+    return
+  }
+  finalResponse := inspectHTTPResponse(listResponse)
+  if listResponse != nil {
+    assert.Equal(200, listResponse.StatusCode,
+      finalResponse)
+  }
+
+  // 4. Verify the object was listed
+  assert.True(
+    strings.Contains(finalResponse, "testlistobjecttobucket1"),
+    finalResponse)
 }
