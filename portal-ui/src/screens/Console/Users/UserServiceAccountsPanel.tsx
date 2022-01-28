@@ -27,16 +27,17 @@ import {
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { AppState } from "../../../store";
-import { setErrorSnackMessage } from "../../../actions";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { stringSort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
 import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { AddIcon } from "../../../icons";
+import { AddIcon, DeleteIcon } from "../../../icons";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -71,6 +72,8 @@ const UserServiceAccountsPanel = ({
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
+    const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
+    const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -120,9 +123,47 @@ const UserServiceAccountsPanel = ({
     }
   };
 
+  const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
+    setDeleteMultipleOpen(false);
+
+    if (refresh) {
+      setSnackBarMessage(`Service accounts deleted successfully.`);
+      setSelectedSAs([]);
+      setLoading(true);
+    }
+  };
+
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setNewServiceAccount(null);
+  };
+
+  const selectSAs = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+    
+
+    let elements: string[] = [...selectedSAs]; // We clone the selectedSAs array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to selectedSAs
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+    setSelectedSAs(elements);
+
+    return elements;
+  };
+
+  const selectAllItems = () => {
+    if (selectedSAs.length === records.length) {
+      setSelectedSAs([]);
+      return;
+    }
+    setSelectedSAs(records);
   };
 
   const confirmDeleteServiceAccount = (selectedServiceAccount: string) => {
@@ -154,6 +195,14 @@ const UserServiceAccountsPanel = ({
           }}
         />
       )}
+      {deleteMultipleOpen && (
+        <DeleteMultipleServiceAccounts
+          classes={classes}
+          deleteOpen={deleteMultipleOpen}
+          selectedSAs={selectedSAs}
+          closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
+        />
+      )}
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={newServiceAccount}
@@ -180,7 +229,19 @@ const UserServiceAccountsPanel = ({
           }}
           disabled={!hasPolicy}
         />
-      </div>
+        <RBIconButton
+                tooltip={"Delete Selected"}
+                onClick={() => {
+                  setDeleteMultipleOpen(true);
+                }}
+                text={"Delete Selected"}
+                icon={<DeleteIcon />}
+                color="secondary"
+                disabled={selectedSAs.length === 0}
+                variant={"outlined"}
+              />
+          
+            </div>
       <div className={classes.tableBlock}>
         <TableWrapper
           isLoading={loading}
@@ -189,6 +250,9 @@ const UserServiceAccountsPanel = ({
           idField={""}
           columns={[{ label: "Service Account", elementKey: "" }]}
           itemActions={tableActions}
+          selectedItems={selectedSAs}
+          onSelect={selectSAs}
+          onSelectAll={selectAllItems}
         />
       </div>
     </React.Fragment>

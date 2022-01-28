@@ -3062,6 +3062,39 @@ func init() {
         }
       }
     },
+    "/service-accounts/delete-multi": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Service Accounts",
+        "operationId": "DeleteMultipleServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedSA",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/deleteSA"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts/{access_key}": {
       "delete": {
         "tags": [
@@ -4329,6 +4362,9 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "deleteSA": {
+      "type": "string"
     },
     "error": {
       "type": "object",
@@ -9116,6 +9152,39 @@ func init() {
         }
       }
     },
+    "/service-accounts/delete-multi": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Service Accounts",
+        "operationId": "DeleteMultipleServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedSA",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/deleteSA"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts/{access_key}": {
       "delete": {
         "tags": [
@@ -10501,6 +10570,9 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "deleteSA": {
+      "type": "string"
     },
     "error": {
       "type": "object",

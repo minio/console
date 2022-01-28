@@ -1260,6 +1260,28 @@ paths:
       tags:
         - UserAPI
 
+  /service-accounts/delete-multi:
+    post:
+      summary: Delete Multiple Service Accounts
+      operationId: DeleteMultipleServiceAccounts
+      parameters:
+        - name: selectedSA
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/deleteSA"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI      
+
   /users:
     get:
       summary: List Users
@@ -3978,6 +4000,9 @@ definitions:
         type: string
       recursive:
         type: boolean
+
+  deleteSA:
+    type: string    
 
   tier:
     type: object

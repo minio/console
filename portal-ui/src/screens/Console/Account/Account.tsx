@@ -23,8 +23,8 @@ import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import { setErrorSnackMessage } from "../../../actions";
-import { AccountIcon, AddIcon, PasswordKeyIcon } from "../../../icons";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
+import { AccountIcon, AddIcon, PasswordKeyIcon, DeleteIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -52,6 +52,9 @@ const AddServiceAccount = withSuspense(
 );
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
+);
+const DeleteMultipleServiceAccounts = withSuspense(
+  React.lazy(() => import("../Users/DeleteMultipleServiceAccounts"))
 );
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -89,6 +92,8 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     useState<NewServiceAccount | null>(null);
   const [changePasswordModalOpen, setChangePasswordModalOpen] =
     useState<boolean>(false);
+    const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
+    const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -139,6 +144,44 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     }
   };
 
+  const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
+    setDeleteMultipleOpen(false);
+
+    if (refresh) {
+      setSnackBarMessage(`Service accounts deleted successfully.`);
+      setSelectedSAs([]);
+      setLoading(true);
+    }
+  };
+ 
+  const selectSAs = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+    
+
+    let elements: string[] = [...selectedSAs]; // We clone the selectedSAs array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to selectedSAs
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+    setSelectedSAs(elements);
+
+    return elements;
+  };
+
+  const selectAllItems = () => {
+    if (selectedSAs.length === records.length) {
+      setSelectedSAs([]);
+      return;
+    }
+    setSelectedSAs(records);
+  };
+
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setNewServiceAccount(null);
@@ -174,6 +217,14 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
+        />
+      )}
+        {deleteMultipleOpen && (
+        <DeleteMultipleServiceAccounts
+          classes={classes}
+          deleteOpen={deleteMultipleOpen}
+          selectedSAs={selectedSAs}
+          closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
         />
       )}
       {showNewCredentials && (
@@ -229,6 +280,17 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
               color={"primary"}
               variant={"contained"}
             />
+             <RBIconButton
+                tooltip={"Delete Selected"}
+                onClick={() => {
+                  setDeleteMultipleOpen(true);
+                }}
+                text={"Delete Selected"}
+                icon={<DeleteIcon />}
+                color="secondary"
+                disabled={selectedSAs.length === 0}
+                variant={"outlined"}
+              />
           </Box>
         </Grid>
 
@@ -240,6 +302,9 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             idField={""}
             columns={[{ label: "Service Account", elementKey: "" }]}
             itemActions={tableActions}
+            selectedItems={selectedSAs}
+          onSelect={selectSAs}
+          onSelectAll={selectAllItems}
           />
         </Grid>
         <Grid item xs={12} marginTop={"15px"}>

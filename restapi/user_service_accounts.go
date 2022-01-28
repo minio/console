@@ -81,6 +81,14 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		return user_api.NewDeleteServiceAccountNoContent()
 	})
 
+	// Delete multiple service accounts
+	api.UserAPIDeleteMultipleServiceAccountsHandler = user_api.DeleteMultipleServiceAccountsHandlerFunc(func(params user_api.DeleteMultipleServiceAccountsParams, session *models.Principal) middleware.Responder {
+		if err := getDeleteMultipleServiceAccountsResponse(session, params.SelectedSA); err != nil {
+			return user_api.NewDeleteMultipleServiceAccountsDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewDeleteMultipleServiceAccountsOK()
+	})
+
 	// List Service Accounts for User
 	api.AdminAPIListAUserServiceAccountsHandler = admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getUserServiceAccountsResponse(session, params.Name)
@@ -340,5 +348,27 @@ func getDeleteServiceAccountResponse(session *models.Principal, accessKey string
 	if err := deleteServiceAccount(ctx, userAdminClient, accessKey); err != nil {
 		return prepareError(err)
 	}
+	return nil
+}
+
+// getDeleteMultipleServiceAccountsResponse authenticates the user and calls deleteServiceAccount for each account listed in selectedSAs
+func getDeleteMultipleServiceAccountsResponse(session *models.Principal, selectedSAs []models.DeleteSA) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	userAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a MinIO user Admin Client interface implementation
+	// defining the client to be used
+	userAdminClient := AdminClient{Client: userAdmin}
+	for i := range selectedSAs {
+		var sa string = string(selectedSAs[i])
+		if err := deleteServiceAccount(ctx, userAdminClient, sa); err != nil {
+			return prepareError(err)
+		}
+	}
+
 	return nil
 }
