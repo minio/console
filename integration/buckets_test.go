@@ -241,6 +241,25 @@ func ListBuckets() (*http.Response, error) {
 	return response, err
 }
 
+func DeleteBucket(name string) (*http.Response, error) {
+	/*
+		Helper function to delete bucket.
+		DELETE: {{baseUrl}}/buckets/:name
+	*/
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/buckets/"+name, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func BucketInfo(name string) (*http.Response, error) {
 	/*
 		Helper function to test Bucket Info End Point
@@ -692,6 +711,54 @@ func TestListBuckets(t *testing.T) {
 		assert.True(strings.Contains(string(b),
 			"testlistbuckets"+strconv.Itoa(i)))
 	}
+}
+
+func TestDeleteBucket(t *testing.T) {
+	/*
+		Test to delete a bucket
+	*/
+	// 1. Create the bucket
+	assert := assert.New(t)
+	response, err := AddBucket("testdeletebucket1", false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Delete the bucket
+	deleteBucketResponse, deleteBucketError := DeleteBucket("testdeletebucket1")
+	assert.Nil(deleteBucketError)
+	if deleteBucketError != nil {
+		log.Println(deleteBucketError)
+		return
+	}
+	if deleteBucketResponse != nil {
+		assert.Equal(
+			204, deleteBucketResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Verify the bucket is gone by trying to put a tag
+	tags := make(map[string]string)
+	tags["tag1"] = "tag1"
+	putBucketTagResponse, putBucketTagError := PutBucketsTags(
+		"testdeletebucket1", tags)
+	if putBucketTagError != nil {
+		log.Println(putBucketTagError)
+		assert.Fail("Error adding a tag to the bucket")
+		return
+	}
+	finalResponse := inspectHTTPResponse(putBucketTagResponse)
+	if putBucketTagResponse != nil {
+		assert.Equal(
+			500, putBucketTagResponse.StatusCode,
+			finalResponse)
+	}
+	assert.True(
+		strings.Contains(finalResponse, "The specified bucket does not exist"))
 }
 
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
