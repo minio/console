@@ -37,8 +37,12 @@ import (
 type BucketAccess string
 
 func NewBucketAccess(value BucketAccess) *BucketAccess {
-	v := value
-	return &v
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated BucketAccess.
+func (m BucketAccess) Pointer() *BucketAccess {
+	return &m
 }
 
 const (

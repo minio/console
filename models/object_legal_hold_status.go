@@ -37,8 +37,12 @@ import (
 type ObjectLegalHoldStatus string
 
 func NewObjectLegalHoldStatus(value ObjectLegalHoldStatus) *ObjectLegalHoldStatus {
-	v := value
-	return &v
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ObjectLegalHoldStatus.
+func (m ObjectLegalHoldStatus) Pointer() *ObjectLegalHoldStatus {
+	return &m
 }
 
 const (
