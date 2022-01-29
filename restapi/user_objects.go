@@ -659,7 +659,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool,
 	// TODO: support older Versions
 	contentCh := make(chan *mc.ClientContent, 1)
 
-	errorCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+	resultCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 OUTER_LOOP:
 	for content := range client.list(ctx, listOpts) {
 		if content.Err != nil {
@@ -677,31 +677,31 @@ OUTER_LOOP:
 			select {
 			case contentCh <- content:
 				sent = true
-			case pErr := <-errorCh:
-				if pErr != nil {
-					switch pErr.ToGoError().(type) {
+			case result := <-resultCh:
+				if result.Err != nil {
+					switch result.Err.ToGoError().(type) {
 					// ignore same as mc
 					case mc.PathInsufficientPermission:
 						// Ignore Permission error.
 						continue
 					}
 					close(contentCh)
-					return pErr.Cause
+					return result.Err.Cause
 				}
 				break OUTER_LOOP
 			}
 		}
 	}
 	close(contentCh)
-	for pErr := range errorCh {
-		if pErr != nil {
-			switch pErr.ToGoError().(type) {
+	for result := range resultCh {
+		if result.Err != nil {
+			switch result.Err.ToGoError().(type) {
 			// ignore same as mc
 			case mc.PathInsufficientPermission:
 				// Ignore Permission error.
 				continue
 			}
-			return pErr.Cause
+			return result.Err.Cause
 		}
 	}
 	return nil
@@ -718,16 +718,16 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 	isIncomplete := false
 	isBypass := false
 
-	errorCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
-	for pErr := range errorCh {
-		if pErr != nil {
-			switch pErr.ToGoError().(type) {
+	resultCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+	for result := range resultCh {
+		if result.Err != nil {
+			switch result.Err.ToGoError().(type) {
 			// ignore same as mc
 			case mc.PathInsufficientPermission:
 				// Ignore Permission error.
 				continue
 			}
-			return pErr.Cause
+			return result.Err.Cause
 		}
 	}
 	return nil

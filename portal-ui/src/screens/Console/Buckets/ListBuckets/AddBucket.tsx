@@ -387,7 +387,6 @@ const AddBucket = ({
                         }}
                         selectorOptions={[
                           { value: "hard", label: "Hard" },
-                          { value: "fifo", label: "FIFO" },
                         ]}
                       />
                     </Grid>
