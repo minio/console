@@ -352,7 +352,7 @@ func getDeleteServiceAccountResponse(session *models.Principal, accessKey string
 }
 
 // getDeleteMultipleServiceAccountsResponse authenticates the user and calls deleteServiceAccount for each account listed in selectedSAs
-func getDeleteMultipleServiceAccountsResponse(session *models.Principal, selectedSAs []models.DeleteSA) *models.Error {
+func getDeleteMultipleServiceAccountsResponse(session *models.Principal, selectedSAs []string) *models.Error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -363,8 +363,7 @@ func getDeleteMultipleServiceAccountsResponse(session *models.Principal, selecte
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
-	for i := range selectedSAs {
-		var sa string = string(selectedSAs[i])
+	for _, sa := range selectedSAs {
 		if err := deleteServiceAccount(ctx, userAdminClient, sa); err != nil {
 			return prepareError(err)
 		}
