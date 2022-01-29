@@ -1286,7 +1286,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/deleteSA"
+              type: string
       responses:
         200:
           description: A successful response.

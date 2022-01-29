@@ -3096,7 +3096,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/deleteSA"
+                "type": "string"
               }
             }
           }
@@ -9208,7 +9208,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/deleteSA"
+                "type": "string"
               }
             }
           }
