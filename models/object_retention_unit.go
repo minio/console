@@ -37,8 +37,12 @@ import (
 type ObjectRetentionUnit string
 
 func NewObjectRetentionUnit(value ObjectRetentionUnit) *ObjectRetentionUnit {
-	v := value
-	return &v
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ObjectRetentionUnit.
+func (m ObjectRetentionUnit) Pointer() *ObjectRetentionUnit {
+	return &m
 }
 
 const (

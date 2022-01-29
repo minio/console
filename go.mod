@@ -6,9 +6,9 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/dustin/go-humanize v1.0.0
-	github.com/go-openapi/errors v0.20.1
+	github.com/go-openapi/errors v0.20.2
 	github.com/go-openapi/loads v0.21.0
-	github.com/go-openapi/runtime v0.21.0
+	github.com/go-openapi/runtime v0.21.1
 	github.com/go-openapi/spec v0.20.4
 	github.com/go-openapi/strfmt v0.21.1
 	github.com/go-openapi/swag v0.19.15
@@ -20,7 +20,7 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
-	github.com/minio/madmin-go v1.1.23
+	github.com/minio/madmin-go v1.2.9
 	github.com/minio/mc v0.0.0-20211207230606-23a05f5a17f2
 	github.com/minio/minio-go/v7 v7.0.21
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
@@ -62,7 +62,7 @@ require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/go-openapi/analysis v0.20.1 // indirect
+	github.com/go-openapi/analysis v0.21.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
@@ -71,7 +71,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-cmp v0.5.5 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gnostic v0.5.1 // indirect
@@ -131,7 +131,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect
-	golang.org/x/sys v0.0.0-20211015200801-69063c4bb744 // indirect
+	golang.org/x/sys v0.0.0-20211213223007-03aa0b5f6827 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
