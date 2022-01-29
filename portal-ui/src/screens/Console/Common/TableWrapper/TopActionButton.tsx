@@ -30,6 +30,7 @@ const styles = (theme: Theme) =>
       color: "#5E5E5E",
       fontWeight: "normal",
       fontSize: 14,
+      whiteSpace: "nowrap",
       borderRight: "#E5E5E5 1px solid",
       borderStyle: "solid",
       borderRadius: 0,
@@ -105,26 +106,28 @@ const TopActionButton = ({
 }: ITopActionButton) => {
   return (
     <Tooltip title={tooltip || ""}>
-      <Button
-        {...rest}
-        className={clsx(classes.root, {
-          [classes.contained]: variant === "contained",
-        })}
-        sx={{
-          "& span.buttonItem": {
-            "@media (max-width: 1279px)": {
-              display: "none",
+      <span>
+        <Button
+          {...rest}
+          className={clsx(classes.root, {
+            [classes.contained]: variant === "contained",
+          })}
+          sx={{
+            "& span.buttonItem": {
+              "@media (max-width: 1279px)": {
+                display: "none",
+              },
             },
-          },
-          "& span": {
-            "@media (max-width: 1279px)": {
-              margin: 0,
+            "& span": {
+              "@media (max-width: 1279px)": {
+                margin: 0,
+              },
             },
-          },
-        }}
-      >
-        <span className={"buttonItem"}>{children}</span>
-      </Button>
+          }}
+        >
+          <span className={"buttonItem"}>{children}</span>
+        </Button>
+      </span>
     </Tooltip>
   );
 };

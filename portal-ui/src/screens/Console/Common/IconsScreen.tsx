@@ -31,6 +31,7 @@ import {
   BucketsIcon,
   CalendarIcon,
   CircleIcon,
+  ClosePanelIcon,
   ClustersIcon,
   CollapseIcon,
   ComputerLineIcon,
@@ -183,6 +184,10 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         <Grid item xs={3} sm={2} md={1}>
           <CircleIcon /> <br />
           CircleIcon
+        </Grid>
+        <Grid item xs={3} sm={2} md={1}>
+          <ClosePanelIcon /> <br />
+          ClosePanelIcon
         </Grid>
         <Grid item xs={3} sm={2} md={1}>
           <ClustersIcon /> <br />
