@@ -1074,6 +1074,8 @@ export const serviceAccountStyles: any = {
 
 export const tableStyles: any = {
   tableBlock: {
+    display: "flex",
+    flexDirection: "row",
     "& .ReactVirtualized__Table__headerRow.rowLine, .ReactVirtualized__Table__row.rowLine":
       {
         borderBottom: "1px solid #EAEAEA",
@@ -1264,6 +1266,65 @@ export const modalStyleUtils: any = {
 export const textStyleUtils: any = {
   textMuted: {
     color: "#8399AB",
+  },
+};
+
+export const detailsPanel: any = {
+  metadataLinear: {
+    marginBottom: 15,
+    fontSize: 14,
+    maxHeight: 180,
+    overflowY: "auto",
+  },
+  hrClass: {
+    borderTop: 0,
+    borderLeft: 0,
+    borderRight: 0,
+    borderColor: "#E2E2E2",
+    backgroundColor: "transparent",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    color: "#000",
+    fontWeight: "bold",
+    borderBottom: "#E2E2E2 1px solid",
+    margin: "10px 22px",
+    paddingBottom: 18,
+    width: "100%",
+  },
+  detailContainer: {
+    padding: "0 22px",
+    marginBottom: 20,
+    fontSize: 14,
+  },
+  titleLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#000",
+    padding: "12px 22px 8px 22px",
+  },
+  objectActions: {
+    backgroundColor: "#F8F8F8",
+    border: "#F1F1F1 1px solid",
+    borderRadius: 3,
+    margin: "8px 22px",
+    padding: 0,
+    color: "#696969",
+    "& li": {
+      listStyle: "none",
+      padding: 6,
+      margin: 0,
+      borderBottom: "#E5E5E5 1px solid",
+      fontSize: 14,
+      "&:first-of-type": {
+        padding: 10,
+        fontWeight: "bold",
+        color: "#000",
+      },
+      "&:last-of-type": {
+        borderBottom: 0,
+      },
+    },
   },
 };
 
