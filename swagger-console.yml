@@ -153,21 +153,6 @@ paths:
     get:
       summary: List Buckets
       operationId: ListBuckets
-      parameters:
-        - name: sort_by
-          in: query
-          required: false
-          type: string
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
       responses:
         200:
           description: A successful response.
@@ -2569,7 +2554,6 @@ definitions:
               type:
                 type: string
                 enum:
-                  - fifo
                   - hard
       creation_date:
         type: string
@@ -3211,7 +3195,6 @@ definitions:
         type: string
         enum:
           - hard
-          - fifo
   setBucketQuota:
     type: object
     required:
@@ -3222,7 +3205,6 @@ definitions:
       quota_type:
         type: string
         enum:
-          - fifo
           - hard
       amount:
         type: integer

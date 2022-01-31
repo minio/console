@@ -23,9 +23,15 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import { UploadFolderIcon, UploadIcon } from "../../../../icons";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+import SecureComponent, {
+  hasPermission,
+} from "../../../../common/SecureComponent/SecureComponent";
 
 interface IUploadFilesButton {
-  buttonDisabled?: boolean;
+  uploadPath: string;
+  bucketName: string;
+  forceDisable?: boolean;
   uploadFileFunction: (closeFunction: () => void) => void;
   uploadFolderFunction: (closeFunction: () => void) => void;
   classes: any;
@@ -43,7 +49,9 @@ const styles = (theme: Theme) =>
   });
 
 const UploadFilesButton = ({
-  buttonDisabled = false,
+  uploadPath,
+  bucketName,
+  forceDisable = false,
   uploadFileFunction,
   uploadFolderFunction,
   classes,
@@ -56,6 +64,18 @@ const UploadFilesButton = ({
   const handleCloseUpload = () => {
     setAnchorEl(null);
   };
+
+  const uploadObjectAllowed = hasPermission(uploadPath, [
+    IAM_SCOPES.S3_PUT_OBJECT,
+  ]);
+  const uploadFolderAllowed = hasPermission(
+    bucketName,
+    [IAM_SCOPES.S3_PUT_OBJECT],
+    false,
+    true
+  );
+
+  const uploadEnabled: boolean = uploadObjectAllowed || uploadFolderAllowed;
 
   return (
     <Fragment>
@@ -70,7 +90,7 @@ const UploadFilesButton = ({
         icon={<UploadIcon />}
         color="primary"
         variant={"contained"}
-        disabled={buttonDisabled}
+        disabled={forceDisable || !uploadEnabled}
       />
       <Menu
         id={`upload-main-menu`}
@@ -89,28 +109,41 @@ const UploadFilesButton = ({
           horizontal: "center",
         }}
       >
-        <MenuItem
-          onClick={() => {
-            uploadFileFunction(handleCloseUpload);
-          }}
-          disabled={buttonDisabled}
+        <SecureComponent
+          resource={uploadPath}
+          scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+          errorProps={{ disabled: true }}
         >
-          <ListItemIcon className={classes.listUploadIcons}>
-            <UploadIcon />
-          </ListItemIcon>{" "}
-          <ListItemText>Upload File</ListItemText>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            uploadFolderFunction(handleCloseUpload);
-          }}
-          disabled={buttonDisabled}
+          <MenuItem
+            onClick={() => {
+              uploadFileFunction(handleCloseUpload);
+            }}
+            disabled={forceDisable}
+          >
+            <ListItemIcon className={classes.listUploadIcons}>
+              <UploadIcon />
+            </ListItemIcon>
+            <ListItemText>Upload File</ListItemText>
+          </MenuItem>
+        </SecureComponent>
+        <SecureComponent
+          resource={bucketName}
+          containsResource
+          scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
+          errorProps={{ disabled: true }}
         >
-          <ListItemIcon className={classes.listUploadIcons}>
-            <UploadFolderIcon />
-          </ListItemIcon>{" "}
-          <ListItemText>Upload Folder</ListItemText>
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              uploadFolderFunction(handleCloseUpload);
+            }}
+            disabled={forceDisable}
+          >
+            <ListItemIcon className={classes.listUploadIcons}>
+              <UploadFolderIcon />
+            </ListItemIcon>
+            <ListItemText>Upload Folder</ListItemText>
+          </MenuItem>
+        </SecureComponent>
       </Menu>
     </Fragment>
   );
