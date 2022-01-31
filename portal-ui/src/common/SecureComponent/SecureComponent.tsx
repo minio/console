@@ -21,7 +21,8 @@ import { hasAccessToResource } from "./permissions";
 export const hasPermission = (
   resource: string | undefined,
   scopes: string[],
-  matchAll?: boolean
+  matchAll?: boolean,
+  containsResource?: boolean
 ) => {
   if (!resource) {
     return false;
@@ -33,8 +34,17 @@ export const hasPermission = (
     sessionGrants[`arn:aws:s3:::${resource}/*`] ||
     [];
   const globalGrants = sessionGrants["arn:aws:s3:::*"] || [];
+  let containsResourceGrants: string[] = [];
+  if (containsResource) {
+    const matchResource = `arn:aws:s3:::${resource}`;
+    for (const [key, value] of Object.entries(sessionGrants)) {
+      if (key.includes(matchResource)) {
+        containsResourceGrants = containsResourceGrants.concat(value);
+      }
+    }
+  }
   return hasAccessToResource(
-    [...resourceGrants, ...globalGrants],
+    [...resourceGrants, ...globalGrants, ...containsResourceGrants],
     scopes,
     matchAll
   );
@@ -47,6 +57,7 @@ interface ISecureComponentProps {
   children: any;
   scopes: string[];
   resource: string;
+  containsResource?: boolean;
 }
 
 const SecureComponent = ({
@@ -56,8 +67,14 @@ const SecureComponent = ({
   matchAll = false,
   scopes = [],
   resource,
+  containsResource = false,
 }: ISecureComponentProps) => {
-  const permissionGranted = hasPermission(resource, scopes, matchAll);
+  const permissionGranted = hasPermission(
+    resource,
+    scopes,
+    matchAll,
+    containsResource
+  );
   if (!permissionGranted && !errorProps) return <RenderError />;
   if (!permissionGranted && errorProps) {
     return Array.isArray(children) ? (

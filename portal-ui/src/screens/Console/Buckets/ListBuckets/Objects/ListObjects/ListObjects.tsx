@@ -91,6 +91,8 @@ import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
 import { DownloadIcon, PreviewIcon, ShareIcon } from "../../../../../../icons";
 import UploadFilesButton from "../../UploadFilesButton";
+import DetailsListPanel from "./DetailsListPanel";
+import ObjectDetailPanel from "./ObjectDetailPanel";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -126,6 +128,9 @@ const styles = (theme: Theme) =>
   createStyles({
     browsePaper: {
       height: "calc(100vh - 280px)",
+      "&.actionsPanelOpen": {
+        height: "100%",
+      },
     },
     "@global": {
       ".rowLine:hover  .iconFileElm": {
@@ -142,7 +147,7 @@ const styles = (theme: Theme) =>
         right: 1,
         width: 5,
         height: 5,
-        minWidth: 5
+        minWidth: 5,
       },
     },
     screenTitle: {
@@ -276,6 +281,10 @@ const ListObjects = ({
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [canShareFile, setCanShareFile] = useState<boolean>(false);
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
+  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
+  const [selectedInternalPaths, setSelectedInternalPaths] = useState<
+    string | null
+  >(null);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -676,11 +685,10 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
-    const newPath = `/buckets/${bucketName}/browse${
-      idElement ? `/${encodeFileName(idElement)}` : ``
-    }`;
-    history.push(newPath);
-    return;
+    setDetailsOpen(true);
+    setSelectedInternalPaths(
+      `${idElement ? `${encodeFileName(idElement)}` : ``}`
+    );
   };
 
   const uploadObject = useCallback(
@@ -764,7 +772,12 @@ const ListObjects = ({
                   xhr.status === 400 ||
                   xhr.status === 500
                 ) {
-                  setSnackBarMessage(errorMessage);
+                  if (xhr.response) {
+                    const err = JSON.parse(xhr.response);
+                    setSnackBarMessage(err.detailedMessage);
+                  } else {
+                    setSnackBarMessage(errorMessage);
+                  }
                 }
                 if (xhr.status === 413) {
                   setSnackBarMessage("Error - File size too large");
@@ -1061,7 +1074,10 @@ const ListObjects = ({
       });
     }
   };
-
+  let uploadPath = [bucketName];
+  if (currentPath.length > 0) {
+    uploadPath = uploadPath.concat(currentPath);
+  }
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1131,42 +1147,36 @@ const ListObjects = ({
             }
             actions={
               <Fragment>
-                <SecureComponent
-                  resource={bucketName}
-                  scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-                  errorProps={{ disabled: true }}
-                >
-                  <Fragment>
-                    <UploadFilesButton
-                      uploadFileFunction={(closeMenu) => {
-                        if (fileUpload && fileUpload.current) {
-                          fileUpload.current.click();
-                        }
-                        closeMenu();
-                      }}
-                      uploadFolderFunction={(closeMenu) => {
-                        if (folderUpload && folderUpload.current) {
-                          folderUpload.current.click();
-                        }
-                        closeMenu();
-                      }}
-                    />
-                    <input
-                      type="file"
-                      multiple
-                      onChange={handleUploadButton}
-                      style={{ display: "none" }}
-                      ref={fileUpload}
-                    />
-                    <input
-                      type="file"
-                      multiple
-                      onChange={handleUploadButton}
-                      style={{ display: "none" }}
-                      ref={folderUpload}
-                    />
-                  </Fragment>
-                </SecureComponent>
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleUploadButton}
+                  style={{ display: "none" }}
+                  ref={fileUpload}
+                />
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleUploadButton}
+                  style={{ display: "none" }}
+                  ref={folderUpload}
+                />
+                <UploadFilesButton
+                  bucketName={bucketName}
+                  uploadPath={uploadPath.join("/")}
+                  uploadFileFunction={(closeMenu) => {
+                    if (fileUpload && fileUpload.current) {
+                      fileUpload.current.click();
+                    }
+                    closeMenu();
+                  }}
+                  uploadFolderFunction={(closeMenu) => {
+                    if (folderUpload && folderUpload.current) {
+                      folderUpload.current.click();
+                    }
+                    closeMenu();
+                  }}
+                />
               </Fragment>
             }
           />
@@ -1206,7 +1216,9 @@ const ListObjects = ({
                 entityName="Objects"
                 idField="name"
                 records={payload}
-                customPaperHeight={classes.browsePaper}
+                customPaperHeight={`${classes.browsePaper} ${
+                  detailsOpen ? "actionsPanelOpen" : ""
+                }`}
                 selectedItems={selectedObjects}
                 onSelect={selectListObjects}
                 customEmptyMessage={`This location is empty${
@@ -1301,6 +1313,20 @@ const ListObjects = ({
                   },
                 ]}
               />
+              <DetailsListPanel
+                open={detailsOpen}
+                closePanel={() => {
+                  setDetailsOpen(false);
+                  setSelectedInternalPaths(null);
+                }}
+              >
+                {selectedInternalPaths !== null && (
+                    <ObjectDetailPanel
+                      internalPaths={selectedInternalPaths}
+                      bucketName={bucketName}
+                    />
+                  )}
+              </DetailsListPanel>
             </SecureComponent>
           </Grid>
         </div>
