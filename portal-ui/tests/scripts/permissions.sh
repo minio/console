@@ -23,6 +23,7 @@ create_policies() {
   mc admin policy add minio trace-$TIMESTAMP portal-ui/tests/policies/trace.json
   mc admin policy add minio users-$TIMESTAMP portal-ui/tests/policies/users.json
   mc admin policy add minio watch-$TIMESTAMP portal-ui/tests/policies/watch.json
+  mc admin policy add minio bucketwriteprefixonlypolicy-$TIMESTAMP portal-ui/tests/policies/bucketWritePrefixOnlyPolicy.json
 }
 
 create_users() {
@@ -41,6 +42,11 @@ create_users() {
   mc admin user add minio trace-$TIMESTAMP trace1234
   mc admin user add minio users-$TIMESTAMP users1234
   mc admin user add minio watch-$TIMESTAMP watch1234
+  mc admin user add minio bucketwriteprefixonlypolicy-$TIMESTAMP bucketwriteprefixonlypolicy
+}
+
+create_buckets() {
+  mc mb minio/testcafe && mc cp ./portal-ui/tests/uploads/test.txt minio/testcafe/write/test.txt
 }
 
 assign_policies() {
@@ -59,6 +65,7 @@ assign_policies() {
   mc admin policy set minio trace-$TIMESTAMP user=trace-$TIMESTAMP
   mc admin policy set minio users-$TIMESTAMP user=users-$TIMESTAMP
   mc admin policy set minio watch-$TIMESTAMP user=watch-$TIMESTAMP
+  mc admin policy set minio bucketwriteprefixonlypolicy-$TIMESTAMP user=bucketwriteprefixonlypolicy-$TIMESTAMP
 }
 
 remove_users() {
@@ -77,6 +84,7 @@ remove_users() {
   mc admin user remove minio trace-$TIMESTAMP
   mc admin user remove minio users-$TIMESTAMP
   mc admin user remove minio watch-$TIMESTAMP
+  mc admin user remove minio bucketwriteprefixonlypolicy-$TIMESTAMP
 }
 
 remove_policies() {
@@ -95,13 +103,17 @@ remove_policies() {
   mc admin policy remove minio trace-$TIMESTAMP
   mc admin policy remove minio users-$TIMESTAMP
   mc admin policy remove minio watch-$TIMESTAMP
+  mc admin policy remove minio bucketwriteprefixonlypolicy-$TIMESTAMP
+}
+
+remove_buckets() {
+  mc rm minio/testcafe/write/test.txt && mc rm minio/testcafe
 }
 
 cleanup() {
   remove_users
   remove_policies
-  pkill console
-  kill -9 `lsof -i:5005 -t`
+  remove_buckets
 }
 
 __init__() {
@@ -117,6 +129,7 @@ __init__() {
   create_policies
   create_users
   assign_policies
+  create_buckets
 }
 
 main() {
