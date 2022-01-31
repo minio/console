@@ -3914,7 +3914,6 @@ func init() {
                 "type": {
                   "type": "string",
                   "enum": [
-                    "fifo",
                     "hard"
                   ]
                 }
@@ -4109,8 +4108,7 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "hard",
-            "fifo"
+            "hard"
           ]
         }
       }
@@ -5498,7 +5496,6 @@ func init() {
         "quota_type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }
@@ -9748,7 +9745,6 @@ func init() {
             "type": {
               "type": "string",
               "enum": [
-                "fifo",
                 "hard"
               ]
             }
@@ -9781,7 +9777,6 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }
@@ -10091,7 +10086,6 @@ func init() {
                 "type": {
                   "type": "string",
                   "enum": [
-                    "fifo",
                     "hard"
                   ]
                 }
@@ -10286,8 +10280,7 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "hard",
-            "fifo"
+            "hard"
           ]
         }
       }
@@ -11675,7 +11668,6 @@ func init() {
         "quota_type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }

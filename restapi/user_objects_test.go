@@ -46,7 +46,7 @@ var minioPutObjectTaggingMock func(ctx context.Context, bucketName, objectName s
 var minioStatObjectMock func(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
 
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
-var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
+var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
 var mcGetMock func(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 var mcShareDownloadMock func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
 
@@ -90,7 +90,7 @@ func (ac minioClientMock) statObject(ctx context.Context, bucketName, prefix str
 func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
 	return mcListMock(ctx, opts)
 }
-func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 }
 
@@ -547,6 +547,7 @@ func Test_listObjects(t *testing.T) {
 		},
 	}
 
+	t.Parallel()
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			minioListObjectsMock = tt.args.listFunc
@@ -554,14 +555,21 @@ func Test_listObjects(t *testing.T) {
 			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
 			minioGetObjectTaggingMock = tt.args.objectGetTaggingFunc
 			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions, tt.args.withMetadata)
-			if !reflect.DeepEqual(err, tt.wantError) {
+			if err == nil && tt.wantError != nil {
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
-				return
+			} else if err != nil && tt.wantError == nil {
+				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
+			} else if err != nil && tt.wantError != nil {
+				if err.Error() != tt.wantError.Error() {
+					t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
+				}
 			}
-			if !reflect.DeepEqual(resp, tt.expectedResp) {
-				ji, _ := json.Marshal(resp)
-				vi, _ := json.Marshal(tt.expectedResp)
-				t.Errorf("\ngot: %s \nwant: %s", ji, vi)
+			if err == nil {
+				if !reflect.DeepEqual(resp, tt.expectedResp) {
+					ji, _ := json.Marshal(resp)
+					vi, _ := json.Marshal(tt.expectedResp)
+					t.Errorf("\ngot: %s \nwant: %s", ji, vi)
+				}
 			}
 		})
 	}
@@ -577,7 +585,7 @@ func Test_deleteObjects(t *testing.T) {
 		versionID  string
 		recursive  bool
 		listFunc   func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
-		removeFunc func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
+		removeFunc func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
 	}
 	tests := []struct {
 		test      string
@@ -590,15 +598,11 @@ func Test_deleteObjects(t *testing.T) {
 				path:      "obj.txt",
 				versionID: "",
 				recursive: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
-					errorCh := make(chan *probe.Error)
-					go func() {
-						defer close(errorCh)
-						for {
-							return
-						}
-					}()
-					return errorCh
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+					resultCh := make(chan mc.RemoveResult, 1)
+					resultCh <- mc.RemoveResult{Err: nil}
+					close(resultCh)
+					return resultCh
 				},
 			},
 			wantError: nil,
@@ -609,16 +613,11 @@ func Test_deleteObjects(t *testing.T) {
 				path:      "obj.txt",
 				versionID: "",
 				recursive: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
-					errorCh := make(chan *probe.Error)
-					go func() {
-						defer close(errorCh)
-						for {
-							errorCh <- probe.NewError(errors.New("probe error"))
-							return
-						}
-					}()
-					return errorCh
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+					resultCh := make(chan mc.RemoveResult, 1)
+					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
+					close(resultCh)
+					return resultCh
 				},
 			},
 			wantError: errors.New("probe error"),
@@ -629,25 +628,16 @@ func Test_deleteObjects(t *testing.T) {
 				path:      "path/",
 				versionID: "",
 				recursive: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
-					errorCh := make(chan *probe.Error)
-					go func() {
-						defer close(errorCh)
-						for {
-							return
-						}
-					}()
-					return errorCh
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+					resultCh := make(chan mc.RemoveResult, 1)
+					resultCh <- mc.RemoveResult{Err: nil}
+					close(resultCh)
+					return resultCh
 				},
 				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
-					ch := make(chan *mc.ClientContent)
-					go func() {
-						defer close(ch)
-						for {
-							ch <- &mc.ClientContent{}
-							return
-						}
-					}()
+					ch := make(chan *mc.ClientContent, 1)
+					ch <- &mc.ClientContent{}
+					close(ch)
 					return ch
 				},
 			},
@@ -661,25 +651,16 @@ func Test_deleteObjects(t *testing.T) {
 				path:      "path/",
 				versionID: "",
 				recursive: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
-					errorCh := make(chan *probe.Error)
-					go func() {
-						defer close(errorCh)
-						for {
-							return
-						}
-					}()
-					return errorCh
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+					resultCh := make(chan mc.RemoveResult, 1)
+					resultCh <- mc.RemoveResult{Err: nil}
+					close(resultCh)
+					return resultCh
 				},
 				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
-					ch := make(chan *mc.ClientContent)
-					go func() {
-						defer close(ch)
-						for {
-							ch <- &mc.ClientContent{Err: probe.NewError(errors.New("probe error"))}
-							return
-						}
-					}()
+					ch := make(chan *mc.ClientContent, 1)
+					ch <- &mc.ClientContent{Err: probe.NewError(errors.New("probe error"))}
+					close(ch)
 					return ch
 				},
 			},
@@ -693,26 +674,16 @@ func Test_deleteObjects(t *testing.T) {
 				path:      "path/",
 				versionID: "",
 				recursive: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
-					errorCh := make(chan *probe.Error)
-					go func() {
-						defer close(errorCh)
-						for {
-							errorCh <- probe.NewError(errors.New("probe error"))
-							return
-						}
-					}()
-					return errorCh
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+					resultCh := make(chan mc.RemoveResult, 1)
+					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
+					close(resultCh)
+					return resultCh
 				},
 				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
-					ch := make(chan *mc.ClientContent)
-					go func() {
-						defer close(ch)
-						for {
-							ch <- &mc.ClientContent{}
-							return
-						}
-					}()
+					ch := make(chan *mc.ClientContent, 1)
+					ch <- &mc.ClientContent{}
+					close(ch)
 					return ch
 				},
 			},
@@ -720,14 +691,20 @@ func Test_deleteObjects(t *testing.T) {
 		},
 	}
 
+	t.Parallel()
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			mcListMock = tt.args.listFunc
 			mcRemoveMock = tt.args.removeFunc
 			err := deleteObjects(ctx, s3Client1, minioClient1, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive, false)
-			if !reflect.DeepEqual(err, tt.wantError) {
+			if err == nil && tt.wantError != nil {
 				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
-				return
+			} else if err != nil && tt.wantError == nil {
+				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
+			} else if err != nil && tt.wantError != nil {
+				if err.Error() != tt.wantError.Error() {
+					t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
+				}
 			}
 		})
 	}
