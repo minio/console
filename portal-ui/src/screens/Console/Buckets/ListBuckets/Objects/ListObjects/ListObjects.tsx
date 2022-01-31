@@ -63,6 +63,7 @@ import {
   resetRewind,
   setFileModeEnabled,
   setNewObject,
+  setSearchObjects,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
@@ -85,7 +86,6 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import SecureComponent, {
   hasPermission,
 } from "../../../../../../common/SecureComponent/SecureComponent";
-import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
@@ -196,6 +196,7 @@ interface IListObjectsProps {
   rewindEnabled: boolean;
   rewindDate: any;
   bucketToRewind: string;
+  searchObjects: string;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
@@ -208,6 +209,7 @@ interface IListObjectsProps {
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   openList: typeof openList;
+  setSearchObjects: typeof setSearchObjects;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -253,6 +255,8 @@ const ListObjects = ({
   setNewObject,
   updateProgress,
   completeObject,
+  setSearchObjects,
+  searchObjects,
   openList,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
@@ -261,7 +265,6 @@ const ListObjects = ({
   const [loadingRewind, setLoadingRewind] = useState<boolean>(false);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
-  const [filterObjects, setFilterObjects] = useState<string>("");
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
     useState<React.ReactNode>(defLoading);
@@ -434,7 +437,9 @@ const ListObjects = ({
 
   useEffect(() => {
     setLoading(true);
-  }, [internalPaths]);
+    setDetailsOpen(false);
+    setSearchObjects("");
+  }, [internalPaths, setSearchObjects]);
 
   useEffect(() => {
     if (loading) {
@@ -685,6 +690,14 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
+    if(idElement.endsWith("/")) {
+      const newPath = `/buckets/${bucketName}/browse${
+          idElement ? `/${encodeFileName(idElement)}` : ``
+      }`;
+      history.push(newPath);
+      return;
+    }
+
     setDetailsOpen(true);
     setSelectedInternalPaths(
       `${idElement ? `${encodeFileName(idElement)}` : ``}`
@@ -923,11 +936,11 @@ const ListObjects = ({
   ];
 
   const filteredRecords = records.filter((b: BucketObject) => {
-    if (filterObjects === "") {
+    if (searchObjects === "") {
       return true;
     } else {
       const objectName = b.name.toLowerCase();
-      if (objectName.indexOf(filterObjects.toLowerCase()) >= 0) {
+      if (objectName.indexOf(searchObjects.toLowerCase()) >= 0) {
         return true;
       } else {
         return false;
@@ -1181,19 +1194,6 @@ const ListObjects = ({
             }
           />
         </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <SecureComponent
-            scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
-            resource={bucketName}
-            errorProps={{ disabled: true }}
-          >
-            <SearchBox
-              onChange={setFilterObjects}
-              placeholder="Search Objects"
-              overrideClass={classes.searchField}
-            />
-          </SecureComponent>
-        </Grid>
         <Grid item xs={12}>
           <br />
         </Grid>
@@ -1321,11 +1321,11 @@ const ListObjects = ({
                 }}
               >
                 {selectedInternalPaths !== null && (
-                    <ObjectDetailPanel
-                      internalPaths={selectedInternalPaths}
-                      bucketName={bucketName}
-                    />
-                  )}
+                  <ObjectDetailPanel
+                    internalPaths={selectedInternalPaths}
+                    bucketName={bucketName}
+                  />
+                )}
               </DetailsListPanel>
             </SecureComponent>
           </Grid>
@@ -1343,6 +1343,7 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
   loadingBucket: buckets.bucketDetails.loadingBucket,
   bucketInfo: buckets.bucketDetails.bucketInfo,
+  searchObjects: objectBrowser.searchObjects,
 });
 
 const mapDispatchToProps = {
@@ -1356,6 +1357,7 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   openList,
+  setSearchObjects,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -161,6 +161,7 @@ const UsersSelectors = ({
                     placeholder="Filter Users"
                     adornmentPosition="end"
                     onChange={setFilter}
+                    value={filter}
                   />
                 </div>
               </Grid>
