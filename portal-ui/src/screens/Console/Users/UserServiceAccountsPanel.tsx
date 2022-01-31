@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import Box from "@mui/material";
+import { Box } from "@mui/material";
 import {
   actionsTray,
   searchField,
@@ -198,31 +198,30 @@ const UserServiceAccountsPanel = ({
       )}
       <div className={classes.actionsTray}>
         <PanelTitle>Service Accounts</PanelTitle> 
-        <RBIconButton
-          tooltip={"Create service account"}
-          text={"Create service account"}
-          variant="contained"
-          color="primary"
-          icon={<AddIcon />}
-          onClick={() => {
-            setAddScreenOpen(true);
-            setAddScreenOpen(true);
-            setSelectedServiceAccount(null);
-          }}
-          disabled={!hasPolicy}
-        />
-        <RBIconButton
-                tooltip={"Delete Selected"}
-                onClick={() => {
-                  setDeleteMultipleOpen(true);
-                }}
-                text={"Delete Selected"}
-                icon={<DeleteIcon />}
-                color="secondary"
-                disabled={selectedSAs.length === 0}
-                variant={"outlined"}
-              />
-      
+        <Box >   
+          <RBIconButton
+            tooltip={"Delete Selected"}
+            onClick={() => {setDeleteMultipleOpen(true);}}
+            text={"Delete Selected"}
+            icon={<DeleteIcon />}
+            color="secondary"
+            disabled={selectedSAs.length === 0}
+            variant={"outlined"}
+          />
+          <RBIconButton
+            tooltip={"Create service account"}
+            text={"Create service account"}
+            variant="contained"
+            color="primary"
+            icon={<AddIcon />}
+            onClick={() => {
+              setAddScreenOpen(true);
+              setAddScreenOpen(true);
+              setSelectedServiceAccount(null);
+            }}
+            disabled={!hasPolicy}
+          />
+        </Box> 
       </div>
       <div className={classes.tableBlock}>
         <TableWrapper
