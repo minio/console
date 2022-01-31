@@ -2554,7 +2554,6 @@ definitions:
               type:
                 type: string
                 enum:
-                  - fifo
                   - hard
       creation_date:
         type: string
@@ -3196,7 +3195,6 @@ definitions:
         type: string
         enum:
           - hard
-          - fifo
   setBucketQuota:
     type: object
     required:
@@ -3207,7 +3205,6 @@ definitions:
       quota_type:
         type: string
         enum:
-          - fifo
           - hard
       amount:
         type: integer
