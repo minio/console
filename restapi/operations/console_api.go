@@ -197,6 +197,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetObjectMetadataHandler: user_api.GetObjectMetadataHandlerFunc(func(params user_api.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetObjectMetadata has not yet been implemented")
 		}),
+		UserAPIGetServiceAccountPolicyHandler: user_api.GetServiceAccountPolicyHandlerFunc(func(params user_api.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetServiceAccountPolicy has not yet been implemented")
+		}),
 		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
 		}),
@@ -526,6 +529,8 @@ type ConsoleAPI struct {
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
 	// UserAPIGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	UserAPIGetObjectMetadataHandler user_api.GetObjectMetadataHandler
+	// UserAPIGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
+	UserAPIGetServiceAccountPolicyHandler user_api.GetServiceAccountPolicyHandler
 	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
 	AdminAPIGetTierHandler admin_api.GetTierHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
@@ -868,6 +873,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "user_api.GetObjectMetadataHandler")
+	}
+	if o.UserAPIGetServiceAccountPolicyHandler == nil {
+		unregistered = append(unregistered, "user_api.GetServiceAccountPolicyHandler")
 	}
 	if o.AdminAPIGetTierHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTierHandler")
@@ -1333,6 +1341,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/metadata"] = user_api.NewGetObjectMetadata(o.context, o.UserAPIGetObjectMetadataHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/service-accounts/{access_key}/policy"] = user_api.NewGetServiceAccountPolicy(o.context, o.UserAPIGetServiceAccountPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
