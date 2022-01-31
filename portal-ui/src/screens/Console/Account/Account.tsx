@@ -46,6 +46,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import {selectSAs} from "../../Console/Configurations/utils"
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -154,26 +155,6 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     }
   };
  
-  const selectSAs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
-    const value = targetD.value;
-    const checked = targetD.checked;
-    
-
-    let elements: string[] = [...selectedSAs]; // We clone the selectedSAs array
-
-    if (checked) {
-      // If the user has checked this field we need to push this to selectedSAs
-      elements.push(value);
-    } else {
-      // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter((element) => element !== value);
-    }
-    setSelectedSAs(elements);
-
-    return elements;
-  };
-
   const selectAllItems = () => {
     if (selectedSAs.length === records.length) {
       setSelectedSAs([]);
@@ -221,7 +202,6 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
       )}
         {deleteMultipleOpen && (
         <DeleteMultipleServiceAccounts
-          classes={classes}
           deleteOpen={deleteMultipleOpen}
           selectedSAs={selectedSAs}
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
@@ -303,8 +283,8 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             columns={[{ label: "Service Account", elementKey: "" }]}
             itemActions={tableActions}
             selectedItems={selectedSAs}
-          onSelect={selectSAs}
-          onSelectAll={selectAllItems}
+            onSelect={e => selectSAs(e, setSelectedSAs, selectedSAs)}
+            onSelectAll={selectAllItems}
           />
         </Grid>
         <Grid item xs={12} marginTop={"15px"}>

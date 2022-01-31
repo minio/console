@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import Box from "@mui/material";
 import {
   actionsTray,
   searchField,
@@ -38,6 +39,7 @@ import { AddIcon, DeleteIcon } from "../../../icons";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
+import {selectSAs} from "../../Console/Configurations/utils"
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -138,25 +140,7 @@ const UserServiceAccountsPanel = ({
     setNewServiceAccount(null);
   };
 
-  const selectSAs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
-    const value = targetD.value;
-    const checked = targetD.checked;
-    
-
-    let elements: string[] = [...selectedSAs]; // We clone the selectedSAs array
-
-    if (checked) {
-      // If the user has checked this field we need to push this to selectedSAs
-      elements.push(value);
-    } else {
-      // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter((element) => element !== value);
-    }
-    setSelectedSAs(elements);
-
-    return elements;
-  };
+ 
 
   const selectAllItems = () => {
     if (selectedSAs.length === records.length) {
@@ -197,7 +181,6 @@ const UserServiceAccountsPanel = ({
       )}
       {deleteMultipleOpen && (
         <DeleteMultipleServiceAccounts
-          classes={classes}
           deleteOpen={deleteMultipleOpen}
           selectedSAs={selectedSAs}
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
@@ -214,8 +197,7 @@ const UserServiceAccountsPanel = ({
         />
       )}
       <div className={classes.actionsTray}>
-        <PanelTitle>Service Accounts</PanelTitle>
-
+        <PanelTitle>Service Accounts</PanelTitle> 
         <RBIconButton
           tooltip={"Create service account"}
           text={"Create service account"}
@@ -240,8 +222,8 @@ const UserServiceAccountsPanel = ({
                 disabled={selectedSAs.length === 0}
                 variant={"outlined"}
               />
-          
-            </div>
+      
+      </div>
       <div className={classes.tableBlock}>
         <TableWrapper
           isLoading={loading}
@@ -251,7 +233,7 @@ const UserServiceAccountsPanel = ({
           columns={[{ label: "Service Account", elementKey: "" }]}
           itemActions={tableActions}
           selectedItems={selectedSAs}
-          onSelect={selectSAs}
+          onSelect={e => selectSAs(e, setSelectedSAs, selectedSAs)}
           onSelectAll={selectAllItems}
         />
       </div>

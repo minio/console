@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,6 @@ import { ConfirmDeleteIcon } from "../../../icons";
 
 
 interface IDeleteMultiSAsProps {
-  classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedSAs: string[];
@@ -33,7 +32,6 @@ interface IDeleteMultiSAsProps {
 }
 
 const DeleteMultipleSAs = ({
-  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedSAs,
