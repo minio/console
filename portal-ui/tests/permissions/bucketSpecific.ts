@@ -24,11 +24,12 @@ import {
 } from "../utils/functions";
 import { Selector } from "testcafe";
 import * as constants from "../utils/constants";
+import { SERVER_PORT } from "../utils/constants";
 
 const TEST_BUCKET_NAME_SPECIFIC = "specific-bucket";
 
 fixture("For user with permissions that only allow specific Buckets").page(
-  "http://localhost:9090"
+  `http://localhost:${SERVER_PORT}`
 );
 
 test("Buckets sidebar item exists", async (t) => {
@@ -47,7 +48,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(namedManageButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-1`))
       .click(elements.bucketAccessRulesTab)
       .click(elements.addAccessRuleButton)
@@ -70,7 +71,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(namedManageButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-2`))
       .click(elements.bucketAccessRulesTab)
       .click(elements.addAccessRuleButton)
@@ -93,7 +94,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(namedManageButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-3`))
       .click(elements.bucketAccessRulesTab)
       .click(elements.addAccessRuleButton)
@@ -117,7 +118,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(
         namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-4`).exists
       )
@@ -136,7 +137,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(
         Selector("h1")
           .withText(`${TEST_BUCKET_NAME_SPECIFIC}-5`)
@@ -157,7 +158,7 @@ test
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-6`);
     await t
       .useRole(roles.admin)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -166,7 +167,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       .expect(elements.table.exists)
       .ok();
@@ -191,7 +192,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(testBucketBrowseButton.exists)
       .ok();
   })
@@ -211,7 +212,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(
         Selector("h1")
           .withText(`${TEST_BUCKET_NAME_SPECIFIC}-8`)
@@ -240,7 +241,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButton)
       .expect(uploadExists)
       .ok();
@@ -263,7 +264,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
@@ -283,7 +284,7 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-11`))
       .expect(elements.bucketsTableDisabled.exists)
       .ok();

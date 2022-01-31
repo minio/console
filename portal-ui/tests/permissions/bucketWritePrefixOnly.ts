@@ -17,9 +17,10 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import { Selector } from "testcafe";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Bucket Write to specific prefix permissions").page(
-  "http://localhost:9090"
+  `http://localhost:${SERVER_PORT}`
 );
 
 test
@@ -29,7 +30,7 @@ test
       const uploadButton = elements.uploadButton;
       await t
         .useRole(roles.bucketWritePrefixOnly)
-        .navigateTo("http://localhost:9090/buckets/testcafe/browse")
+        .navigateTo(`http://localhost:${SERVER_PORT}/buckets/testcafe/browse`)
         .click(uploadButton)
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .ok()
@@ -48,7 +49,9 @@ test
       const uploadButton = elements.uploadButton;
       await t
         .useRole(roles.bucketWritePrefixOnly)
-        .navigateTo("http://localhost:9090/buckets/testcafe/browse/d3JpdGU=/")
+        .navigateTo(
+          `http://localhost:${SERVER_PORT}/buckets/testcafe/browse/d3JpdGU=/`
+        )
         .click(uploadButton)
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .notOk()

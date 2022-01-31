@@ -17,9 +17,10 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import { dashboardElement, monitoringElement } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Dashboard permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.dashboard);
   });

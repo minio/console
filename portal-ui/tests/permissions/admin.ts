@@ -30,9 +30,10 @@ import {
   tiersElement,
   usersElement,
 } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Admin permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.admin);
   });

@@ -21,9 +21,10 @@ import { bucketsElement, logoutItem } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
 import * as constants from "../utils/constants";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Bucket Read permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.bucketRead);
   });
@@ -41,7 +42,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(testBucketBrowseButtonFor("bucketread1").exists)
       .ok();
   })
@@ -58,7 +59,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(
         Selector("h1")
           .withText(`${constants.TEST_BUCKET_NAME}-bucketread2`)
@@ -79,7 +80,7 @@ test
     await functions.setUpBucket(t, "bucketread3");
     await t
       .useRole(roles.admin)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButtonFor("bucketread3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -88,7 +89,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButtonFor("bucketread3"))
       .expect(elements.table.exists)
       .ok();

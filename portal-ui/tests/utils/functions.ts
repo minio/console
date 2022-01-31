@@ -21,6 +21,7 @@ import { Selector } from "testcafe";
 import { logoutItem } from "./elements-menu";
 
 import * as Minio from "minio";
+import { SERVER_PORT } from "./constants";
 
 export const setUpBucket = (t, modifier) => {
   return setUpNamedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
@@ -119,7 +120,7 @@ export const cleanUpBucketAndUploads = (t, modifier) => {
 export const createUser = (t) => {
   return t
     .useRole(roles.admin)
-    .navigateTo("http://localhost:9090/identity/users")
+    .navigateTo(`http://localhost:${SERVER_PORT}/identity/users`)
     .click(elements.createUserButton)
     .typeText(elements.usersAccessKeyInput, constants.TEST_USER_NAME)
     .typeText(elements.usersSecretKeyInput, constants.TEST_PASSWORD)
@@ -138,7 +139,7 @@ export const cleanUpUser = (t) => {
 
   return t
     .useRole(roles.admin)
-    .navigateTo("http://localhost:9090/identity/users")
+    .navigateTo(`http://localhost:${SERVER_PORT}/identity/users`)
     .click(userDeleteIconButton)
     .click(elements.deleteButton);
 };

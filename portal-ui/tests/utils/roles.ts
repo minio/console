@@ -1,12 +1,13 @@
 import { readFileSync } from "fs";
 import { Role, Selector } from "testcafe";
+import { SERVER_PORT } from "./constants";
 
 const data = readFileSync(__dirname + "/../constants/timestamp.txt", "utf-8");
 const unixTimestamp = data.trim();
 
-const loginUrl = "http://localhost:9090/login";
-// diagnostics/watch/trace need to run in port 9090 (through the server) to work
-const loginUrlServer = "http://localhost:9090/login";
+const loginUrl = `http://localhost:${SERVER_PORT}/login`;
+// diagnostics/watch/trace need to run in port 5005 (through the server) to work
+const loginUrlServer = `http://localhost:${SERVER_PORT}/login`;
 const submitButton = Selector("form button");
 
 export const admin = Role(

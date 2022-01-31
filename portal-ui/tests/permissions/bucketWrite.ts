@@ -21,8 +21,11 @@ import { bucketsElement } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
 import * as constants from "../utils/constants";
+import { SERVER_PORT } from "../utils/constants";
 
-fixture("For user with Bucket Write permissions").page("http://localhost:9090");
+fixture("For user with Bucket Write permissions").page(
+  `http://localhost:${SERVER_PORT}`
+);
 
 test("Buckets sidebar item exists", async (t) => {
   const bucketsExist = bucketsElement.with({ boundTestRun: t }).exists;
@@ -37,7 +40,7 @@ test
     const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite1");
     await t
       .useRole(roles.bucketWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(testBucketBrowseButton.exists)
       .ok();
   })
@@ -54,7 +57,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .expect(
         Selector("h1")
           .withText(`${constants.TEST_BUCKET_NAME}-bucketwritew`)
@@ -78,7 +81,7 @@ test
     const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite2");
     await t
       .useRole(roles.bucketWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButton)
       .expect(uploadExists)
       .ok();
@@ -96,7 +99,7 @@ test
     const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite3");
     await t
       .useRole(roles.bucketWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
@@ -113,7 +116,7 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(testBucketBrowseButtonFor("bucketwrite4"))
       .expect(elements.bucketsTableDisabled.exists)
       .ok();

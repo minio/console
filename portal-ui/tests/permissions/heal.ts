@@ -23,9 +23,10 @@ import {
   supportElement,
 } from "../utils/elements-menu";
 import { bucketDropdownOptionFor } from "../utils/elements";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Heal permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.heal);
   });
@@ -44,7 +45,7 @@ test("Heal menu exists in Monitoring page", async (t) => {
 });
 
 test("Heal page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/tools/heal");
+  await t.navigateTo(`http://localhost:${SERVER_PORT}/tools/heal`);
 });
 
 test
@@ -55,7 +56,7 @@ test
     const startButtonExists = elements.startButton.exists;
     await t
       .useRole(roles.heal)
-      .navigateTo("http://localhost:9090/tools/heal")
+      .navigateTo(`http://localhost:${SERVER_PORT}/tools/heal`)
       .expect(startButtonExists)
       .ok();
   })
@@ -71,7 +72,7 @@ test
   })("Start button can be clicked", async (t) => {
     await t
       .useRole(roles.heal)
-      .navigateTo("http://localhost:9090/tools/heal")
+      .navigateTo(`http://localhost:${SERVER_PORT}/tools/heal`)
       .click(elements.bucketNameInput)
       .click(bucketDropdownOptionFor("heal2"))
       .click(elements.startButton);

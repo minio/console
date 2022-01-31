@@ -17,8 +17,11 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import { diagnosticsElement, supportElement } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
-fixture("For user with Diagnostics permissions").page("http://localhost:9090");
+fixture("For user with Diagnostics permissions").page(
+  `http://localhost:${SERVER_PORT}`
+);
 
 test("Support sidebar item exists", async (t) => {
   await t.useRole(roles.diagnostics).expect(supportElement.exists).ok();
@@ -37,14 +40,14 @@ test("Diagnostics link exists in Tools page", async (t) => {
 test("Diagnostics page can be opened", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics");
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`);
 });
 
 test("Start Diagnostic button exists", async (t) => {
   const startDiagnosticExists = elements.startDiagnosticButton.exists;
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .expect(startDiagnosticExists)
     .ok();
 });
@@ -52,14 +55,14 @@ test("Start Diagnostic button exists", async (t) => {
 test("Start Diagnostic button can be clicked", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton);
 });
 
 test("Download button exists after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(3000)
     .expect(elements.downloadButton.exists)
@@ -69,7 +72,7 @@ test("Download button exists after Diagnostic is completed", async (t) => {
 test("Download button is clickable after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .click(elements.downloadButton);
@@ -78,7 +81,7 @@ test("Download button is clickable after Diagnostic is completed", async (t) => 
 test("Start New Diagnostic button exists after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .expect(elements.startNewDiagnosticButton.exists)
@@ -88,7 +91,7 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
 test("Start New Diagnostic button is clickable after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .click(elements.startNewDiagnosticButton);

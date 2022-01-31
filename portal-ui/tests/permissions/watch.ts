@@ -23,9 +23,10 @@ import {
   supportElement,
 } from "../utils/elements-menu";
 import { bucketDropdownOptionFor } from "../utils/elements";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Watch permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.watch);
   });
@@ -44,7 +45,7 @@ test("Watch link exists in Support page", async (t) => {
 });
 
 test("Watch page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/tools/watch");
+  await t.navigateTo(`http://localhost:${SERVER_PORT}/tools/watch`);
 });
 
 test
@@ -56,7 +57,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.watch)
-      .navigateTo("http://localhost:9090/tools/watch")
+      .navigateTo(`http://localhost:${SERVER_PORT}/tools/watch`)
       .click(elements.bucketNameInput)
       .click(bucketDropdownOptionFor("watch"))
       .click(elements.startButton);
