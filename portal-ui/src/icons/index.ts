@@ -118,6 +118,7 @@ export { default as VersionIcon } from "./VersionIcon";
 export { default as WarnIcon } from "./WarnIcon";
 export { default as WarpIcon } from "./WarpIcon";
 export { default as WatchIcon } from "./WatchIcon";
+export { default as ClosePanelIcon } from "./ClosePanelIcon";
 export { default as LoginMinIOLogo } from "./LoginMinIOLogo";
 
 /*Modal Title Icons **/
@@ -157,3 +158,7 @@ export { default as S3TierIcon } from "./S3TierIcon";
 export { default as S3TierIconXs } from "./S3TierIconXs";
 export { default as EditorThemeSwitchIcon } from "./EditorThemeSwitchIcon";
 export { default as PasswordKeyIcon } from "./PasswordKeyIcon";
+export { default as HelpIconFilled } from "./HelpIconFilled";
+export { default as CallHomeFeatureIcon } from "./CallHomeFeatureIcon";
+export { default as DiagnosticsFeatureIcon } from "./DiagnosticsFeatureIcon";
+export { default as PerformanceFeatureIcon } from "./PerformanceFeatureIcon";

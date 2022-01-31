@@ -621,25 +621,6 @@ func init() {
         ],
         "summary": "List Buckets",
         "operationId": "ListBuckets",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "sort_by",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
-          }
-        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -3964,7 +3945,6 @@ func init() {
                 "type": {
                   "type": "string",
                   "enum": [
-                    "fifo",
                     "hard"
                   ]
                 }
@@ -4159,8 +4139,7 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "hard",
-            "fifo"
+            "hard"
           ]
         }
       }
@@ -5548,7 +5527,6 @@ func init() {
         "quota_type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }
@@ -6728,25 +6706,6 @@ func init() {
         ],
         "summary": "List Buckets",
         "operationId": "ListBuckets",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "sort_by",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
-          }
-        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -9848,7 +9807,6 @@ func init() {
             "type": {
               "type": "string",
               "enum": [
-                "fifo",
                 "hard"
               ]
             }
@@ -9881,7 +9839,6 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }
@@ -10191,7 +10148,6 @@ func init() {
                 "type": {
                   "type": "string",
                   "enum": [
-                    "fifo",
                     "hard"
                   ]
                 }
@@ -10386,8 +10342,7 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "hard",
-            "fifo"
+            "hard"
           ]
         }
       }
@@ -11775,7 +11730,6 @@ func init() {
         "quota_type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }

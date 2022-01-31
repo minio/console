@@ -37,8 +37,12 @@ import (
 type NotificationEventType string
 
 func NewNotificationEventType(value NotificationEventType) *NotificationEventType {
-	v := value
-	return &v
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated NotificationEventType.
+func (m NotificationEventType) Pointer() *NotificationEventType {
+	return &m
 }
 
 const (

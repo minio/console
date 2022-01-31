@@ -18,7 +18,9 @@ package integration
 
 import (
 	"bytes"
+	b64 "encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -40,6 +42,14 @@ import (
 )
 
 var token string
+
+func encodeBase64(fileName string) string {
+	/*
+		Helper function to encode in base64 the file name so we can get the path
+	*/
+	path := b64.StdEncoding.EncodeToString([]byte(fileName))
+	return path
+}
 
 func inspectHTTPResponse(httpResponse *http.Response) string {
 	/*
@@ -346,6 +356,110 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	*/
 	request, err := http.NewRequest("GET",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DownloadObject(bucketName string, path string) (*http.Response, error) {
+	/*
+	   Helper function to download an object from a bucket.
+	   GET: {{baseUrl}}/buckets/bucketName/objects/download?prefix=file
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/download?prefix="+
+			path,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func UploadAnObject(bucketName string, fileName string) (*http.Response, error) {
+	/*
+		Helper function to upload a file to a bucket for testing.
+		POST {{baseUrl}}/buckets/:bucket_name/objects/upload
+	*/
+	boundary := "WebKitFormBoundaryWtayBM7t9EUQb8q3"
+	boundaryStart := "------" + boundary + "\r\n"
+	contentDispositionOne := "Content-Disposition: form-data; name=\"2\"; "
+	contentDispositionTwo := "filename=\"" + fileName + "\"\r\n"
+	contenType := "Content-Type: text/plain\r\n\r\na\n\r\n"
+	boundaryEnd := "------" + boundary + "--\r\n"
+	file := boundaryStart + contentDispositionOne + contentDispositionTwo +
+		contenType + boundaryEnd
+	arrayOfBytes := []byte(file)
+	requestDataBody := bytes.NewReader(arrayOfBytes)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/upload",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add(
+		"Content-Type",
+		"multipart/form-data; boundary=----"+boundary,
+	)
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteObject(bucketName string, path string, recursive bool, allVersions bool) (*http.Response, error) {
+	/*
+	   Helper function to delete an object from a given bucket.
+	   DELETE:
+	   {{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
+	*/
+	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
+		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
+		strconv.FormatBool(allVersions)
+	request, err := http.NewRequest(
+		"DELETE",
+		url,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ListObjects(bucketName string) (*http.Response, error) {
+	/*
+	   Helper function to list objects in a bucket.
+	   GET: {{baseUrl}}/buckets/:bucket_name/objects
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects",
 		nil)
 	if err != nil {
 		log.Println(err)
@@ -940,4 +1054,188 @@ func TestBucketRetention(t *testing.T) {
 	}
 	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
+}
+
+func TestDownloadObject(t *testing.T) {
+	/*
+	   Test to download an object from a given bucket.
+	*/
+
+	// Vars
+	assert := assert.New(t)
+	bucketName := "testdownloadobjbucketone"
+	fileName := "testdownloadobjectfilenameone"
+	path := encodeBase64(fileName)
+	workingDirectory, getWdErr := os.Getwd()
+	if getWdErr != nil {
+		assert.Fail("Couldn't get the directory")
+	}
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Upload an object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			inspectHTTPResponse(uploadResponse),
+		)
+	}
+
+	// 3. Download the object from the bucket
+	downloadResponse, downloadError := DownloadObject(bucketName, path)
+	assert.Nil(downloadError)
+	if downloadError != nil {
+		log.Println(downloadError)
+		assert.Fail("Error downloading the object")
+		return
+	}
+	finalResponse := inspectHTTPResponse(downloadResponse)
+	if downloadResponse != nil {
+		assert.Equal(
+			200,
+			downloadResponse.StatusCode,
+			finalResponse,
+		)
+	}
+
+	// 4. Verify the file was downloaded
+	files, err := ioutil.ReadDir(workingDirectory)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range files {
+		fmt.Println(file.Name(), file.IsDir())
+	}
+	if _, err := os.Stat(workingDirectory); errors.Is(err, os.ErrNotExist) {
+		// path/to/whatever does not exist
+		assert.Fail("File wasn't downloaded")
+	}
+}
+
+func TestUploadObjectToBucket(t *testing.T) {
+	/*
+		Function to test the upload of an object to a bucket.
+	*/
+
+	// Test's variables
+	assert := assert.New(t)
+	bucketName := "testuploadobjecttobucket1"
+	fileName := "sample.txt"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+
+	// 3. Verify the object was uploaded
+	finalResponse := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
+	}
+}
+
+func TestDeleteObject(t *testing.T) {
+	/*
+	   Test to delete an object from a given bucket.
+	*/
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testdeleteobjectbucket1"
+	fileName := "testdeleteobjectfile"
+	path := "dGVzdGRlbGV0ZW9iamVjdGZpbGUxLnR4dA==" // fileName encoded base64
+	numberOfFiles := 2
+
+	// 1. Create bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add two objects to the bucket created.
+	for i := 1; i <= numberOfFiles; i++ {
+		uploadResponse, uploadError := UploadAnObject(
+			bucketName, fileName+strconv.Itoa(i)+".txt")
+		assert.Nil(uploadError)
+		if uploadError != nil {
+			log.Println(uploadError)
+			return
+		}
+		if uploadResponse != nil {
+			assert.Equal(200, uploadResponse.StatusCode,
+				inspectHTTPResponse(uploadResponse))
+		}
+	}
+
+	// 3. Delete only one object from the bucket.
+	deleteResponse, deleteError := DeleteObject(bucketName, path, false, false)
+	assert.Nil(deleteError)
+	if deleteError != nil {
+		log.Println(deleteError)
+		return
+	}
+	if deleteResponse != nil {
+		assert.Equal(200, deleteResponse.StatusCode,
+			inspectHTTPResponse(deleteResponse))
+	}
+
+	// 4. List the objects in the bucket and make sure the object is gone
+	listResponse, listError := ListObjects(bucketName)
+	assert.Nil(listError)
+	if listError != nil {
+		log.Println(listError)
+		return
+	}
+	finalResponse := inspectHTTPResponse(listResponse)
+	if listResponse != nil {
+		assert.Equal(200, listResponse.StatusCode,
+			finalResponse)
+	}
+	// Expected only one file: "testdeleteobjectfile2.txt"
+	// "testdeleteobjectfile1.txt" should be gone by now.
+	assert.True(
+		strings.Contains(
+			finalResponse,
+			"testdeleteobjectfile2.txt"), finalResponse) // Still there
+	assert.False(
+		strings.Contains(
+			finalResponse,
+			"testdeleteobjectfile1.txt"), finalResponse) // Gone
 }
