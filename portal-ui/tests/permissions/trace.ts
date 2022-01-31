@@ -21,9 +21,10 @@ import {
   supportElement,
   traceElement,
 } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Trace permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.trace);
   });
@@ -42,19 +43,19 @@ test("Trace link exists in Monitoring menu", async (t) => {
 });
 
 test("Trace page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/tools/trace");
+  await t.navigateTo(`http://localhost:${SERVER_PORT}/tools/trace`);
 });
 
 test("Start button can be clicked", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/tools/trace")
+    .navigateTo(`http://localhost:${SERVER_PORT}/tools/trace`)
     .click(elements.startButton);
 });
 
 test("Stop button appears after Start button has been clicked", async (t) => {
   const stopButtonExists = elements.stopButton.exists;
   await t
-    .navigateTo("http://localhost:9090/tools/trace")
+    .navigateTo(`http://localhost:${SERVER_PORT}/tools/trace`)
     .click(elements.startButton)
     .expect(stopButtonExists)
     .ok();
@@ -62,7 +63,7 @@ test("Stop button appears after Start button has been clicked", async (t) => {
 
 test("Stop button can be clicked after Start button has been clicked", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/tools/trace")
+    .navigateTo(`http://localhost:${SERVER_PORT}/tools/trace`)
     .click(elements.startButton)
     .click(elements.stopButton);
 });

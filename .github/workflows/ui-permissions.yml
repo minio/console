@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+env:
+  CI: true
+
 jobs:
   permissions:
     name: Permissions Tests
@@ -56,14 +59,20 @@ jobs:
         run: |
           make console
 
-      - name: Start Console, front-end app and initialize users/policies
+      - name: Front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          ./console server & 
+          make initialize-permissions
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors '
+          args: '"chrome:headless" portal-ui/tests/permissions/ --concurrency 3 --skip-js-errors '
+
+      - name: Run TestCafe Diagnostics Tests
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: '"chrome:headless" portal-ui/tests/diagnostics/ --skip-js-errors '
 
       - name: Clean up users & policies
         run: |

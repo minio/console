@@ -21,9 +21,10 @@ import {
   monitoringElement,
   supportElement,
 } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Logs permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.logs);
   });
@@ -42,13 +43,13 @@ test("Logs link exists in Tools page", async (t) => {
 });
 
 test("Logs page can be opened", async (t) => {
-  await t.navigateTo("http://localhost:9090/tools/logs");
+  await t.navigateTo(`http://localhost:${SERVER_PORT}/tools/logs`);
 });
 
 test("Log window exists in Logs page", async (t) => {
   const logWindowExists = elements.logWindow.exists;
   await t
-    .navigateTo("http://localhost:9090/tools/logs")
+    .navigateTo(`http://localhost:${SERVER_PORT}/tools/logs`)
     .expect(logWindowExists)
     .ok();
 });

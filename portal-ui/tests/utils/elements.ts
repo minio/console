@@ -1,18 +1,18 @@
-// This file is part of MinIO Console Server
-// Copyright (c) 2022 MinIO, Inc.
+//  This file is part of MinIO Console Server
+//  Copyright (c) 2022 MinIO, Inc.
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Affero General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Affero General Public License for more details.
 //
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  You should have received a copy of the GNU Affero General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as constants from "./constants";
 import { Selector } from "testcafe";
@@ -112,11 +112,13 @@ export const filterUserInput = searchResourceInput.withAttribute(
   "placeholder",
   "Filter Users"
 );
-export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row span")
-  .withText(constants.TEST_USER_NAME)
-  .parent(1)
-  .find(".ReactVirtualized__Grid input")
-  .withAttribute("type", "checkbox");
+export const groupUserCheckbox = (modifier) => {
+  return Selector(".ReactVirtualized__Table__row span")
+    .withText(`${constants.TEST_USER_NAME}-${modifier}`)
+    .parent(1)
+    .find(".ReactVirtualized__Grid input")
+    .withAttribute("type", "checkbox");
+};
 
 //----------------------------------------------------
 // Dropdowns and options

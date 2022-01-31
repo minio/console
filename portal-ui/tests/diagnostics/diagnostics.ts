@@ -1,24 +1,27 @@
-// This file is part of MinIO Console Server
-// Copyright (c) 2022 MinIO, Inc.
+//  This file is part of MinIO Console Server
+//  Copyright (c) 2022 MinIO, Inc.
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Affero General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Affero General Public License for more details.
 //
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  You should have received a copy of the GNU Affero General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import { diagnosticsElement, supportElement } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
-fixture("For user with Diagnostics permissions").page("http://localhost:9090");
+fixture("For user with Diagnostics permissions").page(
+  `http://localhost:${SERVER_PORT}`
+);
 
 test("Support sidebar item exists", async (t) => {
   await t.useRole(roles.diagnostics).expect(supportElement.exists).ok();
@@ -37,14 +40,14 @@ test("Diagnostics link exists in Tools page", async (t) => {
 test("Diagnostics page can be opened", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics");
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`);
 });
 
 test("Start Diagnostic button exists", async (t) => {
   const startDiagnosticExists = elements.startDiagnosticButton.exists;
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .expect(startDiagnosticExists)
     .ok();
 });
@@ -52,14 +55,14 @@ test("Start Diagnostic button exists", async (t) => {
 test("Start Diagnostic button can be clicked", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton);
 });
 
 test("Download button exists after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .expect(elements.downloadButton.exists)
@@ -69,7 +72,7 @@ test("Download button exists after Diagnostic is completed", async (t) => {
 test("Download button is clickable after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .click(elements.downloadButton);
@@ -78,7 +81,7 @@ test("Download button is clickable after Diagnostic is completed", async (t) => 
 test("Start New Diagnostic button exists after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .expect(elements.startNewDiagnosticButton.exists)
@@ -88,7 +91,7 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
 test("Start New Diagnostic button is clickable after Diagnostic is completed", async (t) => {
   await t
     .useRole(roles.diagnostics)
-    .navigateTo("http://localhost:9090/support/diagnostics")
+    .navigateTo(`http://localhost:${SERVER_PORT}/support/diagnostics`)
     .click(elements.startDiagnosticButton)
     .wait(2000)
     .click(elements.startNewDiagnosticButton);

@@ -18,13 +18,12 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 
 import * as functions from "../utils/functions";
-import { bucketsElement, logoutItem } from "../utils/elements-menu";
-import { Selector } from "testcafe";
-import * as constants from "../utils/constants";
 import { manageButtonFor } from "../utils/functions";
+import { bucketsElement } from "../utils/elements-menu";
+import { SERVER_PORT } from "../utils/constants";
 
 fixture("For user with Bucket Assign Policy permissions")
-  .page("http://localhost:9090")
+  .page(`http://localhost:${SERVER_PORT}`)
   .beforeEach(async (t) => {
     await t.useRole(roles.bucketAssignPolicy);
   });
@@ -44,7 +43,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.bucketAssignPolicy)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(manageButtonFor("bucketassign1"))
       .click(elements.bucketAccessRulesTab)
       .click(elements.addAccessRuleButton)
@@ -67,7 +66,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.bucketAssignPolicy)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(manageButtonFor("bucketassign3"))
       .click(elements.bucketAccessRulesTab)
       .click(elements.addAccessRuleButton)
@@ -90,7 +89,7 @@ test
       // We need to log back in after we use the admin account to create bucket,
       // using the specific role we use in this module
       .useRole(roles.bucketAssignPolicy)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
       .click(manageButtonFor("bucketassign4"))
       .click(elements.bucketAccessRulesTab)
       .click(elements.addAccessRuleButton)
@@ -112,7 +111,7 @@ test
 //     await new Promise((resolve) => setTimeout(resolve, 2000));
 //     await t
 //       .useRole(roles.bucketAssignPolicy)
-//       .navigateTo("http://localhost:9090/buckets")
+//       .navigateTo(`http://localhost:${SERVER_PORT}/buckets`)
 //       .click(manageButtonFor("bucketassign5"))
 //       .click(elements.bucketAccessRulesTab)
 //       .click(elements.deleteIconButtonAlt)
