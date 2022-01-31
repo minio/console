@@ -27,7 +27,6 @@ import {
   menuItemMiniStyles,
   menuItemTextStyles,
 } from "./MenuStyleUtils";
-import { DocumentationIcon } from "../../../icons";
 import MenuItem from "./MenuItem";
 import { useLocation } from "react-router-dom";
 
@@ -138,35 +137,6 @@ const ConsoleMenuList = ({
         }}
         className={`${stateClsName} group-wrapper bottom-list`}
       >
-        <ListItem
-          button
-          onClick={(
-            e:
-              | React.MouseEvent<HTMLLIElement>
-              | React.MouseEvent<HTMLAnchorElement>
-              | React.MouseEvent<HTMLDivElement>
-          ) => {
-            e.preventDefault();
-            window.open("https://docs.min.io/?ref=con", "_blank");
-          }}
-          disableRipple
-          className={`$ ${stateClsName} bottom-menu-item`}
-          sx={{
-            ...menuItemContainerStyles,
-            ...menuItemMiniStyles,
-            marginBottom: "3px",
-          }}
-        >
-          <ListItemIcon sx={{ ...menuItemIconStyles }}>
-            <DocumentationIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Documentation"
-            sx={{ ...menuItemTextStyles }}
-            className={stateClsName}
-          />
-        </ListItem>
-
         <ListItem
           button
           onClick={onLogoutClick}

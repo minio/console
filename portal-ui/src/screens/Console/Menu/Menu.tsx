@@ -347,6 +347,23 @@ const Menu = ({
         },
       ],
     },
+    {
+      type: "item",
+      component: NavLink,
+      to: IAM_PAGES.DOCUMENTATION,
+      name: "Documentation",
+      icon: DocumentationIcon,
+      forceDisplay: true,
+      onClick: (
+        e:
+          | React.MouseEvent<HTMLLIElement>
+          | React.MouseEvent<HTMLAnchorElement>
+          | React.MouseEvent<HTMLDivElement>
+      ) => {
+        e.preventDefault();
+        window.open("https://docs.min.io/?ref=con", "_blank");
+      },
+    },
   ];
 
   let operatorMenus: IMenuItem[] = [
