@@ -1,14 +1,22 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, Fragment } from "react";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import { MetadataResponse } from "./types";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import { Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { spacingUtils } from "../../../../Common/FormComponents/common/styleLibrary";
+import {detailsPanel, spacingUtils} from "../../../../Common/FormComponents/common/styleLibrary";
 import { withStyles } from "@mui/styles";
+
+interface IObjectMetadata {
+  bucketName: string;
+  internalPaths: string;
+  classes?: any;
+  actualInfo: any;
+  linear?: boolean;
+}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,8 +40,8 @@ const styles = (theme: Theme) =>
     titleItem: {
       width: "35%",
     },
-
     ...spacingUtils,
+      ...detailsPanel,
   });
 
 const ObjectMetaData = ({
@@ -41,12 +49,8 @@ const ObjectMetaData = ({
   internalPaths,
   classes,
   actualInfo,
-}: {
-  bucketName: string;
-  internalPaths: string;
-  classes?: any;
-  actualInfo: any;
-}) => {
+  linear = false,
+}: IObjectMetadata) => {
   const [metaData, setMetaData] = useState<any>({});
 
   const onMetaDataSuccess = (res: MetadataResponse) => {
@@ -73,6 +77,26 @@ const ObjectMetaData = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actualInfo, loadMetaData]);
+
+  if (linear) {
+    return (
+      <Fragment>
+        {metaKeys.map((element: string, index: number) => {
+          const renderItem = Array.isArray(metaData[element])
+            ? metaData[element].map(decodeURIComponent).join(", ")
+            : decodeURIComponent(metaData[element]);
+
+          return (
+            <Box className={classes.metadataLinear}>
+              <strong>{element}</strong>
+              <br />
+              {renderItem}
+            </Box>
+          );
+        })}
+      </Fragment>
+    );
+  }
 
   return (
     <Grid container>
