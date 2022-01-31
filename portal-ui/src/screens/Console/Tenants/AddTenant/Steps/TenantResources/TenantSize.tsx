@@ -238,8 +238,6 @@ const TenantSize = ({
   useEffect(() => {
     if (distribution.error === "") {
       // Get EC Value
-      updateField("ecParity", "");
-
       if (nodes.trim() !== "" && distribution.disks !== 0) {
         api
           .invoke("GET", `api/v1/get-parity/${nodes}/${distribution.disks}`)
