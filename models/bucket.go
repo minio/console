@@ -362,7 +362,7 @@ type BucketDetailsQuota struct {
 	Quota int64 `json:"quota,omitempty"`
 
 	// type
-	// Enum: [fifo hard]
+	// Enum: [hard]
 	Type string `json:"type,omitempty"`
 }
 
@@ -384,7 +384,7 @@ var bucketDetailsQuotaTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["fifo","hard"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["hard"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -393,9 +393,6 @@ func init() {
 }
 
 const (
-
-	// BucketDetailsQuotaTypeFifo captures enum value "fifo"
-	BucketDetailsQuotaTypeFifo string = "fifo"
 
 	// BucketDetailsQuotaTypeHard captures enum value "hard"
 	BucketDetailsQuotaTypeHard string = "hard"

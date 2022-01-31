@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/go-openapi/swag"
 
@@ -76,10 +77,10 @@ func setBucketQuota(ctx context.Context, ac *AdminClient, bucket *string, bucket
 	if *bucketQuota.Enabled {
 		var quotaType madmin.QuotaType
 		switch bucketQuota.QuotaType {
-		case models.SetBucketQuotaQuotaTypeFifo:
-			quotaType = madmin.FIFOQuota
 		case models.SetBucketQuotaQuotaTypeHard:
 			quotaType = madmin.HardQuota
+		default:
+			return fmt.Errorf("unsupported quota type %s", bucketQuota.QuotaType)
 		}
 		if err := ac.setBucketQuota(ctx, *bucket, &madmin.BucketQuota{
 			Quota: uint64(bucketQuota.Amount),
