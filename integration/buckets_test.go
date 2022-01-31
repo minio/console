@@ -18,7 +18,9 @@ package integration
 
 import (
 	"bytes"
+	b64 "encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -40,6 +42,14 @@ import (
 )
 
 var token string
+
+func encodeBase64(fileName string) string {
+	/*
+		Helper function to encode in base64 the file name so we can get the path
+	*/
+	path := b64.StdEncoding.EncodeToString([]byte(fileName))
+	return path
+}
 
 func inspectHTTPResponse(httpResponse *http.Response) string {
 	/*
@@ -347,6 +357,29 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	request, err := http.NewRequest("GET",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
 		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DownloadObject(bucketName string, path string) (*http.Response, error) {
+	/*
+	   Helper function to download an object from a bucket.
+	   GET: {{baseUrl}}/buckets/bucketName/objects/download?prefix=file
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/download?prefix="+
+			path,
+		nil,
+	)
 	if err != nil {
 		log.Println(err)
 	}
@@ -1021,6 +1054,79 @@ func TestBucketRetention(t *testing.T) {
 	}
 	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
+}
+
+func TestDownloadObject(t *testing.T) {
+	/*
+	   Test to download an object from a given bucket.
+	*/
+
+	// Vars
+	assert := assert.New(t)
+	bucketName := "testdownloadobjbucketone"
+	fileName := "testdownloadobjectfilenameone"
+	path := encodeBase64(fileName)
+	workingDirectory, getWdErr := os.Getwd()
+	if getWdErr != nil {
+		assert.Fail("Couldn't get the directory")
+	}
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Upload an object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			inspectHTTPResponse(uploadResponse),
+		)
+	}
+
+	// 3. Download the object from the bucket
+	downloadResponse, downloadError := DownloadObject(bucketName, path)
+	assert.Nil(downloadError)
+	if downloadError != nil {
+		log.Println(downloadError)
+		assert.Fail("Error downloading the object")
+		return
+	}
+	finalResponse := inspectHTTPResponse(downloadResponse)
+	if downloadResponse != nil {
+		assert.Equal(
+			200,
+			downloadResponse.StatusCode,
+			finalResponse,
+		)
+	}
+
+	// 4. Verify the file was downloaded
+	files, err := ioutil.ReadDir(workingDirectory)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range files {
+		fmt.Println(file.Name(), file.IsDir())
+	}
+	if _, err := os.Stat(workingDirectory); errors.Is(err, os.ErrNotExist) {
+		// path/to/whatever does not exist
+		assert.Fail("File wasn't downloaded")
+	}
 }
 
 func TestUploadObjectToBucket(t *testing.T) {
