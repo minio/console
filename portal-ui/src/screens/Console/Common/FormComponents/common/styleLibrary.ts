@@ -280,8 +280,9 @@ export const searchField = {
       fontWeight: 700,
       color: "#000",
       "&::placeholder": {
-        color: "#a6a5a5",
+        color: "#858585",
         opacity: 1,
+        fontWeight: 400,
       },
     },
     "&:hover": {
@@ -898,8 +899,9 @@ export const inputFieldStyles = {
     fontSize: 13,
     fontWeight: 600,
     "&:placeholder": {
-      color: "#393939",
+      color: "#858585",
       opacity: 1,
+      fontWeight: 400,
     },
   },
   error: {

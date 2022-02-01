@@ -148,6 +148,7 @@ const GroupsSelectors = ({
                   placeholder="Filter Groups"
                   adornmentPosition="end"
                   onChange={setFilter}
+                  value={filter}
                 />
               </div>
             </Grid>

@@ -191,6 +191,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             setMemberFilter(searchText);
           }}
           overrideClass={classes.searchField}
+          value={memberFilter}
         />
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}

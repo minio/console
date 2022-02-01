@@ -21,7 +21,6 @@ import { Button, CircularProgress, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import moment from "moment/moment";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import {
@@ -43,10 +42,11 @@ import STResults from "./STResults";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
 import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
+import HelpBox from "../../../common/HelpBox";
+import WarnIcon from "../../../icons/WarnIcon";
 
 interface ISpeedtest {
   classes: any;
@@ -68,9 +68,7 @@ const styles = (theme: Theme) =>
         paddingBottom: 15,
       },
     },
-    progressContainer: {
-      padding: "0 15px",
-    },
+
     stepProgressText: {
       fontSize: 13,
       marginBottom: 8,
@@ -94,17 +92,14 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
   const [currStatus, setCurrStatus] = useState<SpeedTestResponse[] | null>(
     null
   );
-  const [duration, setDuration] = useState<string>("10");
-  const [durationUnit, setDurationUnit] = useState<string>("s");
+
   const [size, setSize] = useState<string>("64");
   const [sizeUnit, setSizeUnit] = useState<string>("MB");
-  const [concurrent, setConcurrent] = useState<string>("32");
+
   const [topDate, setTopDate] = useState<number>(0);
   const [currentValue, setCurrentValue] = useState<number>(0);
   const [totalSeconds, setTotalSeconds] = useState<number>(0);
   const [speedometerValue, setSpeedometerValue] = useState<number>(0);
-  const [advancedOpen, setAdvancedOpen] = useState<boolean>(false);
-  const [autotune, setAutotune] = useState<boolean>(true);
 
   useEffect(() => {
     // begin watch if bucketName in bucketList and start pressed
@@ -115,11 +110,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}/ws/speedtest?${
-          autotune ? "autotune=true" : ""
-        }&duration=${duration}${durationUnit}&size=${size}${sizeUnit}${
-          concurrent.trim() !== "" ? `&concurrent=${concurrent}` : ""
-        }`
+        `${wsProt}://${url.hostname}:${port}/ws/speedtest?&size=${size}${sizeUnit}`
       );
 
       const baseDate = moment();
@@ -128,10 +119,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
 
       const incrementDate =
         baseDate
-          .add(
-            parseInt(duration) * 2,
-            durationUnit as moment.unitOfTime.DurationConstructor
-          )
+          .add(parseInt("10") * 2, "s" as moment.unitOfTime.DurationConstructor)
           .unix() / 1000;
 
       const totalSeconds = (incrementDate - currentTime) / 1000;
@@ -182,7 +170,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
       // reset start status
       setStart(false);
     }
-  }, [concurrent, duration, durationUnit, size, sizeUnit, start, autotune]);
+  }, [size, sizeUnit, start]);
 
   useEffect(() => {
     const actualSeconds = (topDate - currentValue) / 1000;
@@ -212,7 +200,61 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
           >
             <Grid item xs={12} className={classes.boxy}>
               <Grid container>
-                <Grid item>
+                <Grid item md={6} sm={12}>
+                  <div className={classes.stepProgressText}>
+                    {start ? (
+                      <Fragment>
+                        Speedtest in progress...
+                        <CircularProgress size={15} />
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        {currStatus && !start ? (
+                          <b>Speed Test results:</b>
+                        ) : (
+                          <b>Performance test</b>
+                        )}
+                      </Fragment>
+                    )}
+                  </div>
+                  <div>
+                    <ProgressBarWrapper
+                      value={speedometerValue}
+                      ready={currStatus !== null && !start}
+                      indeterminate={start}
+                      size={"small"}
+                    />
+                  </div>
+                </Grid>
+                <Grid item xs={4}>
+                  <div style={{ marginLeft: 10, width: 300 }}>
+                    <InputBoxWrapper
+                      id={"size"}
+                      name={"size"}
+                      label={"Object Size"}
+                      onChange={(e) => {
+                        setSize(e.target.value);
+                      }}
+                      noLabelMinWidth={true}
+                      value={size}
+                      disabled={start}
+                      overlayObject={
+                        <InputUnitMenu
+                          id={"size-unit"}
+                          onUnitChange={setSizeUnit}
+                          unitSelected={sizeUnit}
+                          unitsList={[
+                            { label: "KiB", value: "KiB" },
+                            { label: "MiB", value: "MiB" },
+                            { label: "GiB", value: "GiB" },
+                          ]}
+                          disabled={start}
+                        />
+                      }
+                    />
+                  </div>
+                </Grid>
+                <Grid item xs={2} textAlign={"right"}>
                   <Button
                     onClick={() => {
                       setCurrStatus(null);
@@ -220,13 +262,12 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                     }}
                     color="primary"
                     type="button"
+                    id={"start-speed-test"}
                     variant={
                       currStatus !== null && !start ? "contained" : "outlined"
                     }
                     className={`${classes.buttonBackground} ${classes.speedStart}`}
-                    disabled={
-                      duration.trim() === "" || size.trim() === "" || start
-                    }
+                    disabled={"10".trim() === "" || size.trim() === "" || start}
                   >
                     {!start && (
                       <Fragment>
@@ -236,168 +277,6 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                     {start ? "Start" : ""}
                   </Button>
                 </Grid>
-                <Grid item md={9} sm={12} className={classes.progressContainer}>
-                  <div className={classes.stepProgressText}>
-                    {start ? (
-                      "Speedtest in progress..."
-                    ) : (
-                      <Fragment>
-                        {currStatus && !start
-                          ? "Done!"
-                          : "Start a new speed test"}
-                      </Fragment>
-                    )}
-                    &nbsp;&nbsp;&nbsp;{start && <CircularProgress size={15} />}
-                  </div>
-                  <div>
-                    <ProgressBarWrapper
-                      value={speedometerValue}
-                      ready={currStatus !== null && !start}
-                      indeterminate={autotune && start}
-                    />
-                  </div>
-                </Grid>
-                <Grid item className={classes.advancedButton}>
-                  <button
-                    onClick={() => {
-                      setAdvancedOpen(!advancedOpen);
-                    }}
-                    className={classes.advancedConfiguration}
-                  >
-                    {advancedOpen ? "Hide" : "Show"} advanced options{" "}
-                    <span
-                      className={
-                        advancedOpen
-                          ? classes.advancedOpen
-                          : classes.advancedClosed
-                      }
-                    >
-                      <ArrowForwardIosIcon />
-                    </span>
-                  </button>
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                className={`${classes.advancedContent} ${
-                  advancedOpen ? "open" : ""
-                }`}
-              >
-                <Grid item xs={12}>
-                  <Grid
-                    container
-                    direction="row"
-                    justifyContent="space-around"
-                    alignItems="center"
-                  >
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      className={classes.advancedOption}
-                    >
-                      <InputBoxWrapper
-                        id={"size"}
-                        name={"size"}
-                        label={"Object Size"}
-                        onChange={(e) => {
-                          setSize(e.target.value);
-                        }}
-                        value={size}
-                        disabled={start}
-                        overlayObject={
-                          <InputUnitMenu
-                            id={"size-unit"}
-                            onUnitChange={setSizeUnit}
-                            unitSelected={sizeUnit}
-                            unitsList={[
-                              { label: "KB", value: "KB" },
-                              { label: "MB", value: "MB" },
-                              { label: "GB", value: "GB" },
-                            ]}
-                            disabled={start}
-                          />
-                        }
-                      />
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      className={classes.advancedAutotune}
-                    >
-                      <CheckboxWrapper
-                        checked={autotune}
-                        onChange={(e) => setAutotune(e.target.checked)}
-                        id={"autotune"}
-                        name={"autotune"}
-                        label={"Enable Autotune"}
-                        tooltip={
-                          "Autotune gets the maximum stats for the system by testing multiple configurations at once. This configuration is enabled by default and overrides duration & concurrent requests options"
-                        }
-                        value="true"
-                        disabled={start}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid
-                    container
-                    direction="row"
-                    justifyContent="space-around"
-                    alignItems="center"
-                  >
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      className={classes.advancedOption}
-                    >
-                      <InputBoxWrapper
-                        id={"duration"}
-                        name={"duration"}
-                        label={"Duration"}
-                        onChange={(e) => {
-                          setDuration(e.target.value);
-                        }}
-                        value={duration}
-                        disabled={start || autotune}
-                        overlayObject={
-                          <InputUnitMenu
-                            id={"duration-unit"}
-                            onUnitChange={setDurationUnit}
-                            unitSelected={durationUnit}
-                            unitsList={[
-                              { label: "miliseconds", value: "ms" },
-                              { label: "seconds", value: "s" },
-                            ]}
-                            disabled={start || autotune}
-                          />
-                        }
-                      />
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      className={classes.advancedOption}
-                    >
-                      <InputBoxWrapper
-                        type="number"
-                        min="0"
-                        id={"concurrent"}
-                        name={"concurrent"}
-                        label={"Concurrent Requests"}
-                        onChange={(e) => {
-                          setConcurrent(e.target.value);
-                        }}
-                        value={concurrent}
-                        disabled={start || autotune}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
               </Grid>
               <Grid container className={classes.multiModule}>
                 <Grid item xs={12}>
@@ -405,11 +284,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                     <Grid item xs={12}>
                       {currStatus !== null && (
                         <Fragment>
-                          <STResults
-                            results={currStatus}
-                            start={start}
-                            autotune={autotune}
-                          />
+                          <STResults results={currStatus} start={start} />
                         </Fragment>
                       )}
                     </Grid>
@@ -417,6 +292,19 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                 </Grid>
               </Grid>
             </Grid>
+
+            {!start && !currStatus && (
+              <Fragment>
+                <br />
+                <HelpBox
+                  title={
+                    "During the speed test all your production traffic will be temporarily suspended."
+                  }
+                  iconComponent={<WarnIcon />}
+                  help={<Fragment />}
+                />
+              </Fragment>
+            )}
           </SecureComponent>
         )}
       </PageLayout>
