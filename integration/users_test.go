@@ -268,6 +268,71 @@ func ReturnsAListOfServiceAccountsForAUser(userName string) (*http.Response, err
 	return response, err
 }
 
+func AddGroup(group string, members []string) (*http.Response, error) {
+	/*
+		Helper function to add a group.
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	requestDataAdd := map[string]interface{}{
+		"group":   group,
+		"members": members,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/groups",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
+func UsersGroupsBulk(users []string, groups []string) (*http.Response, error) {
+	/*
+		Helper function to test Bulk functionality to Add Users to Groups.
+		PUT: {{baseUrl}}/users-groups-bulk
+		{
+			"users": [
+				"magna id",
+				"enim sit tempor incididunt"
+			],
+			"groups": [
+				"nisi est esse",
+				"fugiat eu"
+			]
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"users":  users,
+		"groups": groups,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/users-groups-bulk",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddUser(t *testing.T) {
 	/*
 		This is an API Test to add a user via api/v1/users, the intention
@@ -699,4 +764,93 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 		)
 	}
 	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
+}
+
+func TestUsersGroupsBulk(t *testing.T) {
+	/*
+		To test UsersGroupsBulk End Point
+	*/
+
+	// Vars
+	assert := assert.New(t)
+	numberOfUsers := 5
+	numberOfGroups := 1
+	//var groups = []string{}
+	var policies = []string{}
+	username := "testusersgroupbulk"
+	groupName := "testusersgroupsbulkgroupone"
+	var members = []string{}
+	users := make([]string, numberOfUsers)
+	groups := make([]string, numberOfGroups)
+
+	// 1. Create some users
+	for i := 0; i < numberOfUsers; i++ {
+		users[i] = username + strconv.Itoa(i)
+		response, err := AddUser(
+			users[i],
+			"secretKey"+strconv.Itoa(i), []string{}, policies)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if response != nil {
+			fmt.Println("POST StatusCode:", response.StatusCode)
+			assert.Equal(201, response.StatusCode,
+				"Status Code is incorrect on index: "+strconv.Itoa(i))
+		}
+	}
+
+	// 2. Create a group with no members
+	responseAddGroup, errorAddGroup := AddGroup(groupName, members)
+	if errorAddGroup != nil {
+		log.Println(errorAddGroup)
+		return
+	}
+	finalResponse := inspectHTTPResponse(responseAddGroup)
+	if responseAddGroup != nil {
+		fmt.Println("POST StatusCode:", responseAddGroup.StatusCode)
+		assert.Equal(
+			201,
+			responseAddGroup.StatusCode,
+			finalResponse,
+		)
+	}
+
+	// 3. Add users to the group
+	groups[0] = groupName
+	responseUsersGroupsBulk, errorUsersGroupsBulk := UsersGroupsBulk(
+		users,
+		groups,
+	)
+	if errorUsersGroupsBulk != nil {
+		log.Println(errorUsersGroupsBulk)
+		return
+	}
+	finalResponse = inspectHTTPResponse(responseUsersGroupsBulk)
+	if responseUsersGroupsBulk != nil {
+		fmt.Println("POST StatusCode:", responseUsersGroupsBulk.StatusCode)
+		assert.Equal(
+			200,
+			responseUsersGroupsBulk.StatusCode,
+			finalResponse,
+		)
+	}
+
+	// 4. Verify users got added to the group
+	for i := 0; i < numberOfUsers; i++ {
+		responseGetUserInfo, errGetUserInfo := GetUserInformation(
+			username + strconv.Itoa(i),
+		)
+		if errGetUserInfo != nil {
+			log.Println(errGetUserInfo)
+			assert.Fail("There was an error in the response")
+			return
+		}
+		finalResponse = inspectHTTPResponse(responseGetUserInfo)
+		if responseGetUserInfo != nil {
+			assert.Equal(200, responseGetUserInfo.StatusCode, finalResponse)
+		}
+		// Make sure the user belongs to the created group
+		assert.True(strings.Contains(string(finalResponse), groupName))
+	}
 }
