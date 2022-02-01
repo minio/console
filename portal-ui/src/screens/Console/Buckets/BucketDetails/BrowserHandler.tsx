@@ -41,6 +41,7 @@ import {
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import SearchBox from "../../Common/SearchBox";
+import BackLink from "../../../../common/BackLink";
 
 interface IBrowserHandlerProps {
   fileMode: boolean;
@@ -59,6 +60,12 @@ const styles = (theme: Theme) =>
     breadcrumLink: {
       textDecoration: "none",
       color: "black",
+    },
+    backToBuckets: {
+      color: "#000",
+      fontSize: 14,
+      padding: 0,
+      marginTop: -8,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -88,10 +95,22 @@ const BrowserHandler = ({
       <PageHeader
         label={
           <Fragment>
-            <Link to={"/buckets"} className={classes.breadcrumLink}>
-              Buckets
-            </Link>{" "}
-            &gt; {bucketName}
+            {fileMode ? (
+              <Fragment>
+                <Link to={"/buckets"} className={classes.breadcrumLink}>
+                  Buckets
+                </Link>{" "}
+                &gt; {bucketName}
+              </Fragment>
+            ) : (
+              <Fragment>
+                <BackLink
+                  label={"Back to Buckets"}
+                  to={"/buckets"}
+                  className={classes.backToBuckets}
+                />
+              </Fragment>
+            )}
           </Fragment>
         }
         actions={

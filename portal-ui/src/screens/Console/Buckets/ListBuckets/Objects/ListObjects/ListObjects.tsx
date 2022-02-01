@@ -89,7 +89,12 @@ import SecureComponent, {
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
-import { DownloadIcon, PreviewIcon, ShareIcon } from "../../../../../../icons";
+import {
+  BucketsIcon,
+  DownloadIcon,
+  PreviewIcon,
+  ShareIcon,
+} from "../../../../../../icons";
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
@@ -99,9 +104,6 @@ const AddFolderIcon = React.lazy(
 );
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
-);
-const FolderIcon = React.lazy(
-  () => import("../../../../../../icons/FolderIcon")
 );
 const RefreshIcon = React.lazy(
   () => import("../../../../../../icons/RefreshIcon")
@@ -127,7 +129,7 @@ const PreviewFileModal = withSuspense(
 const styles = (theme: Theme) =>
   createStyles({
     browsePaper: {
-      height: "calc(100vh - 280px)",
+      height: "calc(100vh - 210px)",
       "&.actionsPanelOpen": {
         height: "100%",
       },
@@ -690,9 +692,9 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
-    if(idElement.endsWith("/")) {
+    if (idElement.endsWith("/")) {
       const newPath = `/buckets/${bucketName}/browse${
-          idElement ? `/${encodeFileName(idElement)}` : ``
+        idElement ? `/${encodeFileName(idElement)}` : ``
       }`;
       history.push(newPath);
       return;
@@ -1091,6 +1093,28 @@ const ListObjects = ({
   if (currentPath.length > 0) {
     uploadPath = uploadPath.concat(currentPath);
   }
+
+  // TODO: Add bucket information panel
+  /*
+      *
+      * subTitle={
+                  <Fragment>
+                    <Grid item xs={12} className={classes.bucketDetails}>
+                      <span className={classes.detailsSpacer}>
+                        Created:&nbsp;&nbsp;&nbsp;<strong></strong>
+                      </span>
+                      <span className={classes.detailsSpacer}>
+                        Access:&nbsp;&nbsp;&nbsp;<strong></strong>
+                      </span>
+                      <span className={classes.detailsSpacer}>
+                        SIZE / TOTAL OBJECTS
+                      </span>
+                    </Grid>
+                  </Fragment>
+                }
+      *
+      * */
+
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1144,19 +1168,15 @@ const ListObjects = ({
             className={classes.screenTitle}
             icon={
               <Fragment>
-                <FolderIcon width={40} />
+                <BucketsIcon width={40} />
               </Fragment>
             }
             title={
-              currentPath.length > 0 ? currentPath[currentPath.length - 1] : "/"
-            }
-            subTitle={
-              <Fragment>
-                <BrowserBreadcrumbs
-                  bucketName={bucketName}
-                  internalPaths={pageTitle}
-                />
-              </Fragment>
+              <BrowserBreadcrumbs
+                bucketName={bucketName}
+                internalPaths={pageTitle}
+                fullSizeBreadcrumbs
+              />
             }
             actions={
               <Fragment>
@@ -1193,9 +1213,6 @@ const ListObjects = ({
               </Fragment>
             }
           />
-        </Grid>
-        <Grid item xs={12}>
-          <br />
         </Grid>
         <div
           id="object-list-wrapper"

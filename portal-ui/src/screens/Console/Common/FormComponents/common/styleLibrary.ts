@@ -371,10 +371,22 @@ export const objectBrowserCommon = {
         textDecoration: "underline",
       },
     },
+    "&.fullSize": {
+      fontSize: 18,
+      marginLeft: 10,
+    }
   },
   smallLabel: {
     color: "#9C9C9C",
     fontSize: 15,
+  },
+  bucketDetails: {
+    marginLeft: 10,
+    fontSize:14,
+    color: "#969FA8"
+  },
+  detailsSpacer: {
+    marginRight: 18,
   },
 };
 
