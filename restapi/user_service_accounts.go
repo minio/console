@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -88,6 +89,14 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
+	})
+
+	api.UserAPIGetServiceAccountPolicyHandler = user_api.GetServiceAccountPolicyHandlerFunc(func(params user_api.GetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
+		serviceAccounts, err := getServiceAccountPolicyResponse(session, params.AccessKey)
+		if err != nil {
+			return user_api.NewGetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewGetServiceAccountPolicyOK().WithPayload(serviceAccounts)
 	})
 
 }
@@ -268,6 +277,7 @@ func getCreateServiceAccountCredsResponse(session *models.Principal, serviceAcco
 	}
 
 	accounts, err := userAdminClient.listServiceAccounts(ctx, "")
+	fmt.Println("dummy line")
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -341,4 +351,34 @@ func getDeleteServiceAccountResponse(session *models.Principal, accessKey string
 		return prepareError(err)
 	}
 	return nil
+}
+
+// getServiceAccountPolicy gets policy for a service account
+func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessKey string) (string, error) {
+	serviceAccountInfo, err := userClient.infoServiceAccount(ctx, accessKey)
+	if err != nil {
+		return "", err
+	}
+	return serviceAccountInfo.Policy, nil
+}
+
+// getServiceAccountPolicyResponse authenticates the user and calls
+// getServiceAccountPolicy to get the policy for a service account
+func getServiceAccountPolicyResponse(session *models.Principal, accessKey string) (string, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	userAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return "", prepareError(err)
+	}
+	// create a MinIO user Admin Client interface implementation
+	// defining the client to be used
+	userAdminClient := AdminClient{Client: userAdmin}
+
+	serviceAccounts, err := getServiceAccountPolicy(ctx, userAdminClient, accessKey)
+	if err != nil {
+		return "", prepareError(err)
+	}
+	return serviceAccounts, nil
 }

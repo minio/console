@@ -280,8 +280,9 @@ export const searchField = {
       fontWeight: 700,
       color: "#000",
       "&::placeholder": {
-        color: "#a6a5a5",
+        color: "#858585",
         opacity: 1,
+        fontWeight: 400,
       },
     },
     "&:hover": {
@@ -370,10 +371,22 @@ export const objectBrowserCommon = {
         textDecoration: "underline",
       },
     },
+    "&.fullSize": {
+      fontSize: 18,
+      marginLeft: 10,
+    },
   },
   smallLabel: {
     color: "#9C9C9C",
     fontSize: 15,
+  },
+  bucketDetails: {
+    marginLeft: 10,
+    fontSize: 14,
+    color: "#969FA8",
+  },
+  detailsSpacer: {
+    marginRight: 18,
   },
 };
 
@@ -898,8 +911,9 @@ export const inputFieldStyles = {
     fontSize: 13,
     fontWeight: 600,
     "&:placeholder": {
-      color: "#393939",
+      color: "#858585",
       opacity: 1,
+      fontWeight: 400,
     },
   },
   error: {

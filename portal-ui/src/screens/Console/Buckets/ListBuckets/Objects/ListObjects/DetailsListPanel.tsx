@@ -42,7 +42,7 @@ const styles = (theme: Theme) =>
       transitionDuration: "0.3s",
       overflowX: "hidden",
       overflowY: "auto",
-      position:"relative",
+      position: "relative",
       opacity: 0,
       marginLeft: -1,
       "&.open": {
@@ -60,11 +60,16 @@ const styles = (theme: Theme) =>
       top: 8,
       "& .min-icon": {
         width: 14,
-      }
-    }
+      },
+    },
   });
 
-const DetailsListPanel = ({ classes, open, closePanel, children }: IDetailsListPanel) => {
+const DetailsListPanel = ({
+  classes,
+  open,
+  closePanel,
+  children,
+}: IDetailsListPanel) => {
   return (
     <Grid item className={`${classes.detailsList} ${open ? "open" : ""}`}>
       <IconButton onClick={closePanel} className={classes.closePanel}>

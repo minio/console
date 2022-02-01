@@ -24,7 +24,10 @@ import { Grid, IconButton, Tooltip } from "@mui/material";
 import get from "lodash/get";
 import { AppState } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
-import { setFileModeEnabled } from "../../ObjectBrowser/actions";
+import {
+  setFileModeEnabled,
+  setSearchObjects,
+} from "../../ObjectBrowser/actions";
 import ObjectDetails from "../ListBuckets/Objects/ObjectDetails/ObjectDetails";
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
@@ -35,7 +38,10 @@ import SecureComponent from "../../../../common/SecureComponent/SecureComponent"
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,
+  IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
+import SearchBox from "../../Common/SearchBox";
+import BackLink from "../../../../common/BackLink";
 
 interface IBrowserHandlerProps {
   fileMode: boolean;
@@ -45,6 +51,8 @@ interface IBrowserHandlerProps {
   setFileModeEnabled: typeof setFileModeEnabled;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   bucketInfo: BucketInfo | null;
+  searchObjects: string;
+  setSearchObjects: typeof setSearchObjects;
 }
 
 const styles = (theme: Theme) =>
@@ -52,6 +60,12 @@ const styles = (theme: Theme) =>
     breadcrumLink: {
       textDecoration: "none",
       color: "black",
+    },
+    backToBuckets: {
+      color: "#000",
+      fontSize: 14,
+      padding: 0,
+      marginTop: -8,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -62,7 +76,8 @@ const BrowserHandler = ({
   history,
   classes,
   setFileModeEnabled,
-  bucketInfo,
+  searchObjects,
+  setSearchObjects,
 }: IBrowserHandlerProps) => {
   const bucketName = match.params["bucketName"];
   const internalPaths = get(match.params, "subpaths", "");
@@ -80,10 +95,22 @@ const BrowserHandler = ({
       <PageHeader
         label={
           <Fragment>
-            <Link to={"/buckets"} className={classes.breadcrumLink}>
-              Buckets
-            </Link>{" "}
-            &gt; {bucketName}
+            {fileMode ? (
+              <Fragment>
+                <Link to={"/buckets"} className={classes.breadcrumLink}>
+                  Buckets
+                </Link>{" "}
+                &gt; {bucketName}
+              </Fragment>
+            ) : (
+              <Fragment>
+                <BackLink
+                  label={"Back to Buckets"}
+                  to={"/buckets"}
+                  className={classes.backToBuckets}
+                />
+              </Fragment>
+            )}
           </Fragment>
         }
         actions={
@@ -105,6 +132,25 @@ const BrowserHandler = ({
             </Tooltip>
           </SecureComponent>
         }
+        middleComponent={
+          <Fragment>
+            {!fileMode && (
+              <SecureComponent
+                scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+                resource={bucketName}
+                errorProps={{ disabled: true }}
+              >
+                <SearchBox
+                  placeholder={"Start typing to filter objects in bucket"}
+                  onChange={(value) => {
+                    setSearchObjects(value);
+                  }}
+                  value={searchObjects}
+                />
+              </SecureComponent>
+            )}
+          </Fragment>
+        }
       />
       <Grid>{fileMode ? <ObjectDetails /> : <ListObjects />}</Grid>
     </Fragment>
@@ -115,11 +161,13 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   fileMode: get(objectBrowser, "fileMode", false),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
   bucketInfo: buckets.bucketDetails.bucketInfo,
+  searchObjects: objectBrowser.searchObjects,
 });
 
 const mapDispatchToProps = {
   setFileModeEnabled,
   setErrorSnackMessage,
+  setSearchObjects,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

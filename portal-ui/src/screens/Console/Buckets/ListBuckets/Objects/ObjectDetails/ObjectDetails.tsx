@@ -748,6 +748,7 @@ const ObjectDetails = ({
                           <SearchBox
                             placeholder={`Search ${currentItem}`}
                             onChange={setFilterVersion}
+                            value={filterVersion}
                           />
                         )}
                     </Grid>

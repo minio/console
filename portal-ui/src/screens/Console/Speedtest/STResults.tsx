@@ -35,39 +35,10 @@ import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer } from "recharts";
 import { cleanMetrics } from "./utils";
-
-interface ISTResults {
-  classes: any;
-  results: SpeedTestResponse[];
-  start: boolean;
-  autotune: boolean;
-}
+import SpeedTestUnit from "./SpeedTestUnit";
 
 const styles = (theme: Theme) =>
   createStyles({
-    objectGeneralTitle: {
-      fontWeight: "bold",
-      color: "#000",
-      display: "flex",
-      alignItems: "center",
-      "& svg": {
-        width: 14,
-      },
-    },
-    generalUnit: {
-      color: "#000",
-      marginTop: 6,
-      fontSize: 12,
-      fontWeight: "bold",
-    },
-    testUnitRes: {
-      fontSize: 120,
-      color: "#081C42",
-      fontWeight: "bold",
-    },
-    metricValContainer: {
-      lineHeight: 1,
-    },
     actionButtons: {
       textAlign: "right",
     },
@@ -153,17 +124,27 @@ const styles = (theme: Theme) =>
     },
     download: {
       "& .min-icon": {
+        width: 35,
+        height: 35,
         color: "rgb(113,200,150)",
       },
     },
     upload: {
       "& .min-icon": {
+        width: 35,
+        height: 35,
         color: "rgb(66,127,172)",
       },
     },
   });
 
-const STResults = ({ classes, results, start, autotune }: ISTResults) => {
+interface ISTResults {
+  classes: any;
+  results: SpeedTestResponse[];
+  start: boolean;
+}
+
+const STResults = ({ classes, results, start }: ISTResults) => {
   const [jsonView, setJsonView] = useState<boolean>(false);
 
   const finalRes = results[results.length - 1] || [];
@@ -176,38 +157,6 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
 
   const putThroughput = get(finalRes, "PUTStats.throughputPerSec", 0);
   const putObjects = get(finalRes, "PUTStats.objectsPerSec", 0);
-
-  const ObjectGeneral = ({
-    title,
-    throughput,
-    objects,
-  }: {
-    title: any;
-    throughput: string;
-    objects: number;
-  }) => {
-    const avg = calculateBytes(throughput);
-
-    let total = "--";
-    let unit = "";
-
-    if (avg.total !== 0) {
-      total = avg.total.toString();
-      unit = `${avg.unit}/S`;
-    }
-
-    return (
-      <Grid container>
-        <Grid item xs={12} className={classes.objectGeneralTitle}>
-          {title}
-        </Grid>
-        <Grid item xs={12} md={6} className={classes.metricValContainer}>
-          <span className={classes.testUnitRes}>{total}</span>
-          <span className={classes.generalUnit}>{unit}</span>
-        </Grid>
-      </Grid>
-    );
-  };
 
   let statJoin: IndvServerMetric[] = [];
 
@@ -280,31 +229,35 @@ const STResults = ({ classes, results, start, autotune }: ISTResults) => {
   return (
     <Fragment>
       <Grid container className={classes.objectGeneral}>
-        <Grid item xs={12} md={6} lg={4}>
-          <ObjectGeneral
-            title={
-              <div className={classes.download}>
-                <DownloadStatIcon />
-                &nbsp; GET
-              </div>
-            }
-            throughput={getThroughput}
-            objects={getObjects}
-          />
+        <Grid item xs={12} md={6} lg={6}>
+          <Grid container className={classes.objectGeneral}>
+            <Grid item xs={12} md={6} lg={6}>
+              <SpeedTestUnit
+                icon={
+                  <div className={classes.download}>
+                    <DownloadStatIcon />
+                  </div>
+                }
+                title={"GET"}
+                throughput={getThroughput}
+                objects={getObjects}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={6}>
+              <SpeedTestUnit
+                icon={
+                  <div className={classes.upload}>
+                    <UploadStatIcon />
+                  </div>
+                }
+                title={"PUT"}
+                throughput={putThroughput}
+                objects={putObjects}
+              />
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <ObjectGeneral
-            title={
-              <div className={classes.upload}>
-                <UploadStatIcon />
-                &nbsp; PUT
-              </div>
-            }
-            throughput={putThroughput}
-            objects={putObjects}
-          />
-        </Grid>
-        <Grid item xs={12} md={12} lg={4}>
+        <Grid item xs={12} md={6} lg={6}>
           <ResponsiveContainer width="99%">
             <AreaChart data={clnMetrics}>
               <defs>

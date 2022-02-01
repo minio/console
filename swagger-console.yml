@@ -1260,6 +1260,27 @@ paths:
       tags:
         - UserAPI
 
+  /service-accounts/{access_key}/policy:
+    get:
+      summary: Get Service Account Policy
+      operationId: GetServiceAccountPolicy
+      parameters:
+        - name: access_key
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /users:
     get:
       summary: List Users

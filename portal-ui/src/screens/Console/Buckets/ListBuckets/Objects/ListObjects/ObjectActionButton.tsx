@@ -63,7 +63,12 @@ const ObjectActionButton = ({
   ...restProps
 }: ObjectActionButtonProps) => {
   return (
-    <Button {...restProps} onClick={onClick} className={classes.root} startIcon={icon}>
+    <Button
+      {...restProps}
+      onClick={onClick}
+      className={classes.root}
+      startIcon={icon}
+    >
       <span className={"buttonItem"}>{label}</span>
     </Button>
   );
