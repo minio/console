@@ -157,9 +157,7 @@ const EnableQuota = ({
                     onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                       setQuotaType(e.target.value as string);
                     }}
-                    selectorOptions={[
-                      { value: "hard", label: "Hard" },
-                    ]}
+                    selectorOptions={[{ value: "hard", label: "Hard" }]}
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
