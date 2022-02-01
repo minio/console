@@ -202,7 +202,7 @@ const TenantLogging = ({
           dbServiceAccountName={logInfo.dbServiceAccountName}
           cpuRequest={logInfo.logCPURequest}
           memRequest={logInfo.logMemRequest}
-          dbCPURequest={logInfo.logDBCPURequest} 
+          dbCPURequest={logInfo.logDBCPURequest}
           dbMemRequest={logInfo.logDBMemRequest}
         />
       )}
@@ -254,7 +254,7 @@ const TenantLogging = ({
                     </tr>
                   ) : (
                     <Fragment>
-{logInfo?.logCPURequest != null && (
+                      {logInfo?.logCPURequest != null && (
                         <tr>
                           <td className={classes.titleCol}>CPU Request:</td>
                           <td>{logInfo?.logCPURequest}</td>
@@ -263,94 +263,96 @@ const TenantLogging = ({
                       {logInfo?.logMemRequest != null && (
                         <tr>
                           <td className={classes.titleCol}>Memory Request:</td>
-                          <td>
-                            {niceBytes(
-                              logInfo?.logMemRequest,
-                              true
-                            )}
-                          </td>
+                          <td>{niceBytes(logInfo?.logMemRequest, true)}</td>
                         </tr>
                       )}
-                       {logInfo?.image != null && (
-                      <tr>
-                        <td className={classes.titleCol}>Image:</td>
-                        <td>{logInfo?.image}</td>
-                      </tr>
+                      {logInfo?.image != null && (
+                        <tr>
+                          <td className={classes.titleCol}>Image:</td>
+                          <td>{logInfo?.image}</td>
+                        </tr>
                       )}
                       {logInfo?.diskCapacityGB != null && (
-                      <tr>
-                        <td className={classes.titleCol}>
-                          Disk Capacity (GB):
-                        </td>
-                        <td>{logInfo?.diskCapacityGB}</td>
-                      </tr>
+                        <tr>
+                          <td className={classes.titleCol}>
+                            Disk Capacity (GB):
+                          </td>
+                          <td>{logInfo?.diskCapacityGB}</td>
+                        </tr>
                       )}
                       {logInfo?.serviceAccountName != null && (
-                      <tr>
-                        <td className={classes.titleCol}>Service Account:</td>
-                        <td>{logInfo?.serviceAccountName}</td>
-                      </tr>
+                        <tr>
+                          <td className={classes.titleCol}>Service Account:</td>
+                          <td>{logInfo?.serviceAccountName}</td>
+                        </tr>
                       )}
-                      {logInfo?.labels != null && logInfo.labels.length > 0 && (<Fragment>
-                      <tr>
-                        <td>
-                          <h4>Labels</h4>
-                        </td>
-                      </tr>                      
-                      <tr>
-                        <td>
-                          <KeyPairView
-                            records={
-                              logInfo != null && logInfo.labels.length > 0
-                                ? logInfo.labels
-                                : []
-                            }
-                            recordName="Labels"
-                          />
-                        </td>
-                      </tr>
-                      </Fragment>
+                      {logInfo?.labels != null && logInfo.labels.length > 0 && (
+                        <Fragment>
+                          <tr>
+                            <td>
+                              <h4>Labels</h4>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <KeyPairView
+                                records={
+                                  logInfo != null && logInfo.labels.length > 0
+                                    ? logInfo.labels
+                                    : []
+                                }
+                                recordName="Labels"
+                              />
+                            </td>
+                          </tr>
+                        </Fragment>
                       )}
-                      {logInfo?.annotations != null && logInfo.annotations.length > 0 && (<Fragment>
-                      <tr>
-                        <td>
-                          <h4>Annotations</h4>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <KeyPairView
-                            records={
-                              logInfo != null && logInfo.annotations.length > 0
-                                ? logInfo.annotations
-                                : []
-                            }
-                            recordName="Annotations"
-                          />
-                        </td>
-                      </tr>
-                      </Fragment>
-                      )}
-                    {logInfo?.nodeSelector != null && logInfo.nodeSelector.length > 0 &&(<Fragment>
-                      <tr>
-                        <td>
-                          <h4>Node Selector</h4>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <KeyPairView
-                            records={
-                              logInfo != null && logInfo.nodeSelector.length > 0
-                                ? logInfo.nodeSelector
-                                : []
-                            }
-                            recordName="Node Selector"
-                          />
-                        </td>
-                      </tr>
-                      </Fragment>
-                    )}
+                      {logInfo?.annotations != null &&
+                        logInfo.annotations.length > 0 && (
+                          <Fragment>
+                            <tr>
+                              <td>
+                                <h4>Annotations</h4>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <KeyPairView
+                                  records={
+                                    logInfo != null &&
+                                    logInfo.annotations.length > 0
+                                      ? logInfo.annotations
+                                      : []
+                                  }
+                                  recordName="Annotations"
+                                />
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )}
+                      {logInfo?.nodeSelector != null &&
+                        logInfo.nodeSelector.length > 0 && (
+                          <Fragment>
+                            <tr>
+                              <td>
+                                <h4>Node Selector</h4>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <KeyPairView
+                                  records={
+                                    logInfo != null &&
+                                    logInfo.nodeSelector.length > 0
+                                      ? logInfo.nodeSelector
+                                      : []
+                                  }
+                                  recordName="Node Selector"
+                                />
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )}
                     </Fragment>
                   )}
                 </tbody>
@@ -376,89 +378,94 @@ const TenantLogging = ({
                       )}
                       {logInfo?.logDBMemRequest != null && (
                         <tr>
-                          <td className={classes.titleCol}>DB Memory Request:</td>
-                          <td>
-                            {niceBytes(
-                              logInfo?.logDBMemRequest,
-                              true
-                            )}
+                          <td className={classes.titleCol}>
+                            DB Memory Request:
                           </td>
+                          <td>{niceBytes(logInfo?.logDBMemRequest, true)}</td>
                         </tr>
                       )}
                       {logInfo?.dbImage != null && (
-                      <tr>
-                        <td className={classes.titleCol}>Postgres Image:</td>
-                        <td>{logInfo?.dbImage}</td>
-                      </tr>
+                        <tr>
+                          <td className={classes.titleCol}>Postgres Image:</td>
+                          <td>{logInfo?.dbImage}</td>
+                        </tr>
                       )}
                       {logInfo?.dbServiceAccountName != null && (
-                      <tr>
-                        <td className={classes.titleCol}>Service Account:</td>
-                        <td>{logInfo?.dbServiceAccountName}</td>
-                      </tr>                      
+                        <tr>
+                          <td className={classes.titleCol}>Service Account:</td>
+                          <td>{logInfo?.dbServiceAccountName}</td>
+                        </tr>
                       )}
-                       {logInfo?.dbLabels != null && logInfo.dbLabels.length > 0 &&(<Fragment><tr>
-                        <td>
-                          <h4>Labels</h4>
-                        </td>
-                      </tr>
-                     
-                      <tr>
-                        <td>
-                          <KeyPairView
-                            records={
-                              logInfo != null && logInfo.dbLabels?.length > 0
-                                ? logInfo.dbLabels
-                                : []
-                            }
-                            recordName="labels"
-                          />
-                        </td>
-                      </tr>
-                      </Fragment>
-                      )}
-                      {logInfo?.annotations != null && logInfo.dbAnnotations.length > 0 &&(<Fragment>
-                      <tr>
-                        <td>
-                          <h4>Annotations</h4>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <KeyPairView
-                            records={
-                              logInfo != null &&
-                              logInfo.dbAnnotations?.length > 0
-                                ? logInfo.dbAnnotations
-                                : []
-                            }
-                            recordName="annotations"
-                          />
-                        </td>
-                      </tr>
-                      </Fragment>
-                      )}
-                    {logInfo?.nodeSelector != null && logInfo.dbNodeSelector.length > 0 &&(<Fragment>
-                      <tr>
-                        <td>
-                          <h4>Node Selector </h4>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <KeyPairView
-                            records={
-                              logInfo != null &&
-                              logInfo.dbNodeSelector?.length > 0
-                                ? logInfo.dbNodeSelector
-                                : []
-                            }
-                            recordName="node selectors"
-                          />
-                        </td>
-                      </tr>
-                     </Fragment>
-                     )}
+                      {logInfo?.dbLabels != null &&
+                        logInfo.dbLabels.length > 0 && (
+                          <Fragment>
+                            <tr>
+                              <td>
+                                <h4>Labels</h4>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <KeyPairView
+                                  records={
+                                    logInfo != null &&
+                                    logInfo.dbLabels?.length > 0
+                                      ? logInfo.dbLabels
+                                      : []
+                                  }
+                                  recordName="labels"
+                                />
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )}
+                      {logInfo?.annotations != null &&
+                        logInfo.dbAnnotations.length > 0 && (
+                          <Fragment>
+                            <tr>
+                              <td>
+                                <h4>Annotations</h4>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <KeyPairView
+                                  records={
+                                    logInfo != null &&
+                                    logInfo.dbAnnotations?.length > 0
+                                      ? logInfo.dbAnnotations
+                                      : []
+                                  }
+                                  recordName="annotations"
+                                />
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )}
+                      {logInfo?.nodeSelector != null &&
+                        logInfo.dbNodeSelector.length > 0 && (
+                          <Fragment>
+                            <tr>
+                              <td>
+                                <h4>Node Selector </h4>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <KeyPairView
+                                  records={
+                                    logInfo != null &&
+                                    logInfo.dbNodeSelector?.length > 0
+                                      ? logInfo.dbNodeSelector
+                                      : []
+                                  }
+                                  recordName="node selectors"
+                                />
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )}
                     </Fragment>
                   )}
                 </tbody>

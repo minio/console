@@ -385,9 +385,7 @@ const AddBucket = ({
                         ) => {
                           addBucketQuotaType(e.target.value as string);
                         }}
-                        selectorOptions={[
-                          { value: "hard", label: "Hard" },
-                        ]}
+                        selectorOptions={[{ value: "hard", label: "Hard" }]}
                       />
                     </Grid>
                     <Grid item xs={12}>

@@ -51,7 +51,7 @@ const BrowserBreadcrumbs = ({
   internalPaths,
   rewindEnabled,
   rewindDate,
-                                fullSizeBreadcrumbs,
+  fullSizeBreadcrumbs,
 }: IObjectBrowser) => {
   let paths = internalPaths;
 
@@ -94,7 +94,13 @@ const BrowserBreadcrumbs = ({
         </Grid>
       )}
 
-      <Grid item xs={12} className={`${classes.breadcrumbs} ${fullSizeBreadcrumbs ? "fullSize" : ""}`}>
+      <Grid
+        item
+        xs={12}
+        className={`${classes.breadcrumbs} ${
+          fullSizeBreadcrumbs ? "fullSize" : ""
+        }`}
+      >
         <React.Fragment>
           <Link to={`/buckets/${bucketName}/browse`}>{bucketName}</Link>
           {listBreadcrumbs.length > 0 && <span> / </span>}

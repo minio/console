@@ -55,9 +55,9 @@ interface IEditTenantLogsProps {
   dbNodeSelector: IKeyValue[];
   dbServiceAccountName: string;
   cpuRequest: string;
-  memRequest: string; 
-  dbCPURequest:string;
-  dbMemRequest:string;   
+  memRequest: string;
+  dbCPURequest: string;
+  dbMemRequest: string;
 }
 
 const styles = (theme: Theme) =>
@@ -125,7 +125,7 @@ const EditTenantLogsModal = ({
   cpuRequest,
   memRequest,
   dbCPURequest,
-  dbMemRequest
+  dbMemRequest,
 }: IEditTenantLogsProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
@@ -162,12 +162,16 @@ const EditTenantLogsModal = ({
   const [dbAnnotationsError, setDbAnnotationsError] = useState<any>({});
   const [dbNodeSelectorError, setDbNodeSelectorError] = useState<any>({});
   const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
-  const [newMemRequest, setNewMemRequest] = useState<string>( memRequest ?
-    Math.floor(parseInt(memRequest, 10) / 1000000000).toString() : "0"
+  const [newMemRequest, setNewMemRequest] = useState<string>(
+    memRequest
+      ? Math.floor(parseInt(memRequest, 10) / 1000000000).toString()
+      : "0"
   );
   const [newDBCPURequest, setNewDBCPURequest] = useState<string>(dbCPURequest);
-  const [newDBMemRequest, setNewDBMemRequest] = useState<string>(dbMemRequest ?
-    Math.floor(parseInt(dbMemRequest, 10) / 1000000000).toString() : "0"
+  const [newDBMemRequest, setNewDBMemRequest] = useState<string>(
+    dbMemRequest
+      ? Math.floor(parseInt(dbMemRequest, 10) / 1000000000).toString()
+      : "0"
   );
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
@@ -229,28 +233,32 @@ const EditTenantLogsModal = ({
       required: true,
       value: newCPURequest as any as string,
       pattern: /^[0-9]*$/,
-      customPatternMessage: "Please enter an integer value for number of CPUs requested",
+      customPatternMessage:
+        "Please enter an integer value for number of CPUs requested",
     });
     tenantLogValidation.push({
       fieldKey: `memRequest`,
       required: true,
       value: newMemRequest as any as string,
       pattern: /^[0-9]*$/,
-      customPatternMessage: "Please enter an integer value (Gi) for memory requested",
+      customPatternMessage:
+        "Please enter an integer value (Gi) for memory requested",
     });
     tenantLogValidation.push({
       fieldKey: `dbCPURequest`,
       required: true,
       value: newDBCPURequest as any as string,
       pattern: /^[0-9]*$/,
-      customPatternMessage: "Please enter an integer value for number of  DB CPUs requested",
+      customPatternMessage:
+        "Please enter an integer value for number of  DB CPUs requested",
     });
     tenantLogValidation.push({
       fieldKey: `dbMemRequest`,
       required: true,
       value: newDBMemRequest as any as string,
       pattern: /^[0-9]*$/,
-      customPatternMessage: "Please enter an integer value (Gi) for DB memory requested",
+      customPatternMessage:
+        "Please enter an integer value (Gi) for DB memory requested",
     });
 
     const commonVal = commonFormValidation(tenantLogValidation);
@@ -320,7 +328,7 @@ const EditTenantLogsModal = ({
                   logCPURequest: newCPURequest,
                   logMemRequest: newMemRequest + "Gi",
                   logDBCPURequest: newDBCPURequest,
-                  logDBMemRequest: newDBMemRequest+ "Gi",
+                  logDBMemRequest: newDBMemRequest + "Gi",
                 }
               )
               .then(() => {

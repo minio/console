@@ -331,7 +331,11 @@ const ErrorLogs = ({
       <PageLayout>
         <Grid xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
-            <SearchBox placeholder="Highlight Line" onChange={setHighlight} value={highlight} />
+            <SearchBox
+              placeholder="Highlight Line"
+              onChange={setHighlight}
+              value={highlight}
+            />
           </Grid>
           <Grid item xs={12}>
             <div id="logs-container" className={classes.logList}>

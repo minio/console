@@ -374,7 +374,7 @@ export const objectBrowserCommon = {
     "&.fullSize": {
       fontSize: 18,
       marginLeft: 10,
-    }
+    },
   },
   smallLabel: {
     color: "#9C9C9C",
@@ -382,8 +382,8 @@ export const objectBrowserCommon = {
   },
   bucketDetails: {
     marginLeft: 10,
-    fontSize:14,
-    color: "#969FA8"
+    fontSize: 14,
+    color: "#969FA8",
   },
   detailsSpacer: {
     marginRight: 18,
