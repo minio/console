@@ -30,6 +30,7 @@ export const OBJECT_MANAGER_CLEAN_LIST = "OBJECT_MANAGER/CLEAN_LIST";
 export const OBJECT_MANAGER_TOGGLE_LIST = "OBJECT_MANAGER/TOGGLE_LIST";
 export const OBJECT_MANAGER_OPEN_LIST = "OBJECT_MANAGER/OPEN_LIST";
 export const OBJECT_MANAGER_CLOSE_LIST = "OBJECT_MANAGER/CLOSE_LIST";
+export const OBJECT_MANAGER_SET_SEARCH_OBJECT = "OBJECT_MANAGER/SET_SEARCH_OBJECT";
 
 interface RewindSetEnabled {
   type: typeof REWIND_SET_ENABLE;
@@ -82,6 +83,11 @@ interface OMCloseList {
   type: typeof OBJECT_MANAGER_CLOSE_LIST;
 }
 
+interface SetSearchObjects {
+  type: typeof OBJECT_MANAGER_SET_SEARCH_OBJECT;
+  searchString: string;
+}
+
 export type ObjectBrowserActionTypes =
   | RewindSetEnabled
   | RewindReset
@@ -93,7 +99,7 @@ export type ObjectBrowserActionTypes =
   | OMCleanList
   | OMToggleList
   | OMOpenList
-  | OMCloseList;
+  | OMCloseList | SetSearchObjects;
 
 export const setRewindEnable = (
   state: boolean,
@@ -172,4 +178,11 @@ export const closeList = () => {
   return {
     type: OBJECT_MANAGER_CLOSE_LIST,
   };
+};
+
+export const setSearchObjects = (searchString: string) => {
+  return {
+    type: OBJECT_MANAGER_SET_SEARCH_OBJECT,
+    searchString,
+  }
 };

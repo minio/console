@@ -245,6 +245,7 @@ const ListTiersConfiguration = ({
                 placeholder="Filter"
                 onChange={setFilter}
                 overrideClass={classes.searchField}
+                value={filter}
               />
               <div className={classes.rightActionButtons}>
                 <RBIconButton

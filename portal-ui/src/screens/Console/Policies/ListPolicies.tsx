@@ -202,6 +202,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             onChange={setFilterPolicies}
             placeholder="Search Policies"
             overrideClass={classes.searchField}
+            value={filterPolicies}
           />
 
           <SecureComponent

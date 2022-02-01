@@ -149,6 +149,7 @@ const PolicySelectors = ({
                   onChange={(value) => {
                     setFilter(value);
                   }}
+                  value={filter}
                 />
               </div>
             </Grid>
