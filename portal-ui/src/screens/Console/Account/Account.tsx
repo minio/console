@@ -47,6 +47,7 @@ import {
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import {selectSAs} from "../../Console/Configurations/utils"
+import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts"
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -56,9 +57,6 @@ const DeleteServiceAccount = withSuspense(
 );
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../Common/CredentialsPrompt/CredentialsPrompt"))
-);
-const DeleteMultipleServiceAccounts = withSuspense(
-  React.lazy(() => import("../Users/DeleteMultipleServiceAccounts"))
 );
 
 const styles = (theme: Theme) =>
