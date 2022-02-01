@@ -76,7 +76,7 @@ const styles = (theme: Theme) =>
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-    }
+    },
   });
 
 const PageHeader = ({
@@ -87,7 +87,7 @@ const PageHeader = ({
   operatorMode,
   managerObjects,
   toggleList,
-                      middleComponent,
+  middleComponent,
 }: IPageHeader) => {
   return (
     <Grid
@@ -96,9 +96,16 @@ const PageHeader = ({
       direction="row"
       alignItems="center"
     >
-      <Grid item xs={12} sm={12} md={middleComponent? 3: 6} className={classes.label} sx={{
-        paddingTop: ["15px", "15px", "0", "0"],
-      }}>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={middleComponent ? 3 : 6}
+        className={classes.label}
+        sx={{
+          paddingTop: ["15px", "15px", "0", "0"],
+        }}
+      >
         {!sidebarOpen && (
           <div className={classes.logo}>
             {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
@@ -109,11 +116,24 @@ const PageHeader = ({
         </Typography>
       </Grid>
       {middleComponent && (
-          <Grid item xs={12} sm={12} md={6} className={classes.middleComponent}>
-            {middleComponent}
-          </Grid>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={6}
+          className={classes.middleComponent}
+          sx={{ marginTop: ["10px", "10px", "0", "0"] }}
+        >
+          {middleComponent}
+        </Grid>
       )}
-      <Grid item xs={12} sm={12} md={middleComponent? 3:6} className={classes.rightMenu}>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={middleComponent ? 3 : 6}
+        className={classes.rightMenu}
+      >
         {actions && actions}
         {managerObjects && managerObjects.length > 0 && (
           <IconButton
