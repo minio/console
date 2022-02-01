@@ -522,3 +522,24 @@ export const removeEmptyFields = (formFields: IElementValue[]) => {
 
   return nonEmptyFields;
 };
+
+export const selectSAs = (e: React.ChangeEvent<HTMLInputElement>, setSelectedSAs : Function, selectedSAs : string[]) => {
+  const targetD = e.target;
+  const value = targetD.value;
+  const checked = targetD.checked;
+console.log("You are in the util function")
+console.log("targetD is :", targetD)
+console.log("value is :", value)
+console.log("checked is :", checked)
+console.log("selecteSAS is :", selectedSAs)
+  let elements: string[] = [...selectedSAs]; // We clone the selectedSAs array
+  if (checked) {
+    // If the user has checked this field we need to push this to selectedSAs
+    elements.push(value);
+  } else {
+    // User has unchecked this field, we need to remove it from the list
+    elements = elements.filter((element) => element !== value);
+  }
+  setSelectedSAs(elements);
+  return elements;
+};

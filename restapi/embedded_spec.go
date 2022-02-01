@@ -3062,6 +3062,39 @@ func init() {
         }
       }
     },
+    "/service-accounts/delete-multi": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Service Accounts",
+        "operationId": "DeleteMultipleServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedSA",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts/{access_key}": {
       "delete": {
         "tags": [
@@ -9137,6 +9170,39 @@ func init() {
             "schema": {
               "$ref": "#/definitions/serviceAccountCreds"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/service-accounts/delete-multi": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Service Accounts",
+        "operationId": "DeleteMultipleServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedSA",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
