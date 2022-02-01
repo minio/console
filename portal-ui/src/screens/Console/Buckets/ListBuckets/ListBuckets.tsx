@@ -217,6 +217,7 @@ const ListBuckets = ({
             onChange={setFilterBuckets}
             placeholder="Search Buckets"
             overrideClass={classes.searchField}
+            value={filterBuckets}
           />
 
           <Grid

@@ -1,7 +1,22 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import { connect } from "react-redux";
-import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -22,12 +37,12 @@ interface IPageHeader {
   actions?: any;
   managerObjects?: IFileItem[];
   toggleList: typeof toggleList;
+  middleComponent?: React.ReactNode;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
     headerContainer: {
-      // position: "absolute",
       width: "100%",
       minHeight: 79,
       display: "flex",
@@ -57,6 +72,11 @@ const styles = (theme: Theme) =>
         width: 120,
       },
     },
+    middleComponent: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }
   });
 
 const PageHeader = ({
@@ -67,6 +87,7 @@ const PageHeader = ({
   operatorMode,
   managerObjects,
   toggleList,
+                      middleComponent,
 }: IPageHeader) => {
   return (
     <Grid
@@ -75,12 +96,9 @@ const PageHeader = ({
       direction="row"
       alignItems="center"
     >
-      <Box display={{ xs: "block", sm: "block", md: "none" }}>
-        <Grid item xs={12} style={{ height: 10 }}>
-          &nbsp;
-        </Grid>
-      </Box>
-      <Grid item xs={12} sm={12} md={6} className={classes.label}>
+      <Grid item xs={12} sm={12} md={middleComponent? 3: 6} className={classes.label} sx={{
+        paddingTop: ["15px", "15px", "0", "0"],
+      }}>
         {!sidebarOpen && (
           <div className={classes.logo}>
             {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
@@ -90,7 +108,12 @@ const PageHeader = ({
           {label}
         </Typography>
       </Grid>
-      <Grid item xs={12} sm={12} md={6} className={classes.rightMenu}>
+      {middleComponent && (
+          <Grid item xs={12} sm={12} md={6} className={classes.middleComponent}>
+            {middleComponent}
+          </Grid>
+      )}
+      <Grid item xs={12} sm={12} md={middleComponent? 3:6} className={classes.rightMenu}>
         {actions && actions}
         {managerObjects && managerObjects.length > 0 && (
           <IconButton
