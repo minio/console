@@ -27,6 +27,7 @@ interface IProgressBarWrapper {
   ready: boolean;
   indeterminate?: boolean;
   withLabel?: boolean;
+  size?: string;
 }
 
 const BorderLinearProgress = styled(LinearProgress)(() => ({
@@ -37,6 +38,13 @@ const BorderLinearProgress = styled(LinearProgress)(() => ({
   },
   [`& .${linearProgressClasses.bar}`]: {
     borderRadius: 5,
+  },
+}));
+const SmallBorderLinearProgress = styled(BorderLinearProgress)(() => ({
+  height: 6,
+  borderRadius: 3,
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 3,
   },
 }));
 
@@ -58,6 +66,7 @@ const ProgressBarWrapper = ({
   ready,
   indeterminate,
   withLabel,
+  size = "regular",
 }: IProgressBarWrapper) => {
   const propsComponent: LinearProgressProps = {
     variant: indeterminate && !ready ? "indeterminate" : "determinate",
@@ -66,6 +75,9 @@ const ProgressBarWrapper = ({
   };
   if (withLabel) {
     return <LinearProgressWithLabel {...propsComponent} />;
+  }
+  if (size === "small") {
+    return <SmallBorderLinearProgress {...propsComponent} />;
   }
 
   return <BorderLinearProgress {...propsComponent} />;

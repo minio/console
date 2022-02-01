@@ -767,6 +767,25 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 			expectedError: nil,
 		},
 		{
+			name: "Get Bucket Retention Config Compliance",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+					m := minio.Compliance
+					u := minio.Days
+					return &m, swag.Uint(2), &u, nil
+				},
+			},
+			expectedResponse: &models.GetBucketRetentionConfig{
+				Mode:     models.ObjectRetentionModeCompliance,
+				Unit:     models.ObjectRetentionUnitDays,
+				Validity: int32(2),
+			},
+			expectedError: nil,
+		},
+		{
 			name: "Handle Error on minio func",
 			args: args{
 				ctx:        ctx,
