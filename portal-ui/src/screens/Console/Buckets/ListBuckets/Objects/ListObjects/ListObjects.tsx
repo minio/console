@@ -276,6 +276,7 @@ const ListObjects = ({
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
+  const [previousSelection, setPreviousSelection] = useState<string|null>(null);
   const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [selectedPreview, setSelectedPreview] = useState<BucketObject | null>(
@@ -652,6 +653,7 @@ const ListObjects = ({
     if (refresh) {
       setSnackBarMessage(`Objects deleted successfully.`);
       setSelectedObjects([]);
+      setPreviousSelection(null);
       setLoading(true);
     }
   };
@@ -994,26 +996,6 @@ const ListObjects = ({
     setSelectedPreview(null);
   };
 
-  const selectListObjects = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
-    const value = targetD.value;
-    const checked = targetD.checked;
-
-    let elements: string[] = [...selectedObjects]; // We clone the selectedBuckets array
-
-    if (checked) {
-      // If the user has checked this field we need to push this to selectedBucketsList
-      elements.push(value);
-    } else {
-      // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter((element) => element !== value);
-    }
-    setSelectedObjects(elements);
-    setSelectedInternalPaths(null);
-
-    return elements;
-  };
-
   const sortChange = (sortData: any) => {
     const newSortDirection = get(sortData, "sortDirection", "DESC");
     setCurrentSortField(sortData.sortBy);
@@ -1097,7 +1079,56 @@ const ListObjects = ({
     payload = sortASC.reverse();
   }
 
+  const selectListObjects = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    let checked = targetD.checked;
+    // @ts-ignore shiftKey is defined for click events
+    const shift: bool = e.nativeEvent.shiftKey;
+
+    let elements: string[] = [...selectedObjects]; // We clone the selectedBuckets array
+    
+    let previous = value; // By default, start and end are one element
+    // Use the shift effect if different elements are selected
+    if (shift && previousSelection !== value) {
+      if (previousSelection === null) {
+        // There was no previous action, сhecked only first elements
+        checked = true;
+        previous = payload[0].name;
+      } else {
+        // Repeat the previous steps for everyone in the range
+        checked = elements.indexOf(previousSelection) !== -1;
+        previous = previousSelection;
+      }
+    }
+
+    const [min, max] = [
+      payload.findIndex(object => object.name === value),
+      payload.findIndex(object => object.name === previous),
+    ].sort((a, b) => a - b); // correctly sort an array of numbers
+    for (let i = min; i <= max; i++) {
+      const current = payload[i].name;
+      if (checked) {
+        // If the user has checked this field we need to push this to selectedBucketsList
+        if (elements.indexOf(current) === -1) {
+          elements.push(current);
+        }
+      } else {
+        // User has unchecked this field, we need to remove it from the list
+        elements = elements.filter((element) => element !== current);
+      }
+    }
+       
+    setSelectedObjects(elements);
+    setPreviousSelection(value);
+    setSelectedInternalPaths(null);
+
+    return elements;
+  };
+
   const selectAllItems = () => {
+    setPreviousSelection(null);
+
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
       return;
