@@ -1,3 +1,19 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import createStyles from "@mui/styles/createStyles";
@@ -38,6 +54,10 @@ interface IEditTenantLogsProps {
   dbAnnotations: IKeyValue[];
   dbNodeSelector: IKeyValue[];
   dbServiceAccountName: string;
+  cpuRequest: string;
+  memRequest: string; 
+  dbCPURequest:string;
+  dbMemRequest:string;   
 }
 
 const styles = (theme: Theme) =>
@@ -102,6 +122,10 @@ const EditTenantLogsModal = ({
   dbNodeSelector,
   dbImage,
   dbServiceAccountName,
+  cpuRequest,
+  memRequest,
+  dbCPURequest,
+  dbMemRequest
 }: IEditTenantLogsProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
@@ -137,6 +161,14 @@ const EditTenantLogsModal = ({
   const [dbLabelsError, setDbLabelsError] = useState<any>({});
   const [dbAnnotationsError, setDbAnnotationsError] = useState<any>({});
   const [dbNodeSelectorError, setDbNodeSelectorError] = useState<any>({});
+  const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
+  const [newMemRequest, setNewMemRequest] = useState<string>( memRequest ?
+    Math.floor(parseInt(memRequest, 10) / 1000000000).toString() : "0"
+  );
+  const [newDBCPURequest, setNewDBCPURequest] = useState<string>(dbCPURequest);
+  const [newDBMemRequest, setNewDBMemRequest] = useState<string>(dbMemRequest ?
+    Math.floor(parseInt(dbMemRequest, 10) / 1000000000).toString() : "0"
+  );
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
@@ -192,6 +224,34 @@ const EditTenantLogsModal = ({
       pattern: /^[a-zA-Z0-9-.]{1,253}$/,
       customPatternMessage: "Invalid service account name",
     });
+    tenantLogValidation.push({
+      fieldKey: `cpuRequest`,
+      required: true,
+      value: newCPURequest as any as string,
+      pattern: /^[0-9]*$/,
+      customPatternMessage: "Please enter an integer value for number of CPUs requested",
+    });
+    tenantLogValidation.push({
+      fieldKey: `memRequest`,
+      required: true,
+      value: newMemRequest as any as string,
+      pattern: /^[0-9]*$/,
+      customPatternMessage: "Please enter an integer value (Gi) for memory requested",
+    });
+    tenantLogValidation.push({
+      fieldKey: `dbCPURequest`,
+      required: true,
+      value: newDBCPURequest as any as string,
+      pattern: /^[0-9]*$/,
+      customPatternMessage: "Please enter an integer value for number of  DB CPUs requested",
+    });
+    tenantLogValidation.push({
+      fieldKey: `dbMemRequest`,
+      required: true,
+      value: newDBMemRequest as any as string,
+      pattern: /^[0-9]*$/,
+      customPatternMessage: "Please enter an integer value (Gi) for DB memory requested",
+    });
 
     const commonVal = commonFormValidation(tenantLogValidation);
     setValidationErrors(commonVal);
@@ -201,6 +261,10 @@ const EditTenantLogsModal = ({
     newDiskCapacityGB,
     newServiceAccountName,
     newDbServiceAccountName,
+    newCPURequest,
+    newMemRequest,
+    newDBCPURequest,
+    newDBMemRequest,
     setValidationErrors,
   ]);
 
@@ -253,6 +317,10 @@ const EditTenantLogsModal = ({
                   dbNodeSelector: trim(newDbNodeSelector),
                   dbImage: newDbImage,
                   dbServiceAccountName: newDbServiceAccountName,
+                  logCPURequest: newCPURequest,
+                  logMemRequest: newMemRequest + "Gi",
+                  logDBCPURequest: newDBCPURequest,
+                  logDBMemRequest: newDBMemRequest+ "Gi",
                 }
               )
               .then(() => {
@@ -312,6 +380,38 @@ const EditTenantLogsModal = ({
                 error={validationErrors[`serviceAccountName`] || ""}
               />
             </Grid>
+
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`cpuRequest`}
+                label={"CPU Request"}
+                placeholder={"CPU Request"}
+                name={`cpuRequest`}
+                value={newCPURequest as any as string}
+                onChange={(e) => {
+                  setNewCPURequest(e.target.value as any as string);
+                  cleanValidation(`cpuRequest`);
+                }}
+                key={`cpuRequest`}
+                error={validationErrors[`cpuRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`memRequest`}
+                label={"Memory request"}
+                placeholder={"Memory request"}
+                name={`memRequest`}
+                value={newMemRequest}
+                onChange={(e) => {
+                  setNewMemRequest(e.target.value as any as string);
+                  cleanValidation(`memRequest`);
+                }}
+                key={`memRequest`}
+                error={validationErrors[`memRequest`] || ""}
+              />
+            </Grid>
+
             <Grid item xs={12} className={classes.formFieldRow}>
               <span className={classes.inputLabel}>Labels</span>
               <KeyPairEdit
@@ -373,6 +473,36 @@ const EditTenantLogsModal = ({
                 }}
                 key={`dbServiceAccountName`}
                 error={validationErrors[`dbServiceAccountName`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbCpuRequest`}
+                label={"DB CPU Request"}
+                placeholder={"DB CPU Request"}
+                name={`dbCpuRequest`}
+                value={newDBCPURequest as any as string}
+                onChange={(e) => {
+                  setNewDBCPURequest(e.target.value as any as string);
+                  cleanValidation(`dbCpuRequest`);
+                }}
+                key={`dbCpuRequest`}
+                error={validationErrors[`dbCpuRequest`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbMemRequest`}
+                label={"DB Memory request"}
+                placeholder={"DB Memory request"}
+                name={`dbMemRequest`}
+                value={newDBMemRequest}
+                onChange={(e) => {
+                  setNewDBMemRequest(e.target.value as any as string);
+                  cleanValidation(`dbMemRequest`);
+                }}
+                key={`dbMemRequest`}
+                error={validationErrors[`dbMemRequest`] || ""}
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
