@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/madmin-go"
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
@@ -561,11 +562,19 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := AdminClient{Client: mAdmin}
+
 	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access, req.Definition); err != nil {
 		return nil, prepareError(err)
 	}
 	// set bucket access policy
-	bucket, err := getBucketInfo(ctx, minioClient, bucketName)
+	bucket, err := getBucketInfo(ctx, minioClient, adminClient, bucketName)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -624,7 +633,7 @@ func getDeleteBucketResponse(session *models.Principal, params user_api.DeleteBu
 }
 
 // getBucketInfo return bucket information including name, policy access, size and creation date
-func getBucketInfo(ctx context.Context, client MinioClient, bucketName string) (*models.Bucket, error) {
+func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdmin, bucketName string) (*models.Bucket, error) {
 	var bucketAccess models.BucketAccess
 	policyStr, err := client.getBucketPolicy(context.Background(), bucketName)
 	if err != nil {
@@ -655,13 +664,28 @@ func getBucketInfo(ctx context.Context, client MinioClient, bucketName string) (
 	if bucketTags != nil {
 		bucketDetails.Tags = bucketTags.ToMap()
 	}
+
+	info, err := adminClient.AccountInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var bucketInfo madmin.BucketAccessInfo
+
+	for _, bucket := range info.Buckets {
+		if bucket.Name == bucketName {
+			bucketInfo = bucket
+		}
+	}
+
 	return &models.Bucket{
 		Name:         &bucketName,
 		Access:       &bucketAccess,
 		Definition:   policyStr,
-		CreationDate: "", // to be implemented
-		Size:         0,  // to be implemented
+		CreationDate: bucketInfo.Created.Format(time.RFC3339),
+		Size:         int64(bucketInfo.Size),
 		Details:      bucketDetails,
+		Objects:      int64(bucketInfo.Objects),
 	}, nil
 }
 
@@ -676,7 +700,16 @@ func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfo
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	bucket, err := getBucketInfo(ctx, minioClient, params.Name)
+
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := AdminClient{Client: mAdmin}
+
+	bucket, err := getBucketInfo(ctx, minioClient, adminClient, params.Name)
 	if err != nil {
 		return nil, prepareError(err)
 	}
