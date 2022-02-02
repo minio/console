@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
     post:
@@ -55,7 +55,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
   /login/oauth2/auth:
@@ -75,7 +75,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -921,7 +921,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-    
+
     delete:
       summary: Bucket Replication Rule Delete
       operationId: DeleteBucketReplicationRule
@@ -1252,6 +1252,28 @@ paths:
           type: string
       responses:
         204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /service-accounts/delete-multi:
+    post:
+      summary: Delete Multiple Service Accounts
+      operationId: DeleteMultipleServiceAccounts
+      parameters:
+        - name: selectedSA
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
           description: A successful response.
         default:
           description: Generic error response.
@@ -2471,7 +2493,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [ timeDesc, timeAsc ]
+          enum: [timeDesc, timeAsc]
           default: timeDesc
         - name: timeStart
           in: query
@@ -3234,7 +3256,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account ]
+        enum: [form, redirect, service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -3320,7 +3342,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
       distributedMode:
@@ -3341,7 +3363,7 @@ definitions:
           type: string
       values:
         type: array
-        items: { }
+        items: {}
   resultTarget:
     type: object
     properties:
@@ -3621,7 +3643,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:
