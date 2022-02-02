@@ -138,71 +138,6 @@ func minioGetBucketTaggingMock(ctx context.Context, bucketName string) (*tags.Ta
 	return retval, nil
 }
 
-func TestListBucket(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	ctx := context.Background()
-	// Test-1 : getaAcountUsageInfo() Get response from minio client with two buckets
-	infoPolicy := `
-{
-	"Version": "2012-10-17",
-	"Statement": [{
-			"Action": [
-				"admin:*"
-			],
-			"Effect": "Allow",
-			"Sid": ""
-		},
-		{
-			"Action": [
-				"s3:*"
-			],
-			"Effect": "Allow",
-			"Resource": [
-				"arn:aws:s3:::*"
-			],
-			"Sid": ""
-		}
-	]
-}`
-	mockBucketList := madmin.AccountInfo{
-		AccountName: "test",
-		Buckets: []madmin.BucketAccessInfo{
-			{Name: "bucket-1", Created: time.Now(), Size: 1024},
-			{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
-		},
-		Policy: []byte(infoPolicy),
-	}
-	// mock function response from listBucketsWithContext(ctx)
-	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
-		return mockBucketList, nil
-	}
-	// get list buckets response this response should have Name, CreationDate, Size and Access
-	// as part of of each bucket
-	function := "getaAcountUsageInfo()"
-	bucketList, err := getAccountBuckets(ctx, adminClient)
-	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	// verify length of buckets is correct
-	assert.Equal(len(mockBucketList.Buckets), len(bucketList), fmt.Sprintf("Failed on %s: length of bucket's lists is not the same", function))
-	for i, b := range bucketList {
-		assert.Equal(mockBucketList.Buckets[i].Name, *b.Name)
-		assert.Equal(mockBucketList.Buckets[i].Created.Format(time.RFC3339), b.CreationDate)
-		assert.Equal(mockBucketList.Buckets[i].Name, *b.Name)
-		assert.Equal(int64(mockBucketList.Buckets[i].Size), b.Size)
-	}
-
-	// Test-2 : getaAcountUsageInfo() Return and see that the error is handled correctly and returned
-	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
-		return madmin.AccountInfo{}, errors.New("error")
-	}
-	_, err = getAccountBuckets(ctx, adminClient)
-	if assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
 func TestMakeBucket(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
@@ -932,6 +867,315 @@ func Test_SetBucketVersioning(t *testing.T) {
 				fmt.Println(t.Name())
 				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("getBucketRetentionConfig() error: `%s`, wantErr: `%s`", err, tt.expectedError))
 			}
+		})
+	}
+}
+
+func mustTags(tagsMap map[string]string) *tags.Tags {
+	tags, _ := tags.NewTags(tagsMap, false)
+	return tags
+}
+
+func Test_getAccountBuckets(t *testing.T) {
+	type args struct {
+		ctx            context.Context
+		mockBucketList madmin.AccountInfo
+		mockError      error
+	}
+
+	// Declaring layout constant
+	const layout = "Jan 2, 2006 at 3:04pm (MST)"
+	// Calling Parse() method with its parameters
+	tm, _ := time.Parse(layout, "Feb 4, 2014 at 6:05pm (PST)")
+	tests := []struct {
+		name    string
+		args    args
+		want    []*models.Bucket
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "Test list Buckets",
+			args: args{
+				ctx: context.Background(),
+				mockBucketList: madmin.AccountInfo{
+					AccountName: "test",
+					Buckets: []madmin.BucketAccessInfo{
+						{Name: "bucket-1", Created: tm, Size: 1024},
+						{Name: "bucket-2", Created: tm, Size: 0},
+					},
+					Policy: []byte(`
+			{
+				"Version": "2012-10-17",
+				"Statement": [{
+						"Action": [
+							"admin:*"
+						],
+						"Effect": "Allow",
+						"Sid": ""
+					},
+					{
+						"Action": [
+							"s3:*"
+						],
+						"Effect": "Allow",
+						"Resource": [
+							"arn:aws:s3:::*"
+						],
+						"Sid": ""
+					}
+				]
+			}`),
+				},
+			},
+			want: []*models.Bucket{
+				{
+					Name:         swag.String("bucket-1"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details:      &models.BucketDetails{},
+					RwAccess:     &models.BucketRwAccess{},
+					Size:         1024,
+				},
+				{
+					Name:         swag.String("bucket-2"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details:      &models.BucketDetails{},
+					RwAccess:     &models.BucketRwAccess{},
+				},
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "Test list Buckets Details",
+			args: args{
+				ctx: context.Background(),
+				mockBucketList: madmin.AccountInfo{
+					AccountName: "test",
+					Buckets: []madmin.BucketAccessInfo{
+						{Name: "bucket-1", Created: tm, Size: 1024,
+							Details: &madmin.BucketDetails{
+								Versioning:          true,
+								VersioningSuspended: false,
+								Locking:             false,
+								Replication:         false,
+								Tagging:             nil,
+								Quota:               nil,
+							}},
+						{Name: "bucket-2", Created: tm, Size: 0},
+					},
+					Policy: []byte(`
+			{
+				"Version": "2012-10-17",
+				"Statement": [{
+						"Action": [
+							"admin:*"
+						],
+						"Effect": "Allow",
+						"Sid": ""
+					},
+					{
+						"Action": [
+							"s3:*"
+						],
+						"Effect": "Allow",
+						"Resource": [
+							"arn:aws:s3:::*"
+						],
+						"Sid": ""
+					}
+				]
+			}`),
+				},
+			},
+			want: []*models.Bucket{
+				{
+					Name:         swag.String("bucket-1"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details: &models.BucketDetails{
+						Locking:             false,
+						Quota:               nil,
+						Replication:         false,
+						Tags:                nil,
+						Versioning:          true,
+						VersioningSuspended: false,
+					},
+					RwAccess: &models.BucketRwAccess{},
+					Size:     1024,
+				},
+				{
+					Name:         swag.String("bucket-2"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details:      &models.BucketDetails{},
+					RwAccess:     &models.BucketRwAccess{},
+				},
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "Test list Buckets Details Tags",
+			args: args{
+				ctx: context.Background(),
+				mockBucketList: madmin.AccountInfo{
+					AccountName: "test",
+					Buckets: []madmin.BucketAccessInfo{
+						{Name: "bucket-1", Created: tm, Size: 1024,
+							Details: &madmin.BucketDetails{
+								Versioning:          true,
+								VersioningSuspended: false,
+								Locking:             false,
+								Replication:         false,
+								Tagging: mustTags(map[string]string{
+									"key": "val",
+								}),
+								Quota: nil,
+							}},
+						{Name: "bucket-2", Created: tm, Size: 0},
+					},
+					Policy: []byte(`
+			{
+				"Version": "2012-10-17",
+				"Statement": [{
+						"Action": [
+							"admin:*"
+						],
+						"Effect": "Allow",
+						"Sid": ""
+					},
+					{
+						"Action": [
+							"s3:*"
+						],
+						"Effect": "Allow",
+						"Resource": [
+							"arn:aws:s3:::*"
+						],
+						"Sid": ""
+					}
+				]
+			}`),
+				},
+			},
+			want: []*models.Bucket{
+				{
+					Name:         swag.String("bucket-1"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details: &models.BucketDetails{
+						Locking:     false,
+						Quota:       nil,
+						Replication: false,
+						Tags: map[string]string{
+							"key": "val",
+						},
+						Versioning:          true,
+						VersioningSuspended: false,
+					},
+					RwAccess: &models.BucketRwAccess{},
+					Size:     1024,
+				},
+				{
+					Name:         swag.String("bucket-2"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details:      &models.BucketDetails{},
+					RwAccess:     &models.BucketRwAccess{},
+				},
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "Test list Buckets Details Quota",
+			args: args{
+				ctx: context.Background(),
+				mockBucketList: madmin.AccountInfo{
+					AccountName: "test",
+					Buckets: []madmin.BucketAccessInfo{
+						{Name: "bucket-1", Created: tm, Size: 1024,
+							Details: &madmin.BucketDetails{
+								Versioning:          true,
+								VersioningSuspended: false,
+								Locking:             false,
+								Replication:         false,
+								Tagging:             nil,
+								Quota: &madmin.BucketQuota{
+									Quota: 10,
+									Type:  madmin.HardQuota,
+								},
+							}},
+						{Name: "bucket-2", Created: tm, Size: 0},
+					},
+					Policy: []byte(`
+			{
+				"Version": "2012-10-17",
+				"Statement": [{
+						"Action": [
+							"admin:*"
+						],
+						"Effect": "Allow",
+						"Sid": ""
+					},
+					{
+						"Action": [
+							"s3:*"
+						],
+						"Effect": "Allow",
+						"Resource": [
+							"arn:aws:s3:::*"
+						],
+						"Sid": ""
+					}
+				]
+			}`),
+				},
+			},
+			want: []*models.Bucket{
+				{
+					Name:         swag.String("bucket-1"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details: &models.BucketDetails{
+						Locking: false,
+						Quota: &models.BucketDetailsQuota{
+							Quota: 10,
+							Type:  "hard",
+						},
+						Replication:         false,
+						Tags:                nil,
+						Versioning:          true,
+						VersioningSuspended: false,
+					},
+					RwAccess: &models.BucketRwAccess{},
+					Size:     1024,
+				},
+				{
+					Name:         swag.String("bucket-2"),
+					CreationDate: tm.Format(time.RFC3339),
+					Details:      &models.BucketDetails{},
+					RwAccess:     &models.BucketRwAccess{},
+				},
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "Test list Buckets Error",
+			args: args{
+				ctx:            context.Background(),
+				mockBucketList: madmin.AccountInfo{},
+				mockError:      errors.New("some error"),
+			},
+			want:    []*models.Bucket{},
+			wantErr: assert.Error,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// mock function response from listBucketsWithContext(ctx)
+			minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+				return tt.args.mockBucketList, tt.args.mockError
+			}
+			client := adminClientMock{}
+
+			got, err := getAccountBuckets(tt.args.ctx, client)
+			if !tt.wantErr(t, err, fmt.Sprintf("getAccountBuckets(%v, %v)", tt.args.ctx, client)) {
+				return
+			}
+			assert.EqualValues(t, tt.want, got, "getAccountBuckets(%v, %v)", tt.args.ctx, client)
 		})
 	}
 }
