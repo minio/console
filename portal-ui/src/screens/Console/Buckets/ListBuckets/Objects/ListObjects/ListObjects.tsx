@@ -45,6 +45,7 @@ import {
   decodeFileName,
   encodeFileName,
   niceBytes,
+  niceBytesInt,
 } from "../../../../../../common/utils";
 
 import {
@@ -1094,27 +1095,6 @@ const ListObjects = ({
     uploadPath = uploadPath.concat(currentPath);
   }
 
-  // TODO: Add bucket information panel
-  /*
-      *
-      * subTitle={
-                  <Fragment>
-                    <Grid item xs={12} className={classes.bucketDetails}>
-                      <span className={classes.detailsSpacer}>
-                        Created:&nbsp;&nbsp;&nbsp;<strong></strong>
-                      </span>
-                      <span className={classes.detailsSpacer}>
-                        Access:&nbsp;&nbsp;&nbsp;<strong></strong>
-                      </span>
-                      <span className={classes.detailsSpacer}>
-                        SIZE / TOTAL OBJECTS
-                      </span>
-                    </Grid>
-                  </Fragment>
-                }
-      *
-      * */
-
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1177,6 +1157,38 @@ const ListObjects = ({
                 internalPaths={pageTitle}
                 fullSizeBreadcrumbs
               />
+            }
+            subTitle={
+              <Fragment>
+                <Grid item xs={12} className={classes.bucketDetails}>
+                  <span className={classes.detailsSpacer}>
+                    Created:&nbsp;&nbsp;&nbsp;
+                    <strong>{bucketInfo?.creation_date || ""}</strong>
+                  </span>
+                  <span className={classes.detailsSpacer}>
+                    Access:&nbsp;&nbsp;&nbsp;
+                    <strong>{bucketInfo?.access || ""}</strong>
+                  </span>
+                  {bucketInfo && (
+                    <Fragment>
+                      <span className={classes.detailsSpacer}>
+                        {bucketInfo.size && (
+                          <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
+                        )}
+                        {bucketInfo.size && bucketInfo.objects ? " / " : ""}
+                        {bucketInfo.objects && (
+                          <Fragment>
+                            {bucketInfo.objects}&nbsp;Object
+                            {bucketInfo.objects && bucketInfo.objects !== 1
+                              ? "s"
+                              : ""}
+                          </Fragment>
+                        )}
+                      </span>
+                    </Fragment>
+                  )}
+                </Grid>
+              </Fragment>
             }
             actions={
               <Fragment>
