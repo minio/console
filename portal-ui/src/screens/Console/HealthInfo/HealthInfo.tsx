@@ -47,6 +47,8 @@ import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
 import CircularProgress from "@mui/material/CircularProgress";
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
+import HelpBox from "../../../common/HelpBox";
+import WarnIcon from "../../../icons/WarnIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -303,6 +305,18 @@ const HealthInfo = ({
             </Grid>
           </TestWrapper>
         </Grid>
+        {!diagStarted && (
+          <Fragment>
+            <br />
+            <HelpBox
+              title={
+                "During the health diagnostics run all production traffic will be suspended."
+              }
+              iconComponent={<WarnIcon />}
+              help={<Fragment />}
+            />
+          </Fragment>
+        )}
       </PageLayout>
     </Fragment>
   );

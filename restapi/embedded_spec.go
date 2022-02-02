@@ -3090,6 +3090,37 @@ func init() {
         }
       }
     },
+    "/service-accounts/{access_key}/policy": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get Service Account Policy",
+        "operationId": "GetServiceAccountPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service/restart": {
       "post": {
         "tags": [
@@ -3914,7 +3945,6 @@ func init() {
                 "type": {
                   "type": "string",
                   "enum": [
-                    "fifo",
                     "hard"
                   ]
                 }
@@ -4109,8 +4139,7 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "hard",
-            "fifo"
+            "hard"
           ]
         }
       }
@@ -5498,7 +5527,6 @@ func init() {
         "quota_type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }
@@ -9147,6 +9175,37 @@ func init() {
         }
       }
     },
+    "/service-accounts/{access_key}/policy": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get Service Account Policy",
+        "operationId": "GetServiceAccountPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service/restart": {
       "post": {
         "tags": [
@@ -9748,7 +9807,6 @@ func init() {
             "type": {
               "type": "string",
               "enum": [
-                "fifo",
                 "hard"
               ]
             }
@@ -9781,7 +9839,6 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }
@@ -10091,7 +10148,6 @@ func init() {
                 "type": {
                   "type": "string",
                   "enum": [
-                    "fifo",
                     "hard"
                   ]
                 }
@@ -10286,8 +10342,7 @@ func init() {
         "type": {
           "type": "string",
           "enum": [
-            "hard",
-            "fifo"
+            "hard"
           ]
         }
       }
@@ -11675,7 +11730,6 @@ func init() {
         "quota_type": {
           "type": "string",
           "enum": [
-            "fifo",
             "hard"
           ]
         }

@@ -45,6 +45,9 @@ export interface BucketInfo {
   name: string;
   access: string;
   definition: string;
+  creation_date?: string;
+  objects?: number;
+  size?: number;
 }
 
 export interface BucketList {

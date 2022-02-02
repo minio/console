@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React from "react";
 import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -72,8 +73,9 @@ const styles = (theme: Theme) =>
         fontSize: 13,
         fontWeight: 600,
         "&:placeholder": {
-          color: "#393939",
+          color: "#858585",
           opacity: 1,
+          fontWeight: 400,
         },
       },
     },

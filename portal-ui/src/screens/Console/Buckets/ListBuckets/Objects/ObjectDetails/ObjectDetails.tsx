@@ -200,16 +200,12 @@ const twoColCssGridLayoutConfig = {
 const ObjectDetails = ({
   classes,
   downloadingFiles,
-  rewindEnabled,
-  rewindDate,
   distributedSetup,
-  match,
-  bucketToRewind,
   setErrorSnackMessage,
-  setSnackBarMessage,
   setNewObject,
   updateProgress,
   completeObject,
+  match,
 }: IObjectDetailsProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -752,6 +748,7 @@ const ObjectDetails = ({
                           <SearchBox
                             placeholder={`Search ${currentItem}`}
                             onChange={setFilterVersion}
+                            value={filterVersion}
                           />
                         )}
                     </Grid>

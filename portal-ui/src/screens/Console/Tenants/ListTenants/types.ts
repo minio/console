@@ -177,6 +177,10 @@ export interface ITenantLogsStruct {
   dbNodeSelector: IKeyValue[];
   dbServiceAccountName: string;
   disabled: boolean;
+  logCPURequest: string;
+  logMemRequest: string;
+  logDBCPURequest: string;
+  logDBMemRequest: string;
 }
 
 export interface ValueUnit {

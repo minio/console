@@ -191,6 +191,7 @@ func TestBucketInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
 	minClient := minioClientMock{}
+	adminClient := adminClientMock{}
 	ctx := context.Background()
 	function := "getBucketInfo()"
 
@@ -204,8 +205,9 @@ func TestBucketInfo(t *testing.T) {
 	outputExpected := &models.Bucket{
 		Name:         swag.String(bucketToSet),
 		Access:       models.NewBucketAccess(models.BucketAccessPRIVATE),
-		CreationDate: "", // to be implemented
-		Size:         0,  // to be implemented
+		CreationDate: "0001-01-01T00:00:00Z",
+		Size:         0,
+		Objects:      0,
 	}
 	infoPolicy := `
 {
@@ -242,7 +244,7 @@ func TestBucketInfo(t *testing.T) {
 		return mockBucketList, nil
 	}
 
-	bucketInfo, err := getBucketInfo(ctx, minClient, bucketToSet)
+	bucketInfo, err := getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -250,6 +252,7 @@ func TestBucketInfo(t *testing.T) {
 	assert.Equal(outputExpected.Access, bucketInfo.Access)
 	assert.Equal(outputExpected.CreationDate, bucketInfo.CreationDate)
 	assert.Equal(outputExpected.Size, bucketInfo.Size)
+	assert.Equal(outputExpected.Objects, bucketInfo.Objects)
 
 	// Test-2: getBucketInfo() get a bucket with PUBLIC access
 	// mock policy for bucket csbucket with readWrite access (should return PUBLIC)
@@ -261,10 +264,11 @@ func TestBucketInfo(t *testing.T) {
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
 		Access:       models.NewBucketAccess(models.BucketAccessPUBLIC),
-		CreationDate: "", // to be implemented
-		Size:         0,  // to be implemented
+		CreationDate: "0001-01-01T00:00:00Z",
+		Size:         0,
+		Objects:      0,
 	}
-	bucketInfo, err = getBucketInfo(ctx, minClient, bucketToSet)
+	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -272,6 +276,7 @@ func TestBucketInfo(t *testing.T) {
 	assert.Equal(outputExpected.Access, bucketInfo.Access)
 	assert.Equal(outputExpected.CreationDate, bucketInfo.CreationDate)
 	assert.Equal(outputExpected.Size, bucketInfo.Size)
+	assert.Equal(outputExpected.Objects, bucketInfo.Objects)
 
 	// Test-3: getBucketInfo() get a bucket with PRIVATE access
 	// if bucket has a null statement, the the bucket is PRIVATE
@@ -283,10 +288,11 @@ func TestBucketInfo(t *testing.T) {
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
 		Access:       models.NewBucketAccess(models.BucketAccessPRIVATE),
-		CreationDate: "", // to be implemented
-		Size:         0,  // to be implemented
+		CreationDate: "0001-01-01T00:00:00Z",
+		Size:         0,
+		Objects:      0,
 	}
-	bucketInfo, err = getBucketInfo(ctx, minClient, bucketToSet)
+	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -294,6 +300,7 @@ func TestBucketInfo(t *testing.T) {
 	assert.Equal(outputExpected.Access, bucketInfo.Access)
 	assert.Equal(outputExpected.CreationDate, bucketInfo.CreationDate)
 	assert.Equal(outputExpected.Size, bucketInfo.Size)
+	assert.Equal(outputExpected.Objects, bucketInfo.Objects)
 
 	// Test-4: getBucketInfo() returns an error while parsing invalid policy
 	mockPolicy = "policyinvalid"
@@ -304,10 +311,10 @@ func TestBucketInfo(t *testing.T) {
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
 		Access:       models.NewBucketAccess(models.BucketAccessCUSTOM),
-		CreationDate: "", // to be implemented
-		Size:         0,  // to be implemented
+		CreationDate: "",
+		Size:         0,
 	}
-	_, err = getBucketInfo(ctx, minClient, bucketToSet)
+	_, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if assert.Error(err) {
 		assert.Equal("invalid character 'p' looking for beginning of value", err.Error())
 	}
@@ -696,6 +703,25 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 			},
 			expectedResponse: &models.GetBucketRetentionConfig{
 				Mode:     models.ObjectRetentionModeGovernance,
+				Unit:     models.ObjectRetentionUnitDays,
+				Validity: int32(2),
+			},
+			expectedError: nil,
+		},
+		{
+			name: "Get Bucket Retention Config Compliance",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+					m := minio.Compliance
+					u := minio.Days
+					return &m, swag.Uint(2), &u, nil
+				},
+			},
+			expectedResponse: &models.GetBucketRetentionConfig{
+				Mode:     models.ObjectRetentionModeCompliance,
 				Unit:     models.ObjectRetentionUnitDays,
 				Validity: int32(2),
 			},

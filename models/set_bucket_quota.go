@@ -45,7 +45,7 @@ type SetBucketQuota struct {
 	Enabled *bool `json:"enabled"`
 
 	// quota type
-	// Enum: [fifo hard]
+	// Enum: [hard]
 	QuotaType string `json:"quota_type,omitempty"`
 }
 
@@ -80,7 +80,7 @@ var setBucketQuotaTypeQuotaTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["fifo","hard"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["hard"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -89,9 +89,6 @@ func init() {
 }
 
 const (
-
-	// SetBucketQuotaQuotaTypeFifo captures enum value "fifo"
-	SetBucketQuotaQuotaTypeFifo string = "fifo"
 
 	// SetBucketQuotaQuotaTypeHard captures enum value "hard"
 	SetBucketQuotaQuotaTypeHard string = "hard"

@@ -197,6 +197,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             placeholder={"Search Service Accounts"}
             onChange={setFilter}
             overrideClass={classes.searchField}
+            value={filter}
           />
 
           <Box

@@ -45,6 +45,7 @@ import {
   decodeFileName,
   encodeFileName,
   niceBytes,
+  niceBytesInt,
 } from "../../../../../../common/utils";
 
 import {
@@ -63,6 +64,7 @@ import {
   resetRewind,
   setFileModeEnabled,
   setNewObject,
+  setSearchObjects,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
@@ -85,21 +87,24 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import SecureComponent, {
   hasPermission,
 } from "../../../../../../common/SecureComponent/SecureComponent";
-import SearchBox from "../../../../Common/SearchBox";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";
-import { DownloadIcon, PreviewIcon, ShareIcon } from "../../../../../../icons";
+import {
+  BucketsIcon,
+  DownloadIcon,
+  PreviewIcon,
+  ShareIcon,
+} from "../../../../../../icons";
 import UploadFilesButton from "../../UploadFilesButton";
+import DetailsListPanel from "./DetailsListPanel";
+import ObjectDetailPanel from "./ObjectDetailPanel";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
 );
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
-);
-const FolderIcon = React.lazy(
-  () => import("../../../../../../icons/FolderIcon")
 );
 const RefreshIcon = React.lazy(
   () => import("../../../../../../icons/RefreshIcon")
@@ -125,7 +130,10 @@ const PreviewFileModal = withSuspense(
 const styles = (theme: Theme) =>
   createStyles({
     browsePaper: {
-      height: "calc(100vh - 280px)",
+      height: "calc(100vh - 210px)",
+      "&.actionsPanelOpen": {
+        height: "100%",
+      },
     },
     "@global": {
       ".rowLine:hover  .iconFileElm": {
@@ -191,6 +199,7 @@ interface IListObjectsProps {
   rewindEnabled: boolean;
   rewindDate: any;
   bucketToRewind: string;
+  searchObjects: string;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
@@ -203,6 +212,7 @@ interface IListObjectsProps {
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   openList: typeof openList;
+  setSearchObjects: typeof setSearchObjects;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -248,6 +258,8 @@ const ListObjects = ({
   setNewObject,
   updateProgress,
   completeObject,
+  setSearchObjects,
+  searchObjects,
   openList,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
@@ -256,7 +268,6 @@ const ListObjects = ({
   const [loadingRewind, setLoadingRewind] = useState<boolean>(false);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
-  const [filterObjects, setFilterObjects] = useState<string>("");
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
     useState<React.ReactNode>(defLoading);
@@ -276,6 +287,10 @@ const ListObjects = ({
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [canShareFile, setCanShareFile] = useState<boolean>(false);
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
+  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
+  const [selectedInternalPaths, setSelectedInternalPaths] = useState<
+    string | null
+  >(null);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -425,7 +440,9 @@ const ListObjects = ({
 
   useEffect(() => {
     setLoading(true);
-  }, [internalPaths]);
+    setDetailsOpen(false);
+    setSearchObjects("");
+  }, [internalPaths, setSearchObjects]);
 
   useEffect(() => {
     if (loading) {
@@ -676,11 +693,18 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
-    const newPath = `/buckets/${bucketName}/browse${
-      idElement ? `/${encodeFileName(idElement)}` : ``
-    }`;
-    history.push(newPath);
-    return;
+    if (idElement.endsWith("/")) {
+      const newPath = `/buckets/${bucketName}/browse${
+        idElement ? `/${encodeFileName(idElement)}` : ``
+      }`;
+      history.push(newPath);
+      return;
+    }
+
+    setDetailsOpen(true);
+    setSelectedInternalPaths(
+      `${idElement ? `${encodeFileName(idElement)}` : ``}`
+    );
   };
 
   const uploadObject = useCallback(
@@ -915,11 +939,11 @@ const ListObjects = ({
   ];
 
   const filteredRecords = records.filter((b: BucketObject) => {
-    if (filterObjects === "") {
+    if (searchObjects === "") {
       return true;
     } else {
       const objectName = b.name.toLowerCase();
-      if (objectName.indexOf(filterObjects.toLowerCase()) >= 0) {
+      if (objectName.indexOf(searchObjects.toLowerCase()) >= 0) {
         return true;
       } else {
         return false;
@@ -1070,6 +1094,7 @@ const ListObjects = ({
   if (currentPath.length > 0) {
     uploadPath = uploadPath.concat(currentPath);
   }
+
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1123,18 +1148,46 @@ const ListObjects = ({
             className={classes.screenTitle}
             icon={
               <Fragment>
-                <FolderIcon width={40} />
+                <BucketsIcon width={40} />
               </Fragment>
             }
             title={
-              currentPath.length > 0 ? currentPath[currentPath.length - 1] : "/"
+              <BrowserBreadcrumbs
+                bucketName={bucketName}
+                internalPaths={pageTitle}
+                fullSizeBreadcrumbs
+              />
             }
             subTitle={
               <Fragment>
-                <BrowserBreadcrumbs
-                  bucketName={bucketName}
-                  internalPaths={pageTitle}
-                />
+                <Grid item xs={12} className={classes.bucketDetails}>
+                  <span className={classes.detailsSpacer}>
+                    Created:&nbsp;&nbsp;&nbsp;
+                    <strong>{bucketInfo?.creation_date || ""}</strong>
+                  </span>
+                  <span className={classes.detailsSpacer}>
+                    Access:&nbsp;&nbsp;&nbsp;
+                    <strong>{bucketInfo?.access || ""}</strong>
+                  </span>
+                  {bucketInfo && (
+                    <Fragment>
+                      <span className={classes.detailsSpacer}>
+                        {bucketInfo.size && (
+                          <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
+                        )}
+                        {bucketInfo.size && bucketInfo.objects ? " / " : ""}
+                        {bucketInfo.objects && (
+                          <Fragment>
+                            {bucketInfo.objects}&nbsp;Object
+                            {bucketInfo.objects && bucketInfo.objects !== 1
+                              ? "s"
+                              : ""}
+                          </Fragment>
+                        )}
+                      </span>
+                    </Fragment>
+                  )}
+                </Grid>
               </Fragment>
             }
             actions={
@@ -1173,22 +1226,6 @@ const ListObjects = ({
             }
           />
         </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <SecureComponent
-            scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
-            resource={bucketName}
-            errorProps={{ disabled: true }}
-          >
-            <SearchBox
-              onChange={setFilterObjects}
-              placeholder="Search Objects"
-              overrideClass={classes.searchField}
-            />
-          </SecureComponent>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
         <div
           id="object-list-wrapper"
           {...getRootProps({ style: { ...dndStyles } })}
@@ -1208,7 +1245,9 @@ const ListObjects = ({
                 entityName="Objects"
                 idField="name"
                 records={payload}
-                customPaperHeight={classes.browsePaper}
+                customPaperHeight={`${classes.browsePaper} ${
+                  detailsOpen ? "actionsPanelOpen" : ""
+                }`}
                 selectedItems={selectedObjects}
                 onSelect={selectListObjects}
                 customEmptyMessage={`This location is empty${
@@ -1303,6 +1342,20 @@ const ListObjects = ({
                   },
                 ]}
               />
+              <DetailsListPanel
+                open={detailsOpen}
+                closePanel={() => {
+                  setDetailsOpen(false);
+                  setSelectedInternalPaths(null);
+                }}
+              >
+                {selectedInternalPaths !== null && (
+                  <ObjectDetailPanel
+                    internalPaths={selectedInternalPaths}
+                    bucketName={bucketName}
+                  />
+                )}
+              </DetailsListPanel>
             </SecureComponent>
           </Grid>
         </div>
@@ -1319,6 +1372,7 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
   loadingBucket: buckets.bucketDetails.loadingBucket,
   bucketInfo: buckets.bucketDetails.bucketInfo,
+  searchObjects: objectBrowser.searchObjects,
 });
 
 const mapDispatchToProps = {
@@ -1332,6 +1386,7 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   openList,
+  setSearchObjects,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
