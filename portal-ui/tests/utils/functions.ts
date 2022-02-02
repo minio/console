@@ -67,6 +67,10 @@ export const testBucketBrowseButtonFor = (modifier) => {
     .withText("Browse");
 };
 
+export const uploadFilesButton = () => {
+  return Selector("button").withText("Upload Files");
+};
+
 export const cleanUpBucketAndUploads = (t, modifier) => {
   const bucket = `${constants.TEST_BUCKET_NAME}-${modifier}`;
 

@@ -244,6 +244,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             placeholder={"Search Users"}
             onChange={setFilter}
             overrideClass={classes.searchField}
+            value={filter}
           />
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}

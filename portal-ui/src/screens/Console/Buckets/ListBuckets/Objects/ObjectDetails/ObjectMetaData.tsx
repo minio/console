@@ -7,7 +7,10 @@ import Grid from "@mui/material/Grid";
 import { Box, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import {detailsPanel, spacingUtils} from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  detailsPanel,
+  spacingUtils,
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import { withStyles } from "@mui/styles";
 
 interface IObjectMetadata {
@@ -41,7 +44,7 @@ const styles = (theme: Theme) =>
       width: "35%",
     },
     ...spacingUtils,
-      ...detailsPanel,
+    ...detailsPanel,
   });
 
 const ObjectMetaData = ({

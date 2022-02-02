@@ -211,6 +211,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
               placeholder={"Search Groups"}
               onChange={setFilter}
               overrideClass={classes.searchField}
+              value={filter}
             />
           </SecureComponent>
 
