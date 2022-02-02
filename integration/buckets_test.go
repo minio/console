@@ -369,26 +369,6 @@ func GetBucketRetention(bucketName string) (*http.Response, error) {
 	return response, err
 }
 
-func ListObjects(bucketName string, prefix string) (*http.Response, error) {
-	/*
-		Helper function to list objects in a bucket.
-		GET: {{baseUrl}}/buckets/:bucket_name/objects
-	*/
-	request, err := http.NewRequest("GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects?prefix="+prefix,
-		nil)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
 func PutObjectTags(bucketName string, prefix string, tags map[string]string, versionID string) (*http.Response, error) {
 	/*
 		Helper function to put object's tags.
@@ -492,6 +472,26 @@ func DeleteObject(bucketName string, path string, recursive bool, allVersions bo
 		url,
 		nil,
 	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ListObjects(bucketName string, prefix string) (*http.Response, error) {
+	/*
+		Helper function to list objects in a bucket.
+		GET: {{baseUrl}}/buckets/:bucket_name/objects
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects?prefix="+prefix,
+		nil)
 	if err != nil {
 		log.Println(err)
 	}
