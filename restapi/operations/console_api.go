@@ -143,6 +143,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteMultipleObjectsHandler: user_api.DeleteMultipleObjectsHandlerFunc(func(params user_api.DeleteMultipleObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteMultipleObjects has not yet been implemented")
 		}),
+		UserAPIDeleteMultipleServiceAccountsHandler: user_api.DeleteMultipleServiceAccountsHandlerFunc(func(params user_api.DeleteMultipleServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteMultipleServiceAccounts has not yet been implemented")
+		}),
 		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
 		}),
@@ -493,6 +496,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketReplicationRuleHandler user_api.DeleteBucketReplicationRuleHandler
 	// UserAPIDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
 	UserAPIDeleteMultipleObjectsHandler user_api.DeleteMultipleObjectsHandler
+	// UserAPIDeleteMultipleServiceAccountsHandler sets the operation handler for the delete multiple service accounts operation
+	UserAPIDeleteMultipleServiceAccountsHandler user_api.DeleteMultipleServiceAccountsHandler
 	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
 	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
 	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
@@ -819,6 +824,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteMultipleObjectsHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteMultipleObjectsHandler")
+	}
+	if o.UserAPIDeleteMultipleServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteMultipleServiceAccountsHandler")
 	}
 	if o.UserAPIDeleteObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
@@ -1269,6 +1277,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/delete-objects"] = user_api.NewDeleteMultipleObjects(o.context, o.UserAPIDeleteMultipleObjectsHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/service-accounts/delete-multi"] = user_api.NewDeleteMultipleServiceAccounts(o.context, o.UserAPIDeleteMultipleServiceAccountsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
