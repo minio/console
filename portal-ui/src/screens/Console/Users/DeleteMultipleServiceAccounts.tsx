@@ -69,4 +69,5 @@ const mapDispatchToProps = {
   setErrorSnackMessage,
 };
 const connector = connect(null, mapDispatchToProps);
+
 export default connector(DeleteMultipleSAs);
