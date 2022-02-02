@@ -545,16 +545,45 @@ func ListObjects(bucketName string, prefix string) (*http.Response, error) {
 
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
-
-	response, err := AddBucket("test1", false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
+	type args struct {
+		bucketName string
 	}
-
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+	}{
+		{
+			name:           "Add Bucket with valid name",
+			expectedStatus: 201,
+			args: args{
+				bucketName: "test1",
+			},
+		},
+		{
+			name:           "Add Bucket with invalid name",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "*&^###Test1ThisMightBeInvalid555",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			response, err := AddBucket(
+				tt.args.bucketName, false, false, nil, nil)
+			assert.Nil(err)
+			if err != nil {
+				log.Println(err)
+				assert.Fail("Error while adding the bucket")
+				return
+			}
+			finalResponse := inspectHTTPResponse(response)
+			if response != nil {
+				assert.Equal(tt.expectedStatus,
+					response.StatusCode, finalResponse)
+			}
+		})
 	}
 }
 
