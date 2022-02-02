@@ -23,8 +23,8 @@ import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import { setErrorSnackMessage } from "../../../actions";
-import { AccountIcon, AddIcon, PasswordKeyIcon } from "../../../icons";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
+import { AccountIcon, AddIcon, PasswordKeyIcon, DeleteIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -46,6 +46,8 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import {selectSAs} from "../../Console/Configurations/utils"
+import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts"
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -89,6 +91,8 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     useState<NewServiceAccount | null>(null);
   const [changePasswordModalOpen, setChangePasswordModalOpen] =
     useState<boolean>(false);
+  const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
+  const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);  
 
   useEffect(() => {
     fetchRecords();
@@ -139,6 +143,24 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     }
   };
 
+  const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
+    setDeleteMultipleOpen(false);
+    if (refresh) {
+      setSnackBarMessage(`Service accounts deleted successfully.`);
+      setSelectedSAs([]);
+      setLoading(true);
+    }
+  };
+
+
+const selectAllItems = () => {
+    if (selectedSAs.length === records.length) {
+      setSelectedSAs([]);
+      return;
+    }
+    setSelectedSAs(records);
+  };
+
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setNewServiceAccount(null);
@@ -176,6 +198,13 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
           }}
         />
       )}
+      {deleteMultipleOpen && (
+        <DeleteMultipleServiceAccounts
+          deleteOpen={deleteMultipleOpen}
+          selectedSAs={selectedSAs}
+          closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
+        />
+      )}
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={newServiceAccount}
@@ -204,7 +233,15 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             sx={{
               display: "flex",
             }}
-          >
+          > <RBIconButton
+            tooltip={"Delete Selected"}
+            onClick={() => {setDeleteMultipleOpen(true);}}
+            text={"Delete Selected"}
+            icon={<DeleteIcon />}
+            color="secondary"
+            disabled={selectedSAs.length === 0}
+            variant={"outlined"}
+            />
             <SecureComponent
               scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
               resource={CONSOLE_UI_RESOURCE}
@@ -218,8 +255,9 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
                 color={"primary"}
                 variant={"outlined"}
               />
-            </SecureComponent>
-
+            </SecureComponent>            
+           
+           
             <RBIconButton
               onClick={() => {
                 setAddScreenOpen(true);
@@ -241,6 +279,9 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             idField={""}
             columns={[{ label: "Service Account", elementKey: "" }]}
             itemActions={tableActions}
+            selectedItems={selectedSAs}
+            onSelect={e => selectSAs(e, setSelectedSAs, selectedSAs)}
+            onSelectAll={selectAllItems}
           />
         </Grid>
         <Grid item xs={12} marginTop={"15px"}>
