@@ -26,19 +26,11 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-
-	"github.com/go-openapi/swag"
 )
 
 // ListBucketsURL generates an URL for the list buckets operation
 type ListBucketsURL struct {
-	Limit  *int32
-	Offset *int32
-	SortBy *string
-
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -67,34 +59,6 @@ func (o *ListBucketsURL) Build() (*url.URL, error) {
 		_basePath = "/api/v1"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
-
-	qs := make(url.Values)
-
-	var limitQ string
-	if o.Limit != nil {
-		limitQ = swag.FormatInt32(*o.Limit)
-	}
-	if limitQ != "" {
-		qs.Set("limit", limitQ)
-	}
-
-	var offsetQ string
-	if o.Offset != nil {
-		offsetQ = swag.FormatInt32(*o.Offset)
-	}
-	if offsetQ != "" {
-		qs.Set("offset", offsetQ)
-	}
-
-	var sortByQ string
-	if o.SortBy != nil {
-		sortByQ = *o.SortBy
-	}
-	if sortByQ != "" {
-		qs.Set("sort_by", sortByQ)
-	}
-
-	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

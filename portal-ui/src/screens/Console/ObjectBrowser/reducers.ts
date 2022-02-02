@@ -26,6 +26,7 @@ import {
   OBJECT_MANAGER_TOGGLE_LIST,
   OBJECT_MANAGER_CLOSE_LIST,
   OBJECT_MANAGER_OPEN_LIST,
+  OBJECT_MANAGER_SET_SEARCH_OBJECT,
 } from "./actions";
 
 export interface Route {
@@ -44,6 +45,7 @@ export interface ObjectBrowserState {
   fileMode: boolean;
   rewind: RewindItem;
   objectManager: ObjectManager;
+  searchObjects: string;
 }
 
 export interface ObjectBrowserReducer {
@@ -80,6 +82,7 @@ const initialState: ObjectBrowserState = {
     objectsToManage: [],
     managerOpen: false,
   },
+  searchObjects: "",
 };
 
 export function objectBrowserReducer(
@@ -211,6 +214,11 @@ export function objectBrowserReducer(
           ...state.objectManager,
           managerOpen: false,
         },
+      };
+    case OBJECT_MANAGER_SET_SEARCH_OBJECT:
+      return {
+        ...state,
+        searchObjects: action.searchString,
       };
     default:
       return state;

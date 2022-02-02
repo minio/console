@@ -66,6 +66,18 @@ type TenantLogs struct {
 	// labels
 	Labels []*Label `json:"labels"`
 
+	// log CPU request
+	LogCPURequest string `json:"logCPURequest,omitempty"`
+
+	// log d b CPU request
+	LogDBCPURequest string `json:"logDBCPURequest,omitempty"`
+
+	// log d b mem request
+	LogDBMemRequest string `json:"logDBMemRequest,omitempty"`
+
+	// log mem request
+	LogMemRequest string `json:"logMemRequest,omitempty"`
+
 	// node selector
 	NodeSelector []*NodeSelector `json:"nodeSelector"`
 

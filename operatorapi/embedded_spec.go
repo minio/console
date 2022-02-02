@@ -3368,6 +3368,18 @@ func init() {
             "$ref": "#/definitions/label"
           }
         },
+        "logCPURequest": {
+          "type": "string"
+        },
+        "logDBCPURequest": {
+          "type": "string"
+        },
+        "logDBMemRequest": {
+          "type": "string"
+        },
+        "logMemRequest": {
+          "type": "string"
+        },
         "nodeSelector": {
           "type": "array",
           "items": {
@@ -7618,6 +7630,18 @@ func init() {
           "items": {
             "$ref": "#/definitions/label"
           }
+        },
+        "logCPURequest": {
+          "type": "string"
+        },
+        "logDBCPURequest": {
+          "type": "string"
+        },
+        "logDBMemRequest": {
+          "type": "string"
+        },
+        "logMemRequest": {
+          "type": "string"
         },
         "nodeSelector": {
           "type": "array",

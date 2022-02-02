@@ -147,6 +147,7 @@ const ListNotificationEndpoints = ({
             placeholder="Search target"
             onChange={setFilter}
             overrideClass={classes.searchField}
+            value={filter}
           />
           <div className={classes.rightActionItems}>
             <RBIconButton

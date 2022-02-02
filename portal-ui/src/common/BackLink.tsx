@@ -40,6 +40,9 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      "& svg.min-icon": {
+        width: 12,
+      },
     },
   });
 

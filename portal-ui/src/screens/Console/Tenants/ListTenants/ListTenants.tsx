@@ -204,6 +204,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
                 setFilterTenants(val);
               }}
               overrideClass={classes.searchField}
+              value={filterTenants}
             />
 
             <RBIconButton
