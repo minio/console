@@ -1,4 +1,4 @@
-FROM node:14 as uilayer
+FROM node:17 as uilayer
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN make build-static
 
 USER node
 
-FROM golang:1.16 as golayer
+FROM golang:1.17 as golayer
 
 RUN apt-get update -y && apt-get install -y ca-certificates
 
