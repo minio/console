@@ -33,6 +33,7 @@ import {
   ADD_TENANT_ENCRYPTION_VAULT_CERT,
   ADD_TENANT_RESET_FORM,
   ADD_TENANT_SET_CURRENT_PAGE,
+  ADD_TENANT_SET_KEY_PAIR_VALUE,
   ADD_TENANT_SET_LIMIT_SIZE,
   ADD_TENANT_SET_PAGE_VALID,
   ADD_TENANT_SET_STORAGE_CLASSES_LIST,
@@ -332,6 +333,7 @@ const initialState: ITenantState = {
         encoded_cert: "",
       },
     },
+    nodeSelectorPairs: [{ key: "", value: "" }],
   },
   tenantDetails: {
     currentTenant: "",
@@ -883,6 +885,15 @@ export function tenantsReducer(
               encoded_cert: "",
             },
           },
+          nodeSelectorPairs: [{ key: "", value: "" }],
+        },
+      };
+    case ADD_TENANT_SET_KEY_PAIR_VALUE:
+      return {
+        ...state,
+        createTenant: {
+          ...state.createTenant,
+          nodeSelectorPairs: action.newArray,
         },
       };
     case TENANT_DETAILS_SET_LOADING:

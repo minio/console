@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
 import { AppState } from "../../../../../store";
-import { isPageValid, updateAddField } from "../../actions";
+import { isPageValid, setKeyValuePairs, updateAddField } from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
 import {
   modalBasic,
@@ -32,6 +32,7 @@ import {
   IValidation,
 } from "../../../../../utils/validationFunctions";
 import { ErrorResponseHandler } from "../../../../../common/types";
+import { LabelKeyPair } from "../../types";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../common/api";
@@ -45,9 +46,11 @@ interface IAffinityProps {
   podAffinity: string;
   nodeSelectorLabels: string;
   withPodAntiAffinity: boolean;
+  keyValuePairs: LabelKeyPair[];
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
+  setKeyValuePairs: typeof setKeyValuePairs;
 }
 
 const styles = (theme: Theme) =>
@@ -107,11 +110,6 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-interface LabelKeyPair {
-  key: string;
-  value: string;
-}
-
 interface OptionPair {
   label: string;
   value: string;
@@ -124,6 +122,8 @@ const Affinity = ({
   withPodAntiAffinity,
   setModalErrorSnackMessage,
   updateAddField,
+  keyValuePairs,
+  setKeyValuePairs,
   isPageValid,
 }: IAffinityProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -131,10 +131,6 @@ const Affinity = ({
   const [keyValueMap, setKeyValueMap] = useState<{ [key: string]: string[] }>(
     {}
   );
-  const [keyValuePairs, setKeyValuePairs] = useState<LabelKeyPair[]>([
-    { key: "", value: "" },
-  ]);
-
   const [keyOptions, setKeyOptions] = useState<OptionPair[]>([]);
 
   // Common
@@ -160,7 +156,6 @@ const Affinity = ({
             });
           }
           setKeyOptions(keys);
-          setKeyValuePairs([{ key: keys[0].value, value: keys[0].value }]);
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
@@ -236,7 +231,7 @@ const Affinity = ({
           Configure how pods will be assigned to nodes
         </span>
       </div>
-      <Grid xs={12} className={classes.affinityConfigField}>
+      <Grid item xs={12} className={classes.affinityConfigField}>
         <Grid item className={classes.affinityFieldLabel}>
           <div className={classes.label}>Type</div>
           <div
@@ -287,7 +282,7 @@ const Affinity = ({
               {keyValuePairs &&
                 keyValuePairs.map((kvp, i) => {
                   return (
-                    <Grid item xs={12} className={classes.affinityRow}>
+                    <Grid item xs={12} className={classes.affinityRow} key={`affinity-keyVal-${i.toString()}`}>
                       <Grid item xs={5} className={classes.affinityLabelKey}>
                         {keyOptions.length > 0 && (
                           <SelectWrapper
@@ -307,7 +302,6 @@ const Affinity = ({
                             label={""}
                             value={kvp.key}
                             options={keyOptions}
-                            classes={classes.fieldContainer}
                           />
                         )}
                         {keyOptions.length === 0 && (
@@ -326,7 +320,6 @@ const Affinity = ({
                             }}
                             index={i}
                             placeholder={"Key"}
-                            classes={classes.fieldContainer}
                           />
                         )}
                       </Grid>
@@ -352,7 +345,6 @@ const Affinity = ({
                                   })
                                 : []
                             }
-                            classes={classes.fieldContainer}
                           />
                         )}
                         {keyOptions.length === 0 && (
@@ -371,7 +363,6 @@ const Affinity = ({
                             }}
                             index={i}
                             placeholder={"value"}
-                            classes={classes.fieldContainer}
                           />
                         )}
                       </Grid>
@@ -423,18 +414,22 @@ const Affinity = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  podAffinity: state.tenants.createTenant.fields.affinity.podAffinity,
-  nodeSelectorLabels:
-    state.tenants.createTenant.fields.affinity.nodeSelectorLabels,
-  withPodAntiAffinity:
-    state.tenants.createTenant.fields.affinity.withPodAntiAffinity,
-});
+const mapState = (state: AppState) => {
+  const createTenant = state.tenants.createTenant;
+
+  return {
+    podAffinity: createTenant.fields.affinity.podAffinity,
+    nodeSelectorLabels: createTenant.fields.affinity.nodeSelectorLabels,
+    withPodAntiAffinity: createTenant.fields.affinity.withPodAntiAffinity,
+    keyValuePairs: createTenant.nodeSelectorPairs,
+  };
+};
 
 const connector = connect(mapState, {
   setModalErrorSnackMessage,
   updateAddField,
   isPageValid,
+  setKeyValuePairs,
 });
 
 export default withStyles(styles)(connector(Affinity));
