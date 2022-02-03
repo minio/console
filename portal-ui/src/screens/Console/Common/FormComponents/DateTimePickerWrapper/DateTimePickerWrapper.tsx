@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -114,6 +114,111 @@ const styles = (theme: Theme) =>
       width: 8,
       marginTop: 2,
     },
+    paperOverride: {
+      "& .MuiCalendarPicker-root": {
+        padding: "0 22px",
+        "& > div": {
+          padding: 0,
+          "& > div > div.PrivatePickersFadeTransitionGroup-root:first-of-type":
+            {
+              color: "#0A224C",
+              fontWeight: "bold",
+            },
+          "& > div > div.PrivatePickersFadeTransitionGroup-root:last-of-type": {
+            color: "#9D9E9D",
+            "& +  button.MuiButtonBase-root": {
+              color: "#9D9E9D",
+            },
+          },
+          "& > div:nth-child(2)": {
+            "& > div": {
+              width: 0,
+            },
+            "& > button.MuiButtonBase-root": {
+              color: "#0A224C",
+            },
+          },
+        },
+      },
+      "& .MuiTypography-root.MuiTypography-caption": {
+        width: 26,
+        height: 26,
+        margin: 5,
+        color: "#BCBCBC",
+        fontSize: 10,
+      },
+      "& button.MuiPickersDay-root": {
+        fontWeight: "bold",
+        width: 26,
+        height: 26,
+        margin: 5,
+        textAlign: "center",
+        "&.Mui-selected": {
+          backgroundColor: theme.palette.primary.main,
+          color: "#fff",
+        },
+      },
+      "& div.MuiPickersDay-hiddenDaySpacingFiller": {
+        width: 26,
+        height: 26,
+        margin: 5,
+      },
+      "& div.PrivatePickersSlideTransition-root": {
+        minHeight: 240,
+      },
+      "& div.MuiCalendarPicker-viewTransitionContainer": {
+        borderTop: "#F0F3F5 1px solid",
+      },
+      "& .MuiClockPicker-arrowSwitcher": {
+        "& > div": {
+          width: 0,
+        },
+        "& > button.MuiButtonBase-root": {
+          color: "#0A224C",
+        },
+        "& + div > div": {
+          width: 255,
+          height: 255,
+          backgroundColor: "#fff",
+          border: "#F0F3F5 3px solid",
+          "& > div:nth-child(2)": {
+            backgroundColor: "#B4B5B4",
+            width: 12,
+            height: 12,
+            "&::before": {
+              content: "' '",
+              width: 35,
+              height: 35,
+              display: "block",
+              position: "absolute",
+              border: "#F0F3F5 3px solid",
+              top: -12,
+              left: -12,
+              borderRadius: "100%",
+            },
+          },
+          "& > div:nth-child(3)": {
+            backgroundColor: "#B4B5B4",
+            width: 4,
+          },
+          "& > div:last-of-type": {
+            marginTop: 15,
+            "& > span": {
+              color: "#0A224C",
+              "&.Mui-selected": {
+                color: "#fff",
+              },
+              "&[aria-label='1 hours'], &[aria-label='2 hours'], &[aria-label='3 hours'], &[aria-label='4 hours'], &[aria-label='5 hours'], &[aria-label='6 hours'], &[aria-label='7 hours'], &[aria-label='8 hours'], &[aria-label='9 hours'], &[aria-label='10 hours'], &[aria-label='11 hours'], &[aria-label='12 hours']":
+                {
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  marginTop: -1,
+                },
+            },
+          },
+        },
+      },
+    },
     ...fieldBasic,
     ...tooltipHelper,
   });
@@ -181,6 +286,9 @@ const DateTimePickerWrapper = ({
           <TextField id={id} variant="standard" {...props} disabled />
         )}
         ampm={false}
+        PopperProps={{
+          className: classes.paperOverride,
+        }}
       />
     </LocalizationProvider>
   );
