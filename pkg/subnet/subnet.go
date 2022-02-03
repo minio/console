@@ -87,6 +87,7 @@ func GetOrganizations(client cluster.HTTPClientI, token string) ([]*models.Subne
 type LicenseTokenConfig struct {
 	APIKey  string
 	License string
+	Proxy   string
 }
 
 func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (*LicenseTokenConfig, error) {
@@ -115,7 +116,7 @@ func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, to
 	subnetAPIKey := respJSON.Get("api_key").String()
 	licenseJwt := respJSON.Get("license").String()
 
-	if subnetAPIKey != "" {
+	if subnetAPIKey != "" || licenseJwt != "" {
 		return &LicenseTokenConfig{
 			APIKey:  subnetAPIKey,
 			License: licenseJwt,

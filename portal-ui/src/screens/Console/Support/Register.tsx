@@ -30,7 +30,6 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { CopyIcon, DiagnosticsFeatureIcon, UsersIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import DnsIcon from "@mui/icons-material/Dns";
 import OnlineRegistrationIcon from "../../../icons/OnlineRegistrationIcon";
 import OfflineRegistrationIcon from "../../../icons/OfflineRegistrationIcon";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -302,7 +301,6 @@ const Register = ({
   const [clusterRegistered, setClusterRegistered] = useState<boolean>(false);
   const [initialLicenseLoading, setInitialLicenseLoading] =
     useState<boolean>(true);
-  const [subnetProxy, setSubnetProxy] = useState<string>("");
   const [displaySubnetProxy, setDisplaySubnetProxy] = useState<boolean>(false);
 
   const clearForm = () => {
@@ -374,9 +372,6 @@ const Register = ({
       token: token,
       account_id: account_id,
     };
-    if (displaySubnetProxy) {
-      request.proxy = subnetProxy;
-    }
     api
       .invoke("POST", "/api/v1/subnet/register", request)
       .then(() => {
@@ -409,9 +404,6 @@ const Register = ({
       otp: subnetOTP,
       mfa_token: subnetMFAToken,
     };
-    if (displaySubnetProxy) {
-      request.proxy = subnetProxy;
-    }
     api
       .invoke("POST", "/api/v1/subnet/login/mfa", request)
       .then((resp: SubnetLoginResponse) => {
@@ -448,9 +440,6 @@ const Register = ({
       password: subnetPassword,
       apiKey: license,
     };
-    if (displaySubnetProxy) {
-      request.proxy = subnetProxy;
-    }
     api
       .invoke("POST", "/api/v1/subnet/login", request)
       .then((resp: SubnetLoginResponse) => {
@@ -917,6 +906,9 @@ const Register = ({
     );
   }
 
+  const proxyConfigurationCommand =
+    "mc admin config set {alias} subnet proxy={proxy}";
+
   return (
     <Fragment>
       <PageHeader label="Register" />
@@ -1001,21 +993,33 @@ const Register = ({
                     fontSize: "14px",
                   }}
                 >
-                  For airgap/firewalled environments it is possible to configure
-                  a proxy to connect to SUBNET.
+                  For airgap/firewalled environments it is possible to{" "}
+                  <Link
+                    className={classes.link}
+                    href="https://docs.min.io/docs/minio-server-configuration-guide.html?ref=con"
+                    target="_blank"
+                  >
+                    configure a proxy
+                  </Link>{" "}
+                  to connect to SUBNET .
                 </Box>
                 <Box>
                   {displaySubnetProxy && (
                     <InputBoxWrapper
-                      overlayIcon={<DnsIcon />}
+                      disabled
                       id="subnetProxy"
                       name="subnetProxy"
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        setSubnetProxy(event.target.value)
-                      }
-                      placeholder="https://192.168.1.3:3128"
+                      placeholder=""
+                      onChange={() => {}}
                       label=""
-                      value={subnetProxy}
+                      value={proxyConfigurationCommand}
+                      overlayIcon={<CopyIcon />}
+                      extraInputProps={{
+                        readOnly: true,
+                      }}
+                      overlayAction={() =>
+                        navigator.clipboard.writeText(proxyConfigurationCommand)
+                      }
                     />
                   )}
                 </Box>
