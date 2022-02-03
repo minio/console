@@ -102,13 +102,13 @@ const ConsoleMenuList = ({
         className={`${stateClsName} group-wrapper main-list`}
       >
         <React.Fragment>
-          {(menuItems || []).map((menuGroup: any) => {
+          {(menuItems || []).map((menuGroup: any, index) => {
             if (menuGroup) {
               return (
                 <MenuItem
                   stateClsName={stateClsName}
                   page={menuGroup}
-                  key={menuGroup.id}
+                  key={`${menuGroup.id}-${index.toString()}`}
                   id={menuGroup.id}
                   selectedMenuGroup={openGroup}
                   setSelectedMenuGroup={setOpenGroup}

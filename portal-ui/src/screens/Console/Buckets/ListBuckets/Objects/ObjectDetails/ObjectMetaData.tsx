@@ -90,7 +90,10 @@ const ObjectMetaData = ({
             : decodeURIComponent(metaData[element]);
 
           return (
-            <Box className={classes.metadataLinear}>
+            <Box
+              className={classes.metadataLinear}
+              key={`box-meta-${element}-${index.toString()}`}
+            >
               <strong>{element}</strong>
               <br />
               {renderItem}
