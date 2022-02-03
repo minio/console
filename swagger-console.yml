@@ -4138,8 +4138,6 @@ definitions:
   subnetLoginRequest:
     type: object
     properties:
-      proxy:
-        type: string
       username:
         type: string
       password:
@@ -4154,8 +4152,6 @@ definitions:
       - otp
       - mfa_token
     properties:
-      proxy:
-        type: string
       username:
         type: string
       otp:
@@ -4169,8 +4165,6 @@ definitions:
       - token
       - account_id
     properties:
-      proxy:
-        type: string
       token:
         type: string
       account_id:

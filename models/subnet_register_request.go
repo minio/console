@@ -40,9 +40,6 @@ type SubnetRegisterRequest struct {
 	// Required: true
 	AccountID *string `json:"account_id"`
 
-	// proxy
-	Proxy string `json:"proxy,omitempty"`
-
 	// token
 	// Required: true
 	Token *string `json:"token"`
