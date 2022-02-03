@@ -40,9 +40,6 @@ type SubnetLoginRequest struct {
 	// password
 	Password string `json:"password,omitempty"`
 
-	// proxy
-	Proxy string `json:"proxy,omitempty"`
-
 	// username
 	Username string `json:"username,omitempty"`
 }
