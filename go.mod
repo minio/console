@@ -21,7 +21,7 @@ require (
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
 	github.com/minio/madmin-go v1.3.0
-	github.com/minio/mc v0.0.0-20220129172038-3f23cdd921ae
+	github.com/minio/mc v0.0.0-20220202181549-fd6d4702429c
 	github.com/minio/minio-go/v7 v7.0.21
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
 	github.com/minio/pkg v1.1.14
@@ -50,7 +50,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/charmbracelet/bubbles v0.10.0 // indirect
 	github.com/charmbracelet/bubbletea v0.19.3 // indirect
-	github.com/charmbracelet/lipgloss v0.4.1-0.20220128151721-7ec01f75421d // indirect
+	github.com/charmbracelet/lipgloss v0.4.1-0.20220131213100-024177a6307a // indirect
 	github.com/cheggaaa/pb v1.0.29 // indirect
 	github.com/containerd/console v1.0.2 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -110,7 +110,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/muesli/ansi v0.0.0-20211018074035-2e021307bc4b // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
-	github.com/muesli/termenv v0.10.0 // indirect
+	github.com/muesli/termenv v0.11.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
@@ -146,7 +146,7 @@ require (
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
-	google.golang.org/appengine v1.6.6 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20211223182754-3ac035c7e7cb // indirect
 	google.golang.org/grpc v1.43.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect

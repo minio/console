@@ -1,4 +1,4 @@
-FROM node:14 as uilayer
+FROM node:17 as uilayer
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN make build-static
 
 USER node
 
-FROM golang:1.16 as golayer
+FROM golang:1.17 as golayer
 
 RUN apt-get update -y && apt-get install -y ca-certificates
 
@@ -31,7 +31,7 @@ ENV CGO_ENABLED=0
 COPY --from=uilayer /app/build /go/src/github.com/minio/console/portal-ui/build
 RUN go build -ldflags "-w -s" -a -o console ./cmd/console
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.3
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 MAINTAINER MinIO Development "dev@min.io"
 EXPOSE 9090
 
