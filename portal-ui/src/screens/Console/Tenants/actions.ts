@@ -42,6 +42,8 @@ import {
   TENANT_DETAILS_SET_LOADING,
   TENANT_DETAILS_SET_TAB,
   TENANT_DETAILS_SET_TENANT,
+  ADD_TENANT_SET_KEY_PAIR_VALUE,
+  LabelKeyPair,
 } from "./types";
 
 // Basic actions
@@ -275,5 +277,12 @@ export const setTenantTab = (tab: string) => {
   return {
     type: TENANT_DETAILS_SET_TAB,
     tab,
+  };
+};
+
+export const setKeyValuePairs = (newArray: LabelKeyPair[]) => {
+  return {
+    type: ADD_TENANT_SET_KEY_PAIR_VALUE,
+    newArray,
   };
 };

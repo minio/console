@@ -682,6 +682,7 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
+      resetAddTenantForm();
       history.push("/tenants");
     },
   };
@@ -770,7 +771,11 @@ const AddTenant = ({
         />
       )}
       <PageHeader label={"Create New Tenant"} />
-      <BackLink to={"/tenants"} label={"Return to Tenant List"} />
+      <BackLink
+        to={"/tenants"}
+        label={"Return to Tenant List"}
+        executeOnClick={resetAddTenantForm}
+      />
       <PageLayout>
         {addSending && (
           <Grid item xs={12}>

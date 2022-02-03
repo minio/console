@@ -20,7 +20,6 @@ import { KeyPair, Opts } from "./ListTenants/utils";
 import { IntegrationConfiguration } from "./AddTenant/Steps/TenantResources/utils";
 
 export const ADD_TENANT_SET_CURRENT_PAGE = "ADD_TENANT/SET_CURRENT_PAGE";
-export const ADD_TENANT_SET_ADVANCED_MODE = "ADD_TENANT/SET_ADVANCED_MODE";
 export const ADD_TENANT_UPDATE_FIELD = "ADD_TENANT/UPDATE_FIELD";
 export const ADD_TENANT_SET_PAGE_VALID = "ADD_TENANT/SET_PAGE_VALID";
 export const ADD_TENANT_RESET_FORM = "ADD_TENANT/RESET_FORM";
@@ -59,6 +58,9 @@ export const ADD_TENANT_ENCRYPTION_VAULT_CA = "ADD_TENANT/ENCRYPTION_VAULT_CA";
 export const ADD_TENANT_ENCRYPTION_GEMALTO_CA =
   "ADD_TENANT/ENCRYPTION_GEMALTO_CA";
 
+// Affinity Node Selector KeyPairs
+export const ADD_TENANT_SET_KEY_PAIR_VALUE = "ADD_TENANT/SET_KEY_PAIR_VALUE";
+
 // Tenant Details
 export const TENANT_DETAILS_SET_LOADING = "TENANT_DETAILS/SET_LOADING";
 export const TENANT_DETAILS_SET_CURRENT_TENANT =
@@ -92,6 +94,7 @@ export interface ICreateTenant {
   limitSize: any;
   fields: IFieldStore;
   certificates: ICertificatesItems;
+  nodeSelectorPairs: LabelKeyPair[];
 }
 
 export interface ICertificatesItems {
@@ -121,6 +124,11 @@ export interface INameTenantFields {
   namespace: string;
   selectedStorageClass: string;
   selectedStorageType: string;
+}
+
+export interface LabelKeyPair {
+  key: string;
+  value: string;
 }
 
 export interface ISecurityContext {
@@ -422,6 +430,11 @@ interface ResetForm {
   type: typeof ADD_TENANT_RESET_FORM;
 }
 
+interface SetNodeSelectorKeyPairValueArray {
+  type: typeof ADD_TENANT_SET_KEY_PAIR_VALUE;
+  newArray: LabelKeyPair[];
+}
+
 interface SetLoadingTenant {
   type: typeof TENANT_DETAILS_SET_LOADING;
   state: boolean;
@@ -467,6 +480,7 @@ export type TenantsManagementTypes =
   | AddFileVaultCa
   | AddFileGemaltoCa
   | ResetForm
+  | SetNodeSelectorKeyPairValueArray
   | SetLoadingTenant
   | SetTenantName
   | SetTenantDetails

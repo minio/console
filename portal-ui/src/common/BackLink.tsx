@@ -51,11 +51,20 @@ interface IBackLink {
   to: string;
   label: string;
   className?: any;
+  executeOnClick?: () => void;
 }
 
-const BackLink = ({ to, label, classes, className }: IBackLink) => {
+const BackLink = ({ to, label, classes, className, executeOnClick }: IBackLink) => {
   return (
-    <Link to={to} className={`${classes.link} ${className ? className : ""}`}>
+    <Link
+      to={to}
+      className={`${classes.link} ${className ? className : ""}`}
+      onClick={() => {
+        if (executeOnClick) {
+          executeOnClick();
+        }
+      }}
+    >
       <div className={classes.icon}>
         <BackSettingsIcon />
       </div>
