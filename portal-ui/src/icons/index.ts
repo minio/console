@@ -162,3 +162,4 @@ export { default as HelpIconFilled } from "./HelpIconFilled";
 export { default as CallHomeFeatureIcon } from "./CallHomeFeatureIcon";
 export { default as DiagnosticsFeatureIcon } from "./DiagnosticsFeatureIcon";
 export { default as PerformanceFeatureIcon } from "./PerformanceFeatureIcon";
+export { default as PrometheusErrorIcon } from "./PrometheusErrorIcon";
