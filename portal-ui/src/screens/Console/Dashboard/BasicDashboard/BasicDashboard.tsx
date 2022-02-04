@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,95 +14,86 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import { IDriveInfo, Usage } from "../types";
-import { calculateBytes, representationNumber } from "../../../../common/utils";
-import { TabPanel } from "../../../shared/tabs";
-import ServerInfoCard from "./ServerInfoCard";
-import DriveInfoCard from "./DriveInfoCard";
-import CommonCard from "../CommonCard";
-import TabSelector from "../../Common/TabSelector/TabSelector";
-import GeneralUsePaginator from "../../Common/GeneralUsePaginator/GeneralUsePaginator";
-import { widgetContainerCommon } from "../../Common/FormComponents/common/styleLibrary";
-import { PrometheusIcon } from "../../../../icons";
+import React, { Fragment } from "react";
+import { Box } from "@mui/material";
+import {
+  BucketsIcon,
+  DrivesIcon,
+  PrometheusErrorIcon,
+  ServersIcon,
+  TotalObjectsIcon,
+} from "../../../../icons";
 import HelpBox from "../../../../common/HelpBox";
+import { calculateBytes, representationNumber } from "../../../../common/utils";
+import { IDriveInfo, Usage } from "../types";
+import StatusCountCard from "./StatusCountCard";
+import groupBy from "lodash/groupBy";
+import ServersList from "./ServersList";
+import CounterCard from "./CounterCard";
+import ReportedUsage from "./ReportedUsage";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    generalStatusTitle: {
-      color: "#767676",
-      fontSize: 16,
-      fontWeight: "bold",
-      margin: "15px 10px 0 10px",
-    },
-    paginatorContainer: {
-      maxWidth: 1185,
-      width: "100%",
-    },
-    ...widgetContainerCommon,
-  });
+const BoxItem = ({
+  children,
+  background = "#ffffff",
+}: {
+  children: any;
+  background?: string;
+}) => {
+  return (
+    <Box
+      sx={{
+        border: "1px solid #f1f1f1",
+        background: background,
+        maxWidth: {
+          sm: "100%",
+          xs: "250px",
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
 
 interface IDashboardProps {
-  classes: any;
   usage: Usage | null;
 }
 
-const itemsPerPage = 5;
-
-const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
-  const [curTab, setCurTab] = useState<number>(0);
-  const [serversPageNumber, setServersPageNumber] = useState<number>(1);
-  const [drivesPageNumber, setDrivesPageNumber] = useState<number>(1);
-
-  const prettyUsage = (usage: string | undefined) => {
-    if (usage === undefined) {
-      return { total: "0", unit: "Mi" };
-    }
-
-    const calculatedBytes = calculateBytes(usage);
-
-    return calculatedBytes;
-  };
-
-  const prettyNumber = (usage: number | undefined) => {
-    if (usage === undefined) {
+const getServersList = (usage: Usage | null) => {
+  if (usage !== null) {
+    return usage.servers.sort(function (a, b) {
+      const nameA = a.endpoint.toLowerCase();
+      const nameB = b.endpoint.toLowerCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
       return 0;
-    }
+    });
+  }
 
-    return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  return [];
+};
 
-  const makeServerArray = (usage: Usage | null) => {
-    if (usage !== null) {
-      return usage.servers.sort(function (a, b) {
-        var nameA = a.endpoint.toLowerCase();
-        var nameB = b.endpoint.toLowerCase();
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        return 0;
-      });
-    }
+const prettyUsage = (usage: string | undefined) => {
+  if (usage === undefined) {
+    return { total: "0", unit: "Mi" };
+  }
 
-    return [];
-  };
+  return calculateBytes(usage);
+};
 
-  const serverArray = makeServerArray(usage || null);
+const BasicDashboard = ({ usage }: IDashboardProps) => {
+  const usageValue = usage && usage.usage ? usage.usage.toString() : "0";
+  const usageToRepresent = prettyUsage(usageValue);
 
-  const usageToRepresent = prettyUsage(
-    usage && usage.usage ? usage.usage.toString() : "0"
-  );
+  const serverList = getServersList(usage || null);
 
   let allDrivesArray: IDriveInfo[] = [];
 
-  serverArray.forEach((server) => {
+  serverList.forEach((server) => {
     const drivesInput = server.drives.map((drive) => {
       return drive;
     });
@@ -110,29 +101,35 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     allDrivesArray = [...allDrivesArray, ...drivesInput];
   });
 
-  const splitedServers = serverArray.slice(
-    serversPageNumber * itemsPerPage - itemsPerPage,
-    serversPageNumber * itemsPerPage
-  );
-
-  const splitedDrives = allDrivesArray.slice(
-    drivesPageNumber * itemsPerPage - itemsPerPage,
-    drivesPageNumber * itemsPerPage
-  );
+  const serversGroup = groupBy(serverList, "state");
+  const { offline: offlineServers = [], online: onlineServers = [] } =
+    serversGroup;
+  const drivesGroup = groupBy(allDrivesArray, "state");
+  const { offline: offlineDrives = [], ok: onlineDrives = [] } = drivesGroup;
 
   return (
-    <Fragment>
-      <div className={classes.dashboardBG} />
-      {usage?.prometheusNotReady && (
-        <Grid
-          container
-          justifyContent={"center"}
-          alignContent={"center"}
-          alignItems={"center"}
-        >
-          <Grid item xs={8}>
+    <Box
+      sx={{
+        maxWidth: "1536px",
+        margin: "auto",
+      }}
+    >
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateRows: "1fr",
+          gridTemplateColumns: "1fr",
+          gap: "27px",
+          marginBottom: "40px",
+          marginTop: "80px",
+          marginLeft: "60px",
+          marginRight: "60px",
+        }}
+      >
+        <Box>
+          {usage?.prometheusNotReady && (
             <HelpBox
-              iconComponent={<PrometheusIcon />}
+              iconComponent={<PrometheusErrorIcon />}
               title={"We can't retrieve advanced metrics at this time"}
               help={
                 <Fragment>
@@ -145,160 +142,131 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 </Fragment>
               }
             />
-          </Grid>
-        </Grid>
-      )}
-      <Grid container spacing={2}>
-        <Grid item xs={12} className={classes.generalStatusTitle}>
-          General Status
-        </Grid>
-        <Grid item xs={12} className={classes.dashboardRow}>
-          <Grid
-            item
-            xs={7}
-            sm={8}
-            md={6}
-            lg={3}
-            className={classes.widgetPanelDelimiter}
-          >
-            <CommonCard
-              title={"All Buckets"}
-              metricValue={usage ? representationNumber(usage.buckets) : 0}
-              extraMargin
-            />
-          </Grid>
-          <Grid
-            item
-            xs={7}
-            sm={8}
-            md={6}
-            lg={3}
-            className={classes.widgetPanelDelimiter}
-          >
-            <CommonCard
-              title={"Usage"}
-              metricValue={usageToRepresent.total}
-              metricUnit={usageToRepresent.unit}
-              extraMargin
-            />
-          </Grid>
-          <Grid
-            item
-            xs={7}
-            sm={8}
-            md={6}
-            lg={3}
-            className={classes.widgetPanelDelimiter}
-          >
-            <CommonCard
-              title={"Total Objects"}
-              metricValue={usage ? representationNumber(usage.objects) : 0}
-              extraMargin
-            />
-          </Grid>
-          <Grid
-            item
-            xs={7}
-            sm={8}
-            md={6}
-            lg={3}
-            className={classes.widgetPanelDelimiter}
-          >
-            <CommonCard
-              title={"Servers"}
-              metricValue={usage ? prettyNumber(serverArray.length) : 0}
-              subMessage={{ message: "Total" }}
-              extraMargin
-            />
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <TabSelector
-            selectedTab={curTab}
-            onChange={(newValue: number) => {
-              setCurTab(newValue);
-            }}
-            tabOptions={[{ label: "Servers" }, { label: "Drives" }]}
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.widgetsContainer}>
-          <TabPanel index={0} value={curTab}>
-            <div className={classes.paginatorContainer}>
-              <GeneralUsePaginator
-                page={serversPageNumber}
-                entity={"Servers"}
-                totalItems={serverArray.length}
-                onChange={setServersPageNumber}
-                itemsPerPage={itemsPerPage}
-              />
-            </div>
-            {splitedServers.map((server, index) => (
-              <Grid item xs={12} key={`serverDS-${index.toString()}`}>
-                <ServerInfoCard server={server} index={index + 1} />
-              </Grid>
-            ))}
-          </TabPanel>
-          <TabPanel index={1} value={curTab}>
-            <div className={classes.paginatorContainer}>
-              <GeneralUsePaginator
-                page={drivesPageNumber}
-                entity={"Drives"}
-                totalItems={allDrivesArray.length}
-                onChange={setDrivesPageNumber}
-                itemsPerPage={itemsPerPage}
-              />
-            </div>
-            {splitedDrives.map((drive, index) => (
-              <Grid item xs={12} key={`drive-${index}-${drive.uuid}`}>
-                <DriveInfoCard drive={drive} />
-              </Grid>
-            ))}
-          </TabPanel>
-        </Grid>
-      </Grid>
-      {!usage?.prometheusNotReady && (
-        <Grid
-          container
-          justifyContent={"center"}
-          alignContent={"center"}
-          alignItems={"center"}
-        >
-          <Grid item xs={8}>
+          )}
+
+          {!usage?.prometheusNotReady && (
             <HelpBox
-              iconComponent={<PrometheusIcon />}
-              title={"Monitoring"}
+              iconComponent={<PrometheusErrorIcon />}
+              title={"We can’t retrieve advanced metrics at this time."}
               help={
-                <Fragment>
-                  The MinIO Dashboard is displaying basic metrics only due to
-                  missing the{" "}
-                  <a
-                    href="https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con#configuration"
-                    target="_blank"
-                    rel="noreferrer"
+                <Box>
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                    }}
                   >
-                    necessary settings
-                  </a>{" "}
-                  for displaying extended metrics.
-                  <br />
-                  <br />
-                  See{" "}
-                  <a
-                    href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html?ref=con#minio-metrics-collect-using-prometheus"
-                    target="_blank"
-                    rel="noreferrer"
+                    MinIO Dashboard will display basic metrics as we couldn’t
+                    connect to Prometheus successfully. Please try again in a
+                    few minutes. If the problem persists, you can review your
+                    configuration and confirm that Prometheus server is up and
+                    running.
+                  </Box>
+                  <Box
+                    sx={{
+                      paddingTop: "20px",
+                      fontSize: "14px",
+                      "& a": {
+                        color: (theme) => theme.colors.link,
+                      },
+                    }}
                   >
-                    Collect MinIO Metrics Using Prometheus
-                  </a>{" "}
-                  for a complete tutorial on scraping and visualizing MinIO
-                  metrics with Prometheus.
-                </Fragment>
+                    <a
+                      href="https://docs.min.io/minio/baremetal/monitoring/metrics-alerts/collect-minio-metrics-using-prometheus.html?ref=con#minio-metrics-collect-using-prometheus"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Read more about Prometheus on our Docs site.
+                    </a>
+                  </Box>
+                </Box>
               }
             />
-          </Grid>
-        </Grid>
-      )}
-    </Fragment>
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateRows: "1fr .2fr auto",
+            gridTemplateColumns: "1fr",
+            gap: "40px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateRows: "1fr",
+              gridTemplateColumns: {
+                lg: "1fr 1fr 1fr 1fr ",
+                sm: "1fr 1fr",
+                xs: "1fr",
+              },
+              gap: "40px",
+            }}
+          >
+            <BoxItem
+              background={
+                "linear-gradient(-15deg, #2781b0 0%, #ffffff 30%) 0% 0% no-repeat padding-box"
+              }
+            >
+              <CounterCard
+                label={"Buckets"}
+                icon={<BucketsIcon />}
+                counterValue={usage ? representationNumber(usage.buckets) : 0}
+              />
+            </BoxItem>
+            <BoxItem
+              background={
+                "linear-gradient(-15deg, #4CCB92 0%, #ffffff 30%) 0% 0% no-repeat padding-box"
+              }
+            >
+              <CounterCard
+                label={"Objects"}
+                icon={<TotalObjectsIcon />}
+                counterValue={usage ? representationNumber(usage.objects) : 0}
+              />
+            </BoxItem>
+            <BoxItem>
+              <StatusCountCard
+                onlineCount={onlineServers.length}
+                offlineCount={offlineServers.length}
+                label={"Servers"}
+                icon={<ServersIcon />}
+              />
+            </BoxItem>
+            <BoxItem>
+              <StatusCountCard
+                offlineCount={offlineDrives.length}
+                onlineCount={onlineDrives.length}
+                label={"Drives"}
+                icon={<DrivesIcon />}
+              />
+            </BoxItem>
+          </Box>
+
+          <BoxItem>
+            <ReportedUsage
+              usageValue={usageValue}
+              total={usageToRepresent.total}
+              unit={usageToRepresent.unit}
+            />
+          </BoxItem>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateRows: "auto",
+              gridTemplateColumns: "1fr",
+              gap: "auto",
+            }}
+          >
+            <BoxItem>
+              <ServersList data={serverList} />
+            </BoxItem>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
-export default withStyles(styles)(BasicDashboard);
+export default BasicDashboard;

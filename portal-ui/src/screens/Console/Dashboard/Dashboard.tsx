@@ -24,12 +24,12 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import BasicDashboard from "./BasicDashboard/BasicDashboard";
 import { LinearProgress } from "@mui/material";
 import api from "../../../common/api";
 import { Usage } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
+import BasicDashboard from "./BasicDashboard/BasicDashboard";
 
 interface IDashboardSimple {
   classes: any;
@@ -82,9 +82,7 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
               <PrDashboard />
             </Grid>
           ) : (
-            <Grid container className={classes.container}>
-              <BasicDashboard usage={basicResult} />
-            </Grid>
+            <BasicDashboard usage={basicResult} />
           )}
         </Fragment>
       )}
