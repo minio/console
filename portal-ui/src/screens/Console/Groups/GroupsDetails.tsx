@@ -222,7 +222,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               {
                 type: "view",
                 onClick: (userName) => {
-                  history.push(`${IAM_PAGES.USERS_VIEW}/${userName}`);
+                  history.push(`${IAM_PAGES.USERS}/${userName}`);
                 },
               },
             ]}
