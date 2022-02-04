@@ -234,7 +234,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
       {policyOpen && (
         <ServiceAccountPolicy
           open={policyOpen}
-          accessKey={selectedServiceAccount}
+          selectedAccessKey={selectedServiceAccount}
           closeModalAndRefresh={closePolicyModal}
         />
       )}

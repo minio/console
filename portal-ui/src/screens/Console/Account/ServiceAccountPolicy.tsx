@@ -56,7 +56,7 @@ createStyles({
 interface IServiceAccountPolicyProps {
   classes: any;
   open: boolean;
-  accessKey: string | null;
+  selectedAccessKey: string | null;
   closeModalAndRefresh: () => void;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
@@ -64,7 +64,7 @@ interface IServiceAccountPolicyProps {
 const ServiceAccountPolicy = ({
   classes,
   open,
-  accessKey,
+  selectedAccessKey,
   closeModalAndRefresh,
   setModalErrorSnackMessage,
 }: IServiceAccountPolicyProps) => {
@@ -73,7 +73,7 @@ const ServiceAccountPolicy = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/service-accounts/${accessKey}/policy`)
+        .invoke("GET", `/api/v1/service-accounts/${selectedAccessKey}/policy`)
         .then((res) => {
           setLoading(false);
           setPolicyDefinition(res);
@@ -83,7 +83,7 @@ const ServiceAccountPolicy = ({
           setModalErrorSnackMessage(err);
         });
     }
-  }, [loading, setLoading, setModalErrorSnackMessage, accessKey]);
+  }, [loading, setLoading, setModalErrorSnackMessage, selectedAccessKey]);
 
   return (
     <ModalWrapper
