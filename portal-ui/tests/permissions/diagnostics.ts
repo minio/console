@@ -61,7 +61,7 @@ test("Download button exists after Diagnostic is completed", async (t) => {
     .useRole(roles.diagnostics)
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
-    .wait(2000)
+    .wait(3000)
     .expect(elements.downloadButton.exists)
     .ok();
 });

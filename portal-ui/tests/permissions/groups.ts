@@ -106,7 +106,11 @@ test.before(async (t) => {
   }
 );
 
-test("Groups table exists", async (t) => {
+test.before(async (t) => {
+  // A user must be created as we need to choose a user from the dropdown
+  await functions.createUser(t);
+  await createGroup(t, "groups-table");
+})("Groups table exists", async (t) => {
   await t
     .navigateTo("http://localhost:9090/identity/groups")
     .expect(elements.table.exists)
@@ -115,6 +119,7 @@ test("Groups table exists", async (t) => {
 
 test.before(async (t) => {
   // A user must be created as we need to choose a user from the dropdown
+  await functions.createUser(t);
   await createGroup(t, "disable-enable");
 })("Created Group can be disabled and enabled back", async (t) => {
   await t
@@ -130,6 +135,7 @@ test.before(async (t) => {
 
 test.before(async (t) => {
   // A user must be created as we need to choose a user from the dropdown
+  await functions.createUser(t);
   await createGroup(t, "view-delete");
 })("Created Group can be viewed and deleted", async (t) => {
   await t
