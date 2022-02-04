@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, SelectChangeEvent } from "@mui/material";
+import { Button } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,7 +30,6 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { ChangeAccessPolicyIcon } from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
@@ -57,9 +56,7 @@ createStyles({
 interface IServiceAccountPolicyProps {
   classes: any;
   open: boolean;
-  bucketName: string;
-  actualPolicy: string;
-  actualDefinition: string;
+  accessKey: string | null;
   closeModalAndRefresh: () => void;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
@@ -67,49 +64,26 @@ interface IServiceAccountPolicyProps {
 const ServiceAccountPolicy = ({
   classes,
   open,
-  bucketName,
-  actualPolicy,
-  actualDefinition,
+  accessKey,
   closeModalAndRefresh,
   setModalErrorSnackMessage,
 }: IServiceAccountPolicyProps) => {
-  const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [accessPolicy, ServiceAccountPolicy] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
-  const addRecord = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (addLoading) {
-      return;
-    }
-    setAddLoading(true);
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}/set-policy`, {
-        access: accessPolicy,
-        definition: policyDefinition,
-      })
-      .then((res) => {
-        setAddLoading(false);
-        closeModalAndRefresh();
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setAddLoading(false);
-        setModalErrorSnackMessage(err);
-      });
-  };
-
   useEffect(() => {
-    ServiceAccountPolicy(actualPolicy);
-    setPolicyDefinition(
-      actualDefinition
-        ? JSON.stringify(JSON.parse(actualDefinition), null, 4)
-        : ""
-    );
-  }, [
-    ServiceAccountPolicy,
-    actualPolicy,
-    setPolicyDefinition,
-    actualDefinition,
-  ]);
+    if (loading) {
+      api
+        .invoke("GET", `/api/v1/service-accounts/${accessKey}/policy`)
+        .then((res) => {
+          setLoading(false);
+          setPolicyDefinition(res);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setLoading(false);
+          setModalErrorSnackMessage(err);
+        });
+    }
+  }, [loading, setLoading, setModalErrorSnackMessage, accessKey]);
 
   return (
     <ModalWrapper
@@ -129,6 +103,7 @@ const ServiceAccountPolicy = ({
               setPolicyDefinition(value);
             }}
             editorHeight={"350px"}
+            readOnly={true}
           />
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
@@ -139,17 +114,9 @@ const ServiceAccountPolicy = ({
             onClick={() => {
               closeModalAndRefresh();
             }}
-            disabled={addLoading}
+            disabled={loading}
           >
             Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={addLoading}
-          >
-            Set
           </Button>
         </Grid>
       </Grid>
