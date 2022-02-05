@@ -17,7 +17,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../actions";
-import { ErrorResponseHandler } from "../../../common/types"
+import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../../../screens/Console/Common/Hooks/useApi";
 import ConfirmDialog from "../../../screens/Console/Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
@@ -41,12 +41,12 @@ const DeleteMultipleSAs = ({
     return null;
   }
   const onConfirmDelete = () => {
-      invokeDeleteApi(
-        "POST",
-        `/api/v1/service-accounts/delete-multi`,
-        selectedSAs
-      );
-    };
+    invokeDeleteApi(
+      "POST",
+      `/api/v1/service-accounts/delete-multi`,
+      selectedSAs
+    );
+  };
   return (
     <ConfirmDialog
       title={`Delete Service Accounts`}

@@ -282,7 +282,12 @@ const Affinity = ({
               {keyValuePairs &&
                 keyValuePairs.map((kvp, i) => {
                   return (
-                    <Grid item xs={12} className={classes.affinityRow} key={`affinity-keyVal-${i.toString()}`}>
+                    <Grid
+                      item
+                      xs={12}
+                      className={classes.affinityRow}
+                      key={`affinity-keyVal-${i.toString()}`}
+                    >
                       <Grid item xs={5} className={classes.affinityLabelKey}>
                         {keyOptions.length > 0 && (
                           <SelectWrapper

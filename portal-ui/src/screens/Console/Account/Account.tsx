@@ -24,7 +24,12 @@ import api from "../../../common/api";
 import { Box } from "@mui/material";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
-import { AccountIcon, AddIcon, PasswordKeyIcon, DeleteIcon } from "../../../icons";
+import {
+  AccountIcon,
+  AddIcon,
+  PasswordKeyIcon,
+  DeleteIcon,
+} from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -46,8 +51,8 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import {selectSAs} from "../../Console/Configurations/utils"
-import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts"
+import { selectSAs } from "../../Console/Configurations/utils";
+import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -92,7 +97,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
   const [changePasswordModalOpen, setChangePasswordModalOpen] =
     useState<boolean>(false);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
-  const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);  
+  const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -152,8 +157,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     }
   };
 
-
-const selectAllItems = () => {
+  const selectAllItems = () => {
     if (selectedSAs.length === records.length) {
       setSelectedSAs([]);
       return;
@@ -233,14 +237,18 @@ const selectAllItems = () => {
             sx={{
               display: "flex",
             }}
-          > <RBIconButton
-            tooltip={"Delete Selected"}
-            onClick={() => {setDeleteMultipleOpen(true);}}
-            text={"Delete Selected"}
-            icon={<DeleteIcon />}
-            color="secondary"
-            disabled={selectedSAs.length === 0}
-            variant={"outlined"}
+          >
+            {" "}
+            <RBIconButton
+              tooltip={"Delete Selected"}
+              onClick={() => {
+                setDeleteMultipleOpen(true);
+              }}
+              text={"Delete Selected"}
+              icon={<DeleteIcon />}
+              color="secondary"
+              disabled={selectedSAs.length === 0}
+              variant={"outlined"}
             />
             <SecureComponent
               scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
@@ -255,9 +263,7 @@ const selectAllItems = () => {
                 color={"primary"}
                 variant={"outlined"}
               />
-            </SecureComponent>            
-           
-           
+            </SecureComponent>
             <RBIconButton
               onClick={() => {
                 setAddScreenOpen(true);
@@ -280,7 +286,7 @@ const selectAllItems = () => {
             columns={[{ label: "Service Account", elementKey: "" }]}
             itemActions={tableActions}
             selectedItems={selectedSAs}
-            onSelect={e => selectSAs(e, setSelectedSAs, selectedSAs)}
+            onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
             onSelectAll={selectAllItems}
           />
         </Grid>
