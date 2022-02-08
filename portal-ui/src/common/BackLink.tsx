@@ -54,7 +54,13 @@ interface IBackLink {
   executeOnClick?: () => void;
 }
 
-const BackLink = ({ to, label, classes, className, executeOnClick }: IBackLink) => {
+const BackLink = ({
+  to,
+  label,
+  classes,
+  className,
+  executeOnClick,
+}: IBackLink) => {
   return (
     <Link
       to={to}

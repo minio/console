@@ -44,7 +44,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 	// Get subnet login with MFA handler
 	api.AdminAPISubnetLoginMFAHandler = admin_api.SubnetLoginMFAHandlerFunc(func(params admin_api.SubnetLoginMFAParams, session *models.Principal) middleware.Responder {
-		resp, err := GetSubnetLoginWithMFAResponse(params)
+		resp, err := GetSubnetLoginWithMFAResponse(session, params)
 		if err != nil {
 			return admin_api.NewSubnetLoginMFADefault(int(err.Code)).WithPayload(err)
 		}
@@ -85,7 +85,12 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 	if err != nil {
 		return false, err
 	}
-	configStr := fmt.Sprintf("subnet license=%s api_key=%s", registerResult.License, registerResult.APIKey)
+	// Keep existing subnet proxy if exists
+	subnetKey, err := GetSubnetKeyFromMinIOConfig(ctx, minioClient)
+	if err != nil {
+		return false, err
+	}
+	configStr := fmt.Sprintf("subnet license=%s api_key=%s proxy=%s", registerResult.License, registerResult.APIKey, subnetKey.Proxy)
 	_, err = minioClient.setConfigKV(ctx, configStr)
 	if err != nil {
 		return false, err
@@ -112,15 +117,15 @@ func SubnetLogin(client cluster.HTTPClientI, username, password string) (string,
 
 func GetSubnetLoginResponse(session *models.Principal, params admin_api.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
 	ctx := context.Background()
-	subnetHTTPClient, err := GetSubnetHTTPClient(params.Body.Proxy)
-	if err != nil {
-		return nil, prepareError(err)
-	}
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	minioClient := AdminClient{Client: mAdmin}
+	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
 	apiKey := params.Body.APIKey
 	if apiKey != "" {
 		registered, err := SubnetRegisterWithAPIKey(ctx, minioClient, apiKey)
@@ -173,8 +178,19 @@ func SubnetLoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp stri
 }
 
 // GetSubnetHTTPClient will return a client with proxy if configured, otherwise will return the default console http client
-func GetSubnetHTTPClient(proxy string) (*cluster.HTTPClient, error) {
+func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*cluster.HTTPClient, error) {
 	var subnetHTTPClient *http.Client
+	var proxy string
+	envProxy := getSubnetProxy()
+	subnetKey, err := GetSubnetKeyFromMinIOConfig(ctx, minioClient)
+	if err != nil {
+		return nil, err
+	}
+	if subnetKey.Proxy != "" {
+		proxy = subnetKey.Proxy
+	} else if envProxy != "" {
+		proxy = envProxy
+	}
 	if proxy != "" {
 		transport := prepareSTSClientTransport(false)
 		subnetHTTPClient = &http.Client{
@@ -194,8 +210,14 @@ func GetSubnetHTTPClient(proxy string) (*cluster.HTTPClient, error) {
 	return clientI, nil
 }
 
-func GetSubnetLoginWithMFAResponse(params admin_api.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
-	subnetHTTPClient, err := GetSubnetHTTPClient(params.Body.Proxy)
+func GetSubnetLoginWithMFAResponse(session *models.Principal, params admin_api.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
+	ctx := context.Background()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	minioClient := AdminClient{Client: mAdmin}
+	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -225,6 +247,8 @@ func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin) (*
 			res.APIKey = kv.Value
 		} else if kv.Key == "license" {
 			res.License = kv.Value
+		} else if kv.Key == "proxy" {
+			res.Proxy = kv.Value
 		}
 	}
 	return &res, nil
@@ -239,7 +263,12 @@ func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient c
 	if err != nil {
 		return err
 	}
-	configStr := fmt.Sprintf("subnet license=%s api_key=%s", registerResult.License, registerResult.APIKey)
+	// Keep existing subnet proxy if exists
+	subnetKey, err := GetSubnetKeyFromMinIOConfig(ctx, minioClient)
+	if err != nil {
+		return err
+	}
+	configStr := fmt.Sprintf("subnet license=%s api_key=%s proxy=%s", registerResult.License, registerResult.APIKey, subnetKey.Proxy)
 	_, err = minioClient.setConfigKV(ctx, configStr)
 	if err != nil {
 		return err
@@ -254,7 +283,7 @@ func GetSubnetRegisterResponse(session *models.Principal, params admin_api.Subne
 		return prepareError(err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	subnetHTTPClient, err := GetSubnetHTTPClient(params.Body.Proxy)
+	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, adminClient)
 	if err != nil {
 		return prepareError(err)
 	}

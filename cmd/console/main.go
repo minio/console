@@ -32,22 +32,22 @@ import (
 
 // Help template for Console.
 var consoleHelpTemplate = `NAME:
-  {{.Name}} - {{.Usage}}
+ {{.Name}} - {{.Usage}}
 
 DESCRIPTION:
-  {{.Description}}
+ {{.Description}}
 
 USAGE:
-  {{.HelpName}} {{if .VisibleFlags}}[FLAGS] {{end}}COMMAND{{if .VisibleFlags}}{{end}} [ARGS...]
+ {{.HelpName}} {{if .VisibleFlags}}[FLAGS] {{end}}COMMAND{{if .VisibleFlags}}{{end}} [ARGS...]
 
 COMMANDS:
-  {{range .VisibleCommands}}{{join .Names ", "}}{{ "\t" }}{{.Usage}}
-  {{end}}{{if .VisibleFlags}}
+ {{range .VisibleCommands}}{{join .Names ", "}}{{ "\t" }}{{.Usage}}
+ {{end}}{{if .VisibleFlags}}
 FLAGS:
-  {{range .VisibleFlags}}{{.}}
-  {{end}}{{end}}
+ {{range .VisibleFlags}}{{.}}
+ {{end}}{{end}}
 VERSION:
-  {{.Version}}
+ {{.Version}}
 `
 
 func newApp(name string) *cli.App {

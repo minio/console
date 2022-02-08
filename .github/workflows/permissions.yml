@@ -63,7 +63,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors '
+          args: '"chrome:headless" portal-ui/tests/permissions/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |

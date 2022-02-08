@@ -21,7 +21,7 @@ require (
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
 	github.com/minio/madmin-go v1.3.0
-	github.com/minio/mc v0.0.0-20220202181549-fd6d4702429c
+	github.com/minio/mc v0.0.0-20220204044644-e048c85d71a7
 	github.com/minio/minio-go/v7 v7.0.21
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
 	github.com/minio/pkg v1.1.14
@@ -50,7 +50,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/charmbracelet/bubbles v0.10.0 // indirect
 	github.com/charmbracelet/bubbletea v0.19.3 // indirect
-	github.com/charmbracelet/lipgloss v0.4.1-0.20220131213100-024177a6307a // indirect
+	github.com/charmbracelet/lipgloss v0.4.1-0.20220204041308-bf2912e703f6 // indirect
 	github.com/cheggaaa/pb v1.0.29 // indirect
 	github.com/containerd/console v1.0.2 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -110,7 +110,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/muesli/ansi v0.0.0-20211018074035-2e021307bc4b // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
-	github.com/muesli/termenv v0.11.0 // indirect
+	github.com/muesli/termenv v0.11.1-0.20220204035834-5ac8409525e0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
