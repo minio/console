@@ -22,16 +22,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/minio/madmin-go"
 	"strings"
 	"time"
-
-	"github.com/minio/console/restapi/operations/admin_api"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	"github.com/minio/console/restapi/operations/user_api"
+	"github.com/minio/madmin-go"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
