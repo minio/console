@@ -4425,6 +4425,10 @@ func init() {
         },
         "delete_marker": {
           "type": "boolean"
+        },
+        "noncurrent_expiration_days": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -5947,6 +5951,13 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "noncurrent_storage_class": {
+          "type": "string"
+        },
+        "noncurrent_transition_days": {
+          "type": "integer",
+          "format": "int64"
+        },
         "storage_class": {
           "type": "string"
         }
@@ -5954,6 +5965,9 @@ func init() {
     },
     "updateBucketLifecycle": {
       "type": "object",
+      "required": [
+        "type"
+      ],
       "properties": {
         "disable": {
           "description": "Non required, toggle to disable or enable rule",
@@ -6002,6 +6016,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -10694,6 +10716,10 @@ func init() {
         },
         "delete_marker": {
           "type": "boolean"
+        },
+        "noncurrent_expiration_days": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -12216,6 +12242,13 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "noncurrent_storage_class": {
+          "type": "string"
+        },
+        "noncurrent_transition_days": {
+          "type": "integer",
+          "format": "int64"
+        },
         "storage_class": {
           "type": "string"
         }
@@ -12223,6 +12256,9 @@ func init() {
     },
     "updateBucketLifecycle": {
       "type": "object",
+      "required": [
+        "type"
+      ],
       "properties": {
         "disable": {
           "description": "Non required, toggle to disable or enable rule",
@@ -12271,6 +12307,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },

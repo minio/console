@@ -51,7 +51,7 @@ interface IReplicationModal {
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
-interface ITiersDropDown {
+export interface ITiersDropDown {
   label: string;
   value: string;
 }

@@ -226,9 +226,12 @@ func TestUpdateLifecycleRule(t *testing.T) {
 
 	// Test-2 : editBucketLifecycle() Update lifecycle rule
 
+	expiryRule := "expiry"
+
 	editMock := user_api.UpdateBucketLifecycleParams{
 		BucketName: "testBucket",
 		Body: &models.UpdateBucketLifecycle{
+			Type:                                    &expiryRule,
 			Disable:                                 false,
 			ExpiredObjectDeleteMarker:               false,
 			ExpiryDays:                              int32(16),
@@ -247,6 +250,33 @@ func TestUpdateLifecycleRule(t *testing.T) {
 	}
 
 	err := editBucketLifecycle(ctx, minClient, editMock)
+
+	assert.Equal(nil, err, fmt.Sprintf("Failed on %s: Error returned", function))
+
+	// Test-2a : editBucketLifecycle() Update lifecycle rule
+
+	transitionRule := "transition"
+
+	editMock = user_api.UpdateBucketLifecycleParams{
+		BucketName: "testBucket",
+		Body: &models.UpdateBucketLifecycle{
+			Type:                                    &transitionRule,
+			Disable:                                 false,
+			ExpiredObjectDeleteMarker:               false,
+			NoncurrentversionTransitionDays:         5,
+			Prefix:                                  "pref1",
+			StorageClass:                            "TEST",
+			NoncurrentversionTransitionStorageClass: "TESTNC",
+			Tags:                                    "",
+			TransitionDays:                          int32(16),
+		},
+	}
+
+	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+		return nil
+	}
+
+	err = editBucketLifecycle(ctx, minClient, editMock)
 
 	assert.Equal(nil, err, fmt.Sprintf("Failed on %s: Error returned", function))
 
