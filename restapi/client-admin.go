@@ -314,7 +314,7 @@ func (ac AdminClient) infoServiceAccount(ctx context.Context, serviceAccount str
 }
 
 // implements madmin.UpdateServiceAccount()
-func (ac AdminClient) updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) (error) {
+func (ac AdminClient) updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error {
 	return ac.Client.UpdateServiceAccount(ctx, serviceAccount, opts)
 }
 
