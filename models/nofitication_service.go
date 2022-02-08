@@ -37,12 +37,8 @@ import (
 type NofiticationService string
 
 func NewNofiticationService(value NofiticationService) *NofiticationService {
-	return &value
-}
-
-// Pointer returns a pointer to a freshly-allocated NofiticationService.
-func (m NofiticationService) Pointer() *NofiticationService {
-	return &m
+	v := value
+	return &v
 }
 
 const (

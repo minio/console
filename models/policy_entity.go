@@ -37,12 +37,8 @@ import (
 type PolicyEntity string
 
 func NewPolicyEntity(value PolicyEntity) *PolicyEntity {
-	return &value
-}
-
-// Pointer returns a pointer to a freshly-allocated PolicyEntity.
-func (m PolicyEntity) Pointer() *PolicyEntity {
-	return &m
+	v := value
+	return &v
 }
 
 const (

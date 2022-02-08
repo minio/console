@@ -37,12 +37,8 @@ import (
 type ProfilerType string
 
 func NewProfilerType(value ProfilerType) *ProfilerType {
-	return &value
-}
-
-// Pointer returns a pointer to a freshly-allocated ProfilerType.
-func (m ProfilerType) Pointer() *ProfilerType {
-	return &m
+	v := value
+	return &v
 }
 
 const (

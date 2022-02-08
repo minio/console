@@ -37,12 +37,8 @@ import (
 type ObjectRetentionMode string
 
 func NewObjectRetentionMode(value ObjectRetentionMode) *ObjectRetentionMode {
-	return &value
-}
-
-// Pointer returns a pointer to a freshly-allocated ObjectRetentionMode.
-func (m ObjectRetentionMode) Pointer() *ObjectRetentionMode {
-	return &m
+	v := value
+	return &v
 }
 
 const (

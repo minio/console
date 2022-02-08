@@ -37,12 +37,8 @@ import (
 type BucketEncryptionType string
 
 func NewBucketEncryptionType(value BucketEncryptionType) *BucketEncryptionType {
-	return &value
-}
-
-// Pointer returns a pointer to a freshly-allocated BucketEncryptionType.
-func (m BucketEncryptionType) Pointer() *BucketEncryptionType {
-	return &m
+	v := value
+	return &v
 }
 
 const (
