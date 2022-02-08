@@ -669,7 +669,11 @@ const TableWrapper = ({
             >
               {onSelect && (
                 <Grid item xs className={classes.objectsSelected}>
-                  {selectedItems?.length || 0} Objects selected
+                  {selectedItems?.length || 0} Item
+                  {selectedItems?.length
+                    ? selectedItems?.length !== 1 && "s"
+                    : "s"}{" "}
+                  selected
                 </Grid>
               )}
               {actionButtons && (
