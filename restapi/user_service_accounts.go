@@ -19,6 +19,7 @@ package restapi
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -365,6 +366,11 @@ func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 	serviceAccountInfo, err := userClient.infoServiceAccount(ctx, accessKey)
 	if err != nil {
 		return "", err
+	}
+	var policy iampolicy.Policy
+	json.Unmarshal([]byte(serviceAccountInfo.Policy), &policy)
+	if policy.Statements == nil {
+		return "", nil
 	}
 	return serviceAccountInfo.Policy, nil
 }
