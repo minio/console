@@ -99,6 +99,7 @@ type MinioAdmin interface {
 	listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
 	infoServiceAccount(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
+	updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
 	// Remote Buckets
 	listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error)
 	getRemoteBucket(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error)
@@ -310,6 +311,11 @@ func (ac AdminClient) deleteServiceAccount(ctx context.Context, serviceAccount s
 // implements madmin.InfoServiceAccount()
 func (ac AdminClient) infoServiceAccount(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error) {
 	return ac.Client.InfoServiceAccount(ctx, serviceAccount)
+}
+
+// implements madmin.UpdateServiceAccount()
+func (ac AdminClient) updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error {
+	return ac.Client.UpdateServiceAccount(ctx, serviceAccount, opts)
 }
 
 // AccountInfo implements madmin.AccountInfo()
