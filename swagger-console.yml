@@ -1261,7 +1261,7 @@ paths:
         - UserAPI
 
   /service-accounts/delete-multi:
-    post:
+    delete:
       summary: Delete Multiple Service Accounts
       operationId: DeleteMultipleServiceAccounts
       parameters:
@@ -1273,7 +1273,7 @@ paths:
             items:
               type: string
       responses:
-        200:
+        204:
           description: A successful response.
         default:
           description: Generic error response.

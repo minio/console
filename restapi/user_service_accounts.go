@@ -104,7 +104,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		if err := getDeleteMultipleServiceAccountsResponse(session, params.SelectedSA); err != nil {
 			return user_api.NewDeleteMultipleServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewDeleteMultipleServiceAccountsOK()
+		return user_api.NewDeleteMultipleServiceAccountsNoContent()
 	})
 }
 
