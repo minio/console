@@ -41,12 +41,12 @@ const DeleteMultipleSAs = ({
     return null;
   }
   const onConfirmDelete = () => {
-    invokeDeleteApi(
-      "POST",
-      `/api/v1/service-accounts/delete-multi`,
-      selectedSAs
-    );
-  };
+      invokeDeleteApi(
+        "DELETE",
+        `/api/v1/service-accounts/delete-multi`,
+        selectedSAs
+      );
+    };
   return (
     <ConfirmDialog
       title={`Delete Service Accounts`}
