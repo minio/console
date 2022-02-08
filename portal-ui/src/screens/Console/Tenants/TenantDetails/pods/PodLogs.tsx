@@ -17,6 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { CellMeasurer, CellMeasurerCache, List } from "react-virtualized";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { TextField } from "@mui/material";
@@ -24,6 +25,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../../../../../common/api";
+import SearchIcon from "../../../../../icons/SearchIcon";
 import {
   actionsTray,
   buttonsStyles,
@@ -33,7 +35,7 @@ import {
 import { setErrorSnackMessage } from "../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { AppState } from "../../../../../store";
-import SearchIcon from "../../../../../icons/SearchIcon";
+import { AutoSizer } from "react-virtualized";
 
 interface IPodLogsProps {
   classes: any;
@@ -69,6 +71,7 @@ const styles = (theme: Theme) =>
     },
     ansidefault: {
       color: "#000",
+      lineHeight: "16px",
     },
     highlight: {
       "& span": {
@@ -91,6 +94,11 @@ const PodLogs = ({
   const [logLines, setLogLines] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const cache = new CellMeasurerCache({
+    minWidth: 5,
+    fixedHeight: false,
+  });
+
   useEffect(() => {
     if (propLoading) {
       setLoading(true);
@@ -104,6 +112,9 @@ const PodLogs = ({
   }, [loadingTenant]);
 
   const renderLog = (logMessage: string, index: number) => {
+    if (!logMessage) {
+      return null;
+    }
     // remove any non ascii characters, exclude any control codes
     logMessage = logMessage.replace(/([^\x20-\x7F])/g, "");
 
@@ -144,10 +155,6 @@ const PodLogs = ({
     }
   };
 
-  const renderLines = logLines.map((m, i) => {
-    return renderLog(m, i);
-  });
-
   useEffect(() => {
     if (loading) {
       api
@@ -165,6 +172,26 @@ const PodLogs = ({
         });
     }
   }, [loading, podName, namespace, tenant, setErrorSnackMessage]);
+
+  function cellRenderer({ columnIndex, key, parent, index, style }: any) {
+    return (
+      <CellMeasurer
+        cache={cache}
+        columnIndex={columnIndex}
+        key={key}
+        parent={parent}
+        rowIndex={index}
+      >
+        <div
+          style={{
+            ...style,
+          }}
+        >
+          {renderLog(logLines[index], index)}
+        </div>
+      </CellMeasurer>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -193,7 +220,22 @@ const PodLogs = ({
       </Grid>
       <Grid item xs={12}>
         <Paper>
-          <div className={classes.logList}>{renderLines}</div>
+          <div className={classes.logList}>
+            {logLines.length >= 1 && (
+              <AutoSizer>
+                {({ width, height }) => (
+                  <List
+                    rowHeight={(item) => cache.rowHeight(item)}
+                    overscanRowCount={15}
+                    rowCount={logLines.length}
+                    rowRenderer={cellRenderer}
+                    width={width}
+                    height={height}
+                  />
+                )}
+              </AutoSizer>
+            )}
+          </div>
         </Paper>
       </Grid>
     </React.Fragment>

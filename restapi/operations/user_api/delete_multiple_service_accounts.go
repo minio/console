@@ -48,7 +48,7 @@ func NewDeleteMultipleServiceAccounts(ctx *middleware.Context, handler DeleteMul
 	return &DeleteMultipleServiceAccounts{Context: ctx, Handler: handler}
 }
 
-/* DeleteMultipleServiceAccounts swagger:route POST /service-accounts/delete-multi UserAPI deleteMultipleServiceAccounts
+/* DeleteMultipleServiceAccounts swagger:route DELETE /service-accounts/delete-multi UserAPI deleteMultipleServiceAccounts
 
 Delete Multiple Service Accounts
 

@@ -33,7 +33,6 @@ export interface SubnetLoginRequest {
 export interface SubnetRegisterRequest {
   token: string;
   account_id: string;
-  proxy?: string;
 }
 
 export interface SubnetOrganization {

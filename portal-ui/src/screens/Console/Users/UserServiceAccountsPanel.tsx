@@ -38,8 +38,8 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon, DeleteIcon } from "../../../icons";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts"
-import {selectSAs} from "../../Console/Configurations/utils"
+import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
+import { selectSAs } from "../../Console/Configurations/utils";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -75,7 +75,7 @@ const UserServiceAccountsPanel = ({
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
-  const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);  
+  const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -134,8 +134,7 @@ const UserServiceAccountsPanel = ({
     }
   };
 
-
-const selectAllItems = () => {
+  const selectAllItems = () => {
     if (selectedSAs.length === records.length) {
       setSelectedSAs([]);
       return;
@@ -195,11 +194,13 @@ const selectAllItems = () => {
         />
       )}
       <div className={classes.actionsTray}>
-       <PanelTitle>Service Accounts</PanelTitle>
-        <Box >
+        <PanelTitle>Service Accounts</PanelTitle>
+        <Box>
           <RBIconButton
             tooltip={"Delete Selected"}
-            onClick={() => {setDeleteMultipleOpen(true);}}
+            onClick={() => {
+              setDeleteMultipleOpen(true);
+            }}
             text={"Delete Selected"}
             icon={<DeleteIcon />}
             color="secondary"
@@ -221,7 +222,7 @@ const selectAllItems = () => {
           />
         </Box>
       </div>
-       <div className={classes.tableBlock}>
+      <div className={classes.tableBlock}>
         <TableWrapper
           isLoading={loading}
           records={records}
@@ -230,7 +231,7 @@ const selectAllItems = () => {
           columns={[{ label: "Service Account", elementKey: "" }]}
           itemActions={tableActions}
           selectedItems={selectedSAs}
-          onSelect={e => selectSAs(e, setSelectedSAs, selectedSAs)}
+          onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
           onSelectAll={selectAllItems}
         />
       </div>

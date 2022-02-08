@@ -80,7 +80,7 @@ __init__() {
 }
 
 main() {
-  (yarn start &> /dev/null) & (./console server &> /dev/null) & (testcafe "chrome:headless" portal-ui/tests/permissions/ -q --skip-js-errors)
+  (yarn start &> /dev/null) & (./console server &> /dev/null) & (testcafe "chrome:headless" portal-ui/tests/permissions/ -q --skip-js-errors -c 3)
   cleanup
 }
 

@@ -257,11 +257,11 @@ const TenantSummary = ({
       <StorageSummary tenant={tenant} classes={classes} />
 
       <Grid container>
-        <Grid xs={12} sm={12} md={8} container>
-          <Grid xs={12}>
+        <Grid item xs={12} sm={12} md={8}>
+          <Grid item xs={12}>
             <LabelValuePair label={"State:"} value={tenant?.currentState} />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label="MinIO:"
               value={
@@ -281,7 +281,7 @@ const TenantSummary = ({
               }
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label={"Endpoint:"}
               value={
@@ -296,7 +296,7 @@ const TenantSummary = ({
               }
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label={"Console:"}
               value={
@@ -312,11 +312,11 @@ const TenantSummary = ({
             />
           </Grid>
         </Grid>
-        <Grid xs={12} sm={12} md={4} container>
-          <Grid xs={12}>
+        <Grid item xs={12} sm={12} md={4}>
+          <Grid item xs={12}>
             <LabelValuePair label={"Instances:"} value={instances} />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label={"Clusters:"}
               value={poolCount}
@@ -327,7 +327,7 @@ const TenantSummary = ({
               }}
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label="Total Drives:"
               value={volumes}
@@ -338,7 +338,7 @@ const TenantSummary = ({
               }}
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label={"Write Quorum:"}
               value={
@@ -346,7 +346,7 @@ const TenantSummary = ({
               }
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label={"Drives Online:"}
               value={
@@ -361,7 +361,7 @@ const TenantSummary = ({
               }}
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <LabelValuePair
               label={"Drives Offline:"}
               value={
