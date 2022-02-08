@@ -1277,10 +1277,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/delete-objects"] = user_api.NewDeleteMultipleObjects(o.context, o.UserAPIDeleteMultipleObjectsHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/service-accounts/delete-multi"] = user_api.NewDeleteMultipleServiceAccounts(o.context, o.UserAPIDeleteMultipleServiceAccountsHandler)
+	o.handlers["DELETE"]["/service-accounts/delete-multi"] = user_api.NewDeleteMultipleServiceAccounts(o.context, o.UserAPIDeleteMultipleServiceAccountsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
