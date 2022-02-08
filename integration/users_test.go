@@ -246,6 +246,32 @@ func CreateServiceAccountForUser(userName string, policy string) (*http.Response
 	return response, err
 }
 
+func CreateServiceAccountForUserWithCredentials(userName string, policy string, accessKey string, secretKey string) (*http.Response, error) {
+	// Helper function to test "Create Service Account for User With Credentials" end point.
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	requestDataAdd := map[string]interface{}{
+		"policy":    policy,
+		"accessKey": accessKey,
+		"secretKey": secretKey,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/user/"+userName+"/service-account-credentials",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+	return response, err
+}
+
 func ReturnsAListOfServiceAccountsForAUser(userName string) (*http.Response, error) {
 	/*
 		Helper function to return a list of service accounts for a user.
@@ -764,6 +790,98 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 		)
 	}
 	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
+}
+
+func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
+	/*
+		To test creation of service account for a user.
+	*/
+
+	// Test's variables
+	userName := "testcreateserviceaccountforuserwithcredentials1"
+	assert := assert.New(t)
+	policy := ""
+	serviceAccountLengthInBytes := 40 // As observed, update as needed
+
+	// 1. Create the user
+	var groups = []string{}
+	var policies = []string{}
+	var secretKey = "testcreateserviceaccountforuserwithcrede"
+	response, err := AddUser(userName, "secretKey", groups, policies)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		fmt.Println("StatusCode:", response.StatusCode)
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// Table driven testing part
+	type args struct {
+		accessKey string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+	}{
+		{
+			name:           "Service Account With Valid Credentials",
+			expectedStatus: 201,
+			args: args{
+				accessKey: "testcreateserviceacc",
+			},
+		},
+		{
+			name:           "Service Account With Invalid Credentials",
+			expectedStatus: 500,
+			args: args{
+				accessKey: "tooooooooooooooooooooolongggggggggggggggggg",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 2. Create the service account for the user
+			createServiceAccountWithCredentialsResponse,
+				createServiceAccountWithCredentialsError := CreateServiceAccountForUserWithCredentials(
+				userName,
+				policy,
+				tt.args.accessKey,
+				secretKey,
+			)
+			if createServiceAccountWithCredentialsError != nil {
+				log.Println(createServiceAccountWithCredentialsError)
+				assert.Fail("Error in createServiceAccountWithCredentialsError")
+			}
+			if createServiceAccountWithCredentialsResponse != nil {
+				fmt.Println("StatusCode:", createServiceAccountWithCredentialsResponse.StatusCode)
+				assert.Equal(
+					tt.expectedStatus, // different status expected per table's row
+					createServiceAccountWithCredentialsResponse.StatusCode,
+					inspectHTTPResponse(createServiceAccountWithCredentialsResponse),
+				)
+			}
+
+			// 3. Verify the service account for the user
+			listOfAccountsResponse,
+				listOfAccountsError := ReturnsAListOfServiceAccountsForAUser(userName)
+			if listOfAccountsError != nil {
+				log.Println(listOfAccountsError)
+				assert.Fail("Error in listOfAccountsError")
+			}
+			finalResponse := inspectHTTPResponse(listOfAccountsResponse)
+			if listOfAccountsResponse != nil {
+				fmt.Println("StatusCode:", listOfAccountsResponse.StatusCode)
+				assert.Equal(
+					200, listOfAccountsResponse.StatusCode,
+					finalResponse,
+				)
+			}
+			assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
+		})
+	}
 }
 
 func TestUsersGroupsBulk(t *testing.T) {
