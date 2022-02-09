@@ -139,9 +139,19 @@ const MenuItem = ({
 
         {hasChildren ? (
           isActiveGroup ? (
-            <MenuCollapsedIcon height={15} width={15} className="group-icon" />
+            <MenuCollapsedIcon
+              height={15}
+              width={15}
+              className="group-icon"
+              style={{ color: "white" }}
+            />
           ) : (
-            <MenuExpandedIcon height={15} width={15} className="group-icon" />
+            <MenuExpandedIcon
+              height={15}
+              width={15}
+              className="group-icon"
+              style={{ color: "white" }}
+            />
           )
         ) : null}
       </ListItem>

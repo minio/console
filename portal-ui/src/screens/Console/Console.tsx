@@ -150,7 +150,6 @@ interface IConsoleProps {
   open: boolean;
   needsRestart: boolean;
   isServerLoading: boolean;
-  title: string;
   classes: any;
   setMenuOpen: typeof setMenuOpen;
   serverNeedsRestart: typeof serverNeedsRestart;
