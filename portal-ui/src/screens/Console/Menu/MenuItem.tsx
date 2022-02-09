@@ -33,7 +33,7 @@ import List from "@mui/material/List";
 import {
   MenuCollapsedIcon,
   MenuExpandedIcon,
-} from "../../../icons/SidebarMenus/MenuIcons";
+} from "../../../icons/SidebarMenus";
 import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,

@@ -76,7 +76,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "disable":
       return <DisableIcon active={selected} />;
     case "format":
-      return <FormatDriveIcon active={selected} />;
+      return <FormatDriveIcon />;
     case "preview":
       return <PreviewIcon />;
   }
