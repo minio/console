@@ -3063,7 +3063,7 @@ func init() {
       }
     },
     "/service-accounts/delete-multi": {
-      "post": {
+      "delete": {
         "tags": [
           "UserAPI"
         ],
@@ -3083,7 +3083,7 @@ func init() {
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -9206,7 +9206,7 @@ func init() {
       }
     },
     "/service-accounts/delete-multi": {
-      "post": {
+      "delete": {
         "tags": [
           "UserAPI"
         ],
@@ -9226,7 +9226,7 @@ func init() {
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "A successful response."
           },
           "default": {

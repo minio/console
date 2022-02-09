@@ -30,28 +30,28 @@ import (
 	"github.com/minio/console/models"
 )
 
-// DeleteMultipleServiceAccountsOKCode is the HTTP code returned for type DeleteMultipleServiceAccountsOK
-const DeleteMultipleServiceAccountsOKCode int = 200
+// DeleteMultipleServiceAccountsNoContentCode is the HTTP code returned for type DeleteMultipleServiceAccountsNoContent
+const DeleteMultipleServiceAccountsNoContentCode int = 204
 
-/*DeleteMultipleServiceAccountsOK A successful response.
+/*DeleteMultipleServiceAccountsNoContent A successful response.
 
-swagger:response deleteMultipleServiceAccountsOK
+swagger:response deleteMultipleServiceAccountsNoContent
 */
-type DeleteMultipleServiceAccountsOK struct {
+type DeleteMultipleServiceAccountsNoContent struct {
 }
 
-// NewDeleteMultipleServiceAccountsOK creates DeleteMultipleServiceAccountsOK with default headers values
-func NewDeleteMultipleServiceAccountsOK() *DeleteMultipleServiceAccountsOK {
+// NewDeleteMultipleServiceAccountsNoContent creates DeleteMultipleServiceAccountsNoContent with default headers values
+func NewDeleteMultipleServiceAccountsNoContent() *DeleteMultipleServiceAccountsNoContent {
 
-	return &DeleteMultipleServiceAccountsOK{}
+	return &DeleteMultipleServiceAccountsNoContent{}
 }
 
 // WriteResponse to the client
-func (o *DeleteMultipleServiceAccountsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DeleteMultipleServiceAccountsNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
-	rw.WriteHeader(200)
+	rw.WriteHeader(204)
 }
 
 /*DeleteMultipleServiceAccountsDefault Generic error response.

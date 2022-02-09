@@ -113,7 +113,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		if err := getDeleteMultipleServiceAccountsResponse(session, params.SelectedSA); err != nil {
 			return user_api.NewDeleteMultipleServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewDeleteMultipleServiceAccountsOK()
+		return user_api.NewDeleteMultipleServiceAccountsNoContent()
 	})
 }
 
@@ -374,6 +374,11 @@ func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 	serviceAccountInfo, err := userClient.infoServiceAccount(ctx, accessKey)
 	if err != nil {
 		return "", err
+	}
+	var policy iampolicy.Policy
+	json.Unmarshal([]byte(serviceAccountInfo.Policy), &policy)
+	if policy.Statements == nil {
+		return "", nil
 	}
 	return serviceAccountInfo.Policy, nil
 }
