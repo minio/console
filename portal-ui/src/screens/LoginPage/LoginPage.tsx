@@ -129,6 +129,7 @@ const styles = (theme: Theme) =>
         },
         "& .left-logo": {
           "& .min-icon": {
+            color: "white",
             width: 108,
           },
           marginBottom: 10,

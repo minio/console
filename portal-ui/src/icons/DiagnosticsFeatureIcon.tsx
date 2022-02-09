@@ -53,7 +53,6 @@ const DiagnosticsFeatureIcon = (props: SVGProps<SVGSVGElement>) => (
             data-name="Trazado 7261"
             d="M14.9,10.862a.622.622,0,1,1,.889.871l-3.311,4.139a.622.622,0,0,1-.9.017L9.384,13.694a.622.622,0,1,1,.879-.879L12,14.551l2.881-3.67.017-.018Z"
             transform="translate(-9.182 -10.676)"
-            fill="#fff"
           />
         </g>
       </g>

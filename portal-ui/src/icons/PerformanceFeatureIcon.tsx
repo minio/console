@@ -79,7 +79,6 @@ const PerformanceFeatureIcon = (props: SVGProps<SVGSVGElement>) => (
             data-name="Trazado 7261"
             d="M14.938,10.864a.627.627,0,1,1,.895.877L12.5,15.91a.627.627,0,0,1-.9.017l-2.21-2.211a.627.627,0,1,1,.886-.886l1.75,1.748,2.9-3.7.017-.018Z"
             transform="translate(-9.182 -10.676)"
-            fill="#fff"
           />
         </g>
       </g>

@@ -1,5 +1,5 @@
 import React from "react";
-import { HealthMenuIcon } from "../../icons/SidebarMenus/MenuIcons";
+import { HealthMenuIcon } from "../../icons/SidebarMenus";
 import FeatureNotAvailablePage from "./Common/Components/FeatureNotAvailablePage";
 
 const Health = () => {

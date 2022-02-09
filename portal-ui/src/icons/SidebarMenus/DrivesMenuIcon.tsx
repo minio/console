@@ -32,7 +32,6 @@ const DrivesMenuIcon = (props: SVGProps<SVGSVGElement>) => (
           data-name="Rectángulo 989"
           width="12"
           height="12"
-          fill="#fff"
         />
       </clipPath>
     </defs>
@@ -46,21 +45,18 @@ const DrivesMenuIcon = (props: SVGProps<SVGSVGElement>) => (
         data-name="Trazado 7083"
         d="M6,2.839H6c3.882,0,6-.938,6-1.42S9.882,0,6,0,0,.938,0,1.42s2.118,1.42,6,1.42"
         transform="translate(0)"
-        fill="#fff"
       />
       <path
         id="Trazado_7084"
         data-name="Trazado 7084"
         d="M6,135.08a15.409,15.409,0,0,1-6-1v3.228c0,.482,2.118,1.42,6,1.42s6-.93,6-1.42v-3.233a15.245,15.245,0,0,1-6,1m-3.939,2.063a.915.915,0,0,1-1.234-.281.849.849,0,0,1,.291-1.192.915.915,0,0,1,1.234.281.849.849,0,0,1-.291,1.192"
         transform="translate(0 -126.731)"
-        fill="#fff"
       />
       <path
         id="Trazado_7085"
         data-name="Trazado 7085"
         d="M6,53.034a15.306,15.306,0,0,1-6-1V55.1c0,.482,2.118,1.42,6,1.42s6-.938,6-1.42V52.032a15.244,15.244,0,0,1-6,1M2.061,55.19a.915.915,0,0,1-1.234-.281.849.849,0,0,1,.291-1.192A.915.915,0,0,1,2.353,54a.849.849,0,0,1-.291,1.192"
         transform="translate(0 -49.181)"
-        fill="#fff"
       />
     </g>
   </svg>

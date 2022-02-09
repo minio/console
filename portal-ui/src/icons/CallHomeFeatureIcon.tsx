@@ -32,7 +32,6 @@ const CallHomeFeatureIcon = (props: SVGProps<SVGSVGElement>) => (
           data-name="Rectángulo 1614"
           width="6.172"
           height="6.309"
-          fill="#fff"
           stroke="rgba(0,0,0,0)"
           strokeWidth="1"
         />
@@ -66,7 +65,6 @@ const CallHomeFeatureIcon = (props: SVGProps<SVGSVGElement>) => (
             data-name="Trazado 7262"
             d="M4.6,38.068a.164.164,0,0,0-.231,0l-.377.377a.149.149,0,0,1-.21,0L2.254,36.918a.149.149,0,0,1,0-.21l.377-.377a.164.164,0,0,0,0-.231L1.4,34.871a.164.164,0,0,0-.231,0l-.763.763a1.4,1.4,0,0,0,0,1.982l2.669,2.672a1.4,1.4,0,0,0,1.982,0l.763-.763a.164.164,0,0,0,0-.231Z"
             transform="translate(0 -34.389)"
-            fill="#fff"
             stroke="rgba(0,0,0,0)"
             strokeWidth="1"
           />
@@ -90,7 +88,6 @@ const CallHomeFeatureIcon = (props: SVGProps<SVGSVGElement>) => (
             data-name="Trazado 7261"
             d="M14.9,10.862a.622.622,0,1,1,.889.871l-3.311,4.139a.622.622,0,0,1-.9.017L9.384,13.694a.622.622,0,1,1,.879-.879L12,14.551l2.881-3.67.017-.018Z"
             transform="translate(-9.182 -10.676)"
-            fill="#fff"
           />
         </g>
       </g>
