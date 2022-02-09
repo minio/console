@@ -51,8 +51,9 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import SecureComponent from "../../../common/SecureComponent/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import { selectSAs } from "../../Console/Configurations/utils";
+import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
+import ServiceAccountPolicy from "./ServiceAccountPolicy";
 
 const AddServiceAccount = withSuspense(
   React.lazy(() => import("./AddServiceAccount"))
@@ -98,6 +99,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     useState<boolean>(false);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
+  const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -157,6 +159,11 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     }
   };
 
+  const policyModalOpen = (selectedServiceAccount: string) => {
+    setSelectedServiceAccount(selectedServiceAccount);
+    setPolicyOpen(true);
+  };
+
   const selectAllItems = () => {
     if (selectedSAs.length === records.length) {
       setSelectedSAs([]);
@@ -170,12 +177,17 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     setNewServiceAccount(null);
   };
 
+  const closePolicyModal = () => {
+    setPolicyOpen(false);
+  };
+
   const confirmDeleteServiceAccount = (selectedServiceAccount: string) => {
     setSelectedServiceAccount(selectedServiceAccount);
     setDeleteOpen(true);
   };
 
   const tableActions = [
+    { type: "view", onClick: policyModalOpen },
     { type: "delete", onClick: confirmDeleteServiceAccount },
   ];
 
@@ -217,6 +229,13 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
             closeCredentialsModal();
           }}
           entity="Service Account"
+        />
+      )}
+      {policyOpen && (
+        <ServiceAccountPolicy
+          open={policyOpen}
+          selectedAccessKey={selectedServiceAccount}
+          closeModalAndRefresh={closePolicyModal}
         />
       )}
       <ChangePasswordModal
