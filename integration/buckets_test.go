@@ -543,6 +543,25 @@ func ListObjects(bucketName string, prefix string) (*http.Response, error) {
 	return response, err
 }
 
+func SharesAnObjectOnAUrl(bucketName string, prefix string, versionID string, expires string) (*http.Response, error) {
+	// Helper function to share an object on a url
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/share?prefix="+prefix+"&version_id="+versionID+"&expires="+expires,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
@@ -1531,4 +1550,90 @@ func TestListObjects(t *testing.T) {
 	assert.True(
 		strings.Contains(finalResponse, "testlistobjecttobucket1"),
 		finalResponse)
+}
+
+func TestShareObjectOnURL(t *testing.T) {
+	/*
+		Test to share an object via URL
+	*/
+
+	// Vars
+	assert := assert.New(t)
+	bucketName := "testshareobjectonurl"
+	fileName := "testshareobjectonurl.txt"
+	validPrefix := encodeBase64(fileName)
+	tags := make(map[string]string)
+	tags["tag"] = "testputobjecttagbucketonetagone"
+	versionID := "null"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			inspectHTTPResponse(uploadResponse),
+		)
+	}
+
+	type args struct {
+		prefix string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Share File with valid prefix",
+			expectedStatus: 200,
+			args: args{
+				prefix: validPrefix,
+			},
+		},
+		{
+			name:           "Share file with invalid prefix",
+			expectedStatus: 500,
+			args: args{
+				prefix: "invalidprefix",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// 3. Share the object on a URL
+			shareResponse, shareError := SharesAnObjectOnAUrl(bucketName, tt.args.prefix, versionID, "604800s")
+			assert.Nil(shareError)
+			if shareError != nil {
+				log.Println(shareError)
+				return
+			}
+			finalResponse := inspectHTTPResponse(shareResponse)
+			if shareResponse != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					shareResponse.StatusCode,
+					finalResponse,
+				)
+			}
+
+		})
+	}
 }
