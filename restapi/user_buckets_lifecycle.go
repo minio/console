@@ -53,6 +53,14 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewAddBucketLifecycleCreated()
 	})
+	api.UserAPIUpdateBucketLifecycleHandler = user_api.UpdateBucketLifecycleHandlerFunc(func(params user_api.UpdateBucketLifecycleParams, session *models.Principal) middleware.Responder {
+		err := getEditBucketLifecycleRule(session, params)
+		if err != nil {
+			user_api.NewUpdateBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+		}
+
+		return user_api.NewUpdateBucketLifecycleOK()
+	})
 }
 
 // getBucketLifecycle() gets lifecycle lists for a bucket from MinIO API and returns their implementations
@@ -224,7 +232,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params user_api
 	return client.setBucketLifecycle(ctx, params.BucketName, lfcCfg)
 }
 
-// getAddBucketLifecycleResponse returns the respose of adding a bucket lifecycle response
+// getAddBucketLifecycleResponse returns the response of adding a bucket lifecycle response
 func getAddBucketLifecycleResponse(session *models.Principal, params user_api.AddBucketLifecycleParams) *models.Error {
 	ctx := context.Background()
 	mClient, err := newMinioClient(session)
@@ -236,6 +244,94 @@ func getAddBucketLifecycleResponse(session *models.Principal, params user_api.Ad
 	minioClient := minioClient{client: mClient}
 
 	err = addBucketLifecycle(ctx, minioClient, params)
+	if err != nil {
+		return prepareError(err)
+	}
+
+	return nil
+}
+
+// addBucketLifecycle gets lifecycle lists for a bucket from MinIO API and returns their implementations
+func editBucketLifecycle(ctx context.Context, client MinioClient, params user_api.UpdateBucketLifecycleParams) error {
+	// Configuration that is already set.
+	lfcCfg, err := client.getLifecycleRules(ctx, params.BucketName)
+	if err != nil {
+		if e := err; minio.ToErrorResponse(e).Code == "NoSuchLifecycleConfiguration" {
+			lfcCfg = lifecycle.NewConfiguration()
+		} else {
+			return err
+		}
+	}
+
+	id := params.LifecycleID
+
+	opts := ilm.LifecycleOptions{}
+
+	// Verify if transition items are set
+	if params.Body.ExpiryDays == 0 && params.Body.TransitionDays != 0 {
+
+		if params.Body.NoncurrentversionExpirationDays != 0 {
+			return errors.New("non current version expiration days cannot be set when transition is being configured")
+		}
+
+		opts = ilm.LifecycleOptions{
+			ID:                                      id,
+			Prefix:                                  params.Body.Prefix,
+			Status:                                  !params.Body.Disable,
+			IsTagsSet:                               params.Body.Tags != "",
+			Tags:                                    params.Body.Tags,
+			TransitionDays:                          strconv.Itoa(int(params.Body.TransitionDays)),
+			StorageClass:                            strings.ToUpper(params.Body.StorageClass),
+			ExpiredObjectDeleteMarker:               params.Body.ExpiredObjectDeleteMarker,
+			NoncurrentVersionTransitionDays:         int(params.Body.NoncurrentversionTransitionDays),
+			NoncurrentVersionTransitionStorageClass: strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass),
+		}
+	} else if params.Body.TransitionDays == 0 && params.Body.ExpiryDays != 0 { // Verify if expiry configuration is set
+		if params.Body.NoncurrentversionTransitionDays != 0 {
+			return errors.New("non current version Transition Days cannot be set when expiry is being configured")
+		}
+
+		if params.Body.NoncurrentversionTransitionStorageClass != "" {
+			return errors.New("non current version Transition Storage Class cannot be set when expiry is being configured")
+		}
+
+		opts = ilm.LifecycleOptions{
+			ID:                              id,
+			Prefix:                          params.Body.Prefix,
+			Status:                          !params.Body.Disable,
+			IsTagsSet:                       params.Body.Tags != "",
+			Tags:                            params.Body.Tags,
+			ExpiryDays:                      strconv.Itoa(int(params.Body.ExpiryDays)),
+			ExpiredObjectDeleteMarker:       params.Body.ExpiredObjectDeleteMarker,
+			NoncurrentVersionExpirationDays: int(params.Body.NoncurrentversionExpirationDays),
+		}
+
+	} else {
+		// Non set, we return error
+		return errors.New("transition and expiry cannot be set for the same rule")
+	}
+
+	var err2 *probe.Error
+	lfcCfg, err2 = opts.ToConfig(lfcCfg)
+	if err2.ToGoError() != nil {
+		return err2.ToGoError()
+	}
+
+	return client.setBucketLifecycle(ctx, params.BucketName, lfcCfg)
+}
+
+// getEditBucketLifecycleRule returns the response of bucket lyfecycle tier edit
+func getEditBucketLifecycleRule(session *models.Principal, params user_api.UpdateBucketLifecycleParams) *models.Error {
+	ctx := context.Background()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	err = editBucketLifecycle(ctx, minioClient, params)
 	if err != nil {
 		return prepareError(err)
 	}
