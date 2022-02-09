@@ -34,11 +34,35 @@ import (
 // swagger:model updateBucketLifecycle
 type UpdateBucketLifecycle struct {
 
-	// disable
+	// Non required, toggle to disable or enable rule
 	Disable bool `json:"disable,omitempty"`
 
-	// tags
+	// Non required, toggle to disable or enable rule
+	ExpiredObjectDeleteMarker bool `json:"expired_object_delete_marker,omitempty"`
+
+	// Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM
+	ExpiryDays int32 `json:"expiry_days,omitempty"`
+
+	// Non required, can be set in case of expiration is enabled
+	NoncurrentversionExpirationDays int32 `json:"noncurrentversion_expiration_days,omitempty"`
+
+	// Non required, can be set in case of transition is enabled
+	NoncurrentversionTransitionDays int32 `json:"noncurrentversion_transition_days,omitempty"`
+
+	// Non required, can be set in case of transition is enabled
+	NoncurrentversionTransitionStorageClass string `json:"noncurrentversion_transition_storage_class,omitempty"`
+
+	// Non required field, it matches a prefix to perform ILM operations on it
+	Prefix string `json:"prefix,omitempty"`
+
+	// Required only in case of transition is set. it refers to a tier
+	StorageClass string `json:"storage_class,omitempty"`
+
+	// Non required field, tags to match ILM files
 	Tags string `json:"tags,omitempty"`
+
+	// Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM
+	TransitionDays int32 `json:"transition_days,omitempty"`
 }
 
 // Validate validates this update bucket lifecycle
