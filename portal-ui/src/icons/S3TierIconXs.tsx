@@ -37,7 +37,6 @@ const S3TierIcon = (props: SVGProps<SVGSVGElement>) => {
         data-name="Trazado 6935"
         d="M28.526,66.1l-7.9,1.861V53.686l7.9,1.821V66.1"
         transform="translate(-19.147 -49.842)"
-        fill="#8399ab"
       />
       <path
         id="Trazado_6936"
@@ -58,7 +57,6 @@ const S3TierIcon = (props: SVGProps<SVGSVGElement>) => {
         data-name="Trazado 6938"
         d="M131.349,120.939l-3.353.427v-5.588l3.353.421v4.74"
         transform="translate(-118.91 -107.566)"
-        fill="#8399ab"
       />
       <path
         id="Trazado_6939"
@@ -86,7 +84,6 @@ const S3TierIcon = (props: SVGProps<SVGSVGElement>) => {
         data-name="Trazado 6942"
         d="M131.349,6.417,128,5.587V0l3.353,1.676V6.417"
         transform="translate(-118.91)"
-        fill="#8399ab"
       />
       <path
         id="Trazado_6943"
@@ -100,14 +97,12 @@ const S3TierIcon = (props: SVGProps<SVGSVGElement>) => {
         data-name="Trazado 6944"
         d="M128,226.222l3.352-1.676v-4.741l-3.352.829v5.587"
         transform="translate(-118.91 -204.222)"
-        fill="#8399ab"
       />
       <path
         id="Trazado_6945"
         data-name="Trazado 6945"
         d="M235.367,53.686l1.477.731V67.239l-1.477.73V53.686"
         transform="translate(-218.643 -49.842)"
-        fill="#8399ab"
       />
     </svg>
   );

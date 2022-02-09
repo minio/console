@@ -33,7 +33,7 @@ import List from "@mui/material/List";
 import {
   MenuCollapsedIcon,
   MenuExpandedIcon,
-} from "../../../icons/SidebarMenus/MenuIcons";
+} from "../../../icons/SidebarMenus";
 import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -139,9 +139,19 @@ const MenuItem = ({
 
         {hasChildren ? (
           isActiveGroup ? (
-            <MenuCollapsedIcon height={15} width={15} className="group-icon" />
+            <MenuCollapsedIcon
+              height={15}
+              width={15}
+              className="group-icon"
+              style={{ color: "white" }}
+            />
           ) : (
-            <MenuExpandedIcon height={15} width={15} className="group-icon" />
+            <MenuExpandedIcon
+              height={15}
+              width={15}
+              className="group-icon"
+              style={{ color: "white" }}
+            />
           )
         ) : null}
       </ListItem>

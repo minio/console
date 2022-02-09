@@ -5956,10 +5956,52 @@ func init() {
       "type": "object",
       "properties": {
         "disable": {
+          "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
-        "tags": {
+        "expired_object_delete_marker": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
+        "expiry_days": {
+          "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_expiration_days": {
+          "description": "Non required, can be set in case of expiration is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_days": {
+          "description": "Non required, can be set in case of transition is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_storage_class": {
+          "description": "Non required, can be set in case of transition is enabled",
           "type": "string"
+        },
+        "prefix": {
+          "description": "Non required field, it matches a prefix to perform ILM operations on it",
+          "type": "string"
+        },
+        "storage_class": {
+          "description": "Required only in case of transition is set. it refers to a tier",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Non required field, tags to match ILM files",
+          "type": "string"
+        },
+        "transition_days": {
+          "description": "Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
         }
       }
     },
@@ -12183,10 +12225,52 @@ func init() {
       "type": "object",
       "properties": {
         "disable": {
+          "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
-        "tags": {
+        "expired_object_delete_marker": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
+        "expiry_days": {
+          "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_expiration_days": {
+          "description": "Non required, can be set in case of expiration is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_days": {
+          "description": "Non required, can be set in case of transition is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_storage_class": {
+          "description": "Non required, can be set in case of transition is enabled",
           "type": "string"
+        },
+        "prefix": {
+          "description": "Non required field, it matches a prefix to perform ILM operations on it",
+          "type": "string"
+        },
+        "storage_class": {
+          "description": "Required only in case of transition is set. it refers to a tier",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Non required field, tags to match ILM files",
+          "type": "string"
+        },
+        "transition_days": {
+          "description": "Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
         }
       }
     },

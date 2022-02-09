@@ -37,7 +37,6 @@ const GoogleTierIconXs = (props: SVGProps<SVGSVGElement>) => {
               data-name="Trazado 6946"
               d="M67.542,36.137h.667l1.9-1.9.093-.808A8.55,8.55,0,0,0,56.3,37.6a1.03,1.03,0,0,1,.667-.039l3.8-.628s.193-.321.294-.3a4.745,4.745,0,0,1,6.494-.494Z"
               transform="translate(-53.656 -31.287)"
-              fill="#8399ab"
             />
             <path
               id="Trazado_6947"
