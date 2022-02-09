@@ -17,11 +17,10 @@
 import React, { Suspense } from "react";
 import { Route, Router, Switch } from "react-router-dom";
 import history from "./history";
-
-import Console from "./screens/Console/Console";
 import { hot } from "react-hot-loader/root";
 import ProtectedRoute from "./ProtectedRoutes";
 import LoadingComponent from "./common/LoadingComponent";
+import AppConsole from "./screens/Console/ConsoleKBar";
 
 const Login = React.lazy(() => import("./screens/LoginPage/LoginPage"));
 const LoginCallback = React.lazy(
@@ -50,7 +49,7 @@ const Routes = () => {
             </Suspense>
           )}
         />
-        <ProtectedRoute Component={Console} />
+        <ProtectedRoute Component={AppConsole} />
       </Switch>
     </Router>
   );
