@@ -24,6 +24,7 @@ const LoginMinIOLogo = (props: SVGProps<SVGSVGElement>) => (
     height="49.568"
     viewBox="0 0 284.616 49.568"
     className={"min-icon"}
+    fill={"currentcolor"}
     {...props}
   >
     <g transform="translate(0.5 0.5)">

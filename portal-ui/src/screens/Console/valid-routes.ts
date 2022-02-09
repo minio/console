@@ -39,7 +39,7 @@ import {
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
-} from "../../icons/SidebarMenus/MenuIcons";
+} from "../../icons/SidebarMenus";
 import { hasPermission } from "../../common/SecureComponent/SecureComponent";
 import WatchIcon from "../../icons/WatchIcon";
 import RegisterMenuIcon from "../../icons/SidebarMenus/RegisterMenuIcon";

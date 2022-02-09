@@ -22,7 +22,7 @@ import ToolsList from "./ToolsPanel/ToolsList";
 import Register from "../Support/Register";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
-import { SupportMenuIcon } from "../../../icons/SidebarMenus/MenuIcons";
+import { SupportMenuIcon } from "../../../icons/SidebarMenus";
 
 const Tools = () => {
   return (
