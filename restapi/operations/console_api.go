@@ -24,6 +24,7 @@ package operations
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -62,6 +63,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 
+		ApplicationZipProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("applicationZip producer has not yet been implemented")
+		}),
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
@@ -448,6 +452,9 @@ type ConsoleAPI struct {
 	//   - multipart/form-data
 	MultipartformConsumer runtime.Consumer
 
+	// ApplicationZipProducer registers a producer for the following mime types:
+	//   - application/zip
+	ApplicationZipProducer runtime.Producer
 	// BinProducer registers a producer for the following mime types:
 	//   - application/octet-stream
 	BinProducer runtime.Producer
@@ -766,6 +773,9 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "MultipartformConsumer")
 	}
 
+	if o.ApplicationZipProducer == nil {
+		unregistered = append(unregistered, "ApplicationZipProducer")
+	}
 	if o.BinProducer == nil {
 		unregistered = append(unregistered, "BinProducer")
 	}
@@ -1177,6 +1187,8 @@ func (o *ConsoleAPI) ProducersFor(mediaTypes []string) map[string]runtime.Produc
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "application/zip":
+			result["application/zip"] = o.ApplicationZipProducer
 		case "application/octet-stream":
 			result["application/octet-stream"] = o.BinProducer
 		case "application/json":

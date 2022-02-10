@@ -37,6 +37,7 @@ import {
   MetricsMenuIcon,
   MonitoringMenuIcon,
   PerformanceMenuIcon,
+  ProfileMenuIcon,
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
@@ -186,6 +187,13 @@ export const validRoutes = (
           icon: PerformanceMenuIcon,
           to: IAM_PAGES.TOOLS_SPEEDTEST,
         },
+        {
+          name: "Profile",
+          id: "profile",
+          component: NavLink,
+          icon: ProfileMenuIcon,
+          to: IAM_PAGES.PROFILE,
+        },
 
         // {
         //   name: "Call Home",
@@ -201,13 +209,6 @@ export const validRoutes = (
           icon: InspectMenuIcon,
           component: NavLink,
         },
-        // {
-        //   name: "Profile",
-        //   id: "profile",
-        //   component: NavLink,
-        //   icon: ProfileMenuIcon,
-        //   to: IAM_PAGES.PROFILE,
-        // },
       ],
     },
     {
@@ -315,9 +316,9 @@ export const validRoutes = (
             ((childItem.customPermissionFnc
               ? childItem.customPermissionFnc()
               : hasPermission(
-                  CONSOLE_UI_RESOURCE,
-                  IAM_PAGES_PERMISSIONS[childItem.to ?? ""]
-                )) ||
+                CONSOLE_UI_RESOURCE,
+                IAM_PAGES_PERMISSIONS[childItem.to ?? ""]
+              )) ||
               childItem.forceDisplay) &&
             !childItem.fsHidden
           );
@@ -329,9 +330,9 @@ export const validRoutes = (
         ((item.customPermissionFnc
           ? item.customPermissionFnc()
           : hasPermission(
-              CONSOLE_UI_RESOURCE,
-              IAM_PAGES_PERMISSIONS[item.to ?? ""]
-            )) ||
+            CONSOLE_UI_RESOURCE,
+            IAM_PAGES_PERMISSIONS[item.to ?? ""]
+          )) ||
           item.forceDisplay) &&
         !item.fsHidden;
       return res;
