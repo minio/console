@@ -50,21 +50,23 @@ func TestAddServiceAccount(t *testing.T) {
 	requestDataAddServiceAccount := map[string]interface{}{
 		"accessKey": "testuser1",
 		"secretKey": "password",
-		"policy": "{" +
-			"\n    \"Version\": \"2012-10-17\"," +
-			"\n    \"Statement\": [" +
-			"\n        {" +
-			"\n            \"Effect\": \"Allow\"," +
-			"\n            \"Action\": [" +
-			"\n                \"s3:GetBucketLocation\"," +
-			"\n                \"s3:GetObject\"" +
-			"\n            ]," +
-			"\n            \"Resource\": [" +
-			"\n                \"arn:aws:s3:::*\"" +
-			"\n            ]" +
-			"\n        }" +
-			"\n    ]" +
-			"\n}",
+		"policy": `
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}
+`,
 	}
 
 	fmt.Println("..............................TestServiceAccountPolicy(): Prepare the POST")
