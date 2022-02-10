@@ -176,7 +176,6 @@ const ListBuckets = ({
 
   const renderItemLine = (index: number) => {
     const bucket = filteredRecords[index] || null;
-
     if (bucket) {
       return (
         <BucketListItem
@@ -188,9 +187,11 @@ const ListBuckets = ({
         />
       );
     }
-
     return null;
   };
+
+  const createBucketButtonResources: string[] =
+    Array.from(Object.keys(session.permissions)) || [];
 
   return (
     <Fragment>
@@ -263,7 +264,7 @@ const ListBuckets = ({
 
             <SecureComponent
               scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
-              resource={CONSOLE_UI_RESOURCE}
+              resource={createBucketButtonResources}
               errorProps={{ disabled: true }}
             >
               <RBIconButton

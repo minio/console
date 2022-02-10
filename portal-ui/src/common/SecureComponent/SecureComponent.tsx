@@ -19,7 +19,7 @@ import { store } from "../../store";
 import { hasAccessToResource } from "./permissions";
 
 export const hasPermission = (
-  resource: string | undefined,
+  resource: string | string[] | undefined,
   scopes: string[],
   matchAll?: boolean,
   containsResource?: boolean
@@ -29,17 +29,31 @@ export const hasPermission = (
   }
   const state = store.getState();
   const sessionGrants = state.console.session.permissions || {};
-  const resourceGrants =
-    sessionGrants[resource] ||
-    sessionGrants[`arn:aws:s3:::${resource}/*`] ||
-    [];
+
   const globalGrants = sessionGrants["arn:aws:s3:::*"] || [];
+  let resources: string[] = [];
+  let resourceGrants: string[] = [];
   let containsResourceGrants: string[] = [];
-  if (containsResource) {
-    const matchResource = `arn:aws:s3:::${resource}`;
-    for (const [key, value] of Object.entries(sessionGrants)) {
-      if (key.includes(matchResource)) {
-        containsResourceGrants = containsResourceGrants.concat(value);
+
+  if (Array.isArray(resource)) {
+    resources = resources.concat(resource);
+  } else {
+    resources.push(resource);
+  }
+  for (let i = 0; i < resources.length; i++) {
+    if (resources[i]) {
+      resourceGrants = resourceGrants.concat(
+        sessionGrants[resources[i]] ||
+          sessionGrants[`arn:aws:s3:::${resources[i]}/*`] ||
+          []
+      );
+      if (containsResource) {
+        const matchResource = `arn:aws:s3:::${resources[i]}`;
+        for (const [key, value] of Object.entries(sessionGrants)) {
+          if (key.includes(matchResource)) {
+            containsResourceGrants = containsResourceGrants.concat(value);
+          }
+        }
       }
     }
   }
@@ -56,7 +70,7 @@ interface ISecureComponentProps {
   matchAll?: boolean;
   children: any;
   scopes: string[];
-  resource: string;
+  resource: string | string[];
   containsResource?: boolean;
 }
 

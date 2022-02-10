@@ -218,6 +218,14 @@ const Console = ({
     {
       component: Buckets,
       path: IAM_PAGES.ADD_BUCKETS,
+      customPermissionFnc: () => {
+        const createBucketResources: string[] =
+          Array.from(Object.keys(session.permissions)) || [];
+        return hasPermission(
+          createBucketResources,
+          IAM_PAGES_PERMISSIONS[IAM_PAGES.ADD_BUCKETS]
+        );
+      },
     },
     {
       component: Buckets,
