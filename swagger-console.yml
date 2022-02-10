@@ -3817,6 +3817,9 @@ definitions:
         format: int64
       delete_marker:
         type: boolean
+      noncurrent_expiration_days:
+        type: integer
+        format: int64
 
   transitionResponse:
     type: object
@@ -3828,6 +3831,11 @@ definitions:
       days:
         type: integer
         format: int64
+      noncurrent_transition_days:
+        type: integer
+        format: int64
+      noncurrent_storage_class:
+        type: string
 
   lifecycleTag:
     type: object
@@ -3905,7 +3913,15 @@ definitions:
 
   updateBucketLifecycle:
     type: object
+    required:
+      - type
     properties:
+      type:
+        description: ILM Rule type (Expiry or transition)
+        type: string
+        enum:
+          - expiry
+          - transition
       prefix:
         description: Non required field, it matches a prefix to perform ILM operations on it
         type: string

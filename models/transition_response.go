@@ -40,6 +40,12 @@ type TransitionResponse struct {
 	// days
 	Days int64 `json:"days,omitempty"`
 
+	// noncurrent storage class
+	NoncurrentStorageClass string `json:"noncurrent_storage_class,omitempty"`
+
+	// noncurrent transition days
+	NoncurrentTransitionDays int64 `json:"noncurrent_transition_days,omitempty"`
+
 	// storage class
 	StorageClass string `json:"storage_class,omitempty"`
 }

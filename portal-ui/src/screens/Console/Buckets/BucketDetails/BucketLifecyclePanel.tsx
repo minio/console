@@ -71,6 +71,8 @@ const BucketLifecyclePanel = ({
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
+  const [selectedLifecycleRule, setSelectedLifecycleRule] =
+    useState<LifeCycleItem | null>(null);
 
   const bucketName = match.params["bucketName"];
 
@@ -112,6 +114,7 @@ const BucketLifecyclePanel = ({
 
   const closeEditLCAndRefresh = (refresh: boolean) => {
     setEditLifecycleOpen(false);
+    setSelectedLifecycleRule(null);
     if (refresh) {
       setLoadingLifecycle(true);
     }
@@ -182,16 +185,25 @@ const BucketLifecyclePanel = ({
     },
   ];
 
+  const lifecycleActions = [
+    {
+      type: "view",
+
+      onClick(valueToSend: any): any {
+        setSelectedLifecycleRule(valueToSend);
+        setEditLifecycleOpen(true);
+      },
+    },
+  ];
+
   return (
     <Fragment>
-      {editLifecycleOpen && (
+      {editLifecycleOpen && selectedLifecycleRule && (
         <EditLifecycleConfiguration
           open={editLifecycleOpen}
           closeModalAndRefresh={closeEditLCAndRefresh}
           selectedBucket={bucketName}
-          lifecycle={{
-            id: "",
-          }}
+          lifecycle={selectedLifecycleRule}
         />
       )}
       {addLifecycleOpen && (
@@ -232,7 +244,7 @@ const BucketLifecyclePanel = ({
             errorProps={{ disabled: true }}
           >
             <TableWrapper
-              itemActions={[]}
+              itemActions={lifecycleActions}
               columns={lifecycleColumns}
               isLoading={loadingLifecycle}
               records={lifecycleRecords}

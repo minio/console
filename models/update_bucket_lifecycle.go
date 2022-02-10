@@ -24,9 +24,12 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // UpdateBucketLifecycle update bucket lifecycle
@@ -63,10 +66,67 @@ type UpdateBucketLifecycle struct {
 
 	// Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM
 	TransitionDays int32 `json:"transition_days,omitempty"`
+
+	// ILM Rule type (Expiry or transition)
+	// Required: true
+	// Enum: [expiry transition]
+	Type *string `json:"type"`
 }
 
 // Validate validates this update bucket lifecycle
 func (m *UpdateBucketLifecycle) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var updateBucketLifecycleTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["expiry","transition"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		updateBucketLifecycleTypeTypePropEnum = append(updateBucketLifecycleTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// UpdateBucketLifecycleTypeExpiry captures enum value "expiry"
+	UpdateBucketLifecycleTypeExpiry string = "expiry"
+
+	// UpdateBucketLifecycleTypeTransition captures enum value "transition"
+	UpdateBucketLifecycleTypeTransition string = "transition"
+)
+
+// prop value enum
+func (m *UpdateBucketLifecycle) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, updateBucketLifecycleTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *UpdateBucketLifecycle) validateType(formats strfmt.Registry) error {
+
+	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
+		return err
+	}
+
 	return nil
 }
 

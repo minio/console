@@ -56,7 +56,7 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 	api.UserAPIUpdateBucketLifecycleHandler = user_api.UpdateBucketLifecycleHandlerFunc(func(params user_api.UpdateBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		err := getEditBucketLifecycleRule(session, params)
 		if err != nil {
-			user_api.NewUpdateBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+			return user_api.NewUpdateBucketLifecycleDefault(int(err.Code)).WithPayload(err)
 		}
 
 		return user_api.NewUpdateBucketLifecycleOK()
@@ -83,13 +83,30 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 			})
 		}
 
+		rulePrefix := rule.RuleFilter.And.Prefix
+
+		if rulePrefix == "" {
+			rulePrefix = rule.RuleFilter.Prefix
+		}
+
 		rules = append(rules, &models.ObjectBucketLifecycle{
-			ID:         rule.ID,
-			Status:     rule.Status,
-			Prefix:     rule.RuleFilter.And.Prefix,
-			Expiration: &models.ExpirationResponse{Date: rule.Expiration.Date.Format(time.RFC3339), Days: int64(rule.Expiration.Days), DeleteMarker: rule.Expiration.DeleteMarker.IsEnabled()},
-			Transition: &models.TransitionResponse{Date: rule.Transition.Date.Format(time.RFC3339), Days: int64(rule.Transition.Days), StorageClass: rule.Transition.StorageClass},
-			Tags:       tags,
+			ID:     rule.ID,
+			Status: rule.Status,
+			Prefix: rulePrefix,
+			Expiration: &models.ExpirationResponse{
+				Date:                     rule.Expiration.Date.Format(time.RFC3339),
+				Days:                     int64(rule.Expiration.Days),
+				DeleteMarker:             rule.Expiration.DeleteMarker.IsEnabled(),
+				NoncurrentExpirationDays: int64(rule.NoncurrentVersionExpiration.NoncurrentDays),
+			},
+			Transition: &models.TransitionResponse{
+				Date:                     rule.Transition.Date.Format(time.RFC3339),
+				Days:                     int64(rule.Transition.Days),
+				StorageClass:             rule.Transition.StorageClass,
+				NoncurrentStorageClass:   rule.NoncurrentVersionTransition.StorageClass,
+				NoncurrentTransitionDays: int64(rule.NoncurrentVersionTransition.NoncurrentDays),
+			},
+			Tags: tags,
 		})
 	}
 
@@ -251,7 +268,7 @@ func getAddBucketLifecycleResponse(session *models.Principal, params user_api.Ad
 	return nil
 }
 
-// addBucketLifecycle gets lifecycle lists for a bucket from MinIO API and returns their implementations
+// editBucketLifecycle gets lifecycle lists for a bucket from MinIO API and updates the selected lifecycle rule
 func editBucketLifecycle(ctx context.Context, client MinioClient, params user_api.UpdateBucketLifecycleParams) error {
 	// Configuration that is already set.
 	lfcCfg, err := client.getLifecycleRules(ctx, params.BucketName)
@@ -268,10 +285,9 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params user_ap
 	opts := ilm.LifecycleOptions{}
 
 	// Verify if transition items are set
-	if params.Body.ExpiryDays == 0 && params.Body.TransitionDays != 0 {
-
-		if params.Body.NoncurrentversionExpirationDays != 0 {
-			return errors.New("non current version expiration days cannot be set when transition is being configured")
+	if *params.Body.Type == models.UpdateBucketLifecycleTypeTransition {
+		if params.Body.TransitionDays == 0 && params.Body.NoncurrentversionTransitionDays == 0 {
+			return errors.New("you must select transition days or non-current transition days configuration")
 		}
 
 		opts = ilm.LifecycleOptions{
@@ -285,8 +301,10 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params user_ap
 			ExpiredObjectDeleteMarker:               params.Body.ExpiredObjectDeleteMarker,
 			NoncurrentVersionTransitionDays:         int(params.Body.NoncurrentversionTransitionDays),
 			NoncurrentVersionTransitionStorageClass: strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass),
+			IsTransitionDaysSet:                     params.Body.TransitionDays != 0,
+			IsNoncurrentVersionTransitionDaysSet:    params.Body.NoncurrentversionTransitionDays != 0,
 		}
-	} else if params.Body.TransitionDays == 0 && params.Body.ExpiryDays != 0 { // Verify if expiry configuration is set
+	} else if *params.Body.Type == models.UpdateBucketLifecycleTypeExpiry { // Verify if expiry configuration is set
 		if params.Body.NoncurrentversionTransitionDays != 0 {
 			return errors.New("non current version Transition Days cannot be set when expiry is being configured")
 		}
