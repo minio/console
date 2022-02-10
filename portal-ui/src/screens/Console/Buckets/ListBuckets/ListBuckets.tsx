@@ -190,8 +190,9 @@ const ListBuckets = ({
     return null;
   };
 
-  const createBucketButtonResources: string[] =
-    Array.from(Object.keys(session.permissions)) || [];
+  const createBucketButtonResources: string[] = session
+    ? Array.from(Object.keys(session.permissions)) || []
+    : [];
 
   return (
     <Fragment>
