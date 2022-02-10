@@ -23,6 +23,10 @@ import { logoutItem } from "./elements-menu";
 import * as Minio from "minio";
 
 export const setUpBucket = (t, modifier) => {
+  return setUpNamedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
+};
+
+export const setUpNamedBucket = (t, name) => {
   const minioClient = new Minio.Client({
     endPoint: "localhost",
     port: 9000,
@@ -33,21 +37,25 @@ export const setUpBucket = (t, modifier) => {
 
   return new Promise((resolve, reject) => {
     minioClient
-      .makeBucket(`${constants.TEST_BUCKET_NAME}-${modifier}`, "us-east-1")
+      .makeBucket(name, "us-east-1")
       .then(resolve)
       .catch(resolve);
   });
 };
 
-export const manageButtonFor = (modifier) => {
+export const namedManageButtonFor = (name) => {
   return Selector("h1")
-    .withText(`${constants.TEST_BUCKET_NAME}-${modifier}`)
+    .withText(name)
     .parent(4)
     .find("button:enabled")
     .withText("Manage");
+}
+
+export const manageButtonFor = (modifier) => {
+  return namedManageButtonFor(`${constants.TEST_BUCKET_NAME}-${modifier}`);
 };
 
-export const cleanUpBucket = (t, modifier) => {
+export const cleanUpNamedBucket = (t, name) => {
   const minioClient = new Minio.Client({
     endPoint: "localhost",
     port: 9000,
@@ -56,24 +64,30 @@ export const cleanUpBucket = (t, modifier) => {
     secretKey: "minioadmin",
   });
 
-  return minioClient.removeBucket(`${constants.TEST_BUCKET_NAME}-${modifier}`);
+  return minioClient.removeBucket(name);
 };
 
-export const testBucketBrowseButtonFor = (modifier) => {
+export const cleanUpBucket = (t, modifier) => {
+  return cleanUpNamedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
+};
+
+export const namedTestBucketBrowseButtonFor = (name) => {
   return Selector("h1")
-    .withText(`${constants.TEST_BUCKET_NAME}-${modifier}`)
+    .withText(name)
     .parent(4)
     .find("button:enabled")
     .withText("Browse");
+};
+
+export const testBucketBrowseButtonFor = (modifier) => {
+  return namedTestBucketBrowseButtonFor(`${constants.TEST_BUCKET_NAME}-${modifier}`);
 };
 
 export const uploadFilesButton = () => {
   return Selector("button").withText("Upload Files");
 };
 
-export const cleanUpBucketAndUploads = (t, modifier) => {
-  const bucket = `${constants.TEST_BUCKET_NAME}-${modifier}`;
-
+export const cleanUpNamedBucketAndUploads = (t, bucket) => {
   return new Promise((resolve, reject) => {
     const minioClient = new Minio.Client({
       endPoint: "localhost",
@@ -96,6 +110,11 @@ export const cleanUpBucketAndUploads = (t, modifier) => {
       });
     });
   });
+};
+
+export const cleanUpBucketAndUploads = (t, modifier) => {
+  const bucket = `${constants.TEST_BUCKET_NAME}-${modifier}`;
+  return cleanUpNamedBucketAndUploads(t, bucket)
 };
 
 export const createUser = (t) => {
