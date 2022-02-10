@@ -42,6 +42,7 @@ import SecureComponent, {
 } from "../../../../common/SecureComponent/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import RBIconButton from "./SummaryItems/RBIconButton";
+import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,6 +74,9 @@ const BucketLifecyclePanel = ({
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
   const [selectedLifecycleRule, setSelectedLifecycleRule] =
     useState<LifeCycleItem | null>(null);
+  const [deleteLifecycleOpen, setDeleteLifecycleOpen] =
+    useState<boolean>(false);
+  const [selectedID, setSelectedID] = useState<string | null>(null);
 
   const bucketName = match.params["bucketName"];
 
@@ -99,6 +103,7 @@ const BucketLifecyclePanel = ({
           })
           .catch((err: ErrorResponseHandler) => {
             console.error(err);
+            setLifecycleRecords([]);
             setLoadingLifecycle(false);
           });
       } else {
@@ -122,6 +127,15 @@ const BucketLifecyclePanel = ({
 
   const closeAddLCAndRefresh = (refresh: boolean) => {
     setAddLifecycleOpen(false);
+    if (refresh) {
+      setLoadingLifecycle(true);
+    }
+  };
+
+  const closeDelLCRefresh = (refresh: boolean) => {
+    setDeleteLifecycleOpen(false);
+    setSelectedID(null);
+
     if (refresh) {
       setLoadingLifecycle(true);
     }
@@ -194,6 +208,14 @@ const BucketLifecyclePanel = ({
         setEditLifecycleOpen(true);
       },
     },
+    {
+      type: "delete",
+      onClick(valueToDelete: string): any {
+        setSelectedID(valueToDelete);
+        setDeleteLifecycleOpen(true);
+      },
+      sendOnlyId: true,
+    },
   ];
 
   return (
@@ -211,6 +233,14 @@ const BucketLifecyclePanel = ({
           open={addLifecycleOpen}
           bucketName={bucketName}
           closeModalAndRefresh={closeAddLCAndRefresh}
+        />
+      )}
+      {deleteLifecycleOpen && selectedID && (
+        <DeleteBucketLifecycleRule
+          id={selectedID}
+          bucket={bucketName}
+          deleteOpen={deleteLifecycleOpen}
+          onCloseAndRefresh={closeDelLCRefresh}
         />
       )}
       <Grid container>
