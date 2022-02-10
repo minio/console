@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -60,6 +61,14 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 		}
 
 		return user_api.NewUpdateBucketLifecycleOK()
+	})
+	api.UserAPIDeleteBucketLifecycleRuleHandler = user_api.DeleteBucketLifecycleRuleHandlerFunc(func(params user_api.DeleteBucketLifecycleRuleParams, session *models.Principal) middleware.Responder {
+		err := getDeleteBucketLifecycleRule(session, params)
+		if err != nil {
+			return user_api.NewDeleteBucketLifecycleRuleDefault(int(err.Code)).WithPayload(err)
+		}
+
+		return user_api.NewDeleteBucketLifecycleRuleNoContent()
 	})
 }
 
@@ -338,7 +347,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params user_ap
 	return client.setBucketLifecycle(ctx, params.BucketName, lfcCfg)
 }
 
-// getEditBucketLifecycleRule returns the response of bucket lyfecycle tier edit
+// getEditBucketLifecycleRule returns the response of bucket lifecycle tier edit
 func getEditBucketLifecycleRule(session *models.Principal, params user_api.UpdateBucketLifecycleParams) *models.Error {
 	ctx := context.Background()
 	mClient, err := newMinioClient(session)
@@ -350,6 +359,59 @@ func getEditBucketLifecycleRule(session *models.Principal, params user_api.Updat
 	minioClient := minioClient{client: mClient}
 
 	err = editBucketLifecycle(ctx, minioClient, params)
+	if err != nil {
+		return prepareError(err)
+	}
+
+	return nil
+}
+
+// deleteBucketLifecycle deletes lifecycle rule by passing an empty rule to a selected ID
+func deleteBucketLifecycle(ctx context.Context, client MinioClient, params user_api.DeleteBucketLifecycleRuleParams) error {
+	// Configuration that is already set.
+	lfcCfg, err := client.getLifecycleRules(ctx, params.BucketName)
+	if err != nil {
+		if e := err; minio.ToErrorResponse(e).Code == "NoSuchLifecycleConfiguration" {
+			lfcCfg = lifecycle.NewConfiguration()
+		} else {
+			return err
+		}
+	}
+
+	if len(lfcCfg.Rules) == 0 {
+		return errors.New("no rules available to delete")
+	}
+
+	var newRules []lifecycle.Rule
+
+	for _, rule := range lfcCfg.Rules {
+		if rule.ID != params.LifecycleID {
+			newRules = append(newRules, rule)
+		}
+	}
+
+	if len(newRules) == len(lfcCfg.Rules) && len(lfcCfg.Rules) > 0 {
+		// rule doesn't exist
+		return fmt.Errorf("lifecycle rule for id '%s' doesn't exist", params.LifecycleID)
+	}
+
+	lfcCfg.Rules = newRules
+
+	return client.setBucketLifecycle(ctx, params.BucketName, lfcCfg)
+}
+
+// getDeleteBucketLifecycleRule returns the response of bucket lifecycle tier delete
+func getDeleteBucketLifecycleRule(session *models.Principal, params user_api.DeleteBucketLifecycleRuleParams) *models.Error {
+	ctx := context.Background()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	err = deleteBucketLifecycle(ctx, minioClient, params)
 	if err != nil {
 		return prepareError(err)
 	}

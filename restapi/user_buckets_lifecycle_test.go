@@ -290,3 +290,75 @@ func TestUpdateLifecycleRule(t *testing.T) {
 
 	assert.Equal(errors.New("error setting lifecycle"), err2, fmt.Sprintf("Failed on %s: Error returned", function))
 }
+
+func TestDeleteLifecycleRule(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	minClient := minioClientMock{}
+
+	function := "deleteBucketLifecycle()"
+	ctx := context.Background()
+
+	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+		return nil
+	}
+
+	// Test-1 : deleteBucketLifecycle() get list of events for a particular bucket only one config (get lifecycle mock)
+	// mock create request
+	mockLifecycle := lifecycle.Configuration{
+		Rules: []lifecycle.Rule{
+			{
+				ID:         "TESTRULE",
+				Expiration: lifecycle.Expiration{Days: 15},
+				Status:     "Enabled",
+				RuleFilter: lifecycle.Filter{Tag: lifecycle.Tag{Key: "tag1", Value: "val1"}, And: lifecycle.And{Prefix: "prefix1"}},
+			},
+			{
+				ID:         "TESTRULE2",
+				Transition: lifecycle.Transition{Days: 10, StorageClass: "TESTSTCLASS"},
+				Status:     "Enabled",
+				RuleFilter: lifecycle.Filter{Tag: lifecycle.Tag{Key: "tag1", Value: "val1"}, And: lifecycle.And{Prefix: "prefix1"}},
+			},
+		},
+	}
+
+	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+		return &mockLifecycle, nil
+	}
+
+	// Test-2 : deleteBucketLifecycle() try to delete an available rule
+
+	availableParams := user_api.DeleteBucketLifecycleRuleParams{
+		LifecycleID: "TESTRULE2",
+		BucketName:  "testBucket",
+	}
+
+	err := deleteBucketLifecycle(ctx, minClient, availableParams)
+
+	assert.Equal(nil, err, fmt.Sprintf("Failed on %s: Error returned", function))
+
+	// Test-3 : deleteBucketLifecycle() returns error trying to delete a non available rule
+
+	nonAvailableParams := user_api.DeleteBucketLifecycleRuleParams{
+		LifecycleID: "INVALIDTESTRULE",
+		BucketName:  "testBucket",
+	}
+
+	err2 := deleteBucketLifecycle(ctx, minClient, nonAvailableParams)
+
+	assert.Equal(fmt.Errorf("lifecycle rule for id '%s' doesn't exist", nonAvailableParams.LifecycleID), err2, fmt.Sprintf("Failed on %s: Error returned", function))
+
+	// Test-4 : deleteBucketLifecycle() returns error trying to delete a rule when no rules are available
+
+	mockLifecycle2 := lifecycle.Configuration{
+		Rules: []lifecycle.Rule{},
+	}
+
+	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+		return &mockLifecycle2, nil
+	}
+
+	err3 := deleteBucketLifecycle(ctx, minClient, nonAvailableParams)
+
+	assert.Equal(errors.New("no rules available to delete"), err3, fmt.Sprintf("Failed on %s: Error returned", function))
+}
