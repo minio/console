@@ -53,6 +53,17 @@ export const bucketWrite = Role(
   { preserveUrl: true }
 );
 
+export const bucketSpecific = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "bucketspecific-" + unixTimestamp)
+      .typeText("#secretKey", "bucketspecific")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);
+
 export const bucketWritePrefixOnly = Role(
   loginUrl,
   async (t) => {
