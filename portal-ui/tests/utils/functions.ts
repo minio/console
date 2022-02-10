@@ -36,10 +36,7 @@ export const setUpNamedBucket = (t, name) => {
   });
 
   return new Promise((resolve, reject) => {
-    minioClient
-      .makeBucket(name, "us-east-1")
-      .then(resolve)
-      .catch(resolve);
+    minioClient.makeBucket(name, "us-east-1").then(resolve).catch(resolve);
   });
 };
 
@@ -49,7 +46,7 @@ export const namedManageButtonFor = (name) => {
     .parent(4)
     .find("button:enabled")
     .withText("Manage");
-}
+};
 
 export const manageButtonFor = (modifier) => {
   return namedManageButtonFor(`${constants.TEST_BUCKET_NAME}-${modifier}`);
@@ -80,7 +77,9 @@ export const namedTestBucketBrowseButtonFor = (name) => {
 };
 
 export const testBucketBrowseButtonFor = (modifier) => {
-  return namedTestBucketBrowseButtonFor(`${constants.TEST_BUCKET_NAME}-${modifier}`);
+  return namedTestBucketBrowseButtonFor(
+    `${constants.TEST_BUCKET_NAME}-${modifier}`
+  );
 };
 
 export const uploadFilesButton = () => {
@@ -114,7 +113,7 @@ export const cleanUpNamedBucketAndUploads = (t, bucket) => {
 
 export const cleanUpBucketAndUploads = (t, modifier) => {
   const bucket = `${constants.TEST_BUCKET_NAME}-${modifier}`;
-  return cleanUpNamedBucketAndUploads(t, bucket)
+  return cleanUpNamedBucketAndUploads(t, bucket);
 };
 
 export const createUser = (t) => {

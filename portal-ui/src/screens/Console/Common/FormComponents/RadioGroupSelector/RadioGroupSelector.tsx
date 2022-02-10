@@ -146,7 +146,6 @@ export const RadioGroupSelector = ({
                   [classes.checkedOption]:
                     selectorOption.value === currentSelection,
                 })}
-
               />
             );
           })}
