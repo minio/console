@@ -523,13 +523,54 @@ func DeleteObject(bucketName string, path string, recursive bool, allVersions bo
 	return response, err
 }
 
-func ListObjects(bucketName string, prefix string) (*http.Response, error) {
+func ListObjects(bucketName string, prefix string, withVersions string) (*http.Response, error) {
 	/*
 		Helper function to list objects in a bucket.
 		GET: {{baseUrl}}/buckets/:bucket_name/objects
 	*/
+	//Request URL: http://localhost:49734/api/v1/buckets/testingnew/objects?prefix=QWVyb21leGljby5wZGY=&with_versions=true
 	request, err := http.NewRequest("GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects?prefix="+prefix,
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects?prefix="+prefix+"&with_versions="+withVersions,
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func PutObjectsLegalholdStatus(bucketName string, prefix string, status string, versionID string) (*http.Response, error) {
+	// Helper function to test "Put Object's legalhold status" end point
+	requestDataAdd := map[string]interface{}{
+		"status": status,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/legalhold?prefix="+prefix+"&version_id="+versionID,
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetsTheMetadataOfAnObject(bucketName string, prefix string) (*http.Response, error) {
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/metadata?prefix="+prefix,
 		nil)
 	if err != nil {
 		log.Println(err)
@@ -1210,7 +1251,7 @@ func TestPutObjectTag(t *testing.T) {
 	}
 
 	// 4. Verify the object's tag is set
-	listResponse, listError := ListObjects(bucketName, path)
+	listResponse, listError := ListObjects(bucketName, path, "false")
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1280,7 +1321,7 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	}
 
 	// 4. List the objects, empty list is expected!
-	listResponse, listError := ListObjects(bucketName, "")
+	listResponse, listError := ListObjects(bucketName, "", "false")
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1458,7 +1499,7 @@ func TestDeleteObject(t *testing.T) {
 	}
 
 	// 4. List the objects in the bucket and make sure the object is gone
-	listResponse, listError := ListObjects(bucketName, "")
+	listResponse, listError := ListObjects(bucketName, "", "false")
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1515,7 +1556,7 @@ func TestListObjects(t *testing.T) {
 	}
 
 	// 3. List the object
-	listResponse, listError := ListObjects(bucketName, "")
+	listResponse, listError := ListObjects(bucketName, "", "false")
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1531,4 +1572,102 @@ func TestListObjects(t *testing.T) {
 	assert.True(
 		strings.Contains(finalResponse, "testlistobjecttobucket1"),
 		finalResponse)
+}
+
+func TestPutObjectsLegalholdStatus(t *testing.T) {
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testputobjectslegalholdstatus"
+	fileName := "testputobjectslegalholdstatus.txt"
+	prefix := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0" // encoded base64
+	status := "enabled"
+
+	// 1. Create bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add object
+	uploadResponse, uploadError := UploadAnObject(
+		bucketName,
+		fileName,
+	)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			addObjRsp,
+		)
+	}
+
+	// Get versionID
+	listResponse, listError := ListObjects(bucketName, prefix, "true")
+	fmt.Println(listError)
+	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	listObjs := models.ListObjectsResponse{}
+	err = json.Unmarshal(bodyBytes, &listObjs)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	validVersionID := listObjs.Objects[0].VersionID
+
+	type args struct {
+		versionID string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid VersionID when putting object's legal hold status",
+			expectedStatus: 200,
+			args: args{
+				versionID: validVersionID,
+			},
+		},
+		{
+			name:           "Invalid VersionID when putting object's legal hold status",
+			expectedStatus: 500,
+			args: args{
+				versionID: "*&^###Test1ThisMightBeInvalid555",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 3. Put Objects Legal Status
+			putResponse, putError := PutObjectsLegalholdStatus(
+				bucketName,
+				prefix,
+				status,
+				tt.args.versionID,
+			)
+			if putError != nil {
+				log.Println(putError)
+				assert.Fail("Error creating the bucket")
+			}
+			if putResponse != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					putResponse.StatusCode,
+					inspectHTTPResponse(putResponse),
+				)
+			}
+		})
+	}
 }
