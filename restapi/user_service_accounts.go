@@ -25,12 +25,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/console/restapi/operations/admin_api"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	"github.com/minio/console/restapi/operations/user_api"
+	"github.com/minio/madmin-go"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
@@ -98,6 +98,14 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewGetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewGetServiceAccountPolicyOK().WithPayload(serviceAccounts)
+	})
+
+	api.UserAPISetServiceAccountPolicyHandler = user_api.SetServiceAccountPolicyHandlerFunc(func(params user_api.SetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
+		err := getSetServiceAccountPolicyResponse(session, params.AccessKey, *params.Policy.Policy)
+		if err != nil {
+			return user_api.NewSetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewSetServiceAccountPolicyOK()
 	})
 
 	// Delete multiple service accounts
@@ -394,6 +402,33 @@ func getServiceAccountPolicyResponse(session *models.Principal, accessKey string
 		return "", prepareError(err)
 	}
 	return serviceAccounts, nil
+}
+
+// setServiceAccountPolicy sets policy for a service account
+func setServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessKey string, policy string) error {
+	err := userClient.updateServiceAccount(ctx, accessKey, madmin.UpdateServiceAccountReq{NewPolicy: json.RawMessage(policy)})
+	return err
+}
+
+// getSetServiceAccountPolicyResponse authenticates the user and calls
+// getSetServiceAccountPolicy to set the policy for a service account
+func getSetServiceAccountPolicyResponse(session *models.Principal, accessKey string, policy string) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	userAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a MinIO user Admin Client interface implementation
+	// defining the client to be used
+	userAdminClient := AdminClient{Client: userAdmin}
+
+	err = setServiceAccountPolicy(ctx, userAdminClient, accessKey, policy)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
 }
 
 // getDeleteMultipleServiceAccountsResponse authenticates the user and calls deleteServiceAccount for each account listed in selectedSAs
