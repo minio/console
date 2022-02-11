@@ -1867,3 +1867,66 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 		})
 	}
 }
+
+func TestPutBucketsTags(t *testing.T) {
+	// Focused test for "Put Bucket's tags" endpoint
+
+	// 1. Create the bucket
+	assert := assert.New(t)
+	validBucketName := "testputbuckettags1"
+	response, err := AddBucket(validBucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	type args struct {
+		bucketName string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Put a tag to a valid bucket",
+			expectedStatus: 200,
+			args: args{
+				bucketName: validBucketName,
+			},
+		},
+		{
+			name:           "Put a tag to an invalid bucket",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "invalidbucketname",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// 2. Add a tag to the bucket
+			tags := make(map[string]string)
+			tags["tag2"] = "tag2"
+			putBucketTagResponse, putBucketTagError := PutBucketsTags(
+				tt.args.bucketName, tags)
+			if putBucketTagError != nil {
+				log.Println(putBucketTagError)
+				assert.Fail("Error creating the bucket")
+				return
+			}
+			if putBucketTagResponse != nil {
+				assert.Equal(
+					tt.expectedStatus, putBucketTagResponse.StatusCode,
+					inspectHTTPResponse(putBucketTagResponse))
+			}
+
+		})
+	}
+}
