@@ -22,6 +22,7 @@ const (
 	ConsoleOperatorSAToken = "CONSOLE_OPERATOR_SA_TOKEN"
 	MinIOSubnetLicense     = "MINIO_SUBNET_LICENSE"
 	ConsoleMarketplace     = "CONSOLE_OPERATOR_MARKETPLACE"
+	ConsoleMinIOServer     = "CONSOLE_MINIO_SERVER"
 
 	// Constants for prometheus annotations
 	prometheusPath   = "prometheus.io/path"

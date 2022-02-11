@@ -196,6 +196,7 @@ const CredentialsPrompt = ({
                     consoleExtras = {
                       console: [
                         {
+                          url : consoleCreds.url,
                           access_key: consoleCreds.accessKey,
                           secret_key: consoleCreds.secretKey,
                           api: "s3v4",
@@ -206,6 +207,7 @@ const CredentialsPrompt = ({
                   } else {
                     const cCreds = consoleCreds.map((itemMap) => {
                       return {
+                        url: itemMap.url,
                         access_key: itemMap.accessKey,
                         secret_key: itemMap.secretKey,
                         api: "s3v4",
