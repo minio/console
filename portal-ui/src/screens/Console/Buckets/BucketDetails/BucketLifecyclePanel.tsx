@@ -287,6 +287,7 @@ const BucketLifecyclePanel = ({
         </Grid>
         {!loadingLifecycle && (
           <Grid item xs={12}>
+            <br />
             <HelpBox
               title={"Lifecycle Rules"}
               iconComponent={<TiersIcon />}
