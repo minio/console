@@ -198,6 +198,8 @@ const CredentialsPrompt = ({
                         {
                           access_key: consoleCreds.accessKey,
                           secret_key: consoleCreds.secretKey,
+                          api: "s3v4",
+                          path: "auto",
                         },
                       ],
                     };
@@ -206,6 +208,8 @@ const CredentialsPrompt = ({
                       return {
                         access_key: itemMap.accessKey,
                         secret_key: itemMap.secretKey,
+                        api: "s3v4",
+                        path: "auto",
                       };
                     });
 
