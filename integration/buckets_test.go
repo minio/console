@@ -587,6 +587,29 @@ func PutObjectsRetentionStatus(bucketName string, prefix string, versionID strin
 	return response, err
 }
 
+func GetsTheMetadataOfAnObject(bucketName string, prefix string) (*http.Response, error) {
+	/*
+		Gets the metadata of an object
+		GET
+		{{baseUrl}}/buckets/:bucket_name/objects/metadata?prefix=proident velit
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/metadata?prefix="+prefix,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
@@ -1761,5 +1784,86 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestGetsTheMetadataOfAnObject(t *testing.T) {
+
+	// Vars
+	assert := assert.New(t)
+	bucketName := "testgetsthemetadataofanobject"
+	fileName := "testshareobjectonurl.txt"
+	validPrefix := encodeBase64(fileName)
+	tags := make(map[string]string)
+	tags["tag"] = "testputobjecttagbucketonetagone"
+
+	// 1. Create the bucket
+	response, err := AddBucket(bucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Upload the object to the bucket
+	uploadResponse, uploadError := UploadAnObject(bucketName, fileName)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			inspectHTTPResponse(uploadResponse),
+		)
+	}
+
+	type args struct {
+		prefix string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Get metadata with valid prefix",
+			expectedStatus: 200,
+			args: args{
+				prefix: validPrefix,
+			},
+		},
+		{
+			name:           "Get metadata with invalid prefix",
+			expectedStatus: 500,
+			args: args{
+				prefix: "invalidprefix",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// 3. Get the metadata from an object
+			getRsp, getErr := GetsTheMetadataOfAnObject(
+				bucketName, tt.args.prefix)
+			assert.Nil(getErr)
+			if getErr != nil {
+				log.Println(getErr)
+				return
+			}
+			if getRsp != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					getRsp.StatusCode,
+					inspectHTTPResponse(getRsp),
+				)
+			}
+
+		})
+	}
 }
