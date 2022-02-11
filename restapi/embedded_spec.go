@@ -3863,6 +3863,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -10186,6 +10194,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },

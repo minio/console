@@ -3888,6 +3888,12 @@ definitions:
   addBucketLifecycle:
     type: object
     properties:
+      type:
+        description: ILM Rule type (Expiry or transition)
+        type: string
+        enum:
+          - expiry
+          - transition
       prefix:
         description: Non required field, it matches a prefix to perform ILM operations on it
         type: string

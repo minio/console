@@ -163,9 +163,12 @@ func TestSetLifecycleRule(t *testing.T) {
 		return &mockLifecycle, nil
 	}
 
+	expiryRule := "expiry"
+
 	insertMock := user_api.AddBucketLifecycleParams{
 		BucketName: "testBucket",
 		Body: &models.AddBucketLifecycle{
+			Type:                                    expiryRule,
 			Disable:                                 false,
 			ExpiredObjectDeleteMarker:               false,
 			ExpiryDays:                              int32(16),
