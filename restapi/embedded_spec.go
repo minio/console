@@ -1061,6 +1061,38 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Lifecycle rule",
+        "operationId": "DeleteBucketLifecycleRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "lifecycle_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/buckets/{bucket_name}/object-locking": {
@@ -3152,6 +3184,40 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Service Account Policy",
+        "operationId": "SetServiceAccountPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "policy",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addServiceAccountPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/service/restart": {
@@ -3831,6 +3897,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -3873,6 +3947,17 @@ func init() {
         "name": {
           "type": "string"
         },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "addServiceAccountPolicyRequest": {
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
         "policy": {
           "type": "string"
         }
@@ -7234,6 +7319,38 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Lifecycle rule",
+        "operationId": "DeleteBucketLifecycleRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "lifecycle_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/buckets/{bucket_name}/object-locking": {
@@ -9325,6 +9442,40 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Service Account Policy",
+        "operationId": "SetServiceAccountPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "policy",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addServiceAccountPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/service/restart": {
@@ -10122,6 +10273,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -10164,6 +10323,17 @@ func init() {
         "name": {
           "type": "string"
         },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "addServiceAccountPolicyRequest": {
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
         "policy": {
           "type": "string"
         }

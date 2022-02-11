@@ -50,21 +50,6 @@ func TestAddServiceAccount(t *testing.T) {
 	requestDataAddServiceAccount := map[string]interface{}{
 		"accessKey": "testuser1",
 		"secretKey": "password",
-		"policy": "{" +
-			"\n    \"Version\": \"2012-10-17\"," +
-			"\n    \"Statement\": [" +
-			"\n        {" +
-			"\n            \"Effect\": \"Allow\"," +
-			"\n            \"Action\": [" +
-			"\n                \"s3:GetBucketLocation\"," +
-			"\n                \"s3:GetObject\"" +
-			"\n            ]," +
-			"\n            \"Resource\": [" +
-			"\n                \"arn:aws:s3:::*\"" +
-			"\n            ]" +
-			"\n        }" +
-			"\n    ]" +
-			"\n}",
 	}
 
 	fmt.Println("..............................TestServiceAccountPolicy(): Prepare the POST")
@@ -95,7 +80,51 @@ func TestAddServiceAccount(t *testing.T) {
 		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
-	fmt.Println("...................................TestServiceAccountPolicy(): Remove user")
+	requestDataPolicy := map[string]interface{}{"policy": "{" +
+		"\n    \"Version\": \"2012-10-17\"," +
+		"\n    \"Statement\": [" +
+		"\n        {" +
+		"\n            \"Effect\": \"Allow\"," +
+		"\n            \"Action\": [" +
+		"\n                \"s3:GetBucketLocation\"," +
+		"\n                \"s3:GetObject\"" +
+		"\n            ]," +
+		"\n            \"Resource\": [" +
+		"\n                \"arn:aws:s3:::*\"" +
+		"\n            ]" +
+		"\n        }" +
+		"\n    ]" +
+		"\n}",
+	}
+	fmt.Println("..............................TestServiceAccountPolicy(): Prepare the PUT")
+	requestDataJSON, _ = json.Marshal(requestDataPolicy)
+	requestDataBody = bytes.NewReader(requestDataJSON)
+	request, err = http.NewRequest(
+		"PUT", "http://localhost:9090/api/v1/service-accounts/testuser1/policy", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	fmt.Println(".................................TestServiceAccountPolicy(): Make the PUT")
+	response, err = client.Do(request)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println("..................................TestServiceAccountPolicy(): Verification")
+	fmt.Println(".................................TestServiceAccountPolicy(): PUT response")
+	fmt.Println(response)
+	fmt.Println("....................................TestServiceAccountPolicy(): PUT error")
+	fmt.Println(err)
+	if response != nil {
+		fmt.Println("POST StatusCode:", response.StatusCode)
+		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
+	}
+
+	fmt.Println("...................................TestServiceAccountPolicy(): Check policy")
 
 	// Test policy
 	fmt.Println(".......................TestAddUserServiceAccount(): Create Data to add user")
