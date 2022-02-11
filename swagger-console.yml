@@ -1143,6 +1143,28 @@ paths:
       tags:
         - UserAPI
 
+    delete:
+      summary: Delete Lifecycle rule
+      operationId: DeleteBucketLifecycleRule
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: lifecycle_id
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/rewind/{date}:
     get:
       summary: Get objects in a bucket for a rewind date

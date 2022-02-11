@@ -1061,6 +1061,38 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Lifecycle rule",
+        "operationId": "DeleteBucketLifecycleRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "lifecycle_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/buckets/{bucket_name}/object-locking": {
@@ -7225,6 +7257,38 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Lifecycle rule",
+        "operationId": "DeleteBucketLifecycleRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "lifecycle_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {

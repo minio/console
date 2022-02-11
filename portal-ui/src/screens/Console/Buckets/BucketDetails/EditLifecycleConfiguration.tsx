@@ -141,7 +141,6 @@ const EditLifecycleConfiguration = ({
   }, [ilmType, expiryDays, transitionDays, storageClass]);
 
   useEffect(() => {
-    console.log("lifecycle::", lifecycle);
     if (lifecycle.status === "Enabled") {
       setEnabled(true);
     }
