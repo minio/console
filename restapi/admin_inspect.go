@@ -38,48 +38,13 @@ import (
 func registerInspectHandler(api *operations.ConsoleAPI) {
 	api.AdminAPIInspectHandler = admin_api.InspectHandlerFunc(func(params admin_api.InspectParams, principal *models.Principal) middleware.Responder {
 		k, r, err := getInspectResult(principal, &params)
+		isEncryptOn := params.Encrypt != nil && *params.Encrypt
 
 		if err != nil {
 			return admin_api.NewInspectDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return middleware.ResponderFunc(func(w http.ResponseWriter, _ runtime.Producer) {
-
-			var id [4]byte
-			binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k[:]))
-			isEncryptOn := params.Encrypt != nil && *params.Encrypt
-
-			defer r.Close()
-
-			ext := "enc"
-			if !isEncryptOn {
-				ext = "zip"
-				r = decryptInspect(*k, r)
-			}
-
-			fileName := fmt.Sprintf("inspect.%s.%s", hex.EncodeToString(id[:]), ext)
-
-			if isEncryptOn {
-				// use cookie to transmit the Decryption Key.
-				hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k[:])
-				cookie := http.Cookie{
-					Name:   fileName,
-					Value:  hexKey,
-					Path:   "/",
-					MaxAge: 3000,
-				}
-				http.SetCookie(w, &cookie)
-			}
-
-			w.Header().Set("Content-Type", "application/octet-stream")
-			w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
-
-			_, err := io.Copy(w, r)
-
-			if err != nil {
-				LogError("Unable to write all the data: %v", err)
-			}
-		})
+		return middleware.ResponderFunc(processInspectResponse(isEncryptOn, k, r))
 	})
 }
 
@@ -114,4 +79,41 @@ func decryptInspect(key [32]byte, r io.Reader) io.ReadCloser {
 	}
 	nonce := make([]byte, stream.NonceSize())
 	return ioutil.NopCloser(stream.DecryptReader(r, nonce, nil))
+}
+
+func processInspectResponse(isEnc bool, k *[32]byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
+	return func(w http.ResponseWriter, _ runtime.Producer) {
+		var id [4]byte
+		binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k[:]))
+		defer r.Close()
+
+		ext := "enc"
+		if !isEnc {
+			ext = "zip"
+			r = decryptInspect(*k, r)
+		}
+
+		fileName := fmt.Sprintf("inspect.%s.%s", hex.EncodeToString(id[:]), ext)
+
+		if isEnc {
+			// use cookie to transmit the Decryption Key.
+			hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k[:])
+			cookie := http.Cookie{
+				Name:   fileName,
+				Value:  hexKey,
+				Path:   "/",
+				MaxAge: 3000,
+			}
+			http.SetCookie(w, &cookie)
+		}
+
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+
+		_, err := io.Copy(w, r)
+
+		if err != nil {
+			LogError("Unable to write all the data: %v", err)
+		}
+	}
 }
