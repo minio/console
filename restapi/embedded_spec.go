@@ -1061,6 +1061,38 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Lifecycle rule",
+        "operationId": "DeleteBucketLifecycleRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "lifecycle_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/buckets/{bucket_name}/object-locking": {
@@ -3865,6 +3897,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -7279,6 +7319,38 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Lifecycle rule",
+        "operationId": "DeleteBucketLifecycleRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "lifecycle_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/buckets/{bucket_name}/object-locking": {
@@ -10201,6 +10273,14 @@ func init() {
           "type": "integer",
           "format": "int32",
           "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
