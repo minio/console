@@ -220,7 +220,9 @@ const Console = ({
       path: IAM_PAGES.ADD_BUCKETS,
       customPermissionFnc: () => {
         const createBucketResources: string[] =
-          Array.from(Object.keys(session.permissions)) || [];
+          session && session.permissions
+            ? Array.from(Object.keys(session.permissions)) || []
+            : [];
         return hasPermission(
           createBucketResources,
           IAM_PAGES_PERMISSIONS[IAM_PAGES.ADD_BUCKETS]

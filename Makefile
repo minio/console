@@ -106,3 +106,11 @@ clean:
 
 docker:
 	@docker buildx build --output=type=docker --platform linux/amd64 -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' .
+
+release: swagger-gen
+	@echo "Generating Release: $(RELEASE)"
+	@make assets
+	@yq -i e '.spec.template.spec.containers[0].image |= "minio/console:$(RELEASE)"' k8s/operator-console/base/console-deployment.yaml
+	@yq -i e 'select(.kind == "Deployment").spec.template.spec.containers[0].image |= "minio/console:$(RELEASE)"' k8s/operator-console/standalone/console-deployment.yaml
+	@git add -u .
+	@git add portal-ui/build/
