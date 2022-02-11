@@ -166,6 +166,7 @@ const AddLifecycleModal = ({
     }
 
     const lifecycleInsert = {
+      type: ilmType,
       prefix,
       tags,
       expired_object_delete_marker: expiredObjectDM,
