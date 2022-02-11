@@ -33,6 +33,7 @@ var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Polic
 var minioListServiceAccountsMock func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 var minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
 var minioInfoServiceAccountMock func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
+var minioUpdateServiceAccountMock func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
 
 // mock function of AddServiceAccount()
 func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
@@ -52,6 +53,11 @@ func (ac adminClientMock) deleteServiceAccount(ctx context.Context, serviceAccou
 // mock function of InfoServiceAccount()
 func (ac adminClientMock) infoServiceAccount(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error) {
 	return minioInfoServiceAccountMock(ctx, serviceAccount)
+}
+
+// mock function of UpdateServiceAccount()
+func (ac adminClientMock) updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error {
+	return minioUpdateServiceAccountMock(ctx, serviceAccount, opts)
 }
 
 func TestAddServiceAccount(t *testing.T) {

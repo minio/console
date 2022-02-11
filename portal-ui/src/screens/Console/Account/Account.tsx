@@ -179,6 +179,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
 
   const closePolicyModal = () => {
     setPolicyOpen(false);
+    setLoading(true);
   };
 
   const confirmDeleteServiceAccount = (selectedServiceAccount: string) => {

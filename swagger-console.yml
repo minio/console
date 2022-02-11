@@ -1324,6 +1324,28 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+    put:
+      summary: Set Service Account Policy
+      operationId: SetServiceAccountPolicy
+      parameters:
+        - name: access_key
+          in: path
+          required: true
+          type: string
+        - name: policy
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addServiceAccountPolicyRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
 
   /users:
     get:
@@ -2892,6 +2914,15 @@ definitions:
         type: string
       policy:
         type: string
+
+  addServiceAccountPolicyRequest:
+    type: object
+    required:
+      - policy
+    properties:
+      policy:
+        type: string
+
   listPoliciesResponse:
     type: object
     properties:
