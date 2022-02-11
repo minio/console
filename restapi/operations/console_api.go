@@ -356,6 +356,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPISetPolicyMultipleHandler: admin_api.SetPolicyMultipleHandlerFunc(func(params admin_api.SetPolicyMultipleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicyMultiple has not yet been implemented")
 		}),
+		UserAPISetServiceAccountPolicyHandler: user_api.SetServiceAccountPolicyHandlerFunc(func(params user_api.SetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SetServiceAccountPolicy has not yet been implemented")
+		}),
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
@@ -641,6 +644,8 @@ type ConsoleAPI struct {
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
 	// AdminAPISetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
 	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
+	// UserAPISetServiceAccountPolicyHandler sets the operation handler for the set service account policy operation
+	UserAPISetServiceAccountPolicyHandler user_api.SetServiceAccountPolicyHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
 	// AdminAPISubnetInfoHandler sets the operation handler for the subnet info operation
@@ -1042,6 +1047,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPISetPolicyMultipleHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetPolicyMultipleHandler")
+	}
+	if o.UserAPISetServiceAccountPolicyHandler == nil {
+		unregistered = append(unregistered, "user_api.SetServiceAccountPolicyHandler")
 	}
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
@@ -1569,6 +1577,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/set-policy-multi"] = admin_api.NewSetPolicyMultiple(o.context, o.AdminAPISetPolicyMultipleHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/service-accounts/{access_key}/policy"] = user_api.NewSetServiceAccountPolicy(o.context, o.UserAPISetServiceAccountPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

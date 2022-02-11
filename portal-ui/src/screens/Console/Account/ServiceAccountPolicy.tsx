@@ -85,6 +85,18 @@ const ServiceAccountPolicy = ({
     }
   }, [loading, setLoading, setModalErrorSnackMessage, selectedAccessKey]);
 
+  const setPolicy = (event: React.FormEvent, newPolicy: string) => {
+    event.preventDefault();
+    api
+        .invoke("PUT", `/api/v1/service-accounts/${selectedAccessKey}/policy`, {policy: newPolicy})
+        .then((res) => {
+          closeModalAndRefresh();
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setModalErrorSnackMessage(err);
+        });
+  };
+
   return (
     <ModalWrapper
       title="Service Account Policy"
@@ -94,6 +106,13 @@ const ServiceAccountPolicy = ({
       }}
       titleIcon={<ChangeAccessPolicyIcon />}
     >
+      <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            setPolicy(e, policyDefinition);
+          }}
+      >
       <Grid container>
         <Grid item xs={12} className={classes.codeMirrorContainer}>
           <CodeMirrorWrapper
@@ -103,7 +122,6 @@ const ServiceAccountPolicy = ({
               setPolicyDefinition(value);
             }}
             editorHeight={"350px"}
-            readOnly={true}
           />
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
@@ -118,8 +136,19 @@ const ServiceAccountPolicy = ({
           >
             Cancel
           </Button>
+          <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={
+                loading
+              }
+          >
+            Set
+          </Button>
         </Grid>
       </Grid>
+      </form>
     </ModalWrapper>
   );
 };
