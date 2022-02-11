@@ -58,7 +58,6 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
-	"github.com/minio/pkg/env"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sJson "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -1454,12 +1453,18 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	response = &models.CreateTenantResponse{
 		ExternalIDP: tenantExternalIDPConfigured,
 	}
+	thisClient := &operatorClient{
+		client: opClient,
+	}
+
+	minTenant, err := getTenant(ctx, thisClient, ns, tenantName)
+
 	if tenantReq.Idp != nil && !tenantExternalIDPConfigured {
 		for _, credential := range tenantReq.Idp.Keys {
 			response.Console = append(response.Console, &models.TenantResponseItem{
 				AccessKey: *credential.AccessKey,
 				SecretKey: *credential.SecretKey,
-				URL:       strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000")),
+				URL:       GetTenantServiceURL(minTenant),
 			})
 		}
 	}
