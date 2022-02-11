@@ -3184,6 +3184,40 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Service Account Policy",
+        "operationId": "SetServiceAccountPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "policy",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addServiceAccountPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/service/restart": {
@@ -3913,6 +3947,17 @@ func init() {
         "name": {
           "type": "string"
         },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "addServiceAccountPolicyRequest": {
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
         "policy": {
           "type": "string"
         }
@@ -9397,6 +9442,40 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Service Account Policy",
+        "operationId": "SetServiceAccountPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "policy",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addServiceAccountPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/service/restart": {
@@ -10244,6 +10323,17 @@ func init() {
         "name": {
           "type": "string"
         },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "addServiceAccountPolicyRequest": {
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
         "policy": {
           "type": "string"
         }
