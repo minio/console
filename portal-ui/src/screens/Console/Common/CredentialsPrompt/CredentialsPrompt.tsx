@@ -90,7 +90,6 @@ const download = (filename: string, text: string) => {
   document.body.appendChild(element);
 
   element.click();
-
   document.body.removeChild(element);
 };
 
@@ -104,7 +103,6 @@ const CredentialsPrompt = ({
   if (!newServiceAccount) {
     return null;
   }
-
   const consoleCreds = get(newServiceAccount, "console", null);
   const idp = get(newServiceAccount, "idp", false);
 

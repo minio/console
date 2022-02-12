@@ -135,7 +135,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
         console: {
           accessKey: `${res.accessKey}`,
           secretKey: `${res.secretKey}`,
-          url: "",
+          url: `${res.url}`,
         },
       };
       setNewServiceAccount(nsa);
