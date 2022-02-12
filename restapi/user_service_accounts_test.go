@@ -176,8 +176,23 @@ func TestGetServiceAccountPolicy(t *testing.T) {
 	// Test-1: getServiceAccountPolicy list serviceaccounts for a user
 	ctx := context.Background()
 	mockResponse := madmin.InfoServiceAccountResp{
-		Policy: "{\n \"Version\": \"2012-10-17\",\n \"Statement\": [\n  {\n   \"Effect\": \"Allow\",\n   \"Action\": [\n    \"s3:PutObject\"\n   ],\n   \"Resource\": [\n    \"arn:aws:s3:::*\"\n   ]\n  }\n ]\n}",
+		Policy: `
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}`,
 	}
+
 	minioInfoServiceAccountMock = func(ctx context.Context, user string) (madmin.InfoServiceAccountResp, error) {
 		return mockResponse, nil
 	}

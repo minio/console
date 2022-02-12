@@ -610,6 +610,24 @@ func GetsTheMetadataOfAnObject(bucketName string, prefix string) (*http.Response
 	return response, err
 }
 
+func RestoreObjectToASelectedVersion(bucketName string, prefix string, versionID string) (*http.Response, error) {
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/restore?prefix="+prefix+"&version_id="+versionID,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
@@ -1864,6 +1882,168 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 				)
 			}
 
+		})
+	}
+}
+
+func TestPutBucketsTags(t *testing.T) {
+	// Focused test for "Put Bucket's tags" endpoint
+
+	// 1. Create the bucket
+	assert := assert.New(t)
+	validBucketName := "testputbuckettags1"
+	response, err := AddBucket(validBucketName, false, false, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	type args struct {
+		bucketName string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Put a tag to a valid bucket",
+			expectedStatus: 200,
+			args: args{
+				bucketName: validBucketName,
+			},
+		},
+		{
+			name:           "Put a tag to an invalid bucket",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "invalidbucketname",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// 2. Add a tag to the bucket
+			tags := make(map[string]string)
+			tags["tag2"] = "tag2"
+			putBucketTagResponse, putBucketTagError := PutBucketsTags(
+				tt.args.bucketName, tags)
+			if putBucketTagError != nil {
+				log.Println(putBucketTagError)
+				assert.Fail("Error creating the bucket")
+				return
+			}
+			if putBucketTagResponse != nil {
+				assert.Equal(
+					tt.expectedStatus, putBucketTagResponse.StatusCode,
+					inspectHTTPResponse(putBucketTagResponse))
+			}
+
+		})
+	}
+}
+
+func TestRestoreObjectToASelectedVersion(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testrestoreobjectstoselectedversion"
+	fileName := "testrestoreobjectstoselectedversion.txt"
+	validPrefix := encodeBase64(fileName)
+
+	// 1. Create bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add object
+	uploadResponse, uploadError := UploadAnObject(
+		bucketName,
+		fileName,
+	)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			addObjRsp,
+		)
+	}
+
+	// 3. Get versionID
+	listResponse, listError := ListObjects(bucketName, validPrefix, "true")
+	fmt.Println(listError)
+	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	listObjs := models.ListObjectsResponse{}
+	err = json.Unmarshal(bodyBytes, &listObjs)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	versionID := listObjs.Objects[0].VersionID
+
+	type args struct {
+		prefix string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid prefix when restoring object",
+			expectedStatus: 200,
+			args: args{
+				prefix: validPrefix,
+			},
+		},
+		{
+			name:           "Invalid prefix when restoring object",
+			expectedStatus: 500,
+			args: args{
+				prefix: "fakefile",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 4. Restore Object to a selected version
+			restResp, restErr := RestoreObjectToASelectedVersion(
+				bucketName,
+				tt.args.prefix,
+				versionID,
+			)
+			assert.Nil(restErr)
+			if restErr != nil {
+				log.Println(restErr)
+				return
+			}
+			finalResponse := inspectHTTPResponse(restResp)
+			if restResp != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					restResp.StatusCode,
+					finalResponse,
+				)
+			}
 		})
 	}
 }

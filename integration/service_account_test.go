@@ -80,21 +80,22 @@ func TestAddServiceAccount(t *testing.T) {
 		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
-	requestDataPolicy := map[string]interface{}{"policy": "{" +
-		"\n    \"Version\": \"2012-10-17\"," +
-		"\n    \"Statement\": [" +
-		"\n        {" +
-		"\n            \"Effect\": \"Allow\"," +
-		"\n            \"Action\": [" +
-		"\n                \"s3:GetBucketLocation\"," +
-		"\n                \"s3:GetObject\"" +
-		"\n            ]," +
-		"\n            \"Resource\": [" +
-		"\n                \"arn:aws:s3:::*\"" +
-		"\n            ]" +
-		"\n        }" +
-		"\n    ]" +
-		"\n}",
+	requestDataPolicy := map[string]interface{}{"policy": `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}`,
 	}
 	fmt.Println("..............................TestServiceAccountPolicy(): Prepare the PUT")
 	requestDataJSON, _ = json.Marshal(requestDataPolicy)
