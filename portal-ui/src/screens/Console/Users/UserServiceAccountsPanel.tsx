@@ -40,6 +40,7 @@ import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../../Console/Configurations/utils";
+import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -76,6 +77,7 @@ const UserServiceAccountsPanel = ({
     useState<NewServiceAccount | null>(null);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
+  const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -147,12 +149,23 @@ const UserServiceAccountsPanel = ({
     setNewServiceAccount(null);
   };
 
+  const policyModalOpen = (selectedServiceAccount: string) => {
+    setSelectedServiceAccount(selectedServiceAccount);
+    setPolicyOpen(true);
+  };
+
   const confirmDeleteServiceAccount = (selectedServiceAccount: string) => {
     setSelectedServiceAccount(selectedServiceAccount);
     setDeleteOpen(true);
   };
 
+  const closePolicyModal = () => {
+    setPolicyOpen(false);
+    setLoading(true);
+  };
+
   const tableActions = [
+    { type: "view", onClick: policyModalOpen },
     { type: "delete", onClick: confirmDeleteServiceAccount },
   ];
 
@@ -192,6 +205,13 @@ const UserServiceAccountsPanel = ({
           }}
           entity="Service Account"
         />
+      )}
+      {policyOpen && (
+          <ServiceAccountPolicy
+              open={policyOpen}
+              selectedAccessKey={selectedServiceAccount}
+              closeModalAndRefresh={closePolicyModal}
+          />
       )}
       <div className={classes.actionsTray}>
         <PanelTitle>Service Accounts</PanelTitle>
