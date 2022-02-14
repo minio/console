@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// this shouldn't affect, is our test broken for prev change?
 
 package integration
 
@@ -649,81 +650,6 @@ func BucketSetPolicy(bucketName string, access string, definition string) (*http
 	request, err := http.NewRequest(
 		"PUT",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/set-policy",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func NotifyPostgres() (*http.Response, error) {
-	/*
-		Helper function to add Postgres Notification
-		HTTP Verb: PUT
-		URL: api/v1/configs/notify_postgres
-		Body:
-		{
-			"key_values":[
-				{
-					"key":"connection_string",
-					"value":"user=postgres password=password host=localhost dbname=postgres port=5432 sslmode=disable"
-				},
-				{
-					"key":"table",
-					"value":"accountsssss"
-				},
-				{
-					"key":"format",
-					"value":"namespace"
-				},
-				{
-					"key":"queue_limit",
-					"value":"10000"
-				},
-				{
-					"key":"comment",
-					"value":"comment"
-				}
-			]
-		}
-	*/
-	Body := models.SetConfigRequest{
-		KeyValues: []*models.ConfigurationKV{
-			{
-				Key:   "connection_string",
-				Value: "user=postgres password=password host=173.18.0.3 dbname=postgres port=5432 sslmode=disable",
-			},
-			{
-				Key:   "table",
-				Value: "accountsssss",
-			},
-			{
-				Key:   "format",
-				Value: "namespace",
-			},
-			{
-				Key:   "queue_limit",
-				Value: "10000",
-			},
-			{
-				Key:   "comment",
-				Value: "comment",
-			},
-		},
-	}
-
-	requestDataJSON, _ := json.Marshal(Body)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"PUT",
-		"http://localhost:9090/api/v1/configs/notify_postgres",
 		requestDataBody,
 	)
 	if err != nil {
