@@ -65,6 +65,8 @@ assets:
 	@(cd portal-ui; yarn install; make build-static; yarn prettier --write . --loglevel warn; cd ..)
 
 test-integration:
+	@echo "create docker network to communicate containers MinIO & PostgreSQL"
+	@(docker network create --subnet=173.18.0.0/29 mynet123)
 	@echo "docker run with MinIO Version below:"
 	@echo $(MINIO_VERSION)
 	@(docker run -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4} && sleep 5)
