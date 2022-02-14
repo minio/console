@@ -731,6 +731,34 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/delete-all-replication-rules": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Deletes all replication rules on a bucket",
+        "operationId": "DeleteAllReplicationRules",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/delete-objects": {
       "post": {
         "tags": [
@@ -7092,6 +7120,34 @@ func init() {
             "schema": {
               "$ref": "#/definitions/multiLifecycleResult"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/delete-all-replication-rules": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Deletes all replication rules on a bucket",
+        "operationId": "DeleteAllReplicationRules",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",

@@ -934,6 +934,26 @@ paths:
           in: path
           required: true
           type: string
+
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/delete-all-replication-rules:
+    delete:
+      summary: Deletes all replication rules on a bucket
+      operationId: DeleteAllReplicationRules
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
       responses:
         204:
           description: A successful response.
