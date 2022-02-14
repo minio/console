@@ -2237,7 +2237,7 @@ func TestNotifyPostgres(t *testing.T) {
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
-		assert.Fail("Error creating the bucket")
+		assert.Fail("Error notifying postgresql")
 		return
 	}
 	if response != nil {
