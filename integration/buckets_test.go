@@ -2226,21 +2226,3 @@ func TestBucketSetPolicy(t *testing.T) {
 		})
 	}
 }
-
-func TestNotifyPostgres(t *testing.T) {
-
-	// Variables
-	assert := assert.New(t)
-
-	// Test
-	response, err := NotifyPostgres()
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error notifying postgresql")
-		return
-	}
-	if response != nil {
-		assert.Equal(200, response.StatusCode, inspectHTTPResponse(response))
-	}
-}
