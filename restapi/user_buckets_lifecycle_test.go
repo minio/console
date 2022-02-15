@@ -178,7 +178,6 @@ func TestSetLifecycleRule(t *testing.T) {
 			Prefix:                                  "pref1",
 			StorageClass:                            "",
 			Tags:                                    "",
-			TransitionDate:                          "",
 			TransitionDays:                          0,
 		},
 	}
