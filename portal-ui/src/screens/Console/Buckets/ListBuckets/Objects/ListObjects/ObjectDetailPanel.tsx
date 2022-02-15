@@ -62,7 +62,7 @@ import AddTagModal from "../ObjectDetails/AddTagModal";
 import DeleteTagModal from "../ObjectDetails/DeleteTagModal";
 import SetLegalHoldModal from "../ObjectDetails/SetLegalHoldModal";
 import RestoreFileVersion from "../ObjectDetails/RestoreFileVersion";
-import SecureComponent from "../../../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../../../common/SecureComponent";
 import ObjectTags from "../ObjectDetails/ObjectTags";
 import LabelWithIcon from "../../../BucketDetails/SummaryItems/LabelWithIcon";
 import PreviewFileModal from "../Preview/PreviewFileModal";

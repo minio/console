@@ -44,9 +44,10 @@ import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../../common/BackLink";
-import SecureComponent, {
+import {
+  SecureComponent,
   hasPermission,
-} from "../../../../common/SecureComponent/SecureComponent";
+} from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
