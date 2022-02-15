@@ -45,7 +45,7 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
-import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../common/SecureComponent";
 import { SearchIcon } from "../../../../icons";
 import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 

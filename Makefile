@@ -67,7 +67,7 @@ assets:
 test-integration:
 	@echo "docker run with MinIO Version below:"
 	@echo $(MINIO_VERSION)
-	@(docker run -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4} && sleep 5)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4} && sleep 5)
 	@(GO111MODULE=on go test -race -v github.com/minio/console/integration/...)
 	@(docker stop minio)
 

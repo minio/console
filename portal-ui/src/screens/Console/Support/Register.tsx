@@ -49,7 +49,7 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
