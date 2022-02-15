@@ -44,9 +44,10 @@ import {
 import api from "../../../../common/api";
 import { setBucketDetailsLoad } from "../actions";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import SecureComponent, {
+import {
+  SecureComponent,
   hasPermission,
-} from "../../../../common/SecureComponent/SecureComponent";
+} from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";

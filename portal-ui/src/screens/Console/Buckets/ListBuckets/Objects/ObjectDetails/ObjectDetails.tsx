@@ -59,7 +59,7 @@ import PreviewFileContent from "../Preview/PreviewFileContent";
 import RestoreFileVersion from "./RestoreFileVersion";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import VerticalTabs from "../../../../Common/VerticalTabs/VerticalTabs";
-import SecureComponent from "../../../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../../../common/SecureComponent";
 import {
   completeObject,
   setNewObject,

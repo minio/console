@@ -34,7 +34,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import SettingsIcon from "../../../../icons/SettingsIcon";
 import { BucketInfo } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
-import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,

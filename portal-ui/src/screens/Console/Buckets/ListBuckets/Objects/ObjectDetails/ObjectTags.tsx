@@ -2,7 +2,7 @@ import React from "react";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { Box } from "@mui/material";
 import get from "lodash/get";
-import SecureComponent from "../../../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../../../common/SecureComponent";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
