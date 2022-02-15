@@ -698,6 +698,39 @@ func init() {
         }
       }
     },
+    "/buckets/multi-lifecycle": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Multi Bucket Lifecycle",
+        "operationId": "AddMultiBucketLifecycle",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addMultiBucketLifecycle"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/multiLifecycleResult"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/delete-objects": {
       "post": {
         "tags": [
@@ -3850,10 +3883,6 @@ func init() {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
-        "expiry_date": {
-          "description": "Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM",
-          "type": "string"
-        },
         "expiry_days": {
           "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
           "type": "integer",
@@ -3886,10 +3915,6 @@ func init() {
         },
         "tags": {
           "description": "Non required field, tags to match ILM files",
-          "type": "string"
-        },
-        "transition_date": {
-          "description": "Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM",
           "type": "string"
         },
         "transition_days": {
@@ -3934,6 +3959,73 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "addMultiBucketLifecycle": {
+      "type": "object",
+      "required": [
+        "buckets",
+        "type"
+      ],
+      "properties": {
+        "buckets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expired_object_delete_marker": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
+        "expiry_days": {
+          "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_expiration_days": {
+          "description": "Non required, can be set in case of expiration is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_days": {
+          "description": "Non required, can be set in case of transition is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_storage_class": {
+          "description": "Non required, can be set in case of transition is enabled",
+          "type": "string"
+        },
+        "prefix": {
+          "description": "Non required field, it matches a prefix to perform ILM operations on it",
+          "type": "string"
+        },
+        "storage_class": {
+          "description": "Required only in case of transition is set. it refers to a tier",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Non required field, tags to match ILM files",
+          "type": "string"
+        },
+        "transition_days": {
+          "description": "Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -5039,6 +5131,27 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "multiLifecycleResult": {
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/multicycleResultItem"
+          }
+        }
+      }
+    },
+    "multicycleResultItem": {
+      "type": "object",
+      "properties": {
+        "bucketName": {
+          "type": "string"
+        },
+        "error": {
           "type": "string"
         }
       }
@@ -6945,6 +7058,39 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/multiBucketResponseState"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/multi-lifecycle": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Multi Bucket Lifecycle",
+        "operationId": "AddMultiBucketLifecycle",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addMultiBucketLifecycle"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/multiLifecycleResult"
             }
           },
           "default": {
@@ -10226,10 +10372,6 @@ func init() {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
-        "expiry_date": {
-          "description": "Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM",
-          "type": "string"
-        },
         "expiry_days": {
           "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
           "type": "integer",
@@ -10262,10 +10404,6 @@ func init() {
         },
         "tags": {
           "description": "Non required field, tags to match ILM files",
-          "type": "string"
-        },
-        "transition_date": {
-          "description": "Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM",
           "type": "string"
         },
         "transition_days": {
@@ -10310,6 +10448,73 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "addMultiBucketLifecycle": {
+      "type": "object",
+      "required": [
+        "buckets",
+        "type"
+      ],
+      "properties": {
+        "buckets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expired_object_delete_marker": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
+        "expiry_days": {
+          "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_expiration_days": {
+          "description": "Non required, can be set in case of expiration is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_days": {
+          "description": "Non required, can be set in case of transition is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "noncurrentversion_transition_storage_class": {
+          "description": "Non required, can be set in case of transition is enabled",
+          "type": "string"
+        },
+        "prefix": {
+          "description": "Non required field, it matches a prefix to perform ILM operations on it",
+          "type": "string"
+        },
+        "storage_class": {
+          "description": "Required only in case of transition is set. it refers to a tier",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Non required field, tags to match ILM files",
+          "type": "string"
+        },
+        "transition_days": {
+          "description": "Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "type": {
+          "description": "ILM Rule type (Expiry or transition)",
+          "type": "string",
+          "enum": [
+            "expiry",
+            "transition"
+          ]
         }
       }
     },
@@ -11415,6 +11620,27 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "multiLifecycleResult": {
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/multicycleResultItem"
+          }
+        }
+      }
+    },
+    "multicycleResultItem": {
+      "type": "object",
+      "properties": {
+        "bucketName": {
+          "type": "string"
+        },
+        "error": {
           "type": "string"
         }
       }
