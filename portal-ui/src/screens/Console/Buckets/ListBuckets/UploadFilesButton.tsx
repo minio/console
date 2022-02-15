@@ -24,9 +24,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { UploadFolderIcon, UploadIcon } from "../../../../icons";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import SecureComponent, {
-  hasPermission,
-} from "../../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../../common/SecureComponent";
 
 interface IUploadFilesButton {
   uploadPath: string;
@@ -109,43 +107,28 @@ const UploadFilesButton = ({
           horizontal: "center",
         }}
       >
-
-        <SecureComponent
-          resource={uploadPath}
-          containsResource
-          scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-          errorProps={{ disabled: true }}
+        <MenuItem
+          onClick={() => {
+            uploadFileFunction(handleCloseUpload);
+          }}
+          disabled={!uploadObjectAllowed || forceDisable}
         >
-          <MenuItem
-            onClick={() => {
-              uploadFileFunction(handleCloseUpload);
-            }}
-            disabled={forceDisable}
-          >
-            <ListItemIcon className={classes.listUploadIcons}>
-              <UploadIcon />
-            </ListItemIcon>
-            <ListItemText>Upload File</ListItemText>
-          </MenuItem>
-        </SecureComponent>
-        <SecureComponent
-          resource={bucketName}
-          containsResource
-          scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
-          errorProps={{ disabled: true }}
+          <ListItemIcon className={classes.listUploadIcons}>
+            <UploadIcon />
+          </ListItemIcon>
+          <ListItemText>Upload File</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            uploadFolderFunction(handleCloseUpload);
+          }}
+          disabled={!uploadFolderAllowed || forceDisable}
         >
-          <MenuItem
-            onClick={() => {
-              uploadFolderFunction(handleCloseUpload);
-            }}
-            disabled={forceDisable}
-          >
-            <ListItemIcon className={classes.listUploadIcons}>
-              <UploadFolderIcon />
-            </ListItemIcon>
-            <ListItemText>Upload Folder</ListItemText>
-          </MenuItem>
-        </SecureComponent>
+          <ListItemIcon className={classes.listUploadIcons}>
+            <UploadFolderIcon />
+          </ListItemIcon>
+          <ListItemText>Upload Folder</ListItemText>
+        </MenuItem>
       </Menu>
     </Fragment>
   );

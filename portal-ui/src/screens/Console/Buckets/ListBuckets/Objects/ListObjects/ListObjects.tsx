@@ -84,9 +84,10 @@ import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
-import SecureComponent, {
+import {
+  SecureComponent,
   hasPermission,
-} from "../../../../../../common/SecureComponent/SecureComponent";
+} from "../../../../../../common/SecureComponent";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
 import { displayName } from "./utils";

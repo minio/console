@@ -51,7 +51,7 @@ import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWr
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
-import SecureComponent from "../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 
 const styles = (theme: Theme) =>

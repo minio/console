@@ -52,7 +52,7 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
-import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
