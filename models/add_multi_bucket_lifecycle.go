@@ -32,13 +32,14 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AddBucketLifecycle add bucket lifecycle
+// AddMultiBucketLifecycle add multi bucket lifecycle
 //
-// swagger:model addBucketLifecycle
-type AddBucketLifecycle struct {
+// swagger:model addMultiBucketLifecycle
+type AddMultiBucketLifecycle struct {
 
-	// Non required, toggle to disable or enable rule
-	Disable bool `json:"disable,omitempty"`
+	// buckets
+	// Required: true
+	Buckets []string `json:"buckets"`
 
 	// Non required, toggle to disable or enable rule
 	ExpiredObjectDeleteMarker bool `json:"expired_object_delete_marker,omitempty"`
@@ -68,13 +69,18 @@ type AddBucketLifecycle struct {
 	TransitionDays int32 `json:"transition_days,omitempty"`
 
 	// ILM Rule type (Expiry or transition)
+	// Required: true
 	// Enum: [expiry transition]
-	Type string `json:"type,omitempty"`
+	Type *string `json:"type"`
 }
 
-// Validate validates this add bucket lifecycle
-func (m *AddBucketLifecycle) Validate(formats strfmt.Registry) error {
+// Validate validates this add multi bucket lifecycle
+func (m *AddMultiBucketLifecycle) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateBuckets(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
@@ -86,7 +92,16 @@ func (m *AddBucketLifecycle) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var addBucketLifecycleTypeTypePropEnum []interface{}
+func (m *AddMultiBucketLifecycle) validateBuckets(formats strfmt.Registry) error {
+
+	if err := validate.Required("buckets", "body", m.Buckets); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var addMultiBucketLifecycleTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -94,47 +109,48 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		addBucketLifecycleTypeTypePropEnum = append(addBucketLifecycleTypeTypePropEnum, v)
+		addMultiBucketLifecycleTypeTypePropEnum = append(addMultiBucketLifecycleTypeTypePropEnum, v)
 	}
 }
 
 const (
 
-	// AddBucketLifecycleTypeExpiry captures enum value "expiry"
-	AddBucketLifecycleTypeExpiry string = "expiry"
+	// AddMultiBucketLifecycleTypeExpiry captures enum value "expiry"
+	AddMultiBucketLifecycleTypeExpiry string = "expiry"
 
-	// AddBucketLifecycleTypeTransition captures enum value "transition"
-	AddBucketLifecycleTypeTransition string = "transition"
+	// AddMultiBucketLifecycleTypeTransition captures enum value "transition"
+	AddMultiBucketLifecycleTypeTransition string = "transition"
 )
 
 // prop value enum
-func (m *AddBucketLifecycle) validateTypeEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, addBucketLifecycleTypeTypePropEnum, true); err != nil {
+func (m *AddMultiBucketLifecycle) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, addMultiBucketLifecycleTypeTypePropEnum, true); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *AddBucketLifecycle) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
-		return nil
+func (m *AddMultiBucketLifecycle) validateType(formats strfmt.Registry) error {
+
+	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
 	}
 
 	// value enum
-	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
+	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// ContextValidate validates this add bucket lifecycle based on context it is used
-func (m *AddBucketLifecycle) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this add multi bucket lifecycle based on context it is used
+func (m *AddMultiBucketLifecycle) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *AddBucketLifecycle) MarshalBinary() ([]byte, error) {
+func (m *AddMultiBucketLifecycle) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -142,8 +158,8 @@ func (m *AddBucketLifecycle) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *AddBucketLifecycle) UnmarshalBinary(b []byte) error {
-	var res AddBucketLifecycle
+func (m *AddMultiBucketLifecycle) UnmarshalBinary(b []byte) error {
+	var res AddMultiBucketLifecycle
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

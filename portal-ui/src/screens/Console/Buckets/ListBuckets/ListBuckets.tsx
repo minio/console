@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
-import { AddIcon, BucketsIcon } from "../../../../icons";
+import {AddIcon, BucketsIcon, LifecycleConfigIcon} from "../../../../icons";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
@@ -50,6 +50,7 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
+import BulkLifecycleModal from "./BulkLifecycleModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -100,6 +101,7 @@ const ListBuckets = ({
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
+  const [lifecycleModalOpen, setLifecycleModalOpen] = useState<boolean>(false);
 
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
@@ -174,6 +176,14 @@ const ListBuckets = ({
     }
   };
 
+  const closeBulkLifecycleModal = (unselectAll: boolean) => {
+    setLifecycleModalOpen(false);
+
+    if (unselectAll) {
+      setSelectedBuckets([]);
+    }
+  };
+
   const renderItemLine = (index: number) => {
     const bucket = filteredRecords[index] || null;
     if (bucket) {
@@ -213,6 +223,13 @@ const ListBuckets = ({
           closeModalAndRefresh={closeBulkReplicationModal}
         />
       )}
+      {lifecycleModalOpen && (
+        <BulkLifecycleModal
+          buckets={selectedBuckets}
+          closeModalAndRefresh={closeBulkLifecycleModal}
+          open={lifecycleModalOpen}
+        />
+      )}
       <PageHeader label={"Buckets"} />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
@@ -239,6 +256,18 @@ const ListBuckets = ({
               icon={<SelectMultipleIcon />}
               color={"primary"}
               variant={bulkSelect ? "contained" : "outlined"}
+            />
+
+            <RBIconButton
+                tooltip={"Set Lifecycle"}
+                onClick={() => {
+                  setLifecycleModalOpen(true);
+                }}
+                text={""}
+                icon={<LifecycleConfigIcon />}
+                disabled={selectedBuckets.length === 0}
+                color={"primary"}
+                variant={"outlined"}
             />
 
             <RBIconButton
