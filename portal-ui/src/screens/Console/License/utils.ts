@@ -32,14 +32,14 @@ export const planDetails: IPlanDetails[] = [
   {
     id: 1,
     title: "Standard",
-    price: "$10 per TB",
+    price: "$10 per TiB per Month",
     capacityMax: "(Minimum of 100TB)",
     capacityMin: "",
   },
   {
     id: 2,
     title: "Enterprise",
-    price: "$20 per TB",
+    price: "$20 per TiB per Month",
     capacityMax: "(Minimum of 100TB)",
     capacityMin: "",
   },
@@ -58,28 +58,49 @@ export interface IPlanItem {
   id: number;
   field: string;
   plans: IPlanItemValues;
+  className?:string
 }
 
 export const planItems: IPlanItem[] = [
   {
     id: 0,
-    field: "License",
+    field: "Unit Price",
+    className:"unit-price",
     plans: {
       Community: {
-        label: "GNU AGPL v3",
+        label: "",
         detail: "",
-        link: true,
       },
       Standard: {
-        label: "Commercial License",
+        label: "$10 per TiB per Month",
+        detail: "(Minimum of 100TB)",
       },
       Enterprise: {
-        label: "Commercial License",
+        label: "$20 per TiB per Month",
+        detail: "(Minimum of 100TB)",
       },
     },
   },
   {
     id: 1,
+    field: "License",
+    className:"license-col",
+    plans: {
+      Community: {
+        label: "GNU AGPL v3",
+        detail: "Open source",
+        link: true,
+      },
+      Standard: {
+        label: "Commercial",
+      },
+      Enterprise: {
+        label: "Commercial",
+      },
+    },
+  },
+  {
+    id: 2,
     field: "Software Release",
     plans: {
       Community: {
@@ -94,14 +115,15 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 2,
+    id: 3,
     field: "SLA",
     plans: {
       Community: {
         label: "No SLA",
       },
       Standard: {
-        label: "<48 Hours (Local Business Hours)",
+        label: "<48 Hours",
+        detail: "(Local Business Hours)"
       },
       Enterprise: {
         label: "<1 hour",
@@ -109,7 +131,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 3,
+    id: 4,
     field: "Support",
     plans: {
       Community: {
@@ -127,11 +149,11 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 4,
-    field: "Security Updates & Critical Bugs",
+    id: 5,
+    field: "Critical Security and Bug Detection",
     plans: {
       Community: {
-        label: "Self Update",
+        label: "Self",
       },
       Standard: {
         label: "Continuous Scan and Alert",
@@ -142,7 +164,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 5,
+    id: 6,
     field: "Panic Button",
     plans: {
       Community: {
@@ -157,7 +179,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 6,
+    id:7,
     field: "Health Diagnostics",
     plans: {
       Community: {
@@ -172,7 +194,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 6,
+    id: 8,
     field: "Annual Architecture Review",
     plans: {
       Community: {
@@ -187,7 +209,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 7,
+    id: 9,
     field: "Annual Performance Review",
     plans: {
       Community: {
@@ -202,7 +224,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 8,
+    id: 10,
     field: "Indemnification",
     plans: {
       Community: {
@@ -217,8 +239,8 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id: 9,
-    field: "Security + Policy Review",
+    id: 11,
+    field: "Security and Policy Review",
     plans: {
       Community: {
         label: "N/A",
