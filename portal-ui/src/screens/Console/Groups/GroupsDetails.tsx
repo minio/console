@@ -41,9 +41,10 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import SecureComponent, {
+import {
+  SecureComponent,
   hasPermission,
-} from "../../../common/SecureComponent/SecureComponent";
+} from "../../../common/SecureComponent";
 import GroupDetailsHeader from "./GroupDetailsHeader";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 

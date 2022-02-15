@@ -34,7 +34,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
 import { LicenseIcon } from "../../../icons";
-import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,

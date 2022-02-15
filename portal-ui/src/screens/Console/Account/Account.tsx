@@ -49,7 +49,7 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import SecureComponent from "../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../common/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
