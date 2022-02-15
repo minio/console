@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { cloneElement } from "react";
+import get from "lodash/get";
 import { store } from "../../store";
 import { hasAccessToResource } from "./permissions";
 
@@ -35,28 +36,68 @@ export const hasPermission = (
   let resourceGrants: string[] = [];
   let containsResourceGrants: string[] = [];
 
-  if (Array.isArray(resource)) {
-    resources = resources.concat(resource);
-  } else {
-    resources.push(resource);
-  }
-  for (let i = 0; i < resources.length; i++) {
-    if (resources[i]) {
-      resourceGrants = resourceGrants.concat(
-        sessionGrants[resources[i]] ||
-          sessionGrants[`arn:aws:s3:::${resources[i]}/*`] ||
-          []
-      );
-      if (containsResource) {
-        const matchResource = `arn:aws:s3:::${resources[i]}`;
-        for (const [key, value] of Object.entries(sessionGrants)) {
-          if (key.includes(matchResource)) {
-            containsResourceGrants = containsResourceGrants.concat(value);
-          }
-        }
-      }
+  if (resource) {
+    if (Array.isArray(resource)) {
+      resources = [...resources, ...resource];
+    } else {
+      resources.push(resource);
     }
+
+    // Filter wildcard items
+    const wildcards = Object.keys(sessionGrants).filter(
+      (item) => item.includes("*") && item !== "arn:aws:s3:::*"
+    );
+
+    const getMatchingWildcards = (path: string) => {
+      const items = wildcards.map((element) => {
+        const wildcardItemSection = element.split(":").slice(-1)[0];
+
+        const replaceWildcard = wildcardItemSection
+            .replace("/", "\\/")
+            .replace("\\/*", "($|(\\/.*?))");
+
+        const inRegExp = new RegExp(`${replaceWildcard}$`, "gm");
+
+        if(inRegExp.exec(path)) {
+          return element;
+        }
+
+        return null;
+      });
+
+      return items.filter(itm => itm !== null);
+    };
+
+    resources.forEach((rsItem) => {
+      // Validation against inner paths & wildcards
+      let wildcardRules =getMatchingWildcards(rsItem);
+
+      let wildcardGrants: string[] = [];
+
+      wildcardRules.forEach((rule) => {
+        if(rule) {
+          const wcResources = get(sessionGrants, rule, []);
+          wildcardGrants = [...wildcardGrants, ...wcResources];
+        }
+      });
+
+      const simpleResources = get(sessionGrants, rsItem, []);
+      const s3Resources = get(sessionGrants, `arn:aws:s3:::${rsItem}/*`, []);
+
+      resourceGrants = [...simpleResources, ...s3Resources, ...wildcardGrants];
+
+      if (containsResource) {
+        const matchResource = `arn:aws:s3:::${rsItem}`;
+
+        Object.entries(sessionGrants).forEach(([key, value]) => {
+          if (key.includes(matchResource)) {
+            containsResourceGrants = [...containsResourceGrants, ...value];
+          }
+        });
+      }
+    });
   }
+
   return hasAccessToResource(
     [...resourceGrants, ...globalGrants, ...containsResourceGrants],
     scopes,

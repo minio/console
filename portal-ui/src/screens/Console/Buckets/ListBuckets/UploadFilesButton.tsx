@@ -109,8 +109,10 @@ const UploadFilesButton = ({
           horizontal: "center",
         }}
       >
+
         <SecureComponent
           resource={uploadPath}
+          containsResource
           scopes={[IAM_SCOPES.S3_PUT_OBJECT]}
           errorProps={{ disabled: true }}
         >
