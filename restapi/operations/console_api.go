@@ -74,6 +74,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
 		}),
+		UserAPIAddMultiBucketLifecycleHandler: user_api.AddMultiBucketLifecycleHandlerFunc(func(params user_api.AddMultiBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AddMultiBucketLifecycle has not yet been implemented")
+		}),
 		AdminAPIAddNotificationEndpointHandler: admin_api.AddNotificationEndpointHandlerFunc(func(params admin_api.AddNotificationEndpointParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddNotificationEndpoint has not yet been implemented")
 		}),
@@ -456,6 +459,8 @@ type ConsoleAPI struct {
 	UserAPIAddBucketLifecycleHandler user_api.AddBucketLifecycleHandler
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
 	AdminAPIAddGroupHandler admin_api.AddGroupHandler
+	// UserAPIAddMultiBucketLifecycleHandler sets the operation handler for the add multi bucket lifecycle operation
+	UserAPIAddMultiBucketLifecycleHandler user_api.AddMultiBucketLifecycleHandler
 	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
 	AdminAPIAddNotificationEndpointHandler admin_api.AddNotificationEndpointHandler
 	// AdminAPIAddPolicyHandler sets the operation handler for the add policy operation
@@ -765,6 +770,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIAddGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddGroupHandler")
+	}
+	if o.UserAPIAddMultiBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "user_api.AddMultiBucketLifecycleHandler")
 	}
 	if o.AdminAPIAddNotificationEndpointHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddNotificationEndpointHandler")
@@ -1201,6 +1209,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/groups"] = admin_api.NewAddGroup(o.context, o.AdminAPIAddGroupHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/multi-lifecycle"] = user_api.NewAddMultiBucketLifecycle(o.context, o.UserAPIAddMultiBucketLifecycleHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

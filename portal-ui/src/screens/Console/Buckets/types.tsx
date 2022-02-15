@@ -201,3 +201,12 @@ export interface LifeCycleItem {
   tags?: any;
   status?: string;
 }
+
+export interface MultiBucketResult {
+  bucketName: string,
+  error?: string,
+}
+
+export interface MultiBucketResult {
+  results: MultiBucketResult[],
+}

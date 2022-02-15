@@ -39,6 +39,11 @@ import (
 	"github.com/minio/console/restapi/operations/user_api"
 )
 
+type MultiLifecycleResult struct {
+	BucketName string
+	Error      string
+}
+
 func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 	api.UserAPIGetBucketLifecycleHandler = user_api.GetBucketLifecycleHandlerFunc(func(params user_api.GetBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		listBucketLifecycleResponse, err := getBucketLifecycleResponse(session, params)
@@ -69,6 +74,14 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 		}
 
 		return user_api.NewDeleteBucketLifecycleRuleNoContent()
+	})
+	api.UserAPIAddMultiBucketLifecycleHandler = user_api.AddMultiBucketLifecycleHandlerFunc(func(params user_api.AddMultiBucketLifecycleParams, session *models.Principal) middleware.Responder {
+		multiBucketResponse, err := getAddMultiBucketLifecycleResponse(session, params)
+		if err != nil {
+			user_api.NewAddMultiBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+		}
+
+		return user_api.NewAddMultiBucketLifecycleOK().WithPayload(multiBucketResponse)
 	})
 }
 
@@ -375,4 +388,99 @@ func getDeleteBucketLifecycleRule(session *models.Principal, params user_api.Del
 	}
 
 	return nil
+}
+
+// addMultiBucketLifecycle creates multibuckets lifecycle assignments
+func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params user_api.AddMultiBucketLifecycleParams) []MultiLifecycleResult {
+	bucketsRelation := params.Body.Buckets
+
+	// Parallel Lifecycle rules set
+
+	parallelLifecycleBucket := func(bucketName string) chan MultiLifecycleResult {
+		remoteProc := make(chan MultiLifecycleResult)
+
+		lifecycleParams := models.AddBucketLifecycle{
+			Type:                                    *params.Body.Type,
+			StorageClass:                            params.Body.StorageClass,
+			TransitionDays:                          params.Body.TransitionDays,
+			Prefix:                                  params.Body.Prefix,
+			NoncurrentversionTransitionDays:         params.Body.NoncurrentversionTransitionDays,
+			NoncurrentversionTransitionStorageClass: params.Body.NoncurrentversionTransitionStorageClass,
+			NoncurrentversionExpirationDays:         params.Body.NoncurrentversionExpirationDays,
+			Tags:                                    params.Body.Tags,
+			ExpiryDays:                              params.Body.ExpiryDays,
+			Disable:                                 false,
+			ExpiredObjectDeleteMarker:               params.Body.ExpiredObjectDeleteMarker,
+		}
+
+		go func() {
+			defer close(remoteProc)
+
+			lifecycleParams := user_api.AddBucketLifecycleParams{
+				BucketName: bucketName,
+				Body:       &lifecycleParams,
+			}
+
+			// We add lifecycle rule & expect a response
+			err := addBucketLifecycle(ctx, client, lifecycleParams)
+
+			var errorReturn = ""
+
+			if err != nil {
+				errorReturn = err.Error()
+			}
+
+			retParams := MultiLifecycleResult{
+				BucketName: bucketName,
+				Error:      errorReturn,
+			}
+
+			remoteProc <- retParams
+		}()
+		return remoteProc
+	}
+
+	var lifecycleManagement []chan MultiLifecycleResult
+
+	for _, bucketName := range bucketsRelation {
+		rBucket := parallelLifecycleBucket(bucketName)
+		lifecycleManagement = append(lifecycleManagement, rBucket)
+	}
+
+	var resultsList []MultiLifecycleResult
+	for _, result := range lifecycleManagement {
+		res := <-result
+		resultsList = append(resultsList, res)
+	}
+
+	return resultsList
+}
+
+// getAddMultiBucketLifecycleResponse returns the response of multibucket lifecycle assignment
+func getAddMultiBucketLifecycleResponse(session *models.Principal, params user_api.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *models.Error) {
+	ctx := context.Background()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	multiCycleResult := addMultiBucketLifecycle(ctx, minioClient, params)
+
+	var returnList []*models.MulticycleResultItem
+
+	for _, resultItem := range multiCycleResult {
+		multicycleRS := models.MulticycleResultItem{
+			BucketName: resultItem.BucketName,
+			Error:      resultItem.Error,
+		}
+
+		returnList = append(returnList, &multicycleRS)
+	}
+
+	finalResult := models.MultiLifecycleResult{Results: returnList}
+
+	return &finalResult, nil
 }
