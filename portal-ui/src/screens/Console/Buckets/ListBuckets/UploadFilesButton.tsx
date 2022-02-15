@@ -24,10 +24,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { UploadFolderIcon, UploadIcon } from "../../../../icons";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import {
-  SecureComponent,
-  hasPermission,
-} from "../../../../common/SecureComponent";
+import { hasPermission } from "../../../../common/SecureComponent";
 
 interface IUploadFilesButton {
   uploadPath: string;
