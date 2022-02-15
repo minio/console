@@ -628,6 +628,41 @@ func RestoreObjectToASelectedVersion(bucketName string, prefix string, versionID
 	return response, err
 }
 
+func BucketSetPolicy(bucketName string, access string, definition string) (*http.Response, error) {
+	/*
+		Helper function to set policy on a bucket
+		Name: Bucket Set Policy
+		HTTP Verb: PUT
+		URL: {{baseUrl}}/buckets/:name/set-policy
+		Body:
+		{
+			"access": "PRIVATE",
+			"definition": "dolo"
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"access":     access,
+		"definition": definition,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/set-policy",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
@@ -2044,6 +2079,75 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 					finalResponse,
 				)
 			}
+		})
+	}
+}
+
+func TestBucketSetPolicy(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	validBucketName := "testbucketsetpolicy"
+
+	// 1. Create bucket
+	response, err := AddBucket(validBucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Set a bucket's policy using table driven tests
+	type args struct {
+		bucketName string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid bucket when setting a policy",
+			expectedStatus: 200,
+			args: args{
+				bucketName: validBucketName,
+			},
+		},
+		{
+			name:           "Invalid bucket when setting a bucket",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "wlkjsdkalsjdklajsdlkajsdlkajsdlkajsdklajsdkljaslkdjaslkdj",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// Set Policy
+			restResp, restErr := BucketSetPolicy(
+				tt.args.bucketName,
+				"PUBLIC",
+				"",
+			)
+			assert.Nil(restErr)
+			if restErr != nil {
+				log.Println(restErr)
+				return
+			}
+			finalResponse := inspectHTTPResponse(restResp)
+			if restResp != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					restResp.StatusCode,
+					finalResponse,
+				)
+			}
+
 		})
 	}
 }
