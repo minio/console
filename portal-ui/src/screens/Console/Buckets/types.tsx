@@ -203,10 +203,10 @@ export interface LifeCycleItem {
 }
 
 export interface MultiBucketResult {
-  bucketName: string,
-  error?: string,
+  bucketName: string;
+  error?: string;
 }
 
 export interface MultiBucketResult {
-  results: MultiBucketResult[],
+  results: MultiBucketResult[];
 }
