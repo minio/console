@@ -43,7 +43,7 @@ import {
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
 } from "../../../../common/SecureComponent/permissions";
-import { hasPermission } from "../../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../../common/SecureComponent";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
 

@@ -19,7 +19,7 @@ import { ErrorResponseHandler } from "../../../../../common/types";
 import useApi from "../../../Common/Hooks/useApi";
 import { Box, CircularProgress } from "@mui/material";
 import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
-import SecureComponent from "../../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../../common/SecureComponent";
 import get from "lodash/get";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";

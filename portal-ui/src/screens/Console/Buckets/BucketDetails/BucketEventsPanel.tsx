@@ -36,9 +36,10 @@ import api from "../../../../common/api";
 
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
-import SecureComponent, {
+import {
+  SecureComponent,
   hasPermission,
-} from "../../../../common/SecureComponent/SecureComponent";
+} from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
