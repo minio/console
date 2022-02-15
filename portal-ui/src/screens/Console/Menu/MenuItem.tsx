@@ -34,7 +34,7 @@ import {
   MenuCollapsedIcon,
   MenuExpandedIcon,
 } from "../../../icons/SidebarMenus";
-import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES_PERMISSIONS,

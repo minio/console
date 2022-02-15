@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
-import {AddIcon, BucketsIcon, LifecycleConfigIcon} from "../../../../icons";
+import { AddIcon, BucketsIcon, LifecycleConfigIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
@@ -41,7 +41,7 @@ import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
 import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
 import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
-import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
@@ -259,15 +259,15 @@ const ListBuckets = ({
             />
 
             <RBIconButton
-                tooltip={"Set Lifecycle"}
-                onClick={() => {
-                  setLifecycleModalOpen(true);
-                }}
-                text={""}
-                icon={<LifecycleConfigIcon />}
-                disabled={selectedBuckets.length === 0}
-                color={"primary"}
-                variant={"outlined"}
+              tooltip={"Set Lifecycle"}
+              onClick={() => {
+                setLifecycleModalOpen(true);
+              }}
+              text={""}
+              icon={<LifecycleConfigIcon />}
+              disabled={selectedBuckets.length === 0}
+              color={"primary"}
+              variant={"outlined"}
             />
 
             <RBIconButton

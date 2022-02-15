@@ -33,7 +33,7 @@ import {
   IAM_PERMISSIONS,
   IAM_ROLES,
 } from "../../../../common/SecureComponent/permissions";
-import SecureComponent from "../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../common/SecureComponent";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import clsx from "clsx";
 

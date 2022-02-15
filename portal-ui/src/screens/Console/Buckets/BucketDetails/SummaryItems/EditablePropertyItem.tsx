@@ -16,7 +16,7 @@
 
 import React from "react";
 import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
-import SecureComponent from "../../../../../common/SecureComponent/SecureComponent";
+import { SecureComponent } from "../../../../../common/SecureComponent";
 import ActionLink from "./ActionLink";
 import { Box } from "@mui/material";
 import EditActionButton from "./EditActionButton";
