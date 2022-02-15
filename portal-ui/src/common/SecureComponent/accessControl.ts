@@ -16,7 +16,7 @@
 
 import { store } from "../../store";
 import get from "lodash/get";
-import { hasAccessToResource } from "./permissions";
+import { IAM_SCOPES } from "./permissions";
 
 const hasPermission = (
   resource: string | string[] | undefined,
@@ -102,6 +102,35 @@ const hasPermission = (
     scopes,
     matchAll
   );
+};
+
+// hasAccessToResource receives a list of user permissions to perform on a specific resource, then compares those permissions against
+// a list of required permissions and return true or false depending of the level of required access (match all permissions,
+// match some of the permissions)
+const hasAccessToResource = (
+  userPermissionsOnBucket: string[] | null | undefined,
+  requiredPermissions: string[] = [],
+  matchAll?: boolean
+) => {
+  if (!userPermissionsOnBucket) {
+    return false;
+  }
+
+  const s3All = userPermissionsOnBucket.includes(IAM_SCOPES.S3_ALL_ACTIONS);
+  const AdminAll = userPermissionsOnBucket.includes(
+    IAM_SCOPES.ADMIN_ALL_ACTIONS
+  );
+
+  const permissions = requiredPermissions.filter(function (n) {
+    return (
+      userPermissionsOnBucket.indexOf(n) !== -1 ||
+      (n.indexOf("s3:") !== -1 && s3All) ||
+      (n.indexOf("admin:") !== -1 && AdminAll)
+    );
+  });
+  return matchAll
+    ? permissions.length === requiredPermissions.length
+    : permissions.length > 0;
 };
 
 export default hasPermission;
