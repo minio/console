@@ -88,13 +88,15 @@ const ServiceAccountPolicy = ({
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
     api
-        .invoke("PUT", `/api/v1/service-accounts/${selectedAccessKey}/policy`, {policy: newPolicy})
-        .then((res) => {
-          closeModalAndRefresh();
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
-        });
+      .invoke("PUT", `/api/v1/service-accounts/${selectedAccessKey}/policy`, {
+        policy: newPolicy,
+      })
+      .then((res) => {
+        closeModalAndRefresh();
+      })
+      .catch((err: ErrorResponseHandler) => {
+        setModalErrorSnackMessage(err);
+      });
   };
 
   return (
@@ -107,47 +109,45 @@ const ServiceAccountPolicy = ({
       titleIcon={<ChangeAccessPolicyIcon />}
     >
       <form
-          noValidate
-          autoComplete="off"
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            setPolicy(e, policyDefinition);
-          }}
+        noValidate
+        autoComplete="off"
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          setPolicy(e, policyDefinition);
+        }}
       >
-      <Grid container>
-        <Grid item xs={12} className={classes.codeMirrorContainer}>
-          <CodeMirrorWrapper
-            label={`Service Account Policy`}
-            value={policyDefinition}
-            onBeforeChange={(editor, data, value) => {
-              setPolicyDefinition(value);
-            }}
-            editorHeight={"350px"}
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.modalButtonBar}>
-          <Button
-            type="button"
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              closeModalAndRefresh();
-            }}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
+        <Grid container>
+          <Grid item xs={12} className={classes.codeMirrorContainer}>
+            <CodeMirrorWrapper
+              label={`Service Account Policy`}
+              value={policyDefinition}
+              onBeforeChange={(editor, data, value) => {
+                setPolicyDefinition(value);
+              }}
+              editorHeight={"350px"}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                closeModalAndRefresh();
+              }}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
               type="submit"
               variant="contained"
               color="primary"
-              disabled={
-                loading
-              }
-          >
-            Set
-          </Button>
+              disabled={loading}
+            >
+              Set
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
       </form>
     </ModalWrapper>
   );

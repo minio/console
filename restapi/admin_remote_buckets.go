@@ -109,6 +109,17 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 		return user_api.NewDeleteBucketReplicationRuleNoContent()
 	})
 
+	// delete all replication rules for a bucket
+	api.UserAPIDeleteAllReplicationRulesHandler = user_api.DeleteAllReplicationRulesHandlerFunc(func(params user_api.DeleteAllReplicationRulesParams, session *models.Principal) middleware.Responder {
+		err := deleteBucketReplicationRulesResponse(session, params)
+
+		if err != nil {
+			return user_api.NewDeleteAllReplicationRulesDefault(500).WithPayload(err)
+		}
+
+		return user_api.NewDeleteAllReplicationRulesNoContent()
+	})
+
 	//update local bucket replication config item
 	api.UserAPIUpdateMultiBucketReplicationHandler = user_api.UpdateMultiBucketReplicationHandlerFunc(func(params user_api.UpdateMultiBucketReplicationParams, session *models.Principal) middleware.Responder {
 		err := updateBucketReplicationResponse(session, params)
@@ -591,10 +602,41 @@ func deleteReplicationRule(ctx context.Context, session *models.Principal, bucke
 	return nil
 }
 
+func deleteAllReplicationRules(ctx context.Context, session *models.Principal, bucketName string) error {
+	s3Client, err := newS3BucketClient(session, bucketName, "")
+	if err != nil {
+		LogError("error creating S3Client: %v", err)
+		return err
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+
+	err2 := mcClient.deleteAllReplicationRules(ctx)
+
+	if err2 != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 func deleteReplicationRuleResponse(session *models.Principal, params user_api.DeleteBucketReplicationRuleParams) *models.Error {
 	ctx := context.Background()
 
 	err := deleteReplicationRule(ctx, session, params.BucketName, params.RuleID)
+
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func deleteBucketReplicationRulesResponse(session *models.Principal, params user_api.DeleteAllReplicationRulesParams) *models.Error {
+	ctx := context.Background()
+
+	err := deleteAllReplicationRules(ctx, session, params.BucketName)
 
 	if err != nil {
 		return prepareError(err)
