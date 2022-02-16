@@ -96,6 +96,25 @@ const setPolicy2 = () => {
     },
   });
 };
+const setPolicy3 = () => {
+  store.dispatch({
+    type: SESSION_RESPONSE,
+    message: {
+      distributedMode: true,
+      features: [],
+      permissions: {
+        "arn:aws:s3:::testbucket-*": [
+          "admin:CreateServiceAccount",
+          "s3:*",
+          "admin:CreateUser",
+        ],
+        "console-ui": ["admin:CreateServiceAccount", "admin:CreateUser"],
+      },
+      status: "ok",
+      operator: false,
+    },
+  });
+};
 
 test("Upload button disabled", () => {
   setPolicy1();
@@ -122,4 +141,19 @@ test("Can Browse Bucket", () => {
 test("Can List Objects In Bucket", () => {
   setPolicy2();
   expect(hasPermission("bucket-svc", [IAM_SCOPES.S3_LIST_BUCKET])).toBe(true);
+});
+
+test("Can create bucket for policy with a wildcard", () => {
+  setPolicy3();
+  expect(hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET])).toBe(true);
+});
+
+test("Can browse a bucket for a policy with a wildcard", () => {
+  setPolicy3();
+  expect(
+    hasPermission(
+      "testbucket-0",
+      IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
+    )
+  ).toBe(true);
 });
