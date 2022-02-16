@@ -218,6 +218,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
 		}),
+		AdminAPIInspectHandler: admin_api.InspectHandlerFunc(func(params admin_api.InspectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.Inspect has not yet been implemented")
+		}),
 		AdminAPIListAUserServiceAccountsHandler: admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListAUserServiceAccounts has not yet been implemented")
 		}),
@@ -555,6 +558,8 @@ type ConsoleAPI struct {
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
+	// AdminAPIInspectHandler sets the operation handler for the inspect operation
+	AdminAPIInspectHandler admin_api.InspectHandler
 	// AdminAPIListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
 	AdminAPIListAUserServiceAccountsHandler admin_api.ListAUserServiceAccountsHandler
 	// AdminAPIListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
@@ -914,6 +919,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGroupInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
+	}
+	if o.AdminAPIInspectHandler == nil {
+		unregistered = append(unregistered, "admin_api.InspectHandler")
 	}
 	if o.AdminAPIListAUserServiceAccountsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListAUserServiceAccountsHandler")
@@ -1401,6 +1409,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/group"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/inspect"] = admin_api.NewInspect(o.context, o.AdminAPIInspectHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

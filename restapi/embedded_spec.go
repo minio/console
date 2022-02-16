@@ -214,6 +214,51 @@ func init() {
         }
       }
     },
+    "/admin/inspect": {
+      "get": {
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Inspect Files on Drive",
+        "operationId": "Inspect",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "file",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "volume",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "boolean",
+            "name": "encrypt",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/notification_endpoints": {
       "get": {
         "tags": [
@@ -6574,6 +6619,51 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/widgetDetails"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/inspect": {
+      "get": {
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Inspect Files on Drive",
+        "operationId": "Inspect",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "file",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "volume",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "boolean",
+            "name": "encrypt",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
             }
           },
           "default": {

@@ -122,6 +122,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerSubnetHandlers(api)
 	// Register Account handlers
 	registerAdminTiersHandlers(api)
+	//Register Inspect Handler
+	registerInspectHandler(api)
 
 	// Operator Console
 
