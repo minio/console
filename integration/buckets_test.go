@@ -688,6 +688,67 @@ func DeleteObjectsRetentionStatus(bucketName string, prefix string, versionID st
 	return response, err
 }
 
+func PutBucketQuota(bucketName string, enabled bool, quotaType string, amount int) (*http.Response, error) {
+	/*
+		Helper function to put bucket quota
+		Name: Bucket Quota
+		URL: {{baseUrl}}/buckets/:name/quota
+		HTTP Verb: PUT
+		Body:
+		{
+			"enabled": false,
+			"quota_type": "fifo",
+			"amount": 18462288
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"enabled":    enabled,
+		"quota_type": quotaType,
+		"amount":     amount,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/quota",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetBucketQuota(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to get bucket quota
+		Name: Get Bucket Quota
+		URL: {{baseUrl}}/buckets/:name/quota
+		HTTP Verb: GET
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/quota",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
@@ -2289,6 +2350,160 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 					tt.expectedStatus,
 					putResponse.StatusCode,
 					inspectHTTPResponse(putResponse),
+				)
+			}
+		})
+	}
+
+}
+
+func TestPutBucketQuota(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	validBucket := "testputbucketquota"
+
+	// 1. Create bucket
+	response, err := AddBucket(validBucket, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Put Bucket Quota
+	type args struct {
+		bucketName string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid bucket when putting quota",
+			expectedStatus: 200,
+			args: args{
+				bucketName: validBucket,
+			},
+		},
+		{
+			name:           "Invalid bucket when putting quota",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "lksdjakldjklajdlkasjdklasjdkljaskdljaslkdjalksjdklasjdklajsdlkajs",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			restResp, restErr := PutBucketQuota(
+				tt.args.bucketName,
+				true,          // enabled
+				"hard",        // quotaType
+				1099511627776, // amount
+			)
+			assert.Nil(restErr)
+			if restErr != nil {
+				log.Println(restErr)
+				return
+			}
+			finalResponse := inspectHTTPResponse(restResp)
+			if restResp != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					restResp.StatusCode,
+					finalResponse,
+				)
+			}
+		})
+	}
+
+}
+
+func TestGetBucketQuota(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	validBucket := "testgetbucketquota"
+
+	// 1. Create bucket
+	response, err := AddBucket(validBucket, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Put Bucket Quota
+	restResp, restErr := PutBucketQuota(
+		validBucket,
+		true,          // enabled
+		"hard",        // quotaType
+		1099511627776, // amount
+	)
+	assert.Nil(restErr)
+	if restErr != nil {
+		log.Println(restErr)
+		return
+	}
+	finalResponse := inspectHTTPResponse(restResp)
+	if restResp != nil {
+		assert.Equal(
+			200,
+			restResp.StatusCode,
+			finalResponse,
+		)
+	}
+
+	// 3. Get Bucket Quota
+	type args struct {
+		bucketName string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid bucket when getting quota",
+			expectedStatus: 200,
+			args: args{
+				bucketName: validBucket,
+			},
+		},
+		{
+			name:           "Invalid bucket when getting quota",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "askdaklsjdkasjdklasjdklasjdklajsdklasjdklasjdlkas",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			restResp, restErr := GetBucketQuota(
+				tt.args.bucketName,
+			)
+			assert.Nil(restErr)
+			if restErr != nil {
+				log.Println(restErr)
+				return
+			}
+			finalResponse := inspectHTTPResponse(restResp)
+			if restResp != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					restResp.StatusCode,
+					finalResponse,
 				)
 			}
 		})
