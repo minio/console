@@ -218,6 +218,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
               variant={"outlined"}
             />
             <RBIconButton
+              id={"create-tenant"}
               tooltip={"Create Tenant"}
               text={"Create Tenant"}
               onClick={() => {
