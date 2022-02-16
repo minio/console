@@ -778,6 +778,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/events": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Events for given Tenant",
+        "operationId": "GetTenantEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/log": {
       "get": {
         "tags": [
@@ -3478,6 +3515,9 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -4453,6 +4493,43 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/events": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Events for given Tenant",
+        "operationId": "GetTenantEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7740,6 +7817,9 @@ func init() {
           "type": "string"
         },
         "secret_key": {
+          "type": "string"
+        },
+        "url": {
           "type": "string"
         }
       }

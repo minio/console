@@ -297,6 +297,14 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewPutTenantYAMLCreated()
 	})
+	// Get Tenant Events
+	api.OperatorAPIGetTenantEventsHandler = operator_api.GetTenantEventsHandlerFunc(func(params operator_api.GetTenantEventsParams, principal *models.Principal) middleware.Responder {
+		payload, err := getTenantEventsResponse(principal, params)
+		if err != nil {
+			return operator_api.NewGetTenantEventsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetTenantEventsOK().WithPayload(payload)
+	})
 }
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
@@ -1453,11 +1461,18 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	response = &models.CreateTenantResponse{
 		ExternalIDP: tenantExternalIDPConfigured,
 	}
+	thisClient := &operatorClient{
+		client: opClient,
+	}
+
+	minTenant, err := getTenant(ctx, thisClient, ns, tenantName)
+
 	if tenantReq.Idp != nil && !tenantExternalIDPConfigured {
 		for _, credential := range tenantReq.Idp.Keys {
 			response.Console = append(response.Console, &models.TenantResponseItem{
 				AccessKey: *credential.AccessKey,
 				SecretKey: *credential.SecretKey,
+				URL:       GetTenantServiceURL(minTenant),
 			})
 		}
 	}
@@ -2916,4 +2931,38 @@ func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenan
 	}
 
 	return nil
+}
+
+func getTenantEventsResponse(session *models.Principal, params operator_api.GetTenantEventsParams) (models.EventListWrapper, *models.Error) {
+	ctx := context.Background()
+	client, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	tenant, err := client.MinioV2().Tenants(params.Namespace).Get(ctx, params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", tenant.UID)})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	retval := models.EventListWrapper{}
+	for _, event := range events.Items {
+		retval = append(retval, &models.EventListElement{
+			Namespace: event.Namespace,
+			LastSeen:  event.LastTimestamp.Unix(),
+			Message:   event.Message,
+			EventType: event.Type,
+			Reason:    event.Reason,
+		})
+	}
+	sort.SliceStable(retval, func(i int, j int) bool {
+		return retval[i].LastSeen < retval[j].LastSeen
+	})
+	return retval, nil
 }
