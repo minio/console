@@ -663,6 +663,31 @@ func BucketSetPolicy(bucketName string, access string, definition string) (*http
 	return response, err
 }
 
+func DeleteObjectsRetentionStatus(bucketName string, prefix string, versionID string) (*http.Response, error) {
+	/*
+		Helper function to Delete Object Retention Status
+		DELETE:
+		{{baseUrl}}/buckets/:bucket_name/objects/retention?prefix=proident velit&version_id=proident velit
+	*/
+	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/retention?prefix=" +
+		prefix + "&version_id=" + versionID
+	request, err := http.NewRequest(
+		"DELETE",
+		url,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestAddBucket(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
@@ -2150,4 +2175,123 @@ func TestBucketSetPolicy(t *testing.T) {
 
 		})
 	}
+}
+
+func TestDeleteObjectsRetentionStatus(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testdeleteobjectslegalholdstatus"
+	fileName := "testdeleteobjectslegalholdstatus.txt"
+	validPrefix := encodeBase64(fileName)
+
+	// 1. Create bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add object
+	uploadResponse, uploadError := UploadAnObject(
+		bucketName,
+		fileName,
+	)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			addObjRsp,
+		)
+	}
+
+	// Get versionID
+	listResponse, listError := ListObjects(bucketName, validPrefix, "true")
+	fmt.Println(listError)
+	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	listObjs := models.ListObjectsResponse{}
+	err = json.Unmarshal(bodyBytes, &listObjs)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	versionID := listObjs.Objects[0].VersionID
+
+	// 3. Put Objects Retention Status
+	putResponse, putError := PutObjectsRetentionStatus(
+		bucketName,
+		validPrefix,
+		versionID,
+		"governance",
+		"2033-01-11T23:59:59Z",
+		false,
+	)
+	if putError != nil {
+		log.Println(putError)
+		assert.Fail("Error creating the bucket")
+	}
+	if putResponse != nil {
+		assert.Equal(
+			200,
+			putResponse.StatusCode,
+			inspectHTTPResponse(putResponse),
+		)
+	}
+
+	type args struct {
+		prefix string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid prefix when deleting object's retention status",
+			expectedStatus: 200,
+			args: args{
+				prefix: validPrefix,
+			},
+		},
+		{
+			name:           "Invalid prefix when deleting object's retention status",
+			expectedStatus: 500,
+			args: args{
+				prefix: "fakefile",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 4. Delete Objects Retention Status
+			putResponse, putError := DeleteObjectsRetentionStatus(
+				bucketName,
+				tt.args.prefix,
+				versionID,
+			)
+			if putError != nil {
+				log.Println(putError)
+				assert.Fail("Error creating the bucket")
+			}
+			if putResponse != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					putResponse.StatusCode,
+					inspectHTTPResponse(putResponse),
+				)
+			}
+		})
+	}
+
 }
