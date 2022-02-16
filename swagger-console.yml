@@ -2576,6 +2576,38 @@ paths:
       tags:
         - UserAPI
 
+  /admin/inspect:
+    get:
+      summary: Inspect Files on Drive
+      operationId: Inspect
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: file
+          in: query
+          required: true
+          type: string
+        - name: volume
+          in: query
+          required: true
+          type: string
+        - name: encrypt
+          in: query
+          required: false
+          type: boolean
+
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
 definitions:
   accountChangePasswordRequest:
     type: object
