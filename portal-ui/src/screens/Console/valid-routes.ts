@@ -159,6 +159,13 @@ export const validRoutes = (
           icon: DrivesMenuIcon,
           component: NavLink,
         },
+        {
+          name: "Inspect",
+          id: "inspectObjects",
+          to: IAM_PAGES.TOOLS_INSPECT,
+          icon: DrivesMenuIcon,
+          component: NavLink,
+        },
       ],
     },
     {

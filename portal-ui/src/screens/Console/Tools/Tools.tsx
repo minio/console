@@ -19,10 +19,14 @@ import { Route, Router, Switch } from "react-router-dom";
 import history from "../../../history";
 import NotFoundPage from "../../NotFoundPage";
 import ToolsList from "./ToolsPanel/ToolsList";
-import Register from "../Support/Register";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
 import { SupportMenuIcon } from "../../../icons/SidebarMenus";
+
+import withSuspense from "../Common/Components/withSuspense";
+
+const Inspect = withSuspense(React.lazy(() => import("./Inspect")));
+const Register = withSuspense(React.lazy(() => import("../Support/Register")));
 
 const Tools = () => {
   return (
@@ -72,6 +76,7 @@ const Tools = () => {
             );
           }}
         />
+        <Route path={IAM_PAGES.TOOLS_INSPECT} exact component={Inspect} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>
