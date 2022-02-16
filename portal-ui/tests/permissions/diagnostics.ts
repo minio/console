@@ -61,6 +61,7 @@ test("Download button exists after Diagnostic is completed", async (t) => {
     .useRole(roles.diagnostics)
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
+    .wait(3000)
     .expect(elements.downloadButton.exists)
     .ok();
 });
@@ -70,6 +71,7 @@ test("Download button is clickable after Diagnostic is completed", async (t) => 
     .useRole(roles.diagnostics)
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
+    .wait(2000)
     .click(elements.downloadButton);
 });
 
@@ -78,6 +80,7 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
     .useRole(roles.diagnostics)
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
+    .wait(2000)
     .expect(elements.startNewDiagnosticButton.exists)
     .ok();
 });
@@ -87,5 +90,6 @@ test("Start New Diagnostic button is clickable after Diagnostic is completed", a
     .useRole(roles.diagnostics)
     .navigateTo("http://localhost:9090/support/diagnostics")
     .click(elements.startDiagnosticButton)
+    .wait(2000)
     .click(elements.startNewDiagnosticButton);
 });
