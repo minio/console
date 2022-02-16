@@ -82,8 +82,16 @@ const hasPermission = (
 
       const simpleResources = get(sessionGrants, rsItem, []);
       const s3Resources = get(sessionGrants, `arn:aws:s3:::${rsItem}/*`, []);
+      const bucketOnly = get(sessionGrants, `arn:aws:s3:::${rsItem}/`, []);
+      const bckOnlyNoSlash = get(sessionGrants, `arn:aws:s3:::${rsItem}`, []);
 
-      resourceGrants = [...simpleResources, ...s3Resources, ...wildcardGrants];
+      resourceGrants = [
+        ...simpleResources,
+        ...s3Resources,
+        ...wildcardGrants,
+        ...bucketOnly,
+        ...bckOnlyNoSlash,
+      ];
 
       if (containsResource) {
         const matchResource = `arn:aws:s3:::${rsItem}`;
