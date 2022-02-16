@@ -3478,6 +3478,9 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -7740,6 +7743,9 @@ func init() {
           "type": "string"
         },
         "secret_key": {
+          "type": "string"
+        },
+        "url": {
           "type": "string"
         }
       }

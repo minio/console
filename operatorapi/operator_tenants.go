@@ -1453,11 +1453,18 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	response = &models.CreateTenantResponse{
 		ExternalIDP: tenantExternalIDPConfigured,
 	}
+	thisClient := &operatorClient{
+		client: opClient,
+	}
+
+	minTenant, err := getTenant(ctx, thisClient, ns, tenantName)
+
 	if tenantReq.Idp != nil && !tenantExternalIDPConfigured {
 		for _, credential := range tenantReq.Idp.Keys {
 			response.Console = append(response.Console, &models.TenantResponseItem{
 				AccessKey: *credential.AccessKey,
 				SecretKey: *credential.SecretKey,
+				URL:       GetTenantServiceURL(minTenant),
 			})
 		}
 	}

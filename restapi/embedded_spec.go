@@ -5741,6 +5741,9 @@ func init() {
         },
         "secretKey": {
           "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -11581,6 +11584,9 @@ func init() {
           "type": "string"
         },
         "secretKey": {
+          "type": "string"
+        },
+        "url": {
           "type": "string"
         }
       }

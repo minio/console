@@ -1868,7 +1868,9 @@ definitions:
         type: string
       secret_key:
         type: string
-
+      url:
+        type: string
+        
   tenantPod:
     type: object
     required:

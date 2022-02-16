@@ -652,6 +652,9 @@ const AddTenant = ({
                 return {
                   accessKey: consoleKey.access_key,
                   secretKey: consoleKey.secret_key,
+                  api: "s3v4",
+                  path: "auto",
+                  url: consoleKey.url,
                 };
               });
 
@@ -661,6 +664,7 @@ const AddTenant = ({
                 console: {
                   accessKey: res.console.access_key,
                   secretKey: res.console.secret_key,
+                  url: res.console.url,
                 },
               };
             }
