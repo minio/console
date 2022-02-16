@@ -58,14 +58,14 @@ export interface IPlanItem {
   id: number;
   field: string;
   plans: IPlanItemValues;
-  className?:string
+  className?: string;
 }
 
 export const planItems: IPlanItem[] = [
   {
     id: 0,
     field: "Unit Price",
-    className:"unit-price",
+    className: "unit-price",
     plans: {
       Community: {
         label: "",
@@ -84,7 +84,7 @@ export const planItems: IPlanItem[] = [
   {
     id: 1,
     field: "License",
-    className:"license-col",
+    className: "license-col",
     plans: {
       Community: {
         label: "GNU AGPL v3",
@@ -123,7 +123,7 @@ export const planItems: IPlanItem[] = [
       },
       Standard: {
         label: "<48 Hours",
-        detail: "(Local Business Hours)"
+        detail: "(Local Business Hours)",
       },
       Enterprise: {
         label: "<1 hour",
@@ -179,7 +179,7 @@ export const planItems: IPlanItem[] = [
     },
   },
   {
-    id:7,
+    id: 7,
     field: "Health Diagnostics",
     plans: {
       Community: {
