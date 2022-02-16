@@ -72,7 +72,7 @@ test-integration:
 	@(docker stop minio)
 
 test-permissions:
-	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh)
 	@(docker stop minio)
 
@@ -80,7 +80,7 @@ test-apply-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/initialize-env.sh)
 
 test-start-docker-minio:
-	@(docker run -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
 
 initialize-permissions: test-start-docker-minio test-apply-permissions
 	@echo "Done initializing permissions test"
