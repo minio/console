@@ -53,7 +53,7 @@ const hasPermission = (
 
         const replaceWildcard = wildcardItemSection
           .replace("/", "\\/")
-          .replace("\\/*", "($|(\\/.*?))");
+          .replace("*", "($|\\/?(.*?))");
 
         const inRegExp = new RegExp(`${replaceWildcard}$`, "gm");
 
@@ -105,8 +105,26 @@ const hasPermission = (
     });
   }
 
+  let anyResourceGrant: string[] = [];
+  if (resource === "*") {
+    Object.entries(sessionGrants).forEach(([key, values]) => {
+      scopes.forEach((scope) => {
+        values.forEach((val) => {
+          if (val === scope || val === "s3:*") {
+            anyResourceGrant = [...anyResourceGrant, scope];
+          }
+        });
+      });
+    });
+  }
+
   return hasAccessToResource(
-    [...resourceGrants, ...globalGrants, ...containsResourceGrants],
+    [
+      ...resourceGrants,
+      ...globalGrants,
+      ...containsResourceGrants,
+      ...anyResourceGrant,
+    ],
     scopes,
     matchAll
   );
