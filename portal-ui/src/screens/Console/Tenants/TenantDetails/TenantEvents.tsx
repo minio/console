@@ -21,12 +21,11 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
     actionsTray,
-    buttonsStyles, containerForHeader,
-    hrClass,
+    containerForHeader,
     searchField, tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import {IEvent, ITenant} from "../ListTenants/types";
+import { IEvent } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { niceDays } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
