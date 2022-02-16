@@ -14,35 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// hasAccessToResource receives a list of user permissions to perform on a specific resource, then compares those permissions against
-// a list of required permissions and return true or false depending of the level of required access (match all permissions,
-// match some of the permissions)
-export const hasAccessToResource = (
-  userPermissionsOnBucket: string[] | null | undefined,
-  requiredPermissions: string[] = [],
-  matchAll?: boolean
-) => {
-  if (!userPermissionsOnBucket) {
-    return false;
-  }
-
-  const s3All = userPermissionsOnBucket.includes(IAM_SCOPES.S3_ALL_ACTIONS);
-  const AdminAll = userPermissionsOnBucket.includes(
-    IAM_SCOPES.ADMIN_ALL_ACTIONS
-  );
-
-  const permissions = requiredPermissions.filter(function (n) {
-    return (
-      userPermissionsOnBucket.indexOf(n) !== -1 ||
-      (n.indexOf("s3:") !== -1 && s3All) ||
-      (n.indexOf("admin:") !== -1 && AdminAll)
-    );
-  });
-  return matchAll
-    ? permissions.length === requiredPermissions.length
-    : permissions.length > 0;
-};
-
 export const IAM_ROLES = {
   BUCKET_OWNER: "BUCKET_OWNER", // upload/delete objects from the bucket
   BUCKET_VIEWER: "BUCKET_VIEWER", // only view objects on the bucket

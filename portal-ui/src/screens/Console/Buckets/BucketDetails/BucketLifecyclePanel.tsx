@@ -37,9 +37,10 @@ import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
-import SecureComponent, {
+import {
+  SecureComponent,
   hasPermission,
-} from "../../../../common/SecureComponent/SecureComponent";
+} from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";

@@ -23,11 +23,11 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, Link } from "@mui/material";
+import { Box, Button, Grid, Link } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { CopyIcon, DiagnosticsFeatureIcon, UsersIcon } from "../../../icons";
+import { CopyIcon, UsersIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import OnlineRegistrationIcon from "../../../icons/OnlineRegistrationIcon";
@@ -49,7 +49,7 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { hasPermission } from "../../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
@@ -61,11 +61,8 @@ import SettingsIcon from "../../../icons/SettingsIcon";
 import RegisterStatus from "./RegisterStatus";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { AppState } from "../../../store";
-import {
-  HelpIconFilled,
-  CallHomeFeatureIcon,
-  PerformanceFeatureIcon,
-} from "../../../icons";
+
+import RegisterHelpBox from "./RegisterHelpBox";
 
 interface IRegister {
   classes: any;
@@ -184,99 +181,6 @@ const FormTitle = ({ icon = null, title }: { icon?: any; title: any }) => {
   );
 };
 
-const RegisterHelpBox = () => {
-  return (
-    <Box
-      sx={{
-        flex: 1,
-        border: "1px solid #eaeaea",
-        borderRadius: "2px",
-        display: "flex",
-        flexFlow: "column",
-        padding: "20px",
-        marginLeft: {
-          xs: "0px",
-          sm: "0px",
-          md: "30px",
-        },
-        marginTop: {
-          xs: "0px",
-          sm: "30px",
-        },
-      }}
-    >
-      <Box
-        sx={{
-          fontSize: "16px",
-          fontWeight: 600,
-          display: "flex",
-          alignItems: "center",
-          marginBottom: "16px",
-
-          "& .min-icon": {
-            height: "21px",
-            width: "21px",
-            marginRight: "15px",
-          },
-        }}
-      >
-        <HelpIconFilled />
-        <div>Why should I register?</div>
-      </Box>
-      <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        Registering this cluster with the MinIO Subscription Network (SUBNET)
-        provides the following benefits in addition to the commercial license
-        and SLA backed support.
-      </Box>
-
-      <Box
-        sx={{
-          display: "flex",
-          flexFlow: "column",
-        }}
-      >
-        <FeatureItem
-          icon={<CallHomeFeatureIcon />}
-          description={`Call Home Monitoring`}
-        />
-        <FeatureItem
-          icon={<DiagnosticsFeatureIcon />}
-          description={`Health Diagnostics`}
-        />
-        <FeatureItem
-          icon={<PerformanceFeatureIcon />}
-          description={`Performance Analysis`}
-        />
-      </Box>
-    </Box>
-  );
-};
-const FeatureItem = ({
-  icon,
-  description,
-}: {
-  icon: any;
-  description: string;
-}) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        "& .min-icon": {
-          marginRight: "10px",
-          height: "23px",
-          width: "23px",
-          marginBottom: "10px",
-        },
-      }}
-    >
-      {icon}{" "}
-      <div style={{ fontSize: "14px", fontStyle: "italic", color: "#5E5E5E" }}>
-        {description}
-      </div>
-    </Box>
-  );
-};
 const Register = ({
   classes,
   displayErrorMessage,
@@ -909,179 +813,210 @@ const Register = ({
   const proxyConfigurationCommand =
     "mc admin config set {alias} subnet proxy={proxy}";
 
-  return (
+  const regUi = (
     <Fragment>
-      <PageHeader label="Register" />
-      <PageLayout>
-        <Box
-          sx={{
-            border: "1px solid #eaeaea",
-            borderRadius: "2px",
-            display: "flex",
-            flexFlow: "column",
-            padding: "43px",
-          }}
-        >
-          {clusterRegistered && <RegisterStatus />}
-
-          {!onlineActivation ? (
+      <Box
+        sx={{
+          border: "1px solid #eaeaea",
+          borderRadius: "2px",
+          display: "flex",
+          flexFlow: "column",
+          padding: "43px",
+        }}
+      >
+        {clusterRegistered && <RegisterStatus />}
+        {clusterRegistered ? (
+          <Grid item xs={12} marginTop={"25px"}>
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                marginBottom: "30px",
-                "& .min-icon": {
-                  height: "25px",
-                  width: "25px",
-                  marginRight: "15px",
+                padding: "20px",
+                //  border: "1px solid #eaeaea",
+                "& a": {
+                  color: "#2781B0",
+                  cursor: "pointer",
                 },
               }}
             >
-              <OnlineRegistrationBackIcon />
+              Login to{" "}
               <Link
+                href="https://subnet.min.io"
+                target="_blank"
                 className={classes.link}
-                onClick={() => setOnlineActivation(!onlineActivation)}
               >
-                Back to Online Activation
-              </Link>
+                SUBNET
+              </Link>{" "}
+              to avail support for this MinIO cluster
             </Box>
-          ) : null}
+          </Grid>
+        ) : null}
 
-          {formTitle}
+        {!onlineActivation ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              marginBottom: "30px",
+              "& .min-icon": {
+                height: "25px",
+                width: "25px",
+                marginRight: "15px",
+              },
+            }}
+          >
+            <OnlineRegistrationBackIcon />
+            <Link
+              className={classes.link}
+              onClick={() => setOnlineActivation(!onlineActivation)}
+            >
+              Back to Online Activation
+            </Link>
+          </Box>
+        ) : null}
 
-          {clusterRegistrationForm}
-        </Box>
+        {clusterRegistered ? null : formTitle}
 
-        {onlineActivation && (
-          <React.Fragment>
+        {clusterRegistered ? null : clusterRegistrationForm}
+      </Box>
+
+      {!clusterRegistered && onlineActivation && (
+        <React.Fragment>
+          <Box
+            sx={{
+              border: "1px solid #eaeaea",
+              borderRadius: "2px",
+              display: "flex",
+              padding: "23px",
+              marginTop: "40px",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <Box
               sx={{
-                border: "1px solid #eaeaea",
-                borderRadius: "2px",
                 display: "flex",
-                padding: "23px",
-                marginTop: "40px",
-                alignItems: "center",
-                justifyContent: "space-between",
+                flexFlow: "column",
               }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  flexFlow: "column",
+                  "& .min-icon": {
+                    height: "22px",
+                    width: "22px",
+                  },
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    "& .min-icon": {
-                      height: "22px",
-                      width: "22px",
-                    },
-                  }}
-                >
-                  <SettingsIcon />
-                  <div style={{ marginLeft: "10px", fontWeight: 600 }}>
-                    Proxy Configuration
-                  </div>
-                </Box>
-                <Box
-                  sx={{
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                    fontSize: "14px",
-                  }}
-                >
-                  For airgap/firewalled environments it is possible to{" "}
-                  <Link
-                    className={classes.link}
-                    href="https://docs.min.io/docs/minio-server-configuration-guide.html?ref=con"
-                    target="_blank"
-                  >
-                    configure a proxy
-                  </Link>{" "}
-                  to connect to SUBNET .
-                </Box>
-                <Box>
-                  {displaySubnetProxy && (
-                    <InputBoxWrapper
-                      disabled
-                      id="subnetProxy"
-                      name="subnetProxy"
-                      placeholder=""
-                      onChange={() => {}}
-                      label=""
-                      value={proxyConfigurationCommand}
-                      overlayIcon={<CopyIcon />}
-                      extraInputProps={{
-                        readOnly: true,
-                      }}
-                      overlayAction={() =>
-                        navigator.clipboard.writeText(proxyConfigurationCommand)
-                      }
-                    />
-                  )}
-                </Box>
+                <SettingsIcon />
+                <div style={{ marginLeft: "10px", fontWeight: 600 }}>
+                  Proxy Configuration
+                </div>
               </Box>
               <Box
                 sx={{
-                  display: "flex",
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  fontSize: "14px",
                 }}
               >
-                <FormSwitchWrapper
-                  value="enableProxy"
-                  id="enableProxy"
-                  name="enableProxy"
-                  checked={displaySubnetProxy}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setDisplaySubnetProxy(event.target.checked);
-                  }}
-                />
-              </Box>
-            </Box>
-
-            <Box
-              sx={{
-                border: "1px solid #eaeaea",
-                borderRadius: "2px",
-                display: "flex",
-                padding: "23px",
-                marginTop: "40px",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <OfflineRegistrationBackIcon /> Cluster does not have internet
-                access? Use{" "}
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginLeft: "8px",
-                }}
-              >
+                For airgap/firewalled environments it is possible to{" "}
                 <Link
                   className={classes.link}
-                  onClick={() => {
-                    fetchSubnetRegToken();
-                    setOnlineActivation(!onlineActivation);
-                  }}
+                  href="https://docs.min.io/docs/minio-server-configuration-guide.html?ref=con"
+                  target="_blank"
                 >
-                  Offline Activation.
-                </Link>
+                  configure a proxy
+                </Link>{" "}
+                to connect to SUBNET .
+              </Box>
+              <Box>
+                {displaySubnetProxy && (
+                  <InputBoxWrapper
+                    disabled
+                    id="subnetProxy"
+                    name="subnetProxy"
+                    placeholder=""
+                    onChange={() => {}}
+                    label=""
+                    value={proxyConfigurationCommand}
+                    overlayIcon={<CopyIcon />}
+                    extraInputProps={{
+                      readOnly: true,
+                    }}
+                    overlayAction={() =>
+                      navigator.clipboard.writeText(proxyConfigurationCommand)
+                    }
+                  />
+                )}
               </Box>
             </Box>
-          </React.Fragment>
-        )}
-      </PageLayout>
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <FormSwitchWrapper
+                value="enableProxy"
+                id="enableProxy"
+                name="enableProxy"
+                checked={displaySubnetProxy}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setDisplaySubnetProxy(event.target.checked);
+                }}
+              />
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              border: "1px solid #eaeaea",
+              borderRadius: "2px",
+              display: "flex",
+              padding: "23px",
+              marginTop: "40px",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <OfflineRegistrationBackIcon /> Cluster does not have internet
+              access? Use{" "}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                marginLeft: "8px",
+              }}
+            >
+              <Link
+                className={classes.link}
+                onClick={() => {
+                  fetchSubnetRegToken();
+                  setOnlineActivation(!onlineActivation);
+                }}
+              >
+                Offline Activation.
+              </Link>
+            </Box>
+          </Box>
+        </React.Fragment>
+      )}
+    </Fragment>
+  );
+
+  const loadingUi = <div>Loading..</div>;
+  const uiToShow = loadingLicenseInfo ? loadingUi : regUi;
+
+  return (
+    <Fragment>
+      <PageHeader label="Register" />
+      <PageLayout>{uiToShow}</PageLayout>
     </Fragment>
   );
 };

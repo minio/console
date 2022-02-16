@@ -207,11 +207,11 @@ const UserServiceAccountsPanel = ({
         />
       )}
       {policyOpen && (
-          <ServiceAccountPolicy
-              open={policyOpen}
-              selectedAccessKey={selectedServiceAccount}
-              closeModalAndRefresh={closePolicyModal}
-          />
+        <ServiceAccountPolicy
+          open={policyOpen}
+          selectedAccessKey={selectedServiceAccount}
+          closeModalAndRefresh={closePolicyModal}
+        />
       )}
       <div className={classes.actionsTray}>
         <PanelTitle>Service Accounts</PanelTitle>

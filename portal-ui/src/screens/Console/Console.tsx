@@ -47,7 +47,7 @@ import {
   IAM_SCOPES,
   S3_ALL_RESOURCES,
 } from "../../common/SecureComponent/permissions";
-import { hasPermission } from "../../common/SecureComponent/SecureComponent";
+import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import LoadingComponent from "../../common/LoadingComponent";
 

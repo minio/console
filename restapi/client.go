@@ -262,6 +262,10 @@ func (c mcClient) setReplication(ctx context.Context, cfg *replication.Config, o
 	return c.client.SetReplication(ctx, cfg, opts)
 }
 
+func (c mcClient) deleteAllReplicationRules(ctx context.Context) *probe.Error {
+	return c.client.RemoveReplication(ctx)
+}
+
 func (c mcClient) setVersioning(ctx context.Context, status string) *probe.Error {
 	return c.client.SetVersion(ctx, status)
 }
