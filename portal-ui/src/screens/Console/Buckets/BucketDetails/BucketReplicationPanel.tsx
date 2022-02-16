@@ -20,8 +20,6 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import AddIcon from "../../../../icons/AddIcon";
-import BucketsIcon from "../../../../icons/BucketsIcon";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
@@ -35,17 +33,16 @@ import {
 } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState } from "../../../../store";
-import api from "../../../../common/api";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-
-import HelpBox from "../../../../common/HelpBox";
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
   SecureComponent,
   hasPermission,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-
+import { AddIcon, DeleteIcon, BucketsIcon } from "../../../../icons";
+import api from "../../../../common/api";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import HelpBox from "../../../../common/HelpBox";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import EditReplicationModal from "./EditReplicationModal";
@@ -79,7 +76,6 @@ const BucketReplicationPanel = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
-  bucketInfo,
 }: IBucketReplicationProps) => {
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [replicationRules, setReplicationRules] = useState<
@@ -91,6 +87,7 @@ const BucketReplicationPanel = ({
   const [editReplicationModal, setEditReplicationModal] =
     useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
+  const [deleteAllRules, setDeleteAllRules] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
 
@@ -159,6 +156,13 @@ const BucketReplicationPanel = ({
 
   const confirmDeleteReplication = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
+    setDeleteAllRules(false);
+    setDeleteReplicationModal(true);
+  };
+
+  const confirmDeleteAllReplicationRules = () => {
+    setSelectedRRule("allRules");
+    setDeleteAllRules(true);
     setDeleteReplicationModal(true);
   };
 
@@ -179,7 +183,6 @@ const BucketReplicationPanel = ({
     {
       type: "delete",
       onClick: confirmDeleteReplication,
-      disableButtonFunction: () => replicationRules.length === 1,
     },
     {
       type: "view",
@@ -209,6 +212,8 @@ const BucketReplicationPanel = ({
           selectedBucket={bucketName}
           closeDeleteModalAndRefresh={closeReplicationModalDelete}
           ruleToDelete={selectedRRule}
+          remainingRules={replicationRules.length}
+          deleteAllRules={deleteAllRules}
         />
       )}
 
@@ -223,23 +228,43 @@ const BucketReplicationPanel = ({
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Replication</PanelTitle>
-          <SecureComponent
-            scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
-            resource={bucketName}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <RBIconButton
-              tooltip={"Add Replication Rule"}
-              onClick={() => {
-                setOpenReplicationOpen(true);
-              }}
-              text={"Add Replication Rule"}
-              icon={<AddIcon />}
-              color="primary"
-              variant={"contained"}
-            />
-          </SecureComponent>
+          <div>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+              resource={bucketName}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Remove All Replication Rules"}
+                onClick={() => {
+                  confirmDeleteAllReplicationRules();
+                }}
+                text={"Remove All Rules"}
+                icon={<DeleteIcon />}
+                color={"secondary"}
+                variant={"outlined"}
+                disabled={replicationRules.length === 0}
+              />
+            </SecureComponent>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+              resource={bucketName}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Add Replication Rule"}
+                onClick={() => {
+                  setOpenReplicationOpen(true);
+                }}
+                text={"Add Replication Rule"}
+                icon={<AddIcon />}
+                color="primary"
+                variant={"contained"}
+              />
+            </SecureComponent>
+          </div>
         </Grid>
         <Grid item xs={12}>
           <SecureComponent
@@ -284,6 +309,7 @@ const BucketReplicationPanel = ({
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>
+          <br />
           <HelpBox
             title={"Replication"}
             iconComponent={<BucketsIcon />}
