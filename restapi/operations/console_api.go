@@ -134,6 +134,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDeleteAccessRuleWithBucketHandler: admin_api.DeleteAccessRuleWithBucketHandlerFunc(func(params admin_api.DeleteAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteAccessRuleWithBucket has not yet been implemented")
 		}),
+		UserAPIDeleteAllReplicationRulesHandler: user_api.DeleteAllReplicationRulesHandlerFunc(func(params user_api.DeleteAllReplicationRulesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteAllReplicationRules has not yet been implemented")
+		}),
 		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
 		}),
@@ -502,6 +505,8 @@ type ConsoleAPI struct {
 	AdminAPIDashboardWidgetDetailsHandler admin_api.DashboardWidgetDetailsHandler
 	// AdminAPIDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
 	AdminAPIDeleteAccessRuleWithBucketHandler admin_api.DeleteAccessRuleWithBucketHandler
+	// UserAPIDeleteAllReplicationRulesHandler sets the operation handler for the delete all replication rules operation
+	UserAPIDeleteAllReplicationRulesHandler user_api.DeleteAllReplicationRulesHandler
 	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
@@ -835,6 +840,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIDeleteAccessRuleWithBucketHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteAccessRuleWithBucketHandler")
+	}
+	if o.UserAPIDeleteAllReplicationRulesHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteAllReplicationRulesHandler")
 	}
 	if o.UserAPIDeleteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketHandler")
@@ -1297,6 +1305,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/bucket/{bucket}/access-rules"] = admin_api.NewDeleteAccessRuleWithBucket(o.context, o.AdminAPIDeleteAccessRuleWithBucketHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/buckets/{bucket_name}/delete-all-replication-rules"] = user_api.NewDeleteAllReplicationRules(o.context, o.UserAPIDeleteAllReplicationRulesHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
