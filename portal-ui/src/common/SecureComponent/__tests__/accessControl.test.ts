@@ -17,6 +17,7 @@
 import hasPermission from "../accessControl";
 import { store } from "../../../store";
 import { SESSION_RESPONSE } from "../../../screens/Console/actions";
+import { IAM_PAGES, IAM_PAGES_PERMISSIONS, IAM_SCOPES } from "../permissions";
 
 const setPolicy1 = () => {
   store.dispatch({
@@ -52,6 +53,49 @@ const setPolicy1 = () => {
     },
   });
 };
+const setPolicy2 = () => {
+  store.dispatch({
+    type: SESSION_RESPONSE,
+    message: {
+      distributedMode: true,
+      operator: false,
+      features: [],
+      permissions: {
+        "arn:aws:s3:::bucket-svc": [
+          "admin:CreateServiceAccount",
+          "s3:GetBucketLocation",
+          "s3:ListBucket",
+          "s3:ListBucketMultipartUploads",
+          "s3:ListMultipartUploadParts",
+          "admin:CreateUser",
+        ],
+        "arn:aws:s3:::bucket-svc/prefix1/*": [
+          "admin:CreateUser",
+          "admin:CreateServiceAccount",
+          "s3:GetObject",
+          "s3:PutObject",
+        ],
+        "arn:aws:s3:::bucket-svc/prefix1/ini*": [
+          "admin:CreateServiceAccount",
+          "s3:*",
+          "admin:CreateUser",
+        ],
+        "arn:aws:s3:::bucket-svc/prefix1/jars*": [
+          "admin:CreateUser",
+          "admin:CreateServiceAccount",
+          "s3:*",
+        ],
+        "arn:aws:s3:::bucket-svc/prefix1/logs*": [
+          "admin:CreateUser",
+          "admin:CreateServiceAccount",
+          "s3:*",
+        ],
+        "console-ui": ["admin:CreateServiceAccount", "admin:CreateUser"],
+      },
+      status: "ok",
+    },
+  });
+};
 
 test("Upload button disabled", () => {
   setPolicy1();
@@ -63,4 +107,19 @@ test("Upload button enabled valid prefix", () => {
   expect(hasPermission("testcafe/write", ["s3:PutObject"], false, true)).toBe(
     true
   );
+});
+
+test("Can Browse Bucket", () => {
+  setPolicy2();
+  expect(
+    hasPermission(
+      "bucket-svc",
+      IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
+    )
+  ).toBe(true);
+});
+
+test("Can List Objects In Bucket", () => {
+  setPolicy2();
+  expect(hasPermission("bucket-svc", [IAM_SCOPES.S3_LIST_BUCKET])).toBe(true);
 });
