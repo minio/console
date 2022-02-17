@@ -243,7 +243,8 @@ const mapState = (state: AppState) => ({
   sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
   drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
   nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-  memoryNode: state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest,
+  memoryNode:
+    state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest,
   ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
   ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
   cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
