@@ -29,9 +29,9 @@ import { IEvent } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { niceDays } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import { AppState } from "../../../../store";
+import EventsList from "./events/EventsList";
 
 interface ITenantEventsProps {
   classes: any;
@@ -57,7 +57,7 @@ const TenantEvents = ({
   loadingTenant,
   setErrorSnackMessage,
 }: ITenantEventsProps) => {
-  const [event, setEvent] = useState<IEvent[]>([]);
+  const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -81,7 +81,7 @@ const TenantEvents = ({
 
             res[i].seen = niceDays((currentTime - res[i].last_seen).toString());
           }
-          setEvent(res);
+          setEvents(res);
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -94,21 +94,8 @@ const TenantEvents = ({
   return (
     <React.Fragment>
       <h1 className={classes.sectionTitle}>Events</h1>
-      <Grid item xs={12} className={classes.actionsTray}>
-        <TableWrapper
-          itemActions={[]}
-          columns={[
-            { label: "Namespace", elementKey: "namespace" },
-            { label: "Last Seen", elementKey: "seen" },
-            { label: "Message", elementKey: "message" },
-            { label: "Event Type", elementKey: "event_type" },
-            { label: "Reason", elementKey: "reason" },
-          ]}
-          isLoading={loading}
-          records={event}
-          entityName="Events"
-          idField="event"
-        />
+      <Grid item xs={12}>
+        <EventsList events={events} loading={loading} />
       </Grid>
     </React.Fragment>
   );
