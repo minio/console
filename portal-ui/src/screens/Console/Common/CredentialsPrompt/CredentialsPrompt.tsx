@@ -90,7 +90,6 @@ const download = (filename: string, text: string) => {
   document.body.appendChild(element);
 
   element.click();
-
   document.body.removeChild(element);
 };
 
@@ -104,7 +103,6 @@ const CredentialsPrompt = ({
   if (!newServiceAccount) {
     return null;
   }
-
   const consoleCreds = get(newServiceAccount, "console", null);
   const idp = get(newServiceAccount, "idp", false);
 
@@ -196,16 +194,22 @@ const CredentialsPrompt = ({
                     consoleExtras = {
                       console: [
                         {
+                          url : consoleCreds.url,
                           access_key: consoleCreds.accessKey,
                           secret_key: consoleCreds.secretKey,
+                          api: "s3v4",
+                          path: "auto",
                         },
                       ],
                     };
                   } else {
                     const cCreds = consoleCreds.map((itemMap) => {
                       return {
+                        url: itemMap.url,
                         access_key: itemMap.accessKey,
                         secret_key: itemMap.secretKey,
+                        api: "s3v4",
+                        path: "auto",
                       };
                     });
 

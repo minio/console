@@ -39,6 +39,9 @@ type TenantResponseItem struct {
 
 	// secret key
 	SecretKey string `json:"secret_key,omitempty"`
+
+	// url
+	URL string `json:"url,omitempty"`
 }
 
 // Validate validates this tenant response item
