@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, {Fragment} from "react";
+import React, { Fragment } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -27,7 +27,11 @@ import {
 } from "../../../../icons";
 import { Bucket } from "../types";
 import { Box, Grid, Typography } from "@mui/material";
-import {calculateBytes, niceBytes, prettyNumber} from "../../../../common/utils";
+import {
+  calculateBytes,
+  niceBytes,
+  prettyNumber,
+} from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import { Link } from "react-router-dom";
 import {
@@ -183,7 +187,6 @@ const BucketListItem = ({
   const quota = get(bucket, "details.quota.quota", "0");
   const quotaForString = calculateBytes(quota);
 
-
   const accessToStr = (bucket: Bucket): string => {
     if (bucket.rw_access?.read && !bucket.rw_access?.write) {
       return "R";
@@ -291,9 +294,11 @@ const BucketListItem = ({
               {usageScalar}
               <span className={classes.unit}>{usageUnit}</span>
               {quota !== "0" && (
-                  <Fragment>
-                    {" "}/{" "}{quotaForString.total}<span className={classes.unit}>{quotaForString.unit}</span>
-                  </Fragment>
+                <Fragment>
+                  {" "}
+                  / {quotaForString.total}
+                  <span className={classes.unit}>{quotaForString.unit}</span>
+                </Fragment>
               )}
             </div>
           </Grid>
