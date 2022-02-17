@@ -3745,6 +3745,8 @@ definitions:
         type: string
       secretKey:
         type: string
+      url:
+        type: string  
   remoteBucket:
     type: object
     required:
