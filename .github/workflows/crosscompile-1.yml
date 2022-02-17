@@ -1,4 +1,4 @@
-name: Go
+name: Cross Compile 1
 
 on:
   pull_request:
