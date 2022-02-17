@@ -74,21 +74,11 @@ const styles = (theme: Theme) =>
 
 const SizePreview = ({
   classes,
-  updateAddField,
-  isPageValid,
-  volumeSize,
-  sizeFactor,
-  drivesPerServer,
   nodes,
   memoryNode,
   ecParity,
-  ecParityChoices,
-  cleanECChoices,
-  resourcesSize,
   distribution,
   ecParityCalc,
-  limitSize,
-  selectedStorageClass,
   cpuToUse,
   integrationSelection,
 }: ISizePreviewProps) => {
@@ -253,7 +243,7 @@ const mapState = (state: AppState) => ({
   sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
   drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
   nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-  memoryNode: state.tenants.createTenant.fields.tenantSize.memoryNode,
+  memoryNode: state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest,
   ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
   ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
   cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
@@ -263,7 +253,7 @@ const mapState = (state: AppState) => ({
   limitSize: state.tenants.createTenant.fields.tenantSize.limitSize,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  cpuToUse: state.tenants.createTenant.fields.tenantSize.cpuToUse,
+  cpuToUse: state.tenants.createTenant.fields.tenantSize.resourcesCPURequest,
   integrationSelection:
     state.tenants.createTenant.fields.tenantSize.integrationSelection,
 });
