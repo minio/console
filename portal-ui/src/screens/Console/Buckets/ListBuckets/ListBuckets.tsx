@@ -23,7 +23,6 @@ import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
 import { AddIcon, BucketsIcon, LifecycleConfigIcon } from "../../../../icons";
-import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   containerForHeader,
@@ -31,12 +30,10 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import HelpBox from "../../../../common/HelpBox";
-import { ISessionResponse } from "../../types";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import AButton from "../../Common/AButton/AButton";
 import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
@@ -85,19 +82,15 @@ interface IListBucketsProps {
   classes: any;
   history: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-  session: ISessionResponse;
 }
 
 const ListBuckets = ({
   classes,
   history,
   setErrorSnackMessage,
-  session,
 }: IListBucketsProps) => {
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterBuckets, setFilterBuckets] = useState<string>("");
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [replicationModalOpen, setReplicationModalOpen] =
@@ -125,28 +118,11 @@ const ListBuckets = ({
     }
   }, [loading, setErrorSnackMessage]);
 
-  const closeDeleteModalAndRefresh = (refresh: boolean) => {
-    setDeleteOpen(false);
-    if (refresh) {
-      setLoading(true);
-      setSelectedBuckets([]);
-    }
-  };
-
-  const confirmDeleteBucket = (bucket: string) => {
-    setDeleteOpen(true);
-    setSelectedBucket(bucket);
-  };
-
   const filteredRecords = records.filter((b: Bucket) => {
     if (filterBuckets === "") {
       return true;
     } else {
-      if (b.name.indexOf(filterBuckets) >= 0) {
-        return true;
-      } else {
-        return false;
-      }
+      return b.name.indexOf(filterBuckets) >= 0;
     }
   });
 
@@ -191,7 +167,6 @@ const ListBuckets = ({
       return (
         <BucketListItem
           bucket={bucket}
-          onDelete={confirmDeleteBucket}
           onSelect={selectListBuckets}
           selected={selectedBuckets.includes(bucket.name)}
           bulkSelect={bulkSelect}
@@ -205,15 +180,6 @@ const ListBuckets = ({
 
   return (
     <Fragment>
-      {deleteOpen && (
-        <DeleteBucket
-          deleteOpen={deleteOpen}
-          selectedBucket={selectedBucket}
-          closeDeleteModalAndRefresh={(refresh: boolean) => {
-            closeDeleteModalAndRefresh(refresh);
-          }}
-        />
-      )}
       {replicationModalOpen && (
         <BulkReplicationModal
           open={replicationModalOpen}
@@ -378,11 +344,7 @@ const ListBuckets = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-});
-
-const connector = connect(mapState, {
+const connector = connect(null, {
   setErrorSnackMessage,
 });
 
