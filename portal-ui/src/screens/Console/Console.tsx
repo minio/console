@@ -469,6 +469,11 @@ const Console = ({
       forceDisplay: true,
     },
     {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_EVENTS,
+      forceDisplay: true,
+    },
+    {
       component: License,
       path: IAM_PAGES.LICENSE,
       forceDisplay: true,
