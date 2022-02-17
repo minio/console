@@ -74,6 +74,10 @@ test-integration:
 	@(GO111MODULE=on go test -race -v github.com/minio/console/integration/...)
 	@(docker stop minio)
 
+test-operator:
+	@(env bash $(PWD)/portal-ui/tests/scripts/operator.sh)
+	@(docker stop minio)
+
 test-permissions:
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh)
@@ -84,6 +88,9 @@ test-apply-permissions:
 
 test-start-docker-minio:
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+
+initialize-operator:
+	@echo "Done initializing operator test"
 
 initialize-permissions: test-start-docker-minio test-apply-permissions
 	@echo "Done initializing permissions test"
