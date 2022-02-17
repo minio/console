@@ -49,7 +49,7 @@ const styles = (theme: Theme) =>
     ...deleteDialogStyles,
     root: {
       "& .MuiPaper-root": {
-        padding: "1rem 2rem 2rem 1rem",
+        padding: "0 2rem 2rem 1rem",
       },
     },
     content: {
