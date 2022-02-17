@@ -1,4 +1,4 @@
-name: "UI"
+name: "UI Permissions"
 
 on:
   pull_request:
