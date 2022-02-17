@@ -53,7 +53,7 @@ const hasPermission = (
 
         const replaceWildcard = wildcardItemSection
           .replace("/", "\\/")
-          .replace("\\/*", "($|(\\/.*?))");
+          .replace("*", "($|\\/?(.*?))");
 
         const inRegExp = new RegExp(`${replaceWildcard}$`, "gm");
 
@@ -82,8 +82,16 @@ const hasPermission = (
 
       const simpleResources = get(sessionGrants, rsItem, []);
       const s3Resources = get(sessionGrants, `arn:aws:s3:::${rsItem}/*`, []);
+      const bucketOnly = get(sessionGrants, `arn:aws:s3:::${rsItem}/`, []);
+      const bckOnlyNoSlash = get(sessionGrants, `arn:aws:s3:::${rsItem}`, []);
 
-      resourceGrants = [...simpleResources, ...s3Resources, ...wildcardGrants];
+      resourceGrants = [
+        ...simpleResources,
+        ...s3Resources,
+        ...wildcardGrants,
+        ...bucketOnly,
+        ...bckOnlyNoSlash,
+      ];
 
       if (containsResource) {
         const matchResource = `arn:aws:s3:::${rsItem}`;
@@ -97,8 +105,26 @@ const hasPermission = (
     });
   }
 
+  let anyResourceGrant: string[] = [];
+  if (resource === "*") {
+    Object.entries(sessionGrants).forEach(([key, values]) => {
+      scopes.forEach((scope) => {
+        values.forEach((val) => {
+          if (val === scope || val === "s3:*") {
+            anyResourceGrant = [...anyResourceGrant, scope];
+          }
+        });
+      });
+    });
+  }
+
   return hasAccessToResource(
-    [...resourceGrants, ...globalGrants, ...containsResourceGrants],
+    [
+      ...resourceGrants,
+      ...globalGrants,
+      ...containsResourceGrants,
+      ...anyResourceGrant,
+    ],
     scopes,
     matchAll
   );

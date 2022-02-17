@@ -108,10 +108,11 @@ const UserServiceAccountsPanel = ({
     fetchRecords();
 
     if (res !== null) {
-      const nsa: NewServiceAccount = {
+     const nsa: NewServiceAccount = {
         console: {
           accessKey: `${res.accessKey}`,
           secretKey: `${res.secretKey}`,
+          url : `${res.url}`,
         },
       };
       setNewServiceAccount(nsa);

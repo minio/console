@@ -51,6 +51,7 @@ import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import BulkLifecycleModal from "./BulkLifecycleModal";
+import hasPermission from "../../../../common/SecureComponent/accessControl";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -200,10 +201,7 @@ const ListBuckets = ({
     return null;
   };
 
-  const createBucketButtonResources: string[] =
-    session && session.permissions
-      ? Array.from(Object.keys(session.permissions)) || []
-      : [];
+  const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
 
   return (
     <Fragment>
@@ -293,22 +291,17 @@ const ListBuckets = ({
               variant={"outlined"}
             />
 
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
-              resource={createBucketButtonResources}
-              errorProps={{ disabled: true }}
-            >
-              <RBIconButton
-                tooltip={"Create Bucket"}
-                onClick={() => {
-                  history.push("/add-bucket");
-                }}
-                text={"Create Bucket"}
-                icon={<AddIcon />}
-                color={"primary"}
-                variant={"contained"}
-              />
-            </SecureComponent>
+            <RBIconButton
+              tooltip={"Create Bucket"}
+              onClick={() => {
+                history.push("/add-bucket");
+              }}
+              text={"Create Bucket"}
+              icon={<AddIcon />}
+              color={"primary"}
+              variant={"contained"}
+              disabled={!canCreateBucket}
+            />
           </Grid>
         </Grid>
 

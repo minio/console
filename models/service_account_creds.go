@@ -39,6 +39,9 @@ type ServiceAccountCreds struct {
 
 	// secret key
 	SecretKey string `json:"secretKey,omitempty"`
+
+	// url
+	URL string `json:"url,omitempty"`
 }
 
 // Validate validates this service account creds
