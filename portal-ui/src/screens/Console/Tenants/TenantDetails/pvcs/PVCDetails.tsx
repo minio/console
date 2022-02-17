@@ -1,32 +1,32 @@
-// This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+//  This file is part of MinIO Console Server
+//  Copyright (c) 2022 MinIO, Inc.
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Affero General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Affero General Public License for more details.
 //
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  You should have received a copy of the GNU Affero General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import { setErrorSnackMessage } from "../../../../actions";
-import api from "../../../../common/api";
-import { IEvent } from "../ListTenants/types";
-import { niceDays } from "../../../../common/utils";
-import { ErrorResponseHandler } from "../../../../common/types";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { setErrorSnackMessage } from "../../../../../actions";
+import api from "../../../../../common/api";
+import { IEvent } from "../../ListTenants/types";
+import { niceDays } from "../../../../../common/utils";
+import { ErrorResponseHandler } from "../../../../../common/types";
+import EventsList from "../events/EventsList";
 
 interface IPVCDetailsProps {
   classes: any;
@@ -52,7 +52,7 @@ const PVCDetails = ({
   const tenantNamespace = match.params["tenantNamespace"];
   const tenantName = match.params["tenantName"];
   const PVCName = match.params["PVCName"];
-  const [event, setEvent] = useState<IEvent[]>([]);
+  const [events, setEvents] = useState<IEvent[]>([]);
 
   useEffect(() => {
     if (loading) {
@@ -67,7 +67,7 @@ const PVCDetails = ({
 
             res[i].seen = niceDays((currentTime - res[i].last_seen).toString());
           }
-          setEvent(res);
+          setEvents(res);
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -92,20 +92,7 @@ const PVCDetails = ({
       </Grid>
       <Grid container>
         <h1 className={classes.sectionTitle}>Events</h1>
-        <TableWrapper
-          itemActions={[]}
-          columns={[
-            { label: "Namespace", elementKey: "namespace" },
-            { label: "Last Seen", elementKey: "seen" },
-            { label: "Message", elementKey: "message" },
-            { label: "Event Type", elementKey: "event_type" },
-            { label: "Reason", elementKey: "reason" },
-          ]}
-          isLoading={loading}
-          records={event}
-          entityName="Events"
-          idField="event"
-        />
+        <EventsList events={events} loading={loading} />
       </Grid>
     </Fragment>
   );
