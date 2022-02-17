@@ -688,6 +688,30 @@ func DeleteObjectsRetentionStatus(bucketName string, prefix string, versionID st
 	return response, err
 }
 
+func ListBucketEvents(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to list bucket's events
+		Name: List Bucket Events
+		HTTP Verb: GET
+		URL: {{baseUrl}}/buckets/:bucket_name/events
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func NotifyPostgres() (*http.Response, error) {
 	/*
 		Helper function to add Postgres Notification
@@ -2430,6 +2454,72 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 		})
 	}
 
+}
+
+func TestListBucketEvents(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	validBucket := "testlistbucketevents"
+
+	// 1. Create bucket
+	response, err := AddBucket(validBucket, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. List bucket events
+	type args struct {
+		bucketName string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid bucket when listing events",
+			expectedStatus: 200,
+			args: args{
+				bucketName: validBucket,
+			},
+		},
+		{
+			name:           "Invalid bucket when listing events",
+			expectedStatus: 500,
+			args: args{
+				bucketName: "alksdjalksdjklasjdklasjdlkasjdkljaslkdjaskldjaklsjd",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			restResp, restErr := ListBucketEvents(
+				tt.args.bucketName,
+			)
+			assert.Nil(restErr)
+			if restErr != nil {
+				log.Println(restErr)
+				return
+			}
+			finalResponse := inspectHTTPResponse(restResp)
+			if restResp != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					restResp.StatusCode,
+					finalResponse,
+				)
+			}
+
+		})
+	}
 }
 
 func TestNotifyPostgres(t *testing.T) {
