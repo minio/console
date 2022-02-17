@@ -461,8 +461,8 @@ const TenantDetails = ({
                     component={TenantLogging}
                   />
                   <Route
-                      path="/namespaces/:tenantNamespace/tenants/:tenantName/events"
-                      component={TenantEvents}
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/events"
+                    component={TenantEvents}
                   />
                   <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName"

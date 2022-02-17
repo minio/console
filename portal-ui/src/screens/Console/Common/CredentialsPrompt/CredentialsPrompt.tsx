@@ -194,7 +194,7 @@ const CredentialsPrompt = ({
                     consoleExtras = {
                       console: [
                         {
-                          url : consoleCreds.url,
+                          url: consoleCreds.url,
                           access_key: consoleCreds.accessKey,
                           secret_key: consoleCreds.secretKey,
                           api: "s3v4",

@@ -20,9 +20,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
-    actionsTray,
-    containerForHeader,
-    searchField, tableStyles,
+  actionsTray,
+  containerForHeader,
+  searchField,
+  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { IEvent } from "../ListTenants/types";
@@ -42,13 +43,13 @@ interface ITenantEventsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-      tableWrapper: {
-          height: "450px",
-      },
-      ...actionsTray,
-      ...searchField,
-      ...tableStyles,
-      ...containerForHeader(theme.spacing(4)),
+    tableWrapper: {
+      height: "450px",
+    },
+    ...actionsTray,
+    ...searchField,
+    ...tableStyles,
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const TenantEvents = ({
