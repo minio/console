@@ -1,4 +1,4 @@
-name: Go
+name: Go Test Pkg
 
 on:
   pull_request:
