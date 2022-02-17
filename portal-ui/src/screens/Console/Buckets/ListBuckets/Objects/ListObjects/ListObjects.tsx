@@ -24,7 +24,6 @@ import React, {
 } from "react";
 import { connect } from "react-redux";
 import { useDropzone } from "react-dropzone";
-
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -74,7 +73,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import { BucketInfo, BucketVersioning } from "../../../types";
+import { BucketInfo, BucketQuota, BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
@@ -292,6 +291,7 @@ const ListObjects = ({
   const [selectedInternalPaths, setSelectedInternalPaths] = useState<
     string | null
   >(null);
+  const [quota, setQuota] = useState<BucketQuota | null>(null);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -326,6 +326,25 @@ const ListObjects = ({
       setCanPreviewFile(false);
     }
   }, [selectedObjects]);
+
+  useEffect(() => {
+    if (!quota) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
+        .then((res: BucketQuota) => {
+          let quotaVals = null;
+
+          if (res.quota) {
+            quotaVals = res;
+          }
+
+          setQuota(quotaVals);
+        })
+        .catch(() => {
+          setQuota(null);
+        });
+    }
+  }, [quota, bucketName]);
 
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
@@ -1176,7 +1195,10 @@ const ListObjects = ({
                         {bucketInfo.size && (
                           <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
                         )}
-                        {bucketInfo.size && bucketInfo.objects ? " / " : ""}
+                        {bucketInfo.size && quota && (
+                          <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
+                        )}
+                        {bucketInfo.size && bucketInfo.objects ? " - " : ""}
                         {bucketInfo.objects && (
                           <Fragment>
                             {bucketInfo.objects}&nbsp;Object
