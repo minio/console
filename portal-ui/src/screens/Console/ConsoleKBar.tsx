@@ -33,6 +33,7 @@ import { connect } from "react-redux";
 import { Action } from "kbar/lib/types";
 import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
+import { BucketsIcon } from "../../icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -109,6 +110,17 @@ const ConsoleKBar = ({
       initialActions.push(a);
     }
   }
+  if (!operatorMode) {
+    // Add additional actions
+    const a: Action = {
+      id: `create-bucket`,
+      name: "Create Bucket",
+      section: "Buckets",
+      perform: () => history.push(`/add-bucket`),
+      icon: <BucketsIcon />,
+    };
+    initialActions.push(a);
+  }
 
   return (
     <KBarProvider
@@ -126,7 +138,9 @@ const ConsoleKBar = ({
 function CommandBar() {
   return (
     <KBarPortal>
-      <KBarPositioner>
+      <KBarPositioner
+        style={{ zIndex: 9999, backgroundColor: "rgb(33,33,33,0.5)" }}
+      >
         <KBarAnimator style={animatorStyle}>
           <KBarSearch style={searchStyle} />
           <RenderResults />
