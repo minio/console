@@ -34,7 +34,6 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import TableActionButton from "./TableActionButton";
 import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
-import TopActionButton from "./TopActionButton";
 import history from "../../../../history";
 import {
   checkboxIcons,
@@ -81,15 +80,6 @@ interface ISortConfig {
   currentSort: string;
   currentDirection: "ASC" | "DESC" | undefined;
 }
-
-interface IActionButton {
-  label: string;
-  icon?: React.ReactNode;
-  action: () => void;
-  disabled: boolean;
-  tooltip?: string;
-}
-
 interface TableWrapperProps {
   itemActions?: ItemActions[] | null;
   columns: IColumns[];
@@ -119,10 +109,6 @@ interface TableWrapperProps {
   }: {
     index: number;
   }) => "deleted" | "" | React.CSSProperties;
-  generalTableActions?: () => void;
-  actionButtons?: IActionButton[];
-  subActions?: React.ReactNode;
-  globalActions?: IActionButton[];
 }
 
 const borderColor = "#9c9c9c80";
@@ -133,7 +119,7 @@ const styles = () =>
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
-      padding: "8px 16px",
+      padding: "0 16px 8px",
       boxShadow: "none",
       border: "#EAEDEE 1px solid",
       borderRadius: 3,
@@ -144,16 +130,6 @@ const styles = () =>
         width: 0,
         height: 3,
       },
-      "&.actionsBar": {
-        padding: "45px 16px 8px",
-      },
-    },
-    topHelpers: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      backgroundColor: "#F8F8F8",
-      borderBottom: "#EAEDEE 1px solid",
     },
     noBackground: {
       backgroundColor: "transparent",
@@ -189,59 +165,6 @@ const styles = () =>
     },
     checkAllWrapper: {
       marginTop: -16,
-    },
-    actionsScrollable: {
-      display: "flex",
-      overflowX: "auto",
-      overflowY: "hidden",
-      height: 36,
-      alignItems: "center",
-      "&::-webkit-scrollbar": {
-        height: 2,
-        minHeight: 2,
-        borderRadius: 0,
-      },
-      "&::-webkit-scrollbar-track": {
-        background: "#F0F0F0",
-        borderRadius: 0,
-        boxShadow: "inset 0px 0px 0px 0px transparent",
-        height: 2,
-      },
-      "&::-webkit-scrollbar-thumb": {
-        background: "#5E5E5E",
-        borderRadius: 0,
-      },
-      "&::-webkit-scrollbar-thumb:hover": {
-        background: "#4C4C4C",
-      },
-    },
-    objectsSelected: {
-      display: "flex",
-      flexGrow: 0,
-      whiteSpace: "nowrap",
-      backgroundColor: "#F4F2F2",
-      color: "#000",
-      fontWeight: "bold",
-      fontSize: 14,
-      height: 37,
-      maxHeight: 37,
-      padding: "0 25px",
-      alignItems: "center",
-      position: "relative",
-      "&::after": {
-        content: "' '",
-        borderRight: "#eaeaea 1px solid",
-        width: 1,
-        height: 22,
-        display: "block",
-        position: "absolute",
-        right: 0,
-      },
-    },
-    globalActions: {
-      display: "flex",
-      flexGrow: 0,
-      justifyContent: "flex-end",
     },
     "@global": {
       ".rowLine": {
@@ -541,9 +464,6 @@ const TableWrapper = ({
   disabled = false,
   onSelectAll,
   rowStyle,
-  actionButtons,
-  subActions,
-  globalActions,
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -642,10 +562,6 @@ const TableWrapper = ({
           customPaperHeight !== ""
             ? customPaperHeight
             : classes.defaultPaperHeight
-        } ${
-          onSelect || actionButtons || subActions || globalActions
-            ? "actionsBar"
-            : ""
         }`}
       >
         {isLoading && (
@@ -657,75 +573,6 @@ const TableWrapper = ({
               <LinearProgress />
             </Grid>
           </Grid>
-        )}
-        {!isLoading && (
-          <Fragment>
-            <Grid
-              container
-              direction={"row"}
-              alignItems={"center"}
-              flexGrow={"1"}
-              className={classes.topHelpers}
-            >
-              {onSelect && (
-                <Grid item xs className={classes.objectsSelected}>
-                  {selectedItems?.length || 0} Item
-                  {selectedItems?.length
-                    ? selectedItems?.length !== 1 && "s"
-                    : "s"}{" "}
-                  selected
-                </Grid>
-              )}
-              {actionButtons && (
-                <Grid
-                  item
-                  xs
-                  className={classes.actionsScrollable}
-                  flexWrap={"nowrap"}
-                >
-                  {actionButtons.map((button, index) => {
-                    return (
-                      <TopActionButton
-                        variant={"text"}
-                        onClick={button.action}
-                        disabled={button.disabled}
-                        id={`button-option-${button.label}`}
-                        key={`tableActon-${index.toString()}`}
-                        startIcon={button.icon}
-                        tooltip={button.tooltip}
-                      >
-                        {button.label}
-                      </TopActionButton>
-                    );
-                  })}
-                </Grid>
-              )}
-              {subActions && (
-                <Grid item xs>
-                  {subActions}
-                </Grid>
-              )}
-              {globalActions && (
-                <Grid item xs className={classes.globalActions}>
-                  {globalActions.map((button, index) => {
-                    return (
-                      <TopActionButton
-                        variant={"contained"}
-                        onClick={button.action}
-                        disabled={button.disabled}
-                        id={`button-option-${button.label}`}
-                        key={`tableActon-${index.toString()}`}
-                        endIcon={button.icon}
-                        tooltip={button.tooltip}
-                      >
-                        {button.label}
-                      </TopActionButton>
-                    );
-                  })}
-                </Grid>
-              )}
-            </Grid>
-          </Fragment>
         )}
         {columnsSelector && !isLoading && records.length > 0 && (
           <div className={classes.overlayColumnSelection}>

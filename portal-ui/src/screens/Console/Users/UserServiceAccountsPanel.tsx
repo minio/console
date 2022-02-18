@@ -112,6 +112,7 @@ const UserServiceAccountsPanel = ({
         console: {
           accessKey: `${res.accessKey}`,
           secretKey: `${res.secretKey}`,
+          url: `${res.url}`,
         },
       };
       setNewServiceAccount(nsa);

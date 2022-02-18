@@ -435,7 +435,7 @@ const ObjectDetailPanel = ({
       </div>
 
       <ul className={classes.objectActions}>
-        <li>Object Actions:</li>
+        <li>Actions:</li>
         <li>
           <ObjectActionButton
             label={"Download"}

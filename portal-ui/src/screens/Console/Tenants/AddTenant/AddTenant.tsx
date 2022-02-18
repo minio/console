@@ -29,7 +29,7 @@ import {
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
-import { generatePoolName } from "../../../../common/utils";
+import { generatePoolName, getBytes } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
@@ -280,7 +280,7 @@ const AddTenant = ({
           }
           if (fields.tenantSize.resourcesMemoryRequest !== "") {
             dataSend.pools[0].resources.requests.memory = parseInt(
-              fields.tenantSize.resourcesMemoryRequest
+              getBytes(fields.tenantSize.resourcesMemoryRequest, "Gi", true)
             );
           }
         }
@@ -297,7 +297,7 @@ const AddTenant = ({
           }
           if (fields.tenantSize.resourcesMemoryLimit !== "") {
             dataSend.pools[0].resources.limits.memory = parseInt(
-              fields.tenantSize.resourcesMemoryLimit
+              getBytes(fields.tenantSize.resourcesMemoryLimit, "Gi", true)
             );
           }
         }
@@ -652,6 +652,9 @@ const AddTenant = ({
                 return {
                   accessKey: consoleKey.access_key,
                   secretKey: consoleKey.secret_key,
+                  api: "s3v4",
+                  path: "auto",
+                  url: consoleKey.url,
                 };
               });
 
@@ -661,6 +664,7 @@ const AddTenant = ({
                 console: {
                   accessKey: res.console.access_key,
                   secretKey: res.console.secret_key,
+                  url: res.console.url,
                 },
               };
             }

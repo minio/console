@@ -65,6 +65,7 @@ const ObjectActionButton = ({
   return (
     <Button
       {...restProps}
+      disabled={disabled}
       onClick={onClick}
       className={classes.root}
       startIcon={icon}

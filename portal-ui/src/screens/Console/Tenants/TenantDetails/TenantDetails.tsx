@@ -50,7 +50,7 @@ import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
-import PVCDetails from "./PVCDetails";
+import PVCDetails from "./pvcs/PVCDetails";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -58,6 +58,7 @@ const TenantLicense = withSuspense(React.lazy(() => import("./TenantLicense")));
 const PoolsSummary = withSuspense(React.lazy(() => import("./PoolsSummary")));
 const PodsSummary = withSuspense(React.lazy(() => import("./PodsSummary")));
 const TenantLogging = withSuspense(React.lazy(() => import("./TenantLogging")));
+const TenantEvents = withSuspense(React.lazy(() => import("./TenantEvents")));
 const VolumesSummary = withSuspense(
   React.lazy(() => import("./VolumesSummary"))
 );
@@ -460,6 +461,10 @@ const TenantDetails = ({
                     component={TenantLogging}
                   />
                   <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/events"
+                    component={TenantEvents}
+                  />
+                  <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName"
                     component={() => (
                       <Redirect
@@ -535,6 +540,14 @@ const TenantDetails = ({
               value: "volumes",
               component: Link,
               to: getRoutePath("volumes"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Events",
+              value: "events",
+              component: Link,
+              to: getRoutePath("events"),
             },
           }}
           {{

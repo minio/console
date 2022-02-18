@@ -30,9 +30,9 @@ import { IEvent } from "../../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
 import api from "../../../../../common/api";
 import { AppState } from "../../../../../store";
+import EventsList from "../events/EventsList";
 
 interface IPodEventsProps {
   classes: any;
@@ -65,7 +65,7 @@ const PodEvents = ({
   setErrorSnackMessage,
   loadingTenant,
 }: IPodEventsProps) => {
-  const [event, setEvent] = useState<IEvent[]>([]);
+  const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const PodEvents = ({
 
             res[i].seen = niceDays((currentTime - res[i].last_seen).toString());
           }
-          setEvent(res);
+          setEvents(res);
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -105,21 +105,8 @@ const PodEvents = ({
 
   return (
     <React.Fragment>
-      <Grid item xs={12} className={classes.actionsTray}>
-        <TableWrapper
-          itemActions={[]}
-          columns={[
-            { label: "Namespace", elementKey: "namespace" },
-            { label: "Last Seen", elementKey: "seen" },
-            { label: "Message", elementKey: "message" },
-            { label: "Event Type", elementKey: "event_type" },
-            { label: "Reason", elementKey: "reason" },
-          ]}
-          isLoading={loading}
-          records={event}
-          entityName="Events"
-          idField="event"
-        />
+      <Grid item xs={12}>
+        <EventsList events={events} loading={loading} />
       </Grid>
     </React.Fragment>
   );

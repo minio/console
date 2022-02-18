@@ -176,14 +176,19 @@ const TenantSizeResources = ({
         );
 
         const baseCpuUse = Math.max(1, floor(maxAllocatableCPU / 2));
-        updateField("resourcesCPURequest", baseCpuUse);
+        if (resourcesCPURequest === "") {
+          updateField("resourcesCPURequest", baseCpuUse);
+        }
 
         const baseMemoryUse = Math.max(2, floor(maxMemory / 2));
-        updateField("resourcesMemoryRequest", baseMemoryUse);
+        if (resourcesMemoryRequest === "") {
+          updateField("resourcesMemoryRequest", baseMemoryUse);
+        }
       })
       .catch((err: any) => {
         updateField("maxMemorySize", 0);
         updateField("resourcesCPURequest", "");
+        updateField("resourcesMemoryRequest", "");
 
         console.error(err);
       });

@@ -19,9 +19,11 @@ export interface NewServiceAccount {
   console?: ConsoleSA | ConsoleSA[];
   accessKey?: string;
   secretKey?: string;
+  url?: string;
 }
 
 export interface ConsoleSA {
   accessKey: string;
   secretKey: string;
+  url: string;
 }

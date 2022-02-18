@@ -688,16 +688,91 @@ func DeleteObjectsRetentionStatus(bucketName string, prefix string, versionID st
 	return response, err
 }
 
-func PutObjectsLegalholdStatus(bucketName string, prefix string, status string, versionID string) (*http.Response, error) {
-	// Helper function to test "Put Object's legalhold status" end point
-	requestDataAdd := map[string]interface{}{
-		"status": status,
+func ListBucketEvents(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to list bucket's events
+		Name: List Bucket Events
+		HTTP Verb: GET
+		URL: {{baseUrl}}/buckets/:bucket_name/events
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
 	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func NotifyPostgres() (*http.Response, error) {
+	/*
+		Helper function to add Postgres Notification
+		HTTP Verb: PUT
+		URL: api/v1/configs/notify_postgres
+		Body:
+		{
+			"key_values":[
+				{
+					"key":"connection_string",
+					"value":"user=postgres password=password host=localhost dbname=postgres port=5432 sslmode=disable"
+				},
+				{
+					"key":"table",
+					"value":"accountsssss"
+				},
+				{
+					"key":"format",
+					"value":"namespace"
+				},
+				{
+					"key":"queue_limit",
+					"value":"10000"
+				},
+				{
+					"key":"comment",
+					"value":"comment"
+				}
+			]
+		}
+	*/
+	Body := models.SetConfigRequest{
+		KeyValues: []*models.ConfigurationKV{
+			{
+				Key:   "connection_string",
+				Value: "user=postgres password=password host=173.18.0.3 dbname=postgres port=5432 sslmode=disable",
+			},
+			{
+				Key:   "table",
+				Value: "accountsssss",
+			},
+			{
+				Key:   "format",
+				Value: "namespace",
+			},
+			{
+				Key:   "queue_limit",
+				Value: "10000",
+			},
+			{
+				Key:   "comment",
+				Value: "comment",
+			},
+		},
+	}
+
+	requestDataJSON, _ := json.Marshal(Body)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
 		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/legalhold?prefix="+prefix+"&version_id="+versionID,
+		"http://localhost:9090/api/v1/configs/notify_postgres",
 		requestDataBody,
 	)
 	if err != nil {
@@ -2381,16 +2456,14 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 
 }
 
-func TestPutObjectsLegalholdStatus(t *testing.T) {
+func TestListBucketEvents(t *testing.T) {
+
 	// Variables
 	assert := assert.New(t)
-	bucketName := "testputobjectslegalholdstatus"
-	fileName := "testputobjectslegalholdstatus.txt"
-	prefix := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0" // encoded base64
-	status := "enabled"
+	validBucket := "testlistbucketevents"
 
 	// 1. Create bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
+	response, err := AddBucket(validBucket, true, true, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -2401,39 +2474,9 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
-	// 2. Add object
-	uploadResponse, uploadError := UploadAnObject(
-		bucketName,
-		fileName,
-	)
-	assert.Nil(uploadError)
-	if uploadError != nil {
-		log.Println(uploadError)
-		return
-	}
-	addObjRsp := inspectHTTPResponse(uploadResponse)
-	if uploadResponse != nil {
-		assert.Equal(
-			200,
-			uploadResponse.StatusCode,
-			addObjRsp,
-		)
-	}
-
-	// Get versionID
-	listResponse, listError := ListObjects(bucketName, prefix, "true")
-	fmt.Println(listError)
-	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
-	listObjs := models.ListObjectsResponse{}
-	err = json.Unmarshal(bodyBytes, &listObjs)
-	if err != nil {
-		log.Println(err)
-		assert.Nil(err)
-	}
-	validVersionID := listObjs.Objects[0].VersionID
-
+	// 2. List bucket events
 	type args struct {
-		versionID string
+		bucketName string
 	}
 	tests := []struct {
 		name           string
@@ -2441,41 +2484,60 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 		args           args
 	}{
 		{
-			name:           "Valid VersionID when putting object's legal hold status",
+			name:           "Valid bucket when listing events",
 			expectedStatus: 200,
 			args: args{
-				versionID: validVersionID,
+				bucketName: validBucket,
 			},
 		},
 		{
-			name:           "Invalid VersionID when putting object's legal hold status",
+			name:           "Invalid bucket when listing events",
 			expectedStatus: 500,
 			args: args{
-				versionID: "*&^###Test1ThisMightBeInvalid555",
+				bucketName: "alksdjalksdjklasjdklasjdlkasjdkljaslkdjaskldjaklsjd",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// 3. Put Objects Legal Status
-			putResponse, putError := PutObjectsLegalholdStatus(
-				bucketName,
-				prefix,
-				status,
-				tt.args.versionID,
+
+			restResp, restErr := ListBucketEvents(
+				tt.args.bucketName,
 			)
-			if putError != nil {
-				log.Println(putError)
-				assert.Fail("Error creating the bucket")
+			assert.Nil(restErr)
+			if restErr != nil {
+				log.Println(restErr)
+				return
 			}
-			if putResponse != nil {
+			finalResponse := inspectHTTPResponse(restResp)
+			if restResp != nil {
 				assert.Equal(
 					tt.expectedStatus,
-					putResponse.StatusCode,
-					inspectHTTPResponse(putResponse),
+					restResp.StatusCode,
+					finalResponse,
 				)
 			}
+
 		})
+	}
+}
+
+func TestNotifyPostgres(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+
+	// Test
+	response, err := NotifyPostgres()
+	finalResponse := inspectHTTPResponse(response)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail(finalResponse)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, finalResponse)
 	}
 }
 
@@ -2631,4 +2693,126 @@ func TestGetBucketQuota(t *testing.T) {
 		})
 	}
 
+}
+
+func PutObjectsLegalholdStatus(bucketName string, prefix string, status string, versionID string) (*http.Response, error) {
+	// Helper function to test "Put Object's legalhold status" end point
+	requestDataAdd := map[string]interface{}{
+		"status": status,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/legalhold?prefix="+prefix+"&version_id="+versionID,
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestPutObjectsLegalholdStatus(t *testing.T) {
+	// Variables
+	assert := assert.New(t)
+	bucketName := "testputobjectslegalholdstatus"
+	fileName := "testputobjectslegalholdstatus.txt"
+	prefix := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0" // encoded base64
+	status := "enabled"
+
+	// 1. Create bucket
+	response, err := AddBucket(bucketName, true, true, nil, nil)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Add object
+	uploadResponse, uploadError := UploadAnObject(
+		bucketName,
+		fileName,
+	)
+	assert.Nil(uploadError)
+	if uploadError != nil {
+		log.Println(uploadError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(uploadResponse)
+	if uploadResponse != nil {
+		assert.Equal(
+			200,
+			uploadResponse.StatusCode,
+			addObjRsp,
+		)
+	}
+
+	// Get versionID
+	listResponse, listError := ListObjects(bucketName, prefix, "true")
+	fmt.Println(listError)
+	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	listObjs := models.ListObjectsResponse{}
+	err = json.Unmarshal(bodyBytes, &listObjs)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	validVersionID := listObjs.Objects[0].VersionID
+
+	type args struct {
+		versionID string
+	}
+	tests := []struct {
+		name           string
+		expectedStatus int
+		args           args
+	}{
+		{
+			name:           "Valid VersionID when putting object's legal hold status",
+			expectedStatus: 200,
+			args: args{
+				versionID: validVersionID,
+			},
+		},
+		{
+			name:           "Invalid VersionID when putting object's legal hold status",
+			expectedStatus: 500,
+			args: args{
+				versionID: "*&^###Test1ThisMightBeInvalid555",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 3. Put Objects Legal Status
+			putResponse, putError := PutObjectsLegalholdStatus(
+				bucketName,
+				prefix,
+				status,
+				tt.args.versionID,
+			)
+			if putError != nil {
+				log.Println(putError)
+				assert.Fail("Error putting object's legal hold status")
+			}
+			if putResponse != nil {
+				assert.Equal(
+					tt.expectedStatus,
+					putResponse.StatusCode,
+					inspectHTTPResponse(putResponse),
+				)
+			}
+		})
+	}
 }
