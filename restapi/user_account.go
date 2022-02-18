@@ -18,9 +18,10 @@ package restapi
 
 import (
 	"context"
-	"github.com/minio/console/pkg/auth"
 	"net/http"
 	"time"
+
+	"github.com/minio/console/pkg/auth"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
