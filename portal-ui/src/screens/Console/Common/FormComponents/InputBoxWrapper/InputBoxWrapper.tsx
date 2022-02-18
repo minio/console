@@ -40,6 +40,7 @@ interface InputBoxProps {
   label: string;
   classes: any;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyPress?: (e: any) => void;
   value: string | boolean;
   id: string;
   name: string;
@@ -133,6 +134,7 @@ const InputBoxWrapper = ({
   autoFocus = false,
   classes,
   className = "",
+  onKeyPress,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
 
@@ -197,6 +199,7 @@ const InputBoxWrapper = ({
             helperText={error}
             placeholder={placeholder}
             className={classes.inputRebase}
+            onKeyPress={onKeyPress}
           />
           {overlayIcon && (
             <div
