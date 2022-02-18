@@ -1,6 +1,4 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { saveAs } from "file-saver";
-import Cookies from "js-cookie";
 import { Box, Button, DialogContentText } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -18,6 +16,11 @@ import withStyles from "@mui/styles/withStyles";
 import { setErrorSnackMessage } from "../../../actions";
 import { connect } from "react-redux";
 import HelpBox from "../../../common/HelpBox";
+import {
+  deleteCookie,
+  getCookieValue,
+  performDownload,
+} from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -106,14 +109,14 @@ const Inspect = ({
       setVolumeError("This field is required");
     } else if (volumeName.slice(0, 1) === "/") {
       isVolValid = false;
-      setVolumeError("Enter volume/bucket name without /");
+      setVolumeError("Volume/Bucket name cannot start with /");
     }
     isPathValid = inspectPath.trim().length > 0;
     if (!inspectPath) {
       setPathError("This field is required");
     } else if (inspectPath.slice(0, 1) === "/") {
       isPathValid = false;
-      setPathError("Enter path without /");
+      setPathError("Path cannot start with /");
     }
     const isValid = isVolValid && isPathValid;
 
@@ -151,8 +154,9 @@ const Inspect = ({
 
         //@ts-ignore
         const filename = res.headers.get("content-disposition").split('"')[1];
-        const decryptKey = Cookies.get(filename) || "";
-        saveAs(blob, filename);
+        const decryptKey = getCookieValue(filename) || "";
+
+        performDownload(blob, filename);
         setInsFileName(filename);
         setDecryptionKey(decryptKey);
       })
@@ -168,7 +172,7 @@ const Inspect = ({
   };
 
   const onCloseDecKeyModal = () => {
-    Cookies.remove(insFileName);
+    deleteCookie(insFileName);
     setDecryptionKey("");
     resetForm();
   };
@@ -342,7 +346,7 @@ const Inspect = ({
                     <Box className="step-row">
                       <div className="step-text">
                         To Download 'xl.meta' for a specific object from all the
-                        drives in a zip file.
+                        drives in a zip file:
                       </div>
                     </Box>
 
@@ -370,7 +374,7 @@ const Inspect = ({
                     <Box className="step-row">
                       <div className="step-text">
                         To Download all constituent parts for a specific object,
-                        and optionally encrypt the downloaded zip.
+                        and optionally encrypt the downloaded zip:
                       </div>
                     </Box>
 
@@ -395,8 +399,10 @@ const Inspect = ({
                   <Box>
                     <Box className="step-row">
                       <div className="step-text">
-                        To Download recursively all objects at a prefix. NOTE:
-                        This can be an expensive operation use it with caution.
+                        To Download recursively all objects at a prefix.
+                        <br />
+                        NOTE: This can be an expensive operation use it with
+                        caution.
                       </div>
                     </Box>
 
