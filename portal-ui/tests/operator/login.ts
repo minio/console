@@ -23,6 +23,6 @@ fixture("For user with default permissions").page("http://localhost:9090");
 test("Login to Operator Web Page", async (t) => {
   await t
     .navigateTo("http://localhost:9090/login")
-	.typeText("#jwt","anyrandompasswordwillwork")
-	.click("button.MuiButton-root")
+    .typeText("#jwt", "anyrandompasswordwillwork")
+    .click("button.MuiButton-root");
 });

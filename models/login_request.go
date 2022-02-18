@@ -40,6 +40,9 @@ type LoginRequest struct {
 	// Required: true
 	AccessKey *string `json:"accessKey"`
 
+	// features
+	Features *LoginRequestFeatures `json:"features,omitempty"`
+
 	// secret key
 	// Required: true
 	SecretKey *string `json:"secretKey"`
@@ -50,6 +53,10 @@ func (m *LoginRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAccessKey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFeatures(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -72,6 +79,25 @@ func (m *LoginRequest) validateAccessKey(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *LoginRequest) validateFeatures(formats strfmt.Registry) error {
+	if swag.IsZero(m.Features) { // not required
+		return nil
+	}
+
+	if m.Features != nil {
+		if err := m.Features.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("features")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("features")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *LoginRequest) validateSecretKey(formats strfmt.Registry) error {
 
 	if err := validate.Required("secretKey", "body", m.SecretKey); err != nil {
@@ -81,8 +107,33 @@ func (m *LoginRequest) validateSecretKey(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this login request based on context it is used
+// ContextValidate validate this login request based on the context it is used
 func (m *LoginRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateFeatures(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *LoginRequest) contextValidateFeatures(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Features != nil {
+		if err := m.Features.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("features")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("features")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -97,6 +148,43 @@ func (m *LoginRequest) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *LoginRequest) UnmarshalBinary(b []byte) error {
 	var res LoginRequest
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// LoginRequestFeatures login request features
+//
+// swagger:model LoginRequestFeatures
+type LoginRequestFeatures struct {
+
+	// hide menu
+	HideMenu bool `json:"hide_menu,omitempty"`
+}
+
+// Validate validates this login request features
+func (m *LoginRequestFeatures) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this login request features based on context it is used
+func (m *LoginRequestFeatures) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *LoginRequestFeatures) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *LoginRequestFeatures) UnmarshalBinary(b []byte) error {
+	var res LoginRequestFeatures
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

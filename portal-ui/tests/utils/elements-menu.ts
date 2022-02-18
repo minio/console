@@ -16,6 +16,7 @@
 
 import * as constants from "./constants";
 import { Selector } from "testcafe";
+import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
 //----------------------------------------------------
 // General sidebar element
@@ -32,7 +33,7 @@ export const monitoringElement = Selector(".MuiPaper-root")
 export const monitoringChildren = Selector("#tools-children");
 export const dashboardElement = monitoringChildren
   .find("a")
-  .withAttribute("href", "/tools/dashboard");
+  .withAttribute("href", IAM_PAGES.DASHBOARD);
 export const logsElement = monitoringChildren
   .find("a")
   .withAttribute("href", "/tools/logs");

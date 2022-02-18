@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"github.com/minio/console/pkg/auth"
 	"net/http"
 	"time"
 
@@ -80,7 +81,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// authenticate user and generate new session token
-	sessionID, err := login(credentials)
+	sessionID, err := login(credentials, &auth.SessionFeatures{HideMenu: session.Hm})
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
