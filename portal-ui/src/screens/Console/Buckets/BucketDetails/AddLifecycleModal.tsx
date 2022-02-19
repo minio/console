@@ -29,7 +29,6 @@ import {
 } from "../../Configurations/TiersConfiguration/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -92,8 +91,6 @@ const AddLifecycleModal = ({
   const [prefix, setPrefix] = useState("");
   const [tags, setTags] = useState<string>("");
   const [storageClass, setStorageClass] = useState("");
-  const [NCTransitionSC, setNCTransitionSC] = useState("");
-  const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
   const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
   const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
   const [ilmType, setIlmType] = useState<string>("expiry");
@@ -170,7 +167,6 @@ const AddLifecycleModal = ({
       rules = {
         ...transition,
         noncurrentversion_transition_days: parseInt(NCTransitionDays),
-        noncurrentversion_transition_storage_class: NCTransitionSC,
         storage_class: storageClass,
       };
     }
