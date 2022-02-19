@@ -199,6 +199,9 @@ const Inspect = ({
               <InputBoxWrapper
                 id="inspect_volume"
                 name="inspect_volume"
+                extraInputProps={{
+                  "data-test-id": "inspect_volume",
+                }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setVolumeName(e.target.value);
                 }}
@@ -217,6 +220,9 @@ const Inspect = ({
               <InputBoxWrapper
                 id="inspect_path"
                 name="inspect_path"
+                extraInputProps={{
+                  "data-test-id": "inspect_path",
+                }}
                 error={pathError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setInspectPath(e.target.value);
@@ -235,6 +241,9 @@ const Inspect = ({
               <FormSwitchWrapper
                 classes={{
                   inputLabel: classes.switchLabel,
+                }}
+                extraInputProps={{
+                  "data-test-id": "inspect_encrypt",
                 }}
                 label="Encrypt"
                 indicatorLabels={["True", "False"]}
@@ -262,6 +271,7 @@ const Inspect = ({
                 type="button"
                 color="primary"
                 variant="outlined"
+                data-test-id="inspect-clear-button"
                 onClick={resetForm}
               >
                 Clear
@@ -270,6 +280,7 @@ const Inspect = ({
                 type="submit"
                 variant="contained"
                 color="primary"
+                data-test-id="inspect-submit-button"
                 disabled={!isFormValid}
               >
                 Inspect
