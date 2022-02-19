@@ -99,6 +99,8 @@ import {
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
+import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
+import MultiSelectionPanel from "./MultiSelectionPanel";
 
 const AddFolderIcon = React.lazy(
   () => import("../../../../../../icons/AddFolderIcon")
@@ -345,6 +347,17 @@ const ListObjects = ({
         });
     }
   }, [quota, bucketName]);
+
+  useEffect(() => {
+    if (selectedObjects.length > 0) {
+      setDetailsOpen(true);
+      return;
+    }
+
+    if (selectedObjects.length === 0 && selectedInternalPaths === null) {
+      setDetailsOpen(false);
+    }
+  }, [selectedObjects, selectedInternalPaths]);
 
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
@@ -713,6 +726,7 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
+    setSelectedObjects([]);
     if (idElement.endsWith("/")) {
       const newPath = `/buckets/${bucketName}/browse${
         idElement ? `/${encodeFileName(idElement)}` : ``
@@ -995,6 +1009,7 @@ const ListObjects = ({
       elements = elements.filter((element) => element !== value);
     }
     setSelectedObjects(elements);
+    setSelectedInternalPaths(null);
 
     return elements;
   };
@@ -1115,6 +1130,42 @@ const ListObjects = ({
     uploadPath = uploadPath.concat(currentPath);
   }
 
+  const multiActionButtons = [
+    {
+      action: downloadSelected,
+      label: "Download",
+      disabled: selectedObjects.length === 0,
+      icon: <DownloadIcon />,
+      tooltip: "Download Selected",
+    },
+    {
+      action: openShare,
+      label: "Share",
+      disabled: selectedObjects.length !== 1 || !canShareFile,
+      icon: <ShareIcon />,
+      tooltip: "Share Selected File",
+    },
+    {
+      action: openPreview,
+      label: "Preview",
+      disabled: selectedObjects.length !== 1 || !canPreviewFile,
+      icon: <PreviewIcon />,
+      tooltip: "Preview Selected File",
+    },
+    {
+      action: () => {
+        setDeleteMultipleOpen(true);
+      },
+      label: "Delete",
+      icon: <DeleteIcon />,
+      disabled:
+        !hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]) ||
+        selectedObjects.length === 0 ||
+        !displayDeleteObject,
+      tooltip: "Delete Selected Files",
+    },
+  ];
+
   return (
     <React.Fragment>
       {shareFileModalOpen && selectedPreview && (
@@ -1215,6 +1266,61 @@ const ListObjects = ({
             }
             actions={
               <Fragment>
+                <RBIconButton
+                  id={"new-path"}
+                  tooltip={"Choose or create a new path"}
+                  text={"New Path"}
+                  icon={<AddFolderIcon />}
+                  color="primary"
+                  variant={"outlined"}
+                  onClick={() => {
+                    setCreateFolderOpen(true);
+                  }}
+                  disabled={
+                    rewindEnabled ||
+                    !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
+                  }
+                />
+                <RBIconButton
+                  id={"rewind-objects-list"}
+                  tooltip={"Rewind Bucket"}
+                  text={"Rewind"}
+                  icon={
+                    <Badge
+                      badgeContent=" "
+                      color="secondary"
+                      variant="dot"
+                      invisible={!rewindEnabled}
+                      className={classes.badgeOverlap}
+                    >
+                      <HistoryIcon />
+                    </Badge>
+                  }
+                  color="primary"
+                  variant={"outlined"}
+                  onClick={() => {
+                    setRewindSelect(true);
+                  }}
+                  disabled={
+                    !isVersioned ||
+                    !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
+                  }
+                />
+                <RBIconButton
+                  id={"refresh-objects-list"}
+                  tooltip={"Reload List"}
+                  text={"Reload"}
+                  icon={<RefreshIcon />}
+                  color="primary"
+                  variant={"outlined"}
+                  onClick={() => {
+                    setLoading(true);
+                  }}
+                  disabled={
+                    !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
+                    rewindEnabled
+                  }
+                />
                 <input
                   type="file"
                   multiple
@@ -1282,96 +1388,21 @@ const ListObjects = ({
                   triggerSort: sortChange,
                 }}
                 onSelectAll={selectAllItems}
-                actionButtons={[
-                  {
-                    action: downloadSelected,
-                    label: "Download",
-                    disabled: selectedObjects.length === 0,
-                    icon: <DownloadIcon />,
-                    tooltip: "Download Selected",
-                  },
-                  {
-                    action: openShare,
-                    label: "Share",
-                    disabled: selectedObjects.length !== 1 || !canShareFile,
-                    icon: <ShareIcon />,
-                    tooltip: "Share Selected File",
-                  },
-                  {
-                    action: openPreview,
-                    label: "Preview",
-                    disabled: selectedObjects.length !== 1 || !canPreviewFile,
-                    icon: <PreviewIcon />,
-                    tooltip: "Preview Selected File",
-                  },
-                  {
-                    action: () => {
-                      setDeleteMultipleOpen(true);
-                    },
-                    label: "Delete",
-                    icon: <DeleteIcon />,
-                    disabled:
-                      !hasPermission(bucketName, [
-                        IAM_SCOPES.S3_DELETE_OBJECT,
-                      ]) ||
-                      selectedObjects.length === 0 ||
-                      !displayDeleteObject,
-                    tooltip: "Delete Selected Files",
-                  },
-                  {
-                    action: () => {
-                      setRewindSelect(true);
-                    },
-                    label: "Rewind",
-                    disabled:
-                      !isVersioned ||
-                      !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]),
-                    icon: (
-                      <Badge
-                        badgeContent=" "
-                        color="secondary"
-                        variant="dot"
-                        invisible={!rewindEnabled}
-                        className={classes.badgeOverlap}
-                      >
-                        <HistoryIcon />
-                      </Badge>
-                    ),
-                    tooltip: "Rewind Bucket",
-                  },
-                  {
-                    action: () => {
-                      setCreateFolderOpen(true);
-                    },
-                    label: "New Path",
-                    icon: <AddFolderIcon />,
-                    disabled:
-                      rewindEnabled ||
-                      !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]),
-                    tooltip: "Choose or create a new path",
-                  },
-                ]}
-                globalActions={[
-                  {
-                    action: () => {
-                      setLoading(true);
-                    },
-                    label: "Reload",
-                    icon: <RefreshIcon />,
-                    disabled:
-                      !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
-                      rewindEnabled,
-                    tooltip: "Reload List",
-                  },
-                ]}
               />
               <DetailsListPanel
                 open={detailsOpen}
                 closePanel={() => {
                   setDetailsOpen(false);
                   setSelectedInternalPaths(null);
+                  setSelectedObjects([]);
                 }}
               >
+                {selectedObjects.length > 0 && (
+                  <MultiSelectionPanel
+                    items={multiActionButtons}
+                    title={"Selected Objects:"}
+                  />
+                )}
                 {selectedInternalPaths !== null && (
                   <ObjectDetailPanel
                     internalPaths={selectedInternalPaths}
