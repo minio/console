@@ -174,6 +174,7 @@ const CredentialsPrompt = ({
         </Grid>
         <Grid item xs={12} className={classes.buttonContainer}>
           <Button
+            id={"done-button"}
             variant="outlined"
             className={classes.buttonSpacer}
             onClick={() => {
@@ -186,6 +187,7 @@ const CredentialsPrompt = ({
 
           {!idp && (
             <Button
+              id={"download-button"}
               onClick={() => {
                 let consoleExtras = {};
 
