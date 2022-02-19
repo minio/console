@@ -105,6 +105,7 @@ const WizardPage = ({
           {page.buttons.map((btn) => {
             return (
               <Button
+                id={"wizard-button-" + btn.label}
                 variant="contained"
                 color="primary"
                 size="small"

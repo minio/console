@@ -177,6 +177,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
           </Grid>
           <Grid item xs={4} textAlign={"end"}>
             <RBIconButton
+              id={"manage-tenant-" + tenant.name}
               tooltip={"Manage Tenant"}
               text={"Manage"}
               disabled={!tenantIsOnline(tenant)}
@@ -190,6 +191,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
               variant={"outlined"}
             />
             <RBIconButton
+              id={"view-tenant-" + tenant.name}
               tooltip={"View Tenant"}
               text={"View"}
               onClick={() => {
