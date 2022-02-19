@@ -175,7 +175,7 @@ const FormSwitchWrapper = ({
       <Grid container alignItems={"center"}>
         <Grid item xs>
           <Grid container>
-            <Grid item xs={12} sm={4} md={3}>
+            <Grid item xs={12} sm={10} md={9}>
               {label !== "" && (
                 <InputLabel htmlFor={id} className={classes.inputLabel}>
                   <span>{label}</span>
