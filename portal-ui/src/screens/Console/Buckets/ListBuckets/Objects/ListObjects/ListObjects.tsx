@@ -276,7 +276,7 @@ const ListObjects = ({
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
-  const [previousSelection, setPreviousSelection] = useState<string|null>(null);
+  const [selectedMainObject, setSelectedMainObject] = useState<string|null>(null);
   const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [selectedPreview, setSelectedPreview] = useState<BucketObject | null>(
@@ -653,7 +653,7 @@ const ListObjects = ({
     if (refresh) {
       setSnackBarMessage(`Objects deleted successfully.`);
       setSelectedObjects([]);
-      setPreviousSelection(null);
+      setSelectedMainObject(null);
       setLoading(true);
     }
   };
@@ -1085,26 +1085,29 @@ const ListObjects = ({
     let checked = targetD.checked;
     // @ts-ignore shiftKey is defined for click events
     const shift: bool = e.nativeEvent.shiftKey;
+    // @ts-ignore ctrlKey is defined for click events
+    const ctrl: bool = e.nativeEvent.ctrlKey;
+    let elements: string[] = ctrl ? [...selectedObjects] : []; // We clone the selectedBuckets array
 
-    let elements: string[] = [...selectedObjects]; // We clone the selectedBuckets array
-    
-    let previous = value; // By default, start and end are one element
+    let mainObject = value;
     // Use the shift effect if different elements are selected
-    if (shift && previousSelection !== value) {
-      if (previousSelection === null) {
+    if (shift) {
+      if (selectedMainObject === null) {
         // There was no previous action, сhecked only first elements
+        mainObject = payload[0].name;
         checked = true;
-        previous = payload[0].name;
       } else {
         // Repeat the previous steps for everyone in the range
-        checked = elements.indexOf(previousSelection) !== -1;
-        previous = previousSelection;
+        mainObject = selectedMainObject;
+        checked = elements.indexOf(mainObject) !== -1 || (shift && !ctrl);
       }
+    } else {
+      setSelectedMainObject(value);
     }
 
     const [min, max] = [
       payload.findIndex(object => object.name === value),
-      payload.findIndex(object => object.name === previous),
+      payload.findIndex(object => object.name === mainObject),
     ].sort((a, b) => a - b); // correctly sort an array of numbers
     for (let i = min; i <= max; i++) {
       const current = payload[i].name;
@@ -1120,14 +1123,13 @@ const ListObjects = ({
     }
        
     setSelectedObjects(elements);
-    setPreviousSelection(value);
     setSelectedInternalPaths(null);
 
     return elements;
   };
 
   const selectAllItems = () => {
-    setPreviousSelection(null);
+    setSelectedMainObject(null);
 
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
