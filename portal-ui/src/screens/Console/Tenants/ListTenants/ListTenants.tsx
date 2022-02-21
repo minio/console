@@ -208,6 +208,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
             />
 
             <RBIconButton
+              id={"refresh-tenant-list"}
               tooltip={"Refresh Tenant List"}
               text={""}
               onClick={() => {
