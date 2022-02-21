@@ -21,6 +21,9 @@ import {
   getCookieValue,
   performDownload,
 } from "../../../common/utils";
+import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
+import { AppState } from "../../../store";
+import { InspectMenuIcon } from "../../../icons/SidebarMenus";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,17 +76,23 @@ const KeyRevealer = ({ value }: { value: string }) => {
   );
 };
 
+const mapState = (state: AppState) => ({
+  distributedSetup: state.system.distributedSetup,
+});
+
 const mapDispatchToProps = {
   setErrorSnackMessage,
 };
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapState, mapDispatchToProps);
 
 const Inspect = ({
   classes,
   setErrorSnackMessage,
+  distributedSetup,
 }: {
   classes: any;
   setErrorSnackMessage: any;
+  distributedSetup: boolean;
 }) => {
   const [volumeName, setVolumeName] = useState<string>("");
   const [inspectPath, setInspectPath] = useState<string>("");
@@ -181,282 +190,290 @@ const Inspect = ({
     <Fragment>
       <PageHeader label={"Inspect"} />
       <PageLayout>
-        <Box
-          sx={{
-            border: "1px solid #eaeaea",
-            padding: "25px",
-          }}
-        >
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-              e.preventDefault();
-              performInspect();
-            }}
-          >
-            <Box>
-              <InputBoxWrapper
-                id="inspect_volume"
-                name="inspect_volume"
-                extraInputProps={{
-                  "data-test-id": "inspect_volume",
-                }}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setVolumeName(e.target.value);
-                }}
-                label="Volume or Bucket Name"
-                value={volumeName}
-                error={volumeError}
-                required
-                placeholder={"test-bucket"}
-              />
-            </Box>
+        {!distributedSetup ? (
+          <DistributedOnly
+            iconComponent={<InspectMenuIcon />}
+            entity={"Inspect"}
+          />
+        ) : (
+          <Fragment>
             <Box
               sx={{
-                marginTop: "15px",
+                border: "1px solid #eaeaea",
+                padding: "25px",
               }}
             >
-              <InputBoxWrapper
-                id="inspect_path"
-                name="inspect_path"
-                extraInputProps={{
-                  "data-test-id": "inspect_path",
+              <form
+                noValidate
+                autoComplete="off"
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                  e.preventDefault();
+                  performInspect();
                 }}
-                error={pathError}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setInspectPath(e.target.value);
-                }}
-                label="File or Path to inspect"
-                value={inspectPath}
-                required
-                placeholder={"test*/xl.meta"}
-              />
-            </Box>
-            <Box
-              sx={{
-                marginTop: "25px",
-              }}
-            >
-              <FormSwitchWrapper
-                classes={{
-                  inputLabel: classes.switchLabel,
-                }}
-                extraInputProps={{
-                  "data-test-id": "inspect_encrypt",
-                }}
-                label="Encrypt"
-                indicatorLabels={["True", "False"]}
-                checked={isEncrypt}
-                value={"true"}
-                id="inspect_encrypt"
-                name="inspect_encrypt"
-                onChange={(e) => {
-                  setIsEncrypt(!isEncrypt);
-                }}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                marginTop: "55px",
-              }}
-            >
-              <Button
-                sx={{
-                  marginRight: "15px",
-                }}
-                type="button"
-                color="primary"
-                variant="outlined"
-                data-test-id="inspect-clear-button"
-                onClick={resetForm}
               >
-                Clear
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                data-test-id="inspect-submit-button"
-                disabled={!isFormValid}
-              >
-                Inspect
-              </Button>
-            </Box>
-          </form>
-        </Box>
-        <Box
-          sx={{
-            marginTop: "55px",
-          }}
-        >
-          <HelpBox
-            title={"Inspect"}
-            iconComponent={<FileBookIcon />}
-            help={
-              <Fragment>
+                <Box>
+                  <InputBoxWrapper
+                    id="inspect_volume"
+                    name="inspect_volume"
+                    extraInputProps={{
+                      "data-test-id": "inspect_volume",
+                    }}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setVolumeName(e.target.value);
+                    }}
+                    label="Volume or Bucket Name"
+                    value={volumeName}
+                    error={volumeError}
+                    required
+                    placeholder={"test-bucket"}
+                  />
+                </Box>
                 <Box
                   sx={{
                     marginTop: "15px",
                   }}
                 >
-                  Inspect files on MinIO server
+                  <InputBoxWrapper
+                    id="inspect_path"
+                    name="inspect_path"
+                    extraInputProps={{
+                      "data-test-id": "inspect_path",
+                    }}
+                    error={pathError}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setInspectPath(e.target.value);
+                    }}
+                    label="File or Path to inspect"
+                    value={inspectPath}
+                    required
+                    placeholder={"test*/xl.meta"}
+                  />
                 </Box>
-
                 <Box
                   sx={{
-                    marginTop: "15px",
-                    fontWeight: 500,
+                    marginTop: "25px",
                   }}
                 >
-                  Examples
+                  <FormSwitchWrapper
+                    classes={{
+                      inputLabel: classes.switchLabel,
+                    }}
+                    extraInputProps={{
+                      "data-test-id": "inspect_encrypt",
+                    }}
+                    label="Encrypt"
+                    indicatorLabels={["True", "False"]}
+                    checked={isEncrypt}
+                    value={"true"}
+                    id="inspect_encrypt"
+                    name="inspect_encrypt"
+                    onChange={(e) => {
+                      setIsEncrypt(!isEncrypt);
+                    }}
+                  />
                 </Box>
-
                 <Box
                   sx={{
                     display: "flex",
-                    flexFlow: "column",
-                    flex: "2",
-                    marginTop: "15px",
-                    "& .step-number": {
-                      color: "#ffffff",
-                      height: "25px",
-                      width: "25px",
-                      background: "#081C42",
-                      marginRight: "10px",
-                      textAlign: "center",
-                      fontWeight: 600,
-                      borderRadius: "50%",
-                    },
-
-                    "& .step-row": {
-                      fontSize: "16px",
-                      display: "flex",
-                      marginTop: "15px",
-                      marginBottom: "15px",
-                    },
-
-                    "& code": {
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
-                      paddingTop: "4px",
-                      paddingBottom: "3px",
-                      borderRadius: "2px",
-                      backgroundColor: "#eaeaea",
-                      color: "#082146",
-                    },
-                    "& .spacer": {
-                      marginBottom: "5px",
-                    },
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    marginTop: "55px",
                   }}
                 >
-                  <Box>
-                    <Box className="step-row">
-                      <div className="step-text">
-                        To Download 'xl.meta' for a specific object from all the
-                        drives in a zip file:
-                      </div>
-                    </Box>
-
-                    <Box
-                      sx={{
-                        flex: "1",
-                        marginTop: "15px",
-                        marginLeft: "35px",
-                        "& input": {
-                          color: "#737373",
-                        },
-                      }}
-                    >
-                      <Box>
-                        <label>Volume/bucket Name :</label>{" "}
-                        <code>test-bucket</code>
-                        <div className="spacer" />
-                        <label>Path : </label>
-                        <code>test*/xl.meta</code>
-                      </Box>
-                    </Box>
-                  </Box>
-
-                  <Box>
-                    <Box className="step-row">
-                      <div className="step-text">
-                        To Download all constituent parts for a specific object,
-                        and optionally encrypt the downloaded zip:
-                      </div>
-                    </Box>
-
-                    <Box
-                      sx={{
-                        flex: "1",
-                        marginTop: "15px",
-                        marginLeft: "35px",
-                        "& input": {
-                          color: "#737373",
-                        },
-                      }}
-                    >
-                      <Box>
-                        <label>Volume/bucket Name : </label>
-                        <code>test-bucket</code>
-                        <div className="spacer" />
-                        <label>Path :</label> <code>test*/*/part.*</code>
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Box>
-                    <Box className="step-row">
-                      <div className="step-text">
-                        To Download recursively all objects at a prefix.
-                        <br />
-                        NOTE: This can be an expensive operation use it with
-                        caution.
-                      </div>
-                    </Box>
-
-                    <Box
-                      sx={{
-                        flex: "1",
-                        marginTop: "15px",
-                        marginLeft: "35px",
-                        "& input": {
-                          color: "#737373",
-                        },
-                      }}
-                    >
-                      <Box>
-                        <label>Volume/bucket Name : </label>
-                        <code>test-bucket</code>
-                        <div className="spacer" />
-                        <label>Path :</label> <code>test/**</code>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    marginTop: "30px",
-                  }}
-                >
-                  You can learn more at our{" "}
-                  <a
-                    href="https://github.com/minio/minio/tree/master/docs/debugging?ref=con"
-                    target="_blank"
-                    rel="noreferrer"
+                  <Button
+                    sx={{
+                      marginRight: "15px",
+                    }}
+                    type="button"
+                    color="primary"
+                    variant="outlined"
+                    data-test-id="inspect-clear-button"
+                    onClick={resetForm}
                   >
-                    documentation
-                  </a>
-                  .
+                    Clear
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    data-test-id="inspect-submit-button"
+                    disabled={!isFormValid}
+                  >
+                    Inspect
+                  </Button>
                 </Box>
-              </Fragment>
-            }
-          />
-        </Box>
+              </form>
+            </Box>
+            <Box
+              sx={{
+                marginTop: "55px",
+              }}
+            >
+              <HelpBox
+                title={"Inspect"}
+                iconComponent={<FileBookIcon />}
+                help={
+                  <Fragment>
+                    <Box
+                      sx={{
+                        marginTop: "15px",
+                      }}
+                    >
+                      Inspect files on MinIO server
+                    </Box>
 
+                    <Box
+                      sx={{
+                        marginTop: "15px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      Examples
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexFlow: "column",
+                        flex: "2",
+                        marginTop: "15px",
+                        "& .step-number": {
+                          color: "#ffffff",
+                          height: "25px",
+                          width: "25px",
+                          background: "#081C42",
+                          marginRight: "10px",
+                          textAlign: "center",
+                          fontWeight: 600,
+                          borderRadius: "50%",
+                        },
+
+                        "& .step-row": {
+                          fontSize: "16px",
+                          display: "flex",
+                          marginTop: "15px",
+                          marginBottom: "15px",
+                        },
+
+                        "& code": {
+                          paddingLeft: "10px",
+                          paddingRight: "10px",
+                          paddingTop: "4px",
+                          paddingBottom: "3px",
+                          borderRadius: "2px",
+                          backgroundColor: "#eaeaea",
+                          color: "#082146",
+                        },
+                        "& .spacer": {
+                          marginBottom: "5px",
+                        },
+                      }}
+                    >
+                      <Box>
+                        <Box className="step-row">
+                          <div className="step-text">
+                            To Download 'xl.meta' for a specific object from all
+                            the drives in a zip file:
+                          </div>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            flex: "1",
+                            marginTop: "15px",
+                            marginLeft: "35px",
+                            "& input": {
+                              color: "#737373",
+                            },
+                          }}
+                        >
+                          <Box>
+                            <label>Volume/bucket Name :</label>{" "}
+                            <code>test-bucket</code>
+                            <div className="spacer" />
+                            <label>Path : </label>
+                            <code>test*/xl.meta</code>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      <Box>
+                        <Box className="step-row">
+                          <div className="step-text">
+                            To Download all constituent parts for a specific
+                            object, and optionally encrypt the downloaded zip:
+                          </div>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            flex: "1",
+                            marginTop: "15px",
+                            marginLeft: "35px",
+                            "& input": {
+                              color: "#737373",
+                            },
+                          }}
+                        >
+                          <Box>
+                            <label>Volume/bucket Name : </label>
+                            <code>test-bucket</code>
+                            <div className="spacer" />
+                            <label>Path :</label> <code>test*/*/part.*</code>
+                          </Box>
+                        </Box>
+                      </Box>
+                      <Box>
+                        <Box className="step-row">
+                          <div className="step-text">
+                            To Download recursively all objects at a prefix.
+                            <br />
+                            NOTE: This can be an expensive operation use it with
+                            caution.
+                          </div>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            flex: "1",
+                            marginTop: "15px",
+                            marginLeft: "35px",
+                            "& input": {
+                              color: "#737373",
+                            },
+                          }}
+                        >
+                          <Box>
+                            <label>Volume/bucket Name : </label>
+                            <code>test-bucket</code>
+                            <div className="spacer" />
+                            <label>Path :</label> <code>test/**</code>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        marginTop: "30px",
+                      }}
+                    >
+                      You can learn more at our{" "}
+                      <a
+                        href="https://github.com/minio/minio/tree/master/docs/debugging?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        documentation
+                      </a>
+                      .
+                    </Box>
+                  </Fragment>
+                }
+              />
+            </Box>
+          </Fragment>
+        )}
         {decryptionKey ? (
           <ModalWrapper
             modalOpen={true}
