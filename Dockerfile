@@ -29,7 +29,7 @@ WORKDIR /go/src/github.com/minio/console/
 ENV CGO_ENABLED=0
 
 COPY --from=uilayer /app/build /go/src/github.com/minio/console/portal-ui/build
-RUN go build -ldflags "-w -s" -a -o console ./cmd/console
+RUN go build --tags=kqueue,operator -ldflags "-w -s" -a -o console ./cmd/console
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 MAINTAINER MinIO Development "dev@min.io"

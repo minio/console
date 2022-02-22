@@ -220,7 +220,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		return nil, prepareError(err)
 	}
 	sessionResp := &models.SessionResponse{
-		Features:        getListOfEnabledFeatures(),
+		Features:        getListOfEnabledFeatures(session),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
 		DistributedMode: isErasureMode(),
@@ -230,7 +230,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 }
 
 // getListOfEnabledFeatures returns a list of features
-func getListOfEnabledFeatures() []string {
+func getListOfEnabledFeatures(session *models.Principal) []string {
 	features := []string{}
 	logSearchURL := getLogSearchURL()
 	oidcEnabled := oauth2.IsIDPEnabled()
@@ -244,6 +244,10 @@ func getListOfEnabledFeatures() []string {
 	}
 	if ldapEnabled {
 		features = append(features, "ldap-idp", "external-idp")
+	}
+
+	if session.Hm {
+		features = append(features, "hide-menu")
 	}
 
 	return features

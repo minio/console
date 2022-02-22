@@ -84,6 +84,10 @@ const ConsoleKBar = ({
   operatorMode: boolean;
   features: string[] | null;
 }) => {
+  if (features?.includes("hide-menu")) {
+    return <Console />;
+  }
+
   const allowedMenuItems = validRoutes(features, operatorMode);
 
   const initialActions = [];
