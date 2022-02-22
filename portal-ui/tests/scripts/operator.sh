@@ -44,7 +44,7 @@ function setup_kind() {
 function install_operator() {
 
 	echo "Installing Current Operator"
-	try kubectl apply -k "${SCRIPT_DIR}/resources"
+	try kubectl apply -k "${SCRIPT_DIR}/resources.yaml"
 
 	echo "key, value for pod selector in kustomize test"
 	key=name
