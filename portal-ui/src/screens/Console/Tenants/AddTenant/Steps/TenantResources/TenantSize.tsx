@@ -44,6 +44,7 @@ import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import TenantSizeResources from "./TenantSizeResources";
+import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface ITenantSizeProps {
   classes: any;
@@ -310,39 +311,33 @@ const TenantSize = ({
         />
       </Grid>
       <Grid item xs={12}>
-        <div className={classes.multiContainer}>
-          <div className={classes.formFieldRow}>
-            <div className={classes.compositeFieldContainer}>
-              <InputBoxWrapper
-                type="number"
-                id="volume_size"
-                name="volume_size"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  updateField("volumeSize", e.target.value);
-                  cleanValidation("volume_size");
+        <div className={classes.formFieldRow}>
+          <InputBoxWrapper
+            type="number"
+            id="volume_size"
+            name="volume_size"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("volumeSize", e.target.value);
+              cleanValidation("volume_size");
+            }}
+            label="Total Size"
+            value={volumeSize}
+            disabled={selectedStorageClass === ""}
+            required
+            error={validationErrors["volume_size"] || ""}
+            min="0"
+            overlayObject={
+              <InputUnitMenu
+                id={"size-unit"}
+                onUnitChange={(newValue) => {
+                  updateField("sizeFactor", newValue);
                 }}
-                label="Total Size"
-                value={volumeSize}
+                unitSelected={sizeFactor}
+                unitsList={k8sfactorForDropdown()}
                 disabled={selectedStorageClass === ""}
-                required
-                error={validationErrors["volume_size"] || ""}
-                min="0"
               />
-              <div className={classes.compositeAddOn}>
-                <SelectWrapper
-                  label={""}
-                  id="size_factor"
-                  name="size_factor"
-                  value={sizeFactor}
-                  disabled={selectedStorageClass === ""}
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    updateField("sizeFactor", e.target.value as string);
-                  }}
-                  options={k8sfactorForDropdown()}
-                />
-              </div>
-            </div>
-          </div>
+            }
+          />
         </div>
       </Grid>
 
