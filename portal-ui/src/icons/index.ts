@@ -167,3 +167,5 @@ export { default as FileVideoIcon } from "./FileVideoIcon";
 export { default as ChangePasswordIcon } from "./ChangePasswordIcon";
 export { default as LockIcon } from "./LockIcon";
 export { default as BackCaretIcon } from "./BackCaretIcon";
+export { default as VersionsIcon } from "./VersionsIcon";
+export { default as NewPathIcon } from "./NewPathIcon";

@@ -25,13 +25,14 @@ import { ObjectBrowserState } from "./reducers";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { Link } from "react-router-dom";
 import { encodeFileName } from "../../../common/utils";
-import { BackCaretIcon, FolderIcon } from "../../../icons";
+import { BackCaretIcon, NewPathIcon } from "../../../icons";
 import { IconButton, Tooltip } from "@mui/material";
 import history from "../../../history";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import withSuspense from "../Common/Components/withSuspense";
 import { BucketObject } from "../Buckets/ListBuckets/Objects/ListObjects/types";
+import { setVersionsModeEnabled } from "./actions";
 
 const CreateFolderModal = withSuspense(
   React.lazy(
@@ -48,8 +49,10 @@ interface IObjectBrowser {
   bucketName: string;
   internalPaths: string;
   rewindEnabled?: boolean;
-  rewindDate?: any;
+  versionsMode: boolean;
+  versionedFile: string;
   existingFiles: BucketObject[];
+  setVersionsModeEnabled: typeof setVersionsModeEnabled;
 }
 
 const styles = (theme: Theme) =>
@@ -62,8 +65,10 @@ const BrowserBreadcrumbs = ({
   bucketName,
   internalPaths,
   rewindEnabled,
-  rewindDate,
   existingFiles,
+  versionsMode,
+  versionedFile,
+  setVersionsModeEnabled,
 }: IObjectBrowser) => {
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
@@ -82,20 +87,53 @@ const BrowserBreadcrumbs = ({
     return (
       <Fragment key={`breadcrumbs-${index.toString()}`}>
         <span> / </span>
-        <Link to={route}>{objectItem}</Link>
+        <Link
+          to={route}
+          onClick={() => {
+            setVersionsModeEnabled(false);
+          }}
+        >
+          {objectItem}
+        </Link>
       </Fragment>
     );
   });
 
+  let versionsItem: any[] = [];
+
+  if (versionsMode) {
+    versionsItem = [
+      <Fragment key={`breadcrumbs-versionedItem`}>
+        <span> / {versionedFile} - Versions</span>
+      </Fragment>,
+    ];
+  }
+
   const listBreadcrumbs: any[] = [
     <Fragment key={`breadcrumbs-root-path`}>
-      <Link to={`/buckets/${bucketName}/browse`}>{bucketName}</Link>
+      <Link
+        to={`/buckets/${bucketName}/browse`}
+        onClick={() => {
+          setVersionsModeEnabled(false);
+        }}
+      >
+        {bucketName}
+      </Link>
     </Fragment>,
     ...breadcrumbsMap,
+    ...versionsItem,
   ];
 
   const closeAddFolderModal = () => {
     setCreateFolderOpen(false);
+  };
+
+  const goBackFunction = () => {
+    if (versionsMode) {
+      setVersionsModeEnabled(false);
+    } else {
+      history.goBack();
+    }
   };
 
   return (
@@ -111,14 +149,11 @@ const BrowserBreadcrumbs = ({
       )}
       <Grid item xs={12} className={`${classes.breadcrumbs}`}>
         <IconButton
-          onClick={() => {
-            history.goBack();
-          }}
+          onClick={goBackFunction}
           sx={{
             border: "#EAEDEE 1px solid",
             backgroundColor: "#fff",
             borderLeft: 0,
-            borderBottom: 0,
             borderRadius: 0,
             width: 39,
             height: 39,
@@ -145,7 +180,7 @@ const BrowserBreadcrumbs = ({
               paddingLeft: "6px",
             }}
           >
-            <FolderIcon />
+            <NewPathIcon />
           </IconButton>
         </Tooltip>
         <div className={classes.breadcrumbsList} dir="rtl">
@@ -158,9 +193,14 @@ const BrowserBreadcrumbs = ({
 
 const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
   rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
-  rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
+  versionsMode: get(objectBrowser, "versionsMode", false),
+  versionedFile: get(objectBrowser, "versionedFile", ""),
 });
 
-const connector = connect(mapStateToProps, null);
+const mapDispatchToProps = {
+  setVersionsModeEnabled,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 export default withStyles(styles)(connector(BrowserBreadcrumbs));
