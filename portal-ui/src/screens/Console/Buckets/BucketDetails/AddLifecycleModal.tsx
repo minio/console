@@ -41,6 +41,7 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { LifecycleConfigIcon } from "../../../../icons";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IReplicationModal {
   open: boolean;
@@ -257,6 +258,14 @@ const AddLifecycleModal = ({
                           label="Delete Latest Version After"
                           value={expiryDays}
                           min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"expire-current-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
 
@@ -273,6 +282,14 @@ const AddLifecycleModal = ({
                           label="Delete Older Versions After"
                           value={NCExpirationDays}
                           min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"expire-noncurrent-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
                     </Fragment>
@@ -303,6 +320,14 @@ const AddLifecycleModal = ({
                           label="Transition Latest Version"
                           value={transitionDays}
                           min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"transition-current-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
                       <Grid item xs={12} className={classes.formFieldRow}>
@@ -318,6 +343,14 @@ const AddLifecycleModal = ({
                           label="Transition Older Versions"
                           value={NCTransitionDays}
                           min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"transition-noncurrent-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
                     </Fragment>
