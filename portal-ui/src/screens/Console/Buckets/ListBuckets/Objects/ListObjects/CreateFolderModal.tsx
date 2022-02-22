@@ -102,6 +102,16 @@ const CreateFolderModal = ({
     setIsFormValid(valid);
   }, [pathUrl]);
 
+  const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPathUrl(e.target.value);
+  };
+
+  const keyPressed = (e: any) => {
+    if(e.code === "Enter" && pathUrl !== "") {
+      createProcess();
+    }
+  };
+
   return (
     <React.Fragment>
       <ModalWrapper
@@ -121,9 +131,8 @@ const CreateFolderModal = ({
               id={"folderPath"}
               name={"folderPath"}
               placeholder={"Enter the new Folder Path"}
-              onChange={(e) => {
-                setPathUrl(e.target.value);
-              }}
+              onChange={inputChange}
+              onKeyPress={keyPressed}
               required
             />
           </Grid>

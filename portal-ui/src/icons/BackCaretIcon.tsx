@@ -17,21 +17,21 @@
 import * as React from "react";
 import { SVGProps } from "react";
 
-const FolderIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={`min-icon`}
-    fill={"currentcolor"}
-    viewBox="0 0 256 256"
-    {...props}
-  >
-    <g>
-      <path d="M235.3,72.5c-0.2-15.5-12.8-27.9-28.3-27.9h-78l-1.1-1.5c-5.1-9.3-14.5-15.5-25.1-16.6h-50c-15.6,0-28.3,12.6-28.3,28.3
-			c0,1,0.1,2,0.2,3v12.9c-11.6,3.9-19.4,14.8-19.4,27c0,0.6,0,1.2,0.1,1.7L14.8,202c0.6,15.4,13.2,27.5,28.6,27.5h168.9
-			c15.4,0,28-12.1,28.6-27.5l9.5-102.5c0-0.6,0.1-1.2,0.1-1.8C250.6,87.1,244.7,77.4,235.3,72.5z M32.5,88.4c11.7-3.3,12-11,12-11
-			h172c0.2,4.6,2.9,8.8,6.9,11H32.5z"/>
-    </g>
-  </svg>
+const BackCaretIcon = (props: SVGProps<SVGSVGElement>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className={`min-icon`}
+        fill={"currentcolor"}
+        viewBox="0 0 256 256"
+        {...props}
+    >
+        <g id="noun_chevron_2320228" transform="translate(5.595 10) rotate(180)">
+            <path id="Path_6842" d="M-178.01,7.8c-3.9-0.03-7.62-1.63-10.34-4.43c-5.81-5.68-5.92-15-0.25-20.81
+		c0.08-0.08,0.16-0.16,0.25-0.25l100.13-100.13l-100.13-100.48c-5.81-5.68-5.92-15-0.25-20.81c0.08-0.08,0.16-0.16,0.25-0.25
+		c5.68-5.81,15-5.92,20.81-0.25c0.08,0.08,0.16,0.16,0.25,0.25l110.82,110.82c2.8,2.72,4.39,6.44,4.43,10.34
+		c0.11,3.93-1.51,7.71-4.43,10.34L-167.29,2.99C-170.07,5.97-173.93,7.71-178.01,7.8z"/>
+        </g>
+    </svg>
 );
 
-export default FolderIcon;
+export default BackCaretIcon;
