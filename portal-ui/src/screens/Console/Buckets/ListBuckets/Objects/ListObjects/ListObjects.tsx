@@ -102,9 +102,6 @@ import ObjectDetailPanel from "./ObjectDetailPanel";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import MultiSelectionPanel from "./MultiSelectionPanel";
 
-const AddFolderIcon = React.lazy(
-  () => import("../../../../../../icons/AddFolderIcon")
-);
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
 );
@@ -115,9 +112,7 @@ const RefreshIcon = React.lazy(
 const DeleteIcon = React.lazy(
   () => import("../../../../../../icons/DeleteIcon")
 );
-const CreateFolderModal = withSuspense(
-  React.lazy(() => import("./CreateFolderModal"))
-);
+
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
 );
@@ -168,6 +163,22 @@ const styles = (theme: Theme) =>
     searchField: {
       ...searchField.searchField,
       maxWidth: 380,
+    },
+    screenTitleContainer: {
+      border: "#EAEDEE 1px solid",
+      borderBottom: 0,
+      padding: "0.8rem 15px 0",
+    },
+    titleSpacer: {
+      marginLeft: 10,
+    },
+    listIcon: {
+      display: "block",
+      marginTop: "-10px",
+      "& .min-icon": {
+        width: 20,
+        height: 20,
+      }
     },
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
@@ -269,7 +280,6 @@ const ListObjects = ({
   const [rewind, setRewind] = useState<RewindObject[]>([]);
   const [loadingRewind, setLoadingRewind] = useState<boolean>(false);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
-  const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
     useState<React.ReactNode>(defLoading);
@@ -372,12 +382,12 @@ const ListObjects = ({
 
     if (timeDelta / 1000 >= 6) {
       setLoadingMessage(
-        <React.Fragment>
+        <Fragment>
           <Typography component="h3">
             This operation is taking longer than expected... (
             {Math.ceil(timeDelta / 1000)}s)
           </Typography>
-        </React.Fragment>
+        </Fragment>
       );
     } else if (timeDelta / 1000 >= 3) {
       setLoadingMessage(
@@ -656,9 +666,7 @@ const ListObjects = ({
     }
   };
 
-  const closeAddFolderModal = () => {
-    setCreateFolderOpen(false);
-  };
+
 
   const handleUploadButton = (e: any) => {
     if (
@@ -1167,7 +1175,7 @@ const ListObjects = ({
   ];
 
   return (
-    <React.Fragment>
+    <Fragment>
       {shareFileModalOpen && selectedPreview && (
         <ShareFile
           open={shareFileModalOpen}
@@ -1189,15 +1197,6 @@ const ListObjects = ({
           versioning={isVersioned}
         />
       )}
-      {createFolderOpen && (
-        <CreateFolderModal
-          modalOpen={createFolderOpen}
-          bucketName={bucketName}
-          folderName={internalPaths}
-          onClose={closeAddFolderModal}
-          existingFiles={records}
-        />
-      )}
       {rewindSelect && (
         <RewindEnable
           open={rewindSelect}
@@ -1214,21 +1213,15 @@ const ListObjects = ({
         />
       )}
       <PageLayout>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.screenTitleContainer}>
           <ScreenTitle
             className={classes.screenTitle}
             icon={
-              <Fragment>
-                <BucketsIcon width={40} />
-              </Fragment>
+              <span className={classes.listIcon}>
+                <BucketsIcon />
+              </span>
             }
-            title={
-              <BrowserBreadcrumbs
-                bucketName={bucketName}
-                internalPaths={pageTitle}
-                fullSizeBreadcrumbs
-              />
-            }
+            title={<span className={classes.titleSpacer}>{bucketName}</span>}
             subTitle={
               <Fragment>
                 <Grid item xs={12} className={classes.bucketDetails}>
@@ -1267,21 +1260,6 @@ const ListObjects = ({
             actions={
               <Fragment>
                 <RBIconButton
-                  id={"new-path"}
-                  tooltip={"Choose or create a new path"}
-                  text={"New Path"}
-                  icon={<AddFolderIcon />}
-                  color="primary"
-                  variant={"outlined"}
-                  onClick={() => {
-                    setCreateFolderOpen(true);
-                  }}
-                  disabled={
-                    rewindEnabled ||
-                    !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
-                  }
-                />
-                <RBIconButton
                   id={"rewind-objects-list"}
                   tooltip={"Rewind Bucket"}
                   text={"Rewind"}
@@ -1292,6 +1270,7 @@ const ListObjects = ({
                       variant="dot"
                       invisible={!rewindEnabled}
                       className={classes.badgeOverlap}
+                      sx={{height: 12}}
                     >
                       <HistoryIcon />
                     </Badge>
@@ -1355,6 +1334,13 @@ const ListObjects = ({
             }
           />
         </Grid>
+        <Grid item xs={12}>
+          <BrowserBreadcrumbs
+              bucketName={bucketName}
+              internalPaths={pageTitle}
+              existingFiles={records || []}
+          />
+        </Grid>
         <div
           id="object-list-wrapper"
           {...getRootProps({ style: { ...dndStyles } })}
@@ -1414,7 +1400,7 @@ const ListObjects = ({
           </Grid>
         </div>
       </PageLayout>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
