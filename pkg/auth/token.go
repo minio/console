@@ -66,6 +66,12 @@ type TokenClaims struct {
 	STSSecretAccessKey string `json:"stsSecretAccessKey,omitempty"`
 	STSSessionToken    string `json:"stsSessionToken,omitempty"`
 	AccountAccessKey   string `json:"accountAccessKey,omitempty"`
+	HideMenu           bool   `json:"hm,omitempty"`
+}
+
+// SessionFeatures represents features stored in the session
+type SessionFeatures struct {
+	HideMenu bool
 }
 
 // SessionTokenAuthenticate takes a session token, decode it, extract claims and validate the signature
@@ -96,14 +102,18 @@ func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 
 // NewEncryptedTokenForClient generates a new session token with claims based on the provided STS credentials, first
 // encrypts the claims and the sign them
-func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey string) (string, error) {
+func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey string, features *SessionFeatures) (string, error) {
 	if credentials != nil {
-		encryptedClaims, err := encryptClaims(&TokenClaims{
+		tokenClaims := &TokenClaims{
 			STSAccessKeyID:     credentials.AccessKeyID,
 			STSSecretAccessKey: credentials.SecretAccessKey,
 			STSSessionToken:    credentials.SessionToken,
 			AccountAccessKey:   accountAccessKey,
-		})
+		}
+		if features != nil {
+			tokenClaims.HideMenu = features.HideMenu
+		}
+		encryptedClaims, err := encryptClaims(tokenClaims)
 		if err != nil {
 			return "", err
 		}

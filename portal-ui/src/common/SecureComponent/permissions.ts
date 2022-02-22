@@ -129,8 +129,7 @@ export const IAM_PAGES = {
   TOOLS_LOGS: "/tools/logs",
   TOOLS_AUDITLOGS: "/tools/audit-logs",
   TOOLS_TRACE: "/tools/trace",
-  METRICS: "/tools/metrics",
-  DASHBOARD: "/tools/dashboard",
+  DASHBOARD: "/tools/metrics",
   TOOLS_HEAL: "/tools/heal",
   TOOLS_WATCH: "/tools/watch",
   /* Health */
@@ -178,6 +177,8 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/summary",
   NAMESPACE_TENANT_METRICS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/metrics",
+  NAMESPACE_TENANT_TRACE:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/trace",
   NAMESPACE_TENANT_POOLS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
   NAMESPACE_TENANT_VOLUMES:
@@ -295,9 +296,6 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_DELETE_USER,
   ],
   [IAM_PAGES.DASHBOARD]: [
-    IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
-  ],
-  [IAM_PAGES.METRICS]: [
     IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
   ],
   [IAM_PAGES.POLICIES_VIEW]: [

@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/minio/console/pkg/auth"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -80,7 +82,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// authenticate user and generate new session token
-	sessionID, err := login(credentials)
+	sessionID, err := login(credentials, &auth.SessionFeatures{HideMenu: session.Hm})
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}

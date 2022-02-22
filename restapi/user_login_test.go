@@ -65,7 +65,7 @@ func TestLogin(t *testing.T) {
 			SignerType:      0,
 		}, nil
 	}
-	token, err := login(consoleCredentials)
+	token, err := login(consoleCredentials, nil)
 	funcAssert.NotEmpty(token, "Token was returned empty")
 	funcAssert.Nil(err, "error creating a session")
 
@@ -73,7 +73,7 @@ func TestLogin(t *testing.T) {
 	consoleCredentialsGetMock = func() (credentials.Value, error) {
 		return credentials.Value{}, errors.New("")
 	}
-	_, err = login(consoleCredentials)
+	_, err = login(consoleCredentials, nil)
 	funcAssert.NotNil(err, "not error returned creating a session")
 }
 

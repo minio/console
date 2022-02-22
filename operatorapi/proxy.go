@@ -123,9 +123,12 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		data := map[string]string{
-			"accessKey": string(tenantConfiguration["accesskey"]),
-			"secretKey": string(tenantConfiguration["secretkey"]),
+		data := map[string]interface{}{
+			"accessKey": tenantConfiguration["accesskey"],
+			"secretKey": tenantConfiguration["secretkey"],
+			"features": map[string]bool{
+				"hide_menu": true,
+			},
 		}
 		payload, _ := json.Marshal(data)
 

@@ -5018,6 +5018,14 @@ func init() {
         "accessKey": {
           "type": "string"
         },
+        "features": {
+          "type": "object",
+          "properties": {
+            "hide_menu": {
+              "type": "boolean"
+            }
+          }
+        },
         "secretKey": {
           "type": "string"
         }
@@ -5467,6 +5475,10 @@ func init() {
         },
         "accountAccessKey": {
           "type": "string"
+        },
+        "hm": {
+          "description": "Hide Console Menu",
+          "type": "boolean"
         }
       }
     },
@@ -10422,6 +10434,14 @@ func init() {
         }
       }
     },
+    "LoginRequestFeatures": {
+      "type": "object",
+      "properties": {
+        "hide_menu": {
+          "type": "boolean"
+        }
+      }
+    },
     "SubnetRegTokenResponse": {
       "type": "object",
       "properties": {
@@ -11583,6 +11603,14 @@ func init() {
         "accessKey": {
           "type": "string"
         },
+        "features": {
+          "type": "object",
+          "properties": {
+            "hide_menu": {
+              "type": "boolean"
+            }
+          }
+        },
         "secretKey": {
           "type": "string"
         }
@@ -12032,6 +12060,10 @@ func init() {
         },
         "accountAccessKey": {
           "type": "string"
+        },
+        "hm": {
+          "description": "Hide Console Menu",
+          "type": "boolean"
         }
       }
     },
