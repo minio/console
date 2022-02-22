@@ -48,7 +48,6 @@ import {
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import SetRetention from "./SetRetention";
-import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteObject from "../ListObjects/DeleteObject";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
@@ -517,14 +516,6 @@ const ObjectDetails = ({
                   objectNameArray.length > 0
                     ? objectNameArray[objectNameArray.length - 1]
                     : actualInfo.name
-                }
-                subTitle={
-                  <Fragment>
-                    <BrowserBreadcrumbs
-                      bucketName={bucketName}
-                      internalPaths={actualInfo.name}
-                    />
-                  </Fragment>
                 }
                 actions={
                   <Fragment>

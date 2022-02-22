@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: []
+  - key: [ ]
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
   /login/operator:
@@ -55,7 +55,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -76,7 +76,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -781,13 +781,13 @@ paths:
         200:
           description: A successful response.
           schema:
-              $ref: "#/definitions/tenantMonitoringInfo"
+            $ref: "#/definitions/tenantMonitoringInfo"
         default:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
       tags:
-        - OperatorAPI 
+        - OperatorAPI
     put:
       summary: Set Prometheus monitoring fields for tenant
       operationId: SetTenantMonitoring
@@ -813,7 +813,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-        - OperatorAPI        
+        - OperatorAPI
 
   /namespaces/{namespace}/tenants/{tenant}/certificates:
     put:
@@ -1199,7 +1199,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account]
+        enum: [ form, redirect, service-account ]
       redirect:
         type: string
   loginRequest:
@@ -1212,6 +1212,11 @@ definitions:
         type: string
       secretKey:
         type: string
+      features:
+        type: object
+        properties:
+          hide_menu:
+            type: boolean
   loginOauth2AuthRequest:
     type: object
     required:
@@ -1238,7 +1243,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ok]
+        enum: [ ok ]
       operator:
         type: boolean
       permissions:
@@ -1895,7 +1900,7 @@ definitions:
         type: string
       url:
         type: string
-        
+
   tenantPod:
     type: object
     required:
@@ -2551,12 +2556,12 @@ definitions:
       logCPURequest:
         type: string
       logMemRequest:
-        type: string 
+        type: string
       logDBCPURequest:
         type: string
       logDBMemRequest:
-        type: string    
-     
+        type: string
+
 
   listPVCsResponse:
     type: object
@@ -2622,14 +2627,14 @@ definitions:
         type: string
       message:
         type: string
-        
+
   tenantMonitoringInfo:
     type: object
     properties:
       prometheusEnabled:
-        type: boolean 
+        type: boolean
       toggle:
-        type: boolean  
+        type: boolean
       image:
         type: string
       sidecarImage:
@@ -2651,14 +2656,14 @@ definitions:
         items:
           $ref: "#/definitions/nodeSelector"
       serviceAccountName:
-        type: string  
+        type: string
       storageClassName:
-        type: string    
+        type: string
       monitoringCPURequest:
-        type: string       
+        type: string
       monitoringMemRequest:
-        type: string          
- 
+        type: string
+
   label:
     type: object
     properties:
@@ -2674,7 +2679,7 @@ definitions:
         type: string
       value:
         type: string
-        
+
   nodeSelector:
     type: object
     properties:
@@ -2687,7 +2692,7 @@ definitions:
     type: object
     properties:
       prometheusEnabled:
-        type: boolean    
+        type: boolean
 
   formatConfiguration:
     type: object

@@ -28,6 +28,7 @@ import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 import { LinearProgress } from "@mui/material";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 interface ITenantMetrics {
   classes: any;
@@ -66,7 +67,7 @@ const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
       <iframe
         className={classes.iframeStyle}
         title={"metrics"}
-        src={`/api/proxy/${tenantNamespace}/${tenantName}/metrics?cp=y`}
+        src={`/api/proxy/${tenantNamespace}/${tenantName}${IAM_PAGES.DASHBOARD}?cp=y`}
         onLoad={() => {
           setLoading(false);
         }}
