@@ -56,12 +56,12 @@ jobs:
         run: |
           make console
 
-      - name: Start Console, front-end app
+      # Runs a set of commands using the runners shell
+      - name: Start Kind for Operator UI
         run: |
-          (./console operator) & (make initialize-operator)
+          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/operator.sh"
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome:headless" portal-ui/tests/operator/ --skip-js-errors -c 3'
-
