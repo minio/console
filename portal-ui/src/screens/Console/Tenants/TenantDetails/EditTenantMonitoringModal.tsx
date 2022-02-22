@@ -20,6 +20,7 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IEditTenantMonitoringProps {
   tenant: ITenant;
@@ -88,7 +89,9 @@ const EditTenantMonitoringModal = ({
   );
   const [newCPURequest, setNewCPURequest] = useState<string>(cpuRequest);
   const [newMemRequest, setNewMemRequest] = useState<string>(
-    Math.floor(parseInt(memRequest, 10) / 1000000000).toString()
+    memRequest
+      ? Math.floor(parseInt(memRequest, 10) / 1000000000).toString()
+      : ""
   );
   const [newServiceAccountName, setNewServiceAccountName] =
     useState<string>(serviceAccountName);
@@ -285,8 +288,8 @@ const EditTenantMonitoringModal = ({
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id={`diskCapacityGB`}
-                label={"Disk Capacity (GB)"}
-                placeholder={"Disk Capacity (GB)"}
+                label={"Disk Capacity"}
+                placeholder={"Disk Capacity"}
                 name={`diskCapacityGB`}
                 value={newDiskCapacityGB}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,6 +297,15 @@ const EditTenantMonitoringModal = ({
                 }}
                 key={`diskCapacityGB`}
                 error={validationErrors[`diskCapacityGB`] || ""}
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -313,15 +325,27 @@ const EditTenantMonitoringModal = ({
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id={`memRequest`}
-                label={"Memory Request (Gi)"}
+                label={"Memory Request"}
                 placeholder={"Memory request"}
                 name={`memRequest`}
                 value={newMemRequest}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setNewMemRequest(event.target.value);
+                  if (event.target.validity.valid) {
+                    setNewMemRequest(event.target.value);
+                  }
                 }}
+                pattern={"[0-9]*"}
                 key={`memRequest`}
                 error={validationErrors[`memRequest`] || ""}
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
