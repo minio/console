@@ -83,7 +83,7 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey())
+	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), nil)
 	if err != nil {
 		LogError("error authenticating user: %v", err)
 		return nil, errInvalidCredentials

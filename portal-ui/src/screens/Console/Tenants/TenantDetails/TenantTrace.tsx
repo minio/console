@@ -30,7 +30,7 @@ import { AppState } from "../../../../store";
 import { LinearProgress } from "@mui/material";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
-interface ITenantMetrics {
+interface ITenantTrace {
   classes: any;
   match: any;
   tenant: ITenant | null;
@@ -50,7 +50,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
+const TenantTrace = ({ classes, match }: ITenantTrace) => {
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
 
@@ -67,7 +67,7 @@ const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
       <iframe
         className={classes.iframeStyle}
         title={"metrics"}
-        src={`/api/proxy/${tenantNamespace}/${tenantName}${IAM_PAGES.DASHBOARD}?cp=y`}
+        src={`/api/proxy/${tenantNamespace}/${tenantName}${IAM_PAGES.TOOLS_TRACE}?cp=y`}
         onLoad={() => {
           setLoading(false);
         }}
@@ -103,4 +103,4 @@ const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 
-export default withStyles(styles)(connector(TenantMetrics));
+export default withStyles(styles)(connector(TenantTrace));

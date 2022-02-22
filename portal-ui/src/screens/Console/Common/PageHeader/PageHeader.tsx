@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
@@ -38,6 +38,7 @@ interface IPageHeader {
   managerObjects?: IFileItem[];
   toggleList: typeof toggleList;
   middleComponent?: React.ReactNode;
+  features: string[];
 }
 
 const styles = (theme: Theme) =>
@@ -88,7 +89,11 @@ const PageHeader = ({
   managerObjects,
   toggleList,
   middleComponent,
+  features,
 }: IPageHeader) => {
+  if (features.includes("hide-menu")) {
+    return <Fragment />;
+  }
   return (
     <Grid
       container
@@ -157,6 +162,7 @@ const mapState = (state: AppState) => ({
   sidebarOpen: state.system.sidebarOpen,
   operatorMode: state.system.operatorMode,
   managerObjects: state.objectBrowser.objectManager.objectsToManage,
+  features: state.console.session.features,
 });
 
 const mapDispatchToProps = {

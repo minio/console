@@ -50,7 +50,6 @@ import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
-import PVCDetails from "./pvcs/PVCDetails";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -63,6 +62,10 @@ const VolumesSummary = withSuspense(
   React.lazy(() => import("./VolumesSummary"))
 );
 const TenantMetrics = withSuspense(React.lazy(() => import("./TenantMetrics")));
+const TenantTrace = withSuspense(React.lazy(() => import("./TenantTrace")));
+const TenantVolumes = withSuspense(
+  React.lazy(() => import("./pvcs/TenantVolumes"))
+);
 const TenantSecurity = withSuspense(
   React.lazy(() => import("./TenantSecurity"))
 );
@@ -425,6 +428,10 @@ const TenantDetails = ({
                     component={TenantMetrics}
                   />
                   <Route
+                    path="/namespaces/:tenantNamespace/tenants/:tenantName/trace"
+                    component={TenantTrace}
+                  />
+                  <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName/security"
                     component={TenantSecurity}
                   />
@@ -442,7 +449,7 @@ const TenantDetails = ({
                   />
                   <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName/pvcs/:PVCName"
-                    component={PVCDetails}
+                    component={TenantVolumes}
                   />
                   <Route
                     path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
