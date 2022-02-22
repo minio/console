@@ -92,11 +92,11 @@ const AddLifecycleModal = ({
   const [prefix, setPrefix] = useState("");
   const [tags, setTags] = useState<string>("");
   const [storageClass, setStorageClass] = useState("");
-  const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
-  const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
+  const [NCExpirationDays, setNCExpirationDays] = useState<string>("");
+  const [NCTransitionDays, setNCTransitionDays] = useState<string>("");
   const [ilmType, setIlmType] = useState<string>("expiry");
-  const [expiryDays, setExpiryDays] = useState<string>("0");
-  const [transitionDays, setTransitionDays] = useState<string>("0");
+  const [expiryDays, setExpiryDays] = useState<string>("");
+  const [transitionDays, setTransitionDays] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   useEffect(() => {
@@ -242,22 +242,23 @@ const AddLifecycleModal = ({
                       ]}
                     />
                   </Grid>
-                  <Grid item xs={9}></Grid>
+                  <Grid item xs={9} />
                   {ilmType === "expiry" ? (
                     <Fragment>
                       <Grid item xs={12} className={classes.formFieldRow}>
                         <InputBoxWrapper
-                          type="number"
                           id="expiry_days"
                           name="expiry_days"
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setExpiryDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setExpiryDays(e.target.value);
+                            }
                           }}
+                          pattern={"[0-9]*"}
                           label="Delete Latest Version After"
                           value={expiryDays}
-                          min="0"
                           overlayObject={
                             <InputUnitMenu
                               id={"expire-current-unit"}
@@ -271,14 +272,16 @@ const AddLifecycleModal = ({
 
                       <Grid item xs={12} className={classes.formFieldRow}>
                         <InputBoxWrapper
-                          type="number"
                           id="noncurrentversion_expiration_days"
                           name="noncurrentversion_expiration_days"
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setNCExpirationDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setNCExpirationDays(e.target.value);
+                            }
                           }}
+                          pattern={"[0-9]*"}
                           label="Delete Older Versions After"
                           value={NCExpirationDays}
                           min="0"
@@ -309,14 +312,16 @@ const AddLifecycleModal = ({
                       </Grid>
                       <Grid item xs={12} className={classes.formFieldRow}>
                         <InputBoxWrapper
-                          type="number"
                           id="transition_days"
                           name="transition_days"
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setTransitionDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setTransitionDays(e.target.value);
+                            }
                           }}
+                          pattern={"[0-9]*"}
                           label="Transition Latest Version"
                           value={transitionDays}
                           min="0"
@@ -338,11 +343,13 @@ const AddLifecycleModal = ({
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setNCTransitionDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setNCTransitionDays(e.target.value);
+                            }
                           }}
                           label="Transition Older Versions"
                           value={NCTransitionDays}
-                          min="0"
+                          pattern={"[0-9]*"}
                           overlayObject={
                             <InputUnitMenu
                               id={"transition-noncurrent-unit"}
