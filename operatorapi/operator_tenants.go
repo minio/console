@@ -238,7 +238,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 
 	//Get tenant monitoring info
 	api.OperatorAPIGetTenantMonitoringHandler = operator_api.GetTenantMonitoringHandlerFunc(func(params operator_api.GetTenantMonitoringParams, session *models.Principal) middleware.Responder {
-
 		payload, err := getTenantMonitoringResponse(session, params)
 		if err != nil {
 			return operator_api.NewGetTenantMonitoringDefault(int(err.Code)).WithPayload(err)
@@ -2221,12 +2220,16 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	var requestedMem string
 
 	if minInst.Spec.Prometheus.Resources.Requests != nil {
-		requestedCPUQ := minInst.Spec.Prometheus.Resources.Requests["cpu"]
-		requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
-		requestedMemQ := minInst.Spec.Prometheus.Resources.Requests["memory"]
-		requestedMem = strconv.FormatInt(requestedMemQ.Value(), 10)
-		monitoringInfo.MonitoringCPURequest = requestedCPU
-		monitoringInfo.MonitoringMemRequest = requestedMem
+		// Parse cpu request
+		if requestedCPUQ, ok := minInst.Spec.Prometheus.Resources.Requests["cpu"]; ok && requestedCPUQ.Value() != 0 {
+			requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
+			monitoringInfo.MonitoringCPURequest = requestedCPU
+		}
+		// Parse memory request
+		if requestedMemQ, ok := minInst.Spec.Prometheus.Resources.Requests["memory"]; ok && requestedMemQ.Value() != 0 {
+			requestedMem = strconv.FormatInt(requestedMemQ.Value(), 10)
+			monitoringInfo.MonitoringMemRequest = requestedMem
+		}
 	}
 
 	if len(minInst.Spec.Prometheus.Labels) != 0 && minInst.Spec.Prometheus.Labels != nil {
@@ -2331,17 +2334,19 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	}
 
 	monitoringResourceRequest := make(corev1.ResourceList)
-	if &params.Data.MonitoringCPURequest != nil {
-
+	if params.Data.MonitoringCPURequest != "" {
 		cpuQuantity, err := resource.ParseQuantity(params.Data.MonitoringCPURequest)
 		if err != nil {
 			return false, prepareError(err)
 		}
+		monitoringResourceRequest["cpu"] = cpuQuantity
+	}
+
+	if params.Data.MonitoringMemRequest != "" {
 		memQuantity, err := resource.ParseQuantity(params.Data.MonitoringMemRequest)
 		if err != nil {
 			return false, prepareError(err)
 		}
-		monitoringResourceRequest["cpu"] = cpuQuantity
 		monitoringResourceRequest["memory"] = memQuantity
 	}
 
