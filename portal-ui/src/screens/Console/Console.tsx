@@ -327,6 +327,10 @@ const Console = ({
       path: IAM_PAGES.PROFILE,
     },
     {
+      component: Tools,
+      path: IAM_PAGES.TOOLS_INSPECT,
+    },
+    {
       component: ConfigurationOptions,
       path: IAM_PAGES.SETTINGS,
     },

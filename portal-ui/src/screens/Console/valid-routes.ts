@@ -39,6 +39,7 @@ import {
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
+  InspectMenuIcon,
 } from "../../icons/SidebarMenus";
 import { hasPermission } from "../../common/SecureComponent";
 import WatchIcon from "../../icons/WatchIcon";
@@ -157,6 +158,13 @@ export const validRoutes = (
           id: "monitorDrives",
           to: IAM_PAGES.TOOLS_HEAL,
           icon: DrivesMenuIcon,
+          component: NavLink,
+        },
+        {
+          name: "Inspect",
+          id: "inspectObjects",
+          to: IAM_PAGES.TOOLS_INSPECT,
+          icon: InspectMenuIcon,
           component: NavLink,
         },
       ],
