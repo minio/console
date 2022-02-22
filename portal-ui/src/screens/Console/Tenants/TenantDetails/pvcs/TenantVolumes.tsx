@@ -43,7 +43,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PVCDetails = ({
+const TenantVolumes = ({
   classes,
   match,
   setErrorSnackMessage,
@@ -98,4 +98,4 @@ const PVCDetails = ({
   );
 };
 
-export default withStyles(styles)(PVCDetails);
+export default withStyles(styles)(TenantVolumes);

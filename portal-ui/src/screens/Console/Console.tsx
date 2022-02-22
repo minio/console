@@ -56,7 +56,6 @@ const Heal = React.lazy(() => import("./Heal/Heal"));
 const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
 const Storage = React.lazy(() => import("./Storage/Storage"));
-const Metrics = React.lazy(() => import("./Dashboard/Metrics"));
 const Hop = React.lazy(() => import("./Tenants/TenantDetails/hop/Hop"));
 
 const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
@@ -210,10 +209,6 @@ const Console = ({
     {
       component: Dashboard,
       path: IAM_PAGES.DASHBOARD,
-    },
-    {
-      component: Metrics,
-      path: IAM_PAGES.METRICS,
     },
     {
       component: Buckets,
@@ -435,6 +430,11 @@ const Console = ({
     },
     {
       component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_TRACE,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_PODS_LIST,
       forceDisplay: true,
     },
@@ -513,7 +513,7 @@ const Console = ({
   const location = useLocation();
 
   let hideMenu = false;
-  if (location.pathname === IAM_PAGES.METRICS) {
+  if (features?.includes("hide-menu")) {
     hideMenu = true;
   } else if (location.pathname.endsWith("/hop")) {
     hideMenu = true;

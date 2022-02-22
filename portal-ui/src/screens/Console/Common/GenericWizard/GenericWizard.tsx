@@ -165,6 +165,7 @@ const GenericWizard = ({
           {wizardSteps.map((step, index) => {
             return (
               <ListItem
+                id={"wizard-step-" + step.label}
                 button
                 disableRipple
                 onClick={() => pageChange(index)}

@@ -157,6 +157,7 @@ const ConsoleMenuList = ({
           </ListItemIcon>
           <ListItemText
             primary="Logout"
+            id={"logout"}
             sx={{ ...menuItemTextStyles }}
             className={stateClsName}
           />
