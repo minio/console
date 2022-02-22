@@ -330,7 +330,9 @@ const EditTenantMonitoringModal = ({
                 name={`memRequest`}
                 value={newMemRequest}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setNewMemRequest(event.target.value);
+                  if (event.target.validity.valid) {
+                    setNewMemRequest(event.target.value);
+                  }
                 }}
                 pattern={"[0-9]*"}
                 key={`memRequest`}
