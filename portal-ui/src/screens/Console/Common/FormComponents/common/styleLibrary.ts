@@ -414,7 +414,7 @@ export const selectorsCommon = {
   },
 };
 
-export const settingsCommon = {
+export const settingsCommon:any = {
   customTitle: {
     fontSize: 18,
     color: "#000",
@@ -1152,7 +1152,7 @@ export const spacingUtils: any = {
   },
 };
 
-export const formFieldStyles = {
+export const formFieldStyles:any = {
   formFieldRow: {
     marginBottom: ".8rem",
     "& .MuiInputLabel-root": {
