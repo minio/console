@@ -361,20 +361,27 @@ export const objectBrowserCommon = {
     lineHeight: "40px",
   },
   breadcrumbs: {
-    fontSize: 10,
-    color: "#000",
+    fontSize: 12,
+    color: "#969FA8",
+    fontWeight: "bold",
     marginTop: 2,
+    border: "#EAEDEE 1px solid",
+    borderBottom: 0,
+    height: 38,
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: "#FCFCFD",
     "& a": {
       textDecoration: "none",
-      color: "#000",
+      color: "#969FA8",
       "&:hover": {
         textDecoration: "underline",
       },
     },
-    "&.fullSize": {
-      fontSize: 18,
-      marginLeft: 10,
-    },
+    "& .min-icon": {
+      width: 14,
+      minWidth: 14,
+    }
   },
   smallLabel: {
     color: "#9C9C9C",
@@ -387,6 +394,17 @@ export const objectBrowserCommon = {
   },
   detailsSpacer: {
     marginRight: 18,
+  },
+  breadcrumbsList: {
+    textOverflow: "ellipsis" as const,
+    overflow: "hidden" as const,
+    whiteSpace: "nowrap" as const,
+    display: "inline-block" as const,
+    flexGrow: 1,
+    textAlign: "left" as const,
+    marginLeft: 15,
+    marginRight: 10,
+    lineHeight: 35,
   },
 };
 
