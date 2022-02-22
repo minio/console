@@ -23,6 +23,8 @@ remove_users() {
   mc admin user remove minio trace-$TIMESTAMP
   mc admin user remove minio users-$TIMESTAMP
   mc admin user remove minio watch-$TIMESTAMP
+  mc admin user remove minio inspect-allowed-$TIMESTAMP
+  mc admin user remove minio inspect-not-allowed-$TIMESTAMP
 }
 
 remove_policies() {
@@ -41,6 +43,8 @@ remove_policies() {
   mc admin policy remove minio trace-$TIMESTAMP
   mc admin policy remove minio users-$TIMESTAMP
   mc admin policy remove minio watch-$TIMESTAMP
+  mc admin policy remove minio inspect-allowed-$TIMESTAMP
+  mc admin policy remove minio inspect-not-allowed-$TIMESTAMP
 }
 
 __init__() {

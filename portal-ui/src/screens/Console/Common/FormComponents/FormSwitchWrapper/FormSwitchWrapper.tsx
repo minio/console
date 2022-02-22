@@ -23,6 +23,7 @@ import Grid from "@mui/material/Grid";
 import { actionsTray, fieldBasic } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import clsx from "clsx";
+import { InputProps as StandardInputProps } from "@mui/material/Input/Input";
 
 interface IFormSwitch {
   label?: string;
@@ -38,6 +39,7 @@ interface IFormSwitch {
   checked: boolean;
   switchOnly?: boolean;
   indicatorLabels?: string[];
+  extraInputProps?: StandardInputProps["inputProps"];
 }
 
 const styles = (theme: Theme) =>
@@ -125,6 +127,7 @@ const FormSwitchWrapper = ({
   description = "",
   classes,
   indicatorLabels,
+  extraInputProps = {},
 }: IFormSwitch) => {
   const switchComponent = (
     <React.Fragment>
@@ -144,7 +147,7 @@ const FormSwitchWrapper = ({
         onChange={onChange}
         color="primary"
         name={name}
-        inputProps={{ "aria-label": "primary checkbox" }}
+        inputProps={{ "aria-label": "primary checkbox", ...extraInputProps }}
         disabled={disabled}
         disableRipple
         disableFocusRipple
