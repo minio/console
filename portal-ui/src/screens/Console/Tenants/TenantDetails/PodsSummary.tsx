@@ -174,7 +174,7 @@ const PodsSummary = ({
           isLoading={loadingPods}
           records={filteredRecords}
           itemActions={podTableActions}
-          entityName="Servers"
+          entityName="Pods"
           idField="name"
         />
       </Grid>
