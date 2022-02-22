@@ -36,6 +36,7 @@ import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { ISecurityContext } from "../../types";
+import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IConfigureProps {
   updateAddField: typeof updateAddField;
@@ -692,7 +693,16 @@ const Configure = ({
                   updateField("logSearchVolumeSize", e.target.value);
                   cleanValidation("log_search_volume_size");
                 }}
-                label="Storage Size [Gi]"
+                label="Storage Size"
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
                 value={logSearchVolumeSize}
                 required
                 error={validationErrors["log_search_volume_size"] || ""}
@@ -944,7 +954,16 @@ const Configure = ({
                   updateField("prometheusVolumeSize", e.target.value);
                   cleanValidation("prometheus_volume_size");
                 }}
-                label="Storage Size [Gi]"
+                label="Storage Size"
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
                 value={prometheusVolumeSize}
                 required
                 error={validationErrors["prometheus_volume_size"] || ""}

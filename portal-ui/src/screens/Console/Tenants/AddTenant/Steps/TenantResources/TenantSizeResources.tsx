@@ -34,6 +34,7 @@ import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { floor } from "lodash";
+import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface ITenantSizeResourcesProps {
   classes: any;
@@ -275,7 +276,16 @@ const TenantSizeResources = ({
             }
             updateField("resourcesMemoryRequest", e.target.value);
           }}
-          label="Memory Request [Gi]"
+          label="Memory Request"
+          overlayObject={
+            <InputUnitMenu
+              id={"size-unit"}
+              onUnitChange={() => {}}
+              unitSelected={"Gi"}
+              unitsList={[{ label: "Gi", value: "Gi" }]}
+              disabled={true}
+            />
+          }
           value={resourcesMemoryRequest}
           disabled={selectedStorageClass === ""}
           error={resourcesMemoryRequestError}
@@ -351,7 +361,16 @@ const TenantSizeResources = ({
                 }
                 updateField("resourcesMemoryLimit", e.target.value);
               }}
-              label="Memory Limit [Gi]"
+              label="Memory Limit"
+              overlayObject={
+                <InputUnitMenu
+                  id={"size-unit"}
+                  onUnitChange={() => {}}
+                  unitSelected={"Gi"}
+                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  disabled={true}
+                />
+              }
               value={resourcesMemoryLimit}
               disabled={selectedStorageClass === ""}
               error={resourcesMemoryLimitError}
