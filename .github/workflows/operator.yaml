@@ -65,4 +65,3 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome:headless" portal-ui/tests/operator/ --skip-js-errors -c 3'
-
