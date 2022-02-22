@@ -32,7 +32,7 @@ import {
   calculateDistribution,
   erasureCodeCalc,
   getBytes,
-  k8sfactorForDropdown,
+  k8sScalarUnitsExcluding,
   niceBytes,
 } from "../../../../../../common/utils";
 import { clearValidationError } from "../../../utils";
@@ -333,7 +333,7 @@ const TenantSize = ({
                   updateField("sizeFactor", newValue);
                 }}
                 unitSelected={sizeFactor}
-                unitsList={k8sfactorForDropdown()}
+                unitsList={k8sScalarUnitsExcluding(["Ki", "Mi"])}
                 disabled={selectedStorageClass === ""}
               />
             }
