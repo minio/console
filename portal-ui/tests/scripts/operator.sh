@@ -36,7 +36,7 @@ die() {
 try() { "$@" || die "cannot $*"; }
 
 function setup_kind() {
-	try kind create cluster --config "${SCRIPT_DIR}/kind-config.yaml"
+	try kind create cluster --config "${SCRIPT_DIR}/../../../operator/testing/kind-config.yaml"
 	echo "Kind is ready"
 	try kubectl get nodes
 }

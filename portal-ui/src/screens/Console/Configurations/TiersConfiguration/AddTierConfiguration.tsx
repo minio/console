@@ -185,7 +185,7 @@ const AddTierConfiguration = ({
         .then(() => {
           setSaving(false);
 
-          history.push(IAM_PAGES.TIERS_ADD);
+          history.push(IAM_PAGES.TIERS);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -227,7 +227,7 @@ const AddTierConfiguration = ({
     if (prefix === "") {
       valid = false;
     }
-    if (region === "") {
+    if (region === "" && type !== "minio") {
       valid = false;
     }
 
@@ -377,6 +377,7 @@ const AddTierConfiguration = ({
                     value={name}
                     onChange={updateTierName}
                     error={nameInputError}
+                    required
                   />
                   <InputBoxWrapper
                     id="endpoint"
@@ -387,6 +388,7 @@ const AddTierConfiguration = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setEndpoint(e.target.value);
                     }}
+                    required
                   />
                   {(type === s3ServiceName || type === minioServiceName) && (
                     <Fragment>
@@ -399,6 +401,7 @@ const AddTierConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setAccessKey(e.target.value);
                         }}
+                        required
                       />
                       <InputBoxWrapper
                         id="secretKey"
@@ -409,6 +412,7 @@ const AddTierConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setSecretKey(e.target.value);
                         }}
+                        required
                       />
                     </Fragment>
                   )}
@@ -428,6 +432,7 @@ const AddTierConfiguration = ({
                         setCreds(fileName);
                       }}
                       value={creds}
+                      required
                     />
                   )}
                   {type === azureServiceName && (
@@ -441,6 +446,7 @@ const AddTierConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setAccountName(e.target.value);
                         }}
+                        required
                       />
                       <InputBoxWrapper
                         id="accountKey"
@@ -451,6 +457,7 @@ const AddTierConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setAccountKey(e.target.value);
                         }}
+                        required
                       />
                     </Fragment>
                   )}
@@ -463,6 +470,7 @@ const AddTierConfiguration = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setBucket(e.target.value);
                     }}
+                    required
                   />
                   <InputBoxWrapper
                     id="prefix"
@@ -473,6 +481,7 @@ const AddTierConfiguration = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPrefix(e.target.value);
                     }}
+                    required
                   />
                   <InputBoxWrapper
                     id="region"
@@ -483,6 +492,7 @@ const AddTierConfiguration = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setRegion(e.target.value);
                     }}
+                    required={type !== "minio"}
                   />
                   {type === s3ServiceName ||
                     (type === minioServiceName && (
