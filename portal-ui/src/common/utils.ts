@@ -101,10 +101,17 @@ export const factorForDropdown = () => {
 };
 
 // units to be used in a dropdown
-export const k8sfactorForDropdown = () => {
-  return k8sUnits.map((unit) => {
-    return { label: unit, value: unit };
-  });
+export const k8sScalarUnitsExcluding = (exclude?: string[]) => {
+  return k8sUnits
+    .filter((unit) => {
+      if (exclude && exclude.includes(unit)) {
+        return false;
+      }
+      return true;
+    })
+    .map((unit) => {
+      return { label: unit, value: unit };
+    });
 };
 
 //getBytes, converts from a value and a unit from units array to bytes

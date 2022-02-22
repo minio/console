@@ -36,9 +36,10 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
+import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import { BucketReplicationIcon } from "../../../../icons";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IReplicationModal {
   open: boolean;
@@ -317,24 +318,26 @@ const AddReplicationModal = ({
                     id="bandwidth_scalar"
                     name="bandwidth_scalar"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setBandwidthScalar(e.target.value as string);
+                      if (e.target.validity.valid) {
+                        setBandwidthScalar(e.target.value as string);
+                      }
                     }}
                     label="Bandwidth"
                     value={bandwidthScalar}
                     min="0"
+                    pattern={"[0-9]*"}
+                    overlayObject={
+                      <InputUnitMenu
+                        id={"quota_unit"}
+                        onUnitChange={(newValue) => {
+                          setBandwidthUnit(newValue);
+                        }}
+                        unitSelected={bandwidthUnit}
+                        unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                        disabled={false}
+                      />
+                    }
                   />
-                  <div className={classes.sizeFactorContainer}>
-                    <SelectWrapper
-                      label={" "}
-                      id="bandwidth_unit"
-                      name="bandwidth_unit"
-                      value={bandwidthUnit}
-                      onChange={(e: SelectChangeEvent<string>) => {
-                        setBandwidthUnit(e.target.value as string);
-                      }}
-                      options={k8sfactorForDropdown()}
-                    />
-                  </div>
                 </div>
               </Grid>
             )}

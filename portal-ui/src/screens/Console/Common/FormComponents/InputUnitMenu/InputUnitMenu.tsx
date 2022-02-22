@@ -71,6 +71,7 @@ const InputUnitMenu = ({
         onClick={handleClick}
         className={classes.buttonTrigger}
         disabled={disabled}
+        type={"button"}
       >
         {unitSelected}
       </button>
