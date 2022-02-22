@@ -43,8 +43,8 @@ function setup_kind() {
 
 function install_operator() {
 
-	echo "Installing Current Operator"
-	try kubectl apply -k "${SCRIPT_DIR}/../../../operator/resources"
+	echo "Installing Current Operator from kustomization.yaml"
+	try kubectl apply -k "${SCRIPT_DIR}/resources"
 
 	echo "key, value for pod selector in kustomize test"
 	key=name
@@ -142,7 +142,7 @@ function install_tenant() {
 	value=storage-lite
 	echo "Installing lite tenant"
 
-	try kubectl apply -k "${SCRIPT_DIR}/../../../operator/examples/kustomization/tenant-lite"
+	try kubectl apply -k "${SCRIPT_DIR}/tenant"
 
 	echo "Waiting for the tenant statefulset, this indicates the tenant is being fulfilled"
 	echo $namespace
