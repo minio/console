@@ -2605,6 +2605,14 @@ func init() {
         "accessKey": {
           "type": "string"
         },
+        "features": {
+          "type": "object",
+          "properties": {
+            "hide_menu": {
+              "type": "boolean"
+            }
+          }
+        },
         "secretKey": {
           "type": "string"
         }
@@ -5812,6 +5820,14 @@ func init() {
         }
       }
     },
+    "LoginRequestFeatures": {
+      "type": "object",
+      "properties": {
+        "hide_menu": {
+          "type": "boolean"
+        }
+      }
+    },
     "NodeSelectorTermMatchExpressionsItems0": {
       "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
       "type": "object",
@@ -7042,6 +7058,14 @@ func init() {
       "properties": {
         "accessKey": {
           "type": "string"
+        },
+        "features": {
+          "type": "object",
+          "properties": {
+            "hide_menu": {
+              "type": "boolean"
+            }
+          }
         },
         "secretKey": {
           "type": "string"

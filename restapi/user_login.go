@@ -74,14 +74,14 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 
 // login performs a check of ConsoleCredentials against MinIO, generates some claims and returns the jwt
 // for subsequent authentication
-func login(credentials ConsoleCredentialsI) (*string, error) {
+func login(credentials ConsoleCredentialsI, sessionFeatures *auth.SessionFeatures) (*string, error) {
 	// try to obtain consoleCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
 		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey())
+	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), sessionFeatures)
 	if err != nil {
 		LogError("error authenticating user: %v", err)
 		return nil, errInvalidCredentials
@@ -115,11 +115,15 @@ func getConsoleCredentials(accessKey, secretKey string) (*ConsoleCredentials, er
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
 	// prepare console credentials
-	consolCreds, err := getConsoleCredentials(*lr.AccessKey, *lr.SecretKey)
+	consoleCreds, err := getConsoleCredentials(*lr.AccessKey, *lr.SecretKey)
 	if err != nil {
 		return nil, prepareError(err, errInvalidCredentials, err)
 	}
-	sessionID, err := login(consolCreds)
+	sf := &auth.SessionFeatures{}
+	if lr.Features != nil {
+		sf.HideMenu = lr.Features.HideMenu
+	}
+	sessionID, err := login(consoleCreds, sf)
 	if err != nil {
 		return nil, prepareError(err, errInvalidCredentials, err)
 	}
@@ -185,7 +189,7 @@ func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthReque
 		token, err := login(&ConsoleCredentials{
 			ConsoleCredentials: userCredentials,
 			AccountAccessKey:   "",
-		})
+		}, nil)
 		if err != nil {
 			return nil, prepareError(err)
 		}

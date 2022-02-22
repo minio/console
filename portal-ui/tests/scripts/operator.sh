@@ -137,21 +137,12 @@ function check_tenant_status() {
 # Install tenant function is being used by deploy-tenant and check-prometheus
 function install_tenant() {
 
-	echo "Check if helm will install the Tenant"
-	if [ "$1" = "helm" ]; then
-		namespace=default
-		key=app
-		value=minio
-		helm install --namespace tenant-ns \
-			 --create-namespace tenant minio/tenant
-	else
-		namespace=tenant-lite
-		key=v1.min.io/tenant
-		value=storage-lite
-		echo "Installing lite tenant"
+	namespace=tenant-lite
+	key=v1.min.io/tenant
+	value=storage-lite
+	echo "Installing lite tenant"
 
-		try kubectl apply -k "${SCRIPT_DIR}/../examples/kustomization/tenant-lite"
-	fi
+	try kubectl apply -k "${SCRIPT_DIR}/examples/kustomization/tenant-lite"
 
 	echo "Waiting for the tenant statefulset, this indicates the tenant is being fulfilled"
 	echo $namespace
@@ -170,25 +161,22 @@ function install_tenant() {
 }
 
 __init__() {
-  export TIMESTAMP=$(date "+%s")
-  echo $TIMESTAMP > portal-ui/tests/constants/timestamp.txt
-  export GOPATH=/tmp/gopath
-  export PATH=${PATH}:${GOPATH}/bin
-
-  destroy_kind
-
-  setup_kind
-
-  install_operator
-
-  install_tenant
-
-  kubectl proxy
-
+	export TIMESTAMP=$(date "+%s")
+ 	echo $TIMESTAMP > portal-ui/tests/constants/timestamp.txt
+	export GOPATH=/tmp/gopath
+	export PATH=${PATH}:${GOPATH}/bin
+	destroy_kind
+	setup_kind
+	install_operator
+	install_tenant
+	echo "kubectl proxy"
+	kubectl proxy &
+	echo "yarn start"
+	yarn start &
+	echo "console operator"
+	./console operator &
+	echo "DONE with kind, yarn and console, next is testcafe"
+	exit 0
 }
 
-main() {
-  (yarn start &> /dev/null) & (./console operator &> /dev/null) & (testcafe "chrome:headless" portal-ui/tests/operator/ -q --skip-js-errors -c 3)
-}
-
-( __init__ "$@" && main "$@" )
+( __init__ "$@")
