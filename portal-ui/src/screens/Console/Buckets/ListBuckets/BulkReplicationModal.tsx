@@ -38,8 +38,9 @@ import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { SelectorTypes } from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
+import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -408,35 +409,31 @@ const AddBulkReplicationModal = ({
                 </Grid>
                 {replicationMode === "async" && (
                   <Grid item xs={12}>
-                    <div className={classes.multiContainer}>
-                      <div>
-                        <InputBoxWrapper
-                          type="number"
-                          id="bandwidth_scalar"
-                          name="bandwidth_scalar"
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setBandwidthScalar(e.target.value as string);
+                    <InputBoxWrapper
+                      type="number"
+                      id="bandwidth_scalar"
+                      name="bandwidth_scalar"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        if (e.target.validity.valid) {
+                          setBandwidthScalar(e.target.value as string);
+                        }
+                      }}
+                      label="Bandwidth"
+                      value={bandwidthScalar}
+                      min="0"
+                      pattern={"[0-9]*"}
+                      overlayObject={
+                        <InputUnitMenu
+                          id={"quota_unit"}
+                          onUnitChange={(newValue) => {
+                            setBandwidthUnit(newValue);
                           }}
-                          label="Bandwidth"
-                          value={bandwidthScalar}
-                          min="0"
+                          unitSelected={bandwidthUnit}
+                          unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                          disabled={false}
                         />
-                      </div>
-                      <div className={classes.sizeFactorContainer}>
-                        <SelectWrapper
-                          label={"Unit"}
-                          id="bandwidth_unit"
-                          name="bandwidth_unit"
-                          value={bandwidthUnit}
-                          onChange={(e: SelectChangeEvent<string>) => {
-                            setBandwidthUnit(e.target.value as string);
-                          }}
-                          options={k8sfactorForDropdown()}
-                        />
-                      </div>
-                    </div>
+                      }
+                    />
                   </Grid>
                 )}
                 <Grid item xs={12}>
