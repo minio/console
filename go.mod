@@ -20,11 +20,11 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
-	github.com/minio/madmin-go v1.3.0
+	github.com/minio/madmin-go v1.3.4
 	github.com/minio/mc v0.0.0-20220204044644-e048c85d71a7
-	github.com/minio/minio-go/v7 v7.0.21
+	github.com/minio/minio-go/v7 v7.0.23
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
-	github.com/minio/pkg v1.1.14
+	github.com/minio/pkg v1.1.15
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.3.0
@@ -142,6 +142,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
