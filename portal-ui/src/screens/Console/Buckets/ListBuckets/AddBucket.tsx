@@ -16,16 +16,15 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { factorForDropdown, getBytes } from "../../../../common/utils";
+import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import { AppState } from "../../../../store";
 import history from "../../../../history";
 import { connect } from "react-redux";
@@ -51,6 +50,7 @@ import BackLink from "../../../../common/BackLink";
 import { BucketsIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import PageLayout from "../../Common/Layout/PageLayout";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -159,7 +159,7 @@ const AddBucket = ({
 
     if (distributedSetup) {
       if (quotaEnabled) {
-        const amount = getBytes(quotaSize, quotaUnit, false);
+        const amount = getBytes(quotaSize, quotaUnit, true);
         request.quota = {
           enabled: true,
           quota_type: quotaType,
@@ -375,52 +375,32 @@ const AddBucket = ({
                 {quotaEnabled && distributedSetup && (
                   <React.Fragment>
                     <Grid item xs={12}>
-                      <RadioGroupSelector
-                        currentSelection={quotaType}
-                        id="quota_type"
-                        name="quota_type"
-                        label="Quota Type"
-                        onChange={(
-                          e: React.ChangeEvent<{ value: unknown }>
-                        ) => {
-                          addBucketQuotaType(e.target.value as string);
+                      <InputBoxWrapper
+                        type="number"
+                        id="quota_size"
+                        name="quota_size"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          if (e.target.validity.valid) {
+                            addBucketQuotaSize(e.target.value);
+                          }
                         }}
-                        selectorOptions={[{ value: "hard", label: "Hard" }]}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container>
-                        <Grid item xs={10}>
-                          <InputBoxWrapper
-                            type="number"
-                            id="quota_size"
-                            name="quota_size"
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) => {
-                              addBucketQuotaSize(e.target.value);
+                        label="Quota"
+                        value={quotaSize}
+                        required
+                        min="1"
+                        pattern={"[0-9]*"}
+                        overlayObject={
+                          <InputUnitMenu
+                            id={"quota_unit"}
+                            onUnitChange={(newValue) => {
+                              addBucketQuotaUnit(newValue);
                             }}
-                            label="Quota"
-                            value={quotaSize}
-                            required
-                            min="1"
+                            unitSelected={quotaUnit}
+                            unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                            disabled={false}
                           />
-                        </Grid>
-                        <Grid item xs={2}>
-                          <div style={{ width: 100 }}>
-                            <SelectWrapper
-                              label=""
-                              id="quota_unit"
-                              name="quota_unit"
-                              value={quotaUnit}
-                              onChange={(e: SelectChangeEvent<string>) => {
-                                addBucketQuotaUnit(e.target.value as string);
-                              }}
-                              options={factorForDropdown()}
-                            />
-                          </div>
-                        </Grid>
-                      </Grid>
+                        }
+                      />
                     </Grid>
                   </React.Fragment>
                 )}

@@ -37,6 +37,7 @@ import {
 } from "../../../../utils/validationFunctions";
 import { clearValidationError } from "../utils";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IEditTenantLogsProps {
   tenant: ITenant;
@@ -361,8 +362,8 @@ const EditTenantLogsModal = ({
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 id={`diskCapacityGB`}
-                label={"Disk Capacity (GB)"}
-                placeholder={"Disk Capacity (GB)"}
+                label={"Disk Capacity"}
+                placeholder={"Disk Capacity"}
                 name={`diskCapacityGB`}
                 value={newDiskCapacityGB as any as string}
                 onChange={(e) => {
@@ -371,6 +372,15 @@ const EditTenantLogsModal = ({
                 }}
                 key={`diskCapacityGB`}
                 error={validationErrors[`diskCapacityGB`] || ""}
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -417,6 +427,15 @@ const EditTenantLogsModal = ({
                 }}
                 key={`memRequest`}
                 error={validationErrors[`memRequest`] || ""}
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
               />
             </Grid>
 
@@ -511,6 +530,15 @@ const EditTenantLogsModal = ({
                 }}
                 key={`dbMemRequest`}
                 error={validationErrors[`dbMemRequest`] || ""}
+                overlayObject={
+                  <InputUnitMenu
+                    id={"size-unit"}
+                    onUnitChange={() => {}}
+                    unitSelected={"Gi"}
+                    unitsList={[{ label: "Gi", value: "Gi" }]}
+                    disabled={true}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>

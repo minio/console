@@ -101,10 +101,17 @@ export const factorForDropdown = () => {
 };
 
 // units to be used in a dropdown
-export const k8sfactorForDropdown = () => {
-  return k8sUnits.map((unit) => {
-    return { label: unit, value: unit };
-  });
+export const k8sScalarUnitsExcluding = (exclude?: string[]) => {
+  return k8sUnits
+    .filter((unit) => {
+      if (exclude && exclude.includes(unit)) {
+        return false;
+      }
+      return true;
+    })
+    .map((unit) => {
+      return { label: unit, value: unit };
+    });
 };
 
 //getBytes, converts from a value and a unit from units array to bytes
@@ -608,4 +615,21 @@ export const decodeFileName = (text: string) => {
   } catch (err) {
     return text;
   }
+};
+
+export const performDownload = (blob: Blob, fileName: string) => {
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+export const getCookieValue = (cookieName: string) => {
+  return (
+    document.cookie
+      .match("(^|;)\\s*" + cookieName + "\\s*=\\s*([^;]+)")
+      ?.pop() || ""
+  );
 };
