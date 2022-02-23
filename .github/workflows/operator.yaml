@@ -52,26 +52,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-test-assets:
-  name: "Make assets"
-  needs: operator-job
-  steps:
-      - name: Make assets
-        run: |
-          make assets
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+  test-assets:
+    name: "Make assets"
+    needs: operator-job
+    steps:
+        - name: Make assets
+          run: |
+            make assets
+        - name: Build Console on ${{ matrix.os }}
+          env:
+            GO111MODULE: on
+            GOOS: linux
+          run: |
+            make console
 
-      # Runs a set of commands using the runners shell
-      - name: Start Kind for Operator UI
-        run: |
-          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/operator.sh"
+        # Runs a set of commands using the runners shell
+        - name: Start Kind for Operator UI
+          run: |
+            "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/operator.sh"
 
-      - name: Run TestCafe Tests
-        uses: DevExpress/testcafe-action@latest
-        with:
-          args: '"chrome:headless" portal-ui/tests/operator/ --skip-js-errors -c 3'
+        - name: Run TestCafe Tests
+          uses: DevExpress/testcafe-action@latest
+          with:
+            args: '"chrome:headless" portal-ui/tests/operator/ --skip-js-errors -c 3'
