@@ -27,7 +27,7 @@ interface IInputUnitBox {
   unitSelected: string;
   unitsList: selectorTypes[];
   disabled?: boolean;
-  onUnitChange: (newValue: string) => void;
+  onUnitChange?: (newValue: string) => void;
 }
 
 const styles = (theme: Theme) =>
@@ -56,7 +56,7 @@ const InputUnitMenu = ({
   };
   const handleClose = (newUnit: string) => {
     setAnchorEl(null);
-    if (newUnit !== "") {
+    if (newUnit !== "" && onUnitChange) {
       onUnitChange(newUnit);
     }
   };
