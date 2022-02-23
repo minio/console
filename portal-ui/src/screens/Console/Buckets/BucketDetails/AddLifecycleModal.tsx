@@ -29,7 +29,6 @@ import {
 } from "../../Configurations/TiersConfiguration/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -42,6 +41,7 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { LifecycleConfigIcon } from "../../../../icons";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IReplicationModal {
   open: boolean;
@@ -92,13 +92,11 @@ const AddLifecycleModal = ({
   const [prefix, setPrefix] = useState("");
   const [tags, setTags] = useState<string>("");
   const [storageClass, setStorageClass] = useState("");
-  const [NCTransitionSC, setNCTransitionSC] = useState("");
-  const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
-  const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
-  const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
+  const [NCExpirationDays, setNCExpirationDays] = useState<string>("");
+  const [NCTransitionDays, setNCTransitionDays] = useState<string>("");
   const [ilmType, setIlmType] = useState<string>("expiry");
-  const [expiryDays, setExpiryDays] = useState<string>("0");
-  const [transitionDays, setTransitionDays] = useState<string>("0");
+  const [expiryDays, setExpiryDays] = useState<string>("");
+  const [transitionDays, setTransitionDays] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   useEffect(() => {
@@ -143,10 +141,16 @@ const AddLifecycleModal = ({
   const addRecord = () => {
     let rules = {};
 
+    let markerOn = false;
+
     if (ilmType === "expiry") {
       let expiry = {
         expiry_days: parseInt(expiryDays),
       };
+
+      if (parseInt(expiryDays) > 0 && parseInt(NCExpirationDays) > 0) {
+        markerOn = true;
+      }
 
       rules = {
         ...expiry,
@@ -157,10 +161,13 @@ const AddLifecycleModal = ({
         transition_days: parseInt(transitionDays),
       };
 
+      if (parseInt(transitionDays) > 0 && parseInt(NCTransitionDays) > 0) {
+        markerOn = true;
+      }
+
       rules = {
         ...transition,
         noncurrentversion_transition_days: parseInt(NCTransitionDays),
-        noncurrentversion_transition_storage_class: NCTransitionSC,
         storage_class: storageClass,
       };
     }
@@ -169,7 +176,7 @@ const AddLifecycleModal = ({
       type: ilmType,
       prefix,
       tags,
-      expired_object_delete_marker: expiredObjectDM,
+      expired_object_delete_marker: markerOn,
       ...rules,
     };
 
@@ -218,18 +225,14 @@ const AddLifecycleModal = ({
         >
           <Grid container>
             <Grid item xs={12} className={classes.formScrollable}>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <fieldset className={classes.fieldGroup}>
-                  <legend className={classes.descriptionText}>
-                    Lifecycle Configuration
-                  </legend>
-
-                  <Grid item xs={12}>
+              <Grid item xs={12}>
+                <Grid container>
+                  <Grid item xs={3} textAlign={"left"}>
                     <RadioGroupSelector
                       currentSelection={ilmType}
                       id="quota_type"
                       name="quota_type"
-                      label="ILM Rule"
+                      label=""
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                         setIlmType(e.target.value as string);
                       }}
@@ -239,54 +242,97 @@ const AddLifecycleModal = ({
                       ]}
                     />
                   </Grid>
+                  <Grid item xs={9} />
                   {ilmType === "expiry" ? (
                     <Fragment>
                       <Grid item xs={12} className={classes.formFieldRow}>
                         <InputBoxWrapper
-                          type="number"
                           id="expiry_days"
                           name="expiry_days"
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setExpiryDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setExpiryDays(e.target.value);
+                            }
                           }}
-                          label="Expiry Days"
+                          pattern={"[0-9]*"}
+                          label="Delete Latest Version After"
                           value={expiryDays}
-                          min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"expire-current-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
+
                       <Grid item xs={12} className={classes.formFieldRow}>
                         <InputBoxWrapper
-                          type="number"
                           id="noncurrentversion_expiration_days"
                           name="noncurrentversion_expiration_days"
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setNCExpirationDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setNCExpirationDays(e.target.value);
+                            }
                           }}
-                          label="Non-current Expiration Days"
+                          pattern={"[0-9]*"}
+                          label="Delete Older Versions After"
                           value={NCExpirationDays}
                           min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"expire-noncurrent-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
                     </Fragment>
                   ) : (
                     <Fragment>
                       <Grid item xs={12} className={classes.formFieldRow}>
+                        <SelectWrapper
+                          label="Tier"
+                          id="storage_class"
+                          name="storage_class"
+                          value={storageClass}
+                          onChange={(e: SelectChangeEvent<string>) => {
+                            setStorageClass(e.target.value as string);
+                          }}
+                          options={tiersList}
+                        />
+                      </Grid>
+                      <Grid item xs={12} className={classes.formFieldRow}>
                         <InputBoxWrapper
-                          type="number"
                           id="transition_days"
                           name="transition_days"
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setTransitionDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setTransitionDays(e.target.value);
+                            }
                           }}
-                          label="Transition Days"
+                          pattern={"[0-9]*"}
+                          label="Transition Latest Version"
                           value={transitionDays}
                           min="0"
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"transition-current-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
                       <Grid item xs={12} className={classes.formFieldRow}>
@@ -297,48 +343,30 @@ const AddLifecycleModal = ({
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setNCTransitionDays(e.target.value);
+                            if (e.target.validity.valid) {
+                              setNCTransitionDays(e.target.value);
+                            }
                           }}
-                          label="Non-current Transition Days"
+                          label="Transition Older Versions"
                           value={NCTransitionDays}
-                          min="0"
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="noncurrentversion_t_SC"
-                          name="noncurrentversion_t_SC"
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setNCTransitionSC(e.target.value);
-                          }}
-                          placeholder="Set Non-current Version Transition Storage Class"
-                          label="Non-current Version Transition Storage Class"
-                          value={NCTransitionSC}
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <SelectWrapper
-                          label="Storage Class"
-                          id="storage_class"
-                          name="storage_class"
-                          value={storageClass}
-                          onChange={(e: SelectChangeEvent<string>) => {
-                            setStorageClass(e.target.value as string);
-                          }}
-                          options={tiersList}
+                          pattern={"[0-9]*"}
+                          overlayObject={
+                            <InputUnitMenu
+                              id={"transition-noncurrent-unit"}
+                              unitSelected={"days"}
+                              unitsList={[{ label: "Days", value: "days" }]}
+                              disabled={true}
+                            />
+                          }
                         />
                       </Grid>
                     </Fragment>
                   )}
-                </fieldset>
+                </Grid>
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
                 <fieldset className={classes.fieldGroup}>
-                  <legend className={classes.descriptionText}>
-                    File Configuration
-                  </legend>
+                  <legend className={classes.descriptionText}>Filters</legend>
 
                   <Grid item xs={12}>
                     <InputBoxWrapper
@@ -362,20 +390,6 @@ const AddLifecycleModal = ({
                       keyPlaceholder="Tag Key"
                       valuePlaceholder="Tag Value"
                       withBorder
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormSwitchWrapper
-                      value="expired_delete_marker"
-                      id="expired_delete_marker"
-                      name="expired_delete_marker"
-                      checked={expiredObjectDM}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setExpiredObjectDM(event.target.checked);
-                      }}
-                      label={"Expired Object Delete Marker"}
                     />
                   </Grid>
                 </fieldset>
