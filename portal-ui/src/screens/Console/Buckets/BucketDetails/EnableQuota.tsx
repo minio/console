@@ -16,12 +16,16 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { factorForDropdown, getBytes, units } from "../../../../common/utils";
+import {
+  getBytes,
+  k8sScalarUnitsExcluding,
+  units,
+} from "../../../../common/utils";
 import { BucketQuota } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -30,12 +34,11 @@ import {
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import api from "../../../../common/api";
 import { BucketQuotaIcon } from "../../../../icons";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,7 +67,6 @@ const EnableQuota = ({
 }: IEnableQuotaProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
-  const [quotaType, setQuotaType] = useState<string>("hard");
   const [quotaSize, setQuotaSize] = useState<string>("1");
   const [quotaUnit, setQuotaUnit] = useState<string>("TiB");
 
@@ -72,9 +74,8 @@ const EnableQuota = ({
     if (enabled) {
       setQuotaEnabled(true);
       if (cfg) {
-        setQuotaType(cfg.type);
         setQuotaSize(`${cfg.quota}`);
-        setQuotaUnit(`B`);
+        setQuotaUnit(`Gi`);
 
         let maxUnit = "B";
         let maxQuota = cfg.quota;
@@ -93,15 +94,14 @@ const EnableQuota = ({
     }
   }, [enabled, cfg]);
 
-  const enableBucketEncryption = (event: React.FormEvent) => {
-    event.preventDefault();
+  const enableBucketEncryption = () => {
     if (loading) {
       return;
     }
     let req = {
       enabled: quotaEnabled,
-      amount: parseInt(getBytes(quotaSize, quotaUnit, false)),
-      quota_type: quotaType,
+      amount: parseInt(getBytes(quotaSize, quotaUnit, true)),
+      quota_type: "hard",
     };
 
     api
@@ -129,7 +129,8 @@ const EnableQuota = ({
         noValidate
         autoComplete="off"
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          enableBucketEncryption(e);
+          e.preventDefault();
+          enableBucketEncryption();
         }}
       >
         <Grid container>
@@ -143,52 +144,39 @@ const EnableQuota = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setQuotaEnabled(event.target.checked);
                 }}
-                label={"Quota"}
+                label={"Enabled"}
               />
             </Grid>
             {quotaEnabled && (
               <React.Fragment>
                 <Grid item xs={12} className={classes.formFieldRow}>
-                  <RadioGroupSelector
-                    currentSelection={quotaType}
-                    id="quota_type"
-                    name="quota_type"
-                    label="Quota Type"
-                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                      setQuotaType(e.target.value as string);
-                    }}
-                    selectorOptions={[{ value: "hard", label: "Hard" }]}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
                   <Grid container>
-                    <Grid item xs={10}>
+                    <Grid item xs={12}>
                       <InputBoxWrapper
-                        type="number"
                         id="quota_size"
                         name="quota_size"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setQuotaSize(e.target.value);
+                          if (e.target.validity.valid) {
+                            setQuotaSize(e.target.value);
+                          }
                         }}
+                        pattern={"[0-9]*"}
                         label="Quota"
                         value={quotaSize}
                         required
                         min="1"
+                        overlayObject={
+                          <InputUnitMenu
+                            id={"quota_unit"}
+                            onUnitChange={(newValue) => {
+                              setQuotaUnit(newValue);
+                            }}
+                            unitSelected={quotaUnit}
+                            unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                            disabled={false}
+                          />
+                        }
                       />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <div style={{ width: 100 }}>
-                        <SelectWrapper
-                          label=""
-                          id="quota_unit"
-                          name="quota_unit"
-                          value={quotaUnit}
-                          onChange={(e: SelectChangeEvent<string>) => {
-                            setQuotaUnit(e.target.value as string);
-                          }}
-                          options={factorForDropdown()}
-                        />
-                      </div>
                     </Grid>
                   </Grid>
                 </Grid>
