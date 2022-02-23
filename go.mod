@@ -24,7 +24,7 @@ require (
 	github.com/minio/mc v0.0.0-20220204044644-e048c85d71a7
 	github.com/minio/minio-go/v7 v7.0.23
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
-	github.com/minio/pkg v1.1.15
+	github.com/minio/pkg v1.1.16
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.3.0
