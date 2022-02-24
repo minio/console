@@ -2522,25 +2522,6 @@ func TestListBucketEvents(t *testing.T) {
 	}
 }
 
-func TestNotifyPostgres(t *testing.T) {
-
-	// Variables
-	assert := assert.New(t)
-
-	// Test
-	response, err := NotifyPostgres()
-	finalResponse := inspectHTTPResponse(response)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail(finalResponse)
-		return
-	}
-	if response != nil {
-		assert.Equal(200, response.StatusCode, finalResponse)
-	}
-}
-
 func TestPutBucketQuota(t *testing.T) {
 
 	// Variables
@@ -2840,8 +2821,69 @@ func RestartService() (*http.Response, error) {
 	return response, err
 }
 
-func TestRestartService(t *testing.T) {
+func CreateBucketEvent(bucketName string, ignoreExisting bool, arn string, prefix string, suffix string, events []string) (*http.Response, error) {
+	/*
+		Helper function to create bucket event
+		POST: /buckets/{bucket_name}/events
+		{
+			"configuration":
+				{
+					"arn":"arn:minio:sqs::_:postgresql",
+					"events":["put"],
+					"prefix":"",
+					"suffix":""
+				},
+			"ignoreExisting":true
+		}
+	*/
+	configuration := map[string]interface{}{
+		"arn":    arn,
+		"events": events,
+		"prefix": prefix,
+		"suffix": suffix,
+	}
+	requestDataAdd := map[string]interface{}{
+		"configuration":  configuration,
+		"ignoreExisting": ignoreExisting,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestCreateBucketEvent(t *testing.T) {
+
+	// Variables
 	assert := assert.New(t)
+
+	// 1. Add postgres notification
+	response, err := NotifyPostgres()
+	finalResponse := inspectHTTPResponse(response)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail(finalResponse)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, finalResponse)
+	}
+
+	// 2. Restart the system
 	restartResponse, restartError := RestartService()
 	assert.Nil(restartError)
 	if restartError != nil {
@@ -2854,6 +2896,31 @@ func TestRestartService(t *testing.T) {
 			204,
 			restartResponse.StatusCode,
 			addObjRsp,
+		)
+	}
+
+	// 3. Subscribe bucket to event
+	events := make([]string, 1)
+	events[0] = "put"
+	eventResponse, eventError := CreateBucketEvent(
+		"testputobjectslegalholdstatus", // bucket name
+		true,                            // ignore existing param
+		"arn:minio:sqs::_:postgresql",   // arn
+		"",                              // prefix
+		"",                              // suffix
+		events,                          // events
+	)
+	assert.Nil(eventError)
+	if eventError != nil {
+		log.Println(eventError)
+		return
+	}
+	finalResponseEvent := inspectHTTPResponse(eventResponse)
+	if eventResponse != nil {
+		assert.Equal(
+			201,
+			eventResponse.StatusCode,
+			finalResponseEvent,
 		)
 	}
 }
