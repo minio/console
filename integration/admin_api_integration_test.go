@@ -32,6 +32,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func RestartService() (*http.Response, error) {
+	/*
+		Helper function to restart service
+		HTTP Verb: POST
+		URL: /api/v1/service/restart
+	*/
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/service/restart",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2000 * time.Second, // increased timeout since restart takes time, more than other APIs.
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func NotifyPostgres() (*http.Response, error) {
 	/*
 		Helper function to add Postgres Notification
@@ -123,5 +146,23 @@ func TestNotifyPostgres(t *testing.T) {
 	}
 	if response != nil {
 		assert.Equal(200, response.StatusCode, finalResponse)
+	}
+}
+
+func TestRestartService(t *testing.T) {
+	assert := assert.New(t)
+	restartResponse, restartError := RestartService()
+	assert.Nil(restartError)
+	if restartError != nil {
+		log.Println(restartError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(restartResponse)
+	if restartResponse != nil {
+		assert.Equal(
+			204,
+			restartResponse.StatusCode,
+			addObjRsp,
+		)
 	}
 }
