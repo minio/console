@@ -2,20 +2,14 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": [
-        "admin:*"
-      ],
+      "Action": ["admin:*"],
       "Effect": "Deny",
       "Sid": "Deny_Admin_Actions"
     },
     {
-      "Action": [
-        "s3:*"
-      ],
+      "Action": ["s3:*"],
       "Effect": "Allow",
-      "Resource": [
-        "arn:aws:s3:::*"
-      ],
+      "Resource": ["arn:aws:s3:::*"],
       "Sid": "Allow_S3_Actions"
     }
   ]

@@ -18,6 +18,8 @@ package operatorapi
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -174,6 +176,8 @@ func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginRe
 		return nil, prepareError(err)
 	}
 	consoleCreds := restapi.ConsoleCredentials{ConsoleCredentials: creds}
+	// Set a random as access key as session identifier
+	consoleCreds.AccountAccessKey = fmt.Sprintf("%d", rand.Intn(100000-10000)+10000)
 	token, err := login(consoleCreds)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
