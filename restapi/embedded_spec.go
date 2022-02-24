@@ -5477,7 +5477,6 @@ func init() {
           "type": "string"
         },
         "hm": {
-          "description": "Hide Console Menu",
           "type": "boolean"
         }
       }
@@ -12062,7 +12061,6 @@ func init() {
           "type": "string"
         },
         "hm": {
-          "description": "Hide Console Menu",
           "type": "boolean"
         }
       }

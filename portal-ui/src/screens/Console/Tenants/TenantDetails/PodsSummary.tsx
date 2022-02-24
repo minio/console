@@ -33,7 +33,7 @@ import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
-import {Grid, InputAdornment, TextField} from "@mui/material";
+import { Grid, InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IPodsSummary {
@@ -137,22 +137,22 @@ const PodsSummary = ({
       <h1 className={classes.sectionTitle}>Pods</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
-            placeholder="Search Pods"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-            variant="standard"
+          placeholder="Search Pods"
+          className={classes.searchField}
+          id="search-resource"
+          label=""
+          InputProps={{
+            disableUnderline: true,
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          onChange={(e) => {
+            setFilter(e.target.value);
+          }}
+          variant="standard"
         />
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>

@@ -23,7 +23,8 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import {
   containerForHeader,
-  tableStyles, tenantDetailsStyles,
+  tableStyles,
+  tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IStoragePVCs } from "../../Storage/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -48,11 +49,11 @@ interface ITenantVolumesProps {
 }
 
 const styles = (theme: Theme) =>
-    createStyles({
-      ...tenantDetailsStyles,
-      ...tableStyles,
-      ...containerForHeader(theme.spacing(4)),
-    });
+  createStyles({
+    ...tenantDetailsStyles,
+    ...tableStyles,
+    ...containerForHeader(theme.spacing(4)),
+  });
 
 const TenantVolumes = ({
   classes,
