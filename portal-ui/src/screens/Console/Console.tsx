@@ -22,7 +22,7 @@ import { Button, LinearProgress } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
 import history from "../../history";
-import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../store";
 import {
@@ -514,12 +514,8 @@ const Console = ({
     }
   }, [snackBarMessage]);
 
-  const location = useLocation();
-
   let hideMenu = false;
   if (features?.includes("hide-menu")) {
-    hideMenu = true;
-  } else if (location.pathname.endsWith("/hop")) {
     hideMenu = true;
   }
 
