@@ -33,7 +33,8 @@ import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
-import { Grid } from "@mui/material";
+import {Grid, InputAdornment, TextField} from "@mui/material";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IPodsSummary {
   classes: any;
@@ -60,7 +61,7 @@ const PodsSummary = ({
   const [loadingPods, setLoadingPods] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPod, setSelectedPod] = useState<any>(null);
-
+  const [filter, setFilter] = useState("");
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
 
@@ -82,6 +83,10 @@ const PodsSummary = ({
     setSelectedPod(pod);
     setDeleteOpen(true);
   };
+
+  const filteredRecords: IPodListElement[] = pods.filter((elementItem) =>
+    elementItem.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   const podTableActions = [
     { type: "view", onClick: podViewAction },
@@ -130,10 +135,30 @@ const PodsSummary = ({
         />
       )}
       <h1 className={classes.sectionTitle}>Pods</h1>
+      <Grid item xs={12} className={classes.actionsTray}>
+        <TextField
+            placeholder="Search Pods"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+              ),
+            }}
+            onChange={(e) => {
+              setFilter(e.target.value);
+            }}
+            variant="standard"
+        />
+      </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
           columns={[
-            { label: "Name", elementKey: "name" },
+            { label: "Name", elementKey: "name", width: 200 },
             { label: "Status", elementKey: "status" },
             { label: "Age", elementKey: "time" },
             { label: "Pod IP", elementKey: "podIP" },
@@ -147,9 +172,9 @@ const PodsSummary = ({
             { label: "Node", elementKey: "node" },
           ]}
           isLoading={loadingPods}
-          records={pods}
+          records={filteredRecords}
           itemActions={podTableActions}
-          entityName="Servers"
+          entityName="Pods"
           idField="name"
         />
       </Grid>
