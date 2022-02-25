@@ -503,6 +503,7 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -516,8 +517,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install project dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
-        run: make assets
+        run: yarn install --prefer-offline
 
       - name: Build Console on ${{ matrix.os }}
         env:
