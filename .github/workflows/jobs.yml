@@ -183,3 +183,18 @@ jobs:
           GOOS: linux
         run: |
           make crosscompile arg1="'linux/386 netbsd/amd64'"
+
+  no-warnings:
+    name: "React Code Has No Warnings"
+    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        working-directory: ./portal-ui
+        run: yarn
+      - name: Check for Warnings in build output
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          chmod +x check-warnings.sh  && ./check-warnings.sh 
