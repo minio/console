@@ -392,12 +392,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-
       - name: Install project dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
         run: make assets
-
-
 
       - name: Build Console on ${{ matrix.os }}
         env:
@@ -454,9 +451,11 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Make assets
-        run: |
-          make assets
+
+      - name: Install project dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
+        run: make assets
+
       - name: Build Console on ${{ matrix.os }}
         env:
           GO111MODULE: on
