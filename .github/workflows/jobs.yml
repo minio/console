@@ -351,7 +351,7 @@ jobs:
 
   operator-tests:
     name: Operator Tests
-    needs: no-warnings
+    needs: make-assets
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -419,7 +419,7 @@ jobs:
 
   permissions:
     name: Permissions Tests
-    needs: no-warnings
+    needs: make-assets
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
