@@ -39,9 +39,23 @@ jobs:
         run: |
           make verifiers
 
+  no-warnings:
+    name: "React Code Has No Warnings"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        working-directory: ./portal-ui
+        run: yarn
+      - name: Check for Warnings in build output
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          chmod +x check-warnings.sh  && ./check-warnings.sh
+
   compile-job:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs: lint-job
+    needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -66,7 +80,7 @@ jobs:
 
   cross-compile-1:
     name: Cross compile 1
-    needs: lint-job
+    needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -91,7 +105,7 @@ jobs:
 
   cross-compile-2:
     name: Cross compile 2
-    needs: lint-job
+    needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -116,7 +130,7 @@ jobs:
 
   cross-compile-3:
     name: Cross compile 3
-    needs: lint-job
+    needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -141,7 +155,7 @@ jobs:
 
   cross-compile-4:
     name: Cross compile 4
-    needs: lint-job
+    needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -166,7 +180,7 @@ jobs:
 
   cross-compile-5:
     name: Cross compile 5
-    needs: lint-job
+    needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -189,24 +203,9 @@ jobs:
         run: |
           make crosscompile arg1="'linux/386 netbsd/amd64'"
 
-  no-warnings:
-    name: "React Code Has No Warnings"
-    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install modules
-        working-directory: ./portal-ui
-        run: yarn
-      - name: Check for Warnings in build output
-        working-directory: ./portal-ui
-        continue-on-error: false
-        run: |
-          chmod +x check-warnings.sh  && ./check-warnings.sh
-
   make-assets:
     name: "Make Assets"
-    needs: no-warnings
+    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -253,7 +252,7 @@ jobs:
 
   test-pkg-on-go:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs: no-warnings
+    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -278,7 +277,7 @@ jobs:
 
   test-restapi-on-go:
     name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs: no-warnings
+    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -303,7 +302,7 @@ jobs:
 
   integration-tests:
     name: Integration Tests with Latest Distributed MinIO
-    needs: no-warnings
+    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
     runs-on: ubuntu-latest
 
     strategy:
@@ -480,7 +479,7 @@ jobs:
 
   react-tests:
     name: React Tests
-    needs: no-warnings
+    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
