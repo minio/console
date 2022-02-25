@@ -205,7 +205,15 @@ jobs:
 
   make-assets:
     name: "Make Assets"
-    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
+    needs:
+      - lint-job
+      - no-warnings
+      - compile-job
+      - cross-compile-1
+      - cross-compile-2
+      - cross-compile-3
+      - cross-compile-4
+      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
