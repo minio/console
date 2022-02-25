@@ -40,9 +40,8 @@ jobs:
           make verifiers
 
   compile-job:
-    name: Compile Job
-    needs: lint-job
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    needs: lint-job
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
