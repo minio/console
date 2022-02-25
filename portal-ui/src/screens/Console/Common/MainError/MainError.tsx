@@ -140,6 +140,7 @@ const MainError = ({
               "& .min-icon": {
                 height: "11px",
                 width: "11px",
+                fill: "#ffffff",
               },
             },
           },
@@ -149,7 +150,7 @@ const MainError = ({
         className={`alert ${displayErrorMsg ? "show" : ""}`}
       >
         <div className="message-text">
-          {message}. {messageDetails}
+          {messageDetails ? messageDetails : `${message}.`}
         </div>
         <div className="close-btn-container">
           <button className="close-btn" autoFocus onClick={closeErrorMessage}>
