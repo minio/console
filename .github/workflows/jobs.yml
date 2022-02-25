@@ -1,4 +1,4 @@
-name: Lint
+name: Jobs
 
 on:
   pull_request:
@@ -248,7 +248,7 @@ jobs:
           make test-pkg
 
   test-restapi-on-go:
-    name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    name: Test Restapi on GoLang ${{ matrix.go-version }} and ${{ matrix.os }}
     needs: no-warnings
     runs-on: ${{ matrix.os }}
     strategy:
