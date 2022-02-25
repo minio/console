@@ -1,4 +1,4 @@
-name: Jobs
+name: Workflow
 
 on:
   pull_request:
