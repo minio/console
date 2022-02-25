@@ -39,181 +39,8 @@ jobs:
         run: |
           make verifiers
 
-  no-warnings:
-    name: "React Code Has No Warnings"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install modules
-        working-directory: ./portal-ui
-        run: yarn
-      - name: Check for Warnings in build output
-        working-directory: ./portal-ui
-        continue-on-error: false
-        run: |
-          chmod +x check-warnings.sh  && ./check-warnings.sh
-
-  compile-job:
-    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs: [lint-job,no-warnings]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
-
-  cross-compile-1:
-    name: Cross compile
-    needs: [lint-job,no-warnings]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/ppc64le linux/mips64'"
-
-  cross-compile-2:
-    name: Cross compile 2
-    needs: [lint-job,no-warnings]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/arm64 linux/s390x'"
-
-  cross-compile-3:
-    name: Cross compile 3
-    needs: [lint-job,no-warnings]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
-
-  cross-compile-4:
-    name: Cross compile 4
-    needs: [lint-job,no-warnings]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'windows/amd64 linux/arm'"
-
-  cross-compile-5:
-    name: Cross compile 5
-    needs: [lint-job,no-warnings]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/386 netbsd/amd64'"
-
-  make-assets:
-    name: "Make Assets"
-    needs:
-      - lint-job
-      - no-warnings
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
+  no-warnings-and-make-assets:
+    name: "React Code Has No Warnings and then Make Assets"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -257,12 +84,179 @@ jobs:
       - name: Make assets
         run: |
           make assets
+      - name: Check for Warnings in build output
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          chmod +x check-warnings.sh  && ./check-warnings.sh
+
+  compile-job:
+    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+
+  cross-compile-1:
+    name: Cross compile
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'linux/ppc64le linux/mips64'"
+
+  cross-compile-2:
+    name: Cross compile 2
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'linux/arm64 linux/s390x'"
+
+  cross-compile-3:
+    name: Cross compile 3
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
+
+  cross-compile-4:
+    name: Cross compile 4
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'windows/amd64 linux/arm'"
+
+  cross-compile-5:
+    name: Cross compile 5
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'linux/386 netbsd/amd64'"
 
   test-pkg-on-go:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
-      - no-warnings
+      - no-warnings-and-make-assets
       - compile-job
       - cross-compile-1
       - cross-compile-2
@@ -295,7 +289,7 @@ jobs:
     name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
-      - no-warnings
+      - no-warnings-and-make-assets
       - compile-job
       - cross-compile-1
       - cross-compile-2
@@ -328,7 +322,7 @@ jobs:
     name: Integration Tests with Latest Distributed MinIO
     needs:
       - lint-job
-      - no-warnings
+      - no-warnings-and-make-assets
       - compile-job
       - cross-compile-1
       - cross-compile-2
@@ -384,7 +378,7 @@ jobs:
     name: React Tests
     needs:
       - lint-job
-      - no-warnings
+      - no-warnings-and-make-assets
       - compile-job
       - cross-compile-1
       - cross-compile-2
@@ -405,8 +399,7 @@ jobs:
     name: Operator Tests
     needs:
       - lint-job
-      - no-warnings
-      - make-assets
+      - no-warnings-and-make-assets
       - compile-job
       - cross-compile-1
       - cross-compile-2
@@ -479,8 +472,7 @@ jobs:
     name: Permissions Tests
     needs:
       - lint-job
-      - no-warnings
-      - make-assets
+      - no-warnings-and-make-assets
       - compile-job
       - cross-compile-1
       - cross-compile-2
