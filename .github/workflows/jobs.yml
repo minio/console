@@ -260,7 +260,15 @@ jobs:
 
   test-pkg-on-go:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
+    needs:
+      - lint-job
+      - no-warnings
+      - compile-job
+      - cross-compile-1
+      - cross-compile-2
+      - cross-compile-3
+      - cross-compile-4
+      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -285,7 +293,15 @@ jobs:
 
   test-restapi-on-go:
     name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
+    needs:
+      - lint-job
+      - no-warnings
+      - compile-job
+      - cross-compile-1
+      - cross-compile-2
+      - cross-compile-3
+      - cross-compile-4
+      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -310,7 +326,15 @@ jobs:
 
   integration-tests:
     name: Integration Tests with Latest Distributed MinIO
-    needs: [compile-job,cross-compile-1,cross-compile-2,cross-compile-3,cross-compile-4,cross-compile-5]
+    needs:
+      - lint-job
+      - no-warnings
+      - compile-job
+      - cross-compile-1
+      - cross-compile-2
+      - cross-compile-3
+      - cross-compile-4
+      - cross-compile-5
     runs-on: ubuntu-latest
 
     strategy:
