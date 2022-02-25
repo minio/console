@@ -419,9 +419,8 @@ jobs:
 
 
 
-      - name: Install project dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
-        run: yarn
+       - name: Install project dependencies
+        run: yarn --prefer-offline # This tells yarn to always run but use cached downloads
 
 
 
