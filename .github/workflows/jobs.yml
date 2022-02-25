@@ -79,7 +79,7 @@ jobs:
           make console
 
   cross-compile-1:
-    name: Cross compile 1
+    name: Cross compile
     needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -104,7 +104,7 @@ jobs:
           make crosscompile arg1="'linux/ppc64le linux/mips64'"
 
   cross-compile-2:
-    name: Cross compile 2
+    name: Cross compile
     needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -129,7 +129,7 @@ jobs:
           make crosscompile arg1="'linux/arm64 linux/s390x'"
 
   cross-compile-3:
-    name: Cross compile 3
+    name: Cross compile
     needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -154,7 +154,7 @@ jobs:
           make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
 
   cross-compile-4:
-    name: Cross compile 4
+    name: Cross compile
     needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -179,7 +179,7 @@ jobs:
           make crosscompile arg1="'windows/amd64 linux/arm'"
 
   cross-compile-5:
-    name: Cross compile 5
+    name: Cross compile
     needs: [lint-job,no-warnings]
     runs-on: ${{ matrix.os }}
     strategy:
