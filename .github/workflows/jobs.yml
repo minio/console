@@ -430,6 +430,12 @@ jobs:
       - lint-job
       - no-warnings
       - make-assets
+      - compile-job
+      - cross-compile-1
+      - cross-compile-2
+      - cross-compile-3
+      - cross-compile-4
+      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
