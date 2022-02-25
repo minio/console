@@ -46,7 +46,7 @@ type Principal struct {
 	// account access key
 	AccountAccessKey string `json:"accountAccessKey,omitempty"`
 
-	// Hide Console Menu
+	// hm
 	Hm bool `json:"hm,omitempty"`
 }
 

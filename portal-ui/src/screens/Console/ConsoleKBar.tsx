@@ -84,6 +84,7 @@ const ConsoleKBar = ({
   operatorMode: boolean;
   features: string[] | null;
 }) => {
+  // if we are hiding the menu also disable the k-bar so just return console
   if (features?.includes("hide-menu")) {
     return <Console />;
   }

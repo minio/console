@@ -381,7 +381,7 @@ export const objectBrowserCommon = {
     "& .min-icon": {
       width: 14,
       minWidth: 14,
-    }
+    },
   },
   smallLabel: {
     color: "#9C9C9C",
@@ -414,7 +414,7 @@ export const selectorsCommon = {
   },
 };
 
-export const settingsCommon:any = {
+export const settingsCommon: any = {
   customTitle: {
     fontSize: 18,
     color: "#000",
@@ -1152,7 +1152,7 @@ export const spacingUtils: any = {
   },
 };
 
-export const formFieldStyles:any = {
+export const formFieldStyles: any = {
   formFieldRow: {
     marginBottom: ".8rem",
     "& .MuiInputLabel-root": {

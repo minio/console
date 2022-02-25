@@ -151,7 +151,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
           ref={consoleFrame}
           className={classes.iframeStyle}
           title={"metrics"}
-          src={`/api/proxy/${tenantNamespace}/${tenantName}/?cp=y`}
+          src={`/api/hop/${tenantNamespace}/${tenantName}/?cp=y`}
           onLoad={(val) => {
             setLoading(false);
           }}
