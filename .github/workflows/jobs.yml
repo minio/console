@@ -202,7 +202,16 @@ jobs:
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          chmod +x check-warnings.sh  && ./check-warnings.sh 
+          chmod +x check-warnings.sh  && ./check-warnings.sh
+
+  make-assets:
+    name: "Make Assets"
+    needs: no-warnings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make assets
+        run: |
+          make assets
 
   test-pkg-on-go:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
@@ -304,7 +313,7 @@ jobs:
 
   operator-tests:
     name: Operator Tests
-    needs: no-warnings
+    needs: make-assets
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -367,7 +376,7 @@ jobs:
 
   permissions:
     name: Permissions Tests
-    needs: no-warnings
+    needs: make-assets
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
