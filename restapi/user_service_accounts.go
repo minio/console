@@ -21,7 +21,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -293,7 +292,6 @@ func getCreateServiceAccountCredsResponse(session *models.Principal, serviceAcco
 	}
 
 	accounts, err := userAdminClient.listServiceAccounts(ctx, "")
-	fmt.Println("dummy line")
 	if err != nil {
 		return nil, prepareError(err)
 	}
