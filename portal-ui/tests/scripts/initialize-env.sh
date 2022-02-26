@@ -41,6 +41,7 @@ __init__() {
 
 
   OS="`uname`"
+  echo $OS
   case $OS in
     'Linux')
       OS='linux'
@@ -63,7 +64,11 @@ __init__() {
     *) ;;
   esac
 
+  echo "Start - Downloading mc in the host"
   curl -sLO "https://dl.min.io/client/mc/release/$OS-$ARCH/mc" -o mc
+  pwd
+  ls
+  echo "End - Downloading mc in the host"
   chmod +x mc
   mv mc /usr/local/bin
 
