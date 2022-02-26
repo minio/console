@@ -115,12 +115,6 @@ jobs:
         run: |
           chmod +x check-warnings.sh  && ./check-warnings.sh
 
-
-
-
-
-
-
   compile-job:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
@@ -288,12 +282,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -321,12 +309,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -354,12 +336,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
     runs-on: ubuntu-latest
 
     strategy:
@@ -410,12 +386,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -431,12 +401,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -503,12 +467,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - compile-job
-      - cross-compile-1
-      - cross-compile-2
-      - cross-compile-3
-      - cross-compile-4
-      - cross-compile-5
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
