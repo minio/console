@@ -80,8 +80,8 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            "${GITHUB_WORKSPACE}/portal-ui/node_modules/"
-            "${GITHUB_WORKSPACE}/portal-ui/build/"
+            ./portal-ui/node_modules/
+            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -422,8 +422,8 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            "${GITHUB_WORKSPACE}/portal-ui/node_modules/"
-            "${GITHUB_WORKSPACE}/portal-ui/build/"
+            ./portal-ui/node_modules/
+            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -489,8 +489,8 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            "${GITHUB_WORKSPACE}/portal-ui/node_modules/"
-            "${GITHUB_WORKSPACE}/portal-ui/build/"
+            ./portal-ui/node_modules/
+            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
