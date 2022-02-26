@@ -391,7 +391,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
           id="comment"
           name="comment"
           label="Comment"
-          placeholder="Enter Comment"
+          placeholder="Enter custom notes if any"
           value={comment}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setComment(e.target.value);
