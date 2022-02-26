@@ -531,7 +531,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: /home/runner/work/console/console/portal-ui
+        working-directory: /home/runner/work/console/console
         run: make assets
 
       - name: Install project dependencies
