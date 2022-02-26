@@ -514,11 +514,15 @@ jobs:
 
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${GITHUB_WORKSPACE}/portal-ui/node_modules/
-            ${GITHUB_WORKSPACE}/portal-ui/build/
 
 
-          key: ${{ runner.os }}-yarn-${{ hashFiles('${GITHUB_WORKSPACE}/portal-ui/yarn.lock') }}
+            /home/runner/work/console/console/portal-ui/node_modules/
+            /home/runner/work/console/console/portal-ui/build/
+
+
+
+
+          key: ${{ runner.os }}-yarn-${{ hashFiles('/home/runner/work/console/console/portal-ui/yarn.lock') }}
 
 
 
@@ -527,7 +531,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ${GITHUB_WORKSPACE}/portal-ui
+        working-directory: /home/runner/work/console/console/portal-ui
         run: make assets
 
       - name: Install project dependencies
