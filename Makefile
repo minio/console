@@ -62,7 +62,7 @@ swagger-operator:
 	@swagger generate server -A operator --main-package=operator --server-package=operatorapi --exclude-main -P models.Principal -f ./swagger-operator.yml -r NOTICE
 
 assets:
-	@(cd portal-ui; yarn install; make build-static; yarn prettier --write . --loglevel warn; cd ..)
+	@(cd portal-ui; yarn install --prefer-offline; make build-static; yarn prettier --write . --loglevel warn; cd ..)
 
 test-integration:
 	@echo "create docker network to communicate containers MinIO & PostgreSQL"
