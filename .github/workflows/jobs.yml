@@ -82,7 +82,7 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             "${GITHUB_WORKSPACE}/portal-ui/node_modules/"
             "${GITHUB_WORKSPACE}/portal-ui/build/"
-          key: ${{ runner.os }}-yarn-${{ hashFiles("${GITHUB_WORKSPACE}/portal-ui/yarn.lock") }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('/home/runner/work/console/console/portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
@@ -424,7 +424,7 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             "${GITHUB_WORKSPACE}/portal-ui/node_modules/"
             "${GITHUB_WORKSPACE}/portal-ui/build/"
-          key: ${{ runner.os }}-yarn-${{ hashFiles("${GITHUB_WORKSPACE}/portal-ui/yarn.lock") }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('/home/runner/work/console/console/portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
@@ -491,7 +491,7 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             "${GITHUB_WORKSPACE}/portal-ui/node_modules/"
             "${GITHUB_WORKSPACE}/portal-ui/build/"
-          key: ${{ runner.os }}-yarn-${{ hashFiles("${GITHUB_WORKSPACE}/portal-ui/yarn.lock") }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('/home/runner/work/console/console/portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
