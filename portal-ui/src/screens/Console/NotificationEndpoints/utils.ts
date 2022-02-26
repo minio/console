@@ -43,7 +43,7 @@ export const notificationTransform = (
 export const servicesList = [
   {
     actionTrigger: notifyPostgres,
-    targetTitle: "Postgres SQL",
+    targetTitle: "PostgreSQL",
     logo: "/postgres-logo.svg",
   },
   {
