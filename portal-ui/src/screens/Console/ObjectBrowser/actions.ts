@@ -18,7 +18,6 @@ import { IFileItem } from "./reducers";
 
 export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
 export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
-export const REWIND_FILE_MODE_ENABLED = "BUCKET_BROWSER/FILE_MODE_ENABLED";
 
 export const OBJECT_MANAGER_NEW_OBJECT = "OBJECT_MANAGER/NEW_OBJECT";
 export const OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT =
@@ -33,6 +32,13 @@ export const OBJECT_MANAGER_CLOSE_LIST = "OBJECT_MANAGER/CLOSE_LIST";
 export const OBJECT_MANAGER_SET_SEARCH_OBJECT =
   "OBJECT_MANAGER/SET_SEARCH_OBJECT";
 
+export const BUCKET_BROWSER_VERSIONS_MODE_ENABLED =
+  "BUCKET_BROWSER/VERSIONS_MODE_ENABLED";
+export const BUCKET_BROWSER_VERSIONS_SET_SEARCH =
+  "BUCKET_BROWSER/VERSIONS_SET_SEARCH";
+export const BUCKET_BROWSER_SET_SELECTED_VERSION =
+  "BUCKET_BROWSER/SET_SELECTED_VERSION";
+
 interface RewindSetEnabled {
   type: typeof REWIND_SET_ENABLE;
   bucket: string;
@@ -44,9 +50,10 @@ interface RewindReset {
   type: typeof REWIND_RESET_REWIND;
 }
 
-interface FileModeEnabled {
-  type: typeof REWIND_FILE_MODE_ENABLED;
+interface VersionsModeEnabled {
+  type: typeof BUCKET_BROWSER_VERSIONS_MODE_ENABLED;
   status: boolean;
+  objectName: string;
 }
 
 interface OMNewObject {
@@ -77,9 +84,11 @@ interface OMCleanList {
 interface OMToggleList {
   type: typeof OBJECT_MANAGER_TOGGLE_LIST;
 }
+
 interface OMOpenList {
   type: typeof OBJECT_MANAGER_OPEN_LIST;
 }
+
 interface OMCloseList {
   type: typeof OBJECT_MANAGER_CLOSE_LIST;
 }
@@ -89,10 +98,20 @@ interface SetSearchObjects {
   searchString: string;
 }
 
+interface SetSearchVersions {
+  type: typeof BUCKET_BROWSER_VERSIONS_SET_SEARCH;
+  searchString: string;
+}
+
+interface SetSelectedversion {
+  type: typeof BUCKET_BROWSER_SET_SELECTED_VERSION;
+  selectedVersion: string;
+}
+
 export type ObjectBrowserActionTypes =
   | RewindSetEnabled
   | RewindReset
-  | FileModeEnabled
+  | VersionsModeEnabled
   | OMNewObject
   | OMUpdateProgress
   | OMCompleteObject
@@ -101,7 +120,9 @@ export type ObjectBrowserActionTypes =
   | OMToggleList
   | OMOpenList
   | OMCloseList
-  | SetSearchObjects;
+  | SetSearchObjects
+  | SetSearchVersions
+  | SetSelectedversion;
 
 export const setRewindEnable = (
   state: boolean,
@@ -122,10 +143,14 @@ export const resetRewind = () => {
   };
 };
 
-export const setFileModeEnabled = (status: boolean) => {
+export const setVersionsModeEnabled = (
+  status: boolean,
+  objectName: string = ""
+) => {
   return {
-    type: REWIND_FILE_MODE_ENABLED,
+    type: BUCKET_BROWSER_VERSIONS_MODE_ENABLED,
     status,
+    objectName,
   };
 };
 
@@ -186,5 +211,19 @@ export const setSearchObjects = (searchString: string) => {
   return {
     type: OBJECT_MANAGER_SET_SEARCH_OBJECT,
     searchString,
+  };
+};
+
+export const setSearchVersions = (searchString: string) => {
+  return {
+    type: BUCKET_BROWSER_VERSIONS_SET_SEARCH,
+    searchString,
+  };
+};
+
+export const setSelectedVersion = (selectedVersion: string) => {
+  return {
+    type: BUCKET_BROWSER_SET_SELECTED_VERSION,
+    selectedVersion,
   };
 };

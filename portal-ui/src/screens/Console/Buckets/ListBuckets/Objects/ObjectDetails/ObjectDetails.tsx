@@ -429,7 +429,7 @@ const ObjectDetails = ({
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       {shareFileModalOpen && actualInfo && (
         <ShareFile
           open={shareFileModalOpen}
@@ -587,7 +587,7 @@ const ObjectDetails = ({
                   label: "Details",
                 },
                 content: (
-                  <React.Fragment>
+                  <Fragment>
                     <div className={classes.actionsTray}>
                       <h1 className={classes.sectionTitle}>Details</h1>
                     </div>
@@ -717,7 +717,7 @@ const ObjectDetails = ({
                         actualInfo={actualInfo}
                       />
                     ) : null}
-                  </React.Fragment>
+                  </Fragment>
                 ),
               }}
               {{
@@ -797,7 +797,7 @@ const ObjectDetails = ({
                   disabled: extensionPreview(currentItem) === "none",
                 },
                 content: (
-                  <React.Fragment>
+                  <Fragment>
                     {actualInfo && (
                       <PreviewFileContent
                         bucketName={bucketName}
@@ -811,14 +811,14 @@ const ObjectDetails = ({
                         isFullscreen
                       />
                     )}
-                  </React.Fragment>
+                  </Fragment>
                 ),
               }}
             </VerticalTabs>
           </Fragment>
         )}
       </PageLayout>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
