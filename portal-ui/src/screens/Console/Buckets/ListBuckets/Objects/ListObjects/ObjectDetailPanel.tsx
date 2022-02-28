@@ -44,13 +44,14 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import {
   completeObject,
   setNewObject,
+  setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
 import { AppState } from "../../../../../../store";
 import {
   DisabledIcon,
-  NextArrowIcon,
   PreviewIcon,
+  VersionsIcon,
 } from "../../../../../../icons";
 import { ShareIcon, DownloadIcon, DeleteIcon } from "../../../../../../icons";
 import history from "../../../../../../history";
@@ -114,11 +115,14 @@ interface IObjectDetailPanelProps {
   rewindDate: any;
   bucketToRewind: string;
   distributedSetup: boolean;
+  versionsMode: boolean;
+  selectedVersion: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
+  setVersionsModeEnabled: typeof setVersionsModeEnabled;
 }
 
 const emptyFile: IFileInfo = {
@@ -142,6 +146,9 @@ const ObjectDetailPanel = ({
   setNewObject,
   updateProgress,
   completeObject,
+  versionsMode,
+  selectedVersion,
+  setVersionsModeEnabled,
 }: IObjectDetailPanelProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -151,6 +158,7 @@ const ObjectDetailPanel = ({
   const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
+  const [allInfoElements, setAllInfoElements] = useState<IFileInfo[]>([]);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -176,6 +184,22 @@ const ObjectDetailPanel = ({
   }, [internalPaths, bucketName]);
 
   useEffect(() => {
+    if (distributedSetup && allInfoElements.length >= 1) {
+      let infoElement =
+        allInfoElements.find((el: IFileInfo) => el.is_latest) || emptyFile;
+
+      if (selectedVersion !== "") {
+        infoElement =
+          allInfoElements.find(
+            (el: IFileInfo) => el.version_id === selectedVersion
+          ) || emptyFile;
+      }
+
+      setActualInfo(infoElement);
+    }
+  }, [selectedVersion, distributedSetup, allInfoElements]);
+
+  useEffect(() => {
     if (loadObjectData && internalPaths !== "") {
       api
         .invoke(
@@ -187,9 +211,7 @@ const ObjectDetailPanel = ({
         .then((res: IFileInfo[]) => {
           const result = get(res, "objects", []);
           if (distributedSetup) {
-            setActualInfo(
-              result.find((el: IFileInfo) => el.is_latest) || emptyFile
-            );
+            setAllInfoElements(result);
             setVersions(result);
             const tVersionSize = result.reduce(
               (acc: number, currValue: IFileInfo) => {
@@ -220,6 +242,7 @@ const ObjectDetailPanel = ({
     internalPaths,
     setErrorSnackMessage,
     distributedSetup,
+    selectedVersion,
   ]);
 
   let tagKeys: string[] = [];
@@ -329,17 +352,14 @@ const ObjectDetailPanel = ({
     setPreviewOpen(false);
   };
 
-  const openExtraInfo = () => {
-    const newPath = `/buckets/${bucketName}/browse${
-      internalPaths !== "" ? `/${internalPaths}` : ``
-    }`;
-
-    history.push(newPath);
-  };
-
   if (!actualInfo) {
     return null;
   }
+
+  const objectName =
+    objectNameArray.length > 0
+      ? objectNameArray[objectNameArray.length - 1]
+      : actualInfo.name;
 
   return (
     <Fragment>
@@ -428,11 +448,8 @@ const ObjectDetailPanel = ({
           <LinearProgress />
         </Grid>
       )}
-      <div className={classes.titleLabel}>
-        {objectNameArray.length > 0
-          ? objectNameArray[objectNameArray.length - 1]
-          : actualInfo.name}
-      </div>
+
+      <div className={classes.titleLabel}>{objectName}</div>
 
       <ul className={classes.objectActions}>
         <li>Actions:</li>
@@ -479,17 +496,22 @@ const ObjectDetailPanel = ({
               onClick={() => {
                 setDeleteOpen(true);
               }}
-              disabled={actualInfo.is_delete_marker}
+              disabled={actualInfo.is_delete_marker || selectedVersion !== ""}
             />
           </li>
         </SecureComponent>
         <li>
           <ObjectActionButton
-            label={"Expand Details"}
-            icon={<NextArrowIcon />}
+            label={
+              versionsMode ? "Hide Object Versions" : "Display Object Versions"
+            }
+            icon={<VersionsIcon />}
             onClick={() => {
-              openExtraInfo();
+              setVersionsModeEnabled(!versionsMode, objectName);
             }}
+            disabled={
+              !(actualInfo.version_id && actualInfo.version_id !== "null")
+            }
           />
         </li>
       </ul>
@@ -497,107 +519,150 @@ const ObjectDetailPanel = ({
       <div className={classes.actionsTray}>
         <h1 className={classes.sectionTitle}>Details</h1>
       </div>
+      {selectedVersion !== "" && (
+        <Box className={classes.detailContainer}>
+          <strong>Version ID:</strong>
+          <br />
+          {selectedVersion}
+        </Box>
+      )}
       <Box className={classes.detailContainer}>
-        <LabelValuePair
-          label={"Tags:"}
-          value={
-            <ObjectTags
-              objectInfo={actualInfo}
-              tagKeys={tagKeys}
-              bucketName={bucketName}
-              onDeleteTag={deleteTag}
-              onAddTagClick={() => {
-                setTagModalOpen(true);
-              }}
-            />
-          }
-        />
+        {selectedVersion === "" ? (
+          <LabelValuePair
+            label={"Tags:"}
+            value={
+              <ObjectTags
+                objectInfo={actualInfo}
+                tagKeys={tagKeys}
+                bucketName={bucketName}
+                onDeleteTag={deleteTag}
+                onAddTagClick={() => {
+                  setTagModalOpen(true);
+                }}
+              />
+            }
+          />
+        ) : (
+          <Fragment>
+            <strong>Tags: </strong>
+            <br />
+            {tagKeys.length === 0
+              ? "N/A"
+              : tagKeys.map((tagKey, index) => {
+                  return (
+                    <span key={`key-vs-${index.toString()}`}>
+                      {tagKey}:{get(actualInfo, `tags.${tagKey}`, "")}
+                      {index < tagKeys.length - 1 ? ", " : ""}
+                    </span>
+                  );
+                })}
+          </Fragment>
+        )}
       </Box>
       <Box className={classes.detailContainer}>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
           resource={bucketName}
         >
-          <LabelValuePair
-            label={""}
-            value={
-              actualInfo.version_id && actualInfo.version_id !== "null" ? (
-                <EditablePropertyItem
-                  iamScopes={[IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]}
-                  secureCmpProps={{
-                    matchAll: false,
-                    errorProps: {
-                      disabled: true,
-                      onClick: null,
-                    },
-                  }}
-                  resourceName={bucketName}
-                  property={"Legal Hold:"}
-                  value={
-                    actualInfo.legal_hold_status
-                      ? actualInfo.legal_hold_status.toLowerCase()
-                      : "Off"
-                  }
-                  onEdit={() => {
-                    setLegalholdOpen(true);
-                  }}
-                  isLoading={false}
-                />
-              ) : (
-                <LabelValuePair
-                  label={"Legal Hold:"}
-                  value={
-                    <LabelWithIcon
-                      icon={<DisabledIcon />}
-                      label={
-                        <label className={classes.textMuted}>Disabled</label>
-                      }
-                    />
-                  }
-                />
-              )
-            }
-          />
+          {selectedVersion === "" ? (
+            <LabelValuePair
+              label={""}
+              value={
+                actualInfo.version_id && actualInfo.version_id !== "null" ? (
+                  <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]}
+                    secureCmpProps={{
+                      matchAll: false,
+                      errorProps: {
+                        disabled: true,
+                        onClick: null,
+                      },
+                    }}
+                    resourceName={bucketName}
+                    property={"Legal Hold:"}
+                    value={
+                      actualInfo.legal_hold_status
+                        ? actualInfo.legal_hold_status.toLowerCase()
+                        : "Off"
+                    }
+                    onEdit={() => {
+                      setLegalholdOpen(true);
+                    }}
+                    isLoading={false}
+                  />
+                ) : (
+                  <LabelValuePair
+                    label={"Legal Hold:"}
+                    value={
+                      <LabelWithIcon
+                        icon={<DisabledIcon />}
+                        label={
+                          <label className={classes.textMuted}>Disabled</label>
+                        }
+                      />
+                    }
+                  />
+                )
+              }
+            />
+          ) : (
+            <Fragment>
+              <strong>Legal Hold:</strong>
+              <br />
+              {actualInfo.legal_hold_status ? "On" : "Off"}
+            </Fragment>
+          )}
         </SecureComponent>
-
+      </Box>
+      <Box className={classes.detailContainer}>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
           resource={bucketName}
         >
-          <LabelValuePair
-            label={""}
-            value={
-              actualInfo.version_id && actualInfo.version_id !== "null" ? (
-                <EditablePropertyItem
-                  iamScopes={[IAM_SCOPES.S3_PUT_OBJECT_RETENTION]}
-                  secureCmpProps={{
-                    matchAll: false,
-                  }}
-                  resourceName={bucketName}
-                  property={"Retention:"}
-                  value={
-                    actualInfo.retention_mode
-                      ? actualInfo.retention_mode.toLowerCase()
-                      : "None"
-                  }
-                  onEdit={openRetentionModal}
-                  isLoading={false}
-                />
-              ) : (
-                <LabelValuePair
-                  label={"Retention:"}
-                  value={
-                    <LabelWithIcon
-                      icon={<DisabledIcon />}
-                      label={
-                        <label className={classes.textMuted}>Disabled</label>
-                      }
-                    />
-                  }
-                />
-              )
-            }
-          />
+          {selectedVersion === "" ? (
+            <LabelValuePair
+              label={""}
+              value={
+                actualInfo.version_id && actualInfo.version_id !== "null" ? (
+                  <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.S3_PUT_OBJECT_RETENTION]}
+                    secureCmpProps={{
+                      matchAll: false,
+                    }}
+                    resourceName={bucketName}
+                    property={"Retention:"}
+                    value={
+                      actualInfo.retention_mode
+                        ? actualInfo.retention_mode.toLowerCase()
+                        : "None"
+                    }
+                    onEdit={openRetentionModal}
+                    isLoading={false}
+                  />
+                ) : (
+                  <LabelValuePair
+                    label={"Retention:"}
+                    value={
+                      <LabelWithIcon
+                        icon={<DisabledIcon />}
+                        label={
+                          <label className={classes.textMuted}>Disabled</label>
+                        }
+                      />
+                    }
+                  />
+                )
+              }
+            />
+          ) : (
+            <Fragment>
+              <strong>Object Retention:</strong>
+              <br />
+              {actualInfo.retention_mode
+                ? actualInfo.retention_mode.toLowerCase()
+                : "None"}
+            </Fragment>
+          )}
         </SecureComponent>
       </Box>
       <hr className={classes.hrClass} />
@@ -616,25 +681,27 @@ const ObjectDetailPanel = ({
       </Box>
       <hr className={classes.hrClass} />
 
-      {actualInfo.version_id && actualInfo.version_id !== "null" && (
-        <Fragment>
-          <div className={classes.actionsTray}>
-            <h1 className={classes.sectionTitle}>Versions</h1>
-          </div>
-          <Box className={classes.detailContainer}>
-            <Box className={classes.metadataLinear}>
-              <strong>Total available versions</strong>
-              <br />
-              {versions.length}
+      {actualInfo.version_id &&
+        actualInfo.version_id !== "null" &&
+        selectedVersion === "" && (
+          <Fragment>
+            <div className={classes.actionsTray}>
+              <h1 className={classes.sectionTitle}>Versions</h1>
+            </div>
+            <Box className={classes.detailContainer}>
+              <Box className={classes.metadataLinear}>
+                <strong>Total available versions</strong>
+                <br />
+                {versions.length}
+              </Box>
+              <Box className={classes.metadataLinear}>
+                <strong>Versions Stored size:</strong>
+                <br />
+                {niceBytesInt(totalVersionsSize)}
+              </Box>
             </Box>
-            <Box className={classes.metadataLinear}>
-              <strong>Versions Stored size:</strong>
-              <br />
-              {niceBytesInt(totalVersionsSize)}
-            </Box>
-          </Box>
-        </Fragment>
-      )}
+          </Fragment>
+        )}
     </Fragment>
   );
 };
@@ -644,6 +711,8 @@ const mapStateToProps = ({ objectBrowser, system }: AppState) => ({
   rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
   distributedSetup: get(system, "distributedSetup", false),
+  versionsMode: get(objectBrowser, "versionsMode", false),
+  selectedVersion: get(objectBrowser, "selectedVersion", ""),
 });
 
 const mapDispatchToProps = {
@@ -652,6 +721,7 @@ const mapDispatchToProps = {
   setNewObject,
   updateProgress,
   completeObject,
+  setVersionsModeEnabled,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

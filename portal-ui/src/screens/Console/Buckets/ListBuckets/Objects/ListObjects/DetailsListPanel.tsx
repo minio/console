@@ -46,7 +46,8 @@ const styles = (theme: Theme) =>
       opacity: 0,
       marginLeft: -1,
       "&.open": {
-        width: 400,
+        width: 300,
+        minWidth: 300,
         borderTopWidth: 1,
         borderBottomWidth: 1,
         borderRightWidth: 1,

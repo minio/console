@@ -19,16 +19,15 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Link } from "react-router-dom";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import get from "lodash/get";
 import { AppState } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import {
-  setFileModeEnabled,
   setSearchObjects,
+  setVersionsModeEnabled,
+  setSearchVersions,
 } from "../../ObjectBrowser/actions";
-import ObjectDetails from "../ListBuckets/Objects/ObjectDetails/ObjectDetails";
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import SettingsIcon from "../../../../icons/SettingsIcon";
@@ -44,15 +43,18 @@ import SearchBox from "../../Common/SearchBox";
 import BackLink from "../../../../common/BackLink";
 
 interface IBrowserHandlerProps {
-  fileMode: boolean;
+  versionsMode: boolean;
   match: any;
   history: any;
   classes: any;
-  setFileModeEnabled: typeof setFileModeEnabled;
+  setVersionsModeEnabled: typeof setVersionsModeEnabled;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   bucketInfo: BucketInfo | null;
   searchObjects: string;
+  versionedFile: string;
+  searchVersions: string;
   setSearchObjects: typeof setSearchObjects;
+  setSearchVersions: typeof setSearchVersions;
 }
 
 const styles = (theme: Theme) =>
@@ -71,20 +73,23 @@ const styles = (theme: Theme) =>
   });
 
 const BrowserHandler = ({
-  fileMode,
+  versionsMode,
   match,
   history,
   classes,
-  setFileModeEnabled,
+  setVersionsModeEnabled,
   searchObjects,
   setSearchObjects,
+  setSearchVersions,
+  versionedFile,
+  searchVersions,
 }: IBrowserHandlerProps) => {
   const bucketName = match.params["bucketName"];
   const internalPaths = get(match.params, "subpaths", "");
 
   useEffect(() => {
-    setFileModeEnabled(false);
-  }, [internalPaths, setFileModeEnabled]);
+    setVersionsModeEnabled(false);
+  }, [internalPaths, setVersionsModeEnabled]);
 
   const openBucketConfiguration = () => {
     history.push(`/buckets/${bucketName}/admin`);
@@ -94,24 +99,11 @@ const BrowserHandler = ({
     <Fragment>
       <PageHeader
         label={
-          <Fragment>
-            {fileMode ? (
-              <Fragment>
-                <Link to={"/buckets"} className={classes.breadcrumLink}>
-                  Buckets
-                </Link>{" "}
-                &gt; {bucketName}
-              </Fragment>
-            ) : (
-              <Fragment>
-                <BackLink
-                  label={"Back to Buckets"}
-                  to={"/buckets"}
-                  className={classes.backToBuckets}
-                />
-              </Fragment>
-            )}
-          </Fragment>
+          <BackLink
+            label={"Back to Buckets"}
+            to={"/buckets"}
+            className={classes.backToBuckets}
+          />
         }
         actions={
           <SecureComponent
@@ -134,40 +126,55 @@ const BrowserHandler = ({
         }
         middleComponent={
           <Fragment>
-            {!fileMode && (
+            {!versionsMode ? (
               <SecureComponent
                 scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
                 <SearchBox
-                  placeholder={"Start typing to filter objects in bucket"}
+                  placeholder={"Start typing to filter objects in the bucket"}
                   onChange={(value) => {
                     setSearchObjects(value);
                   }}
                   value={searchObjects}
                 />
               </SecureComponent>
+            ) : (
+              <Fragment>
+                <SearchBox
+                  placeholder={`Start typing to filter versions of ${versionedFile}`}
+                  onChange={(value) => {
+                    setSearchVersions(value);
+                  }}
+                  value={searchVersions}
+                />
+              </Fragment>
             )}
           </Fragment>
         }
       />
-      <Grid>{fileMode ? <ObjectDetails /> : <ListObjects />}</Grid>
+      <Grid>
+        <ListObjects />
+      </Grid>
     </Fragment>
   );
 };
 
 const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
-  fileMode: get(objectBrowser, "fileMode", false),
+  versionsMode: get(objectBrowser, "versionsMode", false),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
   bucketInfo: buckets.bucketDetails.bucketInfo,
   searchObjects: objectBrowser.searchObjects,
+  versionedFile: objectBrowser.versionedFile,
+  searchVersions: objectBrowser.searchVersions,
 });
 
 const mapDispatchToProps = {
-  setFileModeEnabled,
+  setVersionsModeEnabled,
   setErrorSnackMessage,
   setSearchObjects,
+  setSearchVersions,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

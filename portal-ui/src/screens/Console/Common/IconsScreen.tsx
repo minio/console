@@ -570,6 +570,11 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.NewPathIcon /> <br />
+          NewPathIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.NewPoolIcon /> <br />
           NewPoolIcon
         </Grid>
@@ -832,6 +837,11 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         <Grid item xs={3} sm={2} md={1}>
           <cicons.VersionIcon /> <br />
           VersionIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.VersionsIcon /> <br />
+          VersionsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
