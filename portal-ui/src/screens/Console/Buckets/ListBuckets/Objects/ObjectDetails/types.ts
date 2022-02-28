@@ -23,6 +23,7 @@ export interface IFileInfo {
   retention_until_date?: string;
   size?: string;
   tags?: object;
+  etag?: string;
   version_id: string | null;
   is_delete_marker?: boolean;
   user_metadata?: object;

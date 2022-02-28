@@ -98,7 +98,7 @@ import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
-import MultiSelectionPanel from "./MultiSelectionPanel";
+import ActionsListSection from "./ActionsListSection";
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 
@@ -1007,6 +1007,8 @@ const ListObjects = ({
   }
 
   const selectAllItems = () => {
+    setSelectedInternalPaths(null);
+
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
       return;
@@ -1312,7 +1314,7 @@ const ListObjects = ({
                 }}
               >
                 {selectedObjects.length > 0 && (
-                  <MultiSelectionPanel
+                  <ActionsListSection
                     items={multiActionButtons}
                     title={"Selected Objects:"}
                   />
