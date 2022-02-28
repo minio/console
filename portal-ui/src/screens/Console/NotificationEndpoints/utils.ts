@@ -43,7 +43,7 @@ export const notificationTransform = (
 export const servicesList = [
   {
     actionTrigger: notifyPostgres,
-    targetTitle: "Postgres SQL",
+    targetTitle: "PostgreSQL",
     logo: "/postgres-logo.svg",
   },
   {
@@ -117,7 +117,7 @@ const commonFields = [
     label: "Comment",
     required: false,
     type: "comment",
-    placeholder: "Enter Comment",
+    placeholder: "Enter custom notes if any",
   },
 ];
 

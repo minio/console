@@ -101,7 +101,7 @@ export const fieldsConfigurations: any = {
       label: "Comment",
       tooltip: "You can add a comment to this setting",
       type: "comment",
-      placeholder: "Enter Comment",
+      placeholder: "Enter custom notes if any",
     },
   ],
   cache: [
@@ -170,7 +170,7 @@ export const fieldsConfigurations: any = {
       tooltip: "You can add a comment to this setting",
       type: "comment",
       multiline: true,
-      placeholder: "Enter Comment",
+      placeholder: "Enter custom notes if any",
     },
   ],
   compression: [
@@ -333,7 +333,7 @@ export const fieldsConfigurations: any = {
       tooltip: "You can add a comment to this setting",
       type: "comment",
       multiline: true,
-      placeholder: "Enter Comment",
+      placeholder: "Enter custom notes if any",
     },
   ],
   identity_openid: [
@@ -480,7 +480,7 @@ export const fieldsConfigurations: any = {
       label: "Comment",
       tooltip: "Optionally add a comment to this setting",
       type: "comment",
-      placeholder: "Enter Comment",
+      placeholder: "Enter custom notes if any",
     },
   ],
   logger_webhook: [
