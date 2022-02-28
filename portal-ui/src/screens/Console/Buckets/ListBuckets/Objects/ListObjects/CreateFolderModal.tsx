@@ -107,7 +107,7 @@ const CreateFolderModal = ({
   };
 
   const keyPressed = (e: any) => {
-    if(e.code === "Enter" && pathUrl !== "") {
+    if (e.code === "Enter" && pathUrl !== "") {
       createProcess();
     }
   };

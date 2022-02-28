@@ -178,7 +178,7 @@ const styles = (theme: Theme) =>
       "& .min-icon": {
         width: 20,
         height: 20,
-      }
+      },
     },
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
@@ -667,8 +667,6 @@ const ListObjects = ({
       setLoading(true);
     }
   };
-
-
 
   const handleUploadButton = (e: any) => {
     if (
@@ -1303,7 +1301,7 @@ const ListObjects = ({
                       variant="dot"
                       invisible={!rewindEnabled}
                       className={classes.badgeOverlap}
-                      sx={{height: 12}}
+                      sx={{ height: 12 }}
                     >
                       <HistoryIcon />
                     </Badge>
@@ -1369,9 +1367,9 @@ const ListObjects = ({
         </Grid>
         <Grid item xs={12}>
           <BrowserBreadcrumbs
-              bucketName={bucketName}
-              internalPaths={pageTitle}
-              existingFiles={records || []}
+            bucketName={bucketName}
+            internalPaths={pageTitle}
+            existingFiles={records || []}
           />
         </Grid>
         <div

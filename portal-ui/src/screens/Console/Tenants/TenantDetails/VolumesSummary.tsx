@@ -22,10 +22,9 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import {
-  actionsTray,
   containerForHeader,
-  searchField,
   tableStyles,
+  tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IStoragePVCs } from "../../Storage/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -51,11 +50,7 @@ interface ITenantVolumesProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    tableWrapper: {
-      height: "450px",
-    },
-    ...actionsTray,
-    ...searchField,
+    ...tenantDetailsStyles,
     ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -106,7 +101,7 @@ const TenantVolumes = ({
   };
 
   const filteredRecords: IStoragePVCs[] = records.filter((elementItem) =>
-    elementItem.name.includes(filter)
+    elementItem.name.toLowerCase().includes(filter.toLowerCase())
   );
 
   const PVCViewAction = (PVC: IPodListElement) => {
@@ -156,9 +151,6 @@ const TenantVolumes = ({
           }}
           variant="standard"
         />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper

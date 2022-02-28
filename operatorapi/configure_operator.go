@@ -140,7 +140,7 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 // proxyMiddleware adds the proxy capability
 func proxyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, "/api/proxy") {
+		if strings.HasPrefix(r.URL.Path, "/api/proxy") || strings.HasPrefix(r.URL.Path, "/api/hop") {
 			serveProxy(w, r)
 		} else {
 			next.ServeHTTP(w, r)

@@ -297,7 +297,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           id="comment"
           name="comment"
           label="Comment"
-          placeholder="Enter Comment"
+          placeholder="Enter custom notes if any"
           value={comment}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setComment(e.target.value);
