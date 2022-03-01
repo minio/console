@@ -30,10 +30,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// EncryptionConfiguration encryption configuration
+// EncryptionConfigurationResponse encryption configuration response
 //
-// swagger:model encryptionConfiguration
-type EncryptionConfiguration struct {
+// swagger:model encryptionConfigurationResponse
+type EncryptionConfigurationResponse struct {
 	MetadataFields
 
 	// aws
@@ -42,36 +42,33 @@ type EncryptionConfiguration struct {
 	// azure
 	Azure *AzureConfiguration `json:"azure,omitempty"`
 
-	// client
-	Client *KeyPairConfiguration `json:"client,omitempty"`
-
 	// gcp
 	Gcp *GcpConfiguration `json:"gcp,omitempty"`
 
 	// gemalto
-	Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
+	Gemalto *GemaltoConfigurationResponse `json:"gemalto,omitempty"`
 
 	// image
 	Image string `json:"image,omitempty"`
 
+	// mtls client
+	MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
+
 	// replicas
 	Replicas string `json:"replicas,omitempty"`
-
-	// secrets to be deleted
-	SecretsToBeDeleted []string `json:"secretsToBeDeleted"`
 
 	// security context
 	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
 	// server
-	Server *KeyPairConfiguration `json:"server,omitempty"`
+	Server *CertificateInfo `json:"server,omitempty"`
 
 	// vault
-	Vault *VaultConfiguration `json:"vault,omitempty"`
+	Vault *VaultConfigurationResponse `json:"vault,omitempty"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
-func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
+func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 	// AO0
 	var aO0 MetadataFields
 	if err := swag.ReadJSON(raw, &aO0); err != nil {
@@ -85,23 +82,21 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 
 		Azure *AzureConfiguration `json:"azure,omitempty"`
 
-		Client *KeyPairConfiguration `json:"client,omitempty"`
-
 		Gcp *GcpConfiguration `json:"gcp,omitempty"`
 
-		Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
+		Gemalto *GemaltoConfigurationResponse `json:"gemalto,omitempty"`
 
 		Image string `json:"image,omitempty"`
 
-		Replicas string `json:"replicas,omitempty"`
+		MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
 
-		SecretsToBeDeleted []string `json:"secretsToBeDeleted"`
+		Replicas string `json:"replicas,omitempty"`
 
 		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
-		Server *KeyPairConfiguration `json:"server,omitempty"`
+		Server *CertificateInfo `json:"server,omitempty"`
 
-		Vault *VaultConfiguration `json:"vault,omitempty"`
+		Vault *VaultConfigurationResponse `json:"vault,omitempty"`
 	}
 	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
 		return err
@@ -111,17 +106,15 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 
 	m.Azure = dataAO1.Azure
 
-	m.Client = dataAO1.Client
-
 	m.Gcp = dataAO1.Gcp
 
 	m.Gemalto = dataAO1.Gemalto
 
 	m.Image = dataAO1.Image
 
-	m.Replicas = dataAO1.Replicas
+	m.MtlsClient = dataAO1.MtlsClient
 
-	m.SecretsToBeDeleted = dataAO1.SecretsToBeDeleted
+	m.Replicas = dataAO1.Replicas
 
 	m.SecurityContext = dataAO1.SecurityContext
 
@@ -133,7 +126,7 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object to a JSON structure
-func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
+func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
 	aO0, err := swag.WriteJSON(m.MetadataFields)
@@ -146,30 +139,26 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 
 		Azure *AzureConfiguration `json:"azure,omitempty"`
 
-		Client *KeyPairConfiguration `json:"client,omitempty"`
-
 		Gcp *GcpConfiguration `json:"gcp,omitempty"`
 
-		Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
+		Gemalto *GemaltoConfigurationResponse `json:"gemalto,omitempty"`
 
 		Image string `json:"image,omitempty"`
 
-		Replicas string `json:"replicas,omitempty"`
+		MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
 
-		SecretsToBeDeleted []string `json:"secretsToBeDeleted"`
+		Replicas string `json:"replicas,omitempty"`
 
 		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
-		Server *KeyPairConfiguration `json:"server,omitempty"`
+		Server *CertificateInfo `json:"server,omitempty"`
 
-		Vault *VaultConfiguration `json:"vault,omitempty"`
+		Vault *VaultConfigurationResponse `json:"vault,omitempty"`
 	}
 
 	dataAO1.Aws = m.Aws
 
 	dataAO1.Azure = m.Azure
-
-	dataAO1.Client = m.Client
 
 	dataAO1.Gcp = m.Gcp
 
@@ -177,9 +166,9 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 
 	dataAO1.Image = m.Image
 
-	dataAO1.Replicas = m.Replicas
+	dataAO1.MtlsClient = m.MtlsClient
 
-	dataAO1.SecretsToBeDeleted = m.SecretsToBeDeleted
+	dataAO1.Replicas = m.Replicas
 
 	dataAO1.SecurityContext = m.SecurityContext
 
@@ -195,8 +184,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(_parts...), nil
 }
 
-// Validate validates this encryption configuration
-func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
+// Validate validates this encryption configuration response
+func (m *EncryptionConfigurationResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	// validation for a type composition with MetadataFields
@@ -212,15 +201,15 @@ func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateClient(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateGcp(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateGemalto(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMtlsClient(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -242,7 +231,7 @@ func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateAws(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateAws(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Aws) { // not required
 		return nil
@@ -262,7 +251,7 @@ func (m *EncryptionConfiguration) validateAws(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateAzure(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateAzure(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Azure) { // not required
 		return nil
@@ -282,27 +271,7 @@ func (m *EncryptionConfiguration) validateAzure(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateClient(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Client) { // not required
-		return nil
-	}
-
-	if m.Client != nil {
-		if err := m.Client.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("client")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("client")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *EncryptionConfiguration) validateGcp(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateGcp(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Gcp) { // not required
 		return nil
@@ -322,7 +291,7 @@ func (m *EncryptionConfiguration) validateGcp(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateGemalto(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateGemalto(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Gemalto) { // not required
 		return nil
@@ -342,7 +311,27 @@ func (m *EncryptionConfiguration) validateGemalto(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateSecurityContext(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateMtlsClient(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MtlsClient) { // not required
+		return nil
+	}
+
+	if m.MtlsClient != nil {
+		if err := m.MtlsClient.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mtls_client")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mtls_client")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfigurationResponse) validateSecurityContext(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.SecurityContext) { // not required
 		return nil
@@ -362,7 +351,7 @@ func (m *EncryptionConfiguration) validateSecurityContext(formats strfmt.Registr
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateServer(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateServer(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Server) { // not required
 		return nil
@@ -382,7 +371,7 @@ func (m *EncryptionConfiguration) validateServer(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *EncryptionConfiguration) validateVault(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateVault(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Vault) { // not required
 		return nil
@@ -402,8 +391,8 @@ func (m *EncryptionConfiguration) validateVault(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this encryption configuration based on the context it is used
-func (m *EncryptionConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this encryption configuration response based on the context it is used
+func (m *EncryptionConfigurationResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	// validation for a type composition with MetadataFields
@@ -419,15 +408,15 @@ func (m *EncryptionConfiguration) ContextValidate(ctx context.Context, formats s
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateClient(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateGcp(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.contextValidateGemalto(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMtlsClient(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -449,7 +438,7 @@ func (m *EncryptionConfiguration) ContextValidate(ctx context.Context, formats s
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateAws(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateAws(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Aws != nil {
 		if err := m.Aws.ContextValidate(ctx, formats); err != nil {
@@ -465,7 +454,7 @@ func (m *EncryptionConfiguration) contextValidateAws(ctx context.Context, format
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateAzure(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateAzure(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Azure != nil {
 		if err := m.Azure.ContextValidate(ctx, formats); err != nil {
@@ -481,23 +470,7 @@ func (m *EncryptionConfiguration) contextValidateAzure(ctx context.Context, form
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateClient(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Client != nil {
-		if err := m.Client.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("client")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("client")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *EncryptionConfiguration) contextValidateGcp(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateGcp(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Gcp != nil {
 		if err := m.Gcp.ContextValidate(ctx, formats); err != nil {
@@ -513,7 +486,7 @@ func (m *EncryptionConfiguration) contextValidateGcp(ctx context.Context, format
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateGemalto(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateGemalto(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Gemalto != nil {
 		if err := m.Gemalto.ContextValidate(ctx, formats); err != nil {
@@ -529,7 +502,23 @@ func (m *EncryptionConfiguration) contextValidateGemalto(ctx context.Context, fo
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateMtlsClient(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.MtlsClient != nil {
+		if err := m.MtlsClient.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mtls_client")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mtls_client")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfigurationResponse) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.SecurityContext != nil {
 		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
@@ -545,7 +534,7 @@ func (m *EncryptionConfiguration) contextValidateSecurityContext(ctx context.Con
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateServer(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateServer(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Server != nil {
 		if err := m.Server.ContextValidate(ctx, formats); err != nil {
@@ -561,7 +550,7 @@ func (m *EncryptionConfiguration) contextValidateServer(ctx context.Context, for
 	return nil
 }
 
-func (m *EncryptionConfiguration) contextValidateVault(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateVault(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Vault != nil {
 		if err := m.Vault.ContextValidate(ctx, formats); err != nil {
@@ -578,7 +567,7 @@ func (m *EncryptionConfiguration) contextValidateVault(ctx context.Context, form
 }
 
 // MarshalBinary interface implementation
-func (m *EncryptionConfiguration) MarshalBinary() ([]byte, error) {
+func (m *EncryptionConfigurationResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -586,8 +575,8 @@ func (m *EncryptionConfiguration) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *EncryptionConfiguration) UnmarshalBinary(b []byte) error {
-	var res EncryptionConfiguration
+func (m *EncryptionConfigurationResponse) UnmarshalBinary(b []byte) error {
+	var res EncryptionConfigurationResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -177,8 +177,14 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPITenantAddPoolHandler: operator_api.TenantAddPoolHandlerFunc(func(params operator_api.TenantAddPoolParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantAddPool has not yet been implemented")
 		}),
+		OperatorAPITenantDeleteEncryptionHandler: operator_api.TenantDeleteEncryptionHandlerFunc(func(params operator_api.TenantDeleteEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.TenantDeleteEncryption has not yet been implemented")
+		}),
 		OperatorAPITenantDetailsHandler: operator_api.TenantDetailsHandlerFunc(func(params operator_api.TenantDetailsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantDetails has not yet been implemented")
+		}),
+		OperatorAPITenantEncryptionInfoHandler: operator_api.TenantEncryptionInfoHandlerFunc(func(params operator_api.TenantEncryptionInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.TenantEncryptionInfo has not yet been implemented")
 		}),
 		OperatorAPITenantSecurityHandler: operator_api.TenantSecurityHandlerFunc(func(params operator_api.TenantSecurityParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantSecurity has not yet been implemented")
@@ -323,8 +329,12 @@ type OperatorAPI struct {
 	OperatorAPISubscriptionValidateHandler operator_api.SubscriptionValidateHandler
 	// OperatorAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
 	OperatorAPITenantAddPoolHandler operator_api.TenantAddPoolHandler
+	// OperatorAPITenantDeleteEncryptionHandler sets the operation handler for the tenant delete encryption operation
+	OperatorAPITenantDeleteEncryptionHandler operator_api.TenantDeleteEncryptionHandler
 	// OperatorAPITenantDetailsHandler sets the operation handler for the tenant details operation
 	OperatorAPITenantDetailsHandler operator_api.TenantDetailsHandler
+	// OperatorAPITenantEncryptionInfoHandler sets the operation handler for the tenant encryption info operation
+	OperatorAPITenantEncryptionInfoHandler operator_api.TenantEncryptionInfoHandler
 	// OperatorAPITenantSecurityHandler sets the operation handler for the tenant security operation
 	OperatorAPITenantSecurityHandler operator_api.TenantSecurityHandler
 	// OperatorAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
@@ -532,8 +542,14 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPITenantAddPoolHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantAddPoolHandler")
 	}
+	if o.OperatorAPITenantDeleteEncryptionHandler == nil {
+		unregistered = append(unregistered, "operator_api.TenantDeleteEncryptionHandler")
+	}
 	if o.OperatorAPITenantDetailsHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantDetailsHandler")
+	}
+	if o.OperatorAPITenantEncryptionInfoHandler == nil {
+		unregistered = append(unregistered, "operator_api.TenantEncryptionInfoHandler")
 	}
 	if o.OperatorAPITenantSecurityHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantSecurityHandler")
@@ -803,10 +819,18 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = operator_api.NewTenantAddPool(o.context, o.OperatorAPITenantAddPoolHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}/encryption"] = operator_api.NewTenantDeleteEncryption(o.context, o.OperatorAPITenantDeleteEncryptionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = operator_api.NewTenantDetails(o.context, o.OperatorAPITenantDetailsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/encryption"] = operator_api.NewTenantEncryptionInfo(o.context, o.OperatorAPITenantEncryptionInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

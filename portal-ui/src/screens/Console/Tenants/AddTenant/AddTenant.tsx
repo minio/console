@@ -515,7 +515,7 @@ const AddTenant = ({
               };
             }
             let vaultTLS = null;
-            if (vaultKeyPair || vaultCA) {
+            if (vaultKeyPair || vaultCAInsert) {
               vaultTLS = {
                 tls: {
                   ...vaultKeyPair,

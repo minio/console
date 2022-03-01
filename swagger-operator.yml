@@ -844,6 +844,27 @@ paths:
         - OperatorAPI
 
   /namespaces/{namespace}/tenants/{tenant}/encryption:
+    delete:
+      summary: Tenant Delete Encryption
+      operationId: TenantDeleteEncryption
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
     put:
       summary: Tenant Update Encryption
       operationId: TenantUpdateEncryption
@@ -864,6 +885,30 @@ paths:
       responses:
         201:
           description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+    get:
+      summary: Tenant Encryption Info
+      operationId: TenantEncryptionInfo
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/encryptionConfigurationResponse"
         default:
           description: Generic error response.
           schema:
@@ -1622,6 +1667,10 @@ definitions:
             type: string
           replicas:
             type: string
+          secretsToBeDeleted:
+            type: array
+            items:
+              type: string
           server:
             type: object
             $ref: "#/definitions/keyPairConfiguration"
@@ -1637,6 +1686,40 @@ definitions:
           vault:
             type: object
             $ref: "#/definitions/vaultConfiguration"
+          gcp:
+            type: object
+            $ref: "#/definitions/gcpConfiguration"
+          azure:
+            type: object
+            $ref: "#/definitions/azureConfiguration"
+          securityContext:
+            type: object
+            $ref: "#/definitions/securityContext"
+
+  encryptionConfigurationResponse:
+    allOf:
+      - $ref: "#/definitions/metadataFields"
+      - type: object
+        properties:
+          image:
+            type: string
+          replicas:
+            type: string
+          server:
+            type: object
+            $ref: "#/definitions/certificateInfo"
+          mtls_client:
+            type: object
+            $ref: "#/definitions/certificateInfo"
+          gemalto:
+            type: object
+            $ref: "#/definitions/gemaltoConfigurationResponse"
+          aws:
+            type: object
+            $ref: "#/definitions/awsConfiguration"
+          vault:
+            type: object
+            $ref: "#/definitions/vaultConfigurationResponse"
           gcp:
             type: object
             $ref: "#/definitions/gcpConfiguration"
@@ -1691,6 +1774,51 @@ definitions:
             type: string
           ca:
             type: string
+
+  vaultConfigurationResponse:
+    type: object
+    required:
+      - endpoint
+      - approle
+    properties:
+      endpoint:
+        type: string
+      engine:
+        type: string
+      namespace:
+        type: string
+      prefix:
+        type: string
+      approle:
+        type: object
+        required:
+          - id
+          - secret
+        properties:
+          engine:
+            type: string
+          id:
+            type: string
+          secret:
+            type: string
+          retry:
+            type: integer
+            format: int64
+      status:
+        type: object
+        properties:
+          ping:
+            type: integer
+            format: int64
+      tls:
+        type: object
+        properties:
+          crt:
+            type: object
+            $ref: "#/definitions/certificateInfo"
+          ca:
+            type: object
+            $ref: "#/definitions/certificateInfo"
 
   awsConfiguration:
     type: object
@@ -1756,6 +1884,41 @@ definitions:
             properties:
               ca:
                 type: string
+
+  gemaltoConfigurationResponse:
+    type: object
+    required:
+      - keysecure
+    properties:
+      keysecure:
+        type: object
+        required:
+          - endpoint
+          - credentials
+        properties:
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            required:
+              - token
+              - domain
+            properties:
+              token:
+                type: string
+              domain:
+                type: string
+              retry:
+                type: integer
+                format: int64
+          tls:
+            type: object
+            required:
+              - ca
+            properties:
+              ca:
+                type: object
+                $ref: "#/definitions/certificateInfo"
 
   gcpConfiguration:
     type: object
