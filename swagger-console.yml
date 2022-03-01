@@ -2793,6 +2793,8 @@ definitions:
         type: string
       retention_until_date:
         type: string
+      etag:
+        type: string
       tags:
         type: object
         additionalProperties:

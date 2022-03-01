@@ -1332,7 +1332,11 @@ export const detailsPanel: any = {
     fontSize: 14,
     fontWeight: "bold",
     color: "#000",
-    padding: "12px 22px 8px 22px",
+    padding: "12px 30px 8px 22px",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    alignItems: "center",
   },
   objectActions: {
     backgroundColor: "#F8F8F8",
