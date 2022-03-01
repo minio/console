@@ -113,7 +113,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -141,7 +140,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -169,7 +167,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -197,7 +194,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -225,7 +221,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -253,7 +248,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -281,7 +275,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -304,12 +297,19 @@ jobs:
         run: |
           make test-pkg
 
+      - uses: actions/cache@v2
+        id: coverage-cache-pkg
+        name: Coverage Cache Pkg
+        with:
+          path: |
+            ./pkg/coverage/
+          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
   test-restapi-on-go:
     name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -332,12 +332,19 @@ jobs:
         run: |
           make test
 
+      - uses: actions/cache@v2
+        id: coverage-cache-restapi
+        name: Coverage Cache RestAPI
+        with:
+          path: |
+            ./restapi/coverage/
+          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+
   integration-tests:
     name: Integration Tests with Latest Distributed MinIO
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ubuntu-latest
 
     strategy:
@@ -383,12 +390,19 @@ jobs:
           echo $VERSION;
           make test-integration MINIO_VERSION=$VERSION;
 
+      - uses: actions/cache@v2
+        id: coverage-cache
+        name: Coverage Cache
+        with:
+          path: |
+            ./integration/coverage/
+          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
+
   react-tests:
     name: React Tests
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -404,7 +418,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -483,7 +496,6 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
-      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -558,6 +570,9 @@ jobs:
 
   coverage:
     name: "Coverage Limit Check"
+    needs:
+      - integration-tests
+      - test-restapi-on-go
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -587,26 +602,43 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - uses: actions/cache@v2
+        id: coverage-cache
+        name: Coverage Cache
+        with:
+          path: |
+            ./integration/coverage/
+          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
+
+      - uses: actions/cache@v2
+        id: coverage-cache-restapi
+        name: Coverage Cache RestAPI
+        with:
+          path: |
+            ./restapi/coverage/
+          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+
+      - uses: actions/cache@v2
+        id: coverage-cache-pkg
+        name: Coverage Cache Pkg
+        with:
+          path: |
+            ./pkg/coverage/
+          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
       - name: Get coverage
         run: |
-          cd restapi
-          go test -coverprofile=coverage.out
-          cd ../integration
-          go test -coverpkg=../restapi -c -tags testrunmain .
-          docker network create --subnet=173.18.0.0/29 mynet123
-          docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 "quay.io/minio/minio:latest" server /data{1...4}
-          docker run --net=mynet123 --ip=173.18.0.3 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres
-          ./integration.test -test.run "^Test*" -test.coverprofile=system.out
           echo "change directory to gocovmerge"
-          cd ../gocovmerge
+          cd gocovmerge
           echo "download golang x tools"
           go mod download golang.org/x/tools
           echo "go mod tidy compat mode"
           go mod tidy -compat=1.17
           echo "go build gocoverage.go"
-          go build gocovmerge.go 
+          go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/system.out ../restapi/coverage.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
