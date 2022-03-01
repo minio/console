@@ -379,8 +379,8 @@ export const objectBrowserCommon = {
       },
     },
     "& .min-icon": {
-      width: 14,
-      minWidth: 14,
+      width: 16,
+      minWidth: 16,
     },
   },
   smallLabel: {
@@ -404,7 +404,6 @@ export const objectBrowserCommon = {
     textAlign: "left" as const,
     marginLeft: 15,
     marginRight: 10,
-    lineHeight: 35,
   },
 };
 
@@ -1359,6 +1358,20 @@ export const detailsPanel: any = {
     },
   },
 };
+
+export const objectBrowserExtras = {
+  listIcon: {
+    display: "block",
+    marginTop: "-10px",
+    "& .min-icon": {
+      width: 20,
+      height: 20,
+    },
+  },
+  titleSpacer: {
+    marginLeft: 10,
+  },
+}
 
 // These classes are meant to be used as React.CSSProperties for TableWrapper
 export const TableRowPredefStyles: any = {

@@ -43,7 +43,6 @@ import TableWrapper, {
 import {
   decodeFileName,
   encodeFileName,
-  niceBytes,
   niceBytesInt,
 } from "../../../../../../common/utils";
 
@@ -51,19 +50,19 @@ import {
   actionsTray,
   containerForHeader,
   objectBrowserCommon,
+  objectBrowserExtras,
   searchField,
   tableStyles,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { Badge, Typography } from "@mui/material";
-import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
   completeObject,
   openList,
   resetRewind,
-  setFileModeEnabled,
   setNewObject,
   setSearchObjects,
+  setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
@@ -89,7 +88,6 @@ import {
 } from "../../../../../../common/SecureComponent";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
-import { displayName } from "./utils";
 import {
   BucketsIcon,
   DownloadIcon,
@@ -101,6 +99,8 @@ import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import MultiSelectionPanel from "./MultiSelectionPanel";
+import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
+import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -169,17 +169,7 @@ const styles = (theme: Theme) =>
       borderBottom: 0,
       padding: "0.8rem 15px 0",
     },
-    titleSpacer: {
-      marginLeft: 10,
-    },
-    listIcon: {
-      display: "block",
-      marginTop: "-10px",
-      "& .min-icon": {
-        width: 20,
-        height: 20,
-      },
-    },
+    ...objectBrowserExtras,
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -216,16 +206,17 @@ interface IListObjectsProps {
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
-  setFileModeEnabled: typeof setFileModeEnabled;
   loadingBucket: boolean;
   setBucketInfo: typeof setBucketInfo;
   bucketInfo: BucketInfo | null;
+  versionsMode: boolean;
   setBucketDetailsLoad: typeof setBucketDetailsLoad;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   openList: typeof openList;
   setSearchObjects: typeof setSearchObjects;
+  setVersionsModeEnabled: typeof setVersionsModeEnabled;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -263,7 +254,6 @@ const ListObjects = ({
   setSnackBarMessage,
   setErrorSnackMessage,
   resetRewind,
-  setFileModeEnabled,
   setBucketDetailsLoad,
   loadingBucket,
   setBucketInfo,
@@ -273,7 +263,9 @@ const ListObjects = ({
   completeObject,
   setSearchObjects,
   searchObjects,
+  versionsMode,
   openList,
+  setVersionsModeEnabled,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -546,14 +538,14 @@ const ListObjects = ({
                   .then((res: RewindObjectList) => {
                     //It is a file since it has elements in the object, setting file flag and waiting for component mount
                     if (res.objects === null) {
-                      setFileModeEnabled(true);
+                      //setFileModeEnabled(true);
                       setLoadingRewind(false);
                       setLoading(false);
                     } else {
                       // It is a folder, we remove loader
                       setLoadingRewind(false);
                       setLoading(false);
-                      setFileModeEnabled(false);
+                      //setFileModeEnabled(false);
                     }
                   })
                   .catch((err: ErrorResponseHandler) => {
@@ -573,7 +565,7 @@ const ListObjects = ({
                     //It is a file since it has elements in the object, setting file flag and waiting for component mount
                     if (!res.objects) {
                       // It is a folder, we remove loader
-                      setFileModeEnabled(false);
+                      //setFileModeEnabled(false);
                       setLoading(false);
                     } else {
                       // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
@@ -594,9 +586,9 @@ const ListObjects = ({
                           res.objects[0].name.endsWith("/")) ||
                         !found
                       ) {
-                        setFileModeEnabled(false);
+                        //setFileModeEnabled(false);
                       } else {
-                        setFileModeEnabled(true);
+                        //setFileModeEnabled(true);
                       }
 
                       setLoading(false);
@@ -608,7 +600,7 @@ const ListObjects = ({
                   });
               }
             } else {
-              setFileModeEnabled(false);
+              //setFileModeEnabled(false);
               setLoading(false);
             }
           })
@@ -629,7 +621,6 @@ const ListObjects = ({
     rewindEnabled,
     rewindDate,
     internalPaths,
-    setFileModeEnabled,
     bucketInfo,
     displayListObjects,
   ]);
@@ -682,24 +673,6 @@ const ListObjects = ({
       newFiles.push(e.target.files[i]);
     }
     uploadObject(newFiles, "");
-  };
-
-  const displayParsedDate = (object: BucketObject) => {
-    if (object.name.endsWith("/")) {
-      return "";
-    }
-    return <reactMoment.default>{object.last_modified}</reactMoment.default>;
-  };
-
-  const displayNiceBytes = (object: BucketObject) => {
-    if (object.name.endsWith("/")) {
-      return "";
-    }
-    return niceBytes(String(object.size));
-  };
-
-  const displayDeleteFlag = (state: boolean) => {
-    return state ? "Yes" : "No";
   };
 
   const downloadObject = (object: BucketObject | RewindObject) => {
@@ -969,15 +942,6 @@ const ListObjects = ({
     setSelectedPreview(null);
   };
 
-  const tableActions: ItemActions[] = [
-    {
-      type: "view",
-      label: "View",
-      onClick: openPath,
-      sendOnlyId: true,
-    },
-  ];
-
   const filteredRecords = records.filter((b: BucketObject) => {
     if (searchObjects === "") {
       return true;
@@ -1027,67 +991,6 @@ const ListObjects = ({
     setLoading(true);
   };
 
-  const renderName = (element: string) => {
-    return displayName(element);
-  };
-
-  const listModeColumns = [
-    {
-      label: "Name",
-      elementKey: "name",
-      renderFunction: renderName,
-      enableSort: true,
-    },
-    {
-      label: "Last Modified",
-      elementKey: "last_modified",
-      renderFunction: displayParsedDate,
-      renderFullObject: true,
-      enableSort: true,
-    },
-    {
-      label: "Size",
-      elementKey: "size",
-      renderFunction: displayNiceBytes,
-      renderFullObject: true,
-      width: 60,
-      contentTextAlign: "right",
-      enableSort: true,
-    },
-  ];
-
-  const rewindModeColumns = [
-    {
-      label: "Name",
-      elementKey: "name",
-      renderFunction: renderName,
-      enableSort: true,
-    },
-    {
-      label: "Object Date",
-      elementKey: "last_modified",
-      renderFunction: displayParsedDate,
-      renderFullObject: true,
-      enableSort: true,
-    },
-    {
-      label: "Size",
-      elementKey: "size",
-      renderFunction: displayNiceBytes,
-      renderFullObject: true,
-      width: 60,
-      contentTextAlign: "right",
-      enableSort: true,
-    },
-    {
-      label: "Deleted",
-      elementKey: "delete_flag",
-      renderFunction: displayDeleteFlag,
-      width: 60,
-      contentTextAlign: "center",
-    },
-  ];
-
   const pageTitle = decodeFileName(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
 
@@ -1135,6 +1038,15 @@ const ListObjects = ({
   if (currentPath.length > 0) {
     uploadPath = uploadPath.concat(currentPath);
   }
+
+  const tableActions: ItemActions[] = [
+    {
+      type: "view",
+      label: "View",
+      onClick: openPath,
+      sendOnlyId: true,
+    },
+  ];
 
   const multiActionButtons = [
     {
@@ -1345,40 +1257,58 @@ const ListObjects = ({
         >
           <input {...getInputProps()} />
           <Grid item xs={12} className={classes.tableBlock}>
+            {versionsMode ? (
+              <Fragment>
+                {selectedInternalPaths !== null && (
+                  <VersionsNavigator
+                    internalPaths={selectedInternalPaths}
+                    bucketName={bucketName}
+                  />
+                )}
+              </Fragment>
+            ) : (
+              <SecureComponent
+                scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+                resource={bucketName}
+                errorProps={{ disabled: true }}
+              >
+                <TableWrapper
+                  itemActions={tableActions}
+                  columns={rewindEnabled ? rewindModeColumns : listModeColumns}
+                  isLoading={rewindEnabled ? loadingRewind : loading}
+                  loadingMessage={loadingMessage}
+                  entityName="Objects"
+                  idField="name"
+                  records={payload}
+                  customPaperHeight={`${classes.browsePaper} ${
+                    detailsOpen ? "actionsPanelOpen" : ""
+                  }`}
+                  selectedItems={selectedObjects}
+                  onSelect={selectListObjects}
+                  customEmptyMessage={`This location is empty${
+                    !rewindEnabled ? ", please try uploading a new file" : ""
+                  }`}
+                  sortConfig={{
+                    currentSort: currentSortField,
+                    currentDirection: sortDirection,
+                    triggerSort: sortChange,
+                  }}
+                  onSelectAll={selectAllItems}
+                />
+              </SecureComponent>
+            )}
             <SecureComponent
               scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
               resource={bucketName}
               errorProps={{ disabled: true }}
             >
-              <TableWrapper
-                itemActions={tableActions}
-                columns={rewindEnabled ? rewindModeColumns : listModeColumns}
-                isLoading={rewindEnabled ? loadingRewind : loading}
-                loadingMessage={loadingMessage}
-                entityName="Objects"
-                idField="name"
-                records={payload}
-                customPaperHeight={`${classes.browsePaper} ${
-                  detailsOpen ? "actionsPanelOpen" : ""
-                }`}
-                selectedItems={selectedObjects}
-                onSelect={selectListObjects}
-                customEmptyMessage={`This location is empty${
-                  !rewindEnabled ? ", please try uploading a new file" : ""
-                }`}
-                sortConfig={{
-                  currentSort: currentSortField,
-                  currentDirection: sortDirection,
-                  triggerSort: sortChange,
-                }}
-                onSelectAll={selectAllItems}
-              />
               <DetailsListPanel
                 open={detailsOpen}
                 closePanel={() => {
                   setDetailsOpen(false);
                   setSelectedInternalPaths(null);
                   setSelectedObjects([]);
+                  setVersionsModeEnabled(false);
                 }}
               >
                 {selectedObjects.length > 0 && (
@@ -1408,6 +1338,7 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
   rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
+  versionsMode: get(objectBrowser, "versionsMode", false),
   loadingBucket: buckets.bucketDetails.loadingBucket,
   bucketInfo: buckets.bucketDetails.bucketInfo,
   searchObjects: objectBrowser.searchObjects,
@@ -1416,7 +1347,6 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
 const mapDispatchToProps = {
   setSnackBarMessage,
   setErrorSnackMessage,
-  setFileModeEnabled,
   resetRewind,
   setBucketDetailsLoad,
   setBucketInfo,
@@ -1425,6 +1355,7 @@ const mapDispatchToProps = {
   completeObject,
   openList,
   setSearchObjects,
+  setVersionsModeEnabled,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

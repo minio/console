@@ -16,7 +16,7 @@
 import {
   REWIND_SET_ENABLE,
   REWIND_RESET_REWIND,
-  REWIND_FILE_MODE_ENABLED,
+  BUCKET_BROWSER_VERSIONS_MODE_ENABLED,
   ObjectBrowserActionTypes,
   OBJECT_MANAGER_NEW_OBJECT,
   OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT,
@@ -27,6 +27,8 @@ import {
   OBJECT_MANAGER_CLOSE_LIST,
   OBJECT_MANAGER_OPEN_LIST,
   OBJECT_MANAGER_SET_SEARCH_OBJECT,
+  BUCKET_BROWSER_VERSIONS_SET_SEARCH,
+  BUCKET_BROWSER_SET_SELECTED_VERSION,
 } from "./actions";
 
 export interface Route {
@@ -42,10 +44,13 @@ export interface RewindItem {
 }
 
 export interface ObjectBrowserState {
-  fileMode: boolean;
   rewind: RewindItem;
   objectManager: ObjectManager;
   searchObjects: string;
+  versionsMode: boolean;
+  versionedFile: string;
+  searchVersions: string;
+  selectedVersion: string;
 }
 
 export interface ObjectBrowserReducer {
@@ -74,7 +79,7 @@ const defaultRewind = {
 };
 
 const initialState: ObjectBrowserState = {
-  fileMode: false,
+  versionsMode: false,
   rewind: {
     ...defaultRewind,
   },
@@ -83,6 +88,9 @@ const initialState: ObjectBrowserState = {
     managerOpen: false,
   },
   searchObjects: "",
+  versionedFile: "",
+  searchVersions: "",
+  selectedVersion: "",
 };
 
 export function objectBrowserReducer(
@@ -105,8 +113,15 @@ export function objectBrowserReducer(
         dateToRewind: null,
       };
       return { ...state, rewind: resetItem };
-    case REWIND_FILE_MODE_ENABLED:
-      return { ...state, fileMode: action.status };
+    case BUCKET_BROWSER_VERSIONS_MODE_ENABLED:
+      const objectN = !action.status ? "" : action.objectName;
+
+      return {
+        ...state,
+        versionsMode: action.status,
+        versionedFile: objectN,
+        selectedVersion: "",
+      };
     case OBJECT_MANAGER_NEW_OBJECT:
       const cloneObjects = [
         action.newObject,
@@ -219,6 +234,16 @@ export function objectBrowserReducer(
       return {
         ...state,
         searchObjects: action.searchString,
+      };
+    case BUCKET_BROWSER_VERSIONS_SET_SEARCH:
+      return {
+        ...state,
+        searchVersions: action.searchString,
+      };
+    case BUCKET_BROWSER_SET_SELECTED_VERSION:
+      return {
+        ...state,
+        selectedVersion: action.selectedVersion,
       };
     default:
       return state;
