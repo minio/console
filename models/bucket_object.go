@@ -37,6 +37,9 @@ type BucketObject struct {
 	// content type
 	ContentType string `json:"content_type,omitempty"`
 
+	// etag
+	Etag string `json:"etag,omitempty"`
+
 	// expiration
 	Expiration string `json:"expiration,omitempty"`
 

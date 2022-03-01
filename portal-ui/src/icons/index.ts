@@ -169,3 +169,8 @@ export { default as LockIcon } from "./LockIcon";
 export { default as BackCaretIcon } from "./BackCaretIcon";
 export { default as VersionsIcon } from "./VersionsIcon";
 export { default as NewPathIcon } from "./NewPathIcon";
+export { default as ObjectInfoIcon } from "./ObjectInfoIcon";
+export { default as MetadataIcon } from "./MetadataIcon";
+export { default as LegalHoldIcon } from "./LegalHoldIcon";
+export { default as RetentionIcon } from "./RetentionIcon";
+export { default as TagsIcon } from "./TagsIcon";
