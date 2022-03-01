@@ -2696,3 +2696,146 @@ func TestDeleteBucketEvent(t *testing.T) {
 		)
 	}
 }
+
+func SetMultiBucketReplication(accessKey string, secretKey string, targetURL string, region string, originBucket string, destinationBucket string, syncMode string, bandwidth int, healthCheckPeriod int, prefix string, tags string, replicateDeleteMarkers bool, replicateDeletes bool, priority int, storageClass string, replicateMetadata bool) (*http.Response, error) {
+	/*
+		Helper function
+		URL: /buckets-replication
+		HTTP Verb: POST
+		Body:
+		{
+			"accessKey":"Q3AM3UQ867SPQQA43P2F",
+			"secretKey":"zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
+			"targetURL":"https://play.min.io",
+			"region":"",
+			"bucketsRelation":[
+				{
+					"originBucket":"test",
+					"destinationBucket":"versioningenabled"
+				}
+			],
+			"syncMode":"async",
+			"bandwidth":107374182400,
+			"healthCheckPeriod":60,
+			"prefix":"",
+			"tags":"",
+			"replicateDeleteMarkers":true,
+			"replicateDeletes":true,
+			"priority":1,
+			"storageClass":"",
+			"replicateMetadata":true
+		}
+	*/
+	bucketsRelationArray := make([]map[string]interface{}, 1)
+	bucketsRelationIndex0 := map[string]interface{}{
+		"originBucket":      originBucket,
+		"destinationBucket": destinationBucket,
+	}
+	bucketsRelationArray[0] = bucketsRelationIndex0
+	requestDataAdd := map[string]interface{}{
+		"accessKey":              accessKey,
+		"secretKey":              secretKey,
+		"targetURL":              targetURL,
+		"region":                 region,
+		"bucketsRelation":        bucketsRelationArray,
+		"syncMode":               syncMode,
+		"bandwidth":              bandwidth,
+		"healthCheckPeriod":      healthCheckPeriod,
+		"prefix":                 prefix,
+		"tags":                   tags,
+		"replicateDeleteMarkers": replicateDeleteMarkers,
+		"replicateDeletes":       replicateDeletes,
+		"priority":               priority,
+		"storageClass":           storageClass,
+		"replicateMetadata":      replicateMetadata,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets-replication",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetBucketReplication(bucketName string) (*http.Response, error) {
+	/*
+		URL: /buckets/{bucket_name}/replication
+		HTTP Verb: GET
+	*/
+	request, err := http.NewRequest("GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/replication",
+		nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestReplication(t *testing.T) {
+
+	// Vars
+	assert := assert.New(t)
+
+	// 1. Set replication
+	response, err := SetMultiBucketReplication(
+		"minioadmin",                    // accessKey string
+		"minioadmin",                    // secretKey string
+		"http://localhost:9000/",        // targetURL string
+		"",                              // region string
+		"testputobjectslegalholdstatus", // originBucket string
+		"testgetbucketquota",            // destinationBucket string
+		"async",                         // syncMode string
+		107374182400,                    // bandwidth int
+		60,                              // healthCheckPeriod int
+		"",                              // prefix string
+		"",                              // tags string
+		true,                            // replicateDeleteMarkers bool
+		true,                            // replicateDeletes bool
+		1,                               // priority int
+		"",                              // storageClass string
+		true,                            // replicateMetadata bool
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(response)
+	if response != nil {
+		assert.Equal(200, response.StatusCode, finalResponse)
+	}
+
+	// 2. Get replication
+	response, err = GetBucketReplication("testputobjectslegalholdstatus")
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse = inspectHTTPResponse(response)
+	if response != nil {
+		assert.Equal(200, response.StatusCode, finalResponse)
+	}
+
+	// 3. Verify rule is enabled
+	assert.True(
+		strings.Contains(finalResponse, "Enabled"),
+		finalResponse)
+}
