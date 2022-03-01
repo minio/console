@@ -53,6 +53,8 @@ import Images from "./Steps/Images";
 import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
 import TenantResources from "./Steps/TenantResources/TenantResources";
+import ConfigLogSearch from "./Steps/ConfigLogSearch";
+import ConfigPrometheus from "./Steps/ConfigPrometheus";
 
 interface IAddTenantProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -175,8 +177,8 @@ const AddTenant = ({
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
     const tenantCustom = fields.configure.tenantCustom;
-    const logSearchCustom = fields.configure.logSearchCustom;
-    const prometheusCustom = fields.configure.prometheusCustom;
+    const logSearchEnabled = fields.configure.logSearchEnabled;
+    const prometheusEnabled = fields.configure.prometheusEnabled;
     const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
     const logSearchSelectedStorageClass =
       fields.configure.logSearchSelectedStorageClass;
@@ -313,7 +315,7 @@ const AddTenant = ({
         };
       }
 
-      if (logSearchCustom) {
+      if (logSearchEnabled) {
         dataSend = {
           ...dataSend,
           logSearchConfiguration: {
@@ -329,18 +331,9 @@ const AddTenant = ({
             postgres_securityContext: logSearchPostgresSecurityContext,
           },
         };
-      } else {
-        dataSend = {
-          ...dataSend,
-          logSearchConfiguration: {
-            image: logSearchImage,
-            postgres_image: logSearchPostgresImage,
-            postgres_init_image: logSearchPostgresInitImage,
-          },
-        };
       }
 
-      if (prometheusCustom) {
+      if (prometheusEnabled) {
         dataSend = {
           ...dataSend,
           prometheusConfiguration: {
@@ -353,15 +346,6 @@ const AddTenant = ({
             sidecar_image: prometheusSidecarImage,
             init_image: prometheusInitImage,
             securityContext: prometheusSecurityContext,
-          },
-        };
-      } else {
-        dataSend = {
-          ...dataSend,
-          prometheusConfiguration: {
-            image: prometheusImage,
-            sidecar_image: prometheusSidecarImage,
-            init_image: prometheusInitImage,
           },
         };
       }
@@ -751,6 +735,18 @@ const AddTenant = ({
       label: "Encryption",
       advancedOnly: true,
       componentRender: <Encryption />,
+      buttons: [cancelButton, createButton],
+    },
+    {
+      label: "Audit Log",
+      advancedOnly: true,
+      componentRender: <ConfigLogSearch />,
+      buttons: [cancelButton, createButton],
+    },
+    {
+      label: "Monitoring",
+      advancedOnly: true,
+      componentRender: <ConfigPrometheus />,
       buttons: [cancelButton, createButton],
     },
   ];

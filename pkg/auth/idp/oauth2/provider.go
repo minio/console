@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/set"
 
 	"github.com/minio/console/pkg/auth/utils"
 	"golang.org/x/crypto/pbkdf2"
@@ -142,6 +143,11 @@ func getLoginCallbackURL(r *http.Request) string {
 	return redirectURL
 }
 
+var supportedResponseTypes = set.CreateStringSet([]string{
+	"code id_token",
+	"code token id_token",
+}...)
+
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
 // it returns a *Provider object that contains the necessary configuration to initiate an
 // oauth2 authentication flow
@@ -149,6 +155,18 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 	ddoc, err := parseDiscoveryDoc(GetIDPURL(), httpClient)
 	if err != nil {
 		return nil, err
+	}
+
+	var supported bool
+	for _, responseType := range ddoc.ResponseTypesSupported {
+		if supportedResponseTypes.Contains(responseType) {
+			supported = true
+			continue
+		}
+	}
+
+	if !supported {
+		return nil, fmt.Errorf("expected 'code id_token' response type - got %s, login not allowed", ddoc.ResponseTypesSupported)
 	}
 
 	// If provided scopes are empty we use a default list or the user configured list
