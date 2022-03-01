@@ -86,8 +86,6 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	// Register Parity' handlers
 	registerParityHandlers(api)
 
-	// Direct CSI handlers
-	registerDirectCSIHandlers(api)
 	// Volumes handlers
 	registerVolumesHandlers(api)
 	// Namespaces handlers

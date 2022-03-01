@@ -78,9 +78,6 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIDeleteTenantHandler: operator_api.DeleteTenantHandlerFunc(func(params operator_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DeleteTenant has not yet been implemented")
 		}),
-		OperatorAPIDirectCSIFormatDriveHandler: operator_api.DirectCSIFormatDriveHandlerFunc(func(params operator_api.DirectCSIFormatDriveParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation operator_api.DirectCSIFormatDrive has not yet been implemented")
-		}),
 		OperatorAPIDisableTenantLoggingHandler: operator_api.DisableTenantLoggingHandlerFunc(func(params operator_api.DisableTenantLoggingParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DisableTenantLogging has not yet been implemented")
 		}),
@@ -89,12 +86,6 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		OperatorAPIGetAllocatableResourcesHandler: operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetAllocatableResources has not yet been implemented")
-		}),
-		OperatorAPIGetDirectCSIDriveListHandler: operator_api.GetDirectCSIDriveListHandlerFunc(func(params operator_api.GetDirectCSIDriveListParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation operator_api.GetDirectCSIDriveList has not yet been implemented")
-		}),
-		OperatorAPIGetDirectCSIVolumeListHandler: operator_api.GetDirectCSIVolumeListHandlerFunc(func(params operator_api.GetDirectCSIVolumeListParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation operator_api.GetDirectCSIVolumeList has not yet been implemented")
 		}),
 		OperatorAPIGetMaxAllocatableMemHandler: operator_api.GetMaxAllocatableMemHandlerFunc(func(params operator_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetMaxAllocatableMem has not yet been implemented")
@@ -266,18 +257,12 @@ type OperatorAPI struct {
 	OperatorAPIDeletePodHandler operator_api.DeletePodHandler
 	// OperatorAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	OperatorAPIDeleteTenantHandler operator_api.DeleteTenantHandler
-	// OperatorAPIDirectCSIFormatDriveHandler sets the operation handler for the direct c s i format drive operation
-	OperatorAPIDirectCSIFormatDriveHandler operator_api.DirectCSIFormatDriveHandler
 	// OperatorAPIDisableTenantLoggingHandler sets the operation handler for the disable tenant logging operation
 	OperatorAPIDisableTenantLoggingHandler operator_api.DisableTenantLoggingHandler
 	// OperatorAPIEnableTenantLoggingHandler sets the operation handler for the enable tenant logging operation
 	OperatorAPIEnableTenantLoggingHandler operator_api.EnableTenantLoggingHandler
 	// OperatorAPIGetAllocatableResourcesHandler sets the operation handler for the get allocatable resources operation
 	OperatorAPIGetAllocatableResourcesHandler operator_api.GetAllocatableResourcesHandler
-	// OperatorAPIGetDirectCSIDriveListHandler sets the operation handler for the get direct c s i drive list operation
-	OperatorAPIGetDirectCSIDriveListHandler operator_api.GetDirectCSIDriveListHandler
-	// OperatorAPIGetDirectCSIVolumeListHandler sets the operation handler for the get direct c s i volume list operation
-	OperatorAPIGetDirectCSIVolumeListHandler operator_api.GetDirectCSIVolumeListHandler
 	// OperatorAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	OperatorAPIGetMaxAllocatableMemHandler operator_api.GetMaxAllocatableMemHandler
 	// OperatorAPIGetPVCEventsHandler sets the operation handler for the get p v c events operation
@@ -448,9 +433,6 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.DeleteTenantHandler")
 	}
-	if o.OperatorAPIDirectCSIFormatDriveHandler == nil {
-		unregistered = append(unregistered, "operator_api.DirectCSIFormatDriveHandler")
-	}
 	if o.OperatorAPIDisableTenantLoggingHandler == nil {
 		unregistered = append(unregistered, "operator_api.DisableTenantLoggingHandler")
 	}
@@ -459,12 +441,6 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIGetAllocatableResourcesHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetAllocatableResourcesHandler")
-	}
-	if o.OperatorAPIGetDirectCSIDriveListHandler == nil {
-		unregistered = append(unregistered, "operator_api.GetDirectCSIDriveListHandler")
-	}
-	if o.OperatorAPIGetDirectCSIVolumeListHandler == nil {
-		unregistered = append(unregistered, "operator_api.GetDirectCSIVolumeListHandler")
 	}
 	if o.OperatorAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetMaxAllocatableMemHandler")
@@ -698,10 +674,6 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/direct-csi/drives/format"] = operator_api.NewDirectCSIFormatDrive(o.context, o.OperatorAPIDirectCSIFormatDriveHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
 	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/disable-logging"] = operator_api.NewDisableTenantLogging(o.context, o.OperatorAPIDisableTenantLoggingHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -711,14 +683,6 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/cluster/allocatable-resources"] = operator_api.NewGetAllocatableResources(o.context, o.OperatorAPIGetAllocatableResourcesHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/direct-csi/drives"] = operator_api.NewGetDirectCSIDriveList(o.context, o.OperatorAPIGetDirectCSIDriveListHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/direct-csi/volumes"] = operator_api.NewGetDirectCSIVolumeList(o.context, o.OperatorAPIGetDirectCSIVolumeListHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

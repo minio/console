@@ -18,7 +18,6 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/klauspost/compress v1.13.6
 	github.com/minio/cli v1.22.0
-	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
 	github.com/minio/madmin-go v1.3.4
 	github.com/minio/mc v0.0.0-20220204044644-e048c85d71a7
@@ -58,7 +57,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
@@ -71,7 +69,6 @@ require (
 	github.com/goccy/go-json v0.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
@@ -99,7 +96,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
-	github.com/mb0/glob v0.0.0-20160210091149-1eb79d2de6c4 // indirect
 	github.com/minio/argon2 v1.0.0 // indirect
 	github.com/minio/colorjson v1.0.1 // indirect
 	github.com/minio/filepath v1.0.0 // indirect
