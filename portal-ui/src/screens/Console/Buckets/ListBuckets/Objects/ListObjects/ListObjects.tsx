@@ -673,6 +673,8 @@ const ListObjects = ({
       newFiles.push(e.target.files[i]);
     }
     uploadObject(newFiles, "");
+
+    e.target.value="";
   };
 
   const downloadObject = (object: BucketObject | RewindObject) => {
