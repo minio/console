@@ -42,6 +42,7 @@ create_policies() {
   mc admin policy add minio bucketwriteprefixonlypolicy-$TIMESTAMP portal-ui/tests/policies/bucketWritePrefixOnlyPolicy.json
   mc admin policy add minio inspect-allowed-$TIMESTAMP portal-ui/tests/policies/inspect-allowed.json
   mc admin policy add minio inspect-not-allowed-$TIMESTAMP portal-ui/tests/policies/inspect-not-allowed.json
+  mc admin policy add minio fix-prefix-policy-ui-crash-$TIMESTAMP portal-ui/tests/policies/fix-prefix-policy-ui-crash.json
 }
 
 create_users() {
@@ -64,6 +65,7 @@ create_users() {
   mc admin user add minio bucketwriteprefixonlypolicy-$TIMESTAMP bucketwriteprefixonlypolicy
   mc admin user add minio inspect-allowed-$TIMESTAMP insallowed1234
   mc admin user add minio inspect-not-allowed-$TIMESTAMP insnotallowed1234
+  mc admin user add minio prefix-policy-ui-crash-$TIMESTAMP poluicrashfix1234
 }
 
 create_buckets() {
