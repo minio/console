@@ -48,7 +48,6 @@ import {
   DocumentationIcon,
   LambdaIcon,
   LicenseIcon,
-  StorageIcon,
   TenantsOutlineIcon,
   TiersIcon,
 } from "../../icons";
@@ -282,15 +281,6 @@ export const validRoutes = (
       to: IAM_PAGES.TENANTS,
       name: "Tenants",
       icon: TenantsOutlineIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "Operator",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.STORAGE,
-      name: "Storage",
-      icon: StorageIcon,
       forceDisplay: true,
     },
     {
