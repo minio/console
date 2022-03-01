@@ -158,7 +158,7 @@ const UpdateTenantModal = ({
               label={"MinIO's Image"}
               id={"minioImage"}
               name={"minioImage"}
-              placeholder={"E.g. minio/minio:RELEASE.2022-01-08T03-11-54Z"}
+              placeholder={"E.g. minio/minio:RELEASE.2022-02-26T02-54-46Z"}
               onChange={(e) => {
                 setMinioImage(e.target.value);
               }}
