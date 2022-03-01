@@ -102,6 +102,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -129,6 +130,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -156,6 +158,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -183,6 +186,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -210,6 +214,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -237,6 +242,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -264,6 +270,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -291,6 +298,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -318,6 +326,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ubuntu-latest
 
     strategy:
@@ -368,6 +377,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -383,6 +393,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -455,6 +466,7 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - coverage
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -519,3 +531,68 @@ jobs:
       - name: Clean up users & policies
         run: |
           make cleanup-permissions
+
+  coverage:
+    name: "Coverage Limit Check"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '17'
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: Check out gocovmerge as a nested repository
+        uses: actions/checkout@v2
+        with:
+          repository: wadey/gocovmerge
+          path: gocovmerge
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Get coverage
+        run: |
+          cd restapi
+          go test -coverprofile=coverage.out
+          cd ../integration
+          go test -coverpkg=../restapi -c -tags testrunmain .
+          docker network create --subnet=173.18.0.0/29 mynet123
+          docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 "quay.io/minio/minio:latest" server /data{1...4}
+          docker run --net=mynet123 --ip=173.18.0.3 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres
+          ./integration.test -test.run "^Test*" -test.coverprofile=system.out
+          echo "change directory to gocovmerge"
+          cd ../gocovmerge
+          echo "download golang x tools"
+          go mod download golang.org/x/tools
+          echo "go mod tidy compat mode"
+          go mod tidy -compat=1.17
+          echo "go build gocoverage.go"
+          go build gocovmerge.go 
+          echo "put together the outs for final coverage resolution"
+          ./gocovmerge ../integration/system.out ../restapi/coverage.out > all.out
+          echo "grep to obtain the result"
+          go tool cover -func=all.out | grep total > tmp2
+          result=`cat tmp2 | awk 'END {print $3}'`
+          result=${result%\%}
+          echo "result:"
+          echo $result
+          threshold=40
+          if (( $(echo "$result > $threshold" |bc -l) )); then
+            echo "greater than threshold, passed!"
+          else
+            echo "smaller than threshold, failed!"
+            exit 1
+          fi
