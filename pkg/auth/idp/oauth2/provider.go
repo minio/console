@@ -17,6 +17,7 @@
 package oauth2
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha1"
 	"encoding/base64"
@@ -111,6 +112,7 @@ type Provider struct {
 	UserInfo       bool
 	oauth2Config   Configuration
 	provHTTPClient *http.Client
+	ddoc           DiscoveryDoc
 }
 
 // derivedKey is the key used to compute the HMAC for signing the oauth state parameter
@@ -163,8 +165,8 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 		redirectURL = getLoginCallbackURL(r)
 	}
 
-	// add "openid" scope always.
-	scopes = append(scopes, "openid")
+	// add "openid, profile" scope always.
+	scopes = append(scopes, "openid", "profile")
 
 	client := new(Provider)
 	client.oauth2Config = &xoauth2.Config{
@@ -180,6 +182,7 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 
 	client.ClientID = GetIDPClientID()
 	client.UserInfo = GetIDPUserInfo()
+	client.ddoc = ddoc
 	client.provHTTPClient = httpClient
 
 	return client, nil
@@ -341,10 +344,40 @@ func GetRandomStateWithHMAC(length int) string {
 	return base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", state, hmac)))
 }
 
+func (client *Provider) idTokenURL(state string) string {
+	cfg, ok := client.oauth2Config.(*xoauth2.Config)
+	if !ok {
+		return ""
+	}
+	var buf bytes.Buffer
+	buf.WriteString(cfg.Endpoint.AuthURL)
+	v := url.Values{
+		"response_type": {"id_token token"},
+		"client_id":     {cfg.ClientID},
+	}
+	if cfg.RedirectURL != "" {
+		v.Set("redirect_uri", cfg.RedirectURL)
+	}
+	if len(cfg.Scopes) > 0 {
+		v.Set("scope", strings.Join(cfg.Scopes, " "))
+	}
+	if state != "" {
+		v.Set("state", state)
+		v.Set("nonce", state)
+	}
+	if strings.Contains(cfg.Endpoint.AuthURL, "?") {
+		buf.WriteByte('&')
+	} else {
+		buf.WriteByte('?')
+	}
+	buf.WriteString(v.Encode())
+	return buf.String()
+}
+
 // GenerateLoginURL returns a new login URL based on the configured IDP
 func (client *Provider) GenerateLoginURL() string {
 	// generates random state and sign it using HMAC256
 	state := GetRandomStateWithHMAC(25)
-	loginURL := client.oauth2Config.AuthCodeURL(state)
+	loginURL := client.idTokenURL(state)
 	return strings.TrimSpace(loginURL)
 }
