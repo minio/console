@@ -129,7 +129,7 @@ const styles = (theme: Theme) =>
     browsePaper: {
       height: "calc(100vh - 210px)",
       "&.actionsPanelOpen": {
-        height: "100%",
+        minHeight: "100%",
       },
     },
     "@global": {
@@ -1043,6 +1043,17 @@ const ListObjects = ({
     uploadPath = uploadPath.concat(currentPath);
   }
 
+  const onClosePanel = (forceRefresh: boolean) => {
+    setDetailsOpen(false);
+    setSelectedInternalPaths(null);
+    setSelectedObjects([]);
+    setVersionsModeEnabled(false);
+
+    if(forceRefresh) {
+      setLoading(true);
+    }
+  };
+
   const tableActions: ItemActions[] = [
     {
       type: "view",
@@ -1309,10 +1320,7 @@ const ListObjects = ({
               <DetailsListPanel
                 open={detailsOpen}
                 closePanel={() => {
-                  setDetailsOpen(false);
-                  setSelectedInternalPaths(null);
-                  setSelectedObjects([]);
-                  setVersionsModeEnabled(false);
+                  onClosePanel(false);
                 }}
               >
                 {selectedObjects.length > 0 && (
@@ -1325,6 +1333,7 @@ const ListObjects = ({
                   <ObjectDetailPanel
                     internalPaths={selectedInternalPaths}
                     bucketName={bucketName}
+                    onClosePanel={onClosePanel}
                   />
                 )}
               </DetailsListPanel>

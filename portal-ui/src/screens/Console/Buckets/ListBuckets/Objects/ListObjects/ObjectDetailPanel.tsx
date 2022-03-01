@@ -60,7 +60,6 @@ import {
   VersionsIcon,
 } from "../../../../../../icons";
 import { ShareIcon, DownloadIcon, DeleteIcon } from "../../../../../../icons";
-import history from "../../../../../../history";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
@@ -147,6 +146,7 @@ interface IObjectDetailPanelProps {
   distributedSetup: boolean;
   versionsMode: boolean;
   selectedVersion: string;
+  onClosePanel: (hardRefresh: boolean) => void;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
@@ -178,6 +178,7 @@ const ObjectDetailPanel = ({
   completeObject,
   versionsMode,
   selectedVersion,
+  onClosePanel,
   setVersionsModeEnabled,
 }: IObjectDetailPanelProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
@@ -328,16 +329,11 @@ const ObjectDetailPanel = ({
     );
   };
 
-  const closeDeleteModal = (redirectBack: boolean) => {
+  const closeDeleteModal = (closeAndReload: boolean) => {
     setDeleteOpen(false);
 
-    if (redirectBack) {
-      const newPath = allPathData.join("/");
-      history.push(
-        `/buckets/${bucketName}/browse${
-          newPath === "" ? "" : `/${encodeFileName(newPath)}`
-        }`
-      );
+    if (closeAndReload) {
+      onClosePanel(true);
     }
   };
 
@@ -454,35 +450,6 @@ const ObjectDetailPanel = ({
     },
   ];
 
-  /*
-                            *
-                            *
-                            * <Box className={classes.detailContainer}>
-                                  {selectedVersion === "" ? (
-                                    <LabelValuePair
-                                      label={"Tags:"}
-                                      value={
-                                        <ObjectTags
-                                          objectInfo={actualInfo}
-                                          tagKeys={tagKeys}
-                                          bucketName={bucketName}
-                                          onDeleteTag={deleteTag}
-                                          onAddTagClick={() => {
-                                            setTagModalOpen(true);
-                                          }}
-                                        />
-                                      }
-                                    />
-                                  ) : (
-                                    <Fragment>
-                                      <strong>Tags: </strong>
-                                      <br />
-                          
-                                    </Fragment>
-                                  )}
-                                </Box>
-                            *
-                            * */
   const calculateLastModifyTime = (lastModified: string) => {
     const currentTime = new Date();
     const modifiedTime = new Date(lastModified);
