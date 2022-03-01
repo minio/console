@@ -50,6 +50,7 @@ import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -68,6 +69,9 @@ const TenantVolumes = withSuspense(
 );
 const TenantSecurity = withSuspense(
   React.lazy(() => import("./TenantSecurity"))
+);
+const TenantEncryption = withSuspense(
+  React.lazy(() => import("./TenantEncryption"))
 );
 const DeleteTenant = withSuspense(
   React.lazy(() => import("../ListTenants/DeleteTenant"))
@@ -301,10 +305,10 @@ const TenantDetails = ({
     return health_status === "red"
       ? classes.redState
       : health_status === "yellow"
-      ? classes.yellowState
-      : health_status === "green"
-      ? classes.greenState
-      : classes.greyState;
+        ? classes.yellowState
+        : health_status === "green"
+          ? classes.greenState
+          : classes.greyState;
   };
 
   return (
@@ -420,59 +424,63 @@ const TenantDetails = ({
               <Router history={history}>
                 <Switch>
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/summary"
+                    path={IAM_PAGES.NAMESPACE_TENANT_SUMMARY}
                     component={TenantSummary}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
+                    path={IAM_PAGES.NAMESPACE_TENANT_METRICS}
                     component={TenantMetrics}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/trace"
+                    path={IAM_PAGES.NAMESPACE_TENANT_TRACE}
                     component={TenantTrace}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/security"
+                    path={IAM_PAGES.NAMESPACE_TENANT_SECURITY}
                     component={TenantSecurity}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pools"
+                    path={IAM_PAGES.NAMESPACE_TENANT_ENCRYPTION}
+                    component={TenantEncryption}
+                  />
+                  <Route
+                    path={IAM_PAGES.NAMESPACE_TENANT_POOLS}
                     component={PoolsSummary}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
+                    path={IAM_PAGES.NAMESPACE_TENANT_PODS}
                     component={PodDetails}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pods"
+                    path={IAM_PAGES.NAMESPACE_TENANT_PODS_LIST}
                     component={PodsSummary}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/pvcs/:PVCName"
+                    path={IAM_PAGES.NAMESPACE_TENANT_PVCS}
                     component={TenantVolumes}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
+                    path={IAM_PAGES.NAMESPACE_TENANT_VOLUMES}
                     component={VolumesSummary}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/license"
+                    path={IAM_PAGES.NAMESPACE_TENANT_LICENSE}
                     component={TenantLicense}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/monitoring"
+                    path={IAM_PAGES.NAMESPACE_TENANT_MONITORING}
                     component={TenantMonitoring}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/logging"
+                    path={IAM_PAGES.NAMESPACE_TENANT_LOGGING}
                     component={TenantLogging}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName/events"
+                    path={IAM_PAGES.NAMESPACE_TENANT_EVENTS}
                     component={TenantEvents}
                   />
                   <Route
-                    path="/namespaces/:tenantNamespace/tenants/:tenantName"
+                    path={IAM_PAGES.NAMESPACE_TENANT}
                     component={() => (
                       <Redirect
                         to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/summary`}
@@ -506,6 +514,14 @@ const TenantDetails = ({
               value: "security",
               component: Link,
               to: getRoutePath("security"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Encryption",
+              value: "encryption",
+              component: Link,
+              to: getRoutePath("encryption"),
             },
           }}
           {{
