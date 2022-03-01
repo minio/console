@@ -2536,6 +2536,167 @@ func TestAddBucket(t *testing.T) {
 	}
 }
 
+func CreateBucketEvent(bucketName string, ignoreExisting bool, arn string, prefix string, suffix string, events []string) (*http.Response, error) {
+	/*
+		Helper function to create bucket event
+		POST: /buckets/{bucket_name}/events
+		{
+			"configuration":
+				{
+					"arn":"arn:minio:sqs::_:postgresql",
+					"events":["put"],
+					"prefix":"",
+					"suffix":""
+				},
+			"ignoreExisting":true
+		}
+	*/
+	configuration := map[string]interface{}{
+		"arn":    arn,
+		"events": events,
+		"prefix": prefix,
+		"suffix": suffix,
+	}
+	requestDataAdd := map[string]interface{}{
+		"configuration":  configuration,
+		"ignoreExisting": ignoreExisting,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteBucketEvent(bucketName string, arn string, events []string, prefix string, suffix string) (*http.Response, error) {
+	/*
+		Helper function to test Delete Bucket Event
+		DELETE: /buckets/{bucket_name}/events/{arn}
+		{
+			"events":["put"],
+			"prefix":"",
+			"suffix":""
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"events": events,
+		"prefix": prefix,
+		"suffix": suffix,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events/"+arn,
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestDeleteBucketEvent(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+
+	// 1. Add postgres notification
+	response, err := NotifyPostgres()
+	finalResponse := inspectHTTPResponse(response)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail(finalResponse)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, finalResponse)
+	}
+
+	// 2. Restart the system
+	restartResponse, restartError := RestartService()
+	assert.Nil(restartError)
+	if restartError != nil {
+		log.Println(restartError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(restartResponse)
+	if restartResponse != nil {
+		assert.Equal(
+			204,
+			restartResponse.StatusCode,
+			addObjRsp,
+		)
+	}
+
+	// 3. Subscribe bucket to event
+	events := make([]string, 1)
+	events[0] = "put"
+	eventResponse, eventError := CreateBucketEvent(
+		"testputobjectslegalholdstatus", // bucket name
+		true,                            // ignore existing param
+		"arn:minio:sqs::_:postgresql",   // arn
+		"",                              // prefix
+		"",                              // suffix
+		events,                          // events
+	)
+	assert.Nil(eventError)
+	if eventError != nil {
+		log.Println(eventError)
+		return
+	}
+	finalResponseEvent := inspectHTTPResponse(eventResponse)
+	if eventResponse != nil {
+		assert.Equal(
+			201,
+			eventResponse.StatusCode,
+			finalResponseEvent,
+		)
+	}
+
+	// 4. Delete Bucket Event
+	events[0] = "put"
+	deletEventResponse, deventError := DeleteBucketEvent(
+		"testputobjectslegalholdstatus", // bucket name
+		"arn:minio:sqs::_:postgresql",   // arn
+		events,                          // events
+		"",                              // prefix
+		"",                              // suffix
+	)
+	assert.Nil(deventError)
+	if deventError != nil {
+		log.Println(deventError)
+		return
+	}
+	efinalResponseEvent := inspectHTTPResponse(deletEventResponse)
+	if deletEventResponse != nil {
+		assert.Equal(
+			204,
+			deletEventResponse.StatusCode,
+			efinalResponseEvent,
+		)
+	}
+}
+
 func SetMultiBucketReplication(accessKey string, secretKey string, targetURL string, region string, originBucket string, destinationBucket string, syncMode string, bandwidth int, healthCheckPeriod int, prefix string, tags string, replicateDeleteMarkers bool, replicateDeletes bool, priority int, storageClass string, replicateMetadata bool) (*http.Response, error) {
 	/*
 		Helper function
@@ -2567,26 +2728,26 @@ func SetMultiBucketReplication(accessKey string, secretKey string, targetURL str
 	*/
 	bucketsRelationArray := make([]map[string]interface{}, 1)
 	bucketsRelationIndex0 := map[string]interface{}{
-		"originBucket": originBucket,
+		"originBucket":      originBucket,
 		"destinationBucket": destinationBucket,
 	}
 	bucketsRelationArray[0] = bucketsRelationIndex0
 	requestDataAdd := map[string]interface{}{
-		"accessKey": accessKey,
-		"secretKey": secretKey,
-		"targetURL": targetURL,
-		"region": region,
-		"bucketsRelation": bucketsRelationArray,
-		"syncMode": syncMode,
-		"bandwidth": bandwidth,
-		"healthCheckPeriod": healthCheckPeriod,
-		"prefix": prefix,
-		"tags": tags,
+		"accessKey":              accessKey,
+		"secretKey":              secretKey,
+		"targetURL":              targetURL,
+		"region":                 region,
+		"bucketsRelation":        bucketsRelationArray,
+		"syncMode":               syncMode,
+		"bandwidth":              bandwidth,
+		"healthCheckPeriod":      healthCheckPeriod,
+		"prefix":                 prefix,
+		"tags":                   tags,
 		"replicateDeleteMarkers": replicateDeleteMarkers,
-		"replicateDeletes": replicateDeletes,
-		"priority": priority,
-		"storageClass": storageClass,
-		"replicateMetadata": replicateMetadata,
+		"replicateDeletes":       replicateDeletes,
+		"priority":               priority,
+		"storageClass":           storageClass,
+		"replicateMetadata":      replicateMetadata,
 	}
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
@@ -2607,7 +2768,7 @@ func SetMultiBucketReplication(accessKey string, secretKey string, targetURL str
 	return response, err
 }
 
-func GetBucketReplication(bucketName string)(*http.Response, error){
+func GetBucketReplication(bucketName string) (*http.Response, error) {
 	/*
 		URL: /buckets/{bucket_name}/replication
 		HTTP Verb: GET
@@ -2634,22 +2795,22 @@ func TestReplication(t *testing.T) {
 
 	// 1. Set replication
 	response, err := SetMultiBucketReplication(
-		"minioadmin", // accessKey string
-		"minioadmin", // secretKey string
-		"http://localhost:9000/", // targetURL string
-		"", // region string
+		"minioadmin",                    // accessKey string
+		"minioadmin",                    // secretKey string
+		"http://localhost:9000/",        // targetURL string
+		"",                              // region string
 		"testputobjectslegalholdstatus", // originBucket string
-		"testgetbucketquota", // destinationBucket string
-		"async", // syncMode string
-		107374182400, // bandwidth int
-		60, // healthCheckPeriod int
-		"", // prefix string
-		"", // tags string
-		true, // replicateDeleteMarkers bool
-		true, // replicateDeletes bool
-		1, // priority int
-		"", // storageClass string
-		true, // replicateMetadata bool
+		"testgetbucketquota",            // destinationBucket string
+		"async",                         // syncMode string
+		107374182400,                    // bandwidth int
+		60,                              // healthCheckPeriod int
+		"",                              // prefix string
+		"",                              // tags string
+		true,                            // replicateDeleteMarkers bool
+		true,                            // replicateDeletes bool
+		1,                               // priority int
+		"",                              // storageClass string
+		true,                            // replicateMetadata bool
 	)
 	assert.Nil(err)
 	if err != nil {
@@ -2675,6 +2836,6 @@ func TestReplication(t *testing.T) {
 
 	// 3. Verify rule is enabled
 	assert.True(
-	strings.Contains(finalResponse, "Enabled"),
-	finalResponse)
+		strings.Contains(finalResponse, "Enabled"),
+		finalResponse)
 }
