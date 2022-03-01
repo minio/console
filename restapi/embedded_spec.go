@@ -4353,6 +4353,9 @@ func init() {
         "content_type": {
           "type": "string"
         },
+        "etag": {
+          "type": "string"
+        },
         "expiration": {
           "type": "string"
         },
@@ -10935,6 +10938,9 @@ func init() {
       "type": "object",
       "properties": {
         "content_type": {
+          "type": "string"
+        },
+        "etag": {
           "type": "string"
         },
         "expiration": {
