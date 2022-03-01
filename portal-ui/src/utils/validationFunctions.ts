@@ -31,6 +31,7 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
     if (
       field.required &&
       typeof field.value !== "undefined" &&
+      field.value.trim &&
       field.value.trim() === ""
     ) {
       returnErrors[field.fieldKey] = "Field cannot be empty";
@@ -40,6 +41,7 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
     if (
       !field.required &&
       typeof field.value !== "undefined" &&
+      field.value.trim &&
       field.value.trim() === ""
     ) {
       return;

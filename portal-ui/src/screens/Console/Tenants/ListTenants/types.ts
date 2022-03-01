@@ -16,7 +16,11 @@
 
 import { SubnetInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
-import { NodeMaxAllocatableResources } from "../types";
+import {
+  ICertificateInfo,
+  ISecurityContext,
+  NodeMaxAllocatableResources,
+} from "../types";
 
 export interface IEvent {
   namespace: string;
@@ -82,6 +86,33 @@ export interface ITenantStatus {
   drives_healing: string;
   health_status: string;
   usage?: ITenantStatusUsage;
+}
+
+export interface ITenantEncryptionResponse {
+  image: string;
+  replicas: string;
+  securityContext: ISecurityContext;
+  server: ICertificateInfo[];
+  client: ICertificateInfo[];
+  /*
+          gemalto:
+            type: object
+            $ref: "#/definitions/gemaltoConfiguration"
+          aws:
+            type: object
+            $ref: "#/definitions/awsConfiguration"
+          vault:
+            type: object
+            $ref: "#/definitions/vaultConfiguration"
+          gcp:
+            type: object
+            $ref: "#/definitions/gcpConfiguration"
+          azure:
+            type: object
+            $ref: "#/definitions/azureConfiguration"
+          securityContext:
+            type: object
+            $ref: "#/definitions/securityContext"*/
 }
 
 export interface ITenant {
