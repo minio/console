@@ -205,9 +205,9 @@ export interface IConfigureFields {
   imageRegistryPassword: string;
   exposeMinIO: boolean;
   exposeConsole: boolean;
-  prometheusCustom: boolean;
+  prometheusEnabled: boolean;
   tenantCustom: boolean;
-  logSearchCustom: boolean;
+  logSearchEnabled: boolean;
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;
   logSearchSelectedStorageClass: string;

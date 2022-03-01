@@ -18,9 +18,7 @@ package operatorapi
 
 // list of all console environment constants
 const (
-	ConsoleSubnetLicense   = "CONSOLE_SUBNET_LICENSE"
 	ConsoleOperatorSAToken = "CONSOLE_OPERATOR_SA_TOKEN"
-	MinIOSubnetLicense     = "MINIO_SUBNET_LICENSE"
 	ConsoleMarketplace     = "CONSOLE_OPERATOR_MARKETPLACE"
 
 	// Constants for prometheus annotations
@@ -31,11 +29,5 @@ const (
 
 // Image versions
 const (
-	KESImageVersion = "minio/kes:v0.16.1"
-)
-
-// K8s
-
-const (
-	OperatorSubnetLicenseSecretName = "subnet-license"
+	KESImageVersion = "minio/kes:v0.17.6"
 )

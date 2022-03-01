@@ -176,7 +176,7 @@ const Images = ({
           value: logSearchImage,
           pattern: /^((.*?)\/(.*?):(.+))$/,
           customPatternMessage:
-            "Format must be of form: 'minio/logsearchapi:VERSION'",
+            "Format must be of form: 'minio/operator:VERSION'",
         },
         {
           fieldKey: "kesImage",
@@ -286,7 +286,7 @@ const Images = ({
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Container Images</h3>
         <span className={classes.descriptionText}>
-          Images used by the Tenant Deployment
+          Specify the container images used by the Tenant and it's features.
         </span>
       </div>
 
@@ -299,11 +299,29 @@ const Images = ({
               updateField("imageName", e.target.value);
               cleanValidation("image");
             }}
-            label="MinIO's Image"
+            label="MinIO"
             value={imageName}
             error={validationErrors["image"] || ""}
-            placeholder="E.g. minio/minio:RELEASE.2022-01-08T03-11-54Z"
+            placeholder="E.g. minio/minio:RELEASE.2022-02-26T02-54-46Z"
           />
+        </Grid>
+
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <InputBoxWrapper
+            id="kesImage"
+            name="kesImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("kesImage", e.target.value);
+              cleanValidation("kesImage");
+            }}
+            label="KES"
+            value={kesImage}
+            error={validationErrors["kesImage"] || ""}
+            placeholder="E.g. minio/kes:v0.17.6"
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <h4>Log Search</h4>
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
@@ -313,24 +331,10 @@ const Images = ({
               updateField("logSearchImage", e.target.value);
               cleanValidation("logSearchImage");
             }}
-            label="Log Search API's Image"
+            label="API"
             value={logSearchImage}
             error={validationErrors["logSearchImage"] || ""}
-            placeholder="E.g. minio/logsearchapi:v4.1.1"
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.formFieldRow}>
-          <InputBoxWrapper
-            id="kesImage"
-            name="kesImage"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              updateField("kesImage", e.target.value);
-              cleanValidation("kesImage");
-            }}
-            label="KES Image"
-            value={kesImage}
-            error={validationErrors["kesImage"] || ""}
-            placeholder="E.g. minio/kes:v0.14.0"
+            placeholder="E.g. minio/operator:v4.4.10"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -341,7 +345,7 @@ const Images = ({
               updateField("logSearchPostgresImage", e.target.value);
               cleanValidation("logSearchPostgresImage");
             }}
-            label="Log Search Postgres's Image"
+            label="PostgreSQL"
             value={logSearchPostgresImage}
             error={validationErrors["logSearchPostgresImage"] || ""}
             placeholder="E.g. library/postgres:13"
@@ -355,11 +359,14 @@ const Images = ({
               updateField("logSearchPostgresInitImage", e.target.value);
               cleanValidation("logSearchPostgresInitImage");
             }}
-            label="Log Search Postgres's Init Image"
+            label="PostgreSQL Init"
             value={logSearchPostgresInitImage}
             error={validationErrors["logSearchPostgresInitImage"] || ""}
             placeholder="E.g. library/busybox:1.33.1"
           />
+        </Grid>
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <h4>Monitoring</h4>
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
@@ -369,7 +376,7 @@ const Images = ({
               updateField("prometheusImage", e.target.value);
               cleanValidation("prometheusImage");
             }}
-            label="Prometheus Image"
+            label="Prometheus"
             value={prometheusImage}
             error={validationErrors["prometheusImage"] || ""}
             placeholder="E.g. quay.io/prometheus/prometheus:latest"
@@ -383,7 +390,7 @@ const Images = ({
               updateField("prometheusSidecarImage", e.target.value);
               cleanValidation("prometheusSidecarImage");
             }}
-            label="Prometheus Sidecar Image"
+            label="Prometheus Sidecar"
             value={prometheusSidecarImage}
             error={validationErrors["prometheusSidecarImage"] || ""}
             placeholder="E.g. quay.io/prometheus/prometheus:latest"
@@ -397,7 +404,7 @@ const Images = ({
               updateField("prometheusInitImage", e.target.value);
               cleanValidation("prometheusInitImage");
             }}
-            label="Prometheus Init Image"
+            label="Prometheus Init"
             value={prometheusInitImage}
             error={validationErrors["prometheusInitImage"] || ""}
             placeholder="E.g. quay.io/prometheus/prometheus:latest"
@@ -407,6 +414,9 @@ const Images = ({
 
       {customImage && (
         <Fragment>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <h4>Custom Container Registry</h4>
+          </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
               value="custom_docker_hub"
@@ -419,7 +429,7 @@ const Images = ({
 
                 updateField("customDockerhub", checked);
               }}
-              label={"Set/Update Image Registry"}
+              label={"Use a private container registry"}
             />
           </Grid>
         </Fragment>
@@ -485,9 +495,9 @@ const mapState = (state: AppState) => ({
   exposeMinIO: state.tenants.createTenant.fields.configure.exposeMinIO,
   exposeConsole: state.tenants.createTenant.fields.configure.exposeConsole,
   prometheusCustom:
-    state.tenants.createTenant.fields.configure.prometheusCustom,
+    state.tenants.createTenant.fields.configure.prometheusEnabled,
   tenantCustom: state.tenants.createTenant.fields.configure.tenantCustom,
-  logSearchCustom: state.tenants.createTenant.fields.configure.logSearchCustom,
+  logSearchCustom: state.tenants.createTenant.fields.configure.logSearchEnabled,
   logSearchVolumeSize:
     state.tenants.createTenant.fields.configure.logSearchVolumeSize,
   logSearchSizeFactor:
