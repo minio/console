@@ -280,6 +280,24 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewTenantUpdateEncryptionCreated()
 	})
 
+	// Delete tenant Encryption Configuration
+	api.OperatorAPITenantDeleteEncryptionHandler = operator_api.TenantDeleteEncryptionHandlerFunc(func(params operator_api.TenantDeleteEncryptionParams, session *models.Principal) middleware.Responder {
+		err := getTenantDeleteEncryptionResponse(session, params)
+		if err != nil {
+			return operator_api.NewTenantDeleteEncryptionDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewTenantDeleteEncryptionNoContent()
+	})
+
+	// Get Tenant Encryption Configuration
+	api.OperatorAPITenantEncryptionInfoHandler = operator_api.TenantEncryptionInfoHandlerFunc(func(params operator_api.TenantEncryptionInfoParams, session *models.Principal) middleware.Responder {
+		configuration, err := getTenantEncryptionInfoResponse(session, params)
+		if err != nil {
+			return operator_api.NewTenantEncryptionInfoDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewTenantEncryptionInfoOK().WithPayload(configuration)
+	})
+
 	// Get Tenant YAML
 	api.OperatorAPIGetTenantYAMLHandler = operator_api.GetTenantYAMLHandlerFunc(func(params operator_api.GetTenantYAMLParams, principal *models.Principal) middleware.Responder {
 		payload, err := getTenantYAML(principal, params)
@@ -633,6 +651,34 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 	}
 
 	return info, nil
+}
+
+func parseCertificate(name string, rawCert []byte) (*models.CertificateInfo, error) {
+	block, _ := pem.Decode(rawCert)
+	if block == nil {
+		return nil, errors.New("certificate failed to decode")
+	}
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	domains := []string{}
+	// append certificate domain names
+	if len(cert.DNSNames) > 0 {
+		domains = append(domains, cert.DNSNames...)
+	}
+	// append certificate IPs
+	if len(cert.IPAddresses) > 0 {
+		for _, ip := range cert.IPAddresses {
+			domains = append(domains, ip.String())
+		}
+	}
+	return &models.CertificateInfo{
+		SerialNumber: cert.SerialNumber.String(),
+		Name:         name,
+		Domains:      domains,
+		Expiry:       cert.NotAfter.String(),
+	}, nil
 }
 
 // parseTenantCertificates convert public key pem certificates stored in k8s secrets for a given Tenant into x509 certificates
@@ -1207,7 +1253,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		minInst.Spec.KES.NodeSelector = tenantReq.Encryption.NodeSelector
 
 		if tenantReq.Encryption.SecurityContext != nil {
-			sc, err := parseSecurityContext(tenantReq.Encryption.SecurityContext)
+			sc, err := convertModelSCToK8sSC(tenantReq.Encryption.SecurityContext)
 			if err != nil {
 				return nil, prepareError(err)
 			}
@@ -1309,7 +1355,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 		// if security context for logSearch is present, configure it.
 		if tenantReq.LogSearchConfiguration.SecurityContext != nil {
-			sc, err := parseSecurityContext(tenantReq.LogSearchConfiguration.SecurityContext)
+			sc, err := convertModelSCToK8sSC(tenantReq.LogSearchConfiguration.SecurityContext)
 			if err != nil {
 				return nil, prepareError(err)
 			}
@@ -1317,7 +1363,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 		// if security context for logSearch is present, configure it.
 		if tenantReq.LogSearchConfiguration.PostgresSecurityContext != nil {
-			sc, err := parseSecurityContext(tenantReq.LogSearchConfiguration.PostgresSecurityContext)
+			sc, err := convertModelSCToK8sSC(tenantReq.LogSearchConfiguration.PostgresSecurityContext)
 			if err != nil {
 				return nil, prepareError(err)
 			}
@@ -1411,7 +1457,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 	// if security context for prometheus is present, configure it.
 	if tenantReq.PrometheusConfiguration != nil && tenantReq.PrometheusConfiguration.SecurityContext != nil {
-		sc, err := parseSecurityContext(tenantReq.PrometheusConfiguration.SecurityContext)
+		sc, err := convertModelSCToK8sSC(tenantReq.PrometheusConfiguration.SecurityContext)
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -2550,7 +2596,7 @@ func parseTenantPoolRequest(poolParams *models.Pool) (*miniov2.Pool, error) {
 	}
 	// if security context for Tenant is present, configure it.
 	if poolParams.SecurityContext != nil {
-		sc, err := parseSecurityContext(poolParams.SecurityContext)
+		sc, err := convertModelSCToK8sSC(poolParams.SecurityContext)
 		if err != nil {
 			return nil, err
 		}

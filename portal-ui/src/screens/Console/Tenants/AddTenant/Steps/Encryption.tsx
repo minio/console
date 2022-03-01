@@ -482,97 +482,6 @@ const Encryption = ({
           </Grid>
           {encryptionType === "vault" && (
             <Fragment>
-              <Grid item xs={12}>
-                <FormSwitchWrapper
-                  value="enableCustomCertsForKES"
-                  id="enableCustomCertsForKES"
-                  name="enableCustomCertsForKES"
-                  checked={enableCustomCertsForKES || !enableAutoCert}
-                  onChange={(e) => {
-                    const targetD = e.target;
-                    const checked = targetD.checked;
-
-                    updateField("enableCustomCertsForKES", checked);
-                  }}
-                  label={"Custom Certificates"}
-                  disabled={!enableAutoCert}
-                />
-              </Grid>
-              {(enableCustomCertsForKES || !enableAutoCert) && (
-                <Fragment>
-                  <Grid container>
-                    <Grid item xs={12} style={{ marginBottom: 15 }}>
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Encryption Service Certificates
-                        </legend>
-                        <FileSelector
-                          onChange={(encodedValue, fileName) => {
-                            addFileServerCert("key", fileName, encodedValue);
-                            cleanValidation("serverKey");
-                          }}
-                          accept=".key,.pem"
-                          id="serverKey"
-                          name="serverKey"
-                          label="Key"
-                          error={validationErrors["serverKey"] || ""}
-                          value={serverCertificate.key}
-                          required={!enableAutoCert}
-                        />
-                        <FileSelector
-                          onChange={(encodedValue, fileName) => {
-                            addFileServerCert("cert", fileName, encodedValue);
-                            cleanValidation("serverCert");
-                          }}
-                          accept=".cer,.crt,.cert,.pem"
-                          id="serverCert"
-                          name="serverCert"
-                          label="Cert"
-                          error={validationErrors["serverCert"] || ""}
-                          value={serverCertificate.cert}
-                          required={!enableAutoCert}
-                        />
-                      </fieldset>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container style={{ marginBottom: 15 }}>
-                    <Grid item xs={12}>
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Mutual TLS authentication
-                        </legend>
-                        <FileSelector
-                          onChange={(encodedValue, fileName) => {
-                            addFileClientCert("key", fileName, encodedValue);
-                            cleanValidation("clientKey");
-                          }}
-                          accept=".key,.pem"
-                          id="clientKey"
-                          name="clientKey"
-                          label="Key"
-                          error={validationErrors["clientKey"] || ""}
-                          value={clientCertificate.key}
-                          required={!enableAutoCert}
-                        />
-                        <FileSelector
-                          onChange={(encodedValue, fileName) => {
-                            addFileClientCert("cert", fileName, encodedValue);
-                            cleanValidation("clientCert");
-                          }}
-                          accept=".cer,.crt,.cert,.pem"
-                          id="clientCert"
-                          name="clientCert"
-                          label="Cert"
-                          error={validationErrors["clientCert"] || ""}
-                          value={clientCertificate.cert}
-                          required={!enableAutoCert}
-                        />
-                      </fieldset>
-                    </Grid>
-                  </Grid>
-                </Fragment>
-              )}
               <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   id="vault_endpoint"
@@ -1078,6 +987,96 @@ const Encryption = ({
           <div className={classes.headerElement}>
             <h4 className={classes.h3Section}>Additional Configurations</h4>
           </div>
+          <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="enableCustomCertsForKES"
+              id="enableCustomCertsForKES"
+              name="enableCustomCertsForKES"
+              checked={enableCustomCertsForKES || !enableAutoCert}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                updateField("enableCustomCertsForKES", checked);
+              }}
+              label={"Custom Certificates"}
+              disabled={!enableAutoCert}
+            />
+          </Grid>
+          {(enableCustomCertsForKES || !enableAutoCert) && (
+            <Fragment>
+              <Grid container>
+                <Grid item xs={12} style={{ marginBottom: 15 }}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Encryption Service Certificates
+                    </legend>
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        addFileServerCert("key", fileName, encodedValue);
+                        cleanValidation("serverKey");
+                      }}
+                      accept=".key,.pem"
+                      id="serverKey"
+                      name="serverKey"
+                      label="Key"
+                      error={validationErrors["serverKey"] || ""}
+                      value={serverCertificate.key}
+                      required={!enableAutoCert}
+                    />
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        addFileServerCert("cert", fileName, encodedValue);
+                        cleanValidation("serverCert");
+                      }}
+                      accept=".cer,.crt,.cert,.pem"
+                      id="serverCert"
+                      name="serverCert"
+                      label="Cert"
+                      error={validationErrors["serverCert"] || ""}
+                      value={serverCertificate.cert}
+                      required={!enableAutoCert}
+                    />
+                  </fieldset>
+                </Grid>
+              </Grid>
+              <Grid container style={{ marginBottom: 15 }}>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Mutual TLS authentication with MinIO
+                    </legend>
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        addFileClientCert("key", fileName, encodedValue);
+                        cleanValidation("clientKey");
+                      }}
+                      accept=".key,.pem"
+                      id="clientKey"
+                      name="clientKey"
+                      label="Key"
+                      error={validationErrors["clientKey"] || ""}
+                      value={clientCertificate.key}
+                      required={!enableAutoCert}
+                    />
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        addFileClientCert("cert", fileName, encodedValue);
+                        cleanValidation("clientCert");
+                      }}
+                      accept=".cer,.crt,.cert,.pem"
+                      id="clientCert"
+                      name="clientCert"
+                      label="Cert"
+                      error={validationErrors["clientCert"] || ""}
+                      value={clientCertificate.cert}
+                      required={!enableAutoCert}
+                    />
+                  </fieldset>
+                </Grid>
+              </Grid>
+            </Fragment>
+          )}
           <Grid item xs={12}>
             <Grid item xs={12} classes={classes.formFieldRow}>
               <InputBoxWrapper

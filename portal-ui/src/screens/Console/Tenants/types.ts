@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IErasureCodeCalc } from "../../../common/types";
+import {
+  IAWSConfig,
+  IAzureConfig,
+  IErasureCodeCalc,
+  IGCPConfig,
+  IGemaltoCredentials,
+} from "../../../common/types";
 import { IResourcesSize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
 import { IntegrationConfiguration } from "./AddTenant/Steps/TenantResources/utils";
@@ -85,6 +91,58 @@ export interface ICustomCertificates {
 export interface ITenantSecurityResponse {
   autoCert: boolean;
   customCertificates: ICustomCertificates;
+}
+
+export interface IVaultTLS {
+  crt: ICertificateInfo;
+  ca: ICertificateInfo;
+}
+
+export interface IVaultAppRole {
+  engine: string;
+  id: string;
+  secret: string;
+  retry: string;
+}
+
+export interface IVaultStatus {
+  ping: string;
+}
+
+export interface IVaultConfiguration {
+  endpoint: string;
+  engine: string;
+  namespace: string;
+  prefix: string;
+  approle: IVaultAppRole;
+  status: IVaultStatus;
+  tls: IVaultTLS;
+}
+
+export interface IGemaltoTLS {
+  ca: ICertificateInfo;
+}
+
+export interface IKeysecureConfiguration {
+  endpoint: string;
+  credentials: IGemaltoCredentials;
+  tls: IGemaltoTLS;
+}
+export interface IGemaltoConfiguration {
+  keysecure: IKeysecureConfiguration;
+}
+
+export interface ITenantEncryptionResponse {
+  image: string;
+  replicas: string;
+  securityContext: ISecurityContext;
+  server: ICertificateInfo;
+  mtls_client: ICertificateInfo;
+  vault?: IVaultConfiguration;
+  aws?: IAWSConfig;
+  gemalto?: IGemaltoConfiguration;
+  gcp?: IGCPConfig;
+  azure?: IAzureConfig;
 }
 
 export interface ICreateTenant {

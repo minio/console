@@ -42,6 +42,8 @@ var (
 	errorUnableToGetTenantLogs            = errors.New("unable to get tenant logs")
 	errorUnableToUpdateTenantCertificates = errors.New("unable to update tenant certificates")
 	errorUpdatingEncryptionConfig         = errors.New("unable to update encryption configuration")
+	errorDeletingEncryptionConfig         = errors.New("error disabling tenant encryption")
+	errorEncryptionConfigNotFound         = errors.New("encryption configuration not found")
 	errBucketBodyNotInRequest             = errors.New("error bucket body not in request")
 	errBucketNameNotInRequest             = errors.New("error bucket name not in request")
 	errGroupBodyNotInRequest              = errors.New("error group body not in request")

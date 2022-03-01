@@ -634,6 +634,41 @@ func init() {
       }
     },
     "/namespaces/{namespace}/tenants/{tenant}/encryption": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Encryption Info",
+        "operationId": "TenantEncryptionInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/encryptionConfigurationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "OperatorAPI"
@@ -664,6 +699,38 @@ func init() {
         ],
         "responses": {
           "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Delete Encryption",
+        "operationId": "TenantDeleteEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -2013,6 +2080,12 @@ func init() {
             "replicas": {
               "type": "string"
             },
+            "secretsToBeDeleted": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "securityContext": {
               "type": "object",
               "$ref": "#/definitions/securityContext"
@@ -2024,6 +2097,56 @@ func init() {
             "vault": {
               "type": "object",
               "$ref": "#/definitions/vaultConfiguration"
+            }
+          }
+        }
+      ]
+    },
+    "encryptionConfigurationResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "aws": {
+              "type": "object",
+              "$ref": "#/definitions/awsConfiguration"
+            },
+            "azure": {
+              "type": "object",
+              "$ref": "#/definitions/azureConfiguration"
+            },
+            "gcp": {
+              "type": "object",
+              "$ref": "#/definitions/gcpConfiguration"
+            },
+            "gemalto": {
+              "type": "object",
+              "$ref": "#/definitions/gemaltoConfigurationResponse"
+            },
+            "image": {
+              "type": "string"
+            },
+            "mtls_client": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            },
+            "replicas": {
+              "type": "string"
+            },
+            "securityContext": {
+              "type": "object",
+              "$ref": "#/definitions/securityContext"
+            },
+            "server": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            },
+            "vault": {
+              "type": "object",
+              "$ref": "#/definitions/vaultConfigurationResponse"
             }
           }
         }
@@ -2190,6 +2313,57 @@ func init() {
               "properties": {
                 "ca": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gemaltoConfigurationResponse": {
+      "type": "object",
+      "required": [
+        "keysecure"
+      ],
+      "properties": {
+        "keysecure": {
+          "type": "object",
+          "required": [
+            "endpoint",
+            "credentials"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "token",
+                "domain"
+              ],
+              "properties": {
+                "domain": {
+                  "type": "string"
+                },
+                "retry": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "ca"
+              ],
+              "properties": {
+                "ca": {
+                  "type": "object",
+                  "$ref": "#/definitions/certificateInfo"
                 }
               }
             }
@@ -3648,6 +3822,71 @@ func init() {
           }
         }
       }
+    },
+    "vaultConfigurationResponse": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "approle"
+      ],
+      "properties": {
+        "approle": {
+          "type": "object",
+          "required": [
+            "id",
+            "secret"
+          ],
+          "properties": {
+            "engine": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "retry": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "secret": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "ping": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "ca": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            },
+            "crt": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            }
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -4264,6 +4503,41 @@ func init() {
       }
     },
     "/namespaces/{namespace}/tenants/{tenant}/encryption": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Encryption Info",
+        "operationId": "TenantEncryptionInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/encryptionConfigurationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "OperatorAPI"
@@ -4294,6 +4568,38 @@ func init() {
         ],
         "responses": {
           "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Delete Encryption",
+        "operationId": "TenantDeleteEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -5517,6 +5823,80 @@ func init() {
         }
       }
     },
+    "GemaltoConfigurationResponseKeysecure": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "credentials"
+      ],
+      "properties": {
+        "credentials": {
+          "type": "object",
+          "required": [
+            "token",
+            "domain"
+          ],
+          "properties": {
+            "domain": {
+              "type": "string"
+            },
+            "retry": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "token": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "tls": {
+          "type": "object",
+          "required": [
+            "ca"
+          ],
+          "properties": {
+            "ca": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            }
+          }
+        }
+      }
+    },
+    "GemaltoConfigurationResponseKeysecureCredentials": {
+      "type": "object",
+      "required": [
+        "token",
+        "domain"
+      ],
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "retry": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "GemaltoConfigurationResponseKeysecureTLS": {
+      "type": "object",
+      "required": [
+        "ca"
+      ],
+      "properties": {
+        "ca": {
+          "type": "object",
+          "$ref": "#/definitions/certificateInfo"
+        }
+      }
+    },
     "IdpConfigurationActiveDirectory": {
       "type": "object",
       "required": [
@@ -6003,6 +6383,50 @@ func init() {
         }
       }
     },
+    "VaultConfigurationResponseApprole": {
+      "type": "object",
+      "required": [
+        "id",
+        "secret"
+      ],
+      "properties": {
+        "engine": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "retry": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "secret": {
+          "type": "string"
+        }
+      }
+    },
+    "VaultConfigurationResponseStatus": {
+      "type": "object",
+      "properties": {
+        "ping": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "VaultConfigurationResponseTLS": {
+      "type": "object",
+      "properties": {
+        "ca": {
+          "type": "object",
+          "$ref": "#/definitions/certificateInfo"
+        },
+        "crt": {
+          "type": "object",
+          "$ref": "#/definitions/certificateInfo"
+        }
+      }
+    },
     "VaultConfigurationStatus": {
       "type": "object",
       "properties": {
@@ -6376,6 +6800,12 @@ func init() {
             "replicas": {
               "type": "string"
             },
+            "secretsToBeDeleted": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "securityContext": {
               "type": "object",
               "$ref": "#/definitions/securityContext"
@@ -6387,6 +6817,56 @@ func init() {
             "vault": {
               "type": "object",
               "$ref": "#/definitions/vaultConfiguration"
+            }
+          }
+        }
+      ]
+    },
+    "encryptionConfigurationResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "aws": {
+              "type": "object",
+              "$ref": "#/definitions/awsConfiguration"
+            },
+            "azure": {
+              "type": "object",
+              "$ref": "#/definitions/azureConfiguration"
+            },
+            "gcp": {
+              "type": "object",
+              "$ref": "#/definitions/gcpConfiguration"
+            },
+            "gemalto": {
+              "type": "object",
+              "$ref": "#/definitions/gemaltoConfigurationResponse"
+            },
+            "image": {
+              "type": "string"
+            },
+            "mtls_client": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            },
+            "replicas": {
+              "type": "string"
+            },
+            "securityContext": {
+              "type": "object",
+              "$ref": "#/definitions/securityContext"
+            },
+            "server": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            },
+            "vault": {
+              "type": "object",
+              "$ref": "#/definitions/vaultConfigurationResponse"
             }
           }
         }
@@ -6553,6 +7033,57 @@ func init() {
               "properties": {
                 "ca": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gemaltoConfigurationResponse": {
+      "type": "object",
+      "required": [
+        "keysecure"
+      ],
+      "properties": {
+        "keysecure": {
+          "type": "object",
+          "required": [
+            "endpoint",
+            "credentials"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "token",
+                "domain"
+              ],
+              "properties": {
+                "domain": {
+                  "type": "string"
+                },
+                "retry": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "ca"
+              ],
+              "properties": {
+                "ca": {
+                  "type": "object",
+                  "$ref": "#/definitions/certificateInfo"
                 }
               }
             }
@@ -7860,6 +8391,71 @@ func init() {
             },
             "key": {
               "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "vaultConfigurationResponse": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "approle"
+      ],
+      "properties": {
+        "approle": {
+          "type": "object",
+          "required": [
+            "id",
+            "secret"
+          ],
+          "properties": {
+            "engine": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "retry": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "secret": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "ping": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "ca": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
+            },
+            "crt": {
+              "type": "object",
+              "$ref": "#/definitions/certificateInfo"
             }
           }
         }
