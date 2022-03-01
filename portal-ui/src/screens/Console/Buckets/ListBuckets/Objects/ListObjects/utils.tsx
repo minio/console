@@ -130,7 +130,10 @@ export const extensionToIcon: IExtToIcon[] = [
   },
 ];
 
-export const displayFileIconName = (element: string, returnOnlyIcon: boolean = false) => {
+export const displayFileIconName = (
+  element: string,
+  returnOnlyIcon: boolean = false
+) => {
   let elementString = element;
   let icon = <ObjectBrowserIcon />;
   // Element is a folder
@@ -154,7 +157,7 @@ export const displayFileIconName = (element: string, returnOnlyIcon: boolean = f
 
   const splitItem = elementString.split("/");
 
-  if(returnOnlyIcon) {
+  if (returnOnlyIcon) {
     return icon;
   }
 
