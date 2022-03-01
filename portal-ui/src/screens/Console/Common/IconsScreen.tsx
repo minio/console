@@ -82,16 +82,19 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         })}
       >
         <Grid item xs={3}>
-          <cicons.ConsoleLogo /> <br />
+          <cicons.ConsoleLogo />
+          <br />
           ConsoleLogo
         </Grid>
         <Grid item xs={3}>
-          <cicons.LoginMinIOLogo /> <br />
+          <cicons.LoginMinIOLogo />
+          <br />
           LoginMinIOLogo
         </Grid>
 
         <Grid item xs={3}>
-          <cicons.OperatorLogo /> <br />
+          <cicons.OperatorLogo />
+          <br />
           OperatorLogo
         </Grid>
       </Grid>
@@ -105,757 +108,938 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         })}
       >
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AccountIcon /> <br />
+          <cicons.AccountIcon />
+          <br />
           AccountIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AddAccessRuleIcon /> <br />
+          <cicons.AddAccessRuleIcon />
+          <br />
           AddAccessRuleIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AddFolderIcon /> <br />
+          <cicons.AddFolderIcon />
+          <br />
           AddFolderIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AddIcon /> <br />
+          <cicons.AddIcon />
+          <br />
           AddIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AddMembersToGroupIcon /> <br />
+          <cicons.AddMembersToGroupIcon />
+          <br />
           AddMembersToGroupIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AddNewTagIcon /> <br />
+          <cicons.AddNewTagIcon />
+          <br />
           AddNewTagIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AllBucketsIcon /> <br />
+          <cicons.AllBucketsIcon />
+          <br />
           AllBucketsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ArrowIcon /> <br />
+          <cicons.ArrowIcon />
+          <br />
           ArrowIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ArrowRightIcon /> <br />
+          <cicons.ArrowRightIcon />
+          <br />
           ArrowRightIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AzureTierIcon /> <br />
+          <cicons.AzureTierIcon />
+          <br />
           AzureTierIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AzureTierIconXs /> <br />
+          <cicons.AzureTierIconXs />
+          <br />
           AzureTierIconXs
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.BackSettingsIcon /> <br />
+          <cicons.BackSettingsIcon />
+          <br />
           BackSettingsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.BucketEncryptionIcon /> <br />
+          <cicons.BucketEncryptionIcon />
+          <br />
           BucketEncryptionIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.BucketQuotaIcon /> <br />
+          <cicons.BucketQuotaIcon />
+          <br />
           BucketQuotaIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.BucketReplicationIcon /> <br />
+          <cicons.BucketReplicationIcon />
+          <br />
           BucketReplicationIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.BucketsIcon /> <br />
+          <cicons.BucketsIcon />
+          <br />
           BucketsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CalendarIcon /> <br />
+          <cicons.CalendarIcon />
+          <br />
           CalendarIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CallHomeFeatureIcon /> <br />
+          <cicons.CallHomeFeatureIcon />
+          <br />
           CallHomeFeatureIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ChangeAccessPolicyIcon /> <br />
+          <cicons.ChangeAccessPolicyIcon />
+          <br />
           ChangeAccessPolicyIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ChangePasswordIcon /> <br />
+          <cicons.ChangePasswordIcon />
+          <br />
           ChangePasswordIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CircleIcon /> <br />
+          <cicons.CircleIcon />
+          <br />
           CircleIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ClosePanelIcon /> <br />
+          <cicons.ClosePanelIcon />
+          <br />
           ClosePanelIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ClustersIcon /> <br />
+          <cicons.ClustersIcon />
+          <br />
           ClustersIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CollapseIcon /> <br />
+          <cicons.CollapseIcon />
+          <br />
           CollapseIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ComputerLineIcon /> <br />
+          <cicons.ComputerLineIcon />
+          <br />
           ComputerLineIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ConfigurationsListIcon /> <br />
+          <cicons.ConfigurationsListIcon />
+          <br />
           ConfigurationsListIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ConfirmDeleteIcon /> <br />
+          <cicons.ConfirmDeleteIcon />
+          <br />
           ConfirmDeleteIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ConfirmModalIcon /> <br />
+          <cicons.ConfirmModalIcon />
+          <br />
           ConfirmModalIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ConsoleIcon /> <br />
+          <cicons.ConsoleIcon />
+          <br />
           ConsoleIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CopyIcon /> <br />
+          <cicons.CopyIcon />
+          <br />
           CopyIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CreateGroupIcon /> <br />
+          <cicons.CreateGroupIcon />
+          <br />
           CreateGroupIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CreateIcon /> <br />
+          <cicons.CreateIcon />
+          <br />
           CreateIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CreateNewPathIcon /> <br />
+          <cicons.CreateNewPathIcon />
+          <br />
           CreateNewPathIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.CreateUserIcon /> <br />
+          <cicons.CreateUserIcon />
+          <br />
           CreateUserIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DashboardIcon /> <br />
+          <cicons.DashboardIcon />
+          <br />
           DashboardIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DeleteIcon /> <br />
+          <cicons.DeleteIcon />
+          <br />
           DeleteIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DiagnosticsFeatureIcon /> <br />
+          <cicons.DiagnosticsFeatureIcon />
+          <br />
           DiagnosticsFeatureIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DiagnosticsIcon /> <br />
+          <cicons.DiagnosticsIcon />
+          <br />
           DiagnosticsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DisabledIcon /> <br />
+          <cicons.DisabledIcon />
+          <br />
           DisabledIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DocumentationIcon /> <br />
+          <cicons.DocumentationIcon />
+          <br />
           DocumentationIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DownloadIcon /> <br />
+          <cicons.DownloadIcon />
+          <br />
           DownloadIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DownloadStatIcon /> <br />
+          <cicons.DownloadStatIcon />
+          <br />
           DownloadStatIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DriveFormatErrorsIcon /> <br />
+          <cicons.DriveFormatErrorsIcon />
+          <br />
           DriveFormatErrorsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.DrivesIcon /> <br />
+          <cicons.DrivesIcon />
+          <br />
           DrivesIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.EditIcon /> <br />
+          <cicons.EditIcon />
+          <br />
           EditIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.EditYamlIcon /> <br />
+          <cicons.EditYamlIcon />
+          <br />
           EditYamlIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.EditorThemeSwitchIcon /> <br />
+          <cicons.EditorThemeSwitchIcon />
+          <br />
           EditorThemeSwitchIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.EgressIcon /> <br />
+          <cicons.EgressIcon />
+          <br />
           EgressIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.EnabledIcon /> <br />
+          <cicons.EnabledIcon />
+          <br />
           EnabledIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.EventSubscriptionIcon /> <br />
+          <cicons.EventSubscriptionIcon />
+          <br />
           EventSubscriptionIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileBookIcon /> <br />
+          <cicons.FileBookIcon />
+          <br />
           FileBookIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileCloudIcon /> <br />
+          <cicons.FileCloudIcon />
+          <br />
           FileCloudIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileCodeIcon /> <br />
+          <cicons.FileCodeIcon />
+          <br />
           FileCodeIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileConfigIcon /> <br />
+          <cicons.FileConfigIcon />
+          <br />
           FileConfigIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileDbIcon /> <br />
+          <cicons.FileDbIcon />
+          <br />
           FileDbIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileFontIcon /> <br />
+          <cicons.FileFontIcon />
+          <br />
           FileFontIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileImageIcon /> <br />
+          <cicons.FileImageIcon />
+          <br />
           FileImageIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileLinkIcon /> <br />
+          <cicons.FileLinkIcon />
+          <br />
           FileLinkIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileLockIcon /> <br />
+          <cicons.FileLockIcon />
+          <br />
           FileLockIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileMissingIcon /> <br />
+          <cicons.FileMissingIcon />
+          <br />
           FileMissingIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileMusicIcon /> <br />
+          <cicons.FileMusicIcon />
+          <br />
           FileMusicIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FilePdfIcon /> <br />
+          <cicons.FilePdfIcon />
+          <br />
           FilePdfIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FilePptIcon /> <br />
+          <cicons.FilePptIcon />
+          <br />
           FilePptIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileTxtIcon /> <br />
+          <cicons.FileTxtIcon />
+          <br />
           FileTxtIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileVideoIcon /> <br />
+          <cicons.FileVideoIcon />
+          <br />
           FileVideoIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileWorldIcon /> <br />
+          <cicons.FileWorldIcon />
+          <br />
           FileWorldIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileXlsIcon /> <br />
+          <cicons.FileXlsIcon />
+          <br />
           FileXlsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FileZipIcon /> <br />
+          <cicons.FileZipIcon />
+          <br />
           FileZipIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FolderIcon /> <br />
+          <cicons.FolderIcon />
+          <br />
           FolderIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.FormatDrivesIcon /> <br />
+          <cicons.FormatDrivesIcon />
+          <br />
           FormatDrivesIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.GoogleTierIcon /> <br />
+          <cicons.GoogleTierIcon />
+          <br />
           GoogleTierIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.GoogleTierIconXs /> <br />
+          <cicons.GoogleTierIconXs />
+          <br />
           GoogleTierIconXs
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.GroupsIcon /> <br />
+          <cicons.GroupsIcon />
+          <br />
           GroupsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.HardBucketQuotaIcon /> <br />
+          <cicons.HardBucketQuotaIcon />
+          <br />
           HardBucketQuotaIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.HealIcon /> <br />
+          <cicons.HealIcon />
+          <br />
           HealIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.HelpIcon /> <br />
+          <cicons.HelpIcon />
+          <br />
           HelpIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.HelpIconFilled /> <br />
+          <cicons.HelpIconFilled />
+          <br />
           HelpIconFilled
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.HistoryIcon /> <br />
+          <cicons.HistoryIcon />
+          <br />
           HistoryIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.IAMPoliciesIcon /> <br />
+          <cicons.IAMPoliciesIcon />
+          <br />
           IAMPoliciesIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.JSONIcon /> <br />
+          <cicons.JSONIcon />
+          <br />
           JSONIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LambdaBalloonIcon /> <br />
+          <cicons.LambdaBalloonIcon />
+          <br />
           LambdaBalloonIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LambdaIcon /> <br />
+          <cicons.LambdaIcon />
+          <br />
           LambdaIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LambdaNotificationsIcon /> <br />
+          <cicons.LambdaNotificationsIcon />
+          <br />
           LambdaNotificationsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LicenseIcon /> <br />
+          <cicons.LegalHoldIcon />
+          <br />
+          LegalHoldIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.LicenseIcon />
+          <br />
           LicenseIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LifecycleConfigIcon /> <br />
+          <cicons.LifecycleConfigIcon />
+          <br />
           LifecycleConfigIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LockIcon /> <br />
+          <cicons.LockIcon />
+          <br />
           LockIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LogoutIcon /> <br />
+          <cicons.LogoutIcon />
+          <br />
           LogoutIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LogsIcon /> <br />
+          <cicons.LogsIcon />
+          <br />
           LogsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.MinIOTierIcon /> <br />
+          <cicons.MetadataIcon />
+          <br />
+          MetadataIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.MinIOTierIcon />
+          <br />
           MinIOTierIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.MinIOTierIconXs /> <br />
+          <cicons.MinIOTierIconXs />
+          <br />
           MinIOTierIconXs
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.MirroringIcon /> <br />
+          <cicons.MirroringIcon />
+          <br />
           MirroringIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.MultipleBucketsIcon /> <br />
+          <cicons.MultipleBucketsIcon />
+          <br />
           MultipleBucketsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.NewAccountIcon /> <br />
+          <cicons.NewAccountIcon />
+          <br />
           NewAccountIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.NewPathIcon /> <br />
+          <cicons.NewPathIcon />
+          <br />
           NewPathIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.NewPoolIcon /> <br />
+          <cicons.NewPoolIcon />
+          <br />
           NewPoolIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.NextArrowIcon /> <br />
+          <cicons.NextArrowIcon />
+          <br />
           NextArrowIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ObjectBrowser1Icon /> <br />
+          <cicons.ObjectBrowser1Icon />
+          <br />
           ObjectBrowser1Icon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ObjectBrowserFolderIcon /> <br />
+          <cicons.ObjectBrowserFolderIcon />
+          <br />
           ObjectBrowserFolderIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ObjectBrowserIcon /> <br />
+          <cicons.ObjectBrowserIcon />
+          <br />
           ObjectBrowserIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ObjectManagerIcon /> <br />
+          <cicons.ObjectInfoIcon />
+          <br />
+          ObjectInfoIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.ObjectManagerIcon />
+          <br />
           ObjectManagerIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ObjectPreviewIcon /> <br />
+          <cicons.ObjectPreviewIcon />
+          <br />
           ObjectPreviewIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.OfflineRegistrationBackIcon /> <br />
+          <cicons.OfflineRegistrationBackIcon />
+          <br />
           OfflineRegistrationBackIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.OfflineRegistrationIcon /> <br />
+          <cicons.OfflineRegistrationIcon />
+          <br />
           OfflineRegistrationIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.OnlineRegistrationBackIcon /> <br />
+          <cicons.OnlineRegistrationBackIcon />
+          <br />
           OnlineRegistrationBackIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.OnlineRegistrationIcon /> <br />
+          <cicons.OnlineRegistrationIcon />
+          <br />
           OnlineRegistrationIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.OpenListIcon /> <br />
+          <cicons.OpenListIcon />
+          <br />
           OpenListIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.PasswordKeyIcon /> <br />
+          <cicons.PasswordKeyIcon />
+          <br />
           PasswordKeyIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.PerformanceFeatureIcon /> <br />
+          <cicons.PerformanceFeatureIcon />
+          <br />
           PerformanceFeatureIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.PermissionIcon /> <br />
+          <cicons.PermissionIcon />
+          <br />
           PermissionIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.PreviewIcon /> <br />
+          <cicons.PreviewIcon />
+          <br />
           PreviewIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.PrometheusErrorIcon /> <br />
+          <cicons.PrometheusErrorIcon />
+          <br />
           PrometheusErrorIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.PrometheusIcon /> <br />
+          <cicons.PrometheusIcon />
+          <br />
           PrometheusIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.RecoverIcon /> <br />
+          <cicons.RecoverIcon />
+          <br />
           RecoverIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.RedoIcon /> <br />
+          <cicons.RedoIcon />
+          <br />
           RedoIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.RefreshIcon /> <br />
+          <cicons.RefreshIcon />
+          <br />
           RefreshIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.RemoveIcon /> <br />
+          <cicons.RemoveIcon />
+          <br />
           RemoveIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ReportedUsageFullIcon /> <br />
+          <cicons.ReportedUsageFullIcon />
+          <br />
           ReportedUsageFullIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ReportedUsageIcon /> <br />
+          <cicons.ReportedUsageIcon />
+          <br />
           ReportedUsageIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.S3TierIcon /> <br />
+          <cicons.RetentionIcon />
+          <br />
+          RetentionIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.S3TierIcon />
+          <br />
           S3TierIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.S3TierIconXs /> <br />
+          <cicons.S3TierIconXs />
+          <br />
           S3TierIconXs
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.SearchIcon /> <br />
+          <cicons.SearchIcon />
+          <br />
           SearchIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.SelectMultipleIcon /> <br />
+          <cicons.SelectMultipleIcon />
+          <br />
           SelectMultipleIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ServersIcon /> <br />
+          <cicons.ServersIcon />
+          <br />
           ServersIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ServiceAccountCredentialsIcon /> <br />
+          <cicons.ServiceAccountCredentialsIcon />
+          <br />
           ServiceAccountCredentialsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ServiceAccountIcon /> <br />
+          <cicons.ServiceAccountIcon />
+          <br />
           ServiceAccountIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ServiceAccountsIcon /> <br />
+          <cicons.ServiceAccountsIcon />
+          <br />
           ServiceAccountsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.SettingsIcon /> <br />
+          <cicons.SettingsIcon />
+          <br />
           SettingsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ShareIcon /> <br />
+          <cicons.ShareIcon />
+          <br />
           ShareIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.SpeedtestIcon /> <br />
+          <cicons.SpeedtestIcon />
+          <br />
           SpeedtestIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.StorageIcon /> <br />
+          <cicons.StorageIcon />
+          <br />
           StorageIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.SyncIcon /> <br />
+          <cicons.SyncIcon />
+          <br />
           SyncIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TenantsIcon /> <br />
+          <cicons.TagsIcon />
+          <br />
+          TagsIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.TenantsIcon />
+          <br />
           TenantsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TenantsOutlineIcon /> <br />
+          <cicons.TenantsOutlineIcon />
+          <br />
           TenantsOutlineIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TiersIcon /> <br />
+          <cicons.TiersIcon />
+          <br />
           TiersIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TiersNotAvailableIcon /> <br />
+          <cicons.TiersNotAvailableIcon />
+          <br />
           TiersNotAvailableIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.ToolsIcon /> <br />
+          <cicons.ToolsIcon />
+          <br />
           ToolsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TotalObjectsIcon /> <br />
+          <cicons.TotalObjectsIcon />
+          <br />
           TotalObjectsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TraceIcon /> <br />
+          <cicons.TraceIcon />
+          <br />
           TraceIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.TrashIcon /> <br />
+          <cicons.TrashIcon />
+          <br />
           TrashIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.UploadFile /> <br />
+          <cicons.UploadFile />
+          <br />
           UploadFile
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.UploadFolderIcon /> <br />
+          <cicons.UploadFolderIcon />
+          <br />
           UploadFolderIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.UploadIcon /> <br />
+          <cicons.UploadIcon />
+          <br />
           UploadIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.UploadStatIcon /> <br />
+          <cicons.UploadStatIcon />
+          <br />
           UploadStatIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.UptimeIcon /> <br />
+          <cicons.UptimeIcon />
+          <br />
           UptimeIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.UsersIcon /> <br />
+          <cicons.UsersIcon />
+          <br />
           UsersIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.VerifiedIcon /> <br />
+          <cicons.VerifiedIcon />
+          <br />
           VerifiedIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.VersionIcon /> <br />
+          <cicons.VersionIcon />
+          <br />
           VersionIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.VersionsIcon /> <br />
+          <cicons.VersionsIcon />
+          <br />
           VersionsIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.WarnIcon /> <br />
+          <cicons.WarnIcon />
+          <br />
           WarnIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.WarpIcon /> <br />
+          <cicons.WarpIcon />
+          <br />
           WarpIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.WatchIcon /> <br />
+          <cicons.WatchIcon />
+          <br />
           WatchIcon
         </Grid>
       </Grid>
@@ -869,112 +1053,134 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         })}
       >
         <Grid item xs={3} sm={2} md={1}>
-          <micons.AccessMenuIcon /> <br />
+          <micons.AccessMenuIcon />
+          <br />
           AccessMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.AccountsMenuIcon /> <br />
+          <micons.AccountsMenuIcon />
+          <br />
           AccountsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.AuditLogsMenuIcon /> <br />
+          <micons.AuditLogsMenuIcon />
+          <br />
           AuditLogsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.BucketsMenuIcon /> <br />
+          <micons.BucketsMenuIcon />
+          <br />
           BucketsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.CallHomeMenuIcon /> <br />
+          <micons.CallHomeMenuIcon />
+          <br />
           CallHomeMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.DiagnosticsMenuIcon /> <br />
+          <micons.DiagnosticsMenuIcon />
+          <br />
           DiagnosticsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.DrivesMenuIcon /> <br />
+          <micons.DrivesMenuIcon />
+          <br />
           DrivesMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.GroupsMenuIcon /> <br />
+          <micons.GroupsMenuIcon />
+          <br />
           GroupsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.HealthMenuIcon /> <br />
+          <micons.HealthMenuIcon />
+          <br />
           HealthMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.IdentityMenuIcon /> <br />
+          <micons.IdentityMenuIcon />
+          <br />
           IdentityMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.InspectMenuIcon /> <br />
+          <micons.InspectMenuIcon />
+          <br />
           InspectMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.LogsMenuIcon /> <br />
+          <micons.LogsMenuIcon />
+          <br />
           LogsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.MenuCollapsedIcon /> <br />
+          <micons.MenuCollapsedIcon />
+          <br />
           MenuCollapsedIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.MenuExpandedIcon /> <br />
+          <micons.MenuExpandedIcon />
+          <br />
           MenuExpandedIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.MetricsMenuIcon /> <br />
+          <micons.MetricsMenuIcon />
+          <br />
           MetricsMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.MonitoringMenuIcon /> <br />
+          <micons.MonitoringMenuIcon />
+          <br />
           MonitoringMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.PerformanceMenuIcon /> <br />
+          <micons.PerformanceMenuIcon />
+          <br />
           PerformanceMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.ProfileMenuIcon /> <br />
+          <micons.ProfileMenuIcon />
+          <br />
           ProfileMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.RegisterMenuIcon /> <br />
+          <micons.RegisterMenuIcon />
+          <br />
           RegisterMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.SupportMenuIcon /> <br />
+          <micons.SupportMenuIcon />
+          <br />
           SupportMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.TraceMenuIcon /> <br />
+          <micons.TraceMenuIcon />
+          <br />
           TraceMenuIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <micons.UsersMenuIcon /> <br />
+          <micons.UsersMenuIcon />
+          <br />
           UsersMenuIcon
         </Grid>
       </Grid>

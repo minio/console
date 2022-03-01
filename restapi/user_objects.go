@@ -244,6 +244,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			IsDeleteMarker: lsObj.IsDeleteMarker,
 			UserTags:       lsObj.UserTags,
 			UserMetadata:   lsObj.UserMetadata,
+			Etag:           lsObj.ETag,
 		}
 		// only if single object with or without versions; get legalhold, retention and tags
 		if !lsObj.IsDeleteMarker && prefix != "" && !strings.HasSuffix(prefix, "/") {

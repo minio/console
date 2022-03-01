@@ -33,25 +33,25 @@ export interface MultiSelectionItem {
   tooltip: string;
 }
 
-interface IMultiSelectionPanelProps {
+interface IActionsListSectionProps {
   items: MultiSelectionItem[];
-  title: string;
+  title: string | React.ReactNode;
   classes: any;
 }
 
-const MultiSelectionPanel = ({
+const ActionsListSection = ({
   items,
   classes,
   title,
-}: IMultiSelectionPanelProps) => {
+}: IActionsListSectionProps) => {
   return (
     <Fragment>
       <div className={classes.titleLabel}>{title}</div>
       <ul className={classes.objectActions}>
         <li>Actions:</li>
-        {items.map((actionItem) => {
+        {items.map((actionItem, index) => {
           return (
-            <li>
+            <li key={`action-element-${index.toString()}`}>
               <ObjectActionButton
                 label={actionItem.label}
                 icon={actionItem.icon}
@@ -66,4 +66,4 @@ const MultiSelectionPanel = ({
   );
 };
 
-export default withStyles(styles)(MultiSelectionPanel);
+export default withStyles(styles)(ActionsListSection);
