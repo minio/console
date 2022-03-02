@@ -305,10 +305,10 @@ const TenantDetails = ({
     return health_status === "red"
       ? classes.redState
       : health_status === "yellow"
-        ? classes.yellowState
-        : health_status === "green"
-          ? classes.greenState
-          : classes.greyState;
+      ? classes.yellowState
+      : health_status === "green"
+      ? classes.greenState
+      : classes.greyState;
   };
 
   return (
