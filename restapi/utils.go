@@ -144,3 +144,46 @@ func ExpireSessionCookie() http.Cookie {
 func SanitizeEncodedPrefix(rawPrefix string) string {
 	return strings.Replace(rawPrefix, " ", "+", -1)
 }
+
+var safeMimeTypes = []string{
+	"image/jpeg",
+	"mage/apng",
+	"image/avif",
+	"image/webp",
+	"image/bmp",
+	"image/x-icon",
+	"image/gif",
+	"image/png",
+	"image/heic",
+	"image/heif",
+	"application/pdf",
+	"text/plain",
+	"application/json",
+	"audio/wav",
+	"audio/mpeg",
+	"audio/aiff",
+	"audio/dsd",
+	"video/mp4",
+	"video/x-msvideo",
+	"video/mpeg",
+	"audio/webm",
+	"video/webm",
+	"video/quicktime",
+	"video/x-flv",
+	"audio/x-matroska",
+	"video/x-matroska",
+	"video/x-ms-wmv",
+	"application/metastream",
+	"video/avchd-stream",
+	"audio/mp4",
+	"video/mp4",
+}
+
+func isSafeToPreview(str string) bool {
+	for _, v := range safeMimeTypes {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}

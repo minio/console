@@ -254,7 +254,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 	}
 	// Allow iframes
 	responseWriter.Header().Set("X-Frame-Options", "SAMEORIGIN")
-	responseWriter.Header().Set("X-XSS-Protection", "1")
+	responseWriter.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	io.Copy(responseWriter, resp.Body)
 
