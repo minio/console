@@ -1049,7 +1049,7 @@ const ListObjects = ({
     setSelectedObjects([]);
     setVersionsModeEnabled(false);
 
-    if(forceRefresh) {
+    if (forceRefresh) {
       setLoading(true);
     }
   };
