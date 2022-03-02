@@ -95,6 +95,7 @@ const ConfirmDialog = ({
           {...cancelButtonProps}
           variant="outlined"
           color="primary"
+          id={"confirm-cancel"}
         >
           {cancelText}
         </Button>
@@ -110,6 +111,7 @@ const ConfirmDialog = ({
           loadingPosition="start"
           startIcon={<React.Fragment />}
           autoFocus
+          id={"confirm-ok"}
           {...confirmButtonProps}
         >
           {confirmText}

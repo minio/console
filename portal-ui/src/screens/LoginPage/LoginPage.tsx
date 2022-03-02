@@ -437,6 +437,7 @@ const Login = ({
                 type="submit"
                 variant="contained"
                 color="primary"
+                id="do-login"
                 className={classes.submit}
                 disabled={secretKey === "" || accessKey === "" || loginSending}
               >
@@ -460,6 +461,7 @@ const Login = ({
             type="submit"
             variant="contained"
             color="primary"
+            id="sso-login"
             className={classes.submit}
           >
             Login with SSO
@@ -503,6 +505,7 @@ const Login = ({
                 type="submit"
                 variant="contained"
                 color="primary"
+                id="do-login"
                 className={classes.submit}
                 disabled={jwt === "" || loginSending}
               >
@@ -535,6 +538,7 @@ const Login = ({
                   endIcon={<RefreshIcon />}
                   color={"primary"}
                   variant="outlined"
+                  id="retry"
                   className={classes.retryButton}
                 >
                   Retry

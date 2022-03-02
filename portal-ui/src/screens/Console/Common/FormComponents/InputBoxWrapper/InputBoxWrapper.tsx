@@ -55,6 +55,7 @@ interface InputBoxProps {
   placeholder?: string;
   min?: string;
   max?: string;
+  overlayId?: string;
   overlayIcon?: any;
   overlayAction?: () => void;
   overlayObject?: any;
@@ -125,6 +126,7 @@ const InputBoxWrapper = ({
   placeholder = "",
   min,
   max,
+  overlayId,
   overlayIcon = null,
   overlayObject = null,
   extraInputProps = {},
@@ -215,6 +217,7 @@ const InputBoxWrapper = ({
                       }
                     : () => null
                 }
+                id={overlayId}
                 size={"small"}
                 disableFocusRipple={false}
                 disableRipple={false}
