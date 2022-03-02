@@ -147,7 +147,7 @@ func SanitizeEncodedPrefix(rawPrefix string) string {
 
 var safeMimeTypes = []string{
 	"image/jpeg",
-	"mage/apng",
+	"image/apng",
 	"image/avif",
 	"image/webp",
 	"image/bmp",
