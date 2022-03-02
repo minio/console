@@ -174,3 +174,4 @@ export { default as MetadataIcon } from "./MetadataIcon";
 export { default as LegalHoldIcon } from "./LegalHoldIcon";
 export { default as RetentionIcon } from "./RetentionIcon";
 export { default as TagsIcon } from "./TagsIcon";
+export { default as AlertCloseIcon } from "./AlertCloseIcon";

@@ -41,6 +41,7 @@ import MainError from "../Console/Common/MainError/MainError";
 import { encodeFileName } from "../../common/utils";
 import { LockIcon, LoginMinIOLogo, UsersIcon } from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
+import CssBaseline from "@mui/material/CssBaseline";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -556,8 +557,9 @@ const Login = ({
 
   return (
     <React.Fragment>
+      <CssBaseline />
+      <MainError />
       <Paper className={classes.loginPage}>
-        <MainError />
         <div className={classes.shadowBox}>
           <Grid container className={classes.loginContainer}>
             <Grid item className="consoleTextBanner">

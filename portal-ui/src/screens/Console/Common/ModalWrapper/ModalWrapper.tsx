@@ -28,8 +28,8 @@ import {
 import { AppState } from "../../../../store";
 import { snackBarMessage } from "../../../../types";
 import { setModalSnackMessage } from "../../../../actions";
-import ModalError from "../FormComponents/ModalError/ModalError";
 import CloseIcon from "@mui/icons-material/Close";
+import MainError from "../MainError/MainError";
 
 interface IModalProps {
   classes: any;
@@ -149,7 +149,7 @@ const ModalWrapper = ({
         </div>
       </DialogTitle>
 
-      <ModalError />
+      <MainError isModal={true} />
       <Snackbar
         open={openSnackbar}
         className={classes.snackBarModal}

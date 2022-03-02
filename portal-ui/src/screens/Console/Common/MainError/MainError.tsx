@@ -14,112 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import CloseIcon from "@mui/icons-material/Close";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import { snackBarMessage } from "../../../../types";
+import { Box } from "@mui/material";
+import { AlertCloseIcon } from "../../../../icons";
+import { Portal } from "@mui/base";
 
 interface IMainErrorProps {
-  customStyle?: any;
-  classes: any;
   snackBar: snackBarMessage;
   displayErrorMessage: typeof setErrorSnackMessage;
+  isModal?: boolean;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    mainErrorContainer: {
-      position: "fixed",
-      width: "100%",
-      backgroundColor: "#fff",
-      border: "#C72C48 1px solid",
-      borderLeftWidth: 12,
-      borderRadius: 3,
-      zIndex: 5000,
-      padding: "10px 15px",
-      maxWidth: 600,
-      left: "50%",
-      transform: "translateX(-50%)",
-      marginTop: 15,
-      opacity: 0,
-      transitionDuration: "0.2s",
-    },
-    mainErrorShow: {
-      opacity: 1,
-    },
-    closeButton: {
-      position: "absolute",
-      right: 5,
-      fontSize: "small",
-      border: 0,
-      backgroundColor: "#fff",
-      cursor: "pointer",
-    },
-    errorTitle: {
-      display: "flex",
-      alignItems: "center",
-    },
-    errorLabel: {
-      color: "#000",
-      fontSize: 18,
-      fontWeight: 500,
-      marginLeft: 5,
-    },
-    messageIcon: {
-      color: "#C72C48",
-      display: "flex",
-      "& svg": {
-        width: 32,
-        height: 32,
-      },
-    },
-    simpleError: {
-      marginTop: 5,
-      padding: "2px 5px",
-      fontSize: 16,
-      color: "#000",
-    },
-    detailsButton: {
-      color: "#9C9C9C",
-      display: "flex",
-      alignItems: "center",
-      border: 0,
-      backgroundColor: "transparent",
-      paddingLeft: 5,
-      fontSize: 14,
-      transformDuration: "0.3s",
-      cursor: "pointer",
-    },
-    extraDetailsContainer: {
-      fontStyle: "italic",
-      color: "#9C9C9C",
-      lineHeight: 0,
-      padding: "0 10px",
-      transition: "all .2s ease-in-out",
-      overflow: "hidden",
-    },
-    extraDetailsOpen: {
-      lineHeight: 1,
-      padding: "3px 10px",
-    },
-    arrowElement: {
-      marginLeft: -5,
-    },
-    arrowOpen: {
-      transform: "rotateZ(90deg)",
-      transformDuration: "0.3s",
-    },
-  });
-
-var timerI: any;
+let timerI: any;
 
 const startHideTimer = (callbackFunction: () => void) => {
   timerI = setInterval(callbackFunction, 10000);
@@ -130,12 +41,10 @@ const stopHideTimer = () => {
 };
 
 const MainError = ({
-  classes,
   snackBar,
   displayErrorMessage,
-  customStyle,
+  isModal = false,
 }: IMainErrorProps) => {
-  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
   const [displayErrorMsg, setDisplayErrorMsg] = useState<boolean>(false);
 
   const closeErrorMessage = useCallback(() => {
@@ -145,7 +54,6 @@ const MainError = ({
   useEffect(() => {
     if (!displayErrorMsg) {
       displayErrorMessage({ detailedError: "", errorMessage: "" });
-      setDetailsOpen(false);
       clearInterval(timerI);
     }
   }, [displayErrorMessage, displayErrorMsg]);
@@ -158,10 +66,6 @@ const MainError = ({
     }
   }, [closeErrorMessage, snackBar.message, snackBar.type]);
 
-  const detailsToggle = () => {
-    setDetailsOpen(!detailsOpen);
-  };
-
   const message = get(snackBar, "message", "");
   const messageDetails = get(snackBar, "detailedErrorMsg", "");
 
@@ -170,53 +74,98 @@ const MainError = ({
   }
 
   return (
-    <Fragment>
-      <div
-        className={`${classes.mainErrorContainer} ${
-          displayErrorMsg ? classes.mainErrorShow : ""
-        }`}
-        style={customStyle}
+    <Portal>
+      <Box
+        sx={{
+          "&.alert": {
+            border: 0,
+            left: 0,
+            right: 0,
+            top: 0,
+            height: "75px",
+            position: "fixed",
+            color: "#ffffff",
+            padding: "0 30px 0 30px",
+            zIndex: 10000,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontWeight: 600,
+            backgroundColor: "#C72C48",
+            opacity: 0,
+            width: "100%",
+
+            "&.show": {
+              opacity: 1,
+            },
+          },
+          "& .message-text": {
+            flex: 2,
+            fontSize: "14px",
+            textAlign: {
+              md: "center",
+              xs: "left",
+            },
+          },
+
+          "& .close-btn-container": {
+            cursor: "pointer",
+            border: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            marginLeft: {
+              sm: "0px",
+              xs: "10px",
+            },
+
+            "& .close-btn": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "23px",
+              width: "23px",
+              borderRadius: "50%",
+
+              border: 0,
+              backgroundColor: "transparent",
+              cursor: "pointer",
+
+              "&:hover,&:focus": {
+                border: 0,
+                outline: 0,
+                backgroundColor: "#ba0202",
+              },
+              "& .min-icon": {
+                height: "11px",
+                width: "11px",
+                fill: "#ffffff",
+              },
+            },
+          },
+        }}
         onMouseOver={stopHideTimer}
         onMouseLeave={() => startHideTimer(closeErrorMessage)}
+        className={`alert ${displayErrorMsg ? "show" : ""}`}
       >
-        <button className={classes.closeButton} onClick={closeErrorMessage}>
-          <CloseIcon />
-        </button>
-        <div className={classes.errorTitle}>
-          <span className={classes.messageIcon}>
-            <ErrorOutlineIcon />
-          </span>
-          <span className={classes.errorLabel}>Error</span>
+        <div className="message-text">
+          {messageDetails ? messageDetails : `${message}.`}
         </div>
-        <div className={classes.simpleError}>{message}</div>
-        {messageDetails !== "" && (
-          <Fragment>
-            <div className={classes.detailsContainerLink}>
-              <button className={classes.detailsButton} onClick={detailsToggle}>
-                Details
-                <ArrowRightIcon
-                  className={`${classes.arrowElement} ${
-                    detailsOpen ? classes.arrowOpen : ""
-                  }`}
-                />
-              </button>
-            </div>
-            <div
-              className={`${classes.extraDetailsContainer} ${
-                detailsOpen ? classes.extraDetailsOpen : ""
-              }`}
-            >
-              {messageDetails}
-            </div>
-          </Fragment>
-        )}
-      </div>
-    </Fragment>
+        <div className="close-btn-container">
+          <button className="close-btn" autoFocus onClick={closeErrorMessage}>
+            <AlertCloseIcon />
+          </button>
+        </div>
+      </Box>
+    </Portal>
   );
 };
 
-const mapState = (state: AppState) => ({
-  snackBar: state.system.snackBar,
+const mapState = (state: AppState, ownProps: any) => ({
+  snackBar: ownProps.isModal
+    ? state.system.modalSnackBar
+    : state.system.snackBar,
 });
 
 const mapDispatchToProps = {
@@ -225,4 +174,4 @@ const mapDispatchToProps = {
 
 const connector = connect(mapState, mapDispatchToProps);
 
-export default connector(withStyles(styles)(MainError));
+export default connector(MainError);
