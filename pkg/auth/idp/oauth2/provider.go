@@ -161,7 +161,7 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 	for _, responseType := range ddoc.ResponseTypesSupported {
 		if supportedResponseTypes.Contains(responseType) {
 			supported = true
-			continue
+			break // one support is enough
 		}
 	}
 
