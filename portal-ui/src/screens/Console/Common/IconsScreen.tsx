@@ -1046,6 +1046,16 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           <cicons.AlertCloseIcon /> <br />
           AlertCloseIcon
         </Grid>
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.OpenSourceIcon />
+          <br />
+          OpenSourceIcon
+        </Grid>
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.LicenseDocIcon />
+          <br />
+          LicenseDocIcon
+        </Grid>
       </Grid>
       <h1>Menu Icons</h1>
       <Grid
