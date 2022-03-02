@@ -1375,7 +1375,7 @@ export const objectBrowserExtras = {
   titleSpacer: {
     marginLeft: 10,
   },
-}
+};
 
 // These classes are meant to be used as React.CSSProperties for TableWrapper
 export const TableRowPredefStyles: any = {

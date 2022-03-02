@@ -3,29 +3,17 @@
   "Statement": [
     {
       "Effect": "Deny",
-      "Action": [
-        "admin:*"
-      ]
+      "Action": ["admin:*"]
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "s3:GetBucketLocation",
-        "s3:ListBucket"
-      ],
-      "Resource": [
-        "arn:aws:s3:::*testcafe/*"
-      ]
+      "Action": ["s3:GetBucketLocation", "s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::*testcafe/*"]
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:ListBucket"
-      ],
-      "Resource": [
-        "arn:aws:s3:::*testcafe/write/*"
-      ]
+      "Action": ["s3:GetObject", "s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::*testcafe/write/*"]
     }
   ]
 }
