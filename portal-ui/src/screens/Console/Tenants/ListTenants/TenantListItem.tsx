@@ -160,7 +160,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
 
   return (
     <Fragment>
-      <div className={classes.tenantItem}>
+      <div className={classes.tenantItem} id={`list-tenant-${tenant.name}`}>
         <Grid container>
           <Grid item xs={8}>
             <div className={classes.title}>{tenant.name}</div>

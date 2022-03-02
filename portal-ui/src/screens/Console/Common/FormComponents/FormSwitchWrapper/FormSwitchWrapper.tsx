@@ -153,6 +153,7 @@ const FormSwitchWrapper = ({
         disableFocusRipple
         disableTouchRipple
         value={value}
+        id={id}
       />
       {!switchOnly && (
         <span

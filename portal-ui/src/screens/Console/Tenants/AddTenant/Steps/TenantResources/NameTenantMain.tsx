@@ -321,6 +321,7 @@ const NameTenantMain = ({
                   label="Namespace"
                   value={namespace}
                   error={validationErrors["namespace"] || ""}
+                  overlayId={"add-namespace"}
                   overlayIcon={showCreateButton ? <AddIcon /> : null}
                   overlayAction={addNamespace}
                   required
