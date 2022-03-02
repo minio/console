@@ -260,8 +260,8 @@ const ConfigLogSearch = ({
       <Grid item xs={12} className={classes.configSectionItem}>
         <FormSwitchWrapper
           value="logSearchConfig"
-          id="log_search_configuration"
-          name="log_search_configuration"
+          id="log-search-enabled"
+          name="log_search_enabled"
           checked={logSearchEnabled}
           onChange={(e) => {
             const targetD = e.target;

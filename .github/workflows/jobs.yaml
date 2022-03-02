@@ -20,8 +20,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -63,6 +63,7 @@ jobs:
           repository: minio/operator
           path: operator
       - uses: actions/cache@v2
+        name: Go Mod Cache
         with:
           path: |
             ~/.cache/go-build
@@ -77,25 +78,35 @@ jobs:
 
       - uses: actions/cache@v2
         id: yarn-cache
+        name: Yarn Cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ./
-        run: make assets
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
 
+      - name: Install Dependencies
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          yarn install
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          chmod +x check-warnings.sh  && ./check-warnings.sh
+          ./check-warnings.sh
 
   compile-job:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
@@ -106,8 +117,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -134,8 +145,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -162,8 +173,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -190,8 +201,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -218,8 +229,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -246,8 +257,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -274,8 +285,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -302,8 +313,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -331,7 +342,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.17.x]
+        go-version: [ 1.17.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -416,6 +427,7 @@ jobs:
           repository: minio/operator
           path: operator
       - uses: actions/cache@v2
+        name: Go Mod Cache
         with:
           path: |
             ~/.cache/go-build
@@ -430,19 +442,24 @@ jobs:
 
       - uses: actions/cache@v2
         id: yarn-cache
+        name: Yarn Cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ./
-        run: make assets
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
 
       - name: Build Console on ${{ matrix.os }}
         env:
@@ -484,6 +501,7 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
       - uses: actions/cache@v2
+        name: Go Mod Cache
         with:
           path: |
             ~/.cache/go-build
@@ -498,6 +516,7 @@ jobs:
 
       - uses: actions/cache@v2
         id: yarn-cache
+        name: Yarn Cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -507,10 +526,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ./
-        run: make assets
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
 
       - name: Build Console on ${{ matrix.os }}
         env:
