@@ -218,7 +218,7 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
+          make crosscompile arg1="'darwin/amd64 darwin/arm64'"
 
   cross-compile-4:
     name: Cross compile 4
@@ -275,7 +275,33 @@ jobs:
           GOOS: linux
         run: |
           make crosscompile arg1="'linux/386 netbsd/amd64'"
+  cross-compile-6:
+    name: Cross compile 6
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - coverage
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
 
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'freebsd/amd64'"
   test-pkg-on-go:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
