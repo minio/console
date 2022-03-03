@@ -216,7 +216,7 @@ jobs:
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
-          GOOS: linux
+          GOOS: darwin
         run: |
           make crosscompile arg1="'darwin/amd64 darwin/arm64'"
 
