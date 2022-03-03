@@ -127,7 +127,7 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/get-dependencies.sh"
+          source "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/get-dependencies.sh"
 
       - uses: actions/cache@v2
         name: Go Mod Cache
