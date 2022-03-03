@@ -120,29 +120,27 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
           GOOS: linux
         run: |
-          echo "create the 3 folders, one per needed repository dependencies"
-          mkdir console
-          mkdir minio
-          mkdir mc
 
           echo "get console dependencies"
-          cd console
-          go mod init github.com/minio/console
-          go mod download
-          cd ..
+          make console
 
           echo "get minio dependencies"
+          mkdir minio
           cd minio
           go mod init github.com/minio/minio
           go install github.com/minio/minio@latest
           cd ..
 
           echo "get mc dependencies"
+          mkdir mc
           cd mc
           go mod init github.com/minio/mc
           go install github.com/minio/mc@latest
