@@ -31,7 +31,9 @@ const messageForConsoleMsg = (log: LogMessage) => {
 
   let fullMessage = log.ConsoleMsg;
   // remove the 0x1B character
+  /* eslint-disable no-control-regex */
   fullMessage = fullMessage.replace(/\x1B/g, " ");
+  /* eslint-enable no-control-regex */
   // get substring if there was a match for to split what
   // is going to be colored and what not, here we add color
   // only to the first match.
