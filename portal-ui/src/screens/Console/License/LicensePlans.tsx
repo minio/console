@@ -407,6 +407,24 @@ const LicensePlans = ({
           border: "1px solid #eaeaea",
           borderTop: "0px",
           marginBottom: "45px",
+          overflow: "auto",
+          overflowY: "hidden",
+          "&::-webkit-scrollbar": {
+            width: "5px",
+            height: "5px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#F0F0F0",
+            borderRadius: 0,
+            boxShadow: "inset 0px 0px 0px 0px #F0F0F0",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#777474",
+            borderRadius: 0,
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#5A6375",
+          },
         }}
       >
         <Box
@@ -414,10 +432,6 @@ const LicensePlans = ({
           sx={{
             height: "8px",
             borderBottom: "8px solid rgb(6 48 83)",
-            display: {
-              sm: "block",
-              xs: "none",
-            },
           }}
         />
         <Box
@@ -425,29 +439,22 @@ const LicensePlans = ({
           sx={{
             display: "grid",
 
+            margin: "0 1.5rem 0 1.5rem",
+
             gridTemplateColumns: {
               sm: "1fr 1fr 1fr 1fr",
-              xs: "1fr",
+              xs: "1fr 1fr 1fr",
             },
 
             "&.paid-plans-only": {
               display: "grid",
-
               gridTemplateColumns: "1fr 1fr 1fr",
             },
 
-            "@media (max-width: 600px)": {
-              "& .non-active, .features-col": {
-                display: "none",
-              },
-            },
-
             "& .features-col": {
-              minWidth: {
-                md: "280px",
-                sm: "120px",
-                xs: "0px",
-              },
+              flex: 1,
+              minWidth: "260px",
+
               "@media (max-width: 600px)": {
                 display: "none",
               },
@@ -543,21 +550,8 @@ const LicensePlans = ({
             },
 
             "& .plan-col": {
-              minWidth: {
-                md: "370px",
-                sm: "120px",
-                xs: "240px",
-              },
-
-              "@media (max-width: 600px)": {
-                "&.non-active-plan-col": {
-                  display: "none",
-                },
-
-                "&.active-plan-col": {
-                  minWidth: "240px",
-                },
-              },
+              minWidth: "260px",
+              flex: 1,
             },
 
             "& .active-plan-col": {
