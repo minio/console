@@ -132,26 +132,22 @@ jobs:
           mkdir minio
           mkdir mc
 
-          echo "create dummy file for each module to get the dependencies"
-          echo "package main" > hello.go
-          echo "import \"fmt\"" >> hello.go
-          echo "func main() {" >> hello.go
-          echo "    fmt.Println(\"Hello, World!\")" >> hello.go
-          echo "}" >> hello.go
-
-          echo "go and get the go.mod file for each repo"
+          echo "get console dependencies"
           cd console
-          wget https://raw.githubusercontent.com/minio/console/master/go.mod
-          cp ../hello.go hello.go
-          go get
-          cd ../minio
-          wget https://raw.githubusercontent.com/minio/minio/master/go.mod
-          cp ../hello.go hello.go
-          go get
-          cd ../mc
-          wget https://raw.githubusercontent.com/minio/mc/master/go.mod
-          cp ../hello.go hello.go
-          go get
+          go mod init github.com/minio/console
+          go install github.com/minio/console@latest
+          cd ..
+
+          echo "get minio dependencies"
+          cd minio
+          go mod init github.com/minio/minio
+          go install github.com/minio/minio@latest
+          cd ..
+
+          echo "get mc dependencies"
+          cd mc
+          go mod init github.com/minio/mc
+          go install github.com/minio/mc@latest
           cd ..
 
       - uses: actions/cache@v2
