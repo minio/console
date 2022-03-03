@@ -30,6 +30,8 @@ const messageForConsoleMsg = (log: LogMessage) => {
   const tColorRegex = /((\[[0-9;]+m))/g;
 
   let fullMessage = log.ConsoleMsg;
+  // remove the 0x1B character
+  fullMessage = fullMessage.replace(/\x1B/g, " ");
   // get substring if there was a match for to split what
   // is going to be colored and what not, here we add color
   // only to the first match.
