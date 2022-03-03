@@ -3849,6 +3849,74 @@ func init() {
         }
       }
     },
+    "/support/callhome/{rule}": {
+      "get": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Get callhome configuration for the selected rule",
+        "operationId": "GetCallHomeOptionValue",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "rule",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeGetResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Sets callhome configuration for the selectd rule",
+        "operationId": "GetCallHomeSetOption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "rule",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callHomeSetRule"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeSetRuleResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/policy": {
       "get": {
         "tags": [
@@ -4919,6 +4987,36 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "callHomeGetResponse": {
+      "type": "object",
+      "properties": {
+        "ruleName": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "callHomeSetRule": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "callHomeSetRuleResponse": {
+      "type": "object",
+      "properties": {
+        "restart": {
+          "type": "boolean"
         }
       }
     },
@@ -10944,6 +11042,74 @@ func init() {
         }
       }
     },
+    "/support/callhome/{rule}": {
+      "get": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Get callhome configuration for the selected rule",
+        "operationId": "GetCallHomeOptionValue",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "rule",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeGetResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Sets callhome configuration for the selectd rule",
+        "operationId": "GetCallHomeSetOption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "rule",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callHomeSetRule"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeSetRuleResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/policy": {
       "get": {
         "tags": [
@@ -12140,6 +12306,36 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "callHomeGetResponse": {
+      "type": "object",
+      "properties": {
+        "ruleName": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "callHomeSetRule": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "callHomeSetRuleResponse": {
+      "type": "object",
+      "properties": {
+        "restart": {
+          "type": "boolean"
         }
       }
     },

@@ -52,6 +52,7 @@ import (
 	"github.com/minio/console/restapi/operations/service_account"
 	"github.com/minio/console/restapi/operations/site_replication"
 	"github.com/minio/console/restapi/operations/subnet"
+	"github.com/minio/console/restapi/operations/support"
 	"github.com/minio/console/restapi/operations/system"
 	"github.com/minio/console/restapi/operations/tiering"
 	"github.com/minio/console/restapi/operations/user"
@@ -233,6 +234,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketGetBucketVersioningHandler: bucket.GetBucketVersioningHandlerFunc(func(params bucket.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketVersioning has not yet been implemented")
+		}),
+		SupportGetCallHomeOptionValueHandler: support.GetCallHomeOptionValueHandlerFunc(func(params support.GetCallHomeOptionValueParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation support.GetCallHomeOptionValue has not yet been implemented")
+		}),
+		SupportGetCallHomeSetOptionHandler: support.GetCallHomeSetOptionHandlerFunc(func(params support.GetCallHomeSetOptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation support.GetCallHomeSetOption has not yet been implemented")
 		}),
 		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
@@ -614,6 +621,10 @@ type ConsoleAPI struct {
 	BucketGetBucketRewindHandler bucket.GetBucketRewindHandler
 	// BucketGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
+	// SupportGetCallHomeOptionValueHandler sets the operation handler for the get call home option value operation
+	SupportGetCallHomeOptionValueHandler support.GetCallHomeOptionValueHandler
+	// SupportGetCallHomeSetOptionHandler sets the operation handler for the get call home set option operation
+	SupportGetCallHomeSetOptionHandler support.GetCallHomeSetOptionHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
 	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
@@ -1001,6 +1012,12 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketVersioningHandler")
+	}
+	if o.SupportGetCallHomeOptionValueHandler == nil {
+		unregistered = append(unregistered, "support.GetCallHomeOptionValueHandler")
+	}
+	if o.SupportGetCallHomeSetOptionHandler == nil {
+		unregistered = append(unregistered, "support.GetCallHomeSetOptionHandler")
 	}
 	if o.ObjectGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
@@ -1528,6 +1545,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = bucket.NewGetBucketVersioning(o.context, o.BucketGetBucketVersioningHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/support/callhome/{rule}"] = support.NewGetCallHomeOptionValue(o.context, o.SupportGetCallHomeOptionValueHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/support/callhome/{rule}"] = support.NewGetCallHomeSetOption(o.context, o.SupportGetCallHomeSetOptionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

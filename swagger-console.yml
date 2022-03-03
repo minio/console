@@ -2877,6 +2877,52 @@ paths:
       tags:
         - Inspect
 
+  /support/callhome/{rule}:
+    get:
+      summary: Get callhome configuration for the selected rule
+      operationId: GetCallHomeOptionValue
+      parameters:
+        - name: rule
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/callHomeGetResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Support
+
+    post:
+      summary: Sets callhome configuration for the selectd rule
+      operationId: GetCallHomeSetOption
+      parameters:
+        - name: rule
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/callHomeSetRule"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/callHomeSetRuleResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Support
+
 definitions:
   accountChangePasswordRequest:
     type: object
@@ -4855,6 +4901,7 @@ definitions:
         type: string
       shortName:
         type: string
+
   checkVersionResponse:
     type: object
     properties:
@@ -4879,3 +4926,25 @@ definitions:
     properties:
       policy:
         type: string
+
+  callHomeGetResponse:
+    type: object
+    properties:
+      ruleName:
+        type: string
+      value:
+        type: string
+
+  callHomeSetRule:
+    type: object
+    properties:
+      value:
+        type: string
+      enable:
+        type: boolean
+
+  callHomeSetRuleResponse:
+    type: object
+    properties:
+      restart:
+        type: boolean
