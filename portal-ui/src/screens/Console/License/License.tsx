@@ -30,17 +30,22 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import PageHeader from "../Common/PageHeader/PageHeader";
 import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
-import { LicenseIcon } from "../../../icons";
+import {
+  ArrowRightLink,
+  HelpIconFilled,
+  LicenseIcon,
+  LoginMinIOLogo,
+} from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
 } from "../../../common/SecureComponent/permissions";
-import RegisterStatus from "../Support/RegisterStatus";
 import LicensePlans from "./LicensePlans";
 import { Link } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
+import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 
 const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
@@ -53,12 +58,18 @@ const styles = (theme: Theme) =>
     pageTitle: {
       backgroundColor: "rgb(250,250,252)",
       marginTop: 40,
-      border: "1px solid #EAEDEE",
-      padding: 25,
+      border: "1px solid #E5E5E5",
+      paddingTop: 33,
+      paddingLeft: 28,
+      paddingBottom: 30,
+      paddingRight: 28,
       fontSize: 16,
       fontWeight: "bold",
       "& ul": {
+        marginLeft: "-25px",
         listStyleType: "square",
+        color: "#1C5A8D",
+        fontSize: "16px",
         "& li": {
           float: "left",
           fontSize: 14,
@@ -226,175 +237,253 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
   return (
     <Fragment>
       <PageHeader label="License" />
-      <Box
-        sx={{
-          maxWidth: "1015px",
-          margin: "auto",
-        }}
-      >
-        <PageLayout>
-          <Grid xs={12}>{isRegistered && <RegisterStatus />}</Grid>
-          {!isRegistered && (
-            <Grid
-              item
-              xs={12}
+
+      <PageLayout>
+        <Grid item xs={12}>
+          {isRegistered && (
+            <RegistrationStatusBanner email={licenseInfo?.email} />
+          )}
+        </Grid>
+        {!isRegistered && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              flexFlow: "column",
+            }}
+          >
+            <Box
               sx={{
+                padding: "25px",
+                border: "1px solid #eaeaea",
                 display: "flex",
-                flexFlow: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                flexFlow: {
+                  sm: "row",
+                  xs: "column",
+                },
               }}
             >
               <Box
                 sx={{
-                  padding: "25px",
-                  border: "1px solid #eaeaea",
+                  marginRight: "8px",
+                  fontSize: "16px",
+                  fontWeight: 600,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  flexFlow: {
-                    sm: "row",
-                    xs: "column",
+
+                  "& .min-icon": {
+                    width: "83px",
+                    height: "14px",
+                    marginLeft: "5px",
+                    marginRight: "5px",
                   },
                 }}
               >
-                <Box sx={{ marginRight: "8px" }}>
-                  Are you already a customer of MinIO?
-                </Box>
-                <Link
-                  to={IAM_PAGES.REGISTER_SUPPORT}
-                  className={classes.link}
-                  style={{ fontSize: 14 }}
-                >
-                  Register this cluster →
-                </Link>
+                Are you already a customer of <LoginMinIOLogo />?
               </Box>
-
-              <div className={classes.pageTitle}>
-                <Typography component="h2" variant="h6">
-                  Choosing between GNU AGPL v3 and Commercial License
-                </Typography>
-                <br />
-                <Typography className={classes.chooseFlavorText}>
-                  If you are building proprietary applications, you may want to
-                  choose the commercial license included as part of the Standard
-                  and Enterprise subscription plans. Applications must otherwise
-                  comply with all the GNU AGPLv3 License & Trademark
-                  obligations. Follow the links below to learn more about the
-                  compliance policy.
-                </Typography>
-                <ul>
-                  <li>
-                    <a
-                      href={`https://min.io/compliance?ref=${
-                        operatorMode ? "op" : "con"
-                      }`}
-                      className={classes.openSourcePolicy}
-                      target="_blank"
-                      rel="nofollow noopener noreferrer"
-                    >
-                      Learn more about GNU AGPL v3
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={`https://min.io/logo?ref=${
-                        operatorMode ? "op" : "con"
-                      }`}
-                      className={classes.openSourcePolicy}
-                      target="_blank"
-                      rel="nofollow noopener noreferrer"
-                    >
-                      MinIO Trademark Compliance
-                    </a>
-                  </li>
-                </ul>
-                <div style={{ clear: "both" }} />
-              </div>
-
-              <Box
-                sx={{
-                  padding: "30px 30px 30px 0px",
-                  fontSize: "22px",
-                  fontWeight: 600,
+              <Link
+                to={IAM_PAGES.REGISTER_SUPPORT}
+                className={classes.link}
+                style={{
+                  fontSize: "14px",
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
-                MinIO License and Support plans
+                Register this cluster{" "}
+                <ArrowRightLink
+                  style={{
+                    width: "13px",
+                    height: "8px",
+                    marginLeft: "5px",
+                    marginTop: "3px",
+                  }}
+                />
+              </Link>
+            </Box>
+
+            <div className={classes.pageTitle}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  "& .min-icon": {
+                    height: "18px",
+                    width: "18px",
+                  },
+                }}
+              >
+                <HelpIconFilled />
+                <Box
+                  sx={{
+                    fontSize: "16px",
+                    marginLeft: "15px",
+                  }}
+                >
+                  Choosing between GNU AGPL v3 and Commercial License
+                </Box>
               </Box>
-            </Grid>
-          )}
+              <br />
+              <Box
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "normal",
+                  lineHeight: "17px",
+                }}
+              >
+                If you are building proprietary applications, you may want to
+                choose the commercial license included as part of the Standard
+                and Enterprise subscription plans. Applications must otherwise
+                comply with all the GNU AGPLv3 License & Trademark obligations.
+                Follow the links below to learn more about the compliance
+                policy.
+              </Box>
+              <Box component="ul">
+                <li>
+                  <a
+                    href={`https://min.io/compliance?ref=${
+                      operatorMode ? "op" : "con"
+                    }`}
+                    className={classes.openSourcePolicy}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    Learn more about GNU AGPL v3
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`https://min.io/logo?ref=${
+                      operatorMode ? "op" : "con"
+                    }`}
+                    className={classes.openSourcePolicy}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    MinIO Trademark Compliance
+                  </a>
+                </li>
+              </Box>
+              <div style={{ clear: "both" }} />
+            </div>
 
-          <LicensePlans
-            activateProductModal={activateProductModal}
-            closeModalAndFetchLicenseInfo={closeModalAndFetchLicenseInfo}
-            licenseInfo={licenseInfo}
-            setLicenseModal={setLicenseModal}
-            operatorMode={operatorMode}
-            currentPlanID={currentPlanID}
-            setActivateProductModal={setActivateProductModal}
-          />
+            <Box
+              sx={{
+                padding: "40px 0px 40px 0px",
+                fontSize: "16px",
+                fontWeight: 600,
+              }}
+            >
+              MinIO License and Support plans
+            </Box>
+          </Grid>
+        )}
 
-          <Grid item xs={12}>
-            <Grid container marginTop="35px">
-              <Grid item xs={12} lg={12}>
-                <Fragment>
-                  <LicenseModal
-                    open={licenseModal}
-                    closeModal={() => setLicenseModal(false)}
-                  />
-                  <Grid
-                    xs={12}
-                    className={classes.icon}
-                    marginTop={"25px"}
+        <LicensePlans
+          activateProductModal={activateProductModal}
+          closeModalAndFetchLicenseInfo={closeModalAndFetchLicenseInfo}
+          licenseInfo={licenseInfo}
+          setLicenseModal={setLicenseModal}
+          operatorMode={operatorMode}
+          currentPlanID={currentPlanID}
+          setActivateProductModal={setActivateProductModal}
+        />
+
+        <Grid item xs={12}>
+          <Grid
+            container
+            marginTop="35px"
+            sx={{
+              border: "1px solid #eaeaea",
+              padding: "15px",
+            }}
+          >
+            <Grid item xs={12} lg={12}>
+              <Fragment>
+                <LicenseModal
+                  open={licenseModal}
+                  closeModal={() => setLicenseModal(false)}
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    marginBottom: "15px",
+                    flexFlow: {
+                      sm: "row",
+                      xs: "column",
+                    },
+                    alignItems: {
+                      xs: "flex-start",
+                      sm: "center",
+                    },
+                  }}
+                >
+                  <Box>
+                    <LicenseIcon />
+                  </Box>
+                  <Box
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      flex: 1,
+                      marginLeft: {
+                        sm: "15px",
+                        xs: "0",
+                      },
                     }}
                   >
-                    <LicenseIcon />
-                    GNU Affero General Public License
-                  </Grid>
-                  <Grid container justifyContent={"space-between"}>
-                    <Grid item>
-                      <img src="/agpl-logo.svg" height={40} alt="agpl" />{" "}
-                    </Grid>
-                    <Grid item className={classes.licDet}>
-                      <b>Version 3.</b> 19 November 2007{" "}
-                    </Grid>
-                  </Grid>
-
-                  <Grid container>
-                    <Typography>
-                      The GNU Affero General Public License is a free, copyleft
-                      license for software and other kinds of works,
-                      specifically designed to ensure cooperation with the
-                      Community in the case of network server software.
-                    </Typography>
-                    <br />
-                    <Typography>
-                      The licenses for most software and other practical works
-                      are designed to take away your freedom to share and change
-                      the works. By contrast, our General Public Licenses are
-                      intended to guarantee your freedom to share and change all
-                      versions of a program--to make sure it remains free
-                      software for all its users.
-                    </Typography>
-                    <div className={classes.linkMore}>
-                      <Button
-                        variant="text"
-                        color="primary"
-                        size="small"
-                        className={clsx(classes.link, classes.linkButton)}
-                        onClick={() => setLicenseModal(true)}
-                      >
-                        Read more
-                      </Button>
+                    <div> GNU Affero General Public License</div>
+                    <div className={classes.licDet}>
+                      Version 3. 19 November 2007
                     </div>
-                  </Grid>
-                </Fragment>
-              </Grid>
+                  </Box>
+                  <Box>
+                    <img src="/agpl-logo.svg" height={40} alt="agpl" />
+                  </Box>
+                </Box>
+
+                <Grid container>
+                  <Typography>
+                    The GNU Affero General Public License is a free, copyleft
+                    license for software and other kinds of works, specifically
+                    designed to ensure cooperation with the Community in the
+                    case of network server software.
+                  </Typography>
+                  <br />
+                  <Typography>
+                    The licenses for most software and other practical works are
+                    designed to take away your freedom to share and change the
+                    works. By contrast, our General Public Licenses are intended
+                    to guarantee your freedom to share and change all versions
+                    of a program--to make sure it remains free software for all
+                    its users.
+                  </Typography>
+                  <div className={classes.linkMore}>
+                    <Button
+                      variant="text"
+                      color="primary"
+                      size="small"
+                      className={clsx(classes.link, classes.linkButton)}
+                      onClick={() => setLicenseModal(true)}
+                    >
+                      Read more{" "}
+                      <ArrowRightLink
+                        style={{
+                          width: "13px",
+                          height: "8px",
+                          marginLeft: "5px",
+                          marginTop: "3px",
+                        }}
+                      />
+                    </Button>
+                  </div>
+                </Grid>
+              </Fragment>
             </Grid>
           </Grid>
-        </PageLayout>
-      </Box>
+        </Grid>
+      </PageLayout>
     </Fragment>
   );
 };

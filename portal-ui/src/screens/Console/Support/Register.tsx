@@ -58,11 +58,11 @@ import {
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../actions";
 import SettingsIcon from "../../../icons/SettingsIcon";
-import RegisterStatus from "./RegisterStatus";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { AppState } from "../../../store";
 
 import RegisterHelpBox from "./RegisterHelpBox";
+import RegistrationStatusBanner from "./RegistrationStatusBanner";
 
 interface IRegister {
   classes: any;
@@ -203,10 +203,11 @@ const Register = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
   const [clusterRegistered, setClusterRegistered] = useState<boolean>(false);
+  const [licenseInfo, setLicenseInfo] = useState<SubnetInfo | undefined>();
+
   const [initialLicenseLoading, setInitialLicenseLoading] =
     useState<boolean>(true);
   const [displaySubnetProxy, setDisplaySubnetProxy] = useState<boolean>(false);
-
   const clearForm = () => {
     setSubnetAccessToken("");
     setSelectedSubnetOrganization("");
@@ -236,6 +237,7 @@ const Register = ({
       api
         .invoke("GET", `/api/v1/subnet/info`)
         .then((res: SubnetInfo) => {
+          setLicenseInfo(res);
           setClusterRegistered(true);
           setLoadingLicenseInfo(false);
         })
@@ -824,7 +826,9 @@ const Register = ({
           padding: "43px",
         }}
       >
-        {clusterRegistered && <RegisterStatus />}
+        {clusterRegistered && (
+          <RegistrationStatusBanner email={licenseInfo?.email} />
+        )}
         {clusterRegistered ? (
           <Grid item xs={12} marginTop={"25px"}>
             <Box
