@@ -130,7 +130,9 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make console
+          make console              # GoLang Dependency 1
+          make test-integration     # GoLang Dependency 2
+          make cleanup-permissions  # GoLang Dependency 3
 
       - uses: actions/cache@v2
         name: Go Mod Cache
