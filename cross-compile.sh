@@ -18,7 +18,7 @@ _build() {
     arch="${arr[1]}"
     package=$(go list -f '{{.ImportPath}}' ./cmd/console)
     printf -- "--> %15s:%s\n" "${osarch}" "${package}"
-
+    uname -a
     # go build -trimpath to build the binary.
     GOOS=$os GOARCH=$arch GO111MODULE=on go build -trimpath --tags=kqueue --ldflags "-s -w" -o /dev/null ./cmd/console
 }
