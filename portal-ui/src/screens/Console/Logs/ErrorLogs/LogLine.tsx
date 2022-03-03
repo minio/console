@@ -118,6 +118,8 @@ const LogLine = (props: { log: LogMessage }) => {
   }
   // remove any non ascii characters, exclude any control codes
   let titleLogMessage = logMessage.replace(/━|┏|┓|┃|┗|┛/g, "");
+  // remove any non ascii characters, exclude any control codes
+  titleLogMessage = titleLogMessage.replace(/([^\x20-\x7F])/g, "");
 
   // regex for terminal colors like e.g. `[31;4m `
   const tColorRegex = /((\[[0-9;]+m))/g;
