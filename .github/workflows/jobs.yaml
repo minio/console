@@ -122,17 +122,12 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make console              # GoLang Dependency 1
-          make test-integration     # GoLang Dependency 2
-          make cleanup-permissions  # GoLang Dependency 3
+          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/get-dependencies.sh"
 
       - uses: actions/cache@v2
         name: Go Mod Cache
