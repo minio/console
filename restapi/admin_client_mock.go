@@ -31,10 +31,11 @@ var (
 	MinioServerInfoMock     func(ctx context.Context) (madmin.InfoMessage, error)
 	minioChangePasswordMock func(ctx context.Context, accessKey, secretKey string) error
 
-	minioHelpConfigKVMock func(subSys, key string, envOnly bool) (madmin.Help, error)
-	minioGetConfigKVMock  func(key string) ([]byte, error)
-	minioSetConfigKVMock  func(kv string) (restart bool, err error)
-	minioDelConfigKVMock  func(name string) (err error)
+	minioHelpConfigKVMock       func(subSys, key string, envOnly bool) (madmin.Help, error)
+	minioGetConfigKVMock        func(key string) ([]byte, error)
+	minioSetConfigKVMock        func(kv string) (restart bool, err error)
+	minioDelConfigKVMock        func(name string) (err error)
+	minioHelpConfigKVGlobalMock func(envOnly bool) (madmin.Help, error)
 
 	minioGetLogsMock func(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo
 
@@ -131,6 +132,11 @@ func (ac AdminClientMock) getConfigKV(ctx context.Context, name string) ([]byte,
 // mock function setConfigKV()
 func (ac AdminClientMock) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
 	return minioSetConfigKVMock(kv)
+}
+
+// mock function helpConfigKV()
+func (ac AdminClientMock) helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error) {
+	return minioHelpConfigKVGlobalMock(envOnly)
 }
 
 func (ac AdminClientMock) delConfigKV(ctx context.Context, name string) (err error) {

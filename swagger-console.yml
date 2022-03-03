@@ -3452,6 +3452,41 @@ paths:
       tags:
         - release
 
+  /support/callhome:
+    get:
+      summary: Get Callhome current status
+      operationId: GetCallHomeOptionValue
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/callHomeGetResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Support
+
+    put:
+      summary: Sets callhome status
+      operationId: SetCallHomeStatus
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/callHomeSetStatus"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Support
+
 definitions:
   accountChangePasswordRequest:
     type: object
@@ -5840,6 +5875,7 @@ definitions:
     properties:
       restart:
         type: boolean
+
   releaseListResponse:
     type: object
     properties:
@@ -5862,6 +5898,7 @@ definitions:
         type: string
       newFeaturesContent:
         type: string
+
   releaseMetadata:
     type: object
     properties:
@@ -5936,3 +5973,22 @@ definitions:
         type: string
       subscriptions_url:
         type: string
+
+  callHomeGetResponse:
+    type: object
+    properties:
+      diagnosticsStatus:
+        type: boolean
+      logsStatus:
+        type: boolean
+
+  callHomeSetStatus:
+    type: object
+    required:
+      - diagState
+      - logsState
+    properties:
+      diagState:
+        type: boolean
+      logsState:
+        type: boolean

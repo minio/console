@@ -4725,6 +4725,57 @@ func init() {
         }
       }
     },
+    "/support/callhome": {
+      "get": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Get Callhome current status",
+        "operationId": "GetCallHomeOptionValue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeGetResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Sets callhome status",
+        "operationId": "SetCallHomeStatus",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callHomeSetStatus"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/policy": {
       "get": {
         "tags": [
@@ -5825,6 +5876,32 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "callHomeGetResponse": {
+      "type": "object",
+      "properties": {
+        "diagnosticsStatus": {
+          "type": "boolean"
+        },
+        "logsStatus": {
+          "type": "boolean"
+        }
+      }
+    },
+    "callHomeSetStatus": {
+      "type": "object",
+      "required": [
+        "diagState",
+        "logsState"
+      ],
+      "properties": {
+        "diagState": {
+          "type": "boolean"
+        },
+        "logsState": {
+          "type": "boolean"
         }
       }
     },
@@ -13418,6 +13495,57 @@ func init() {
         }
       }
     },
+    "/support/callhome": {
+      "get": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Get Callhome current status",
+        "operationId": "GetCallHomeOptionValue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeGetResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Sets callhome status",
+        "operationId": "SetCallHomeStatus",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callHomeSetStatus"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/policy": {
       "get": {
         "tags": [
@@ -14644,6 +14772,32 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "callHomeGetResponse": {
+      "type": "object",
+      "properties": {
+        "diagnosticsStatus": {
+          "type": "boolean"
+        },
+        "logsStatus": {
+          "type": "boolean"
+        }
+      }
+    },
+    "callHomeSetStatus": {
+      "type": "object",
+      "required": [
+        "diagState",
+        "logsState"
+      ],
+      "properties": {
+        "diagState": {
+          "type": "boolean"
+        },
+        "logsState": {
+          "type": "boolean"
         }
       }
     },
