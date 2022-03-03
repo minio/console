@@ -36,6 +36,8 @@ const RegionSelect = ({
         "& .MuiOutlinedInput-root": {
           padding: 0,
           paddingLeft: "10px",
+          fontSize: 13,
+          fontWeight: 600,
         },
         "& .MuiAutocomplete-inputRoot": {
           "& .MuiOutlinedInput-notchedOutline": {
@@ -114,11 +116,11 @@ const RegionSelect = ({
                 width: "100%",
 
                 "& .label": {
-                  fontSize: "16px",
+                  fontSize: "13px",
                   fontWeight: 500,
                 },
                 "& .value": {
-                  fontSize: "12px",
+                  fontSize: "11px",
                   fontWeight: 400,
                 },
               }}
