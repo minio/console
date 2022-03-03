@@ -415,18 +415,18 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			LogError("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err)
 			return
 		}
+		contentType := stat.ContentType
+		rw.Header().Set("X-XSS-Protection", "1; mode=block")
 
-		if isPreview {
+		if isPreview && isSafeToPreview(contentType) {
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", escapedName))
 			rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
-			rw.Header().Set("X-XSS-Protection", "1")
 		} else {
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", escapedName))
 		}
 
 		rw.Header().Set("Last-Modified", stat.LastModified.UTC().Format(http.TimeFormat))
 
-		contentType := stat.ContentType
 		if isPreview {
 			// In case content type was uploaded as octet-stream, we double verify content type
 			if stat.ContentType == "application/octet-stream" {
