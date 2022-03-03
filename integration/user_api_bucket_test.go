@@ -2788,29 +2788,123 @@ func GetBucketReplication(bucketName string) (*http.Response, error) {
 	return response, err
 }
 
+func DeletesAllReplicationRulesOnABucket(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to delete all replication rules in a bucket
+		URL: /buckets/{bucket_name}/delete-all-replication-rules
+		HTTP Verb: DELETE
+	*/
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-all-replication-rules",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteBucketReplicationRule(bucketName string, ruleID string) (*http.Response, error) {
+	/*
+		Helper function to delete a bucket's replication rule
+		URL: /buckets/{bucket_name}/replication/{rule_id}
+		HTTP Verb: DELETE
+	*/
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/replication/"+ruleID,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestReplication(t *testing.T) {
 
 	// Vars
 	assert := assert.New(t)
+	originBucket := "testputobjectslegalholdstatus"
+	destinationBuckets := []string{"testgetbucketquota", "testputbucketquota"} // an array of strings to iterate over
 
-	// 1. Set replication
-	response, err := SetMultiBucketReplication(
-		"minioadmin",                    // accessKey string
-		"minioadmin",                    // secretKey string
-		"http://localhost:9000/",        // targetURL string
-		"",                              // region string
-		"testputobjectslegalholdstatus", // originBucket string
-		"testgetbucketquota",            // destinationBucket string
-		"async",                         // syncMode string
-		107374182400,                    // bandwidth int
-		60,                              // healthCheckPeriod int
-		"",                              // prefix string
-		"",                              // tags string
-		true,                            // replicateDeleteMarkers bool
-		true,                            // replicateDeletes bool
-		1,                               // priority int
-		"",                              // storageClass string
-		true,                            // replicateMetadata bool
+	// 1. Set replication rules with DIFFERENT PRIORITY <------- NOT SAME BUT DIFFERENT! 1, 2, etc.
+	for index, destinationBucket := range destinationBuckets {
+		response, err := SetMultiBucketReplication(
+			"minioadmin",             // accessKey string
+			"minioadmin",             // secretKey string
+			"http://localhost:9000/", // targetURL string
+			"",                       // region string
+			originBucket,             // originBucket string
+			destinationBucket,        // destinationBucket string
+			"async",                  // syncMode string
+			107374182400,             // bandwidth int
+			60,                       // healthCheckPeriod int
+			"",                       // prefix string
+			"",                       // tags string
+			true,                     // replicateDeleteMarkers bool
+			true,                     // replicateDeletes bool
+			index+1,                  // priority int
+			"",                       // storageClass string
+			true,                     // replicateMetadata bool
+		)
+		assert.Nil(err)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		finalResponse := inspectHTTPResponse(response)
+		if response != nil {
+			assert.Equal(200, response.StatusCode, finalResponse)
+		}
+
+	}
+
+	// 2. Get replication, at this point two rules are expected
+	response, err := GetBucketReplication(originBucket)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, "error invalid status")
+	}
+
+	// 3. Get rule ID and status from response's body
+	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	structBucketRepl := models.BucketReplicationResponse{}
+	err = json.Unmarshal(bodyBytes, &structBucketRepl)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+
+	// 4. Verify rules are enabled
+	for index := 0; index < 2; index++ {
+		Status := structBucketRepl.Rules[index].Status
+		assert.Equal(Status, "Enabled")
+	}
+
+	// 5. Delete 2nd rule only with dedicated end point for single rules:
+	// /buckets/{bucket_name}/replication/{rule_id}
+	ruleID := structBucketRepl.Rules[1].ID // To delete 2nd rule in a single way
+	response, err = DeleteBucketReplicationRule(
+		originBucket,
+		ruleID,
 	)
 	assert.Nil(err)
 	if err != nil {
@@ -2819,11 +2913,14 @@ func TestReplication(t *testing.T) {
 	}
 	finalResponse := inspectHTTPResponse(response)
 	if response != nil {
-		assert.Equal(200, response.StatusCode, finalResponse)
+		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
-	// 2. Get replication
-	response, err = GetBucketReplication("testputobjectslegalholdstatus")
+	// 6. Delete remaining Bucket Replication Rule with generic end point:
+	// /buckets/{bucket_name}/delete-all-replication-rules
+	response, err = DeletesAllReplicationRulesOnABucket(
+		originBucket,
+	)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -2831,11 +2928,7 @@ func TestReplication(t *testing.T) {
 	}
 	finalResponse = inspectHTTPResponse(response)
 	if response != nil {
-		assert.Equal(200, response.StatusCode, finalResponse)
+		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
-	// 3. Verify rule is enabled
-	assert.True(
-		strings.Contains(finalResponse, "Enabled"),
-		finalResponse)
 }
