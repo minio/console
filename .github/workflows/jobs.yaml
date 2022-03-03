@@ -135,7 +135,7 @@ jobs:
           echo "get console dependencies"
           cd console
           go mod init github.com/minio/console
-          go install github.com/minio/console@latest
+          go mod download
           cd ..
 
           echo "get minio dependencies"
