@@ -131,7 +131,7 @@ func NotifyPostgres() (*http.Response, error) {
 }
 
 func TestNotifyPostgres(t *testing.T) {
-
+	printStartFunc("TestNotifyPostgres")
 	// Variables
 	assert := assert.New(t)
 
@@ -147,9 +147,11 @@ func TestNotifyPostgres(t *testing.T) {
 	if response != nil {
 		assert.Equal(200, response.StatusCode, finalResponse)
 	}
+	printEndFunc("TestNotifyPostgres")
 }
 
 func TestRestartService(t *testing.T) {
+	printStartFunc("TestRestartService")
 	assert := assert.New(t)
 	restartResponse, restartError := RestartService()
 	assert.Nil(restartError)
@@ -165,4 +167,5 @@ func TestRestartService(t *testing.T) {
 			addObjRsp,
 		)
 	}
+	printEndFunc("TestRestartService")
 }
