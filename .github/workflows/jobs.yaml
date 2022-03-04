@@ -62,13 +62,6 @@ jobs:
         with:
           repository: minio/operator
           path: operator
-      - uses: actions/cache@v2
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
