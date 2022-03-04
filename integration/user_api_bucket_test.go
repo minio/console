@@ -2321,6 +2321,30 @@ func TestBucketVersioning(t *testing.T) {
 		return
 	}
 
+	// Read the HTTP Response and make sure we get: {"is_versioned":true}
+	getVersioningResult, getVersioningError := GetBucketVersioning("test2")
+	assert.Nil(getVersioningError)
+	if getVersioningError != nil {
+		log.Println(getVersioningError)
+		return
+	}
+	if getVersioningResult != nil {
+		assert.Equal(
+			200, getVersioningResult.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(getVersioningResult.Body)
+	structBucketRepl := models.BucketVersioningResponse{}
+	err = json.Unmarshal(bodyBytes, &structBucketRepl)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	assert.Equal(
+		structBucketRepl.IsVersioned,
+		true,
+		structBucketRepl.IsVersioned,
+	)
+
 	fmt.Println("Versioned bucket creation test status:", response.Status)
 	if distributedSystem {
 		assert.Equal(201, response.StatusCode, "Versioning test Status Code is incorrect - bucket failed to create")
@@ -2931,4 +2955,23 @@ func TestReplication(t *testing.T) {
 		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
+}
+
+func GetBucketVersioning(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to get bucket's versioning
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/versioning", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
 }
