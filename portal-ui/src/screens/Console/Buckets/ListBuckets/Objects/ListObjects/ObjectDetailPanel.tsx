@@ -59,6 +59,7 @@ import {
   TagsIcon,
   VersionsIcon,
 } from "../../../../../../icons";
+import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
 import { ShareIcon, DownloadIcon, DeleteIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
@@ -75,6 +76,7 @@ import ObjectMetaData from "../ObjectDetails/ObjectMetaData";
 import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
+import InspectObject from "./InspectObject";
 
 const styles = () =>
   createStyles({
@@ -186,6 +188,7 @@ const ObjectDetailPanel = ({
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
+  const [inspectModalOpen, setInspectModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [allInfoElements, setAllInfoElements] = useState<IFileInfo[]>([]);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
@@ -344,6 +347,13 @@ const ObjectDetailPanel = ({
     }
   };
 
+  const closeInspectModal = (reloadObjectData: boolean) => {
+    setInspectModalOpen(false);
+    if (reloadObjectData) {
+      setLoadObjectData(true);
+    }
+  };
+
   const closeLegalholdModal = (reload: boolean) => {
     setLegalholdOpen(false);
     if (reload) {
@@ -441,6 +451,18 @@ const ObjectDetailPanel = ({
     },
     {
       action: () => {
+        setInspectModalOpen(true);
+      },
+      label: "Inspect",
+      disabled:
+          !!actualInfo.is_delete_marker ||
+          extensionPreview(currentItem) === "none" ||
+          selectedVersion !== "",
+      icon: <InspectMenuIcon />,
+      tooltip: "Inspect this file",
+    },
+    {
+      action: () => {
         setVersionsModeEnabled(!versionsMode, objectName);
       },
       label: versionsMode ? "Hide Object Versions" : "Display Object Versions",
@@ -448,6 +470,7 @@ const ObjectDetailPanel = ({
       disabled: !(actualInfo.version_id && actualInfo.version_id !== "null"),
       tooltip: "Display Versions for this file",
     },
+
   ];
 
   const calculateLastModifyTime = (lastModified: string) => {
@@ -526,6 +549,14 @@ const ObjectDetailPanel = ({
           actualInfo={actualInfo}
           onCloseAndUpdate={closeAddTagModal}
         />
+      )}
+      {inspectModalOpen && actualInfo && (
+          <InspectObject
+              inspectOpen={inspectModalOpen}
+              volumeName={bucketName}
+              inspectPath={actualInfo.name}
+              closeInspectModalAndRefresh={closeInspectModal}
+          />
       )}
 
       {!actualInfo && (
