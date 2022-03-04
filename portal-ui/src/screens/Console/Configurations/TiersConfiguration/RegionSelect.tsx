@@ -1,8 +1,26 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React from "react";
-import s3Regions from "./s3-regions.json";
-import gcsRegions from "./gcs-regions.json";
-import azRegions from "./azure-regions.json";
+
 import { Autocomplete, Box, TextField } from "@mui/material";
+
+import s3Regions from "./s3-regions";
+import gcsRegions from "./gcs-regions";
+import azRegions from "./azure-regions";
 
 const getRegions = (type: string): any => {
   if (type === "s3") {
