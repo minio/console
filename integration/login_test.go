@@ -30,6 +30,7 @@ import (
 )
 
 func TestLoginStrategy(t *testing.T) {
+	printStartFunc("TestLoginStrategy")
 	assert := assert.New(t)
 
 	// image for now:
@@ -67,5 +68,5 @@ func TestLoginStrategy(t *testing.T) {
 		assert.Equal(models.LoginDetailsLoginStrategyForm, loginDetails.LoginStrategy, "Login Details don't match")
 
 	}
-
+	printEndFunc("TestLoginStrategy")
 }
