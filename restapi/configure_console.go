@@ -108,6 +108,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerProfilingHandler(api)
 	// Register session handlers
 	registerSessionHandlers(api)
+	// Register version handlers
+	registerVersionHandlers(api)
 	// Register admin info handlers
 	registerAdminInfoHandlers(api)
 	// Register admin arns handlers
