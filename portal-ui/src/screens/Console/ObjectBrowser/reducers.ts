@@ -29,6 +29,7 @@ import {
   OBJECT_MANAGER_SET_SEARCH_OBJECT,
   BUCKET_BROWSER_VERSIONS_SET_SEARCH,
   BUCKET_BROWSER_SET_SELECTED_VERSION,
+  BUCKET_BROWSER_SHOW_DELETED,
 } from "./actions";
 
 export interface Route {
@@ -51,6 +52,7 @@ export interface ObjectBrowserState {
   versionedFile: string;
   searchVersions: string;
   selectedVersion: string;
+  showDeleted: boolean;
 }
 
 export interface ObjectBrowserReducer {
@@ -91,6 +93,7 @@ const initialState: ObjectBrowserState = {
   versionedFile: "",
   searchVersions: "",
   selectedVersion: "",
+  showDeleted: false,
 };
 
 export function objectBrowserReducer(
@@ -244,6 +247,11 @@ export function objectBrowserReducer(
       return {
         ...state,
         selectedVersion: action.selectedVersion,
+      };
+    case BUCKET_BROWSER_SHOW_DELETED:
+      return {
+        ...state,
+        showDeleted: action.status,
       };
     default:
       return state;

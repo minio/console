@@ -52,6 +52,7 @@ interface IObjectBrowser {
   versionsMode: boolean;
   versionedFile: string;
   existingFiles: BucketObject[];
+  additionalOptions?: React.ReactNode;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
 }
 
@@ -69,6 +70,7 @@ const BrowserBreadcrumbs = ({
   versionsMode,
   versionedFile,
   setVersionsModeEnabled,
+  additionalOptions,
 }: IObjectBrowser) => {
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
@@ -186,6 +188,9 @@ const BrowserBreadcrumbs = ({
         <div className={classes.breadcrumbsList} dir="rtl">
           {listBreadcrumbs}
         </div>
+        {additionalOptions && (
+          <div className={classes.additionalOptions}>{additionalOptions}</div>
+        )}
       </Grid>
     </React.Fragment>
   );
