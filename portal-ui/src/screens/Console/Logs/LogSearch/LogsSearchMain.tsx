@@ -133,6 +133,7 @@ const LogsSearchMain = ({
   const [records, setRecords] = useState<IReqInfoSearchResults[]>([]);
   const [bucket, setBucket] = useState<string>("");
   const [apiName, setApiName] = useState<string>("");
+  const [accessKey, setAccessKey] = useState<string>("");
   const [userAgent, setUserAgent] = useState<string>("");
   const [object, setObject] = useState<string>("");
   const [requestID, setRequestID] = useState<string>("");
@@ -143,6 +144,7 @@ const LogsSearchMain = ({
   const [columnsShown, setColumnsShown] = useState<string[]>([
     "time",
     "api_name",
+    "access_key",
     "bucket",
     "object",
     "remote_host",
@@ -165,7 +167,7 @@ const LogsSearchMain = ({
       setAlreadyFetching(true);
       let queryParams = `${bucket !== "" ? `&fp=bucket:${bucket}` : ""}${
         object !== "" ? `&fp=object:${object}` : ""
-      }${apiName !== "" ? `&fp=api_name:${apiName}` : ""}${
+      }${apiName !== "" ? `&fp=api_name:${apiName}` : ""}${accessKey !== "" ? `&fp=access_key:${accessKey}` : ""}${
         requestID !== "" ? `&fp=request_id:${requestID}` : ""
       }${userAgent !== "" ? `&fp=user_agent:${userAgent}` : ""}${
         responseStatus !== "" ? `&fp=response_status:${responseStatus}` : ""
@@ -215,6 +217,7 @@ const LogsSearchMain = ({
     bucket,
     object,
     apiName,
+    accessKey,
     requestID,
     userAgent,
     responseStatus,
@@ -358,6 +361,13 @@ const LogsSearchMain = ({
                       name="api_name"
                     />
                     <FilterInputWrapper
+                        onChange={setAccessKey}
+                        value={accessKey}
+                        label={"Access Key"}
+                        id="access_key"
+                        name="access_key"
+                    />
+                    <FilterInputWrapper
                       onChange={setUserAgent}
                       value={userAgent}
                       label={"User Agent"}
@@ -417,6 +427,10 @@ const LogsSearchMain = ({
                     {
                       label: LogSearchColumnLabels.api_name,
                       elementKey: "api_name",
+                    },
+                    {
+                      label: LogSearchColumnLabels.access_key,
+                      elementKey: "access_key",
                     },
                     {
                       label: LogSearchColumnLabels.bucket,
