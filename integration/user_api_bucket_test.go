@@ -1013,7 +1013,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	)
 	if putError != nil {
 		log.Println(putError)
-		assert.Fail("Error creating the bucket")
+		assert.Fail("Error putting the object retention status")
 	}
 	if putResponse != nil {
 		assert.Equal(
@@ -1056,7 +1056,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 			)
 			if putError != nil {
 				log.Println(putError)
-				assert.Fail("Error creating the bucket")
+				assert.Fail("Error deleting the object retention status")
 			}
 			if putResponse != nil {
 				assert.Equal(
@@ -1287,7 +1287,7 @@ func TestPutBucketsTags(t *testing.T) {
 				tt.args.bucketName, tags)
 			if putBucketTagError != nil {
 				log.Println(putBucketTagError)
-				assert.Fail("Error creating the bucket")
+				assert.Fail("Error putting the bucket's tags")
 				return
 			}
 			if putBucketTagResponse != nil {
@@ -1469,7 +1469,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 			)
 			if putError != nil {
 				log.Println(putError)
-				assert.Fail("Error creating the bucket")
+				assert.Fail("Error putting the object's retention status")
 			}
 			if putResponse != nil {
 				assert.Equal(
@@ -1990,7 +1990,7 @@ func TestBucketRetention(t *testing.T) {
 	assert.Nil(setBucketRetentionError)
 	if setBucketRetentionError != nil {
 		log.Println(setBucketRetentionError)
-		assert.Fail("Error creating the bucket")
+		assert.Fail("Error setting the bucket retention")
 		return
 	}
 	if setBucketRetentionResponse != nil {
@@ -2005,7 +2005,7 @@ func TestBucketRetention(t *testing.T) {
 	assert.Nil(getBucketRetentionError)
 	if getBucketRetentionError != nil {
 		log.Println(getBucketRetentionError)
-		assert.Fail("Error creating the bucket")
+		assert.Fail("Error getting the bucket's retention")
 		return
 	}
 	finalResponse := inspectHTTPResponse(getBucketRetentionResponse)
@@ -2044,7 +2044,7 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 		"bucketinformation2", tags)
 	if putBucketTagError != nil {
 		log.Println(putBucketTagError)
-		assert.Fail("Error creating the bucket")
+		assert.Fail("Error putting the bucket's tags")
 		return
 	}
 	if putBucketTagResponse != nil {
@@ -2095,7 +2095,7 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 		"bucketinformation1", tags)
 	if putBucketTagError != nil {
 		log.Println(putBucketTagError)
-		assert.Fail("Error creating the bucket")
+		assert.Fail("Error putting the bucket's tags")
 		return
 	}
 	if putBucketTagResponse != nil {
@@ -2974,4 +2974,87 @@ func GetBucketVersioning(bucketName string) (*http.Response, error) {
 	}
 	response, err := client.Do(request)
 	return response, err
+}
+
+func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, error) {
+	/*
+		Helper function to set Bucket Versioning
+	*/
+	requestDataAdd := map[string]interface{}{
+		"versioning": versioning,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest("PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/versioning",
+		requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestSetBucketVersioning(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucket := "test-set-bucket-versioning"
+	locking := false
+	versioning := true
+
+	// 1. Create bucket with versioning as true and locking as false
+	response, err := AddBucket(
+		bucket,
+		locking,
+		versioning,
+		nil,
+		nil,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error creating the bucket")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 2. Set versioning as False
+	response, err = SetBucketVersioning(bucket, false)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		assert.Fail("Error setting the bucket versioning")
+		return
+	}
+	if response != nil {
+		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
+	}
+
+	// 3. Read the HTTP Response and make sure is disabled.
+	getVersioningResult, getVersioningError := GetBucketVersioning(bucket)
+	assert.Nil(getVersioningError)
+	if getVersioningError != nil {
+		log.Println(getVersioningError)
+		return
+	}
+	if getVersioningResult != nil {
+		assert.Equal(
+			200, getVersioningResult.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(getVersioningResult.Body)
+	result := models.BucketVersioningResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	assert.Equal(false, result.IsVersioned, result)
 }
