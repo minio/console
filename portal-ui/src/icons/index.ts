@@ -175,3 +175,7 @@ export { default as LegalHoldIcon } from "./LegalHoldIcon";
 export { default as RetentionIcon } from "./RetentionIcon";
 export { default as TagsIcon } from "./TagsIcon";
 export { default as AlertCloseIcon } from "./AlertCloseIcon";
+export { default as OpenSourceIcon } from "./OpenSourceIcon";
+export { default as ArrowRightLink } from "./ArrowRightLink";
+export { default as LicenseDocIcon } from "./LicenseDocIcon";
+export { default as SelectAllIcon } from "./SelectAllIcon";

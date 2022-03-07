@@ -14,274 +14,226 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IPlanDetails {
-  id: number;
-  title: string;
-  price: string;
-  capacityMax: string;
-  capacityMin?: string;
-}
+export const LICENSE_PLANS = {
+  COMMUNITY: "community",
+  STANDARD: "standard",
+  ENTERPRISE: "enterprise",
+};
 
-export const planDetails: IPlanDetails[] = [
+export const FEATURE_ITEMS = [
   {
-    id: 0,
-    title: "Community",
-    price: "Open Source",
-    capacityMax: "",
+    label: "Unit Price", //spacer
+    isHeader: true,
   },
   {
-    id: 1,
-    title: "Standard",
-    price: "$10 per TiB per Month",
-    capacityMax: "(Minimum of 100TB)",
-    capacityMin: "",
+    desc: "Features",
+    featureTitleRow: true,
   },
   {
-    id: 2,
-    title: "Enterprise",
-    price: "$20 per TiB per Month",
-    capacityMax: "(Minimum of 100TB)",
-    capacityMin: "",
+    desc: "License",
+  },
+  {
+    desc: "Software Release",
+  },
+  {
+    desc: "SLA",
+  },
+  {
+    desc: "Support",
+  },
+  {
+    desc: "Critical Security and Bug Detection",
+  },
+  {
+    desc: "Panic Button",
+  },
+  {
+    desc: "Health Diagnostics",
+  },
+  {
+    desc: "Annual Architecture Review",
+  },
+  {
+    desc: "Annual Performance Review",
+  },
+  {
+    desc: "Indemnification",
+  },
+  {
+    desc: "Security and Policy Review",
   },
 ];
 
-export interface IPlanItemValue {
-  label: string;
-  detail?: string;
-  link?: boolean;
-}
-
-export interface IPlanItemValues {
-  [index: string]: IPlanItemValue;
-}
-export interface IPlanItem {
-  id: number;
-  field: string;
-  plans: IPlanItemValues;
-  className?: string;
-}
-
-export const planItems: IPlanItem[] = [
+export const COMMUNITY_PLAN_FEATURES = [
   {
-    id: 0,
-    field: "Unit Price",
-    className: "unit-price",
-    plans: {
-      Community: {
-        label: "",
-        detail: "",
-      },
-      Standard: {
-        label: "$10 per TiB per Month",
-        detail: "(Minimum of 100TB)",
-      },
-      Enterprise: {
-        label: "$20 per TiB per Month",
-        detail: "(Minimum of 100TB)",
-      },
-    },
+    label: "Community",
+    isHeader: true,
   },
   {
-    id: 1,
-    field: "License",
-    className: "license-col",
-    plans: {
-      Community: {
-        label: "GNU AGPL v3",
-        detail: "Open source",
-        link: true,
-      },
-      Standard: {
-        label: "Commercial",
-      },
-      Enterprise: {
-        label: "Commercial",
-      },
-    },
+    id: "com_feat_title",
+    featureTitleRow: true,
   },
   {
-    id: 2,
-    field: "Software Release",
-    plans: {
-      Community: {
-        label: "Upstream",
-      },
-      Standard: {
-        label: "1 Year Long Term Support",
-      },
-      Enterprise: {
-        label: "5 Years Long Term Support",
-      },
-    },
+    id: "com_license",
+    label: "GNU AGPL v3",
+    isOssLicenseLink: true,
   },
   {
-    id: 3,
-    field: "SLA",
-    plans: {
-      Community: {
-        label: "No SLA",
-      },
-      Standard: {
-        label: "<48 Hours",
-        detail: "(Local Business Hours)",
-      },
-      Enterprise: {
-        label: "<1 hour",
-      },
-    },
+    id: "com_release",
+    label: "Upstream",
   },
   {
-    id: 4,
-    field: "Support",
-    plans: {
-      Community: {
-        label: "Community:",
-        detail: "Public Slack Channel + Github Issues",
-      },
-      Standard: {
-        label: "L4 Direct Engineering",
-        detail: " support via SUBNET",
-      },
-      Enterprise: {
-        label: "L4 Direct Engineering",
-        detail: "support via SUBNET",
-      },
-    },
+    id: "com_sla",
+    label: "No SLA",
   },
   {
-    id: 5,
-    field: "Critical Security and Bug Detection",
-    plans: {
-      Community: {
-        label: "Self",
-      },
-      Standard: {
-        label: "Continuous Scan and Alert",
-      },
-      Enterprise: {
-        label: "Continuous Scan and Alert",
-      },
-    },
+    id: "com_support",
+    label: "Community:",
+    detail: "Public Slack Channel + Github Issues",
   },
   {
-    id: 6,
-    field: "Panic Button",
-    plans: {
-      Community: {
-        label: "N/A",
-      },
-      Standard: {
-        label: "1 per year",
-      },
-      Enterprise: {
-        label: "Unlimited",
-      },
-    },
+    id: "com_security",
+    label: "Self",
   },
   {
-    id: 7,
-    field: "Health Diagnostics",
-    plans: {
-      Community: {
-        label: "N/A",
-      },
-      Standard: {
-        label: "24/7/365",
-      },
-      Enterprise: {
-        label: "24/7/365",
-      },
-    },
+    id: "com_panic",
+    xsLabel: "N/A",
   },
   {
-    id: 8,
-    field: "Annual Architecture Review",
-    plans: {
-      Community: {
-        label: "N/A",
-      },
-      Standard: {
-        label: "N/A",
-      },
-      Enterprise: {
-        label: "Yes",
-      },
-    },
+    id: "com_diag",
+    xsLabel: "N/A",
   },
   {
-    id: 9,
-    field: "Annual Performance Review",
-    plans: {
-      Community: {
-        label: "N/A",
-      },
-      Standard: {
-        label: "N/A",
-      },
-      Enterprise: {
-        label: "Yes",
-      },
-    },
+    id: "com_arch",
+    xsLabel: "N/A",
   },
   {
-    id: 10,
-    field: "Indemnification",
-    plans: {
-      Community: {
-        label: "N/A",
-      },
-      Standard: {
-        label: "N/A",
-      },
-      Enterprise: {
-        label: "Yes",
-      },
-    },
+    id: "com_perf",
+    xsLabel: "N/A",
   },
   {
-    id: 11,
-    field: "Security and Policy Review",
-    plans: {
-      Community: {
-        label: "N/A",
-      },
-      Standard: {
-        label: "N/A",
-      },
-      Enterprise: {
-        label: "Yes",
-      },
-    },
+    id: "com_indemnity",
+    xsLabel: "N/A",
+  },
+  {
+    id: "com_sec_policy",
+    xsLabel: "N/A",
   },
 ];
 
-export interface IPlanButton {
-  id: number;
-  text: string;
-  text2: string;
-  link: string;
-  plan: string;
-}
-export const planButtons: IPlanButton[] = [
+export const STANDARD_PLAN_FEATURES = [
   {
-    id: 0,
-    text: "Join Slack",
-    text2: "",
-    link: "https://slack.min.io",
-    plan: "Community",
+    label: "Standard",
+    isHeader: true,
   },
   {
-    id: 1,
-    text: "Subscribe",
-    text2: "Sign up",
-    link: "https://min.io/signup",
-    plan: "Standard",
+    id: "std_feat_title",
+    featureTitleRow: true,
   },
   {
-    id: 2,
-    text: "Subscribe",
-    text2: "Sign up",
-    link: "https://min.io/signup",
-    plan: "Enterprise",
+    id: "std_license",
+    label: "Commercial",
+  },
+  {
+    id: "std_release",
+    label: "1 Year Long Term Support",
+  },
+  {
+    id: "std_sla",
+    label: "<48 Hours",
+    detail: "(Local Business Hours)",
+  },
+  {
+    id: "std_support",
+    label: "L4 Direct Engineering",
+    detail: "support via SUBNET",
+  },
+  {
+    id: "std_security",
+    label: "Continuous Scan and Alert",
+  },
+  {
+    id: "std_panic",
+    label: "1 Per year",
+  },
+  {
+    id: "std_diag",
+    label: "24/7/365",
+  },
+  {
+    id: "std_arch",
+    xsLabel: "N/A",
+  },
+  {
+    id: "std_perf",
+    xsLabel: "N/A",
+  },
+  {
+    id: "std_indemnity",
+    xsLabel: "N/A",
+  },
+  {
+    id: "std_sec_policy",
+    xsLabel: "N/A",
   },
 ];
+
+export const ENTERPRISE_PLAN_FEATURES = [
+  {
+    label: "Enterprise",
+    isHeader: true,
+  },
+  {
+    id: "end_feat_title",
+    featureTitleRow: true,
+  },
+  {
+    id: "ent_license",
+    label: "Commercial",
+  },
+  {
+    id: "ent_release",
+    label: "5 Years Long Term Support",
+  },
+  {
+    id: "ent_sla",
+    label: "<1 hour",
+  },
+  {
+    id: "ent_support",
+    label: "L4 Direct Engineering support via",
+    detail: "SUBNET, Phone, Web Conference",
+  },
+  {
+    id: "ent_security",
+    label: "Continuous Scan and Alert",
+  },
+  {
+    id: "ent_panic",
+    label: "Unlimited",
+  },
+  {
+    id: "ent_diag",
+    label: "24/7/365",
+  },
+  {
+    id: "ent_arch",
+    yesIcon: true,
+  },
+  {
+    id: "ent_perf",
+    yesIcon: true,
+  },
+  {
+    id: "ent_indemnity",
+    yesIcon: true,
+  },
+  {
+    id: "ent_sec_policy",
+    yesIcon: true,
+  },
+];
+
+export const PAID_PLANS = [LICENSE_PLANS.STANDARD, LICENSE_PLANS.ENTERPRISE];
+
+
