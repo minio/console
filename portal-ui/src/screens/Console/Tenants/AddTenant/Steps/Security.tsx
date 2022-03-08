@@ -246,7 +246,7 @@ const Security = ({
                       <Grid
                         item
                         xs={12}
-                        key={keyPair.id}
+                        key={`minio-certs-${keyPair.id}`}
                         className={classes.minioCertificateRows}
                       >
                         <Grid item xs={10} className={classes.fileItem}>
@@ -316,7 +316,7 @@ const Security = ({
                       <Grid
                         item
                         xs={12}
-                        key={keyPair.id}
+                        key={`minio-CA-certs-${keyPair.id}`}
                         className={classes.minioCACertsRow}
                       >
                         <Grid item xs={6}>
