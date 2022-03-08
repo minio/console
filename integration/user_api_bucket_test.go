@@ -69,6 +69,26 @@ func AddBucket(name string, locking bool, versioning bool, quota map[string]inte
 	return response, err
 }
 
+func BucketGotAdded(name string, locking bool, versioning bool, quota map[string]interface{}, retention map[string]interface{}, assert *assert.Assertions, expected int) bool {
+	/*
+		The intention of this function is to return either true or false to
+		reduce the code by performing the verification in one place only.
+	*/
+	// Verify if there is an error and return either true or false
+	response, err := AddBucket(name, locking, versioning, quota, retention)
+	if err != nil {
+		assert.Fail("Error adding the bucket")
+		return false
+	}
+	if response != nil {
+		if response.StatusCode != expected {
+			assert.Fail(inspectHTTPResponse(response))
+			return false
+		}
+	}
+	return true
+}
+
 func ListBuckets() (*http.Response, error) {
 	/*
 		Helper function to list buckets
@@ -645,15 +665,8 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	status := "enabled"
 
 	// 1. Create bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add object
@@ -679,7 +692,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	listResponse, _ := ListObjects(bucketName, prefix, "true")
 	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
-	err = json.Unmarshal(bodyBytes, &listObjs)
+	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
@@ -741,15 +754,8 @@ func TestGetBucketQuota(t *testing.T) {
 	validBucket := "testgetbucketquota"
 
 	// 1. Create bucket
-	response, err := AddBucket(validBucket, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(validBucket, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Put Bucket Quota
@@ -827,15 +833,8 @@ func TestPutBucketQuota(t *testing.T) {
 	validBucket := "testputbucketquota"
 
 	// 1. Create bucket
-	response, err := AddBucket(validBucket, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(validBucket, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Put Bucket Quota
@@ -895,15 +894,8 @@ func TestListBucketEvents(t *testing.T) {
 	validBucket := "testlistbucketevents"
 
 	// 1. Create bucket
-	response, err := AddBucket(validBucket, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(validBucket, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. List bucket events
@@ -964,15 +956,8 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	validPrefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add object
@@ -998,7 +983,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	listResponse, _ := ListObjects(bucketName, validPrefix, "true")
 	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
-	err = json.Unmarshal(bodyBytes, &listObjs)
+	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
@@ -1080,15 +1065,8 @@ func TestBucketSetPolicy(t *testing.T) {
 	validBucketName := "testbucketsetpolicy"
 
 	// 1. Create bucket
-	response, err := AddBucket(validBucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(validBucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Set a bucket's policy using table driven tests
@@ -1152,15 +1130,8 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 	validPrefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add object
@@ -1186,7 +1157,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 	listResponse, _ := ListObjects(bucketName, validPrefix, "true")
 	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
-	err = json.Unmarshal(bodyBytes, &listObjs)
+	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
@@ -1249,15 +1220,8 @@ func TestPutBucketsTags(t *testing.T) {
 	// 1. Create the bucket
 	assert := assert.New(t)
 	validBucketName := "testputbuckettags1"
-	response, err := AddBucket(validBucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(validBucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	type args struct {
@@ -1318,14 +1282,8 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 	tags["tag"] = "testputobjecttagbucketonetagone"
 
 	// 1. Create the bucket
-	response, err := AddBucket(bucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Upload the object to the bucket
@@ -1399,15 +1357,8 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 	prefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add object
@@ -1433,7 +1384,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 	listResponse, _ := ListObjects(bucketName, prefix, "true")
 	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
-	err = json.Unmarshal(bodyBytes, &listObjs)
+	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
@@ -1505,14 +1456,8 @@ func TestShareObjectOnURL(t *testing.T) {
 	versionID := "null"
 
 	// 1. Create the bucket
-	response, err := AddBucket(bucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Upload the object to the bucket
@@ -1588,14 +1533,8 @@ func TestListObjects(t *testing.T) {
 	fileName := "testlistobjecttobucket1.txt"
 
 	// 1. Create the bucket
-	response, err := AddBucket(bucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Upload the object to the bucket
@@ -1643,15 +1582,8 @@ func TestDeleteObject(t *testing.T) {
 	numberOfFiles := 2
 
 	// 1. Create bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add two objects to the bucket created.
@@ -1717,14 +1649,8 @@ func TestUploadObjectToBucket(t *testing.T) {
 	fileName := "sample.txt"
 
 	// 1. Create the bucket
-	response, err := AddBucket(bucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Upload the object to the bucket
@@ -1759,15 +1685,8 @@ func TestDownloadObject(t *testing.T) {
 	}
 
 	// 1. Create the bucket
-	response, err := AddBucket(bucketName, true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Upload an object to the bucket
@@ -1829,14 +1748,8 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	fileName := "testdeletemultipleobjs"
 
 	// 1. Create a bucket for this particular test
-	response, err := AddBucket(bucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Add couple of objects to this bucket
@@ -1904,14 +1817,8 @@ func TestPutObjectTag(t *testing.T) {
 	versionID := "null"
 
 	// 1. Create the bucket
-	response, err := AddBucket(bucketName, false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Upload the object to the bucket
@@ -1985,15 +1892,8 @@ func TestBucketRetention(t *testing.T) {
 	retention["mode"] = "compliance"
 	retention["unit"] = "years"
 	retention["validity"] = 2
-	response, err := AddBucket("setbucketretention1", true, true, nil, retention)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded("setbucketretention1", true, true, nil, retention, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Set the bucket's retention from 2 years to 3 years
@@ -2044,15 +1944,8 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 	printStartFunc("TestBucketInformationGenericErrorResponse")
 	// 1. Create the bucket
 	assert := assert.New(t)
-	response, err := AddBucket("bucketinformation2", false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded("bucketinformation2", false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add a tag to the bucket
@@ -2097,14 +1990,8 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	printStartFunc("TestBucketInformationSuccessfulResponse")
 	// 1. Create the bucket
 	assert := assert.New(t)
-	response, err := AddBucket("bucketinformation1", false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded("bucketinformation1", false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Add a tag to the bucket
@@ -2154,14 +2041,8 @@ func TestDeleteBucket(t *testing.T) {
 	printStartFunc("TestDeleteBucket")
 	// 1. Create the bucket
 	assert := assert.New(t)
-	response, err := AddBucket("testdeletebucket1", false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded("testdeletebucket1", false, false, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
 	// 2. Delete the bucket
@@ -2207,22 +2088,8 @@ func TestListBuckets(t *testing.T) {
 	// 1. Create buckets
 	var numberOfBuckets = 3
 	for i := 1; i <= numberOfBuckets; i++ {
-		response, err := AddBucket(
-			"testlistbuckets"+strconv.Itoa(i), false, false, nil, nil)
-		assert.Nil(err)
-		if err != nil {
-			log.Println(err)
-			assert.Fail("Error creating the buckets")
+		if !BucketGotAdded("testlistbuckets"+strconv.Itoa(i), false, false, nil, nil, assert, 201) {
 			return
-		}
-		if response != nil {
-			b, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			assert.Equal(201, response.StatusCode,
-				"Status Code is incorrect: "+string(b)+
-					" Bucket name: TestListBuckets"+strconv.Itoa(i))
 		}
 	}
 
@@ -2341,10 +2208,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	requestDataBody := bytes.NewReader(requestDataJSON)
 
-	response, err = AddBucket("test2", true, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded("test2", true, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2374,7 +2238,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	fmt.Println("Versioned bucket creation test status:", response.Status)
 	if distributedSystem {
-		assert.Equal(201, response.StatusCode, "Versioning test Status Code is incorrect - bucket failed to create")
+		assert.Equal(200, response.StatusCode, "Versioning test Status Code is incorrect - bucket failed to create")
 	} else {
 		assert.NotEqual(201, response.StatusCode, "Versioning test Status Code is incorrect -  versioned bucket created on non-distributed system")
 	}
@@ -2409,10 +2273,7 @@ func TestSetBucketTags(t *testing.T) {
 	}
 
 	// put bucket
-	response, err := AddBucket("test4", false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded("test4", false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2436,7 +2297,7 @@ func TestSetBucketTags(t *testing.T) {
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
-	response, err = client.Do(request)
+	response, err := client.Do(request)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -2481,10 +2342,7 @@ func TestGetBucket(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	response, err := AddBucket("test3", false, false, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
+	if !BucketGotAdded("test3", false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2498,7 +2356,7 @@ func TestGetBucket(t *testing.T) {
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
-	response, err = client.Do(request)
+	response, err := client.Do(request)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -2509,45 +2367,6 @@ func TestGetBucket(t *testing.T) {
 		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
 	}
 	printEndFunc("TestGetBucket")
-}
-
-func TestAddBucketLocking(t *testing.T) {
-	/*
-		This function is to test that locking can't be activated if versioning
-		is not enabled.
-		Then, locking will be activated because versioning is activated as well.
-	*/
-	printStartFunc("TestAddBucketLocking")
-	assert := assert.New(t)
-
-	/*
-		This is valid, versioning is true, then locking can be true as well.
-	*/
-	response, err := AddBucket("thujun", true, true, nil, nil)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// Verification part, bucket should be created with versioning enabled and
-	// locking enabled, we expect 201 when created.
-	if response != nil {
-		assert.Equal(201, response.StatusCode, "201 is expected for this test")
-	}
-
-	defer response.Body.Close()
-
-	/*
-		To convert an HTTP response body to a string in Go, so you can read the
-		error from the API in case the bucket is invalid for some reason
-	*/
-	b, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(string(b))
-	printEndFunc("TestAddBucketLocking")
 }
 
 func TestAddBucket(t *testing.T) {
@@ -2578,18 +2397,8 @@ func TestAddBucket(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			response, err := AddBucket(
-				tt.args.bucketName, false, false, nil, nil)
-			assert.Nil(err)
-			if err != nil {
-				log.Println(err)
-				assert.Fail("Error while adding the bucket")
+			if !BucketGotAdded(tt.args.bucketName, false, false, nil, nil, assert, tt.expectedStatus) {
 				return
-			}
-			finalResponse := inspectHTTPResponse(response)
-			if response != nil {
-				assert.Equal(tt.expectedStatus,
-					response.StatusCode, finalResponse)
 			}
 		})
 	}
@@ -3096,25 +2905,12 @@ func TestSetBucketVersioning(t *testing.T) {
 	versioning := true
 
 	// 1. Create bucket with versioning as true and locking as false
-	response, err := AddBucket(
-		bucket,
-		locking,
-		versioning,
-		nil,
-		nil,
-	)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		assert.Fail("Error creating the bucket")
+	if !BucketGotAdded(bucket, locking, versioning, nil, nil, assert, 201) {
 		return
-	}
-	if response != nil {
-		assert.Equal(201, response.StatusCode, inspectHTTPResponse(response))
 	}
 
 	// 2. Set versioning as False
-	response, err = SetBucketVersioning(bucket, false)
+	response, err := SetBucketVersioning(bucket, false)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
