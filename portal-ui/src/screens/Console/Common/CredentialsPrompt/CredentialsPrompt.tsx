@@ -195,8 +195,8 @@ const CredentialsPrompt = ({
                   if (!Array.isArray(consoleCreds)) {
                     consoleExtras = {
                           url: consoleCreds.url,
-                          accesskey: consoleCreds.accessKey,
-                          secretkey: consoleCreds.secretKey,
+                          accessKey: consoleCreds.accessKey,
+                          secretKey: consoleCreds.secretKey,
                           api: "s3v4",
                           path: "auto",
                     };
@@ -204,8 +204,8 @@ const CredentialsPrompt = ({
                     const cCreds = consoleCreds.map((itemMap) => {
                       return {
                         url: itemMap.url,
-                        accesskey: itemMap.accessKey,
-                        secretkey: itemMap.secretKey,
+                        accessKey: itemMap.accessKey,
+                        secretKey: itemMap.secretKey,
                         api: "s3v4",
                         path: "auto",
                       };
