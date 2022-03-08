@@ -23,7 +23,7 @@ require (
 	github.com/minio/mc v0.0.0-20220302011226-f13defa54577
 	github.com/minio/minio-go/v7 v7.0.23
 	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
-	github.com/minio/pkg v1.1.18
+	github.com/minio/pkg v1.1.20
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.3.0
@@ -161,5 +161,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
-
-replace google.golang.org/grpc => google.golang.org/grpc v1.29.1
