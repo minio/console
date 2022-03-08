@@ -194,15 +194,11 @@ const CredentialsPrompt = ({
                 if (consoleCreds) {
                   if (!Array.isArray(consoleCreds)) {
                     consoleExtras = {
-                      console: [
-                        {
                           url: consoleCreds.url,
                           accesskey: consoleCreds.accessKey,
                           secretkey: consoleCreds.secretKey,
                           api: "s3v4",
                           path: "auto",
-                        },
-                      ],
                     };
                   } else {
                     const cCreds = consoleCreds.map((itemMap) => {
@@ -214,10 +210,7 @@ const CredentialsPrompt = ({
                         path: "auto",
                       };
                     });
-
-                    consoleExtras = {
-                      console: [...cCreds],
-                    };
+                    consoleExtras = cCreds[0];
                   }
                 }
 
