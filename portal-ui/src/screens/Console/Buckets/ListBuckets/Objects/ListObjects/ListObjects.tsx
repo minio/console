@@ -62,6 +62,7 @@ import {
   resetRewind,
   setNewObject,
   setSearchObjects,
+  setShowDeletedObjects,
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
@@ -101,6 +102,7 @@ import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import ActionsListSection from "./ActionsListSection";
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
+import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -169,6 +171,10 @@ const styles = (theme: Theme) =>
       borderBottom: 0,
       padding: "0.8rem 15px 0",
     },
+    labelStyle: {
+      color: "#969FA8",
+      fontSize: "12px",
+    },
     ...objectBrowserExtras,
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
@@ -203,6 +209,7 @@ interface IListObjectsProps {
   rewindDate: any;
   bucketToRewind: string;
   searchObjects: string;
+  showDeleted: boolean;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
@@ -217,6 +224,7 @@ interface IListObjectsProps {
   openList: typeof openList;
   setSearchObjects: typeof setSearchObjects;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
+  setShowDeletedObjects: typeof setShowDeletedObjects;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -266,6 +274,8 @@ const ListObjects = ({
   versionsMode,
   openList,
   setVersionsModeEnabled,
+  showDeleted,
+  setShowDeletedObjects,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -493,10 +503,20 @@ const ListObjects = ({
         let currentTimestamp = Date.now();
         setLoadingStartTime(currentTimestamp);
         setLoadingMessage(defLoading);
+
+        let urlTake = `/api/v1/buckets/${bucketName}/objects`;
+
+        if (showDeleted) {
+          const currDate = new Date();
+          const currDateISO = currDate.toISOString();
+
+          urlTake = `/api/v1/buckets/${bucketName}/rewind/${currDateISO}`;
+        }
+
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects${
+            `${urlTake}${
               pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
             }`
           )
@@ -622,6 +642,7 @@ const ListObjects = ({
     rewindDate,
     internalPaths,
     bucketInfo,
+    showDeleted,
     displayListObjects,
   ]);
 
@@ -1054,6 +1075,11 @@ const ListObjects = ({
     }
   };
 
+  const setDeletedAction = () => {
+    setShowDeletedObjects(!showDeleted);
+    onClosePanel(true);
+  };
+
   const tableActions: ItemActions[] = [
     {
       type: "view",
@@ -1264,6 +1290,22 @@ const ListObjects = ({
             bucketName={bucketName}
             internalPaths={pageTitle}
             existingFiles={records || []}
+            additionalOptions={
+              !isVersioned || rewindEnabled ? null : (
+                <div>
+                  <CheckboxWrapper
+                    name={"deleted_objects"}
+                    id={"showDeletedObjects"}
+                    value={"deleted_on"}
+                    label={"Show deleted objects on this bucket"}
+                    onChange={setDeletedAction}
+                    checked={showDeleted}
+                    overrideLabelClasses={classes.labelStyle}
+                    noTopMargin
+                  />
+                </div>
+              )
+            }
           />
         </Grid>
         <div
@@ -1309,6 +1351,13 @@ const ListObjects = ({
                     triggerSort: sortChange,
                   }}
                   onSelectAll={selectAllItems}
+                  rowStyle={({ index }) => {
+                    if (payload[index]?.delete_flag) {
+                      return "deleted";
+                    }
+
+                    return "";
+                  }}
                 />
               </SecureComponent>
             )}
@@ -1355,6 +1404,7 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   loadingBucket: buckets.bucketDetails.loadingBucket,
   bucketInfo: buckets.bucketDetails.bucketInfo,
   searchObjects: objectBrowser.searchObjects,
+  showDeleted: objectBrowser.showDeleted,
 });
 
 const mapDispatchToProps = {
@@ -1369,6 +1419,7 @@ const mapDispatchToProps = {
   openList,
   setSearchObjects,
   setVersionsModeEnabled,
+  setShowDeletedObjects,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
