@@ -52,6 +52,30 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/check-version": {
+      "get": {
+        "security": [],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Checks the current Operator version against the latest",
+        "operationId": "CheckMinIOVersion”",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/checkOperatorVersionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/cluster/allocatable-resources": {
       "get": {
         "tags": [
@@ -1859,6 +1883,17 @@ func init() {
           "type": "string"
         },
         "serialNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "checkOperatorVersionResponse": {
+      "type": "object",
+      "properties": {
+        "current_version": {
+          "type": "string"
+        },
+        "latest_version": {
           "type": "string"
         }
       }
@@ -3921,6 +3956,30 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/check-version": {
+      "get": {
+        "security": [],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Checks the current Operator version against the latest",
+        "operationId": "CheckMinIOVersion”",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/checkOperatorVersionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/cluster/allocatable-resources": {
       "get": {
         "tags": [
@@ -6579,6 +6638,17 @@ func init() {
           "type": "string"
         },
         "serialNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "checkOperatorVersionResponse": {
+      "type": "object",
+      "properties": {
+        "current_version": {
+          "type": "string"
+        },
+        "latest_version": {
           "type": "string"
         }
       }
