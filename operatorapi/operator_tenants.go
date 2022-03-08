@@ -33,6 +33,8 @@ import (
 	"strings"
 	"time"
 
+	utils2 "github.com/minio/console/pkg/utils"
+
 	"github.com/dustin/go-humanize"
 
 	"github.com/minio/console/restapi"
@@ -1039,7 +1041,7 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 }
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
-func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, params operator_api.UpdateTenantParams) error {
+func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl utils2.HTTPClientI, namespace string, params operator_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
 	imageRegistryReq := params.Body.ImageRegistry
 
@@ -1145,7 +1147,7 @@ func getUpdateTenantResponse(session *models.Principal, params operator_api.Upda
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	httpC := &cluster.HTTPClient{
+	httpC := &utils2.HTTPClient{
 		Client: &http.Client{
 			Timeout: 4 * time.Second,
 		},

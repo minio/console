@@ -110,6 +110,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIChangeUserPasswordHandler: admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ChangeUserPassword has not yet been implemented")
 		}),
+		UserAPICheckMinIOVersionHandler: user_api.CheckMinIOVersionHandlerFunc(func(params user_api.CheckMinIOVersionParams) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.CheckMinIOVersion has not yet been implemented")
+		}),
 		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
 		}),
@@ -489,6 +492,8 @@ type ConsoleAPI struct {
 	AdminAPIBulkUpdateUsersGroupsHandler admin_api.BulkUpdateUsersGroupsHandler
 	// AdminAPIChangeUserPasswordHandler sets the operation handler for the change user password operation
 	AdminAPIChangeUserPasswordHandler admin_api.ChangeUserPasswordHandler
+	// UserAPICheckMinIOVersionHandler sets the operation handler for the check min i o version operation
+	UserAPICheckMinIOVersionHandler user_api.CheckMinIOVersionHandler
 	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
 	// AdminAPICreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
@@ -816,6 +821,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIChangeUserPasswordHandler == nil {
 		unregistered = append(unregistered, "admin_api.ChangeUserPasswordHandler")
+	}
+	if o.UserAPICheckMinIOVersionHandler == nil {
+		unregistered = append(unregistered, "user_api.CheckMinIOVersionHandler")
 	}
 	if o.AdminAPIConfigInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
@@ -1273,6 +1281,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/account/change-user-password"] = admin_api.NewChangeUserPassword(o.context, o.AdminAPIChangeUserPasswordHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/check-version"] = user_api.NewCheckMinIOVersion(o.context, o.UserAPICheckMinIOVersionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

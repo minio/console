@@ -24,17 +24,17 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/minio/pkg/licverifier"
 
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go"
 	mc "github.com/minio/mc/cmd"
 	"github.com/tidwall/gjson"
-
-	"github.com/minio/console/cluster"
 )
 
-func LoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp string) (*LoginResp, error) {
+func LoginWithMFA(client utils.HTTPClientI, username, mfaToken, otp string) (*LoginResp, error) {
 	mfaLoginReq := MfaReq{Username: username, OTP: otp, Token: mfaToken}
 	resp, err := subnetPostReq(client, subnetMFAURL(), mfaLoginReq, nil)
 	if err != nil {
@@ -47,7 +47,7 @@ func LoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp string) (*
 	return nil, errors.New("access token not found in response")
 }
 
-func Login(client cluster.HTTPClientI, username, password string) (*LoginResp, error) {
+func Login(client utils.HTTPClientI, username, password string) (*LoginResp, error) {
 	loginReq := map[string]string{
 		"username": username,
 		"password": password,
@@ -71,7 +71,7 @@ func Login(client cluster.HTTPClientI, username, password string) (*LoginResp, e
 	return nil, errors.New("access token not found in response")
 }
 
-func GetOrganizations(client cluster.HTTPClientI, token string) ([]*models.SubnetOrganization, error) {
+func GetOrganizations(client utils.HTTPClientI, token string) ([]*models.SubnetOrganization, error) {
 	headers := subnetAuthHeaders(token)
 	respStr, err := subnetGetReq(client, subnetOrgsURL(), headers)
 	if err != nil {
@@ -90,7 +90,7 @@ type LicenseTokenConfig struct {
 	Proxy   string
 }
 
-func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (*LicenseTokenConfig, error) {
+func Register(client utils.HTTPClientI, admInfo madmin.InfoMessage, apiKey, token, accountID string) (*LicenseTokenConfig, error) {
 	var headers map[string]string
 	regInfo := GetClusterRegInfo(admInfo)
 	regURL := subnetRegisterURL()
@@ -128,7 +128,7 @@ func Register(client cluster.HTTPClientI, admInfo madmin.InfoMessage, apiKey, to
 const publicKey = "/downloads/license-pubkey.pem"
 
 // downloadSubnetPublicKey will download the current subnet public key.
-func downloadSubnetPublicKey(client cluster.HTTPClientI) (string, error) {
+func downloadSubnetPublicKey(client utils.HTTPClientI) (string, error) {
 	// Get the public key directly from Subnet
 	url := fmt.Sprintf("%s%s", subnetBaseURL(), publicKey)
 	resp, err := client.Get(url)
@@ -145,7 +145,7 @@ func downloadSubnetPublicKey(client cluster.HTTPClientI) (string, error) {
 }
 
 // ParseLicense parses the license with the bundle public key and return it's information
-func ParseLicense(client cluster.HTTPClientI, license string) (*licverifier.LicenseInfo, error) {
+func ParseLicense(client utils.HTTPClientI, license string) (*licverifier.LicenseInfo, error) {
 	var publicKeys []string
 
 	subnetPubKey, err := downloadSubnetPublicKey(client)
