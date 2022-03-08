@@ -678,7 +678,7 @@ func parseCertificate(name string, rawCert []byte) (*models.CertificateInfo, err
 		SerialNumber: cert.SerialNumber.String(),
 		Name:         name,
 		Domains:      domains,
-		Expiry:       cert.NotAfter.String(),
+		Expiry:       cert.NotAfter.Format(time.RFC3339),
 	}, nil
 }
 
@@ -722,7 +722,7 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 				SerialNumber: cert.SerialNumber.String(),
 				Name:         secret.Name,
 				Domains:      domains,
-				Expiry:       cert.NotAfter.String(),
+				Expiry:       cert.NotAfter.Format(time.RFC3339),
 			})
 		}
 	}
