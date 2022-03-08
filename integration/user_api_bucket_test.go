@@ -2998,9 +2998,24 @@ func GetBucketVersioning(bucketName string) (*http.Response, error) {
 	/*
 		Helper function to get bucket's versioning
 	*/
+	endPoint := "versioning"
+	return BaseGetFunction(bucketName, endPoint)
+}
+
+func ReturnsTheStatusOfObjectLockingSupportOnTheBucket(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to test end point below:
+		URL: /buckets/{bucket_name}/object-locking:
+		HTTP Verb: GET
+	*/
+	endPoint := "object-locking"
+	return BaseGetFunction(bucketName, endPoint)
+}
+
+func BaseGetFunction(bucketName string, endPoint string) (*http.Response, error) {
 	request, err := http.NewRequest(
 		"GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/versioning", nil)
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/"+endPoint, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -3011,6 +3026,41 @@ func GetBucketVersioning(bucketName string) (*http.Response, error) {
 	}
 	response, err := client.Do(request)
 	return response, err
+}
+
+func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
+	// Test for end point: /buckets/{bucket_name}/object-locking
+
+	// Vars
+	assert := assert.New(t)
+	bucketName := "testputobjectslegalholdstatus"
+
+	// 1. Get the status
+	response, err := ReturnsTheStatusOfObjectLockingSupportOnTheBucket(
+		bucketName,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, "error invalid status")
+	}
+
+	// 2. Verify the status to be enabled for this bucket
+	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	structBucketLocking := models.BucketObLockingResponse{}
+	err = json.Unmarshal(bodyBytes, &structBucketLocking)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	assert.Equal(
+		structBucketLocking.ObjectLockingEnabled,
+		true,
+		structBucketLocking,
+	)
 }
 
 func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, error) {
