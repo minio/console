@@ -62,3 +62,8 @@ export interface ITierUpdateCreds {
   secret_key: string;
   creds: string;
 }
+
+export interface RegionEntry {
+  label: string;
+  value: string;
+}
