@@ -197,8 +197,8 @@ const CredentialsPrompt = ({
                       console: [
                         {
                           url: consoleCreds.url,
-                          access_key: consoleCreds.accessKey,
-                          secret_key: consoleCreds.secretKey,
+                          accesskey: consoleCreds.accessKey,
+                          secretkey: consoleCreds.secretKey,
                           api: "s3v4",
                           path: "auto",
                         },
@@ -208,8 +208,8 @@ const CredentialsPrompt = ({
                     const cCreds = consoleCreds.map((itemMap) => {
                       return {
                         url: itemMap.url,
-                        access_key: itemMap.accessKey,
-                        secret_key: itemMap.secretKey,
+                        accesskey: itemMap.accessKey,
+                        secretkey: itemMap.secretKey,
                         api: "s3v4",
                         path: "auto",
                       };
