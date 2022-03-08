@@ -109,6 +109,23 @@ paths:
       tags:
         - UserAPI
 
+  /check-version:
+    get:
+      summary: Checks the current MinIO version against the latest
+      operationId: CheckMinIOVersion
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/checkVersionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: [ ]
+      tags:
+        - UserAPI
+
   /account/change-password:
     post:
       summary: Change password of currently logged in user.
@@ -4445,4 +4462,11 @@ definitions:
       company:
         type: string
       shortName:
+        type: string
+  checkVersionResponse:
+    type: object
+    properties:
+      current_version:
+        type: string
+      latest_version:
         type: string

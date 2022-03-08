@@ -63,6 +63,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
+		UserAPICheckMinIOVersionHandler: user_api.CheckMinIOVersionHandlerFunc(func(params user_api.CheckMinIOVersionParams) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.CheckMinIOVersion has not yet been implemented")
+		}),
 		OperatorAPICreateNamespaceHandler: operator_api.CreateNamespaceHandlerFunc(func(params operator_api.CreateNamespaceParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.CreateNamespace has not yet been implemented")
 		}),
@@ -253,6 +256,8 @@ type OperatorAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
+	// UserAPICheckMinIOVersionHandler sets the operation handler for the check min i o version operation
+	UserAPICheckMinIOVersionHandler user_api.CheckMinIOVersionHandler
 	// OperatorAPICreateNamespaceHandler sets the operation handler for the create namespace operation
 	OperatorAPICreateNamespaceHandler operator_api.CreateNamespaceHandler
 	// OperatorAPICreateTenantHandler sets the operation handler for the create tenant operation
@@ -428,6 +433,9 @@ func (o *OperatorAPI) Validate() error {
 		unregistered = append(unregistered, "KeyAuth")
 	}
 
+	if o.UserAPICheckMinIOVersionHandler == nil {
+		unregistered = append(unregistered, "user_api.CheckMinIOVersionHandler")
+	}
 	if o.OperatorAPICreateNamespaceHandler == nil {
 		unregistered = append(unregistered, "operator_api.CreateNamespaceHandler")
 	}
@@ -667,6 +675,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/check-version"] = user_api.NewCheckMinIOVersion(o.context, o.UserAPICheckMinIOVersionHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

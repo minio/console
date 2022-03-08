@@ -38,7 +38,7 @@ func TestAddServiceAccount(t *testing.T) {
 		tests like users.ts can run over clean data and we don't collide against
 		it.
 	*/
-
+	printStartFunc("TestAddServiceAccount")
 	assert := assert.New(t)
 
 	client := &http.Client{
@@ -46,13 +46,11 @@ func TestAddServiceAccount(t *testing.T) {
 	}
 
 	// Add service account
-	fmt.Println(".......................TestServiceAccountPolicy(): Create Data to add user")
 	requestDataAddServiceAccount := map[string]interface{}{
 		"accessKey": "testuser1",
 		"secretKey": "password",
 	}
 
-	fmt.Println("..............................TestServiceAccountPolicy(): Prepare the POST")
 	requestDataJSON, _ := json.Marshal(requestDataAddServiceAccount)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
@@ -64,17 +62,11 @@ func TestAddServiceAccount(t *testing.T) {
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
-	fmt.Println(".................................TestServiceAccountPolicy(): Make the POST")
 	response, err := client.Do(request)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println("..................................TestServiceAccountPolicy(): Verification")
-	fmt.Println(".................................TestServiceAccountPolicy(): POST response")
-	fmt.Println(response)
-	fmt.Println("....................................TestServiceAccountPolicy(): POST error")
-	fmt.Println(err)
 	if response != nil {
 		fmt.Println("POST StatusCode:", response.StatusCode)
 		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
@@ -97,7 +89,6 @@ func TestAddServiceAccount(t *testing.T) {
   ]
 }`,
 	}
-	fmt.Println("..............................TestServiceAccountPolicy(): Prepare the PUT")
 	requestDataJSON, _ = json.Marshal(requestDataPolicy)
 	requestDataBody = bytes.NewReader(requestDataJSON)
 	request, err = http.NewRequest(
@@ -108,27 +99,17 @@ func TestAddServiceAccount(t *testing.T) {
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
-
-	fmt.Println(".................................TestServiceAccountPolicy(): Make the PUT")
 	response, err = client.Do(request)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println("..................................TestServiceAccountPolicy(): Verification")
-	fmt.Println(".................................TestServiceAccountPolicy(): PUT response")
-	fmt.Println(response)
-	fmt.Println("....................................TestServiceAccountPolicy(): PUT error")
-	fmt.Println(err)
 	if response != nil {
 		fmt.Println("POST StatusCode:", response.StatusCode)
 		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
 	}
 
-	fmt.Println("...................................TestServiceAccountPolicy(): Check policy")
-
 	// Test policy
-	fmt.Println(".......................TestAddUserServiceAccount(): Create Data to add user")
 	request, err = http.NewRequest(
 		"GET", "http://localhost:9090/api/v1/service-accounts/testuser1/policy", nil)
 	if err != nil {
@@ -137,18 +118,11 @@ func TestAddServiceAccount(t *testing.T) {
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
-
-	fmt.Println(".................................TestAddServiceAccount(): Make the POST")
 	response, err = client.Do(request)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println("..................................TestAddServiceAccount(): Verification")
-	fmt.Println(".................................TestAddServiceAccount(): POST response")
-	fmt.Println(response)
-	fmt.Println("....................................TestAddServiceAccount(): POST error")
-	fmt.Println(err)
 	if response != nil {
 		fmt.Println("POST StatusCode:", response.StatusCode)
 		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
@@ -166,8 +140,6 @@ func TestAddServiceAccount(t *testing.T) {
 		assert.Equal(expected, actual)
 	}
 
-	fmt.Println("...................................TestServiceAccountPolicy(): Remove service account")
-
 	// {{baseUrl}}/user?name=proident velit
 	// Investiga como se borra en el browser.
 	request, err = http.NewRequest(
@@ -178,21 +150,14 @@ func TestAddServiceAccount(t *testing.T) {
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
-
-	fmt.Println("...............................TestServiceAccountPolicy(): Make the DELETE")
 	response, err = client.Do(request)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println("..................................TestServiceAccountPolicy(): Verification")
-	fmt.Println("...............................TestServiceAccountPolicy(): DELETE response")
-	fmt.Println(response)
-	fmt.Println("..................................TestServiceAccountPolicy(): DELETE error")
-	fmt.Println(err)
 	if response != nil {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 		assert.Equal(204, response.StatusCode, "has to be 204 when delete user")
 	}
-
+	printEndFunc("TestAddServiceAccount")
 }

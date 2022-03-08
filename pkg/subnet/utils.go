@@ -25,7 +25,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/minio/console/cluster"
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/minio/madmin-go"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/pkg/env"
@@ -68,11 +69,11 @@ func subnetAuthHeaders(authToken string) map[string]string {
 	return map[string]string{"Authorization": "Bearer " + authToken}
 }
 
-func httpDo(client cluster.HTTPClientI, req *http.Request) (*http.Response, error) {
+func httpDo(client utils.HTTPClientI, req *http.Request) (*http.Response, error) {
 	return client.Do(req)
 }
 
-func subnetReqDo(client cluster.HTTPClientI, r *http.Request, headers map[string]string) (string, error) {
+func subnetReqDo(client utils.HTTPClientI, r *http.Request, headers map[string]string) (string, error) {
 	for k, v := range headers {
 		r.Header.Add(k, v)
 	}
@@ -100,7 +101,7 @@ func subnetReqDo(client cluster.HTTPClientI, r *http.Request, headers map[string
 	return respStr, fmt.Errorf("Request failed with code %d and error: %s", resp.StatusCode, respStr)
 }
 
-func subnetGetReq(client cluster.HTTPClientI, reqURL string, headers map[string]string) (string, error) {
+func subnetGetReq(client utils.HTTPClientI, reqURL string, headers map[string]string) (string, error) {
 	r, e := http.NewRequest(http.MethodGet, reqURL, nil)
 	if e != nil {
 		return "", e
@@ -108,7 +109,7 @@ func subnetGetReq(client cluster.HTTPClientI, reqURL string, headers map[string]
 	return subnetReqDo(client, r, headers)
 }
 
-func subnetPostReq(client cluster.HTTPClientI, reqURL string, payload interface{}, headers map[string]string) (string, error) {
+func subnetPostReq(client utils.HTTPClientI, reqURL string, payload interface{}, headers map[string]string) (string, error) {
 	body, e := json.Marshal(payload)
 	if e != nil {
 		return "", e

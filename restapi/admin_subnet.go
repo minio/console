@@ -24,8 +24,9 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/subnet"
 	"github.com/minio/console/restapi/operations"
@@ -99,7 +100,7 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 	return true, nil
 }
 
-func SubnetLogin(client cluster.HTTPClientI, username, password string) (string, string, error) {
+func SubnetLogin(client utils.HTTPClientI, username, password string) (string, string, error) {
 	tokens, err := subnet.Login(client, username, password)
 	if err != nil {
 		return "", "", err
@@ -159,7 +160,7 @@ type SubnetRegistration struct {
 	Organizations []models.SubnetOrganization
 }
 
-func SubnetLoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp string) (*models.SubnetLoginResponse, error) {
+func SubnetLoginWithMFA(client utils.HTTPClientI, username, mfaToken, otp string) (*models.SubnetLoginResponse, error) {
 	tokens, err := subnet.LoginWithMFA(client, username, mfaToken, otp)
 	if err != nil {
 		return nil, err
@@ -178,7 +179,7 @@ func SubnetLoginWithMFA(client cluster.HTTPClientI, username, mfaToken, otp stri
 }
 
 // GetSubnetHTTPClient will return a client with proxy if configured, otherwise will return the default console http client
-func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*cluster.HTTPClient, error) {
+func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*utils.HTTPClient, error) {
 	var subnetHTTPClient *http.Client
 	var proxy string
 	envProxy := getSubnetProxy()
@@ -204,7 +205,7 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*cluster.
 	} else {
 		subnetHTTPClient = GetConsoleHTTPClient()
 	}
-	clientI := &cluster.HTTPClient{
+	clientI := &utils.HTTPClient{
 		Client: subnetHTTPClient,
 	}
 	return clientI, nil
@@ -254,7 +255,7 @@ func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin) (*
 	return &res, nil
 }
 
-func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient cluster.HTTPClientI, params admin_api.SubnetRegisterParams) error {
+func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient utils.HTTPClientI, params admin_api.SubnetRegisterParams) error {
 	serverInfo, err := minioClient.serverInfo(ctx)
 	if err != nil {
 		return err
@@ -308,7 +309,7 @@ func GetSubnetInfoResponse(session *models.Principal) (*models.License, *models.
 	if subnetTokens.APIKey == "" {
 		return nil, prepareError(errLicenseNotFound)
 	}
-	client := &cluster.HTTPClient{
+	client := &utils.HTTPClient{
 		Client: GetConsoleHTTPClient(),
 	}
 	licenseInfo, err := subnet.ParseLicense(client, subnetTokens.License)
