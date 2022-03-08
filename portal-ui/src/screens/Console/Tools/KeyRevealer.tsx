@@ -17,46 +17,46 @@
 import { Box, Button } from "@mui/material";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { CopyIcon } from "../../../icons";
-import {useState} from "react";
+import { useState } from "react";
 const KeyRevealer = ({ value }: { value: string }) => {
   const [shown, setShown] = useState<boolean>(false);
 
   return (
-      <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexFlow: {
-              sm: "row",
-              xs: "column",
-            },
-          }}
-      >
-        <InputBoxWrapper
-            id="inspect-dec-key"
-            name="inspect-dec-key"
-            placeholder=""
-            label=""
-            type={shown ? "text" : "password"}
-            onChange={() => {}}
-            value={value}
-            overlayIcon={<CopyIcon />}
-            extraInputProps={{
-              readOnly: true,
-            }}
-            overlayAction={() => navigator.clipboard.writeText(value)}
-        />
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexFlow: {
+          sm: "row",
+          xs: "column",
+        },
+      }}
+    >
+      <InputBoxWrapper
+        id="inspect-dec-key"
+        name="inspect-dec-key"
+        placeholder=""
+        label=""
+        type={shown ? "text" : "password"}
+        onChange={() => {}}
+        value={value}
+        overlayIcon={<CopyIcon />}
+        extraInputProps={{
+          readOnly: true,
+        }}
+        overlayAction={() => navigator.clipboard.writeText(value)}
+      />
 
-        <Button
-            sx={{
-              marginLeft: "10px",
-            }}
-            variant="contained"
-            onClick={() => setShown(!shown)}
-        >
-          Show/Hide
-        </Button>
-      </Box>
+      <Button
+        sx={{
+          marginLeft: "10px",
+        }}
+        variant="contained"
+        onClick={() => setShown(!shown)}
+      >
+        Show/Hide
+      </Button>
+    </Box>
   );
 };
 
