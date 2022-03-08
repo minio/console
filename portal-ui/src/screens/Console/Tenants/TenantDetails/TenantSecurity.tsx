@@ -414,7 +414,7 @@ const TenantSecurity = ({
                             >
                               {certificateInfo.domains &&
                                 certificateInfo.domains.map((dom) => {
-                                  return <div>{dom}</div>;
+                                  return <div key={`domain-${dom}`}>{dom}</div>;
                                 })}
                             </Typography>
                             <Typography
@@ -534,7 +534,7 @@ const TenantSecurity = ({
                             >
                               {certificateInfo.domains &&
                                 certificateInfo.domains.map((dom) => {
-                                  return <div>{dom}</div>;
+                                  return <div key={`CA-domain-${dom}`}>{dom}</div>;
                                 })}
                             </Typography>
                             <Typography
