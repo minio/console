@@ -455,9 +455,9 @@ const ObjectDetailPanel = ({
       },
       label: "Inspect",
       disabled:
-          !!actualInfo.is_delete_marker ||
-          extensionPreview(currentItem) === "none" ||
-          selectedVersion !== "",
+        !!actualInfo.is_delete_marker ||
+        extensionPreview(currentItem) === "none" ||
+        selectedVersion !== "",
       icon: <InspectMenuIcon />,
       tooltip: "Inspect this file",
     },
@@ -470,7 +470,6 @@ const ObjectDetailPanel = ({
       disabled: !(actualInfo.version_id && actualInfo.version_id !== "null"),
       tooltip: "Display Versions for this file",
     },
-
   ];
 
   const calculateLastModifyTime = (lastModified: string) => {
@@ -551,12 +550,12 @@ const ObjectDetailPanel = ({
         />
       )}
       {inspectModalOpen && actualInfo && (
-          <InspectObject
-              inspectOpen={inspectModalOpen}
-              volumeName={bucketName}
-              inspectPath={actualInfo.name}
-              closeInspectModalAndRefresh={closeInspectModal}
-          />
+        <InspectObject
+          inspectOpen={inspectModalOpen}
+          volumeName={bucketName}
+          inspectPath={actualInfo.name}
+          closeInspectModalAndRefresh={closeInspectModal}
+        />
       )}
 
       {!actualInfo && (

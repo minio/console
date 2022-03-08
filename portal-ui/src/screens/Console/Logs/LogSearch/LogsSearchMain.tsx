@@ -167,11 +167,11 @@ const LogsSearchMain = ({
       setAlreadyFetching(true);
       let queryParams = `${bucket !== "" ? `&fp=bucket:${bucket}` : ""}${
         object !== "" ? `&fp=object:${object}` : ""
-      }${apiName !== "" ? `&fp=api_name:${apiName}` : ""}${accessKey !== "" ? `&fp=access_key:${accessKey}` : ""}${
-        requestID !== "" ? `&fp=request_id:${requestID}` : ""
-      }${userAgent !== "" ? `&fp=user_agent:${userAgent}` : ""}${
-        responseStatus !== "" ? `&fp=response_status:${responseStatus}` : ""
-      }`;
+      }${apiName !== "" ? `&fp=api_name:${apiName}` : ""}${
+        accessKey !== "" ? `&fp=access_key:${accessKey}` : ""
+      }${requestID !== "" ? `&fp=request_id:${requestID}` : ""}${
+        userAgent !== "" ? `&fp=user_agent:${userAgent}` : ""
+      }${responseStatus !== "" ? `&fp=response_status:${responseStatus}` : ""}`;
 
       queryParams = queryParams.trim();
 
@@ -361,11 +361,11 @@ const LogsSearchMain = ({
                       name="api_name"
                     />
                     <FilterInputWrapper
-                        onChange={setAccessKey}
-                        value={accessKey}
-                        label={"Access Key"}
-                        id="access_key"
-                        name="access_key"
+                      onChange={setAccessKey}
+                      value={accessKey}
+                      label={"Access Key"}
+                      id="access_key"
+                      name="access_key"
                     />
                     <FilterInputWrapper
                       onChange={setUserAgent}
