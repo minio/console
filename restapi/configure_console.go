@@ -28,6 +28,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -368,9 +369,16 @@ func getSubPath() string {
 }
 
 func replaceBaseInIndex(indexPageBytes []byte, basePath string) []byte {
-	indexPageStr := string(indexPageBytes)
-	newBase := fmt.Sprintf("<base href=\"%s\"/>", basePath)
-	indexPageStr = strings.Replace(indexPageStr, "<base href=\"/\"/>", newBase, 1)
-	indexPageBytes = []byte(indexPageStr)
+	if basePath != "" {
+		validBasePath := regexp.MustCompile(`^[0-9a-zA-Z\/-]+$`)
+		if !validBasePath.MatchString(basePath) {
+			return indexPageBytes
+		}
+		indexPageStr := string(indexPageBytes)
+		newBase := fmt.Sprintf("<base href=\"%s\"/>", basePath)
+		indexPageStr = strings.Replace(indexPageStr, "<base href=\"/\"/>", newBase, 1)
+		indexPageBytes = []byte(indexPageStr)
+
+	}
 	return indexPageBytes
 }
