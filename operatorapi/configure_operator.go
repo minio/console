@@ -75,6 +75,7 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	// Register login handlers
 	registerLoginHandlers(api)
 	registerSessionHandlers(api)
+	registerVersionHandlers(api)
 
 	// Operator Console
 	// Register tenant handlers
