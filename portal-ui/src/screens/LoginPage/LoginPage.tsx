@@ -20,7 +20,6 @@ import {
   CircularProgress,
   InputAdornment,
   LinearProgress,
-  Paper,
   TextFieldProps,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -39,56 +38,97 @@ import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import { encodeFileName } from "../../common/utils";
-import { LockIcon, LoginMinIOLogo, UsersIcon } from "../../icons";
+import {
+  ArrowRightIcon,
+  DocumentationIcon,
+  DownloadIcon,
+  LockIcon,
+  LoginMinIOLogo,
+  MinIOTierIconXs,
+} from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import CssBaseline from "@mui/material/CssBaseline";
+import LockFilledIcon from "../../icons/LockFilledIcon";
+import UserFilledIcon from "../../icons/UsersFilledIcon";
+import { SupportMenuIcon } from "../../icons/SidebarMenus";
+import GithubIcon from "../../icons/GithubIcon";
+import clsx from "clsx";
 
 const styles = (theme: Theme) =>
   createStyles({
+    root: {
+      backgroundImage: `url('/images/background-wave-orig.svg'), url('/images/background.svg')`,
+      backgroundPosition: "center 250px, center center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "2547px 980px,cover",
+      backgroundBlendMode: "color-dodge",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+    },
     form: {
       width: "100%", // Fix IE 11 issue.
     },
     submit: {
-      margin: "30px 0px 16px",
+      margin: "30px 0px 8px",
       height: 40,
+      width: "100%",
       boxShadow: "none",
       padding: "16px 30px",
     },
-    loginPage: {
-      height: "100%",
-      display: "flex",
-      flexFlow: "column",
-      alignItems: "stretch",
-      position: "relative",
-      padding: 84,
-
-      "@media (max-width: 900px)": {
-        padding: 0,
+    learnMore: {
+      textAlign: "center",
+      fontSize: 10,
+      "& a": {
+        color: "#2781B0",
+      },
+      "& .min-icon": {
+        marginLeft: 12,
+        marginTop: 2,
+        width: 10,
       },
     },
-    shadowBox: {
-      boxShadow:
-        "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.125) 0px 15px 50px 0px",
+    separator: {
+      marginLeft: 8,
+      marginRight: 8,
+    },
+    linkHolder: {
+      marginTop: 20,
+    },
+    miniLinks: {
+      margin: "auto",
+      fontSize: 10,
+      textAlign: "center",
+      color: "#B2DEF5",
+      "& a": {
+        color: "#B2DEF5",
+        textDecoration: "none",
+      },
+      "& .min-icon": {
+        height: 10,
+        color: "#B2DEF5",
+      },
+    },
+    miniLogo: {
+      marginTop: 8,
+      "& .min-icon": {
+        height: 12,
+        paddingTop: 2,
+      },
+    },
+    loginPage: {
       height: "100%",
+      maxWidth: 360,
+      margin: "auto",
     },
     loginContainer: {
-      flex: 1,
-      height: "100%",
-
       "& .right-items": {
-        padding: 50,
-        flex: 1,
-        height: "100%",
-        display: "flex",
-        flexFlow: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        maxWidth: "33%",
-
-        "@media (max-width: 900px)": {
-          maxWidth: "100%",
-          margin: "auto",
-        },
+        backgroundColor: "white",
+        borderRadius: 3,
+        boxShadow: "6px 6px 50",
+        padding: 20,
       },
       "& .consoleTextBanner": {
         fontWeight: 300,
@@ -101,8 +141,6 @@ const styles = (theme: Theme) =>
         display: "flex",
         justifyContent: "flex-start",
         margin: "auto",
-        flexFlow: "column",
-        background: "linear-gradient(120deg,#081c42,#073052)",
 
         "& .logoLine": {
           display: "flex",
@@ -112,21 +150,8 @@ const styles = (theme: Theme) =>
         },
         "& .left-items": {
           margin: "auto",
-          textAlign: "left",
-          paddingRight: 240,
-          paddingBottom: 200,
-          "@media (max-width: 1400px)": {
-            paddingBottom: 120,
-            paddingRight: 50,
-          },
-          "@media (max-width: 900px)": {
-            paddingBottom: 0,
-            paddingRight: 0,
-          },
-          "@media (max-width: 600px)": {
-            paddingBottom: 0,
-            paddingRight: 0,
-          },
+          paddingTop: 100,
+          paddingBottom: 60,
         },
         "& .left-logo": {
           "& .min-icon": {
@@ -136,27 +161,16 @@ const styles = (theme: Theme) =>
           marginBottom: 10,
         },
         "& .text-line1": {
-          font: " 100 70px 'Lato'",
-
-          "@media (max-width: 600px)": {
-            fontSize: 35,
-          },
-          "@media (max-width: 800px)": {
-            fontSize: 45,
-          },
+          font: " 100 44px 'Lato'",
         },
         "& .text-line2": {
-          fontSize: 100,
+          fontSize: 80,
           fontWeight: 100,
           textTransform: "uppercase",
-          "@media (max-width: 600px)": {
-            fontSize: 35,
-            marginLeft: 0,
-          },
-          "@media (max-width: 800px)": {
-            fontSize: 55,
-            marginLeft: 0,
-          },
+        },
+        "& .text-line3": {
+          fontSize: 14,
+          fontWeight: "bold",
         },
         "& .logo-console": {
           display: "flex",
@@ -227,11 +241,13 @@ const inputStyles = makeStyles((theme: Theme) =>
       "& .MuiOutlinedInput-root": {
         paddingLeft: 0,
         "& svg": {
-          height: 16,
+          marginLeft: 4,
+          height: 14,
           color: theme.palette.primary.main,
         },
         "& input": {
-          padding: 5,
+          padding: 10,
+          fontSize: 14,
           paddingLeft: 0,
           "&::placeholder": {
             fontSize: 12,
@@ -240,15 +256,8 @@ const inputStyles = makeStyles((theme: Theme) =>
             padding: 10,
           },
         },
-        "& fieldset": {
-          border: "none", // default
-          borderBottom: "1px solid #EAEAEA",
-          borderRadius: 0,
-        },
-        "&.Mui-focused fieldset": {
-          borderBottom: "1px solid #000000",
-          borderRadius: 0,
-        },
+        "& fieldset": {},
+
         "& fieldset:hover": {
           borderBottom: "2px solid #000000",
           borderRadius: 0,
@@ -311,6 +320,9 @@ const Login = ({
   const [loadingFetchConfiguration, setLoadingFetchConfiguration] =
     useState<boolean>(true);
 
+  const [latestMinIOVersion, setLatestMinIOVersion] = useState<string>("");
+  const [loadingVersion, setLoadingVersion] = useState<boolean>(true);
+
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
     "service-account": "/api/v1/login/operator",
@@ -370,6 +382,45 @@ const Login = ({
     }
   }, [loadingFetchConfiguration, setErrorSnackMessage]);
 
+  useEffect(() => {
+    if (loadingVersion) {
+      api
+        .invoke("GET", "/api/v1/check-version")
+        .then(
+          ({
+            current_version,
+            latest_version,
+          }: {
+            current_version: string;
+            latest_version: string;
+          }) => {
+            setLatestMinIOVersion(latest_version);
+            setLoadingVersion(false);
+          }
+        )
+        .catch((err: ErrorResponseHandler) => {
+          // try the operator version
+          api
+            .invoke("GET", "/api/v1/check-operator-version")
+            .then(
+              ({
+                current_version,
+                latest_version,
+              }: {
+                current_version: string;
+                latest_version: string;
+              }) => {
+                setLatestMinIOVersion(latest_version);
+                setLoadingVersion(false);
+              }
+            )
+            .catch((err: ErrorResponseHandler) => {
+              setLoadingVersion(false);
+            });
+        });
+    }
+  }, [loadingVersion, setLoadingVersion, setLatestMinIOVersion]);
+
   let loginComponent = null;
 
   switch (loginStrategy.loginStrategy) {
@@ -398,7 +449,7 @@ const Login = ({
                         position="start"
                         className={classes.iconColor}
                       >
-                        <UsersIcon />
+                        <UserFilledIcon />
                       </InputAdornment>
                     ),
                   }}
@@ -425,7 +476,7 @@ const Login = ({
                         position="start"
                         className={classes.iconColor}
                       >
-                        <LockIcon />
+                        <LockFilledIcon />
                       </InputAdornment>
                     ),
                   }}
@@ -556,28 +607,83 @@ const Login = ({
       : "Console";
 
   return (
-    <React.Fragment>
+    <div className={classes.root}>
       <CssBaseline />
       <MainError />
-      <Paper className={classes.loginPage}>
-        <div className={classes.shadowBox}>
-          <Grid container className={classes.loginContainer}>
-            <Grid item className="consoleTextBanner">
-              <div className="left-items">
-                <div className="left-logo">
-                  <LoginMinIOLogo />
-                </div>
-                <div className="text-line1">Welcome to</div>
-                <div className="text-line2">{consoleText}</div>
+      <div className={classes.loginPage}>
+        <Grid container className={classes.loginContainer}>
+          <Grid item className="consoleTextBanner" xs={12}>
+            <div className="left-items">
+              <div className="left-logo">
+                <LoginMinIOLogo />
               </div>
-            </Grid>
-            <Grid item className="right-items">
-              {loginComponent}
-            </Grid>
+              <div className="text-line1">Welcome to</div>
+              <div className="text-line2">{consoleText}</div>
+              <div className="text-line3">Multi-Cloud Object Storage</div>
+            </div>
           </Grid>
-        </div>
-      </Paper>
-    </React.Fragment>
+          <Grid item className="right-items" xs={12}>
+            {loginComponent}
+            <div className={classes.learnMore}>
+              <a
+                href="https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Learn more about Console <ArrowRightIcon />
+              </a>
+            </div>
+          </Grid>
+          <Grid item xs={12} className={classes.linkHolder}>
+            <div className={classes.miniLinks}>
+              <a
+                href="https://docs.min.io/?ref=con"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <DocumentationIcon /> Documentation
+              </a>
+              <span className={classes.separator}>|</span>
+              <a
+                href="https://github.com/minio/minio"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GithubIcon /> Github
+              </a>
+              <span className={classes.separator}>|</span>
+              <a
+                href="https://subnet.min.io/?ref=con"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <SupportMenuIcon /> Support
+              </a>
+              <span className={classes.separator}>|</span>
+              <a
+                href="https://min.io/download/?ref=con"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <DownloadIcon /> Download
+              </a>
+            </div>
+            <div className={clsx(classes.miniLinks, classes.miniLogo)}>
+              <a
+                href="https://github.com/minio/minio/releases"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MinIOTierIconXs /> Latest Version{" "}
+                {!loadingVersion && latestMinIOVersion !== "" && (
+                  <React.Fragment>{latestMinIOVersion}</React.Fragment>
+                )}
+              </a>
+            </div>
+          </Grid>
+        </Grid>
+      </div>
+    </div>
   );
 };
 

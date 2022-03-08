@@ -110,6 +110,23 @@ paths:
       tags:
         - UserAPI
 
+  /check-version:
+    get:
+      summary: Checks the current Operator version against the latest
+      operationId: CheckMinIOVersion”
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/checkOperatorVersionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: [ ]
+      tags:
+        - UserAPI
+
   /subscription/info:
     get:
       summary: Subscription info
@@ -2838,26 +2855,11 @@ definitions:
       max_allocatable_mem:
         type: integer
         format: int64
-  label:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
 
-  annotation:
+  checkOperatorVersionResponse:
     type: object
     properties:
-      key:
+      current_version:
         type: string
-      value:
-        type: string
-
-  nodeSelector:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
+      latest_version:
         type: string
