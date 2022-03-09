@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Button, CircularProgress } from "@mui/material";
+import { Button } from "@mui/material";
+import Loader from "../../../Common/Loader/Loader";
 
 type ActionLinkProps = {
   isLoading: boolean;
@@ -54,11 +55,7 @@ const ActionLink = ({
       disableFocusRipple
       {...restProps}
     >
-      {isLoading ? (
-        <CircularProgress color="primary" size={16} variant="indeterminate" />
-      ) : (
-        label
-      )}
+      {isLoading ? <Loader style={{ width: 16, height: 16 }} /> : label}
     </Button>
   );
 };

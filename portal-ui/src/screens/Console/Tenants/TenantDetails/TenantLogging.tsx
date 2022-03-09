@@ -26,7 +26,7 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { CircularProgress, DialogContentText } from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
@@ -41,6 +41,7 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { niceBytes } from "../../../../common/utils";
+import Loader from "../../Common/Loader/Loader";
 
 interface ITenantLogs {
   classes: any;
@@ -249,7 +250,7 @@ const TenantLogging = ({
                   {loadingTenant ? (
                     <tr>
                       <td className={classes.centerAlign} colSpan={4}>
-                        <CircularProgress />
+                          <Loader />
                       </td>
                     </tr>
                   ) : (
@@ -365,7 +366,7 @@ const TenantLogging = ({
                   {loadingTenant ? (
                     <tr>
                       <td className={classes.centerAlign} colSpan={4}>
-                        <CircularProgress />
+                          <Loader />
                       </td>
                     </tr>
                   ) : (

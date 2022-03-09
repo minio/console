@@ -26,7 +26,7 @@ import {
   searchField,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { CircularProgress, DialogContentText } from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -41,6 +41,7 @@ import KeyPairView from "./KeyPairView";
 import { niceBytes } from "../../../../common/utils";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import Loader from "../../Common/Loader/Loader";
 
 interface ITenantMonitoring {
   classes: any;
@@ -223,7 +224,7 @@ const TenantMonitoring = ({
                   {loadingTenant ? (
                     <tr>
                       <td className={classes.centerAlign} colSpan={4}>
-                        <CircularProgress />
+                        <Loader />
                       </td>
                     </tr>
                   ) : (

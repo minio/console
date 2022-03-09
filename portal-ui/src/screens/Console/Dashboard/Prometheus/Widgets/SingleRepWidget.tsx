@@ -25,10 +25,10 @@ import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
-import { CircularProgress } from "@mui/material";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import api from "../../../../../common/api";
 import { representationNumber } from "../../../../../common/utils";
+import api from "../../../../../common/api";
+import Loader from "../../../Common/Loader/Loader";
 
 interface ISingleRepWidget {
   classes: any;
@@ -128,7 +128,7 @@ const SingleRepWidget = ({
       <div className={classes.titleContainer}>{title}</div>
       {loading && (
         <div className={classes.loadingAlign}>
-          <CircularProgress />
+          <Loader />
         </div>
       )}
       {!loading && (
