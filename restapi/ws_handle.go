@@ -97,6 +97,12 @@ type TraceRequest struct {
 	path       string
 }
 
+//Type for log requests. This allows for filtering by node and kind
+type LogRequest struct {
+	node    string
+	logType string
+}
+
 func (c wsConn) writeMessage(messageType int, data []byte) error {
 	return c.conn.WriteMessage(messageType, data)
 }
@@ -168,12 +174,20 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 
 		go wsAdminClient.trace(traceRequestItem)
 	case strings.HasPrefix(wsPath, `/console`):
+
 		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
 		}
-		go wsAdminClient.console()
+		node := req.URL.Query().Get("node")
+		logType := req.URL.Query().Get("logType")
+
+		logRequestItem := LogRequest{
+			node:    node,
+			logType: logType,
+		}
+		go wsAdminClient.console(logRequestItem)
 	case strings.HasPrefix(wsPath, `/health-info`):
 		deadline, err := getHealthInfoOptionsFromReq(req)
 		if err != nil {
@@ -330,7 +344,7 @@ func (wsc *wsAdminClient) trace(traceRequestItem TraceRequest) {
 
 // console serves madmin.GetLogs
 // on a Websocket connection.
-func (wsc *wsAdminClient) console() {
+func (wsc *wsAdminClient) console(logRequestItem LogRequest) {
 	defer func() {
 		LogInfo("console logs stopped")
 		// close connection after return
@@ -340,7 +354,7 @@ func (wsc *wsAdminClient) console() {
 
 	ctx := wsReadClientCtx(wsc.conn)
 
-	err := startConsoleLog(ctx, wsc.conn, wsc.client)
+	err := startConsoleLog(ctx, wsc.conn, wsc.client, logRequestItem)
 
 	sendWsCloseMessage(wsc.conn, err)
 }
