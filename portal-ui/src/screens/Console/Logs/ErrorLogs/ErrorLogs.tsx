@@ -19,8 +19,11 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { connect } from "react-redux";
-import { Box, Grid } from "@mui/material";
+import { Grid, FormControl, MenuItem, Select, InputBase } from "@mui/material";
+
 import moment from "moment/moment";
+import { ErrorResponseHandler } from "../../../../../src/common/types";
+import api from "../../../../../src/common/api";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
 import { LogMessage } from "../types";
@@ -30,6 +33,7 @@ import {
   containerForHeader,
   logsCommon,
   searchField,
+  inlineCheckboxes,
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
@@ -39,6 +43,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import LogLine from "./LogLine";
+import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,8 +65,20 @@ const styles = (theme: Theme) =>
       color: "#A52A2A",
       paddingLeft: 25,
     },
+    nodeField: {
+      flexGrow: 2,
+      minWidth: 200,
+    },
     ansidefault: {
       color: "#000",
+    },
+    midColumnCheckboxes: {
+      display: "flex",
+    },
+    checkBoxLabel: {
+      marginTop: 10,
+      fontSize: 16,
+      fontWeight: 500,
     },
     highlight: {
       "& span": {
@@ -71,8 +88,28 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...logsCommon,
+    ...inlineCheckboxes,
     ...containerForHeader(theme.spacing(4)),
   });
+
+const SelectStyled = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      lineHeight: "50px",
+      "label + &": {
+        marginTop: theme.spacing(3),
+      },
+      "& .MuiSelect-select:focus": {
+        backgroundColor: "transparent",
+      },
+    },
+    input: {
+      height: 50,
+      fontSize: 13,
+      lineHeight: "50px",
+    },
+  })
+)(InputBase);
 
 interface ILogs {
   classes: any;
@@ -88,6 +125,14 @@ const ErrorLogs = ({
   messages,
 }: ILogs) => {
   const [filter, setFilter] = useState<string>("");
+  const [nodes, setNodes] = useState<string[]>([""]);
+  const [selectedNode, setSelectedNode] = useState<string>("Select node");
+
+  const [allTypes, setAllTypes] = useState<boolean>(false);
+  //const [applicationType, setApplicationType] = useState<boolean>(false);
+  //const [minioType, setMinioType] = useState<boolean>(false);
+  const [logType, setLogType] = useState<string>("all");
+  const [loadingNodes, setLoadingNodes] = useState<boolean>(false);
 
   useEffect(() => {
     logResetMessages();
@@ -98,13 +143,18 @@ const ErrorLogs = ({
     const wsProt = wsProtocol(url.protocol);
 
     const c = new W3CWebSocket(
-      `${wsProt}://${url.hostname}:${port}/ws/console`
+      `${wsProt}://${
+        url.hostname
+      }:${port}/ws/console/?logType=${logType}&?node=${
+        selectedNode == "Select node" ? "" : selectedNode
+      }`
     );
 
     let interval: any | null = null;
     if (c !== null) {
       c.onopen = () => {
         console.log("WebSocket Client Connected");
+
         c.send("ok");
         interval = setInterval(() => {
           c.send("ok");
@@ -128,7 +178,7 @@ const ErrorLogs = ({
         console.log("closing websockets");
       };
     }
-  }, [logMessageReceived, logResetMessages]);
+  }, [logMessageReceived, logResetMessages, selectedNode, logType]);
 
   const filtLow = filter.toLowerCase();
   let filteredMessages = messages.filter((m) => {
@@ -156,6 +206,19 @@ const ErrorLogs = ({
     return true;
   });
 
+  useEffect(() => {
+    setLoadingNodes(true);
+    api
+      .invoke("GET", `/api/v1/nodes`)
+      .then((res: string[]) => {
+        setNodes(res);
+        setLoadingNodes(false);
+      })
+      .catch((err: ErrorResponseHandler) => {
+        setLoadingNodes(false);
+      });
+  }, []);
+
   return (
     <Fragment>
       <PageHeader label="Logs" />
@@ -170,38 +233,92 @@ const ErrorLogs = ({
               value={filter}
             />
           </Grid>
-          <Grid item xs={12} data-test-id={"logs-list-container"}>
-            {filteredMessages.length ? (
-              <div id="logs-container" className={classes.logList}>
-                <TableContainer
-                  component={Paper}
-                  sx={{
-                    borderBottom: "0px",
+          <Grid>
+            {!loadingNodes ? (
+              <FormControl variant="outlined" className={classes.nodeField}>
+                <Select
+                  id="node"
+                  name="node"
+                  value={selectedNode}
+                  onChange={(e) => {
+                    setSelectedNode(e.target.value as string);
                   }}
+                  className={classes.searchField}
+                  disabled={loadingNodes}
+                  input={<SelectStyled />}
                 >
-                  <Table aria-label="collapsible table">
-                    <TableBody>
-                      {filteredMessages.map((m) => {
-                        return <LogLine key={m.key} log={m} />;
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </div>
+                  <MenuItem
+                    value={selectedNode}
+                    key={`select-node-default`}
+                    disabled={true}
+                  >
+                    Select Node
+                  </MenuItem>
+                  {nodes.map((aNode) => (
+                    <MenuItem value={aNode} key={`select-node-name-${aNode}`}>
+                      {aNode}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             ) : (
-              <Box
-                sx={{
-                  padding: "15px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {filter.trim().length
-                  ? `No matching logs for "${filter.trim()}".`
-                  : "No logs to display."}
-              </Box>
+              <h3> Loading nodes</h3>
             )}
+
+            <div className={classes.checkBoxLabel}>Log type to display:</div>
+            <div className={classes.midColumnCheckboxes}>
+              <CheckboxWrapper
+                checked={allTypes}
+                id={"all_calls"}
+                name={"all_calls"}
+                label={"All"}
+                onChange={(item) => {
+                  setAllTypes(!allTypes);
+                  item.target.checked ? setLogType("all") : setLogType("");
+                }}
+                value={"all"}
+                disabled={false}
+              />
+              <CheckboxWrapper
+                checked={logType == "application" || allTypes}
+                id={"application_type"}
+                name={"application_type"}
+                label={"Application"}
+                onChange={(item) => {
+                  setAllTypes(false);
+                  item.target.checked
+                    ? setLogType("application")
+                    : setLogType("");
+                }}
+                value={"s3"}
+                disabled={false}
+              />
+              <CheckboxWrapper
+                checked={logType == "minio" || allTypes}
+                id={"minio_type"}
+                name={"minio_type"}
+                label={"Minio"}
+                onChange={(item) => {
+                  setAllTypes(false);
+                  item.target.checked ? setLogType("minio") : setLogType("");
+                }}
+                value={"Minio"}
+                disabled={false}
+              />
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <div id="logs-container" className={classes.logList}>
+              <TableContainer component={Paper}>
+                <Table aria-label="collapsible table">
+                  <TableBody>
+                    {filteredMessages.map((m) => {
+                      return <LogLine log={m} />;
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
           </Grid>
         </Grid>
       </PageLayout>

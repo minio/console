@@ -130,6 +130,29 @@ func NotifyPostgres() (*http.Response, error) {
 	return response, err
 }
 
+func GetNodes() (*http.Response, error) {
+	/*
+		Helper function to get nodes
+		HTTP Verb: GET
+		URL: /api/v1/nodes
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/nodes",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 20 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestNotifyPostgres(t *testing.T) {
 
 	// Variables
@@ -256,4 +279,24 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 		)
 	}
 
+}
+
+func TestGetNodes(t *testing.T) {
+	printStartFunc("TestGetNodes")
+	assert := assert.New(t)
+	getNodesResponse, getNodesError := GetNodes()
+	assert.Nil(getNodesError)
+	if getNodesError != nil {
+		log.Println(getNodesError)
+		return
+	}
+	getNodesRsp := inspectHTTPResponse(getNodesResponse)
+	if getNodesResponse != nil {
+		assert.Equal(
+			200,
+			getNodesResponse.StatusCode,
+			getNodesRsp,
+		)
+	}
+	printEndFunc("TestGetNodes")
 }
