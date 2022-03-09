@@ -2941,3 +2941,65 @@ func TestSetBucketVersioning(t *testing.T) {
 	}
 	assert.Equal(false, result.IsVersioned, result)
 }
+
+func EnableBucketEncryption(bucketName string, encType string, kmsKeyID string) (*http.Response, error) {
+	/*
+		Helper function to enable bucket encryption
+		HTTP Verb: POST
+		URL: /buckets/{bucket_name}/encryption/enable
+		Body:
+		{
+			"encType":"sse-s3",
+			"kmsKeyID":""
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"encType":  encType,
+		"kmsKeyID": kmsKeyID,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST", "http://localhost:9090/api/v1/buckets/"+bucketName+"/encryption/enable", requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestEnableBucketEncryption(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "test-enable-bucket-encryption"
+	locking := false
+	versioning := false
+	encType := "sse-s3"
+	kmsKeyID := ""
+
+	// 1. Add bucket
+	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Enable Bucket's Encryption
+	resp, err := EnableBucketEncryption(bucketName, encType, kmsKeyID)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+}
