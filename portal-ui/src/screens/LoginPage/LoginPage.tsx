@@ -580,7 +580,11 @@ const Login = ({
           ) : (
             <React.Fragment>
               <div>
-                <p>An error has occurred, the backend cannot be reached.</p>
+                <p style={{ color: "#000", textAlign: "center" }}>
+                  An error has occurred
+                  <br />
+                  The backend cannot be reached.
+                </p>
               </div>
               <div>
                 <Button
@@ -622,7 +626,11 @@ const Login = ({
               <div className="text-line3">Multi-Cloud Object Storage</div>
             </div>
           </Grid>
-          <Grid item className={`right-items ${classes.loginComponentContainer}`} xs={12}>
+          <Grid
+            item
+            className={`right-items ${classes.loginComponentContainer}`}
+            xs={12}
+          >
             {loginComponent}
             <div className={classes.learnMore}>
               <a
@@ -677,7 +685,7 @@ const Login = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  marginBottom: 20
+                  marginBottom: 20,
                 }}
               >
                 <MinIOTierIconXs /> Latest Version{" "}
