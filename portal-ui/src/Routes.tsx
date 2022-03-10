@@ -44,9 +44,24 @@ const Routes = () => {
           exact
           path="/login"
           children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <Login />
-            </Suspense>
+            <div
+              style={{
+                backgroundImage: `url('/images/background-wave-orig2.svg'), url('/images/background.svg')`,
+                backgroundPosition: "center 250px, center center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "2547px 980px,cover",
+                backgroundBlendMode: "color-dodge",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                color: "#fff",
+                overflow: "auto",
+              }}
+            >
+              <Suspense fallback={<LoadingComponent />}>
+                <Login />
+              </Suspense>
+            </div>
           )}
         />
         <ProtectedRoute Component={AppConsole} />

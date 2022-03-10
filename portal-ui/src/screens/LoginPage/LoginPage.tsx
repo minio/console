@@ -57,11 +57,6 @@ import clsx from "clsx";
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      backgroundImage: `url('/images/background-wave-orig.svg'), url('/images/background.svg')`,
-      backgroundPosition: "center 250px, center center",
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "2547px 980px,cover",
-      backgroundBlendMode: "color-dodge",
       position: "absolute",
       top: 0,
       left: 0,
@@ -121,10 +116,10 @@ const styles = (theme: Theme) =>
     },
     loginPage: {
       height: "100%",
-      maxWidth: 360,
       margin: "auto",
     },
     loginContainer: {
+      flexDirection: "column",
       "& .right-items": {
         backgroundColor: "white",
         borderRadius: 3,
@@ -232,6 +227,11 @@ const styles = (theme: Theme) =>
     },
     retryButton: {
       alignSelf: "flex-end",
+    },
+    loginComponentContainer: {
+      maxWidth: 360,
+      width: "100%",
+      alignSelf: "center",
     },
     ...spacingUtils,
   });
@@ -622,7 +622,7 @@ const Login = ({
               <div className="text-line3">Multi-Cloud Object Storage</div>
             </div>
           </Grid>
-          <Grid item className="right-items" xs={12}>
+          <Grid item className={`right-items ${classes.loginComponentContainer}`} xs={12}>
             {loginComponent}
             <div className={classes.learnMore}>
               <a
@@ -673,6 +673,12 @@ const Login = ({
                 href="https://github.com/minio/minio/releases"
                 target="_blank"
                 rel="noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 20
+                }}
               >
                 <MinIOTierIconXs /> Latest Version{" "}
                 {!loadingVersion && latestMinIOVersion !== "" && (
