@@ -250,7 +250,7 @@ const TenantLogging = ({
                   {loadingTenant ? (
                     <tr>
                       <td className={classes.centerAlign} colSpan={4}>
-                          <Loader />
+                        <Loader />
                       </td>
                     </tr>
                   ) : (
@@ -366,7 +366,7 @@ const TenantLogging = ({
                   {loadingTenant ? (
                     <tr>
                       <td className={classes.centerAlign} colSpan={4}>
-                          <Loader />
+                        <Loader />
                       </td>
                     </tr>
                   ) : (

@@ -30,11 +30,7 @@ import Chip from "@mui/material/Chip";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import {
-  Button,
-  DialogContentText,
-  Typography,
-} from "@mui/material";
+import { Button, DialogContentText, Typography } from "@mui/material";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
