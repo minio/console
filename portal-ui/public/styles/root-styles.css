@@ -156,6 +156,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#preload {
+  display: none;
+}
+
 #loader-block {
   display: flex;
   flex-direction: column;
