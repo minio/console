@@ -22,7 +22,12 @@ import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
-import { AddIcon, BucketsIcon, LifecycleConfigIcon } from "../../../../icons";
+import {
+  AddIcon,
+  BucketsIcon,
+  LifecycleConfigIcon,
+  SelectAllIcon,
+} from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   containerForHeader,
@@ -176,6 +181,19 @@ const ListBuckets = ({
     return null;
   };
 
+  const selectAllBuckets = () => {
+    if (selectedBuckets.length === filteredRecords.length) {
+      setSelectedBuckets([]);
+      return;
+    }
+
+    const selectAllBuckets = filteredRecords.map((bucket) => {
+      return bucket.name;
+    });
+
+    setSelectedBuckets(selectAllBuckets);
+  };
+
   const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
 
   return (
@@ -212,15 +230,33 @@ const ListBuckets = ({
             justifyContent={"flex-end"}
           >
             <RBIconButton
-              tooltip={bulkSelect ? "Un Select All" : "Select Multiple"}
+              tooltip={
+                bulkSelect ? "Unselect Buckets" : "Select Multiple Buckets"
+              }
               onClick={() => {
                 setBulkSelect(!bulkSelect);
+                setSelectedBuckets([]);
               }}
               text={""}
               icon={<SelectMultipleIcon />}
               color={"primary"}
               variant={bulkSelect ? "contained" : "outlined"}
             />
+
+            {bulkSelect && (
+              <RBIconButton
+                tooltip={
+                  selectedBuckets.length === filteredRecords.length
+                    ? "Unselect All Buckets"
+                    : "Select All Buckets"
+                }
+                onClick={selectAllBuckets}
+                text={""}
+                icon={<SelectAllIcon />}
+                color={"primary"}
+                variant={"outlined"}
+              />
+            )}
 
             <RBIconButton
               tooltip={"Set Lifecycle"}

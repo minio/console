@@ -17,6 +17,7 @@
 export const LogSearchColumnLabels = {
   time: "Timestamp",
   api_name: "API Name",
+  access_key: "Access Key",
   bucket: "Bucket",
   object: "Object",
   remote_host: "Remote Host",

@@ -45,6 +45,8 @@ import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
+import RegionSelectWrapper from "./RegionSelectWrapper";
+
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
@@ -483,16 +485,15 @@ const AddTierConfiguration = ({
                     }}
                     required
                   />
-                  <InputBoxWrapper
-                    id="region"
-                    name="region"
-                    label="Region"
-                    placeholder="Enter Region"
-                    value={region}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setRegion(e.target.value);
+                  <RegionSelectWrapper
+                    onChange={(value) => {
+                      setRegion(value);
                     }}
                     required={type !== "minio"}
+                    label={"Region"}
+                    id="region"
+                    name="region"
+                    type={type}
                   />
                   {type === s3ServiceName ||
                     (type === minioServiceName && (

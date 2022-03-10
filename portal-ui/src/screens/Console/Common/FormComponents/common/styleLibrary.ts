@@ -383,6 +383,9 @@ export const objectBrowserCommon = {
       minWidth: 16,
     },
   },
+  additionalOptions: {
+    paddingRight: "10px"
+  },
   smallLabel: {
     color: "#9C9C9C",
     fontSize: 15,

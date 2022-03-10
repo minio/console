@@ -38,6 +38,7 @@ export const BUCKET_BROWSER_VERSIONS_SET_SEARCH =
   "BUCKET_BROWSER/VERSIONS_SET_SEARCH";
 export const BUCKET_BROWSER_SET_SELECTED_VERSION =
   "BUCKET_BROWSER/SET_SELECTED_VERSION";
+export const BUCKET_BROWSER_SHOW_DELETED = "BUCKET_BROWSER/SHOW_DELETED";
 
 interface RewindSetEnabled {
   type: typeof REWIND_SET_ENABLE;
@@ -108,6 +109,11 @@ interface SetSelectedversion {
   selectedVersion: string;
 }
 
+interface SetShowDeletedObjects {
+  type: typeof BUCKET_BROWSER_SHOW_DELETED;
+  status: boolean;
+}
+
 export type ObjectBrowserActionTypes =
   | RewindSetEnabled
   | RewindReset
@@ -122,7 +128,8 @@ export type ObjectBrowserActionTypes =
   | OMCloseList
   | SetSearchObjects
   | SetSearchVersions
-  | SetSelectedversion;
+  | SetSelectedversion
+  | SetShowDeletedObjects;
 
 export const setRewindEnable = (
   state: boolean,
@@ -226,4 +233,11 @@ export const setSelectedVersion = (selectedVersion: string) => {
     type: BUCKET_BROWSER_SET_SELECTED_VERSION,
     selectedVersion,
   };
+};
+
+export const setShowDeletedObjects = (status: boolean) => {
+  return {
+    type: BUCKET_BROWSER_SHOW_DELETED,
+    status
+  }
 };

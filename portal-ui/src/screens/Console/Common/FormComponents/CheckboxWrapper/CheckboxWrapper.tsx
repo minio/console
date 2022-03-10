@@ -34,7 +34,9 @@ interface CheckBoxProps {
   name: string;
   disabled?: boolean;
   tooltip?: string;
+  overrideLabelClasses?: string;
   index?: number;
+  noTopMargin?: boolean;
   checked: boolean;
 }
 
@@ -52,6 +54,9 @@ const styles = (theme: Theme) =>
       marginBottom: 0,
       flexBasis: "initial",
     },
+    noTopMargin: {
+      marginTop: 0,
+    },
   });
 
 const CheckboxWrapper = ({
@@ -62,12 +67,20 @@ const CheckboxWrapper = ({
   name,
   checked = false,
   disabled = false,
+  noTopMargin = false,
   tooltip = "",
+  overrideLabelClasses = "",
   classes,
 }: CheckBoxProps) => {
   return (
     <React.Fragment>
-      <Grid item xs={12} className={classes.fieldContainer}>
+      <Grid
+        item
+        xs={12}
+        className={`${classes.fieldContainer} ${
+          noTopMargin ? classes.noTopMargin : ""
+        }`}
+      >
         <div>
           <Checkbox
             name={name}
@@ -83,7 +96,10 @@ const CheckboxWrapper = ({
           />
         </div>
         {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.noMinWidthLabel}>
+          <InputLabel
+            htmlFor={id}
+            className={`${classes.noMinWidthLabel} ${overrideLabelClasses}`}
+          >
             <span>{label}</span>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>

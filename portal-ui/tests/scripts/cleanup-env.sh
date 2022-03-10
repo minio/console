@@ -54,7 +54,8 @@ __init__() {
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
 
-  go install github.com/minio/mc@latest
+  wget https://dl.min.io/client/mc/release/linux-amd64/mc
+  chmod +x mc
 
   add_alias
 }
