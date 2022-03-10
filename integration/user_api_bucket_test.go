@@ -2839,7 +2839,7 @@ func BaseGetFunction(bucketName string, endPoint string) (*http.Response, error)
 
 func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
 	// Test for end point: /buckets/{bucket_name}/object-locking
-
+	printStartFunc("TestReturnsTheStatusOfObjectLockingSupportOnTheBucket")
 	// Vars
 	assert := assert.New(t)
 	bucketName := "testputobjectslegalholdstatus"
@@ -2870,6 +2870,7 @@ func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
 		true,
 		structBucketLocking,
 	)
+	printEndFunc("TestReturnsTheStatusOfObjectLockingSupportOnTheBucket")
 }
 
 func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, error) {
@@ -2897,7 +2898,7 @@ func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, er
 }
 
 func TestSetBucketVersioning(t *testing.T) {
-
+	printStartFunc("TestSetBucketVersioning")
 	// Variables
 	assert := assert.New(t)
 	bucket := "test-set-bucket-versioning"
@@ -2940,6 +2941,7 @@ func TestSetBucketVersioning(t *testing.T) {
 		assert.Nil(err)
 	}
 	assert.Equal(false, result.IsVersioned, result)
+	printEndFunc("TestSetBucketVersioning")
 }
 
 func EnableBucketEncryption(bucketName string, encType string, kmsKeyID string) (*http.Response, error) {
@@ -2976,7 +2978,7 @@ func EnableBucketEncryption(bucketName string, encType string, kmsKeyID string) 
 }
 
 func TestEnableBucketEncryption(t *testing.T) {
-
+	printStartFunc("TestEnableBucketEncryption")
 	// Variables
 	assert := assert.New(t)
 	bucketName := "test-enable-bucket-encryption"
@@ -3002,4 +3004,45 @@ func TestEnableBucketEncryption(t *testing.T) {
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
 
+	// 3. Get Bucket Encryption Information to verify it got encrypted.
+	resp, err = GetBucketEncryptionInformation(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	result := models.BucketEncryptionInfo{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	assert.Equal("AES256", result.Algorithm, result)
+	printEndFunc("TestEnableBucketEncryption")
+}
+
+func GetBucketEncryptionInformation(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to get bucket encryption information
+		HTTP Verb: GET
+		URL: api/v1/buckets/<bucket-name>/encryption/info
+		Response: {"algorithm":"AES256"}
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/buckets/"+bucketName+"/encryption/info", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
 }
