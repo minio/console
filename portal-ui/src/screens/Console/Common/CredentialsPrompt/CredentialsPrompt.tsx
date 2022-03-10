@@ -164,7 +164,7 @@ const CredentialsPrompt = ({
             </div>
           ) : (
             <div className={classes.warningBlock}>
-              <WarnIcon />
+             <WarnIcon />
               <span>
                 Write these down, as this is the only time the secret will be
                 displayed.
