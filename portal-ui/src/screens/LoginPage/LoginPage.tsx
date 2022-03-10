@@ -17,7 +17,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
-  CircularProgress,
   InputAdornment,
   LinearProgress,
   TextFieldProps,
@@ -53,6 +52,7 @@ import UserFilledIcon from "../../icons/UsersFilledIcon";
 import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
+import Loader from "../Console/Common/Loader/Loader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -205,6 +205,8 @@ const styles = (theme: Theme) =>
     },
     loadingLoginStrategy: {
       textAlign: "center",
+      width: 40,
+      height: 40,
     },
     headerTitle: {
       marginRight: "auto",
@@ -576,11 +578,15 @@ const Login = ({
       loginComponent = (
         <div className={classes.loaderAlignment}>
           {loadingFetchConfiguration ? (
-            <CircularProgress className={classes.loadingLoginStrategy} />
+            <Loader className={classes.loadingLoginStrategy} />
           ) : (
             <React.Fragment>
               <div>
-                <p>An error has occurred, the backend cannot be reached.</p>
+                <p style={{ color: "#000", textAlign: "center" }}>
+                  An error has occurred
+                  <br />
+                  The backend cannot be reached.
+                </p>
               </div>
               <div>
                 <Button
@@ -622,7 +628,11 @@ const Login = ({
               <div className="text-line3">Multi-Cloud Object Storage</div>
             </div>
           </Grid>
-          <Grid item className={`right-items ${classes.loginComponentContainer}`} xs={12}>
+          <Grid
+            item
+            className={`right-items ${classes.loginComponentContainer}`}
+            xs={12}
+          >
             {loginComponent}
             <div className={classes.learnMore}>
               <a
@@ -677,7 +687,7 @@ const Login = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  marginBottom: 20
+                  marginBottom: 20,
                 }}
               >
                 <MinIOTierIconXs /> Latest Version{" "}

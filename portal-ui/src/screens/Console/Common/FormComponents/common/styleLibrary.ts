@@ -384,7 +384,7 @@ export const objectBrowserCommon = {
     },
   },
   additionalOptions: {
-    paddingRight: "10px"
+    paddingRight: "10px",
   },
   smallLabel: {
     color: "#9C9C9C",

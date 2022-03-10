@@ -33,7 +33,6 @@ import * as cicons from "../../../icons";
 import * as micons from "../../../icons/SidebarMenus";
 import Loader from "./Loader/Loader";
 
-
 interface IIconsScreenSimple {
   classes: any;
 }
@@ -47,7 +46,7 @@ const styles = (theme: Theme) =>
       "& .min-loader": {
         width: 45,
         height: 45,
-      }
+      },
     },
     def: {},
     red: {
@@ -106,12 +105,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
       </Grid>
       <h1>Loaders</h1>
       <Grid
-          container
-          spacing={4}
-          textAlign={"center"}
-          className={clsx(classes.root, {
-            [classes.red]: color === "red",
-          })}
+        container
+        spacing={4}
+        textAlign={"center"}
+        className={clsx(classes.root, {
+          [classes.red]: color === "red",
+        })}
       >
         <Grid item xs={3}>
           <Loader />
