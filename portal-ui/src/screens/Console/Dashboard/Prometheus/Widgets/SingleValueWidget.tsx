@@ -15,16 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../../common/api";
+import Loader from "../../../Common/Loader/Loader";
+import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
-import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
-import { CircularProgress } from "@mui/material";
 import { ErrorResponseHandler } from "../../../../../common/types";
 
 interface ISingleValueWidget {
@@ -124,7 +124,7 @@ const SingleValueWidget = ({
     <div className={classes.containerAlignment}>
       {loading && (
         <div className={classes.loadingAlign}>
-          <CircularProgress />
+          <Loader />
         </div>
       )}
       {!loading && (

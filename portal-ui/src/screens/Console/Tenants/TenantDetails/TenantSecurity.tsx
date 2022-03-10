@@ -32,7 +32,6 @@ import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import {
   Button,
-  CircularProgress,
   DialogContentText,
   Typography,
 } from "@mui/material";
@@ -46,6 +45,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { setTenantDetailsLoad } from "../actions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { AddIcon, ConfirmModalIcon } from "../../../../icons";
+import Loader from "../../Common/Loader/Loader";
 
 interface ITenantSecurity {
   classes: any;
@@ -347,7 +347,7 @@ const TenantSecurity = ({
       {loadingTenant ? (
         <Paper className={classes.paperContainer}>
           <div className={classes.loaderAlign}>
-            <CircularProgress />
+            <Loader />
           </div>
         </Paper>
       ) : (
@@ -534,7 +534,9 @@ const TenantSecurity = ({
                             >
                               {certificateInfo.domains &&
                                 certificateInfo.domains.map((dom) => {
-                                  return <div key={`CA-domain-${dom}`}>{dom}</div>;
+                                  return (
+                                    <div key={`CA-domain-${dom}`}>{dom}</div>
+                                  );
                                 })}
                             </Typography>
                             <Typography

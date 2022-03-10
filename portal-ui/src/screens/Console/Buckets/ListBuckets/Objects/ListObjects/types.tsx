@@ -21,7 +21,7 @@ export interface BucketObject {
   last_modified: Date;
   content_type: string;
   version_id: string;
-  delete_flag?:boolean;
+  delete_flag?: boolean;
 }
 
 export interface BucketObjectsList {

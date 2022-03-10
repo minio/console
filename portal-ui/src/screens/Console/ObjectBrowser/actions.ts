@@ -238,6 +238,6 @@ export const setSelectedVersion = (selectedVersion: string) => {
 export const setShowDeletedObjects = (status: boolean) => {
   return {
     type: BUCKET_BROWSER_SHOW_DELETED,
-    status
-  }
+    status,
+  };
 };

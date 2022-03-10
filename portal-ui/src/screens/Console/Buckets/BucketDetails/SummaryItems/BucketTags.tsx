@@ -17,7 +17,7 @@ import React, { useEffect, useState } from "react";
 import { Bucket } from "../../../Watch/types";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import useApi from "../../../Common/Hooks/useApi";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../common/SecureComponent";
 import get from "lodash/get";
@@ -25,6 +25,7 @@ import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import withSuspense from "../../../Common/Components/withSuspense";
+import Loader from "../../../Common/Loader/Loader";
 
 const AddBucketTagModal = withSuspense(
   React.lazy(() => import("../AddBucketTagModal"))
@@ -89,9 +90,7 @@ const BucketTags = ({ setErrorSnackMessage, bucketName }: BucketTagProps) => {
 
   return (
     <Box>
-      {isLoading ? (
-        <CircularProgress color="primary" size={16} variant="indeterminate" />
-      ) : null}
+      {isLoading ? <Loader style={{ width: 16, height: 16 }} /> : null}
       <SecureComponent
         scopes={[IAM_SCOPES.S3_GET_BUCKET_TAGGING]}
         resource={bucketName}

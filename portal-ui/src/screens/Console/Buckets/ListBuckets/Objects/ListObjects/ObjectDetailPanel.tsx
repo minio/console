@@ -80,18 +80,6 @@ import InspectObject from "./InspectObject";
 
 const styles = () =>
   createStyles({
-    tag: {
-      marginRight: 6,
-      fontSize: 10,
-      fontWeight: 700,
-      "&.MuiChip-sizeSmall": {
-        height: 18,
-      },
-      "& .min-icon": {
-        height: 10,
-        width: 10,
-      },
-    },
     ObjectDetailsTitle: {
       display: "flex",
       alignItems: "center",
@@ -116,20 +104,6 @@ const styles = () =>
     },
     capitalizeFirst: {
       textTransform: "capitalize",
-    },
-    "@global": {
-      ".progressDetails": {
-        paddingTop: 3,
-        display: "inline-block",
-        position: "relative",
-        width: 18,
-        height: 18,
-      },
-      ".progressDetails > .MuiCircularProgress-root": {
-        position: "absolute",
-        left: 0,
-        top: 3,
-      },
     },
     ...buttonsStyles,
     ...actionsTray,

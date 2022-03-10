@@ -25,7 +25,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CircularProgress, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -40,6 +40,7 @@ import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import { openZoomPage } from "../../actions";
 import { useTheme } from "@mui/styles";
+import Loader from "../../../Common/Loader/Loader";
 
 interface IBarChartWidget {
   classes: any;
@@ -174,7 +175,7 @@ const BarChartWidget = ({
       )}
       {loading && (
         <div className={classes.loadingAlign}>
-          <CircularProgress />
+          <Loader />
         </div>
       )}
       {!loading && (

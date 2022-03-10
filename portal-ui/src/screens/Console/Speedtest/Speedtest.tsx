@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Button, CircularProgress, Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -47,6 +47,7 @@ import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import HelpBox from "../../../common/HelpBox";
 import WarnIcon from "../../../icons/WarnIcon";
+import Loader from "../Common/Loader/Loader";
 
 interface ISpeedtest {
   classes: any;
@@ -205,7 +206,7 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
                     {start ? (
                       <Fragment>
                         Speedtest in progress...
-                        <CircularProgress size={15} />
+                        <Loader style={{ width: 15, height: 15 }} />
                       </Fragment>
                     ) : (
                       <Fragment>

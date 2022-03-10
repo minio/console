@@ -17,7 +17,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
-  CircularProgress,
   InputAdornment,
   LinearProgress,
   TextFieldProps,
@@ -53,6 +52,7 @@ import UserFilledIcon from "../../icons/UsersFilledIcon";
 import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
+import Loader from "../Console/Common/Loader/Loader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -205,6 +205,8 @@ const styles = (theme: Theme) =>
     },
     loadingLoginStrategy: {
       textAlign: "center",
+      width: 40,
+      height: 40,
     },
     headerTitle: {
       marginRight: "auto",
@@ -576,7 +578,7 @@ const Login = ({
       loginComponent = (
         <div className={classes.loaderAlignment}>
           {loadingFetchConfiguration ? (
-            <CircularProgress className={classes.loadingLoginStrategy} />
+            <Loader className={classes.loadingLoginStrategy} />
           ) : (
             <React.Fragment>
               <div>

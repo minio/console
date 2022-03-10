@@ -19,12 +19,12 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { CircularProgress } from "@mui/material";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../common/types";
+import Loader from "../../../Common/Loader/Loader";
 
 interface ISimpleWidget {
   classes: any;
@@ -118,7 +118,7 @@ const SimpleWidget = ({
     <Fragment>
       {loading && (
         <div className={classes.loadingAlign}>
-          <CircularProgress />
+          <Loader />
         </div>
       )}
       {!loading && (
