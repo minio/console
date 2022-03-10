@@ -3024,6 +3024,40 @@ func TestEnableBucketEncryption(t *testing.T) {
 	}
 	assert.Equal("AES256", result.Algorithm, result)
 	printEndFunc("TestEnableBucketEncryption")
+
+	// 4. Disable Bucket's Encryption
+	resp, err = DisableBucketEncryption(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 5. Verify encryption got disabled.
+	resp, err = GetBucketEncryptionInformation(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			404, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	result2 := models.Error{}
+	err = json.Unmarshal(bodyBytes, &result2)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	dereferencedPointerDetailedMessage := *result2.DetailedMessage
+	assert.Equal("error server side encryption configuration not found", dereferencedPointerDetailedMessage, dereferencedPointerDetailedMessage)
+	printEndFunc("TestEnableBucketEncryption")
 }
 
 func GetBucketEncryptionInformation(bucketName string) (*http.Response, error) {
@@ -3035,6 +3069,29 @@ func GetBucketEncryptionInformation(bucketName string) (*http.Response, error) {
 	*/
 	request, err := http.NewRequest(
 		"GET", "http://localhost:9090/api/v1/buckets/"+bucketName+"/encryption/info", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DisableBucketEncryption(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to disable bucket's encryption
+		HTTP Verb: POST
+		URL: /buckets/{bucket_name}/encryption/disable
+	*/
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/encryption/disable",
+		nil,
+	)
 	if err != nil {
 		log.Println(err)
 	}
