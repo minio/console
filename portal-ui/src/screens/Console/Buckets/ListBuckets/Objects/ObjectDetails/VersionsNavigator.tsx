@@ -60,64 +60,9 @@ import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/Selec
 
 const styles = (theme: Theme) =>
   createStyles({
-    propertiesIcon: {
-      marginLeft: 5,
-      "& .min-icon": {
-        height: 12,
-      },
-    },
-    tag: {
-      marginRight: 6,
-      fontSize: 10,
-      fontWeight: 700,
-      "&.MuiChip-sizeSmall": {
-        height: 18,
-      },
-      "& .min-icon": {
-        height: 10,
-        width: 10,
-      },
-    },
-    search: {
-      marginBottom: 8,
-      "&.MuiFormControl-root": {
-        marginRight: 0,
-      },
-    },
-    capitalizeFirst: {
-      textTransform: "capitalize",
-      "& .min-icon": {
-        width: 16,
-        height: 16,
-      },
-    },
-    titleCol: {
-      width: "25%",
-    },
-    titleItem: {
-      width: "35%",
-    },
     versionsContainer: {
       border: "#EAEDEE 1px solid",
       padding: 10,
-    },
-    "@global": {
-      ".progressDetails": {
-        paddingTop: 3,
-        display: "inline-block",
-        position: "relative",
-        width: 18,
-        height: 18,
-      },
-      ".progressDetails > .MuiCircularProgress-root": {
-        position: "absolute",
-        left: 0,
-        top: 3,
-      },
-    },
-    tabsContainer: {
-      border: "1px solid #eaeaea",
-      borderTop: 0,
     },
     noBottomBorder: {
       borderBottom: 0,

@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { CircularProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   containerForHeader,
@@ -33,6 +32,7 @@ import { setTenantDetailsLoad } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import api from "../../../../common/api";
+import Loader from "../../Common/Loader/Loader";
 
 interface ITenantLicense {
   classes: any;
@@ -102,7 +102,7 @@ const TenantLicense = ({
       <h1 className={classes.sectionTitle}>License</h1>
       {loadingTenant ? (
         <div className={classes.loaderAlign}>
-          <CircularProgress />
+          <Loader />
         </div>
       ) : (
         <Fragment>

@@ -4,8 +4,8 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import CircularProgress from "@mui/material/CircularProgress";
 import ErrorBlock from "../../../shared/ErrorBlock";
+import Loader from "../Loader/Loader";
 
 interface IProgressBar {
   maxValue: number;
@@ -102,11 +102,7 @@ const UsageBarWrapper = ({
       {loading && (
         <div className={classes.padChart}>
           <Grid item xs={12} className={classes.centerItem}>
-            <CircularProgress
-              color="primary"
-              size={40}
-              variant="indeterminate"
-            />
+            <Loader />
           </Grid>
         </div>
       )}

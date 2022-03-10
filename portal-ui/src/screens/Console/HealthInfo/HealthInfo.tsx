@@ -44,11 +44,11 @@ import {
 import { Button, Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
-import CircularProgress from "@mui/material/CircularProgress";
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
 import HelpBox from "../../../common/HelpBox";
 import WarnIcon from "../../../icons/WarnIcon";
+import Loader from "../Common/Loader/Loader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -266,7 +266,7 @@ const HealthInfo = ({
                   <div className={classes.localMessage}>{localMessage}</div>
                   {serverDiagnosticStatus === DiagStatInProgress ? (
                     <div className={classes.loading}>
-                      <CircularProgress size={25} />
+                      <Loader style={{ width: 25, height: 25 }} />
                     </div>
                   ) : (
                     <Fragment>

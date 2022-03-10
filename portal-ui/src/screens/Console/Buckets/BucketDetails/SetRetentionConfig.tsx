@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, LinearProgress, CircularProgress } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -36,6 +36,7 @@ import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import Loader from "../../Common/Loader/Loader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -124,7 +125,7 @@ const SetRetentionConfig = ({
       }}
     >
       {loadingForm ? (
-        <CircularProgress color="primary" size={16} variant="indeterminate" />
+        <Loader style={{ width: 16, height: 16 }} />
       ) : (
         <form
           noValidate

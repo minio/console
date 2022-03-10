@@ -4,12 +4,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import CircularProgress from "@mui/material/CircularProgress";
 import ErrorBlock from "../../../shared/ErrorBlock";
 import { CircleIcon } from "../../../../icons";
 import LabelValuePair from "./LabelValuePair";
 import { ValueUnit } from "../../Tenants/ListTenants/types";
 import { niceBytes } from "../../../../common/utils";
+import Loader from "../Loader/Loader";
 
 interface ISummaryUsageBar {
   maxValue: number | undefined;
@@ -134,11 +134,7 @@ const SummaryUsageBar = ({
       {loading && (
         <div className={classes.padChart}>
           <Grid item xs={12} className={classes.centerItem}>
-            <CircularProgress
-              color="primary"
-              size={40}
-              variant="indeterminate"
-            />
+            <Loader style={{ width: 40, height: 40 }} />
           </Grid>
         </div>
       )}

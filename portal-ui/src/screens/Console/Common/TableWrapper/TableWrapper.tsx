@@ -28,7 +28,6 @@ import {
 import { AutoSizer, Column, InfiniteLoader, Table } from "react-virtualized";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import CircularProgress from "@mui/material/CircularProgress";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -40,6 +39,7 @@ import {
   radioIcons,
   TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
+import Loader from "../Loader/Loader";
 
 //Interfaces for table Items
 
@@ -394,10 +394,8 @@ const elementActions = (
       if (action.showLoaderFunction(vlSend)) {
         return (
           <div className={"progress-enabled"}>
-            <CircularProgress
-              color="primary"
-              size={18}
-              variant="indeterminate"
+            <Loader
+              style={{width: 18, height: 18}}
               key={`actions-loader-${action.type}-${index.toString()}`}
             />
           </div>
