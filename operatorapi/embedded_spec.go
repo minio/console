@@ -58,7 +58,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Checks the current Operator version against the latest",
+        "summary": "Checks the current MinIO version against the latest",
         "operationId": "CheckMinIOVersion”",
         "responses": {
           "200": {
@@ -3962,7 +3962,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Checks the current Operator version against the latest",
+        "summary": "Checks the current MinIO version against the latest",
         "operationId": "CheckMinIOVersion”",
         "responses": {
           "200": {

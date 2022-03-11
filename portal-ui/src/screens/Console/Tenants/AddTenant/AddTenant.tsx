@@ -87,6 +87,7 @@ const AddTenant = ({
   validPages,
   setErrorSnackMessage,
   resetAddTenantForm,
+  updateAddField,
 }: IAddTenantProps) => {
   // Modals
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
@@ -95,6 +96,7 @@ const AddTenant = ({
 
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
+  const [loadMNVersion, setLoadMNVersion] = useState<boolean>(true);
 
   /* Send Information to backend */
   useEffect(() => {
@@ -664,6 +666,21 @@ const AddTenant = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addSending]);
+
+  useEffect(() => {
+    if (loadMNVersion) {
+      api
+        .invoke("GET", `/api/v1/check-version`)
+        .then((res) => {
+          updateAddField("configure", "imageName", res.latest_version || "");
+          setLoadMNVersion(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          console.error("MinIO version couldn't be retrieved: ", err);
+          setLoadMNVersion(false);
+        });
+    }
+  }, [loadMNVersion, updateAddField]);
 
   const cancelButton = {
     label: "Cancel",

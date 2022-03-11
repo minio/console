@@ -48,7 +48,7 @@ func NewCheckMinIOVersion(ctx *middleware.Context, handler CheckMinIOVersionHand
 
 /* CheckMinIOVersion swagger:route GET /check-version UserAPI checkMinIOVersion
 
-Checks the current Operator version against the latest
+Checks the current MinIO version against the latest
 
 */
 type CheckMinIOVersion struct {
