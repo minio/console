@@ -42,9 +42,20 @@ export interface KeyPair {
   key: string;
 }
 
-export const ecListTransform = (ecList: string[]): Opts[] => {
+export const ecListTransform = (
+  ecList: string[],
+  defaultEC: string = ""
+): Opts[] => {
   return ecList.map((value) => {
-    return { label: value, value };
+    let defLabel = value;
+    if (defaultEC !== "" && value === defaultEC) {
+      defLabel = `${value} (Default)`;
+    }
+
+    return {
+      label: defLabel,
+      value,
+    };
   });
 };
 
