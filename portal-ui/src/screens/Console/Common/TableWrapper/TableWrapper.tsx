@@ -395,7 +395,7 @@ const elementActions = (
         return (
           <div className={"progress-enabled"}>
             <Loader
-              style={{width: 18, height: 18}}
+              style={{ width: 18, height: 18 }}
               key={`actions-loader-${action.type}-${index.toString()}`}
             />
           </div>

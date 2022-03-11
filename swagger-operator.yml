@@ -1646,15 +1646,9 @@ definitions:
         properties:
           url:
             type: string
-          username_format:
-            type: string
-          username_search_filter:
-            type: string
           group_search_base_dn:
             type: string
           group_search_filter:
-            type: string
-          group_name_attribute:
             type: string
           skip_tls_verification:
             type: boolean
