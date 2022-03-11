@@ -37,7 +37,7 @@ test
       .click(testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
-      .wait(5000)
+      .wait(1000)
       .click("div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)")
       .click(elements.deleteButton)
       .click(elements.switchInput)
