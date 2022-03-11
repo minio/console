@@ -240,11 +240,8 @@ export interface IIdentityProviderFields {
   ADURL: string;
   ADSkipTLS: boolean;
   ADServerInsecure: boolean;
-  ADUserNameSearchFilter: string;
-  ADUserNameFormat: string;
   ADGroupSearchBaseDN: string;
   ADGroupSearchFilter: string;
-  ADGroupNameAttribute: string;
   ADUserDNs: string[];
   ADLookupBindDN: string;
   ADLookupBindPassword: string;

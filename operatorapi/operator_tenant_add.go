@@ -151,9 +151,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.Idp.ActiveDirectory != nil {
 			tenantExternalIDPConfigured = true
 			serverAddress := *tenantReq.Idp.ActiveDirectory.URL
-			userNameFormat := tenantReq.Idp.ActiveDirectory.UsernameFormat
-			userNameSearchFilter := tenantReq.Idp.ActiveDirectory.UsernameSearchFilter
-			groupNameAttribute := tenantReq.Idp.ActiveDirectory.GroupNameAttribute
 			tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipTLSVerification
 			serverInsecure := tenantReq.Idp.ActiveDirectory.ServerInsecure
 			lookupBindDN := tenantReq.Idp.ActiveDirectory.LookupBindDn
@@ -176,10 +173,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 				tenantConfigurationENV["MINIO_IDENTITY_LDAP_SERVER_STARTTLS"] = "on"
 			}
 
-			// LDAP Username
-			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USERNAME_FORMAT"] = userNameFormat
-			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USERNAME_SEARCH_FILTER"] = userNameSearchFilter
-
 			// LDAP Lookup
 			tenantConfigurationENV["MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN"] = lookupBindDN
 			tenantConfigurationENV["MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD"] = lookupBindPassword
@@ -189,7 +182,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER"] = userDNSearchFilter
 
 			// LDAP Group
-			tenantConfigurationENV["MINIO_IDENTITY_LDAP_GROUP_NAME_ATTRIBUTE"] = groupNameAttribute
 			tenantConfigurationENV["MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN"] = groupSearchBaseDN
 			tenantConfigurationENV["MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER"] = groupSearchFilter
 

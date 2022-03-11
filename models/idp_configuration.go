@@ -230,9 +230,6 @@ func (m *IdpConfiguration) UnmarshalBinary(b []byte) error {
 // swagger:model IdpConfigurationActiveDirectory
 type IdpConfigurationActiveDirectory struct {
 
-	// group name attribute
-	GroupNameAttribute string `json:"group_name_attribute,omitempty"`
-
 	// group search base dn
 	GroupSearchBaseDn string `json:"group_search_base_dn,omitempty"`
 
@@ -266,12 +263,6 @@ type IdpConfigurationActiveDirectory struct {
 
 	// user dns
 	UserDNS []string `json:"user_dns"`
-
-	// username format
-	UsernameFormat string `json:"username_format,omitempty"`
-
-	// username search filter
-	UsernameSearchFilter string `json:"username_search_filter,omitempty"`
 }
 
 // Validate validates this idp configuration active directory
