@@ -118,13 +118,9 @@ const AddTenant = ({
     const ADURL = fields.identityProvider.ADURL;
     const ADSkipTLS = fields.identityProvider.ADSkipTLS;
     const ADServerInsecure = fields.identityProvider.ADServerInsecure;
-    const ADUserNameSearchFilter =
-      fields.identityProvider.ADUserNameSearchFilter;
     const ADGroupSearchBaseDN = fields.identityProvider.ADGroupSearchBaseDN;
     const ADGroupSearchFilter = fields.identityProvider.ADGroupSearchFilter;
-    const ADGroupNameAttribute = fields.identityProvider.ADGroupNameAttribute;
     const ADUserDNs = fields.identityProvider.ADUserDNs;
-    const ADUserNameFormat = fields.identityProvider.ADUserNameFormat;
     const ADLookupBindDN = fields.identityProvider.ADLookupBindDN;
     const ADLookupBindPassword = fields.identityProvider.ADLookupBindPassword;
     const ADUserDNSearchBaseDN = fields.identityProvider.ADUserDNSearchBaseDN;
@@ -600,11 +596,8 @@ const AddTenant = ({
               url: ADURL,
               skip_tls_verification: ADSkipTLS,
               server_insecure: ADServerInsecure,
-              username_format: ADUserNameFormat,
-              username_search_filter: ADUserNameSearchFilter,
               group_search_base_dn: ADGroupSearchBaseDN,
               group_search_filter: ADGroupSearchFilter,
-              group_name_attribute: ADGroupNameAttribute,
               user_dns: ADUserDNs,
               lookup_bind_dn: ADLookupBindDN,
               lookup_bind_password: ADLookupBindPassword,

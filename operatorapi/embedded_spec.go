@@ -2437,9 +2437,6 @@ func init() {
             "url"
           ],
           "properties": {
-            "group_name_attribute": {
-              "type": "string"
-            },
             "group_search_base_dn": {
               "type": "string"
             },
@@ -2475,12 +2472,6 @@ func init() {
               "items": {
                 "type": "string"
               }
-            },
-            "username_format": {
-              "type": "string"
-            },
-            "username_search_filter": {
-              "type": "string"
             }
           }
         },
@@ -5962,9 +5953,6 @@ func init() {
         "url"
       ],
       "properties": {
-        "group_name_attribute": {
-          "type": "string"
-        },
         "group_search_base_dn": {
           "type": "string"
         },
@@ -6000,12 +5988,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        },
-        "username_format": {
-          "type": "string"
-        },
-        "username_search_filter": {
-          "type": "string"
         }
       }
     },
@@ -7192,9 +7174,6 @@ func init() {
             "url"
           ],
           "properties": {
-            "group_name_attribute": {
-              "type": "string"
-            },
             "group_search_base_dn": {
               "type": "string"
             },
@@ -7230,12 +7209,6 @@ func init() {
               "items": {
                 "type": "string"
               }
-            },
-            "username_format": {
-              "type": "string"
-            },
-            "username_search_filter": {
-              "type": "string"
             }
           }
         },
