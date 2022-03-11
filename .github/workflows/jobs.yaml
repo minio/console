@@ -773,7 +773,7 @@ jobs:
           result=${result%\%}
           echo "result:"
           echo $result
-          threshold=48
+          threshold=49.4
           if (( $(echo "$result > $threshold" |bc -l) )); then
             echo "greater than threshold, passed!"
           else
