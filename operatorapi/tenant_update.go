@@ -20,6 +20,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/minio/console/operatorapi/operations/operator_api"
 	utils2 "github.com/minio/console/pkg/utils"
 	"github.com/minio/console/restapi"
@@ -27,7 +29,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
-	"strings"
 )
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
