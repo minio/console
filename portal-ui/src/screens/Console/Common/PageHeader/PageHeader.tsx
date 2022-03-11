@@ -148,6 +148,7 @@ const PageHeader = ({
             onClick={() => {
               toggleList();
             }}
+            id="object-manager-toggle"
             size="large"
           >
             <ObjectManagerIcon />
