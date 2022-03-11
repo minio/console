@@ -774,7 +774,7 @@ jobs:
           echo "result:"
           echo $result
           threshold=49.4
-          if (( $(echo "$result > $threshold" |bc -l) )); then
+          if (( $(echo "$result >= $threshold" |bc -l) )); then
             echo "greater than threshold, passed!"
           else
             echo "smaller than threshold, failed!"
