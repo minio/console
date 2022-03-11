@@ -22,7 +22,7 @@ import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
 import * as constants from "../utils/constants";
 
-fixture("For user with Bucket Delete permissions").page("http://localhost:9090");
+fixture("For user with Bucket Read & Write permissions").page("http://localhost:9090");
 
 test
   .before(async (t) => {
