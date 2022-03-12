@@ -381,7 +381,13 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		prefix = string(decodedPrefix)
 	}
 
-	resp, err := mClient.GetObject(ctx, params.BucketName, prefix, minio.GetObjectOptions{})
+	opts := minio.GetObjectOptions{}
+
+	if params.VersionID != nil && *params.VersionID != "" {
+		opts.VersionID = *params.VersionID
+	}
+
+	resp, err := mClient.GetObject(ctx, params.BucketName, prefix, opts)
 	if err != nil {
 		return nil, prepareError(err)
 	}
