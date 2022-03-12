@@ -42,6 +42,7 @@ test
       .click(elements.deleteButton)
       .click(elements.switchInput)
       .click(Selector("button:enabled").withExactText("Delete").nth(1))
+      .expect(Selector("div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)").exists).notOk()
   }).after(async (t) => {
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpBucketAndUploads(t, "bucketdelete3");
