@@ -482,7 +482,7 @@ const ObjectDetailPanel = ({
           selectedBucket={bucketName}
           selectedObject={internalPaths}
           closeDeleteModalAndRefresh={closeDeleteModal}
-          versioning={versioning}
+          versioning={distributedSetup && versioning}
         />
       )}
       {legalholdOpen && actualInfo && (
