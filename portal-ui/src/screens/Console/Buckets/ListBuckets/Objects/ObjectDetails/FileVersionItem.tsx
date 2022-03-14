@@ -23,7 +23,12 @@ import { withStyles } from "@mui/styles";
 import { displayFileIconName } from "../ListObjects/utils";
 import { IFileInfo } from "./types";
 import { IconButton, Tooltip } from "@mui/material";
-import { DownloadIcon, RecoverIcon, ShareIcon } from "../../../../../../icons";
+import {
+  DownloadIcon,
+  PreviewIcon,
+  RecoverIcon,
+  ShareIcon,
+} from "../../../../../../icons";
 
 interface IFileVersionItem {
   fileName: string;
@@ -32,6 +37,7 @@ interface IFileVersionItem {
   onShare: (versionInfo: IFileInfo) => void;
   onDownload: (versionInfo: IFileInfo) => void;
   onRestore: (versionInfo: IFileInfo) => void;
+  onPreview: (versionInfo: IFileInfo) => void;
   globalClick: (versionInfo: IFileInfo) => void;
   classes: any;
 }
@@ -93,12 +99,18 @@ const FileVersionItem = ({
   onShare,
   onDownload,
   onRestore,
+  onPreview,
   globalClick,
   index,
 }: IFileVersionItem) => {
   const disableButtons = versionInfo.is_delete_marker;
 
   const versionItemButtons = [
+    {
+      icon: <PreviewIcon />,
+      action: onPreview,
+      tooltip: "Preview",
+    },
     {
       icon: <DownloadIcon />,
       action: onDownload,
