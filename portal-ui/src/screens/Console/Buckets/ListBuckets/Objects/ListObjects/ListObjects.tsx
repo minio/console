@@ -1383,6 +1383,7 @@ const ListObjects = ({
                     internalPaths={selectedInternalPaths}
                     bucketName={bucketName}
                     onClosePanel={onClosePanel}
+                    versioning={isVersioned}
                   />
                 )}
               </DetailsListPanel>

@@ -120,6 +120,7 @@ interface IObjectDetailPanelProps {
   rewindDate: any;
   bucketToRewind: string;
   distributedSetup: boolean;
+  versioning: boolean;
   versionsMode: boolean;
   selectedVersion: string;
   onClosePanel: (hardRefresh: boolean) => void;
@@ -148,6 +149,7 @@ const ObjectDetailPanel = ({
   internalPaths,
   bucketName,
   distributedSetup,
+  versioning,
   setErrorSnackMessage,
   setNewObject,
   updateProgress,
@@ -480,7 +482,7 @@ const ObjectDetailPanel = ({
           selectedBucket={bucketName}
           selectedObject={internalPaths}
           closeDeleteModalAndRefresh={closeDeleteModal}
-          versioning={distributedSetup}
+          versioning={versioning}
         />
       )}
       {legalholdOpen && actualInfo && (
