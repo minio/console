@@ -346,10 +346,6 @@ const ObjectDetailPanel = ({
     }
   };
 
-  const closePreviewWindow = () => {
-    setPreviewOpen(false);
-  };
-
   if (!actualInfo) {
     return null;
   }
@@ -514,7 +510,9 @@ const ObjectDetailPanel = ({
             content_type: "",
             last_modified: new Date(actualInfo.last_modified),
           }}
-          onClosePreview={closePreviewWindow}
+          onClosePreview={() => {
+            setPreviewOpen(false);
+          }}
         />
       )}
       {tagModalOpen && actualInfo && (
