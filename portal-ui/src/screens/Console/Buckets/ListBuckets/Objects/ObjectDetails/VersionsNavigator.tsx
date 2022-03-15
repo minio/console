@@ -47,6 +47,7 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 import {
   completeObject,
+  setLoadingVersions,
   setNewObject,
   setSelectedVersion,
   updateProgress,
@@ -110,12 +111,14 @@ interface IVersionsNavigatorProps {
   internalPaths: string;
   bucketName: string;
   searchVersions: string;
+  loadingVersions: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   setSelectedVersion: typeof setSelectedVersion;
+  setLoadingVersions: typeof setLoadingVersions;
 }
 
 const emptyFile: IFileInfo = {
@@ -137,12 +140,13 @@ const VersionsNavigator = ({
   setNewObject,
   updateProgress,
   searchVersions,
+  loadingVersions,
   completeObject,
   internalPaths,
   bucketName,
   setSelectedVersion,
+  setLoadingVersions,
 }: IVersionsNavigatorProps) => {
-  const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
@@ -159,7 +163,7 @@ const VersionsNavigator = ({
   }
 
   useEffect(() => {
-    if (loadObjectData && internalPaths !== "") {
+    if (loadingVersions && internalPaths !== "") {
       api
         .invoke(
           "GET",
@@ -179,15 +183,16 @@ const VersionsNavigator = ({
             setVersions([]);
           }
 
-          setLoadObjectData(false);
+          setLoadingVersions(false);
         })
         .catch((error: ErrorResponseHandler) => {
           setErrorSnackMessage(error);
-          setLoadObjectData(false);
+          setLoadingVersions(false);
         });
     }
   }, [
-    loadObjectData,
+    setLoadingVersions,
+    loadingVersions,
     bucketName,
     internalPaths,
     setErrorSnackMessage,
@@ -268,7 +273,7 @@ const VersionsNavigator = ({
     setRestoreVersion("");
 
     if (reloadObjectData) {
-      setLoadObjectData(true);
+      setLoadingVersions(true);
     }
   };
 
@@ -455,6 +460,7 @@ const VersionsNavigator = ({
 const mapStateToProps = ({ system, objectBrowser }: AppState) => ({
   distributedSetup: get(system, "distributedSetup", false),
   searchVersions: objectBrowser.searchVersions,
+  loadingVersions: objectBrowser.loadingVersions,
 });
 
 const mapDispatchToProps = {
@@ -464,6 +470,7 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   setSelectedVersion,
+  setLoadingVersions,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
