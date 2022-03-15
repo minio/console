@@ -110,6 +110,23 @@ paths:
       tags:
         - UserAPI
 
+  /check-version:
+    get:
+      summary: Checks the current Operator version against the latest
+      operationId: CheckMinIOVersion”
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/checkOperatorVersionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: [ ]
+      tags:
+        - UserAPI
+
   /subscription/info:
     get:
       summary: Subscription info
@@ -844,6 +861,27 @@ paths:
         - OperatorAPI
 
   /namespaces/{namespace}/tenants/{tenant}/encryption:
+    delete:
+      summary: Tenant Delete Encryption
+      operationId: TenantDeleteEncryption
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
     put:
       summary: Tenant Update Encryption
       operationId: TenantUpdateEncryption
@@ -864,6 +902,30 @@ paths:
       responses:
         201:
           description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+    get:
+      summary: Tenant Encryption Info
+      operationId: TenantEncryptionInfo
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/encryptionConfigurationResponse"
         default:
           description: Generic error response.
           schema:
@@ -1013,78 +1075,6 @@ paths:
           description: A successful response.
           schema:
             $ref: "#/definitions/parityResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - OperatorAPI
-
-  /direct-csi/drives:
-    get:
-      summary: Get direct-csi drives list
-      operationId: GetDirectCSIDriveList
-      parameters:
-        - name: nodes
-          in: query
-          required: false
-          type: string
-        - name: drives
-          in: query
-          required: false
-          type: string
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/getDirectCSIDriveListResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - OperatorAPI
-
-  /direct-csi/volumes:
-    get:
-      summary: Get direct-csi volumes list
-      operationId: GetDirectCSIVolumeList
-      parameters:
-        - name: nodes
-          in: query
-          required: false
-          type: string
-        - name: drives
-          in: query
-          required: false
-          type: string
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/getDirectCSIVolumeListResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - OperatorAPI
-
-  /direct-csi/drives/format:
-    post:
-      summary: Format direct-csi drives from a list
-      operationId: DirectCSIFormatDrive
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/formatConfiguration"
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/formatDirectCSIDrivesResponse"
         default:
           description: Generic error response.
           schema:
@@ -1656,15 +1646,9 @@ definitions:
         properties:
           url:
             type: string
-          username_format:
-            type: string
-          username_search_filter:
-            type: string
           group_search_base_dn:
             type: string
           group_search_filter:
-            type: string
-          group_name_attribute:
             type: string
           skip_tls_verification:
             type: boolean
@@ -1694,6 +1678,10 @@ definitions:
             type: string
           replicas:
             type: string
+          secretsToBeDeleted:
+            type: array
+            items:
+              type: string
           server:
             type: object
             $ref: "#/definitions/keyPairConfiguration"
@@ -1709,6 +1697,40 @@ definitions:
           vault:
             type: object
             $ref: "#/definitions/vaultConfiguration"
+          gcp:
+            type: object
+            $ref: "#/definitions/gcpConfiguration"
+          azure:
+            type: object
+            $ref: "#/definitions/azureConfiguration"
+          securityContext:
+            type: object
+            $ref: "#/definitions/securityContext"
+
+  encryptionConfigurationResponse:
+    allOf:
+      - $ref: "#/definitions/metadataFields"
+      - type: object
+        properties:
+          image:
+            type: string
+          replicas:
+            type: string
+          server:
+            type: object
+            $ref: "#/definitions/certificateInfo"
+          mtls_client:
+            type: object
+            $ref: "#/definitions/certificateInfo"
+          gemalto:
+            type: object
+            $ref: "#/definitions/gemaltoConfigurationResponse"
+          aws:
+            type: object
+            $ref: "#/definitions/awsConfiguration"
+          vault:
+            type: object
+            $ref: "#/definitions/vaultConfigurationResponse"
           gcp:
             type: object
             $ref: "#/definitions/gcpConfiguration"
@@ -1763,6 +1785,51 @@ definitions:
             type: string
           ca:
             type: string
+
+  vaultConfigurationResponse:
+    type: object
+    required:
+      - endpoint
+      - approle
+    properties:
+      endpoint:
+        type: string
+      engine:
+        type: string
+      namespace:
+        type: string
+      prefix:
+        type: string
+      approle:
+        type: object
+        required:
+          - id
+          - secret
+        properties:
+          engine:
+            type: string
+          id:
+            type: string
+          secret:
+            type: string
+          retry:
+            type: integer
+            format: int64
+      status:
+        type: object
+        properties:
+          ping:
+            type: integer
+            format: int64
+      tls:
+        type: object
+        properties:
+          crt:
+            type: object
+            $ref: "#/definitions/certificateInfo"
+          ca:
+            type: object
+            $ref: "#/definitions/certificateInfo"
 
   awsConfiguration:
     type: object
@@ -1828,6 +1895,41 @@ definitions:
             properties:
               ca:
                 type: string
+
+  gemaltoConfigurationResponse:
+    type: object
+    required:
+      - keysecure
+    properties:
+      keysecure:
+        type: object
+        required:
+          - endpoint
+          - credentials
+        properties:
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            required:
+              - token
+              - domain
+            properties:
+              token:
+                type: string
+              domain:
+                type: string
+              retry:
+                type: integer
+                format: int64
+          tls:
+            type: object
+            required:
+              - ca
+            properties:
+              ca:
+                type: object
+                $ref: "#/definitions/certificateInfo"
 
   gcpConfiguration:
     type: object
@@ -2747,26 +2849,11 @@ definitions:
       max_allocatable_mem:
         type: integer
         format: int64
-  label:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
 
-  annotation:
+  checkOperatorVersionResponse:
     type: object
     properties:
-      key:
+      current_version:
         type: string
-      value:
-        type: string
-
-  nodeSelector:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
+      latest_version:
         type: string

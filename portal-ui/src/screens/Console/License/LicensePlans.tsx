@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
-import { planDetails, planItems } from "./utils";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Button from "@mui/material/Button";
 import { Theme, useTheme } from "@mui/material/styles";
@@ -25,20 +24,18 @@ import { SubnetInfo } from "./types";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Tooltip } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import HelpIcon from "../../../icons/HelpIcon";
+import { HelpIconFilled, LicenseDocIcon, OpenSourceIcon } from "../../../icons";
+import {
+  LICENSE_PLANS,
+  FEATURE_ITEMS,
+  COMMUNITY_PLAN_FEATURES,
+  STANDARD_PLAN_FEATURES,
+  ENTERPRISE_PLAN_FEATURES,
+  PAID_PLANS,
+} from "./utils";
 
 const styles = (theme: Theme) =>
   createStyles({
-    planItemsPadding: {
-      border: "1px solid #EAEDEE",
-      borderTop: 0,
-      maxWidth: 1180,
-    },
-    planItemsBorder: {
-      height: 7,
-      backgroundColor: "#07193E",
-    },
-
     link: {
       textDecoration: "underline !important",
       color: theme.palette.info.main,
@@ -65,88 +62,6 @@ const styles = (theme: Theme) =>
       paddingTop: 18,
       lineHeight: 1,
     },
-    currPlan: {
-      color: "white",
-      backgroundColor: "#2781B0",
-    },
-    planHeader: {
-      padding: 8,
-    },
-    detailsPrice: {
-      fontSize: 13,
-      fontWeight: 700,
-    },
-    detailsCapacityMax: {
-      minHeight: 28,
-      fontSize: 10,
-    },
-    itemContainer: {
-      height: 36,
-      "& .item:last-child": {
-        borderRight: "1px solid #e5e5e5",
-      },
-    },
-    itemContainerDetail: {
-      height: 48,
-    },
-    item: {
-      height: "100%",
-      borderLeft: "1px solid #e5e5e5",
-      textAlign: "center",
-      fontSize: 10,
-      fontWeight: 700,
-      display: "flex",
-      alignItems: "center",
-      alignContent: "center",
-      borderTop: "1px solid #e5e5e5",
-    },
-
-    itemFirst: {
-      borderLeft: 0,
-      borderRight: 0,
-    },
-    field: {
-      textAlign: "left",
-      fontWeight: 400,
-      fontSize: 12,
-    },
-    checkIcon: {
-      fontSize: 15,
-      color: "#385973",
-    },
-    buttonContainer: {
-      paddingTop: 8,
-      paddingBottom: 24,
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      borderLeft: "1px solid #e2e2e2",
-    },
-    buttonContainerBlank: {
-      border: 0,
-    },
-    buttonContainerHighlighted: {
-      borderTop: 0,
-    },
-    button: {
-      textTransform: "none",
-      fontSize: 15,
-      fontWeight: 700,
-    },
-    activateLink: {
-      color: "#1C5A8D",
-      fontWeight: "bold",
-      clear: "both",
-      background: "none",
-      border: "none",
-      textDecoration: "underline",
-      cursor: "pointer",
-    },
-    currentPlanBG: {
-      background: "#022A4A 0% 0% no-repeat padding-box",
-      color: "#FFFFFF",
-      borderTop: "1px solid #52687d",
-    },
   });
 
 interface IRegisterStatus {
@@ -160,65 +75,26 @@ interface IRegisterStatus {
   setActivateProductModal: any;
 }
 
-const formatLabel = (
-  label = "",
-  isLink = false,
-  isSmallScreen = false,
-  setLicenseModal: any
-) => {
-  const lbl =
-    label === "N/A" ? (
-      isSmallScreen ? (
-        label
-      ) : (
-        ""
-      )
-    ) : label === "Yes" ? (
-      <CheckCircleIcon className="min-icon" />
-    ) : (
-      <Fragment>
-        {isLink ? (
-          <Button
-            sx={{
-              textDecoration: "underline",
-            }}
-            disableRipple
-            disableFocusRipple
-            variant="text"
-            color="primary"
-            size="small"
-            onClick={() => setLicenseModal && setLicenseModal(true)}
-          >
-            {label}
-          </Button>
-        ) : (
-          label
-        )}
-      </Fragment>
-    );
-
-  return lbl;
-};
-
 const PlanHeader = ({
   isActive,
   isXsViewActive,
   title,
-  tooltipText = "",
   onClick,
+  children,
 }: {
   isActive: boolean;
   isXsViewActive: boolean;
   title: string;
   price?: string;
-  capacity: string;
   tooltipText?: string;
   onClick: any;
+  children: any;
 }) => {
   const plan = title.toLowerCase();
   return (
     <Box
       className={clsx({
+        "plan-header": true,
         active: isActive,
         [`xs-active`]: isXsViewActive,
       })}
@@ -227,9 +103,10 @@ const PlanHeader = ({
       }}
       sx={{
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-start",
         justifyContent: "center",
         flexFlow: "column",
+        paddingLeft: "26px",
         borderLeft: "1px solid #eaeaea",
         "& .plan-header": {
           display: "flex",
@@ -240,16 +117,55 @@ const PlanHeader = ({
 
         "& .title-block": {
           paddingTop: "20px",
-          paddingBottom: "20px",
+          display: "flex",
+          alignItems: "flex-start",
+          flexFlow: "column",
+          width: "100%",
+
+          marginTop: "auto",
+          marginBottom: "auto",
+          "& .title-main": {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          },
+          "& .min-icon": {
+            marginLeft: "13px",
+            height: "13px",
+            width: "13px",
+          },
 
           "& .title": {
-            fontSize: "19px",
+            fontSize: "22px",
             fontWeight: 600,
           },
         },
+
+        "& .price-line": {
+          fontSize: "16px",
+          fontWeight: 600,
+        },
+        "& .minimum-cost": {
+          fontSize: "14px",
+          fontWeight: 400,
+          marginBottom: "5px",
+        },
+        "& .open-source": {
+          fontSize: "14px",
+          display: "flex",
+          marginBottom: "5px",
+          alignItems: "center",
+          "& .min-icon": {
+            marginRight: "8px",
+            height: "12px",
+            width: "12px",
+          },
+        },
+
         "& .cur-plan-text": {
-          padding: "10px",
           fontSize: "12px",
+          textTransform: "uppercase",
         },
 
         "@media (max-width: 600px)": {
@@ -264,7 +180,11 @@ const PlanHeader = ({
 
         "&.active, &.active.xs-active": {
           borderTop: "3px solid #2781B0",
-          color: "#000000",
+          color: "#ffffff",
+
+          "& .min-icon": {
+            fill: "#ffffff",
+          },
         },
         "&.active": {
           background: "#2781B0",
@@ -275,26 +195,41 @@ const PlanHeader = ({
         },
       }}
     >
-      <Box className="title-block">
-        <div className="title">{title}</div>
-        <Tooltip title={tooltipText} placement="top-start">
-          <div className="tool-tip">
-            <HelpIcon />
-          </div>
-        </Tooltip>
-      </Box>
-      <div className="cur-plan-text">{isActive ? "Current Plan" : ""}</div>
+      {children}
     </Box>
   );
 };
 
-const LICENSE_PLANS = {
-  COMMUNITY: "community",
-  STANDARD: "standard",
-  ENTERPRISE: "enterprise",
+const FeatureTitleRowCmp = (props: { featureLabel: any }) => {
+  return (
+    <Box className="feature-title">
+      <Box className="feature-title-info">
+        <div className="xs-only">{props.featureLabel} </div>
+      </Box>
+    </Box>
+  );
 };
 
-const PAID_PLANS = [LICENSE_PLANS.STANDARD, LICENSE_PLANS.ENTERPRISE];
+const PricingFeatureItem = (props: {
+  featureLabel: any;
+  label?: string;
+  detail?: string;
+  xsLabel?: string;
+}) => {
+  return (
+    <Box className="feature-item">
+      <Box className="feature-item-info">
+        <div className="xs-only">{props.featureLabel} </div>
+        <Box className="plan-feature">
+          <div>{props.label || ""}</div>
+          {props.detail ? <div>{props.detail}</div> : null}
+          <div className="xs-only">{props.xsLabel} </div>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
 const LicensePlans = ({
   licenseInfo,
   setLicenseModal,
@@ -311,13 +246,105 @@ const LicensePlans = ({
   const isStandardPlan = currentPlan === LICENSE_PLANS.STANDARD;
   const isEnterprisePlan = currentPlan === LICENSE_PLANS.ENTERPRISE;
 
+  const isPaidPlan = PAID_PLANS.includes(currentPlan);
+
   /*In smaller screen use tabbed view to show features*/
   const [xsPlanView, setXsPlanView] = useState("");
   let isXsViewCommunity = xsPlanView === LICENSE_PLANS.COMMUNITY;
   let isXsViewStandard = xsPlanView === LICENSE_PLANS.STANDARD;
   let isXsViewEnterprise = xsPlanView === LICENSE_PLANS.ENTERPRISE;
 
-  const [communityHeader, standardHeader, enterpriseHeader] = planDetails;
+  const getCommunityPlanHeader = () => {
+    const tooltipText =
+      "Designed for developers who are building open source applications in compliance with the AGPL v3 license and are able to support themselves. The community version of MinIO has all the functionality of the Standard and Enterprise editions.";
+
+    return (
+      <PlanHeader
+        isActive={isCommunityPlan}
+        isXsViewActive={isXsViewCommunity}
+        title={"community"}
+        onClick={isSmallScreen ? onPlanClick : null}
+      >
+        <Box className="title-block">
+          <Box className="title-main">
+            <div className="title">Community</div>
+            <Tooltip title={tooltipText} placement="top-start">
+              <div className="tool-tip">
+                <HelpIconFilled />
+              </div>
+            </Tooltip>
+          </Box>
+          <div className="cur-plan-text">
+            {isCommunityPlan ? "Current Plan" : ""}
+          </div>
+        </Box>
+        <div className="open-source">
+          <OpenSourceIcon />
+          Open Source
+        </div>
+      </PlanHeader>
+    );
+  };
+
+  const getStandardPlanHeader = () => {
+    const tooltipText =
+      "Designed for customers who require a commercial license and can mostly self-support but want the peace of mind that comes with the MinIO Subscription Network’s suite of operational capabilities and direct-to-engineer interaction. The Standard version is fully featured but with SLA limitations. ";
+
+    return (
+      <PlanHeader
+        isActive={isStandardPlan}
+        isXsViewActive={isXsViewStandard}
+        title={"Standard"}
+        onClick={isSmallScreen ? onPlanClick : null}
+      >
+        <Box className="title-block">
+          <Box className="title-main">
+            <div className="title">Standard</div>
+            <Tooltip title={tooltipText} placement="top-start">
+              <div className="tool-tip">
+                <HelpIconFilled />
+              </div>
+            </Tooltip>
+          </Box>
+          <div className="cur-plan-text">
+            {isStandardPlan ? "Current Plan" : ""}
+          </div>
+        </Box>
+        <div className="price-line">$10 per TiB per month</div>
+        <div className="minimum-cost">(Minimum of 100TiB)</div>
+      </PlanHeader>
+    );
+  };
+
+  const getEnterpriseHeader = () => {
+    const tooltipText =
+      "Designed for mission critical environments where both a license and strict SLAs are required. The Enterprise version is fully featured but comes with additional capabilities. ";
+
+    return (
+      <PlanHeader
+        isActive={isEnterprisePlan}
+        isXsViewActive={isXsViewEnterprise}
+        title={"Enterprise"}
+        onClick={isSmallScreen ? onPlanClick : null}
+      >
+        <Box className="title-block">
+          <Box className="title-main">
+            <div className="title">Enterprise</div>
+            <Tooltip title={tooltipText} placement="top-start">
+              <div className="tool-tip">
+                <HelpIconFilled />
+              </div>
+            </Tooltip>
+          </Box>
+          <div className="cur-plan-text">
+            {isEnterprisePlan ? "Current Plan" : ""}
+          </div>
+        </Box>
+        <div className="price-line">$20 per TiB per month</div>
+        <div className="minimum-cost">(Minimum of 100TiB)</div>
+      </PlanHeader>
+    );
+  };
 
   const getButton = (
     link: string,
@@ -369,340 +396,426 @@ const LicensePlans = ({
       setXsPlanView("");
     }
   }, [isSmallScreen, currentPlan]);
+
+  const linkTracker = `?ref=${operatorMode ? "op" : "con"}`;
+
+  const featureList = FEATURE_ITEMS;
   return (
     <Fragment>
       <Box
         sx={{
-          display: "flex",
-          flexFlow: "column",
+          border: "1px solid #eaeaea",
+          borderTop: "0px",
+          marginBottom: "45px",
+          overflow: "auto",
+          overflowY: "hidden",
+          "&::-webkit-scrollbar": {
+            width: "5px",
+            height: "5px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#F0F0F0",
+            borderRadius: 0,
+            boxShadow: "inset 0px 0px 0px 0px #F0F0F0",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#777474",
+            borderRadius: 0,
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#5A6375",
+          },
         }}
       >
         <Box
+          className={"title-blue-bar"}
           sx={{
             height: "8px",
-            background: "rgb(6 48 83)",
+            borderBottom: "8px solid rgb(6 48 83)",
           }}
-        ></Box>
+        />
         <Box
+          className={isPaidPlan ? "paid-plans-only" : ""}
           sx={{
-            border: "1px solid #eaeaea",
-            paddingLeft: "20px",
-            paddingRight: "20px",
-            paddingBottom: "20px",
-            "@media (max-width: 600px)": {
-              paddingLeft: "0px",
-              paddingRight: "0px",
+            display: "grid",
+
+            margin: "0 1.5rem 0 1.5rem",
+
+            gridTemplateColumns: {
+              sm: "1fr 1fr 1fr 1fr",
+              xs: "1fr 1fr 1fr",
+            },
+
+            "&.paid-plans-only": {
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+            },
+
+            "& .features-col": {
+              flex: 1,
+              minWidth: "260px",
+
+              "@media (max-width: 600px)": {
+                display: "none",
+              },
+            },
+
+            "& .xs-only": {
+              display: "none",
+            },
+
+            "& .button-box": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "5px 0px 5px 0px",
+              borderLeft: "1px solid #eaeaea",
+            },
+            "& .plan-header": {
+              height: "153px",
+              borderBottom: "1px solid #eaeaea",
+            },
+            "& .feature-title": {
+              height: "25px",
+              paddingLeft: "26px",
+              fontSize: "14px",
+              background: "#E5E5E5",
+
+              "@media (max-width: 600px)": {
+                "& .feature-title-info .xs-only": {
+                  display: "block",
+                },
+              },
+            },
+            "& .feature-name": {
+              minHeight: "60px",
+              padding: "5px",
+              borderBottom: "1px solid #eaeaea",
+              display: "flex",
+              alignItems: "center",
+              paddingLeft: "26px",
+              fontSize: "14px",
+              fontWeight: 600,
+            },
+            "& .feature-item": {
+              display: "flex",
+              flexFlow: "column",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              minHeight: "60px",
+              padding: "5px",
+              borderBottom: "1px solid #eaeaea",
+              borderLeft: " 1px solid #eaeaea",
+              paddingLeft: "26px",
+              fontSize: "14px",
+
+              "@media (max-width: 900px)": {
+                maxHeight: "30px",
+                overflow: "hidden",
+              },
+
+              "& .link-text": {
+                color: "#2781B0",
+              },
+
+              "&.icon-yes": {
+                width: "15px",
+                height: "15px",
+              },
+            },
+
+            "& .feature-item-info": {
+              flex: 1,
+              display: "flex",
+              flexFlow: "column",
+              alignItems: "flex-start",
+              justifyContent: "space-around",
+
+              "@media (max-width: 600px)": {
+                display: "flex",
+                flexFlow: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                "& .xs-only": {
+                  display: "block",
+                  flex: 1,
+                },
+                "& .plan-feature": {
+                  flex: 1,
+                  textAlign: "right",
+                  paddingRight: "10px",
+                },
+              },
+            },
+
+            "& .plan-col": {
+              minWidth: "260px",
+              flex: 1,
+            },
+
+            "& .active-plan-col": {
+              background: "#FDFDFD 0% 0% no-repeat padding-box",
+              boxShadow: " 0px 3px 20px #00000038",
+
+              "& .plan-header": {
+                backgroundColor: "#2781B0",
+              },
+
+              "& .feature-title": {
+                background: "#F7F7F7",
+              },
+
+              "& .title-main": {
+                position: "relative",
+                top: "-17px",
+              },
+              "& .cur-plan-text": {
+                position: "relative",
+                top: "-17px",
+              },
             },
           }}
         >
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateRows: "1fr",
-              gridTemplateColumns: {
-                sm: "1fr 1fr 1fr 1fr",
-                xs: "1fr 1fr 1fr",
-              },
+          <Box className="features-col">
+            {featureList.map((fi) => {
+              const featureTitleRow = fi.featureTitleRow;
+              const isHeader = fi.isHeader;
 
-              "@media (max-width: 600px)": {
-                "& .tool-tip, .plan-price, .plan-capacity": {
-                  display: "none",
-                },
+              if (isHeader) {
+                if (isPaidPlan) {
+                  return (
+                    <Box
+                      key={fi.desc}
+                      className="plan-header"
+                      sx={{
+                        fontSize: "14px",
+                        paddingLeft: "26px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
 
-                "& .feature-col": {
-                  display: "none",
-                },
-                "& .title-block": {
-                  padding: ".2rem",
-                },
-                "& .plan-header": {
-                  paddingBottom: "0",
-                },
+                        "& .link-text": {
+                          color: "#2781B0",
+                        },
 
-                "& .feature-title-row": {
-                  paddingLeft: "5px",
-                },
-              },
-              "& .plan-header": {
-                paddingBottom: "1.5rem",
-              },
-              "& .title-block": {
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                        "& .min-icon": {
+                          marginRight: "10px",
+                          color: "#2781B0",
+                          fill: "#2781B0",
+                        },
+                      }}
+                    >
+                      <LicenseDocIcon />
+                      <a
+                        href={`https://subnet.min.io/terms-and-conditions/${currentPlan}`}
+                        rel="noreferrer noopener"
+                        className={"link-text"}
+                      >
+                        View License agreement <br />
+                        for the registered plan.
+                      </a>
+                    </Box>
+                  );
+                }
 
-                "& .title": {
-                  fontSize: "16px",
-                },
-
-                "& .tool-tip": {
-                  marginLeft: "8px",
-                  "& .min-icon": {
-                    height: "12px",
-                    width: "12px",
-                  },
-                },
-              },
-            }}
-          >
-            <Box className="feature-col">{/*Spacer*/}</Box>
-            <PlanHeader
-              isActive={isCommunityPlan}
-              isXsViewActive={isXsViewCommunity}
-              capacity={communityHeader.capacityMax || ""}
-              title={communityHeader.title}
-              price={communityHeader.price}
-              onClick={isSmallScreen ? onPlanClick : null}
-              tooltipText={
-                "Designed for developers who are building open source applications in compliance with the AGPL v3 license and are able to support themselves. The community version of MinIO has all the functionality of the Standard and Enterprise editions."
+                return (
+                  <Box
+                    key={fi.desc}
+                    className={`plan-header`}
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      paddingLeft: "26px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    {fi.label}
+                  </Box>
+                );
               }
-            />
-
-            <PlanHeader
-              isActive={isStandardPlan}
-              isXsViewActive={isXsViewStandard}
-              capacity={standardHeader.capacityMax || ""}
-              title={standardHeader.title}
-              price={standardHeader.price}
-              onClick={isSmallScreen ? onPlanClick : null}
-              tooltipText={
-                "Designed for customers who require a commercial license and can mostly self-support but want the peace of mind that comes with the MinIO Subscription Network’s suite of operational capabilities and direct-to-engineer interaction. The Standard version is fully featured but with SLA limitations. "
+              if (featureTitleRow) {
+                return (
+                  <Box
+                    key={fi.desc}
+                    className="feature-title"
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    <div>{fi.desc} </div>
+                  </Box>
+                );
               }
-            />
-
-            <PlanHeader
-              isActive={isEnterprisePlan}
-              isXsViewActive={isXsViewEnterprise}
-              capacity={enterpriseHeader.capacityMax || ""}
-              title={enterpriseHeader.title}
-              price={enterpriseHeader.price}
-              onClick={isSmallScreen ? onPlanClick : null}
-              tooltipText={
-                "Designed for mission critical environments where both a license and strict SLAs are required. The Enterprise version is fully featured but comes with additional capabilities. "
-              }
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateRows: "1fr",
-              gridTemplateColumns: "1fr",
-              "& .feature-title-row": {
-                paddingLeft: "10px",
-                background: "rgb(247 247 247)",
-                height: "32px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
-              },
-            }}
-          >
-            <div className="feature-title-row">Features</div>
-          </Box>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateRows: "1fr",
-              borderBottom: "0",
-              gridTemplateColumns: {
-                sm: "1fr 1fr 1fr 1fr",
-                xs: "1fr",
-              },
-              "& .feature-row": {
-                display: "flex",
-                flexFlow: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-              },
-
-              "& .plan-col": {
-                borderBottom: "1px solid #eaeaea",
-                borderLeft: "1px solid #eaeaea",
-                minHeight: "50px",
-                padding: "5px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-
-                "& .min-icon": {
-                  height: "16px",
-                  width: "16px",
-                  fill: "#385973",
-                },
-
-                "&.unit-price": {
-                  "& .feature-main": {
-                    fontSize: "17px",
-                    fontWeight: 500,
-                  },
-
-                  "& .feature-sub": {
-                    fontSize: "15px",
-                    color: "#4b4b4b",
-                    fontWeight: 500,
-                  },
-                },
-              },
-              "& .feature-col": {
-                display: "flex",
-                alignItems: "center",
-                borderBottom: "1px solid #eaeaea",
-                minHeight: "50px",
-                padding: "5px",
-              },
-              "& .xs-only-feature-col": {
-                maxWidth: "80px",
-                display: "none",
-              },
-              "@media (max-width: 600px)": {
-                "& .feature-row": {
-                  maxWidth: "160px",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  flexFlow: "column",
-                  alignItems: "flex-end",
-                  textAlign: "end",
-                },
-                "& .xs-only-feature-col": {
-                  display: "block",
-                },
-                "& .feature-col": {
-                  display: "none",
-                },
-
-                "& .plan-col": {
-                  display: "none",
-                  borderLeft: "0px",
-                  borderBottom: "1px solid #eaeaea",
-                  minHeight: "50px",
-                  padding: "5px",
-
-                  "&.active": {
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  },
-                },
-              },
-            }}
-          >
-            {planItems.map((item: any, index: number) => {
-              const clsName = item.className || "";
-              const community = item.plans["Community"];
-              const standard = item.plans["Standard"];
-              const enterprise = item.plans["Enterprise"];
-
-              const linkTracker = `?ref=${operatorMode ? "op" : "con"}`;
               return (
-                <Fragment key={item.id}>
-                  <Box className="feature-col">{item.field}</Box>
-                  <Box
-                    className={clsx("plan-col", {
-                      active: isXsViewCommunity,
-                      [clsName]: true,
-                    })}
-                  >
-                    <div className="xs-only-feature-col"> {item.field}</div>
-                    <div className="feature-row">
-                      <span className="feature-main">
-                        {formatLabel(
-                          community.label,
-                          community.link,
-                          isSmallScreen,
-                          setLicenseModal
-                        )}
-                      </span>
-                      <span className="feature-sub">{community.detail}</span>
-                    </div>
-                  </Box>
-                  <Box
-                    className={clsx("plan-col", {
-                      active: isXsViewStandard,
-                      [clsName]: true,
-                    })}
-                  >
-                    <div className="xs-only-feature-col"> {item.field}</div>
-                    <div className="feature-row">
-                      <span className="feature-main">
-                        {formatLabel(
-                          standard.label,
-                          standard.link,
-                          isSmallScreen,
-                          null
-                        )}
-                      </span>
-                      <span className="feature-sub"> {standard.detail}</span>
-                    </div>
-                  </Box>
-                  <Box
-                    className={clsx("plan-col", {
-                      active: isXsViewEnterprise,
-                      [clsName]: true,
-                    })}
-                  >
-                    <div className="xs-only-feature-col"> {item.field}</div>
-                    <div className="feature-row">
-                      <span className="feature-main">
-                        {formatLabel(
-                          enterprise.label,
-                          enterprise.link,
-                          isSmallScreen,
-                          null
-                        )}
-                      </span>
-                      <span className="feature-sub">{enterprise.detail}</span>
-                    </div>
-                  </Box>
-
-                  {index + 1 === planItems.length ? (
-                    <Fragment>
-                      <Box className="feature-col">{/*Space Col*/}</Box>
-                      <Box
-                        className={clsx("plan-col", {
-                          active: isXsViewCommunity,
-                        })}
-                      >
-                        {getButton(
-                          `https://slack.min.io${linkTracker}`,
-                          "Join Slack",
-                          "outlined",
-                          LICENSE_PLANS.COMMUNITY
-                        )}
-                      </Box>
-                      <Box
-                        className={clsx("plan-col", {
-                          active: isXsViewStandard,
-                        })}
-                      >
-                        {getButton(
-                          `https://min.io/signup${linkTracker}`,
-                          !PAID_PLANS.includes(currentPlan)
-                            ? "Subscribe"
-                            : "Login to SUBNET",
-                          "contained",
-                          LICENSE_PLANS.STANDARD
-                        )}
-                      </Box>
-                      <Box
-                        className={clsx("plan-col", {
-                          active: isXsViewEnterprise,
-                        })}
-                      >
-                        {getButton(
-                          `https://min.io/signup${linkTracker}`,
-                          !PAID_PLANS.includes(currentPlan)
-                            ? "Subscribe"
-                            : "Login to SUBNET",
-                          "contained",
-                          LICENSE_PLANS.ENTERPRISE
-                        )}
-                      </Box>
-                    </Fragment>
-                  ) : null}
-                </Fragment>
+                <Box key={fi.desc} className="feature-name">
+                  <div>{fi.desc} </div>
+                </Box>
               );
             })}
+          </Box>
+          {!isPaidPlan ? (
+            <Box
+              className={`plan-col ${
+                isCommunityPlan ? "active-plan-col" : "non-active-plan-col"
+              }`}
+            >
+              {COMMUNITY_PLAN_FEATURES.map((fi, idx) => {
+                const featureLabel = featureList[idx].desc;
+                const { featureTitleRow, isHeader, isOssLicenseLink } = fi;
+
+                if (isHeader) {
+                  return getCommunityPlanHeader();
+                }
+                if (featureTitleRow) {
+                  return (
+                    <FeatureTitleRowCmp
+                      key={fi.id}
+                      featureLabel={featureLabel}
+                    />
+                  );
+                }
+
+                if (isOssLicenseLink) {
+                  return (
+                    <Box
+                      key={fi.id}
+                      className="feature-item"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <a
+                        href={"https://www.gnu.org/licenses/agpl-3.0.en.html"}
+                        rel="noreferrer noopener"
+                        className={"link-text"}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setLicenseModal && setLicenseModal(true);
+                        }}
+                      >
+                        GNU AGPL v3
+                      </a>
+                    </Box>
+                  );
+                }
+                return (
+                  <PricingFeatureItem
+                    key={fi.id}
+                    featureLabel={featureLabel}
+                    label={fi.label}
+                    detail={fi.detail}
+                    xsLabel={fi.xsLabel}
+                  />
+                );
+              })}
+              <Box className="button-box">
+                {getButton(
+                  `https://slack.min.io${linkTracker}`,
+                  "Join Slack",
+                  "outlined",
+                  LICENSE_PLANS.COMMUNITY
+                )}
+              </Box>
+            </Box>
+          ) : null}
+          <Box
+            className={`plan-col ${
+              isStandardPlan ? "active-plan-col" : "non-active-plan-col"
+            }`}
+          >
+            {STANDARD_PLAN_FEATURES.map((fi, idx) => {
+              const featureLabel = featureList[idx].desc;
+              const featureTitleRow = fi.featureTitleRow;
+              const isHeader = fi.isHeader;
+
+              if (isHeader) {
+                return getStandardPlanHeader();
+              }
+              if (featureTitleRow) {
+                return (
+                  <FeatureTitleRowCmp key={fi.id} featureLabel={featureLabel} />
+                );
+              }
+              return (
+                <PricingFeatureItem
+                  key={fi.id}
+                  featureLabel={featureLabel}
+                  label={fi.label}
+                  detail={fi.detail}
+                  xsLabel={fi.xsLabel}
+                />
+              );
+            })}
+
+            <Box className="button-box">
+              {getButton(
+                `https://min.io/signup${linkTracker}`,
+                !PAID_PLANS.includes(currentPlan)
+                  ? "Subscribe"
+                  : "Login to SUBNET",
+                "contained",
+                LICENSE_PLANS.STANDARD
+              )}
+            </Box>
+          </Box>
+          <Box
+            className={`plan-col ${
+              isEnterprisePlan ? "active-plan-col" : "non-active-plan-col"
+            }`}
+          >
+            {ENTERPRISE_PLAN_FEATURES.map((fi, idx) => {
+              const featureLabel = featureList[idx].desc;
+              const { featureTitleRow, isHeader, yesIcon } = fi;
+
+              if (isHeader) {
+                return getEnterpriseHeader();
+              }
+
+              if (featureTitleRow) {
+                return (
+                  <FeatureTitleRowCmp key={fi.id} featureLabel={featureLabel} />
+                );
+              }
+
+              if (yesIcon) {
+                return (
+                  <Box className="feature-item">
+                    <Box className="feature-item-info">
+                      <div className="xs-only"> </div>
+                      <Box className="plan-feature">
+                        <CheckCircleIcon />
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              }
+              return (
+                <PricingFeatureItem
+                  key={fi.id}
+                  featureLabel={featureLabel}
+                  label={fi.label}
+                  detail={fi.detail}
+                />
+              );
+            })}
+            <Box className="button-box">
+              {getButton(
+                `https://min.io/signup${linkTracker}`,
+                !PAID_PLANS.includes(currentPlan)
+                  ? "Subscribe"
+                  : "Login to SUBNET",
+                "contained",
+                LICENSE_PLANS.ENTERPRISE
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>

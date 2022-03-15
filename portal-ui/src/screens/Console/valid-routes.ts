@@ -32,6 +32,7 @@ import {
   GroupsMenuIcon,
   HealthMenuIcon,
   IdentityMenuIcon,
+  InspectMenuIcon,
   LogsMenuIcon,
   MetricsMenuIcon,
   MonitoringMenuIcon,
@@ -39,7 +40,6 @@ import {
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
-  InspectMenuIcon,
 } from "../../icons/SidebarMenus";
 import { hasPermission } from "../../common/SecureComponent";
 import WatchIcon from "../../icons/WatchIcon";
@@ -48,7 +48,6 @@ import {
   DocumentationIcon,
   LambdaIcon,
   LicenseIcon,
-  StorageIcon,
   TenantsOutlineIcon,
   TiersIcon,
 } from "../../icons";
@@ -60,7 +59,6 @@ export const validRoutes = (
   operatorMode: boolean
 ) => {
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
-
   let consoleMenus: IMenuItem[] = [
     {
       name: "Buckets",
@@ -160,13 +158,6 @@ export const validRoutes = (
           icon: DrivesMenuIcon,
           component: NavLink,
         },
-        {
-          name: "Inspect",
-          id: "inspectObjects",
-          to: IAM_PAGES.TOOLS_INSPECT,
-          icon: InspectMenuIcon,
-          component: NavLink,
-        },
       ],
     },
     {
@@ -203,13 +194,13 @@ export const validRoutes = (
         //   icon: CallHomeMenuIcon,
         //   to: IAM_PAGES.CALL_HOME,
         // },
-        // {
-        //   name: "Inspect",
-        //   id: "inspect",
-        //   component: NavLink,
-        //   icon: InspectMenuIcon,
-        //   to: IAM_PAGES.TOOLS_WATCH,
-        // },
+        {
+          name: "Inspect",
+          id: "inspectObjects",
+          to: IAM_PAGES.TOOLS_INSPECT,
+          icon: InspectMenuIcon,
+          component: NavLink,
+        },
         // {
         //   name: "Profile",
         //   id: "profile",
@@ -278,6 +269,7 @@ export const validRoutes = (
     {
       group: "Operator",
       type: "item",
+      id: "Tenants",
       component: NavLink,
       to: IAM_PAGES.TENANTS,
       name: "Tenants",
@@ -287,15 +279,7 @@ export const validRoutes = (
     {
       group: "Operator",
       type: "item",
-      component: NavLink,
-      to: IAM_PAGES.STORAGE,
-      name: "Storage",
-      icon: StorageIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "Operator",
-      type: "item",
+      id: "License",
       component: NavLink,
       to: IAM_PAGES.LICENSE,
       name: "License",
@@ -305,6 +289,7 @@ export const validRoutes = (
     {
       group: "Operator",
       type: "item",
+      id: "Documentation",
       component: NavLink,
       to: IAM_PAGES.DOCUMENTATION,
       name: "Documentation",

@@ -53,6 +53,8 @@ import Images from "./Steps/Images";
 import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
 import TenantResources from "./Steps/TenantResources/TenantResources";
+import ConfigLogSearch from "./Steps/ConfigLogSearch";
+import ConfigPrometheus from "./Steps/ConfigPrometheus";
 
 interface IAddTenantProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -116,13 +118,9 @@ const AddTenant = ({
     const ADURL = fields.identityProvider.ADURL;
     const ADSkipTLS = fields.identityProvider.ADSkipTLS;
     const ADServerInsecure = fields.identityProvider.ADServerInsecure;
-    const ADUserNameSearchFilter =
-      fields.identityProvider.ADUserNameSearchFilter;
     const ADGroupSearchBaseDN = fields.identityProvider.ADGroupSearchBaseDN;
     const ADGroupSearchFilter = fields.identityProvider.ADGroupSearchFilter;
-    const ADGroupNameAttribute = fields.identityProvider.ADGroupNameAttribute;
     const ADUserDNs = fields.identityProvider.ADUserDNs;
-    const ADUserNameFormat = fields.identityProvider.ADUserNameFormat;
     const ADLookupBindDN = fields.identityProvider.ADLookupBindDN;
     const ADLookupBindPassword = fields.identityProvider.ADLookupBindPassword;
     const ADUserDNSearchBaseDN = fields.identityProvider.ADUserDNSearchBaseDN;
@@ -175,8 +173,8 @@ const AddTenant = ({
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
     const tenantCustom = fields.configure.tenantCustom;
-    const logSearchCustom = fields.configure.logSearchCustom;
-    const prometheusCustom = fields.configure.prometheusCustom;
+    const logSearchEnabled = fields.configure.logSearchEnabled;
+    const prometheusEnabled = fields.configure.prometheusEnabled;
     const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
     const logSearchSelectedStorageClass =
       fields.configure.logSearchSelectedStorageClass;
@@ -313,7 +311,7 @@ const AddTenant = ({
         };
       }
 
-      if (logSearchCustom) {
+      if (logSearchEnabled) {
         dataSend = {
           ...dataSend,
           logSearchConfiguration: {
@@ -329,18 +327,9 @@ const AddTenant = ({
             postgres_securityContext: logSearchPostgresSecurityContext,
           },
         };
-      } else {
-        dataSend = {
-          ...dataSend,
-          logSearchConfiguration: {
-            image: logSearchImage,
-            postgres_image: logSearchPostgresImage,
-            postgres_init_image: logSearchPostgresInitImage,
-          },
-        };
       }
 
-      if (prometheusCustom) {
+      if (prometheusEnabled) {
         dataSend = {
           ...dataSend,
           prometheusConfiguration: {
@@ -353,15 +342,6 @@ const AddTenant = ({
             sidecar_image: prometheusSidecarImage,
             init_image: prometheusInitImage,
             securityContext: prometheusSecurityContext,
-          },
-        };
-      } else {
-        dataSend = {
-          ...dataSend,
-          prometheusConfiguration: {
-            image: prometheusImage,
-            sidecar_image: prometheusSidecarImage,
-            init_image: prometheusInitImage,
           },
         };
       }
@@ -515,7 +495,7 @@ const AddTenant = ({
               };
             }
             let vaultTLS = null;
-            if (vaultKeyPair || vaultCA) {
+            if (vaultKeyPair || vaultCAInsert) {
               vaultTLS = {
                 tls: {
                   ...vaultKeyPair,
@@ -616,11 +596,8 @@ const AddTenant = ({
               url: ADURL,
               skip_tls_verification: ADSkipTLS,
               server_insecure: ADServerInsecure,
-              username_format: ADUserNameFormat,
-              username_search_filter: ADUserNameSearchFilter,
               group_search_base_dn: ADGroupSearchBaseDN,
               group_search_filter: ADGroupSearchFilter,
-              group_name_attribute: ADGroupNameAttribute,
               user_dns: ADUserDNs,
               lookup_bind_dn: ADLookupBindDN,
               lookup_bind_password: ADLookupBindPassword,
@@ -751,6 +728,18 @@ const AddTenant = ({
       label: "Encryption",
       advancedOnly: true,
       componentRender: <Encryption />,
+      buttons: [cancelButton, createButton],
+    },
+    {
+      label: "Audit Log",
+      advancedOnly: true,
+      componentRender: <ConfigLogSearch />,
+      buttons: [cancelButton, createButton],
+    },
+    {
+      label: "Monitoring",
+      advancedOnly: true,
+      componentRender: <ConfigPrometheus />,
       buttons: [cancelButton, createButton],
     },
   ];

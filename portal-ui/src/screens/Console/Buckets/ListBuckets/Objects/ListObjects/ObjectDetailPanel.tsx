@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Box, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import createStyles from "@mui/styles/createStyles";
 import get from "lodash/get";
@@ -29,7 +29,7 @@ import {
   detailsPanel,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "../ObjectDetails/types";
-import { download } from "../utils";
+import { download, extensionPreview } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import {
   setErrorSnackMessage,
@@ -38,7 +38,9 @@ import {
 import {
   decodeFileName,
   encodeFileName,
+  niceBytes,
   niceBytesInt,
+  niceDaysInt,
 } from "../../../../../../common/utils";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import {
@@ -49,56 +51,59 @@ import {
 } from "../../../../ObjectBrowser/actions";
 import { AppState } from "../../../../../../store";
 import {
-  DisabledIcon,
+  LegalHoldIcon,
+  MetadataIcon,
+  ObjectInfoIcon,
   PreviewIcon,
+  RetentionIcon,
+  TagsIcon,
   VersionsIcon,
 } from "../../../../../../icons";
+import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
 import { ShareIcon, DownloadIcon, DeleteIcon } from "../../../../../../icons";
-import history from "../../../../../../history";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
 import DeleteObject from "../ListObjects/DeleteObject";
-import AddTagModal from "../ObjectDetails/AddTagModal";
-import DeleteTagModal from "../ObjectDetails/DeleteTagModal";
 import SetLegalHoldModal from "../ObjectDetails/SetLegalHoldModal";
 import RestoreFileVersion from "../ObjectDetails/RestoreFileVersion";
-import { SecureComponent } from "../../../../../../common/SecureComponent";
-import ObjectTags from "../ObjectDetails/ObjectTags";
-import LabelWithIcon from "../../../BucketDetails/SummaryItems/LabelWithIcon";
+import {
+  hasPermission,
+  SecureComponent,
+} from "../../../../../../common/SecureComponent";
 import PreviewFileModal from "../Preview/PreviewFileModal";
-import ObjectActionButton from "./ObjectActionButton";
 import ObjectMetaData from "../ObjectDetails/ObjectMetaData";
-import EditablePropertyItem from "../../../BucketDetails/SummaryItems/EditablePropertyItem";
-import LabelValuePair from "../../../../Common/UsageBarWrapper/LabelValuePair";
+import ActionsListSection from "./ActionsListSection";
+import { displayFileIconName } from "./utils";
+import TagsModal from "../ObjectDetails/TagsModal";
+import InspectObject from "./InspectObject";
 
 const styles = () =>
   createStyles({
-    tag: {
-      marginRight: 6,
-      fontSize: 10,
-      fontWeight: 700,
-      "&.MuiChip-sizeSmall": {
-        height: 18,
-      },
-      "& .min-icon": {
-        height: 10,
-        width: 10,
-      },
+    ObjectDetailsTitle: {
+      display: "flex",
+      alignItems: "center",
     },
-    "@global": {
-      ".progressDetails": {
-        paddingTop: 3,
-        display: "inline-block",
-        position: "relative",
-        width: 18,
-        height: 18,
-      },
-      ".progressDetails > .MuiCircularProgress-root": {
-        position: "absolute",
-        left: 0,
-        top: 3,
-      },
+    objectNameContainer: {
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
+      overflow: "hidden",
+      alignItems: "center",
+      marginLeft: 10,
+    },
+    headerForSection: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingBottom: 15,
+      borderBottom: "#E2E2E2 2px solid",
+      fontWeight: "bold",
+      fontSize: 18,
+      color: "#000",
+      margin: "20px 22px",
+    },
+    capitalizeFirst: {
+      textTransform: "capitalize",
     },
     ...buttonsStyles,
     ...actionsTray,
@@ -115,8 +120,10 @@ interface IObjectDetailPanelProps {
   rewindDate: any;
   bucketToRewind: string;
   distributedSetup: boolean;
+  versioning: boolean;
   versionsMode: boolean;
   selectedVersion: string;
+  onClosePanel: (hardRefresh: boolean) => void;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
@@ -142,21 +149,22 @@ const ObjectDetailPanel = ({
   internalPaths,
   bucketName,
   distributedSetup,
+  versioning,
   setErrorSnackMessage,
   setNewObject,
   updateProgress,
   completeObject,
   versionsMode,
   selectedVersion,
+  onClosePanel,
   setVersionsModeEnabled,
 }: IObjectDetailPanelProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
-  const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
-  const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
+  const [inspectModalOpen, setInspectModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [allInfoElements, setAllInfoElements] = useState<IFileInfo[]>([]);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
@@ -271,11 +279,6 @@ const ObjectDetailPanel = ({
     setShareFileModalOpen(false);
   };
 
-  const deleteTag = (tagKey: string, tagLabel: string) => {
-    setSelectedTag([tagKey, tagLabel]);
-    setDeleteTagModalOpen(true);
-  };
-
   const downloadObject = (object: IFileInfo) => {
     const identityDownload = encodeFileName(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
@@ -305,16 +308,11 @@ const ObjectDetailPanel = ({
     );
   };
 
-  const closeDeleteModal = (redirectBack: boolean) => {
+  const closeDeleteModal = (closeAndReload: boolean) => {
     setDeleteOpen(false);
 
-    if (redirectBack) {
-      const newPath = allPathData.join("/");
-      history.push(
-        `/buckets/${bucketName}/browse${
-          newPath === "" ? "" : `/${encodeFileName(newPath)}`
-        }`
-      );
+    if (closeAndReload) {
+      onClosePanel(true);
     }
   };
 
@@ -325,16 +323,16 @@ const ObjectDetailPanel = ({
     }
   };
 
-  const closeLegalholdModal = (reload: boolean) => {
-    setLegalholdOpen(false);
-    if (reload) {
+  const closeInspectModal = (reloadObjectData: boolean) => {
+    setInspectModalOpen(false);
+    if (reloadObjectData) {
       setLoadObjectData(true);
     }
   };
 
-  const closeDeleteTagModal = (reloadObjectData: boolean) => {
-    setDeleteTagModalOpen(false);
-    if (reloadObjectData) {
+  const closeLegalholdModal = (reload: boolean) => {
+    setLegalholdOpen(false);
+    if (reload) {
       setLoadObjectData(true);
     }
   };
@@ -348,10 +346,6 @@ const ObjectDetailPanel = ({
     }
   };
 
-  const closePreviewWindow = () => {
-    setPreviewOpen(false);
-  };
-
   if (!actualInfo) {
     return null;
   }
@@ -360,6 +354,104 @@ const ObjectDetailPanel = ({
     objectNameArray.length > 0
       ? objectNameArray[objectNameArray.length - 1]
       : actualInfo.name;
+
+  const multiActionButtons = [
+    {
+      action: () => {
+        downloadObject(actualInfo);
+      },
+      label: "Download",
+      disabled: !!actualInfo.is_delete_marker,
+      icon: <DownloadIcon />,
+      tooltip: "Download this Object",
+    },
+    {
+      action: () => {
+        shareObject();
+      },
+      label: "Share",
+      disabled: !!actualInfo.is_delete_marker,
+      icon: <ShareIcon />,
+      tooltip: "Share this File",
+    },
+    {
+      action: () => {
+        setPreviewOpen(true);
+      },
+      label: "Preview",
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        extensionPreview(currentItem) === "none",
+      icon: <PreviewIcon />,
+      tooltip: "Preview this File",
+    },
+    {
+      action: () => {
+        setLegalholdOpen(true);
+      },
+      label: "Legal Hold",
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        extensionPreview(currentItem) === "none" ||
+        !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]) ||
+        selectedVersion !== "",
+      icon: <LegalHoldIcon />,
+      tooltip: "Change Legal Hold rules for this File",
+    },
+    {
+      action: openRetentionModal,
+      label: "Retention",
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        extensionPreview(currentItem) === "none" ||
+        !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT_RETENTION]) ||
+        selectedVersion !== "",
+      icon: <RetentionIcon />,
+      tooltip: "Change Retention rules for this File",
+    },
+    {
+      action: () => {
+        setTagModalOpen(true);
+      },
+      label: "Tags",
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        extensionPreview(currentItem) === "none" ||
+        selectedVersion !== "",
+      icon: <TagsIcon />,
+      tooltip: "Change Tags for this File",
+    },
+    {
+      action: () => {
+        setInspectModalOpen(true);
+      },
+      label: "Inspect",
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        extensionPreview(currentItem) === "none" ||
+        selectedVersion !== "",
+      icon: <InspectMenuIcon />,
+      tooltip: "Inspect this file",
+    },
+    {
+      action: () => {
+        setVersionsModeEnabled(!versionsMode, objectName);
+      },
+      label: versionsMode ? "Hide Object Versions" : "Display Object Versions",
+      icon: <VersionsIcon />,
+      disabled: !(actualInfo.version_id && actualInfo.version_id !== "null"),
+      tooltip: "Display Versions for this file",
+    },
+  ];
+
+  const calculateLastModifyTime = (lastModified: string) => {
+    const currentTime = new Date();
+    const modifiedTime = new Date(lastModified);
+
+    const difTime = currentTime.getTime() - modifiedTime.getTime();
+
+    return `${niceDaysInt(difTime, "ms")} ago`;
+  };
 
   return (
     <Fragment>
@@ -386,28 +478,7 @@ const ObjectDetailPanel = ({
           selectedBucket={bucketName}
           selectedObject={internalPaths}
           closeDeleteModalAndRefresh={closeDeleteModal}
-          versioning={distributedSetup}
-        />
-      )}
-      {tagModalOpen && actualInfo && (
-        <AddTagModal
-          modalOpen={tagModalOpen}
-          currentTags={actualInfo.tags}
-          selectedObject={internalPaths}
-          versionId={actualInfo.version_id}
-          bucketName={bucketName}
-          onCloseAndUpdate={closeAddTagModal}
-        />
-      )}
-      {deleteTagModalOpen && actualInfo && (
-        <DeleteTagModal
-          deleteOpen={deleteTagModalOpen}
-          currentTags={actualInfo.tags}
-          selectedObject={actualInfo.name}
-          versionId={actualInfo.version_id}
-          bucketName={bucketName}
-          onCloseAndUpdate={closeDeleteTagModal}
-          selectedTag={selectedTag}
+          versioning={distributedSetup && versioning}
         />
       )}
       {legalholdOpen && actualInfo && (
@@ -439,7 +510,25 @@ const ObjectDetailPanel = ({
             content_type: "",
             last_modified: new Date(actualInfo.last_modified),
           }}
-          onClosePreview={closePreviewWindow}
+          onClosePreview={() => {
+            setPreviewOpen(false);
+          }}
+        />
+      )}
+      {tagModalOpen && actualInfo && (
+        <TagsModal
+          modalOpen={tagModalOpen}
+          bucketName={bucketName}
+          actualInfo={actualInfo}
+          onCloseAndUpdate={closeAddTagModal}
+        />
+      )}
+      {inspectModalOpen && actualInfo && (
+        <InspectObject
+          inspectOpen={inspectModalOpen}
+          volumeName={bucketName}
+          inspectPath={actualInfo.name}
+          closeInspectModalAndRefresh={closeInspectModal}
         />
       )}
 
@@ -449,76 +538,55 @@ const ObjectDetailPanel = ({
         </Grid>
       )}
 
-      <div className={classes.titleLabel}>{objectName}</div>
+      <ActionsListSection
+        title={
+          <div className={classes.ObjectDetailsTitle}>
+            {displayFileIconName(objectName, true)}
+            <span className={classes.objectNameContainer}>{objectName}</span>
+          </div>
+        }
+        items={multiActionButtons}
+      />
 
-      <ul className={classes.objectActions}>
-        <li>Actions:</li>
-        <li>
-          <ObjectActionButton
-            label={"Download"}
-            icon={<DownloadIcon />}
-            onClick={() => {
-              downloadObject(actualInfo);
-            }}
-            disabled={actualInfo.is_delete_marker}
-          />
-        </li>
-        <li>
-          <ObjectActionButton
-            label={"Share"}
-            icon={<ShareIcon />}
-            onClick={() => {
-              shareObject();
-            }}
-            disabled={actualInfo.is_delete_marker}
-          />
-        </li>
-        <li>
-          <ObjectActionButton
-            label={"Preview"}
-            icon={<PreviewIcon />}
-            onClick={() => {
-              setPreviewOpen(true);
-            }}
-            disabled={actualInfo.is_delete_marker}
-          />
-        </li>
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-          resource={bucketName}
-          matchAll
-          errorProps={{ disabled: true }}
-        >
-          <li>
-            <ObjectActionButton
-              label={"Delete"}
-              icon={<DeleteIcon />}
+      <Grid item xs={12} sx={{ textAlign: "center" }}>
+        {selectedVersion === "" && (
+          <SecureComponent
+            resource={bucketName}
+            scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
+            <Button
+              startIcon={<DeleteIcon />}
+              color="secondary"
+              variant={"outlined"}
               onClick={() => {
                 setDeleteOpen(true);
               }}
               disabled={actualInfo.is_delete_marker || selectedVersion !== ""}
-            />
-          </li>
-        </SecureComponent>
-        <li>
-          <ObjectActionButton
-            label={
-              versionsMode ? "Hide Object Versions" : "Display Object Versions"
-            }
-            icon={<VersionsIcon />}
-            onClick={() => {
-              setVersionsModeEnabled(!versionsMode, objectName);
-            }}
-            disabled={
-              !(actualInfo.version_id && actualInfo.version_id !== "null")
-            }
-          />
-        </li>
-      </ul>
-
-      <div className={classes.actionsTray}>
-        <h1 className={classes.sectionTitle}>Details</h1>
-      </div>
+              sx={{
+                width: "calc(100% - 44px)",
+                margin: "8px 0",
+                "& svg.min-icon": {
+                  width: 14,
+                  height: 14,
+                },
+              }}
+            >
+              Delete
+            </Button>
+          </SecureComponent>
+        )}
+      </Grid>
+      <Grid item xs={12} className={classes.headerForSection}>
+        <span>Object Info</span>
+        <ObjectInfoIcon />
+      </Grid>
+      <Box className={classes.detailContainer}>
+        <strong>Name:</strong>
+        <br />
+        {objectName}
+      </Box>
       {selectedVersion !== "" && (
         <Box className={classes.detailContainer}>
           <strong>Version ID:</strong>
@@ -527,91 +595,56 @@ const ObjectDetailPanel = ({
         </Box>
       )}
       <Box className={classes.detailContainer}>
-        {selectedVersion === "" ? (
-          <LabelValuePair
-            label={"Tags:"}
-            value={
-              <ObjectTags
-                objectInfo={actualInfo}
-                tagKeys={tagKeys}
-                bucketName={bucketName}
-                onDeleteTag={deleteTag}
-                onAddTagClick={() => {
-                  setTagModalOpen(true);
-                }}
-              />
-            }
-          />
-        ) : (
-          <Fragment>
-            <strong>Tags: </strong>
+        <strong>Size:</strong>
+        <br />
+        {niceBytes(actualInfo.size || "0")}
+      </Box>
+      {actualInfo.version_id &&
+        actualInfo.version_id !== "null" &&
+        selectedVersion === "" && (
+          <Box className={classes.detailContainer}>
+            <strong>Versions:</strong>
             <br />
-            {tagKeys.length === 0
-              ? "N/A"
-              : tagKeys.map((tagKey, index) => {
-                  return (
-                    <span key={`key-vs-${index.toString()}`}>
-                      {tagKey}:{get(actualInfo, `tags.${tagKey}`, "")}
-                      {index < tagKeys.length - 1 ? ", " : ""}
-                    </span>
-                  );
-                })}
-          </Fragment>
+            {versions.length} version{versions.length !== 1 ? "s" : ""},{" "}
+            {niceBytesInt(totalVersionsSize)}
+          </Box>
         )}
+      {selectedVersion === "" && (
+        <Box className={classes.detailContainer}>
+          <strong>Last Modified:</strong>
+          <br />
+          {calculateLastModifyTime(actualInfo.last_modified)}
+        </Box>
+      )}
+      <Box className={classes.detailContainer}>
+        <strong>ETAG:</strong>
+        <br />
+        {actualInfo.etag || "N/A"}
+      </Box>
+      <Box className={classes.detailContainer}>
+        <strong>Tags:</strong>
+        <br />
+        {tagKeys.length === 0
+          ? "N/A"
+          : tagKeys.map((tagKey, index) => {
+              return (
+                <span key={`key-vs-${index.toString()}`}>
+                  {tagKey}:{get(actualInfo, `tags.${tagKey}`, "")}
+                  {index < tagKeys.length - 1 ? ", " : ""}
+                </span>
+              );
+            })}
       </Box>
       <Box className={classes.detailContainer}>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
           resource={bucketName}
         >
-          {selectedVersion === "" ? (
-            <LabelValuePair
-              label={""}
-              value={
-                actualInfo.version_id && actualInfo.version_id !== "null" ? (
-                  <EditablePropertyItem
-                    iamScopes={[IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]}
-                    secureCmpProps={{
-                      matchAll: false,
-                      errorProps: {
-                        disabled: true,
-                        onClick: null,
-                      },
-                    }}
-                    resourceName={bucketName}
-                    property={"Legal Hold:"}
-                    value={
-                      actualInfo.legal_hold_status
-                        ? actualInfo.legal_hold_status.toLowerCase()
-                        : "Off"
-                    }
-                    onEdit={() => {
-                      setLegalholdOpen(true);
-                    }}
-                    isLoading={false}
-                  />
-                ) : (
-                  <LabelValuePair
-                    label={"Legal Hold:"}
-                    value={
-                      <LabelWithIcon
-                        icon={<DisabledIcon />}
-                        label={
-                          <label className={classes.textMuted}>Disabled</label>
-                        }
-                      />
-                    }
-                  />
-                )
-              }
-            />
-          ) : (
-            <Fragment>
-              <strong>Legal Hold:</strong>
-              <br />
-              {actualInfo.legal_hold_status ? "On" : "Off"}
-            </Fragment>
-          )}
+          <Fragment>
+            <strong>Legal Hold:</strong>
+            <br />
+            {actualInfo.legal_hold_status ? "On" : "Off"}
+          </Fragment>
         </SecureComponent>
       </Box>
       <Box className={classes.detailContainer}>
@@ -619,56 +652,31 @@ const ObjectDetailPanel = ({
           scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
           resource={bucketName}
         >
-          {selectedVersion === "" ? (
-            <LabelValuePair
-              label={""}
-              value={
-                actualInfo.version_id && actualInfo.version_id !== "null" ? (
-                  <EditablePropertyItem
-                    iamScopes={[IAM_SCOPES.S3_PUT_OBJECT_RETENTION]}
-                    secureCmpProps={{
-                      matchAll: false,
-                    }}
-                    resourceName={bucketName}
-                    property={"Retention:"}
-                    value={
-                      actualInfo.retention_mode
-                        ? actualInfo.retention_mode.toLowerCase()
-                        : "None"
-                    }
-                    onEdit={openRetentionModal}
-                    isLoading={false}
-                  />
-                ) : (
-                  <LabelValuePair
-                    label={"Retention:"}
-                    value={
-                      <LabelWithIcon
-                        icon={<DisabledIcon />}
-                        label={
-                          <label className={classes.textMuted}>Disabled</label>
-                        }
-                      />
-                    }
-                  />
-                )
-              }
-            />
-          ) : (
-            <Fragment>
-              <strong>Object Retention:</strong>
-              <br />
-              {actualInfo.retention_mode
-                ? actualInfo.retention_mode.toLowerCase()
-                : "None"}
-            </Fragment>
-          )}
+          <Fragment>
+            <strong>Retention Policy:</strong>
+            <br />
+            <span className={classes.capitalizeFirst}>
+              {actualInfo.version_id && actualInfo.version_id !== "null" ? (
+                <Fragment>
+                  {actualInfo.retention_mode
+                    ? actualInfo.retention_mode.toLowerCase()
+                    : "None"}
+                </Fragment>
+              ) : (
+                <Fragment>
+                  {actualInfo.retention_mode
+                    ? actualInfo.retention_mode.toLowerCase()
+                    : "None"}
+                </Fragment>
+              )}
+            </span>
+          </Fragment>
         </SecureComponent>
       </Box>
-      <hr className={classes.hrClass} />
-      <div className={classes.actionsTray}>
-        <h1 className={classes.sectionTitle}>Object Metadata</h1>
-      </div>
+      <Grid item xs={12} className={classes.headerForSection}>
+        <span>Metadata</span>
+        <MetadataIcon />
+      </Grid>
       <Box className={classes.detailContainer}>
         {actualInfo ? (
           <ObjectMetaData
@@ -679,29 +687,6 @@ const ObjectDetailPanel = ({
           />
         ) : null}
       </Box>
-      <hr className={classes.hrClass} />
-
-      {actualInfo.version_id &&
-        actualInfo.version_id !== "null" &&
-        selectedVersion === "" && (
-          <Fragment>
-            <div className={classes.actionsTray}>
-              <h1 className={classes.sectionTitle}>Versions</h1>
-            </div>
-            <Box className={classes.detailContainer}>
-              <Box className={classes.metadataLinear}>
-                <strong>Total available versions</strong>
-                <br />
-                {versions.length}
-              </Box>
-              <Box className={classes.metadataLinear}>
-                <strong>Versions Stored size:</strong>
-                <br />
-                {niceBytesInt(totalVersionsSize)}
-              </Box>
-            </Box>
-          </Fragment>
-        )}
     </Fragment>
   );
 };

@@ -35,9 +35,29 @@ export function logReducer(
 ): LogState {
   switch (action.type) {
     case LOG_MESSAGE_RECEIVED:
+      // if it's a simple ConsoleMsg, append it to the current ConsoleMsg in the
+      // state if any
+      let msgs = [...state.messages];
+
+      if (
+        msgs.length > 0 &&
+        action.message.time.getFullYear() === 1 &&
+        action.message.ConsoleMsg !== ""
+      ) {
+        for (let m in msgs) {
+          if (msgs[m].time.getFullYear() === 1) {
+            msgs[
+              m
+            ].ConsoleMsg = `${msgs[m].ConsoleMsg}\n${action.message.ConsoleMsg}`;
+          }
+        }
+      } else {
+        msgs.push(action.message);
+      }
+
       return {
         ...state,
-        messages: [...state.messages, action.message],
+        messages: msgs,
       };
     case LOG_RESET_MESSAGES:
       return {

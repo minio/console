@@ -16,6 +16,8 @@
 
 import { Role, Selector } from "testcafe";
 import { readFileSync } from "fs";
+import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
+import { monitoringElement } from "../utils/elements-menu";
 
 const data = readFileSync(__dirname + "/../constants/timestamp.txt", "utf-8");
 const $TIMESTAMP = data.trim();
@@ -48,12 +50,12 @@ const loginSubmitBtn = Selector("form button");
 
 export const supportSidebarEl = Selector(".MuiPaper-root")
   .find("ul")
-  .child("#tools");
+  .child("#support");
 
-export const supportChildren = Selector("#tools-children");
+export const supportChildren = Selector("#support-children");
 export const inspectEl = supportChildren
   .find("a")
-  .withAttribute("href", "/tools/inspect");
+  .withAttribute("href", IAM_PAGES.TOOLS_INSPECT);
 
 export const inspect_volume_input = Selector('[data-test-id="inspect_volume"]');
 export const inspect_path_input = Selector('[data-test-id="inspect_path"]');
@@ -190,9 +192,9 @@ test("Inspect page can NOT be opened", async (t) => {
 
 test("Inspect link should NOT exists in Menu list", async (t) => {
   await t
-    .expect(supportSidebarEl.exists)
+    .expect(monitoringElement.exists)
     .ok()
-    .click(supportSidebarEl)
+    .click(monitoringElement)
     .expect(inspectEl.exists)
     .notOk(
       "Inspect Link should not exist in the menu list as per inspect not allowed policy"

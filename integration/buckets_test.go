@@ -62,6 +62,30 @@ func printMessage(message string) {
 	fmt.Println(message)
 }
 
+func printLoggingMessage(message string, functionName string) {
+	/*
+		Helper function to have standard output across the tests.
+	*/
+	finalString := "......................." + functionName + "(): " + message
+	printMessage(finalString)
+}
+
+func printStartFunc(functionName string) {
+	/*
+		Common function for all tests to tell that test has started
+	*/
+	printMessage("")
+	printLoggingMessage("started", functionName)
+}
+
+func printEndFunc(functionName string) {
+	/*
+		Helper function for all tests to tell that test has ended, is completed
+	*/
+	printLoggingMessage("completed", functionName)
+	printMessage("")
+}
+
 func initConsoleServer() (*restapi.Server, error) {
 
 	//os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
@@ -99,7 +123,7 @@ func initConsoleServer() (*restapi.Server, error) {
 }
 
 func TestMain(m *testing.M) {
-
+	printStartFunc("TestMain")
 	// start console server
 	go func() {
 		fmt.Println("start server")
@@ -188,6 +212,6 @@ func TestMain(m *testing.M) {
 	if response != nil {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 	}
-
+	printEndFunc("TestMain")
 	os.Exit(code)
 }

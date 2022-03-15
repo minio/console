@@ -55,7 +55,6 @@ const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
 const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
-const Storage = React.lazy(() => import("./Storage/Storage"));
 const Hop = React.lazy(() => import("./Tenants/TenantDetails/hop/Hop"));
 
 const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
@@ -388,21 +387,6 @@ const Console = ({
       forceDisplay: true,
     },
     {
-      component: Storage,
-      path: IAM_PAGES.STORAGE,
-      forceDisplay: true,
-    },
-    {
-      component: Storage,
-      path: IAM_PAGES.STORAGE_VOLUMES,
-      forceDisplay: true,
-    },
-    {
-      component: Storage,
-      path: IAM_PAGES.STORAGE_DRIVES,
-      forceDisplay: true,
-    },
-    {
       component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT,
       forceDisplay: true,
@@ -460,6 +444,11 @@ const Console = ({
     {
       component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_SECURITY,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_ENCRYPTION,
       forceDisplay: true,
     },
     {

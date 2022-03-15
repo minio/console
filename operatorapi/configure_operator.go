@@ -75,6 +75,7 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	// Register login handlers
 	registerLoginHandlers(api)
 	registerSessionHandlers(api)
+	registerVersionHandlers(api)
 
 	// Operator Console
 	// Register tenant handlers
@@ -86,8 +87,6 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	// Register Parity' handlers
 	registerParityHandlers(api)
 
-	// Direct CSI handlers
-	registerDirectCSIHandlers(api)
 	// Volumes handlers
 	registerVolumesHandlers(api)
 	// Namespaces handlers

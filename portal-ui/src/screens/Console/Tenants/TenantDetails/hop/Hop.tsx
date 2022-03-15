@@ -19,12 +19,13 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Link } from "react-router-dom";
-import { Box, CircularProgress, IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import history from "./../../../../../history";
 import RefreshIcon from "../../../../../icons/RefreshIcon";
+import Loader from "../../../Common/Loader/Loader";
 
 interface IHopSimple {
   classes: any;
@@ -144,7 +145,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
       <div className={classes.divContainer}>
         {loading && (
           <div className={classes.loader}>
-            <CircularProgress />
+            <Loader />
           </div>
         )}
         <iframe

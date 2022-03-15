@@ -80,7 +80,8 @@ const hasPermission = (
         }
       });
 
-      const simpleResources = get(sessionGrants, rsItem, []);
+      let simpleResources = get(sessionGrants, rsItem, []);
+      simpleResources = simpleResources || [];
       const s3Resources = get(sessionGrants, `arn:aws:s3:::${rsItem}/*`, []);
       const bucketOnly = get(sessionGrants, `arn:aws:s3:::${rsItem}/`, []);
       const bckOnlyNoSlash = get(sessionGrants, `arn:aws:s3:::${rsItem}`, []);
@@ -106,10 +107,12 @@ const hasPermission = (
   }
 
   let anyResourceGrant: string[] = [];
+  let validScopes = scopes || [];
   if (resource === "*") {
-    Object.entries(sessionGrants).forEach(([key, values]) => {
-      scopes.forEach((scope) => {
-        values.forEach((val) => {
+    Object.entries(sessionGrants).forEach(([key, values = []]) => {
+      let validValues = values || [];
+      validScopes.forEach((scope) => {
+        validValues.forEach((val) => {
           if (val === scope || val === "s3:*") {
             anyResourceGrant = [...anyResourceGrant, scope];
           }

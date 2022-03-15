@@ -30,8 +30,8 @@ export const displayParsedDate = (object: BucketObject) => {
 };
 
 export const displayNiceBytes = (object: BucketObject) => {
-  if (object.name.endsWith("/")) {
-    return "";
+  if (object.name.endsWith("/") || !object.size) {
+    return "-";
   }
   return niceBytes(String(object.size));
 };
@@ -62,7 +62,7 @@ export const listModeColumns = [
     renderFunction: displayNiceBytes,
     renderFullObject: true,
     width: 60,
-    contentTextAlign: "right",
+    contentTextAlign: "center",
     enableSort: true,
   },
 ];
@@ -87,7 +87,7 @@ export const rewindModeColumns = [
     renderFunction: displayNiceBytes,
     renderFullObject: true,
     width: 60,
-    contentTextAlign: "right",
+    contentTextAlign: "center",
     enableSort: true,
   },
   {

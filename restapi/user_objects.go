@@ -244,6 +244,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			IsDeleteMarker: lsObj.IsDeleteMarker,
 			UserTags:       lsObj.UserTags,
 			UserMetadata:   lsObj.UserMetadata,
+			Etag:           lsObj.ETag,
 		}
 		// only if single object with or without versions; get legalhold, retention and tags
 		if !lsObj.IsDeleteMarker && prefix != "" && !strings.HasSuffix(prefix, "/") {
@@ -380,7 +381,13 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		prefix = string(decodedPrefix)
 	}
 
-	resp, err := mClient.GetObject(ctx, params.BucketName, prefix, minio.GetObjectOptions{})
+	opts := minio.GetObjectOptions{}
+
+	if params.VersionID != nil && *params.VersionID != "" {
+		opts.VersionID = *params.VersionID
+	}
+
+	resp, err := mClient.GetObject(ctx, params.BucketName, prefix, opts)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -414,18 +421,18 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			LogError("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err)
 			return
 		}
+		contentType := stat.ContentType
+		rw.Header().Set("X-XSS-Protection", "1; mode=block")
 
-		if isPreview {
+		if isPreview && isSafeToPreview(contentType) {
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", escapedName))
 			rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
-			rw.Header().Set("X-XSS-Protection", "1")
 		} else {
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", escapedName))
 		}
 
 		rw.Header().Set("Last-Modified", stat.LastModified.UTC().Format(http.TimeFormat))
 
-		contentType := stat.ContentType
 		if isPreview {
 			// In case content type was uploaded as octet-stream, we double verify content type
 			if stat.ContentType == "application/octet-stream" {
@@ -572,12 +579,7 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	if params.AllVersions != nil {
 		allVersions = *params.AllVersions
 	}
-	minClient, err := newMinioClient(session)
-	if err != nil {
-		return prepareError(err)
-	}
-	client2 := minioClient{client: minClient}
-	err = deleteObjects(ctx, mcClient, client2, params.BucketName, prefix, version, rec, allVersions)
+	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec, allVersions)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -592,11 +594,6 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 	if params.AllVersions != nil {
 		allVersions = *params.AllVersions
 	}
-	minClient, err := newMinioClient(session)
-	if err != nil {
-		return prepareError(err)
-	}
-	client2 := minioClient{client: minClient}
 	for i := 0; i < len(params.Files); i++ {
 		if params.Files[i].VersionID != "" {
 			version = params.Files[i].VersionID
@@ -609,7 +606,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		mcClient := mcClient{client: s3Client}
-		err = deleteObjects(ctx, mcClient, client2, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions)
+		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -618,22 +615,10 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 }
 
 // deleteObjects deletes either a single object or multiple objects based on recursive flag
-func deleteObjects(ctx context.Context, client MCClient, client2 MinioClient, bucket string, path string, versionID string, recursive bool, allVersions bool) error {
+func deleteObjects(ctx context.Context, client MCClient, bucket string, path string, versionID string, recursive bool, allVersions bool) error {
 	if allVersions {
-		if recursive {
-			if err := deleteMultipleObjects(ctx, client, recursive, true); err != nil {
-				return err
-			}
-		} else {
-			objects, err := listBucketObjects(ctx, client2, bucket, path, recursive, true, false)
-			if err != nil {
-				return err
-			}
-			for i := range objects {
-				if err := deleteSingleObject(ctx, client, bucket, path, objects[i].VersionID); err != nil {
-					return err
-				}
-			}
+		if err := deleteMultipleObjects(ctx, client, recursive, true); err != nil {
+			return err
 		}
 	}
 	if recursive {

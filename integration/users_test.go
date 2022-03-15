@@ -40,7 +40,6 @@ func AddUser(accessKey string, secretKey string, groups []string, policies []str
 		Timeout: 3 * time.Second,
 	}
 
-	fmt.Println(".......................TestAddUser(): Create Data to add user")
 	requestDataAdd := map[string]interface{}{
 		"accessKey": accessKey,
 		"secretKey": secretKey,
@@ -48,7 +47,6 @@ func AddUser(accessKey string, secretKey string, groups []string, policies []str
 		"policies":  policies,
 	}
 
-	fmt.Println("..............................TestAddUser(): Prepare the POST")
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
@@ -59,7 +57,6 @@ func AddUser(accessKey string, secretKey string, groups []string, policies []str
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
-	fmt.Println(".................................TestAddUser(): Make the POST")
 	response, err := client.Do(request)
 	return response, err
 }
@@ -72,7 +69,6 @@ func DeleteUser(userName string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: 3 * time.Second,
 	}
-	fmt.Println("...................................TestAddUser(): Remove user")
 	request, err := http.NewRequest(
 		"DELETE", "http://localhost:9090/api/v1/user?name="+userName, nil)
 	if err != nil {
@@ -80,8 +76,6 @@ func DeleteUser(userName string) (*http.Response, error) {
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
-
-	fmt.Println("...............................TestAddUser(): Make the DELETE")
 	response, err := client.Do(request)
 	return response, err
 }
@@ -94,7 +88,6 @@ func ListUsers(offset string, limit string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: 3 * time.Second,
 	}
-	fmt.Println("...................................TestAddUser(): Remove user")
 	request, err := http.NewRequest(
 		"GET",
 		"http://localhost:9090/api/v1/users?offset="+offset+"&limit="+limit,
@@ -104,8 +97,6 @@ func ListUsers(offset string, limit string) (*http.Response, error) {
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
-
-	fmt.Println("...............................TestAddUser(): Make the DELETE")
 	response, err := client.Do(request)
 	return response, err
 }
@@ -368,24 +359,17 @@ func TestAddUser(t *testing.T) {
 		tests like users.ts can run over clean data and we don't collide against
 		it.
 	*/
-
+	printStartFunc("TestAddUser")
 	assert := assert.New(t)
 
 	// With no groups & no policies
 	var groups = []string{}
 	var policies = []string{}
-
-	fmt.Println(".................................TestAddUser(): Make the POST")
 	response, err := AddUser("accessKey", "secretKey", groups, policies)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println("..................................TestAddUser(): Verification")
-	fmt.Println(".................................TestAddUser(): POST response")
-	fmt.Println(response)
-	fmt.Println("....................................TestAddUser(): POST error")
-	fmt.Println(err)
 	if response != nil {
 		fmt.Println("POST StatusCode:", response.StatusCode)
 		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
@@ -396,16 +380,11 @@ func TestAddUser(t *testing.T) {
 		log.Println(err)
 		return
 	}
-	fmt.Println("..................................TestAddUser(): Verification")
-	fmt.Println("...............................TestAddUser(): DELETE response")
-	fmt.Println(response)
-	fmt.Println("..................................TestAddUser(): DELETE error")
-	fmt.Println(err)
 	if response != nil {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 		assert.Equal(204, response.StatusCode, "has to be 204 when delete user")
 	}
-
+	printEndFunc("TestAddUser")
 }
 
 func TestListUsers(t *testing.T) {
@@ -415,7 +394,7 @@ func TestListUsers(t *testing.T) {
 		2. Then, it lists the users <------ 200 is expected when listing them.
 		3. Finally, it deletes the users
 	*/
-
+	printStartFunc("TestListUsers")
 	assert := assert.New(t)
 
 	// With no groups & no policies
@@ -425,8 +404,6 @@ func TestListUsers(t *testing.T) {
 	// 1. Create the users
 	numberOfUsers := 5
 	for i := 1; i < numberOfUsers; i++ {
-		fmt.Println("............................TestListUsers(): Adding users")
-		fmt.Println(strconv.Itoa(i) + "accessKey" + strconv.Itoa(i))
 		response, err := AddUser(
 			strconv.Itoa(i)+"accessKey"+strconv.Itoa(i),
 			"secretKey"+strconv.Itoa(i), groups, policies)
@@ -434,11 +411,6 @@ func TestListUsers(t *testing.T) {
 			log.Println(err)
 			return
 		}
-		fmt.Println("............................TestListUsers(): Verification")
-		fmt.Println("...........................TestListUsers(): POST response")
-		fmt.Println(response)
-		fmt.Println("..............................TestListUsers(): POST error")
-		fmt.Println(err)
 		if response != nil {
 			fmt.Println("POST StatusCode:", response.StatusCode)
 			assert.Equal(201, response.StatusCode,
@@ -476,24 +448,20 @@ func TestListUsers(t *testing.T) {
 			log.Println(err)
 			return
 		}
-		fmt.Println("............................TestListUsers(): Verification")
-		fmt.Println(".........................TestListUsers(): DELETE response")
-		fmt.Println(response)
-		fmt.Println("............................TestListUsers(): DELETE error")
-		fmt.Println(err)
 		if response != nil {
 			fmt.Println("DELETE StatusCode:", response.StatusCode)
 			assert.Equal(204,
 				response.StatusCode, "has to be 204 when delete user")
 		}
 	}
+	printEndFunc("TestListUsers")
 }
 
 func TestGetUserInfo(t *testing.T) {
 	/*
 		Test to get the user information via API.
 	*/
-
+	printStartFunc("TestGetUserInfo")
 	// 1. Create the user
 	fmt.Println("TestGetUserInfo(): 1. Create the user")
 	assert := assert.New(t)
@@ -532,13 +500,14 @@ func TestGetUserInfo(t *testing.T) {
 	expected := "{\"accessKey\":\"accessKey\",\"memberOf\":null,\"policy\":[],\"status\":\"enabled\"}\n"
 	obtained := string(b)
 	assert.Equal(expected, obtained, "User Information is wrong")
+	printEndFunc("TestGetUserInfo")
 }
 
 func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
 	/*
 		Update User Information Test with Successful Response
 	*/
-
+	printStartFunc("TestGetUserInfo")
 	assert := assert.New(t)
 
 	// 1. Create an active user
@@ -576,14 +545,14 @@ func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "disabled"))
-
+	printEndFunc("TestGetUserInfo")
 }
 
 func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 	/*
 		Update User Information Test with Generic Error Response
 	*/
-
+	printStartFunc("TestUpdateUserInfoGenericErrorResponse")
 	assert := assert.New(t)
 
 	// 1. Create an active user
@@ -621,13 +590,14 @@ func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "status not valid"))
-
+	printEndFunc("TestUpdateUserInfoGenericErrorResponse")
 }
 
 func TestRemoveUserSuccessfulResponse(t *testing.T) {
 	/*
 		To test removing a user from API
 	*/
+	printStartFunc("TestRemoveUserSuccessfulResponse")
 	assert := assert.New(t)
 
 	// 1. Create an active user
@@ -674,13 +644,14 @@ func TestRemoveUserSuccessfulResponse(t *testing.T) {
 	printMessage(finalResponse)
 	assert.True(strings.Contains(
 		finalResponse, "The specified user does not exist"), finalResponse)
-
+	printEndFunc("TestRemoveUserSuccessfulResponse")
 }
 
 func TestUpdateGroupsForAUser(t *testing.T) {
 	/*
 		To test Update Groups For a User End Point.
 	*/
+	printStartFunc("TestUpdateGroupsForAUser")
 	// 1. Create the user
 	numberOfGroups := 3
 	groupName := "updategroupforausergroup"
@@ -730,13 +701,14 @@ func TestUpdateGroupsForAUser(t *testing.T) {
 		assert.True(strings.Contains(
 			finalResponse, groupName+strconv.Itoa(i)), finalResponse)
 	}
+	printEndFunc("TestUpdateGroupsForAUser")
 }
 
 func TestCreateServiceAccountForUser(t *testing.T) {
 	/*
 		To test creation of service account for a user.
 	*/
-
+	printStartFunc("TestCreateServiceAccountForUser")
 	// Test's variables
 	userName := "testcreateserviceaccountforuser1"
 	assert := assert.New(t)
@@ -790,13 +762,14 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 		)
 	}
 	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
+	printEndFunc("TestCreateServiceAccountForUser")
 }
 
 func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 	/*
 		To test creation of service account for a user.
 	*/
-
+	printStartFunc("TestCreateServiceAccountForUserWithCredentials")
 	// Test's variables
 	userName := "testcreateserviceaccountforuserwithcredentials1"
 	assert := assert.New(t)
@@ -882,13 +855,14 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 			assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
 		})
 	}
+	printEndFunc("TestCreateServiceAccountForUserWithCredentials")
 }
 
 func TestUsersGroupsBulk(t *testing.T) {
 	/*
 		To test UsersGroupsBulk End Point
 	*/
-
+	printStartFunc("TestUsersGroupsBulk")
 	// Vars
 	assert := assert.New(t)
 	numberOfUsers := 5
@@ -971,4 +945,5 @@ func TestUsersGroupsBulk(t *testing.T) {
 		// Make sure the user belongs to the created group
 		assert.True(strings.Contains(string(finalResponse), groupName))
 	}
+	printEndFunc("TestUsersGroupsBulk")
 }

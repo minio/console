@@ -34,6 +34,7 @@ remove_users() {
   mc admin user remove minio bucketwriteprefixonlypolicy-$TIMESTAMP
   mc admin user remove minio inspect-allowed-$TIMESTAMP
   mc admin user remove minio inspect-not-allowed-$TIMESTAMP
+  mc admin user remove minio prefix-policy-ui-crash-$TIMESTAMP
 }
 
 remove_policies() {
@@ -55,6 +56,7 @@ remove_policies() {
   mc admin policy remove minio bucketwriteprefixonlypolicy-$TIMESTAMP
   mc admin policy remove minio inspect-allowed-$TIMESTAMP
   mc admin policy remove minio inspect-not-allowed-$TIMESTAMP
+  mc admin policy remove minio fix-prefix-policy-ui-crash-$TIMESTAMP
 }
 
 remove_buckets() {

@@ -28,10 +28,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/minio/console/operatorapi/operations/operator_api"
 
 	"github.com/go-openapi/swag"
-	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	corev1 "k8s.io/api/core/v1"
@@ -895,7 +896,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 	type args struct {
 		ctx               context.Context
 		operatorClient    OperatorClientI
-		httpCl            cluster.HTTPClientI
+		httpCl            utils.HTTPClientI
 		nameSpace         string
 		tenantName        string
 		mockTenantPatch   func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)

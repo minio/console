@@ -25,7 +25,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CircularProgress, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -40,6 +40,7 @@ import api from "../../../../../common/api";
 import LineChartTooltip from "./tooltips/LineChartTooltip";
 import { openZoomPage } from "../../actions";
 import { useTheme } from "@mui/styles";
+import Loader from "../../../Common/Loader/Loader";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -212,7 +213,7 @@ const LinearGraphWidget = ({
           zoomActivated ? classes.verticalAlignment : classes.containerElements
         }
       >
-        {loading && <CircularProgress className={classes.loadingAlign} />}
+        {loading && <Loader className={classes.loadingAlign} />}
         {!loading && (
           <React.Fragment>
             <div

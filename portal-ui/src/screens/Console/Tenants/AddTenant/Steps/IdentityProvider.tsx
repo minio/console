@@ -55,12 +55,9 @@ interface IIdentityProviderProps {
   ADURL: string;
   ADSkipTLS: boolean;
   ADServerInsecure: boolean;
-  ADUserNameSearchFilter: string;
   ADGroupSearchBaseDN: string;
   ADGroupSearchFilter: string;
-  ADGroupNameAttribute: string;
   ADUserDNs: string[];
-  ADUserNameFormat: string;
   ADLookupBindDN: string;
   ADLookupBindPassword: string;
   ADUserDNSearchBaseDN: string;
@@ -136,12 +133,9 @@ const IdentityProvider = ({
   ADURL,
   ADSkipTLS,
   ADServerInsecure,
-  ADUserNameSearchFilter,
   ADGroupSearchBaseDN,
   ADGroupSearchFilter,
-  ADGroupNameAttribute,
   ADUserDNs,
-  ADUserNameFormat,
   ADLookupBindDN,
   ADLookupBindPassword,
   ADUserDNSearchBaseDN,
@@ -236,6 +230,11 @@ const IdentityProvider = ({
           required: true,
           value: ADURL,
         },
+        {
+          fieldKey: "ad_lookupBindDN",
+          required: true,
+          value: ADLookupBindDN,
+        },
       ];
       // validate user DNs
       for (let i = 0; i < ADUserDNs.length; i++) {
@@ -253,16 +252,15 @@ const IdentityProvider = ({
 
     setValidationErrors(commonVal);
   }, [
+    ADLookupBindDN,
     idpSelection,
     accessKeys,
     secretKeys,
     openIDClientID,
     openIDSecretID,
     ADURL,
-    ADUserNameSearchFilter,
     ADGroupSearchBaseDN,
     ADGroupSearchFilter,
-    ADGroupNameAttribute,
     ADUserDNs,
     isPageValid,
     openIDConfigurationURL,
@@ -603,74 +601,17 @@ const IdentityProvider = ({
           </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
-              id="ad_userNameFormat"
-              name="ad_userNameFormat"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADUserNameFormat", e.target.value);
-              }}
-              label="Username Format"
-              value={ADUserNameFormat}
-              placeholder="uid=%s,cn=accounts,dc=myldapserver,dc=com"
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
-              id="ad_userNameFilter"
-              name="ad_userNameFilter"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADUserNameSearchFilter", e.target.value);
-              }}
-              label="Username Search Filter"
-              value={ADUserNameSearchFilter}
-              placeholder="(|(objectclass=posixAccount)(uid=%s))"
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
-              id="ad_groupSearchBaseDN"
-              name="ad_groupSearchBaseDN"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADGroupSearchBaseDN", e.target.value);
-              }}
-              label="Group Search Base DN"
-              value={ADGroupSearchBaseDN}
-              placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
-              id="ad_groupSearchFilter"
-              name="ad_groupSearchFilter"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADGroupSearchFilter", e.target.value);
-              }}
-              label="Group Search Filter"
-              value={ADGroupSearchFilter}
-              placeholder="(&(objectclass=groupOfNames)(member=%s))"
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
-              id="ad_groupNameAttribute"
-              name="ad_groupNameAttribute"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADGroupNameAttribute", e.target.value);
-              }}
-              label="Group Name Attribute"
-              value={ADGroupNameAttribute}
-              placeholder="cn"
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
               id="ad_lookupBindDN"
               name="ad_lookupBindDN"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADLookupBindDN", e.target.value);
+                cleanValidation("ad_lookupBindDN");
               }}
               label="Lookup Bind DN"
               value={ADLookupBindDN}
               placeholder="cn=admin,dc=min,dc=io"
+              error={validationErrors["ad_lookupBindDN"] || ""}
+              required
             />
           </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
@@ -706,7 +647,31 @@ const IdentityProvider = ({
               }}
               label="User DN Search Filter"
               value={ADUserDNSearchFilter}
-              placeholder="(uid=%s)"
+              placeholder="(sAMAcountName=%s)"
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <InputBoxWrapper
+              id="ad_groupSearchBaseDN"
+              name="ad_groupSearchBaseDN"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADGroupSearchBaseDN", e.target.value);
+              }}
+              label="Group Search Base DN"
+              value={ADGroupSearchBaseDN}
+              placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <InputBoxWrapper
+              id="ad_groupSearchFilter"
+              name="ad_groupSearchFilter"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADGroupSearchFilter", e.target.value);
+              }}
+              label="Group Search Filter"
+              value={ADGroupSearchFilter}
+              placeholder="(&(objectclass=groupOfNames)(member=%s))"
             />
           </Grid>
           <fieldset className={classes.fieldGroup}>
@@ -742,17 +707,11 @@ const mapState = (state: AppState) => ({
   ADSkipTLS: state.tenants.createTenant.fields.identityProvider.ADSkipTLS,
   ADServerInsecure:
     state.tenants.createTenant.fields.identityProvider.ADServerInsecure,
-  ADUserNameSearchFilter:
-    state.tenants.createTenant.fields.identityProvider.ADUserNameSearchFilter,
   ADGroupSearchBaseDN:
     state.tenants.createTenant.fields.identityProvider.ADGroupSearchBaseDN,
   ADGroupSearchFilter:
     state.tenants.createTenant.fields.identityProvider.ADGroupSearchFilter,
-  ADGroupNameAttribute:
-    state.tenants.createTenant.fields.identityProvider.ADGroupNameAttribute,
   ADUserDNs: state.tenants.createTenant.fields.identityProvider.ADUserDNs,
-  ADUserNameFormat:
-    state.tenants.createTenant.fields.identityProvider.ADUserNameFormat,
   ADLookupBindDN:
     state.tenants.createTenant.fields.identityProvider.ADLookupBindDN,
   ADLookupBindPassword:

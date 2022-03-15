@@ -20,8 +20,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -38,6 +38,37 @@ jobs:
           GOOS: linux
         run: |
           make verifiers
+
+  vulnerable-dependencies-checks:
+    name: "Check for vulnerable dependencies"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        continue-on-error: false
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          CGO_ENABLED: 0
+          GO111MODULE: on
+        run: |
+          sudo apt install jq -y
+          sudo sysctl net.ipv6.conf.all.disable_ipv6=0
+          sudo sysctl net.ipv6.conf.default.disable_ipv6=0
+          nancy_version=$(curl --retry 10 -Ls -o /dev/null -w "%{url_effective}" https://github.com/sonatype-nexus-community/nancy/releases/latest | sed "s/https:\/\/github.com\/sonatype-nexus-community\/nancy\/releases\/tag\///")
+          curl -L -o nancy https://github.com/sonatype-nexus-community/nancy/releases/download/${nancy_version}/nancy-${nancy_version}-linux-amd64 && chmod +x nancy
+          go list -deps -json ./... | jq -s 'unique_by(.Module.Path)|.[]|select(has("Module"))|.Module' | ./nancy sleuth
 
   no-warnings-and-make-assets:
     name: "React Code Has No Warnings and then Make Assets"
@@ -57,19 +88,6 @@ jobs:
           node-version: '17'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-      - name: Check out operator as a nested repository
-        uses: actions/checkout@v2
-        with:
-          repository: minio/operator
-          path: operator
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -77,36 +95,43 @@ jobs:
 
       - uses: actions/cache@v2
         id: yarn-cache
+        name: Yarn Cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ./
-        run: make assets
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
 
+      - name: Install Dependencies
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          yarn install
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          chmod +x check-warnings.sh  && ./check-warnings.sh
+          ./check-warnings.sh
 
-  compile-job:
-    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs:
-      - lint-job
-      - no-warnings-and-make-assets
+  reuse-golang-dependencies:
+    name: reuse golang dependencies
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -116,6 +141,51 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          go mod download
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
+  compile-job:
+    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -129,11 +199,13 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -143,6 +215,14 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -156,11 +236,13 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -170,6 +252,14 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -183,11 +273,13 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -197,6 +289,14 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -210,11 +310,13 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -224,6 +326,14 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -237,11 +347,13 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -251,6 +363,14 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -264,11 +384,13 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -286,16 +408,26 @@ jobs:
         run: |
           make test-pkg
 
+      - uses: actions/cache@v2
+        id: coverage-cache-pkg
+        name: Coverage Cache Pkg
+        with:
+          path: |
+            ./pkg/coverage/
+          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
   test-restapi-on-go:
     name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.17.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -306,6 +438,14 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
@@ -313,16 +453,26 @@ jobs:
         run: |
           make test
 
+      - uses: actions/cache@v2
+        id: coverage-cache-restapi
+        name: Coverage Cache RestAPI
+        with:
+          path: |
+            ./restapi/coverage/
+          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+
   integration-tests:
     name: Integration Tests with Latest Distributed MinIO
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        go-version: [1.17.x]
+        go-version: [ 1.17.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -347,6 +497,14 @@ jobs:
           # To have two repositories under the same test
           path: 'minio_repository'
 
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
       - name: Build on ${{ matrix.os }}
         run: |
           echo "The idea is to build minio image from downloaded repository";
@@ -363,11 +521,21 @@ jobs:
           echo $VERSION;
           make test-integration MINIO_VERSION=$VERSION;
 
+      - uses: actions/cache@v2
+        id: coverage-cache
+        name: Coverage Cache
+        with:
+          path: |
+            ./integration/coverage/
+          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
+
   react-tests:
     name: React Tests
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -383,6 +551,8 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -396,22 +566,16 @@ jobs:
         id: go
       - uses: actions/setup-node@v2
         with:
-          node-version: '17'
+          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-      - name: Check out operator as a nested repository
-        uses: actions/checkout@v2
-        with:
-          repository: minio/operator
-          path: operator
       - uses: actions/cache@v2
+        name: Go Mod Cache
         with:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -419,19 +583,24 @@ jobs:
 
       - uses: actions/cache@v2
         id: yarn-cache
+        name: Yarn Cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ./
-        run: make assets
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
 
       - name: Build Console on ${{ matrix.os }}
         env:
@@ -455,6 +624,8 @@ jobs:
     needs:
       - lint-job
       - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -468,17 +639,9 @@ jobs:
         id: go
       - uses: actions/setup-node@v2
         with:
-          node-version: '17'
+          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -486,6 +649,7 @@ jobs:
 
       - uses: actions/cache@v2
         id: yarn-cache
+        name: Yarn Cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -495,10 +659,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        working-directory: ./
-        run: make assets
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build Console on ${{ matrix.os }}
         env:
@@ -519,3 +696,84 @@ jobs:
       - name: Clean up users & policies
         run: |
           make cleanup-permissions
+
+  coverage:
+    name: "Coverage Limit Check"
+    needs:
+      - integration-tests
+      - test-restapi-on-go
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: Check out gocovmerge as a nested repository
+        uses: actions/checkout@v2
+        with:
+          repository: wadey/gocovmerge
+          path: gocovmerge
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
+      - uses: actions/cache@v2
+        id: coverage-cache
+        name: Coverage Cache
+        with:
+          path: |
+            ./integration/coverage/
+          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
+
+      - uses: actions/cache@v2
+        id: coverage-cache-restapi
+        name: Coverage Cache RestAPI
+        with:
+          path: |
+            ./restapi/coverage/
+          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+
+      - uses: actions/cache@v2
+        id: coverage-cache-pkg
+        name: Coverage Cache Pkg
+        with:
+          path: |
+            ./pkg/coverage/
+          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
+      - name: Get coverage
+        run: |
+          echo "change directory to gocovmerge"
+          cd gocovmerge
+          echo "download golang x tools"
+          go mod download golang.org/x/tools
+          echo "go mod tidy compat mode"
+          go mod tidy -compat=1.17
+          echo "go build gocoverage.go"
+          go build gocovmerge.go
+          echo "put together the outs for final coverage resolution"
+          ./gocovmerge ../integration/coverage/system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
+          echo "grep to obtain the result"
+          go tool cover -func=all.out | grep total > tmp2
+          result=`cat tmp2 | awk 'END {print $3}'`
+          result=${result%\%}
+          echo "result:"
+          echo $result
+          threshold=50.4
+          if (( $(echo "$result >= $threshold" |bc -l) )); then
+            echo "It is equal or greater than threshold, passed!"
+          else
+            echo "It is smaller than threshold value, failed!"
+            exit 1
+          fi

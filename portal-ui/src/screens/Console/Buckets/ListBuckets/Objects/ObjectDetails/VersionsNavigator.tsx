@@ -57,67 +57,13 @@ import { VersionsIcon } from "../../../../../../icons";
 import VirtualizedList from "../../../../Common/VirtualizedList/VirtualizedList";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import PreviewFileModal from "../Preview/PreviewFileModal";
 
 const styles = (theme: Theme) =>
   createStyles({
-    propertiesIcon: {
-      marginLeft: 5,
-      "& .min-icon": {
-        height: 12,
-      },
-    },
-    tag: {
-      marginRight: 6,
-      fontSize: 10,
-      fontWeight: 700,
-      "&.MuiChip-sizeSmall": {
-        height: 18,
-      },
-      "& .min-icon": {
-        height: 10,
-        width: 10,
-      },
-    },
-    search: {
-      marginBottom: 8,
-      "&.MuiFormControl-root": {
-        marginRight: 0,
-      },
-    },
-    capitalizeFirst: {
-      textTransform: "capitalize",
-      "& .min-icon": {
-        width: 16,
-        height: 16,
-      },
-    },
-    titleCol: {
-      width: "25%",
-    },
-    titleItem: {
-      width: "35%",
-    },
     versionsContainer: {
       border: "#EAEDEE 1px solid",
       padding: 10,
-    },
-    "@global": {
-      ".progressDetails": {
-        paddingTop: 3,
-        display: "inline-block",
-        position: "relative",
-        width: 18,
-        height: 18,
-      },
-      ".progressDetails > .MuiCircularProgress-root": {
-        position: "absolute",
-        left: 0,
-        top: 3,
-      },
-    },
-    tabsContainer: {
-      border: "1px solid #eaeaea",
-      borderTop: 0,
     },
     noBottomBorder: {
       borderBottom: 0,
@@ -204,6 +150,7 @@ const VersionsNavigator = ({
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
   const [restoreVersion, setRestoreVersion] = useState<string>("");
   const [sortValue, setSortValue] = useState<string>("date");
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
 
   // calculate object name to display
   let objectNameArray: string[] = [];
@@ -254,6 +201,7 @@ const VersionsNavigator = ({
   const closeShareModal = () => {
     setObjectToShare(null);
     setShareFileModalOpen(false);
+    setPreviewOpen(false);
   };
 
   const downloadObject = (object: IFileInfo) => {
@@ -288,6 +236,11 @@ const VersionsNavigator = ({
   const onShareItem = (item: IFileInfo) => {
     setObjectToShare(item);
     shareObject();
+  };
+
+  const onPreviewItem = (item: IFileInfo) => {
+    setObjectToShare(item);
+    setPreviewOpen(true);
   };
 
   const onRestoreItem = (item: IFileInfo) => {
@@ -373,6 +326,7 @@ const VersionsNavigator = ({
         onDownload={onDownloadItem}
         onRestore={onRestoreItem}
         onShare={onShareItem}
+        onPreview={onPreviewItem}
         globalClick={onGlobalClick}
       />
     );
@@ -395,6 +349,27 @@ const VersionsNavigator = ({
           versionID={restoreVersion}
           objectPath={actualInfo.name}
           onCloseAndUpdate={closeRestoreModal}
+        />
+      )}
+      {previewOpen && actualInfo && (
+        <PreviewFileModal
+          open={previewOpen}
+          bucketName={bucketName}
+          object={{
+            name: actualInfo.name,
+            version_id:
+              objectToShare && objectToShare.version_id
+                ? objectToShare.version_id
+                : "null",
+            size: parseInt(
+              objectToShare && objectToShare.size ? objectToShare.size : "0"
+            ),
+            content_type: "",
+            last_modified: new Date(actualInfo.last_modified),
+          }}
+          onClosePreview={() => {
+            setPreviewOpen(false);
+          }}
         />
       )}
       <Grid container className={classes.versionsContainer}>

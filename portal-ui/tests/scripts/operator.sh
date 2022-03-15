@@ -36,7 +36,16 @@ die() {
 try() { "$@" || die "cannot $*"; }
 
 function setup_kind() {
-	try kind create cluster --config "${SCRIPT_DIR}/../../../operator/testing/kind-config.yaml"
+	# TODO once feature is added: https://github.com/kubernetes-sigs/kind/issues/1300
+	echo "kind: Cluster" > kind-config.yaml
+	echo "apiVersion: kind.x-k8s.io/v1alpha4" >> kind-config.yaml
+	echo "nodes:" >> kind-config.yaml
+	echo "  - role: control-plane" >> kind-config.yaml
+	echo "  - role: worker" >> kind-config.yaml
+	echo "  - role: worker" >> kind-config.yaml
+	echo "  - role: worker" >> kind-config.yaml
+	echo "  - role: worker" >> kind-config.yaml
+	try kind create cluster --config kind-config.yaml
 	echo "Kind is ready"
 	try kubectl get nodes
 }

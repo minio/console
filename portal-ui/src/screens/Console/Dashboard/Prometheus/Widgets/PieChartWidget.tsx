@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { CircularProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,6 +28,7 @@ import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import get from "lodash/get";
 import api from "../../../../../common/api";
+import Loader from "../../../Common/Loader/Loader";
 
 interface IPieChartWidget {
   classes: any;
@@ -135,7 +135,7 @@ const PieChartWidget = ({
       <div className={classes.titleContainer}>{title}</div>
       {loading && (
         <div className={classes.loadingAlign}>
-          <CircularProgress />
+          <Loader />
         </div>
       )}
       {!loading && (

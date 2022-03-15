@@ -24,7 +24,6 @@ import moment from "moment/moment";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
 import { LogMessage } from "../types";
-import { timeFromDate } from "../../../../common/utils";
 import { wsProtocol } from "../../../../utils/wsUtils";
 import {
   actionsTray,
@@ -35,6 +34,11 @@ import {
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
+import LogLine from "./LogLine";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -44,7 +48,6 @@ const styles = (theme: Theme) =>
       height: "calc(100vh - 280px)",
       overflow: "auto",
       fontSize: 13,
-      padding: "15px 15px 0",
       border: "1px solid #EAEDEE",
       borderRadius: 4,
     },
@@ -85,7 +88,7 @@ const ErrorLogs = ({
   logResetMessages,
   messages,
 }: ILogs) => {
-  const [highlight, setHighlight] = useState("");
+  const [filter, setFilter] = useState<string>("");
 
   useEffect(() => {
     logResetMessages();
@@ -128,218 +131,57 @@ const ErrorLogs = ({
     }
   }, [logMessageReceived, logResetMessages]);
 
-  const renderError = (logElement: LogMessage) => {
-    let errorElems = [];
-    if (logElement.error !== null && logElement.error !== undefined) {
-      if (logElement.api && logElement.api.name) {
-        const errorText = `API: ${logElement.api.name}`;
-
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-
-        errorElems.push(
-          <div
-            key={`api-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <br />
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
+  const filtLow = filter.toLowerCase();
+  let filteredMessages = messages.filter((m) => {
+    if (filter !== "") {
+      if (m.ConsoleMsg.toLowerCase().indexOf(filtLow) >= 0) {
+        return true;
+      } else if (
+        m.error &&
+        m.error.source &&
+        m.error.source.filter((x) => {
+          return x.toLowerCase().indexOf(filtLow) >= 0;
+        }).length > 0
+      ) {
+        return true;
+      } else if (
+        m.error &&
+        m.error.message.toLowerCase().indexOf(filtLow) >= 0
+      ) {
+        return true;
+      } else if (m.api && m.api.name.toLowerCase().indexOf(filtLow) >= 0) {
+        return true;
       }
-      if (logElement.time) {
-        const errorText = `Time: ${timeFromDate(logElement.time)}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`time-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.deploymentid) {
-        const errorText = `DeploymentID: ${logElement.deploymentid}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`deploytmentid-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.requestID) {
-        const errorText = `RequestID: ${logElement.requestID}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`requestid-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.remotehost) {
-        const errorText = `RemoteHost: ${logElement.remotehost}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`remotehost-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.host) {
-        const errorText = `Host: ${logElement.host}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`host-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.userAgent) {
-        const errorText = `UserAgent: ${logElement.userAgent}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`useragent-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.error.message) {
-        const errorText = `Error: ${logElement.error.message}`;
-        const highlightedLine =
-          highlight !== ""
-            ? errorText.toLowerCase().includes(highlight.toLowerCase())
-            : false;
-        errorElems.push(
-          <div
-            key={`message-${logElement.key}`}
-            className={`${highlightedLine ? classes.highlight : ""}`}
-          >
-            <span className={classes.logerror}>{errorText}</span>
-          </div>
-        );
-      }
-      if (logElement.error.source) {
-        // for all sources add padding
-        for (let s in logElement.error.source) {
-          const errorText = logElement.error.source[s];
-          const highlightedLine =
-            highlight !== ""
-              ? errorText.toLowerCase().includes(highlight.toLowerCase())
-              : false;
-          errorElems.push(
-            <div
-              key={`source-${logElement.key}-${s}`}
-              className={`${highlightedLine ? classes.highlight : ""}`}
-            >
-              <span className={classes.logerror_tab}>{errorText}</span>
-            </div>
-          );
-        }
-      }
+      return false;
     }
-    return errorElems;
-  };
-
-  const renderLog = (logElement: LogMessage) => {
-    let logMessage = logElement.ConsoleMsg;
-    // remove any non ascii characters, exclude any control codes
-    logMessage = logMessage.replace(/([^\x20-\x7F])/g, "");
-
-    // regex for terminal colors like e.g. `[31;4m `
-    const tColorRegex = /((\[[0-9;]+m))/g;
-
-    // get substring if there was a match for to split what
-    // is going to be colored and what not, here we add color
-    // only to the first match.
-    let substr = logMessage.replace(tColorRegex, "");
-
-    // in case highlight is set, we select the line that contains the requested string
-    let highlightedLine =
-      highlight !== ""
-        ? logMessage.toLowerCase().includes(highlight.toLowerCase())
-        : false;
-
-    // if starts with multiple spaces add padding
-    if (substr.startsWith("   ")) {
-      return (
-        <div
-          key={logElement.key}
-          className={`${highlightedLine ? classes.highlight : ""}`}
-        >
-          <span className={classes.tab}>{substr}</span>
-        </div>
-      );
-    } else if (logElement.error !== null && logElement.error !== undefined) {
-      // list error message and all sources and error elems
-      return renderError(logElement);
-    } else {
-      // for all remaining set default class
-      return (
-        <div
-          key={logElement.key}
-          className={`${highlightedLine ? classes.highlight : ""}`}
-        >
-          <span className={classes.ansidefault}>{substr}</span>
-        </div>
-      );
-    }
-  };
-
-  const renderLines = messages.map((m) => {
-    return renderLog(m);
+    return true;
   });
 
   return (
     <Fragment>
       <PageHeader label="Logs" />
       <PageLayout>
-        <Grid xs={12}>
+        <Grid container>
           <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox
-              placeholder="Highlight Line"
-              onChange={setHighlight}
-              value={highlight}
+              placeholder="Filter"
+              onChange={(e) => {
+                setFilter(e);
+              }}
+              value={filter}
             />
           </Grid>
           <Grid item xs={12}>
             <div id="logs-container" className={classes.logList}>
-              {renderLines}
+              <TableContainer component={Paper}>
+                <Table aria-label="collapsible table">
+                  <TableBody>
+                    {filteredMessages.map((m) => {
+                      return <LogLine log={m} />;
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </div>
           </Grid>
         </Grid>

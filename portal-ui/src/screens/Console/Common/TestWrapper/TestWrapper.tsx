@@ -18,12 +18,13 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { CircularProgress, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { DrivesIcon, VersionIcon } from "../../../../icons";
 import { ServerInfo, Usage } from "../../Dashboard/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
+import Loader from "../Loader/Loader";
 
 interface ITestWrapper {
   title: any;
@@ -210,7 +211,7 @@ const TestWrapper = ({
             ) : (
               <Fragment>
                 <Grid item xs={12} className={classes.loaderAlign}>
-                  <CircularProgress size={25} />
+                  <Loader style={{ width: 25, height: 25 }} />
                 </Grid>
               </Fragment>
             )}

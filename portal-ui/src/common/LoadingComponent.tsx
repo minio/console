@@ -15,7 +15,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { CircularProgress, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
+import Loader from "../screens/Console/Common/Loader/Loader";
 
 const LoadingComponent = () => {
   return (
@@ -28,7 +29,7 @@ const LoadingComponent = () => {
       style={{ minHeight: "100vh" }}
     >
       <Grid item xs={3} style={{ textAlign: "center" }}>
-        <CircularProgress />
+        <Loader style={{ width: 35, height: 35 }} />
         <br />
         Loading...
       </Grid>

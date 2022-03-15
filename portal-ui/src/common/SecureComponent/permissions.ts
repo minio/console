@@ -163,9 +163,6 @@ export const IAM_PAGES = {
   /* Operator */
   TENANTS: "/tenants",
   TENANTS_ADD: "/tenants/add",
-  STORAGE: "/storage",
-  STORAGE_VOLUMES: "/storage/volumes",
-  STORAGE_DRIVES: "/storage/drives",
   NAMESPACE_TENANT: "/namespaces/:tenantNamespace/tenants/:tenantName",
   NAMESPACE_TENANT_HOP: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
   NAMESPACE_TENANT_PODS:
@@ -188,6 +185,8 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/license",
   NAMESPACE_TENANT_SECURITY:
     "/namespaces/:tenantNamespace/tenants/:tenantName/security",
+  NAMESPACE_TENANT_ENCRYPTION:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/encryption",
   NAMESPACE_TENANT_MONITORING:
     "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring",
   NAMESPACE_TENANT_LOGGING:

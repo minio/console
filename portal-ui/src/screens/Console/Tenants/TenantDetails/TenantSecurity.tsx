@@ -30,12 +30,7 @@ import Chip from "@mui/material/Chip";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import {
-  Button,
-  CircularProgress,
-  DialogContentText,
-  Typography,
-} from "@mui/material";
+import { Button, DialogContentText, Typography } from "@mui/material";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
@@ -46,6 +41,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { setTenantDetailsLoad } from "../actions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { AddIcon, ConfirmModalIcon } from "../../../../icons";
+import Loader from "../../Common/Loader/Loader";
 
 interface ITenantSecurity {
   classes: any;
@@ -347,7 +343,7 @@ const TenantSecurity = ({
       {loadingTenant ? (
         <Paper className={classes.paperContainer}>
           <div className={classes.loaderAlign}>
-            <CircularProgress />
+            <Loader />
           </div>
         </Paper>
       ) : (
@@ -414,7 +410,7 @@ const TenantSecurity = ({
                             >
                               {certificateInfo.domains &&
                                 certificateInfo.domains.map((dom) => {
-                                  return <div>{dom}</div>;
+                                  return <div key={`domain-${dom}`}>{dom}</div>;
                                 })}
                             </Typography>
                             <Typography
@@ -534,7 +530,9 @@ const TenantSecurity = ({
                             >
                               {certificateInfo.domains &&
                                 certificateInfo.domains.map((dom) => {
-                                  return <div>{dom}</div>;
+                                  return (
+                                    <div key={`CA-domain-${dom}`}>{dom}</div>
+                                  );
                                 })}
                             </Typography>
                             <Typography
