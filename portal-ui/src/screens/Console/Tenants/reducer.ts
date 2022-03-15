@@ -197,6 +197,7 @@ const initialState: ITenantState = {
         ecParity: "",
         ecParityChoices: [],
         cleanECChoices: [],
+        untouchedECField: true,
         cpuToUse: "0",
         // resource request
         resourcesSpecifyLimit: false,
@@ -331,6 +332,7 @@ const initialState: ITenantState = {
       },
     },
     nodeSelectorPairs: [{ key: "", value: "" }],
+
   },
   tenantDetails: {
     currentTenant: "",
@@ -746,6 +748,7 @@ export function tenantsReducer(
               ecParity: "",
               ecParityChoices: [],
               cleanECChoices: [],
+              untouchedECField: true,
               distribution: {
                 error: "",
                 nodes: 0,
