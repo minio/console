@@ -3103,3 +3103,286 @@ func DisableBucketEncryption(bucketName string) (*http.Response, error) {
 	response, err := client.Do(request)
 	return response, err
 }
+
+func UpdateLifecycleRule(bucketName string, Type string, disable bool, prefix string, tags string, expiredObjectDeleteMarker bool, expiryDays int64, noncurrentversionExpirationDays int64, lifecycleID string) (*http.Response, error) {
+	/*
+		Helper function to update lifecycle rule
+		HTTP Verb: PUT
+		URL: /buckets/{bucket_name}/lifecycle/{lifecycle_id}
+		Body Example:
+		{
+			"type":"expiry",
+			"disable":false,
+			"prefix":"",
+			"tags":"",
+			"expired_object_delete_marker":false,
+			"expiry_days":2,
+			"noncurrentversion_expiration_days":0
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"type":                              Type,
+		"disable":                           disable,
+		"prefix":                            prefix,
+		"tags":                              tags,
+		"expired_object_delete_marker":      expiredObjectDeleteMarker,
+		"expiry_days":                       expiryDays,
+		"noncurrentversion_expiration_days": noncurrentversionExpirationDays,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest("PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle/"+lifecycleID,
+		requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetBucketLifeCycle(bucketName string) (*http.Response, error) {
+	/*
+		Get Bucket Lifecycle
+		HTTP Verb: GET
+		URL: /buckets/{bucket_name}/lifecycle
+		Response Example:
+		{
+			"lifecycle": [
+				{
+					"expiration": {
+						"date": "0001-01-01T00:00:00Z",
+						"days": 1
+					},
+					"id": "c8nmpte49b3m6uu3pac0",
+					"status": "Enabled",
+					"tags": null,
+					"transition": {
+						"date": "0001-01-01T00:00:00Z"
+					}
+				}
+			]
+		}
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func AddBucketLifecycle(bucketName string, Type string, prefix string, tags string, expiredObjectDeleteMarker bool, expiryDays int64, noncurrentversionExpirationDays int64) (*http.Response, error) {
+	/*
+		Helper function to add bucket lifecycle
+		URL: /buckets/{bucket_name}/lifecycle
+		HTTP Verb: POST
+		Body Example:
+		{
+			"type":"expiry",
+			"prefix":"",
+			"tags":"",
+			"expired_object_delete_marker":false,
+			"expiry_days":1,
+			"noncurrentversion_expiration_days":null
+		}
+	*/
+	// Needed Parameters for API Call
+	requestDataAdd := map[string]interface{}{
+		"type":                              Type,
+		"prefix":                            prefix,
+		"tags":                              tags,
+		"expired_object_delete_marker":      expiredObjectDeleteMarker,
+		"expiry_days":                       expiryDays,
+		"noncurrentversion_expiration_days": noncurrentversionExpirationDays,
+	}
+
+	// Creating the Call by adding the URL and Headers
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteLifecycleRule(bucketName string, lifecycleID string) (*http.Response, error) {
+	/*
+		Helper function to delete lifecycle rule
+		HTTP Verb: DELETE
+		URL: /buckets/{bucket_name}/lifecycle/{lifecycle_id}
+	*/
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle/"+lifecycleID, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestBucketLifeCycle(t *testing.T) {
+
+	printStartFunc("TestBucketLifeCycle")
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "test-bucket-life-cycle"
+	locking := false
+	versioning := false
+	Type := "expiry"
+	prefix := ""
+	tags := ""
+	var expiryDays int64 = 1
+	var expiryDays2 int64 = 2
+	disable := false
+	expiredObjectDeleteMarker := false
+	var noncurrentversionExpirationDays int64
+
+	// 1. Add bucket
+	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Add Bucket Lifecycle
+	resp, err := AddBucketLifecycle(
+		bucketName,
+		Type,
+		prefix,
+		tags,
+		expiredObjectDeleteMarker,
+		expiryDays,
+		noncurrentversionExpirationDays,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			201, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Get Bucket LifeCycle
+	resp, err = GetBucketLifeCycle(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	result := models.BucketLifecycleResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	Status := &result.Lifecycle[0].Status
+	Days := &result.Lifecycle[0].Expiration.Days
+	lifecycleID := &result.Lifecycle[0].ID
+	assert.Equal(expiryDays, *Days, *Days)    // Checking it is one day expiration
+	assert.Equal("Enabled", *Status, *Status) // Checking it's enabled
+
+	// 4. Update from 1 day expiration to 2 days expiration
+	resp, err = UpdateLifecycleRule(
+		bucketName,
+		Type,
+		disable,
+		prefix,
+		tags,
+		expiredObjectDeleteMarker,
+		expiryDays2,
+		noncurrentversionExpirationDays,
+		*lifecycleID,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 5. Verify 2 expiration days got updated
+	resp, err = GetBucketLifeCycle(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	result = models.BucketLifecycleResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	Days = &result.Lifecycle[0].Expiration.Days
+	assert.Equal(expiryDays2, *Days, *Days) // Checking it is two days expiration
+
+	// 6. Delete Bucket Lifecycle
+	resp, err = DeleteLifecycleRule(bucketName, *lifecycleID)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			204, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 6. Verify bucket lifecycle got deleted
+	resp, err = GetBucketLifeCycle(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			404, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	printEndFunc("TestBucketLifeCycle")
+}
