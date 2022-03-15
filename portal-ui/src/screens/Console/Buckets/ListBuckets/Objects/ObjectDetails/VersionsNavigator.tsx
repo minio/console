@@ -145,7 +145,7 @@ const VersionsNavigator = ({
   internalPaths,
   bucketName,
   setSelectedVersion,
-                             setLoadingVersions,
+  setLoadingVersions,
 }: IVersionsNavigatorProps) => {
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
