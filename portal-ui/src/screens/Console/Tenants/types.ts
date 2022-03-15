@@ -302,6 +302,7 @@ export interface ITenantSizeFields {
   ecParity: string;
   ecParityChoices: Opts[];
   cleanECChoices: string[];
+  untouchedECField: boolean;
   resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
