@@ -45,6 +45,7 @@ import {
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import {
   completeObject,
+  setLoadingObjectInfo,
   setNewObject,
   setVersionsModeEnabled,
   updateProgress,
@@ -66,7 +67,6 @@ import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
 import DeleteObject from "../ListObjects/DeleteObject";
 import SetLegalHoldModal from "../ObjectDetails/SetLegalHoldModal";
-import RestoreFileVersion from "../ObjectDetails/RestoreFileVersion";
 import {
   hasPermission,
   SecureComponent,
@@ -123,6 +123,7 @@ interface IObjectDetailPanelProps {
   versioning: boolean;
   versionsMode: boolean;
   selectedVersion: string;
+  loadingObjectInfo: boolean;
   onClosePanel: (hardRefresh: boolean) => void;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
@@ -130,6 +131,7 @@ interface IObjectDetailPanelProps {
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
+  setLoadingObjectInfo: typeof setLoadingObjectInfo;
 }
 
 const emptyFile: IFileInfo = {
@@ -158,8 +160,9 @@ const ObjectDetailPanel = ({
   selectedVersion,
   onClosePanel,
   setVersionsModeEnabled,
+  loadingObjectInfo,
+  setLoadingObjectInfo,
 }: IObjectDetailPanelProps) => {
-  const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
@@ -170,9 +173,7 @@ const ObjectDetailPanel = ({
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-  const [restoreVersion, setRestoreVersion] = useState<string>("");
   const [totalVersionsSize, setTotalVersionsSize] = useState<number>(0);
 
   const internalPathsDecoded = decodeFileName(internalPaths) || "";
@@ -187,9 +188,9 @@ const ObjectDetailPanel = ({
 
   useEffect(() => {
     if (bucketName !== "" && internalPaths) {
-      setLoadObjectData(true);
+      setLoadingObjectInfo(true);
     }
-  }, [internalPaths, bucketName]);
+  }, [internalPaths, bucketName, setLoadingObjectInfo]);
 
   useEffect(() => {
     if (distributedSetup && allInfoElements.length >= 1) {
@@ -208,7 +209,7 @@ const ObjectDetailPanel = ({
   }, [selectedVersion, distributedSetup, allInfoElements]);
 
   useEffect(() => {
-    if (loadObjectData && internalPaths !== "") {
+    if (loadingObjectInfo && internalPaths !== "") {
       api
         .invoke(
           "GET",
@@ -237,20 +238,21 @@ const ObjectDetailPanel = ({
             setVersions([]);
           }
 
-          setLoadObjectData(false);
+          setLoadingObjectInfo(false);
         })
         .catch((error: ErrorResponseHandler) => {
           setErrorSnackMessage(error);
-          setLoadObjectData(false);
+          setLoadingObjectInfo(false);
         });
     }
   }, [
-    loadObjectData,
+    loadingObjectInfo,
     bucketName,
     internalPaths,
     setErrorSnackMessage,
     distributedSetup,
     selectedVersion,
+    setLoadingObjectInfo
   ]);
 
   let tagKeys: string[] = [];
@@ -266,7 +268,7 @@ const ObjectDetailPanel = ({
   const closeRetentionModal = (updateInfo: boolean) => {
     setRetentionModalOpen(false);
     if (updateInfo) {
-      setLoadObjectData(true);
+      setLoadingObjectInfo(true);
     }
   };
 
@@ -319,30 +321,21 @@ const ObjectDetailPanel = ({
   const closeAddTagModal = (reloadObjectData: boolean) => {
     setTagModalOpen(false);
     if (reloadObjectData) {
-      setLoadObjectData(true);
+      setLoadingObjectInfo(true);
     }
   };
 
   const closeInspectModal = (reloadObjectData: boolean) => {
     setInspectModalOpen(false);
     if (reloadObjectData) {
-      setLoadObjectData(true);
+      setLoadingObjectInfo(true);
     }
   };
 
   const closeLegalholdModal = (reload: boolean) => {
     setLegalholdOpen(false);
     if (reload) {
-      setLoadObjectData(true);
-    }
-  };
-
-  const closeRestoreModal = (reloadObjectData: boolean) => {
-    setRestoreVersionOpen(false);
-    setRestoreVersion("");
-
-    if (reloadObjectData) {
-      setLoadObjectData(true);
+      setLoadingObjectInfo(true);
     }
   };
 
@@ -392,7 +385,6 @@ const ObjectDetailPanel = ({
       label: "Legal Hold",
       disabled:
         !!actualInfo.is_delete_marker ||
-        extensionPreview(currentItem) === "none" ||
         !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]) ||
         selectedVersion !== "",
       icon: <LegalHoldIcon />,
@@ -403,7 +395,6 @@ const ObjectDetailPanel = ({
       label: "Retention",
       disabled:
         !!actualInfo.is_delete_marker ||
-        extensionPreview(currentItem) === "none" ||
         !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT_RETENTION]) ||
         selectedVersion !== "",
       icon: <RetentionIcon />,
@@ -414,10 +405,7 @@ const ObjectDetailPanel = ({
         setTagModalOpen(true);
       },
       label: "Tags",
-      disabled:
-        !!actualInfo.is_delete_marker ||
-        extensionPreview(currentItem) === "none" ||
-        selectedVersion !== "",
+      disabled: !!actualInfo.is_delete_marker || selectedVersion !== "",
       icon: <TagsIcon />,
       tooltip: "Change Tags for this File",
     },
@@ -426,10 +414,7 @@ const ObjectDetailPanel = ({
         setInspectModalOpen(true);
       },
       label: "Inspect",
-      disabled:
-        !!actualInfo.is_delete_marker ||
-        extensionPreview(currentItem) === "none" ||
-        selectedVersion !== "",
+      disabled: !!actualInfo.is_delete_marker || selectedVersion !== "",
       icon: <InspectMenuIcon />,
       tooltip: "Inspect this file",
     },
@@ -450,7 +435,9 @@ const ObjectDetailPanel = ({
 
     const difTime = currentTime.getTime() - modifiedTime.getTime();
 
-    return `${niceDaysInt(difTime, "ms")} ago`;
+    const formatTime = niceDaysInt(difTime, "ms");
+
+    return formatTime.trim() !== "" ? `${formatTime} ago` : "Just now";
   };
 
   return (
@@ -488,15 +475,6 @@ const ObjectDetailPanel = ({
           objectName={actualInfo.name}
           bucketName={bucketName}
           actualInfo={actualInfo}
-        />
-      )}
-      {restoreVersionOpen && actualInfo && (
-        <RestoreFileVersion
-          restoreOpen={restoreVersionOpen}
-          bucketName={bucketName}
-          versionID={restoreVersion}
-          objectPath={actualInfo.name}
-          onCloseAndUpdate={closeRestoreModal}
         />
       )}
       {previewOpen && actualInfo && (
@@ -698,6 +676,7 @@ const mapStateToProps = ({ objectBrowser, system }: AppState) => ({
   distributedSetup: get(system, "distributedSetup", false),
   versionsMode: get(objectBrowser, "versionsMode", false),
   selectedVersion: get(objectBrowser, "selectedVersion", ""),
+  loadingObjectInfo: get(objectBrowser, "loadingObjectInfo", false),
 });
 
 const mapDispatchToProps = {
@@ -707,6 +686,7 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   setVersionsModeEnabled,
+  setLoadingObjectInfo,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
