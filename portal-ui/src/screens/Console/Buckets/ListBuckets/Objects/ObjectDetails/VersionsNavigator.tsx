@@ -57,6 +57,7 @@ import { VersionsIcon } from "../../../../../../icons";
 import VirtualizedList from "../../../../Common/VirtualizedList/VirtualizedList";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import PreviewFileModal from "../Preview/PreviewFileModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -149,6 +150,7 @@ const VersionsNavigator = ({
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
   const [restoreVersion, setRestoreVersion] = useState<string>("");
   const [sortValue, setSortValue] = useState<string>("date");
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
 
   // calculate object name to display
   let objectNameArray: string[] = [];
@@ -199,6 +201,7 @@ const VersionsNavigator = ({
   const closeShareModal = () => {
     setObjectToShare(null);
     setShareFileModalOpen(false);
+    setPreviewOpen(false);
   };
 
   const downloadObject = (object: IFileInfo) => {
@@ -233,6 +236,11 @@ const VersionsNavigator = ({
   const onShareItem = (item: IFileInfo) => {
     setObjectToShare(item);
     shareObject();
+  };
+
+  const onPreviewItem = (item: IFileInfo) => {
+    setObjectToShare(item);
+    setPreviewOpen(true);
   };
 
   const onRestoreItem = (item: IFileInfo) => {
@@ -318,6 +326,7 @@ const VersionsNavigator = ({
         onDownload={onDownloadItem}
         onRestore={onRestoreItem}
         onShare={onShareItem}
+        onPreview={onPreviewItem}
         globalClick={onGlobalClick}
       />
     );
@@ -340,6 +349,27 @@ const VersionsNavigator = ({
           versionID={restoreVersion}
           objectPath={actualInfo.name}
           onCloseAndUpdate={closeRestoreModal}
+        />
+      )}
+      {previewOpen && actualInfo && (
+        <PreviewFileModal
+          open={previewOpen}
+          bucketName={bucketName}
+          object={{
+            name: actualInfo.name,
+            version_id:
+              objectToShare && objectToShare.version_id
+                ? objectToShare.version_id
+                : "null",
+            size: parseInt(
+              objectToShare && objectToShare.size ? objectToShare.size : "0"
+            ),
+            content_type: "",
+            last_modified: new Date(actualInfo.last_modified),
+          }}
+          onClosePreview={() => {
+            setPreviewOpen(false);
+          }}
         />
       )}
       <Grid container className={classes.versionsContainer}>
