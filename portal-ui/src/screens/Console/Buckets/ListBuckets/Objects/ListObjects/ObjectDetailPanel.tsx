@@ -252,7 +252,7 @@ const ObjectDetailPanel = ({
     setErrorSnackMessage,
     distributedSetup,
     selectedVersion,
-    setLoadingObjectInfo
+    setLoadingObjectInfo,
   ]);
 
   let tagKeys: string[] = [];
