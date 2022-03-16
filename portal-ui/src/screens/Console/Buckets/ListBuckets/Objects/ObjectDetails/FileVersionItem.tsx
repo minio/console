@@ -35,6 +35,7 @@ interface IFileVersionItem {
   fileName: string;
   versionInfo: IFileInfo;
   index: number;
+  isSelected?: boolean;
   onShare: (versionInfo: IFileInfo) => void;
   onDownload: (versionInfo: IFileInfo) => void;
   onRestore: (versionInfo: IFileInfo) => void;
@@ -48,8 +49,17 @@ const styles = (theme: Theme) =>
     mainFileVersionItem: {
       borderBottom: "#E2E2E2 1px solid",
       padding: "1rem 0",
-      margin: "0 2rem 0 3.5rem",
+      margin: "0 0.5rem 0 2.5rem",
       cursor: "pointer",
+    },
+    intermediateLayer: {
+      margin: "0 1.5rem 0 1.5rem",
+      "&:hover, &.selected": {
+        backgroundColor: "#F8F8F8",
+        "& > div": {
+          borderBottomColor: "#F8F8F8",
+        },
+      },
     },
     versionContainer: {
       fontSize: 16,
@@ -97,6 +107,7 @@ const FileVersionItem = ({
   classes,
   fileName,
   versionInfo,
+  isSelected,
   onShare,
   onDownload,
   onRestore,
@@ -138,73 +149,83 @@ const FileVersionItem = ({
         globalClick(versionInfo);
       }}
     >
-      <Grid item xs={12} className={classes.mainFileVersionItem}>
-        <Grid item xs={12} justifyContent={"space-between"}>
-          <Grid container>
-            <Grid item xs={4} className={classes.versionContainer}>
-              {displayFileIconName(fileName, true)} v{index.toString()}
-            </Grid>
-            <Grid item xs={8} className={classes.buttonContainer}>
-              {versionItemButtons.map((button, index) => {
-                return (
-                  <Tooltip
-                    title={button.tooltip}
-                    key={`version-action-${button.tooltip}-${index.toString()}`}
-                  >
-                    <IconButton
-                      size={"small"}
-                      id={`version-action-${
+      <Grid
+        item
+        xs={12}
+        className={`${classes.intermediateLayer} ${
+          isSelected ? "selected" : ""
+        }`}
+      >
+        <Grid item xs={12} className={classes.mainFileVersionItem}>
+          <Grid item xs={12} justifyContent={"space-between"}>
+            <Grid container>
+              <Grid item xs={4} className={classes.versionContainer}>
+                {displayFileIconName(fileName, true)} v{index.toString()}
+              </Grid>
+              <Grid item xs={8} className={classes.buttonContainer}>
+                {versionItemButtons.map((button, index) => {
+                  return (
+                    <Tooltip
+                      title={button.tooltip}
+                      key={`version-action-${
                         button.tooltip
                       }-${index.toString()}`}
-                      className={`${classes.spacing} ${
-                        disableButtons ? classes.buttonDisabled : ""
-                      }`}
-                      disabled={disableButtons}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!disableButtons) {
-                          button.action(versionInfo);
-                        } else {
-                          e.preventDefault();
-                        }
-                      }}
-                      sx={{
-                        backgroundColor: "#F8F8F8",
-                        borderRadius: "100%",
-                        width: "28px",
-                        height: "28px",
-                        padding: "5px",
-                        "& .min-icon": {
-                          width: "14px",
-                          height: "14px",
-                        },
-                      }}
                     >
-                      {button.icon}
-                    </IconButton>
-                  </Tooltip>
-                );
-              })}
+                      <IconButton
+                        size={"small"}
+                        id={`version-action-${
+                          button.tooltip
+                        }-${index.toString()}`}
+                        className={`${classes.spacing} ${
+                          disableButtons ? classes.buttonDisabled : ""
+                        }`}
+                        disabled={disableButtons}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!disableButtons) {
+                            button.action(versionInfo);
+                          } else {
+                            e.preventDefault();
+                          }
+                        }}
+                        sx={{
+                          backgroundColor: "#F8F8F8",
+                          borderRadius: "100%",
+                          width: "28px",
+                          height: "28px",
+                          padding: "5px",
+                          "& .min-icon": {
+                            width: "14px",
+                            height: "14px",
+                          },
+                        }}
+                      >
+                        {button.icon}
+                      </IconButton>
+                    </Tooltip>
+                  );
+                })}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12} className={classes.versionID}>
-          {versionInfo.version_id}
-        </Grid>
-        <Grid item xs={12}>
-          <span className={classes.versionData}>
-            <strong>Last modified:</strong>{" "}
-            <reactMoment.default>
-              {versionInfo.last_modified}
-            </reactMoment.default>
-          </span>
-          <span className={classes.versionData}>
-            <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
-          </span>
-          <span className={classes.versionData}>
-            <strong>Deleted:</strong>{" "}
-            {versionInfo.is_delete_marker ? "Yes" : "No"}
-          </span>
+          <Grid item xs={12} className={classes.versionID}>
+            {versionInfo.version_id}
+          </Grid>
+          <Grid item xs={12}>
+            <span className={classes.versionData}>
+              <strong>Last modified:</strong>{" "}
+              <reactMoment.default>
+                {versionInfo.last_modified}
+              </reactMoment.default>
+            </span>
+            <span className={classes.versionData}>
+              <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
+            </span>
+            <span className={classes.versionData}>
+              <strong>Deleted:</strong>{" "}
+              {versionInfo.is_delete_marker ? "Yes" : "No"}
+            </span>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
