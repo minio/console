@@ -15,6 +15,56 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  operator-api-tests:
+
+    name: Operator API Tests
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+
+    steps:
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
+      - name: Operator API Tests
+        run: |
+          curl -sLO "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o kubectl
+          chmod +x kubectl
+          mv kubectl /usr/local/bin
+          "${GITHUB_WORKSPACE}/.github/workflows/deploy-tenant.sh"
+          echo "start ---> make test-operator-integration";
+          make test-operator-integration;
+
+      - uses: actions/cache@v2
+        id: coverage-cache-operator
+        name: Coverage Cache Operator
+        with:
+          path: |
+            ./operator-integration/coverage/
+          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
+
   lint-job:
     name: Checking Lint
     runs-on: ${{ matrix.os }}
@@ -702,6 +752,8 @@ jobs:
     needs:
       - integration-tests
       - test-restapi-on-go
+      - operator-api-tests
+      - test-pkg-on-go
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -737,6 +789,14 @@ jobs:
           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
 
       - uses: actions/cache@v2
+        id: coverage-cache-operator
+        name: Coverage Cache Operator
+        with:
+          path: |
+            ./operator-integration/coverage/
+          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
+
+      - uses: actions/cache@v2
         id: coverage-cache-restapi
         name: Coverage Cache RestAPI
         with:
@@ -763,14 +823,14 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out > all.out
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
           echo "result:"
           echo $result
-          threshold=50.4
+          threshold=50.5
           if (( $(echo "$result >= $threshold" |bc -l) )); then
             echo "It is equal or greater than threshold, passed!"
           else
