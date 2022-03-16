@@ -259,7 +259,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                     />
                   </SecureComponent>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} marginTop={"25px"}>
                   <HelpBox
                     title={"Groups"}
                     iconComponent={<GroupsIcon />}

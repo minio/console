@@ -328,16 +328,16 @@ const TenantDetails = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
+
       <PageHeader
         label={
           <Fragment>
-            <Link to={"/tenants"} className={classes.breadcrumLink}>
-              Tenants
-            </Link>
+            <BackLink to={IAM_PAGES.TENANTS} label="Tenants" />
           </Fragment>
         }
+        actions={<React.Fragment />}
       />
-      <BackLink to={"/tenants"} label={"Return to Tenants"} />
+
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle

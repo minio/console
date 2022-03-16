@@ -38,6 +38,7 @@ import {
   IAM_PERMISSIONS,
   IAM_ROLES,
   IAM_SCOPES,
+  IAM_PAGES,
 } from "../../../../common/SecureComponent/permissions";
 import SearchBox from "../../Common/SearchBox";
 import BackLink from "../../../../common/BackLink";
@@ -98,13 +99,7 @@ const BrowserHandler = ({
   return (
     <Fragment>
       <PageHeader
-        label={
-          <BackLink
-            label={"Back to Buckets"}
-            to={"/buckets"}
-            className={classes.backToBuckets}
-          />
-        }
+        label={<BackLink label={"Buckets"} to={IAM_PAGES.BUCKETS} />}
         actions={
           <SecureComponent
             scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}

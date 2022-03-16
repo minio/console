@@ -33,7 +33,6 @@ import DeleteGroup from "./DeleteGroup";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
-import BackLink from "../../../common/BackLink";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import SearchBox from "../Common/SearchBox";
 import {
@@ -277,7 +276,6 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   return (
     <React.Fragment>
       <GroupDetailsHeader />
-      <BackLink to={IAM_PAGES.GROUPS} label={"Return to Groups"} />
 
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
