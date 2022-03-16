@@ -47,6 +47,8 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 import {
   completeObject,
+  setLoadingObjectInfo,
+  setLoadingVersions,
   setNewObject,
   setSelectedVersion,
   updateProgress,
@@ -110,12 +112,16 @@ interface IVersionsNavigatorProps {
   internalPaths: string;
   bucketName: string;
   searchVersions: string;
+  loadingVersions: boolean;
+  selectedVersion: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   setSelectedVersion: typeof setSelectedVersion;
+  setLoadingVersions: typeof setLoadingVersions;
+  setLoadingObjectInfo: typeof setLoadingObjectInfo;
 }
 
 const emptyFile: IFileInfo = {
@@ -137,12 +143,15 @@ const VersionsNavigator = ({
   setNewObject,
   updateProgress,
   searchVersions,
+  loadingVersions,
+  selectedVersion,
   completeObject,
   internalPaths,
   bucketName,
   setSelectedVersion,
+  setLoadingVersions,
+  setLoadingObjectInfo,
 }: IVersionsNavigatorProps) => {
-  const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
@@ -159,7 +168,7 @@ const VersionsNavigator = ({
   }
 
   useEffect(() => {
-    if (loadObjectData && internalPaths !== "") {
+    if (loadingVersions && internalPaths !== "") {
       api
         .invoke(
           "GET",
@@ -179,15 +188,16 @@ const VersionsNavigator = ({
             setVersions([]);
           }
 
-          setLoadObjectData(false);
+          setLoadingVersions(false);
         })
         .catch((error: ErrorResponseHandler) => {
           setErrorSnackMessage(error);
-          setLoadObjectData(false);
+          setLoadingVersions(false);
         });
     }
   }, [
-    loadObjectData,
+    setLoadingVersions,
+    loadingVersions,
     bucketName,
     internalPaths,
     setErrorSnackMessage,
@@ -268,7 +278,8 @@ const VersionsNavigator = ({
     setRestoreVersion("");
 
     if (reloadObjectData) {
-      setLoadObjectData(true);
+      setLoadingVersions(true);
+      setLoadingObjectInfo(true);
     }
   };
 
@@ -281,23 +292,15 @@ const VersionsNavigator = ({
 
   filteredRecords.sort((a, b) => {
     switch (sortValue) {
-      case "version":
-        if (a.version_id && b.version_id) {
-          if (a.version_id < b.version_id) {
+      case "size":
+        if (a.size && b.size) {
+          if (a.size < b.size) {
             return -1;
           }
-          if (a.version_id > b.version_id) {
+          if (a.size > b.size) {
             return 1;
           }
           return 0;
-        }
-        return 0;
-      case "deleted":
-        if (a.is_delete_marker && !b.is_delete_marker) {
-          return -1;
-        }
-        if (!a.is_delete_marker && b.is_delete_marker) {
-          return 1;
         }
         return 0;
       default:
@@ -328,6 +331,7 @@ const VersionsNavigator = ({
         onShare={onShareItem}
         onPreview={onPreviewItem}
         globalClick={onGlobalClick}
+        isSelected={selectedVersion === item.version_id}
       />
     );
   };
@@ -425,10 +429,9 @@ const VersionsNavigator = ({
                       options={[
                         { label: "Date", value: "date" },
                         {
-                          label: "Version ID",
-                          value: "version",
+                          label: "Size",
+                          value: "size",
                         },
-                        { label: "Deleted", value: "deleted" },
                       ]}
                     />
                   </Fragment>
@@ -441,7 +444,7 @@ const VersionsNavigator = ({
                 <VirtualizedList
                   rowRenderFunction={renderVersion}
                   totalItems={filteredRecords.length}
-                  defaultHeight={110}
+                  defaultHeight={108}
                 />
               )}
             </Grid>
@@ -455,6 +458,8 @@ const VersionsNavigator = ({
 const mapStateToProps = ({ system, objectBrowser }: AppState) => ({
   distributedSetup: get(system, "distributedSetup", false),
   searchVersions: objectBrowser.searchVersions,
+  loadingVersions: objectBrowser.loadingVersions,
+  selectedVersion: objectBrowser.selectedVersion,
 });
 
 const mapDispatchToProps = {
@@ -464,6 +469,8 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   setSelectedVersion,
+  setLoadingVersions,
+  setLoadingObjectInfo,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -30,6 +30,8 @@ import {
   BUCKET_BROWSER_VERSIONS_SET_SEARCH,
   BUCKET_BROWSER_SET_SELECTED_VERSION,
   BUCKET_BROWSER_SHOW_DELETED,
+  BUCKET_BROWSER_LOAD_VERSIONS,
+  BUCKET_BROWSER_LOAD_OBJECT_DETAILS,
 } from "./actions";
 
 export interface Route {
@@ -48,6 +50,8 @@ export interface ObjectBrowserState {
   rewind: RewindItem;
   objectManager: ObjectManager;
   searchObjects: string;
+  loadingVersions: boolean;
+  loadingObjectInfo: boolean;
   versionsMode: boolean;
   versionedFile: string;
   searchVersions: string;
@@ -82,6 +86,8 @@ const defaultRewind = {
 
 const initialState: ObjectBrowserState = {
   versionsMode: false,
+  loadingVersions: true,
+  loadingObjectInfo: true,
   rewind: {
     ...defaultRewind,
   },
@@ -252,6 +258,16 @@ export function objectBrowserReducer(
       return {
         ...state,
         showDeleted: action.status,
+      };
+    case BUCKET_BROWSER_LOAD_VERSIONS:
+      return {
+        ...state,
+        loadingVersions: action.status,
+      };
+    case BUCKET_BROWSER_LOAD_OBJECT_DETAILS:
+      return {
+        ...state,
+        loadingObjectInfo: action.status,
       };
     default:
       return state;

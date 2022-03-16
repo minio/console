@@ -61,13 +61,6 @@ func GetNsFromFile() string {
 // Namespace will run only once at console startup
 var Namespace = GetNsFromFile()
 
-var latestMinIOImage, errLatestMinIOImage = utils.GetLatestMinIOImage(
-	&utils.HTTPClient{
-		Client: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-	})
-
 // GetMinioImage returns the image URL to be used when deploying a MinIO instance, if there is
 // a preferred image to be used (configured via ENVIRONMENT VARIABLES) GetMinioImage will return that
 // if not, GetMinioImage will try to obtain the image URL for the latest version of MinIO and return that
@@ -77,17 +70,15 @@ func GetMinioImage() (*string, error) {
 	if image != "" {
 		return &image, nil
 	}
+	latestMinIOImage, errLatestMinIOImage := utils.GetLatestMinIOImage(
+		&utils.HTTPClient{
+			Client: &http.Client{
+				Timeout: 5 * time.Second,
+			},
+		})
+
 	if errLatestMinIOImage != nil {
 		return nil, errLatestMinIOImage
-	}
-	return latestMinIOImage, nil
-}
-
-// GetLatestMinioImage returns the latest image URL on minio repository
-func GetLatestMinioImage(client utils.HTTPClientI) (*string, error) {
-	latestMinIOImage, err := utils.GetLatestMinIOImage(client)
-	if err != nil {
-		return nil, err
 	}
 	return latestMinIOImage, nil
 }
