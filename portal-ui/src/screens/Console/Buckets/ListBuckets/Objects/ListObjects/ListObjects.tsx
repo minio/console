@@ -1027,16 +1027,10 @@ const ListObjects = ({
 
     let mainObject = value;
     // Use the shift effect if different elements are selected
-    if (shift) {
-      if (selectedMainObject === null) {
-        // There was no previous action, сhecked only first elements
-        mainObject = payload[0].name;
-        checked = true;
-      } else {
-        // Repeat the previous steps for everyone in the range
-        mainObject = selectedMainObject;
-        checked = elements.indexOf(mainObject) !== -1 || (shift && !ctrl);
-      }
+    if (shift && selectedMainObject !== null) {
+      // Repeat the previous steps for everyone in the range
+      mainObject = selectedMainObject;
+      checked = elements.indexOf(mainObject) !== -1 || (shift && !ctrl);
     } else {
       setSelectedMainObject(value);
     }
