@@ -18,36 +18,13 @@ package operatorapi
 
 import (
 	"crypto/x509"
-	"io/ioutil"
-	"time"
-
 	xcerts "github.com/minio/pkg/certs"
+	"io/ioutil"
 
 	"github.com/minio/pkg/env"
 )
 
 var (
-	// Port console default port
-	Port = "9090"
-
-	// Hostname console hostname
-	// avoid listening on 0.0.0.0 by default
-	// instead listen on all IPv4 and IPv6
-	// - Hostname should be empty.
-	Hostname = ""
-
-	// TLSPort console tls port
-	TLSPort = "9443"
-
-	// TLSRedirect console tls redirect rule
-	TLSRedirect = "on"
-
-	// SessionDuration cookie validity duration
-	SessionDuration = 45 * time.Minute
-
-	// LicenseKey in memory license key used by console ui
-	LicenseKey = ""
-
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool
 	// GlobalPublicCerts has certificates Console will use to serve clients
