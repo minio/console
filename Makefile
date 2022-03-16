@@ -80,6 +80,11 @@ test-integration:
 	@(docker stop minio)
 	@(docker network rm mynet123)
 
+test-operator-integration:
+	@(echo "Start cd operator-integration && go test:")
+	@(pwd)
+	@(cd operator-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./operator-integration.test -test.run "^Test*" -test.coverprofile=coverage/operator-api.out)
+
 test-operator:
 	@(env bash $(PWD)/portal-ui/tests/scripts/operator.sh)
 	@(docker stop minio)
