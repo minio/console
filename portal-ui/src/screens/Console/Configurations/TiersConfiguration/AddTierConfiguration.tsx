@@ -310,9 +310,14 @@ const AddTierConfiguration = ({
 
   return (
     <Fragment>
-      <PageHeader label="Tiers" />
-
-      <BackLink to={IAM_PAGES.TIERS_ADD} label="Back To Tier Type Selection" />
+      <PageHeader
+        label={
+          <Fragment>
+            <BackLink to={IAM_PAGES.TIERS_ADD} label={"Add Tier"} />
+          </Fragment>
+        }
+        actions={<React.Fragment />}
+      />
 
       <PageLayout>
         <Grid
