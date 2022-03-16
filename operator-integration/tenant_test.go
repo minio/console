@@ -267,3 +267,175 @@ func TestListTenants(t *testing.T) {
 	assert.Equal("storage-lite", *TenantName, *TenantName)
 	printEndFunc("TestListTenants")
 }
+
+func CreateTenant(tenantName string, namespace string, accessKey string, secretKey string, accessKeys []string, idp map[string]interface{}, tls map[string]interface{}, prometheusConfiguration map[string]interface{}, logSearchConfiguration map[string]interface{}, erasureCodingParity int, pools []map[string]interface{}, exposeConsole bool, exposeMinIO bool, image string, serviceName string, enablePrometheus bool, enableConsole bool, enableTLS bool, secretKeys []string) (*http.Response, error) {
+	/*
+		Helper function to create a tenant
+		HTTP Verb: POST
+		API: /api/v1/tenants
+	*/
+	requestDataAdd := map[string]interface{}{
+		"name":                    tenantName,
+		"namespace":               namespace,
+		"access_key":              accessKey,
+		"secret_key":              secretKey,
+		"access_keys":             accessKeys,
+		"secret_keys":             secretKeys,
+		"enable_tls":              enableTLS,
+		"enable_console":          enableConsole,
+		"enable_prometheus":       enablePrometheus,
+		"service_name":            serviceName,
+		"image":                   image,
+		"expose_minio":            exposeMinIO,
+		"expose_console":          exposeConsole,
+		"pools":                   pools,
+		"erasureCodingParity":     erasureCodingParity,
+		"logSearchConfiguration":  logSearchConfiguration,
+		"prometheusConfiguration": prometheusConfiguration,
+		"tls":                     tls,
+		"idp":                     idp,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/tenants",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestCreateTenant(t *testing.T) {
+	printStartFunc("TestCreateTenant")
+
+	// Variables
+	assert := assert.New(t)
+	erasureCodingParity := 2
+	tenantName := "new-tenant"
+	namespace := "default"
+	accessKey := ""
+	secretKey := ""
+	var accessKeys []string
+	var secretKeys []string
+	var minio []string
+	var caCertificates []string
+	var consoleCAcertificates []string
+	enableTLS := true
+	enableConsole := true
+	enablePrometheus := true
+	serviceName := ""
+	image := ""
+	exposeMinIO := true
+	exposeConsole := true
+	values := make([]string, 1)
+	values[0] = "new-tenant"
+	values2 := make([]string, 1)
+	values2[0] = "pool-0"
+	keys := make([]map[string]interface{}, 1)
+	keys[0] = map[string]interface{}{
+		"access_key": "IGLksSXdiU3fjcRI",
+		"secret_key": "EqeCPZ1xBYdnygizxxRWnkH09N2350nO",
+	}
+	pools := make([]map[string]interface{}, 1)
+	matchExpressions := make([]map[string]interface{}, 2)
+	matchExpressions[0] = map[string]interface{}{
+		"key":      "v1.min.io/tenant",
+		"operator": "In",
+		"values":   values,
+	}
+	matchExpressions[1] = map[string]interface{}{
+		"key":      "v1.min.io/pool",
+		"operator": "In",
+		"values":   values2,
+	}
+	requiredDuringSchedulingIgnoredDuringExecution := make([]map[string]interface{}, 1)
+	requiredDuringSchedulingIgnoredDuringExecution[0] = map[string]interface{}{
+		"labelSelector": map[string]interface{}{
+			"matchExpressions": matchExpressions,
+		},
+		"topologyKey": "kubernetes.io/hostname",
+	}
+	pools0 := map[string]interface{}{
+		"name":               "pool-0",
+		"servers":            4,
+		"volumes_per_server": 1,
+		"volume_configuration": map[string]interface{}{
+			"size":               26843545600,
+			"storage_class_name": "standard",
+		},
+		"securityContext": nil,
+		"affinity": map[string]interface{}{
+			"podAntiAffinity": map[string]interface{}{
+				"requiredDuringSchedulingIgnoredDuringExecution": requiredDuringSchedulingIgnoredDuringExecution,
+			},
+		},
+		"resources": map[string]interface{}{
+			"requests": map[string]interface{}{
+				"cpu":    2,
+				"memory": 2,
+			},
+		},
+	}
+	logSearchConfiguration := map[string]interface{}{
+		"image":               "",
+		"postgres_image":      "",
+		"postgres_init_image": "",
+	}
+	prometheusConfiguration := map[string]interface{}{
+		"image":         "",
+		"sidecar_image": "",
+		"init_image":    "",
+	}
+	tls := map[string]interface{}{
+		"minio":                   minio,
+		"ca_certificates":         caCertificates,
+		"console_ca_certificates": consoleCAcertificates,
+	}
+	idp := map[string]interface{}{
+		"keys": keys,
+	}
+	pools[0] = pools0
+
+	// 1. Create Tenant
+	resp, err := CreateTenant(
+		tenantName,
+		namespace,
+		accessKey,
+		secretKey,
+		accessKeys,
+		idp,
+		tls,
+		prometheusConfiguration,
+		logSearchConfiguration,
+		erasureCodingParity,
+		pools,
+		exposeConsole,
+		exposeMinIO,
+		image,
+		serviceName,
+		enablePrometheus,
+		enableConsole,
+		enableTLS,
+		secretKeys,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	printEndFunc("TestCreateTenant")
+}
