@@ -113,6 +113,7 @@ interface IVersionsNavigatorProps {
   bucketName: string;
   searchVersions: string;
   loadingVersions: boolean;
+  selectedVersion: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
@@ -143,6 +144,7 @@ const VersionsNavigator = ({
   updateProgress,
   searchVersions,
   loadingVersions,
+  selectedVersion,
   completeObject,
   internalPaths,
   bucketName,
@@ -329,6 +331,7 @@ const VersionsNavigator = ({
         onShare={onShareItem}
         onPreview={onPreviewItem}
         globalClick={onGlobalClick}
+        isSelected={selectedVersion === item.version_id}
       />
     );
   };
@@ -441,7 +444,7 @@ const VersionsNavigator = ({
                 <VirtualizedList
                   rowRenderFunction={renderVersion}
                   totalItems={filteredRecords.length}
-                  defaultHeight={110}
+                  defaultHeight={108}
                 />
               )}
             </Grid>
@@ -456,6 +459,7 @@ const mapStateToProps = ({ system, objectBrowser }: AppState) => ({
   distributedSetup: get(system, "distributedSetup", false),
   searchVersions: objectBrowser.searchVersions,
   loadingVersions: objectBrowser.loadingVersions,
+  selectedVersion: objectBrowser.selectedVersion,
 });
 
 const mapDispatchToProps = {
