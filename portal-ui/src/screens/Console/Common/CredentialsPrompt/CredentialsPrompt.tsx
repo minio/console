@@ -164,7 +164,7 @@ const CredentialsPrompt = ({
             </div>
           ) : (
             <div className={classes.warningBlock}>
-             <WarnIcon />
+              <WarnIcon />
               <span>
                 Write these down, as this is the only time the secret will be
                 displayed.
@@ -194,11 +194,11 @@ const CredentialsPrompt = ({
                 if (consoleCreds) {
                   if (!Array.isArray(consoleCreds)) {
                     consoleExtras = {
-                          url: consoleCreds.url,
-                          accessKey: consoleCreds.accessKey,
-                          secretKey: consoleCreds.secretKey,
-                          api: "s3v4",
-                          path: "auto",
+                      url: consoleCreds.url,
+                      accessKey: consoleCreds.accessKey,
+                      secretKey: consoleCreds.secretKey,
+                      api: "s3v4",
+                      path: "auto",
                     };
                   } else {
                     const cCreds = consoleCreds.map((itemMap) => {

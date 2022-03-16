@@ -54,14 +54,14 @@ export const bucketWrite = Role(
 );
 
 export const bucketReadWrite = Role(
-    loginUrl,
-    async (t) => {
-        await t
-            .typeText("#accessKey", "bucketreadwrite-" + unixTimestamp)
-            .typeText("#secretKey", "bucketreadwrite")
-            .click(submitButton);
-    },
-    { preserveUrl: true }
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "bucketreadwrite-" + unixTimestamp)
+      .typeText("#secretKey", "bucketreadwrite")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
 );
 
 export const bucketSpecific = Role(
