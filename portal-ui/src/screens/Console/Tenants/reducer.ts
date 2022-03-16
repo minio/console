@@ -332,7 +332,6 @@ const initialState: ITenantState = {
       },
     },
     nodeSelectorPairs: [{ key: "", value: "" }],
-
   },
   tenantDetails: {
     currentTenant: "",
