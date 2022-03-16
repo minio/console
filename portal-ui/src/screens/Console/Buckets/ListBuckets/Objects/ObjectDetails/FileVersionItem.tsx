@@ -29,6 +29,7 @@ import {
   RecoverIcon,
   ShareIcon,
 } from "../../../../../../icons";
+import { niceBytes } from "../../../../../../common/utils";
 
 interface IFileVersionItem {
   fileName: string;
@@ -196,6 +197,9 @@ const FileVersionItem = ({
             <reactMoment.default>
               {versionInfo.last_modified}
             </reactMoment.default>
+          </span>
+          <span className={classes.versionData}>
+            <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
           </span>
           <span className={classes.versionData}>
             <strong>Deleted:</strong>{" "}

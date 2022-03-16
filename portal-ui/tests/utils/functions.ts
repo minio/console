@@ -40,6 +40,24 @@ export const setUpNamedBucket = (t, name) => {
   });
 };
 
+export const setVersioned = (t, modifier) => {
+  return setVersionedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
+};
+
+export const setVersionedBucket = (t, name) => {
+  const minioClient = new Minio.Client({
+    endPoint: "localhost",
+    port: 9000,
+    useSSL: false,
+    accessKey: "minioadmin",
+    secretKey: "minioadmin",
+  });
+
+  return new Promise((resolve, reject) => {
+    minioClient.setBucketVersioning(name, {Status:"Enabled"}).then(resolve).catch(resolve);
+  });
+};
+
 export const namedManageButtonFor = (name) => {
   return Selector("h1")
     .withText(name)

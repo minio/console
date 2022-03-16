@@ -286,23 +286,15 @@ const VersionsNavigator = ({
 
   filteredRecords.sort((a, b) => {
     switch (sortValue) {
-      case "version":
-        if (a.version_id && b.version_id) {
-          if (a.version_id < b.version_id) {
+      case "size":
+        if (a.size && b.size) {
+          if (a.size < b.size) {
             return -1;
           }
-          if (a.version_id > b.version_id) {
+          if (a.size > b.size) {
             return 1;
           }
           return 0;
-        }
-        return 0;
-      case "deleted":
-        if (a.is_delete_marker && !b.is_delete_marker) {
-          return -1;
-        }
-        if (!a.is_delete_marker && b.is_delete_marker) {
-          return 1;
         }
         return 0;
       default:
@@ -430,10 +422,9 @@ const VersionsNavigator = ({
                       options={[
                         { label: "Date", value: "date" },
                         {
-                          label: "Version ID",
-                          value: "version",
+                          label: "Size",
+                          value: "size",
                         },
-                        { label: "Deleted", value: "deleted" },
                       ]}
                     />
                   </Fragment>
