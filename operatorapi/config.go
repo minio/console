@@ -18,8 +18,9 @@ package operatorapi
 
 import (
 	"crypto/x509"
-	xcerts "github.com/minio/pkg/certs"
 	"io/ioutil"
+
+	xcerts "github.com/minio/pkg/certs"
 
 	"github.com/minio/pkg/env"
 )
