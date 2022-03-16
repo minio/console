@@ -3386,3 +3386,186 @@ func TestBucketLifeCycle(t *testing.T) {
 
 	printEndFunc("TestBucketLifeCycle")
 }
+
+func SetAccessRuleWithBucket(bucketName string, prefix string, access string) (*http.Response, error) {
+	/*
+		Helper function to Set Access Rule within Bucket
+		HTTP Verb: PUT
+		URL: /bucket/{bucket}/access-rules
+		Data Example:
+		{
+			"prefix":"prefix",
+			"access":"readonly"
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"prefix": prefix,
+		"access": access,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/bucket/"+bucketName+"/access-rules",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ListAccessRulesWithBucket(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to List Access Rules Within Bucket
+		HTTP Verb: GET
+		URL: /bucket/{bucket}/access-rules
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/bucket/"+bucketName+"/access-rules", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteAccessRuleWithBucket(bucketName string, prefix string) (*http.Response, error) {
+	/*
+		Helper function to Delete Access Rule With Bucket
+		HTTP Verb: DELETE
+		URL: /bucket/{bucket}/access-rules
+		Data Example: {"prefix":"prefix"}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"prefix": prefix,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/bucket/"+bucketName+"/access-rules",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestAccessRule(t *testing.T) {
+
+	printStartFunc("TestAccessRule")
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "test-access-rule-bucket"
+	locking := false
+	versioning := false
+	prefix := "prefix"
+	access := "readonly"
+
+	// 1. Add bucket
+	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Set Access Rule With Bucket
+	resp, err := SetAccessRuleWithBucket(
+		bucketName,
+		prefix,
+		access,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. List Access Rule
+	resp, err = ListAccessRulesWithBucket(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	result := models.ListAccessRulesResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	Access := &result.AccessRules[0].Access
+	Prefix := &result.AccessRules[0].Prefix
+	assert.Equal("readonly", *Access, *Access)
+	assert.Equal("prefix", *Prefix, *Prefix)
+
+	// 4. Delete Access Rule
+	resp, err = DeleteAccessRuleWithBucket(
+		bucketName,
+		prefix,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 5. Verify access rule was deleted
+	resp, err = ListAccessRulesWithBucket(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	result = models.ListAccessRulesResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	AccessRules := &result.AccessRules // The array has to be empty, no index accessible
+	if len(*AccessRules) == 0 {
+		printMessage("Cool, access rules are gone from this bucket")
+	} else {
+		assert.Fail("Access Rule not deleted")
+	}
+
+	printEndFunc("TestAccessRule")
+}
