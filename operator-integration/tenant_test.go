@@ -50,26 +50,19 @@ func decodeBase64(value string) string {
 	return string(result)
 }
 
-func printMessage(message string) {
-	/*
-		Helper function to print HTTP response.
-	*/
-	fmt.Println(message)
-}
-
 func printLoggingMessage(message string, functionName string) {
 	/*
 		Helper function to have standard output across the tests.
 	*/
 	finalString := "......................." + functionName + "(): " + message
-	printMessage(finalString)
+	fmt.Println(finalString)
 }
 
 func printStartFunc(functionName string) {
 	/*
 		Common function for all tests to tell that test has started
 	*/
-	printMessage("")
+	fmt.Println("")
 	printLoggingMessage("started", functionName)
 }
 
@@ -78,7 +71,7 @@ func printEndFunc(functionName string) {
 		Helper function for all tests to tell that test has ended, is completed
 	*/
 	printLoggingMessage("completed", functionName)
-	printMessage("")
+	fmt.Println("")
 }
 
 func initConsoleServer() (*restapi.Server, error) {
