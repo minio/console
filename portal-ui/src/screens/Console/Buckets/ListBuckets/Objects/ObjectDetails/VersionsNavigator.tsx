@@ -47,6 +47,7 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 import {
   completeObject,
+  setLoadingObjectInfo,
   setLoadingVersions,
   setNewObject,
   setSelectedVersion,
@@ -119,6 +120,7 @@ interface IVersionsNavigatorProps {
   completeObject: typeof completeObject;
   setSelectedVersion: typeof setSelectedVersion;
   setLoadingVersions: typeof setLoadingVersions;
+  setLoadingObjectInfo: typeof setLoadingObjectInfo;
 }
 
 const emptyFile: IFileInfo = {
@@ -146,6 +148,7 @@ const VersionsNavigator = ({
   bucketName,
   setSelectedVersion,
   setLoadingVersions,
+  setLoadingObjectInfo,
 }: IVersionsNavigatorProps) => {
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
@@ -274,6 +277,7 @@ const VersionsNavigator = ({
 
     if (reloadObjectData) {
       setLoadingVersions(true);
+      setLoadingObjectInfo(true);
     }
   };
 
@@ -462,6 +466,7 @@ const mapDispatchToProps = {
   completeObject,
   setSelectedVersion,
   setLoadingVersions,
+  setLoadingObjectInfo,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
