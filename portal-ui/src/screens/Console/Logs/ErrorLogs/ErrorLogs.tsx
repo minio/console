@@ -170,7 +170,7 @@ const ErrorLogs = ({
               value={filter}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} data-test-id={"logs-list-container"}>
             {filteredMessages.length ? (
               <div id="logs-container" className={classes.logList}>
                 <TableContainer
