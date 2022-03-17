@@ -23,7 +23,6 @@ import { logoutItem } from "./elements-menu";
 import * as Minio from "minio";
 
 export const setUpBucket = (t, modifier) => {
-  console.log(`${constants.TEST_BUCKET_NAME}-${modifier}`);
   return setUpNamedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
 };
 

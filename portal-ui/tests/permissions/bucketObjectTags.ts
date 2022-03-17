@@ -17,10 +17,8 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
-import { bucketsElement } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
-import * as constants from "../utils/constants";
 
 fixture("For user with Bucket Read & Write permissions").page("http://localhost:9090");
 
