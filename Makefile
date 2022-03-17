@@ -75,7 +75,7 @@ test-integration:
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 -p 9001:9001 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --console-address ':9001' && sleep 5)
 	@(docker run --net=mynet123 --ip=173.18.0.3 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres && sleep 5)
 	@echo "execute test and get coverage"
-	@(cd integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./integration.test -test.run "^Test*" -test.coverprofile=coverage/system.out)
+	@(cd integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/system.out)
 	@(docker stop pgsqlcontainer)
 	@(docker stop minio)
 	@(docker network rm mynet123)
@@ -83,7 +83,7 @@ test-integration:
 test-operator-integration:
 	@(echo "Start cd operator-integration && go test:")
 	@(pwd)
-	@(cd operator-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./operator-integration.test -test.run "^Test*" -test.coverprofile=coverage/operator-api.out)
+	@(cd operator-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./operator-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/operator-api.out)
 
 test-operator:
 	@(env bash $(PWD)/portal-ui/tests/scripts/operator.sh)
@@ -112,11 +112,11 @@ cleanup-permissions:
 
 test:
 	@echo "execute test and get coverage"
-	@(cd restapi && mkdir coverage && GO111MODULE=on go test -coverprofile=coverage/coverage.out)
+	@(cd restapi && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage.out)
 
 test-pkg:
 	@echo "execute test and get coverage"
-	@(cd pkg && mkdir coverage && GO111MODULE=on go test -coverprofile=coverage/coverage-pkg.out)
+	@(cd pkg && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage-pkg.out)
 
 coverage:
 	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/restapi/... && go tool cover -html=coverage.out && open coverage.html)
