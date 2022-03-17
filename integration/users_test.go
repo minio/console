@@ -359,7 +359,7 @@ func TestAddUser(t *testing.T) {
 		tests like users.ts can run over clean data and we don't collide against
 		it.
 	*/
-	printStartFunc("TestAddUser")
+
 	assert := assert.New(t)
 
 	// With no groups & no policies
@@ -384,7 +384,7 @@ func TestAddUser(t *testing.T) {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 		assert.Equal(204, response.StatusCode, "has to be 204 when delete user")
 	}
-	printEndFunc("TestAddUser")
+
 }
 
 func TestListUsers(t *testing.T) {
@@ -394,7 +394,7 @@ func TestListUsers(t *testing.T) {
 		2. Then, it lists the users <------ 200 is expected when listing them.
 		3. Finally, it deletes the users
 	*/
-	printStartFunc("TestListUsers")
+
 	assert := assert.New(t)
 
 	// With no groups & no policies
@@ -454,14 +454,14 @@ func TestListUsers(t *testing.T) {
 				response.StatusCode, "has to be 204 when delete user")
 		}
 	}
-	printEndFunc("TestListUsers")
+
 }
 
 func TestGetUserInfo(t *testing.T) {
 	/*
 		Test to get the user information via API.
 	*/
-	printStartFunc("TestGetUserInfo")
+
 	// 1. Create the user
 	fmt.Println("TestGetUserInfo(): 1. Create the user")
 	assert := assert.New(t)
@@ -500,14 +500,14 @@ func TestGetUserInfo(t *testing.T) {
 	expected := "{\"accessKey\":\"accessKey\",\"memberOf\":null,\"policy\":[],\"status\":\"enabled\"}\n"
 	obtained := string(b)
 	assert.Equal(expected, obtained, "User Information is wrong")
-	printEndFunc("TestGetUserInfo")
+
 }
 
 func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
 	/*
 		Update User Information Test with Successful Response
 	*/
-	printStartFunc("TestGetUserInfo")
+
 	assert := assert.New(t)
 
 	// 1. Create an active user
@@ -545,14 +545,14 @@ func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "disabled"))
-	printEndFunc("TestGetUserInfo")
+
 }
 
 func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 	/*
 		Update User Information Test with Generic Error Response
 	*/
-	printStartFunc("TestUpdateUserInfoGenericErrorResponse")
+
 	assert := assert.New(t)
 
 	// 1. Create an active user
@@ -590,14 +590,14 @@ func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "status not valid"))
-	printEndFunc("TestUpdateUserInfoGenericErrorResponse")
+
 }
 
 func TestRemoveUserSuccessfulResponse(t *testing.T) {
 	/*
 		To test removing a user from API
 	*/
-	printStartFunc("TestRemoveUserSuccessfulResponse")
+
 	assert := assert.New(t)
 
 	// 1. Create an active user
@@ -641,17 +641,17 @@ func TestRemoveUserSuccessfulResponse(t *testing.T) {
 			404, getUserInfoResponse.StatusCode, "Status Code is incorrect")
 	}
 	finalResponse := inspectHTTPResponse(getUserInfoResponse)
-	printMessage(finalResponse)
+	fmt.Println(finalResponse)
 	assert.True(strings.Contains(
 		finalResponse, "The specified user does not exist"), finalResponse)
-	printEndFunc("TestRemoveUserSuccessfulResponse")
+
 }
 
 func TestUpdateGroupsForAUser(t *testing.T) {
 	/*
 		To test Update Groups For a User End Point.
 	*/
-	printStartFunc("TestUpdateGroupsForAUser")
+
 	// 1. Create the user
 	numberOfGroups := 3
 	groupName := "updategroupforausergroup"
@@ -701,14 +701,14 @@ func TestUpdateGroupsForAUser(t *testing.T) {
 		assert.True(strings.Contains(
 			finalResponse, groupName+strconv.Itoa(i)), finalResponse)
 	}
-	printEndFunc("TestUpdateGroupsForAUser")
+
 }
 
 func TestCreateServiceAccountForUser(t *testing.T) {
 	/*
 		To test creation of service account for a user.
 	*/
-	printStartFunc("TestCreateServiceAccountForUser")
+
 	// Test's variables
 	userName := "testcreateserviceaccountforuser1"
 	assert := assert.New(t)
@@ -762,14 +762,14 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 		)
 	}
 	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
-	printEndFunc("TestCreateServiceAccountForUser")
+
 }
 
 func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 	/*
 		To test creation of service account for a user.
 	*/
-	printStartFunc("TestCreateServiceAccountForUserWithCredentials")
+
 	// Test's variables
 	userName := "testcreateserviceaccountforuserwithcredentials1"
 	assert := assert.New(t)
@@ -855,14 +855,14 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 			assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
 		})
 	}
-	printEndFunc("TestCreateServiceAccountForUserWithCredentials")
+
 }
 
 func TestUsersGroupsBulk(t *testing.T) {
 	/*
 		To test UsersGroupsBulk End Point
 	*/
-	printStartFunc("TestUsersGroupsBulk")
+
 	// Vars
 	assert := assert.New(t)
 	numberOfUsers := 5
@@ -945,5 +945,5 @@ func TestUsersGroupsBulk(t *testing.T) {
 		// Make sure the user belongs to the created group
 		assert.True(strings.Contains(string(finalResponse), groupName))
 	}
-	printEndFunc("TestUsersGroupsBulk")
+
 }
