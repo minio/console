@@ -58,9 +58,6 @@ func GetNsFromFile() string {
 	return string(dat)
 }
 
-// Namespace will run only once at console startup
-var Namespace = GetNsFromFile()
-
 // GetMinioImage returns the image URL to be used when deploying a MinIO instance, if there is
 // a preferred image to be used (configured via ENVIRONMENT VARIABLES) GetMinioImage will return that
 // if not, GetMinioImage will try to obtain the image URL for the latest version of MinIO and return that
