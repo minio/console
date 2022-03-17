@@ -72,7 +72,7 @@ test-integration:
 	@(docker network create --subnet=173.18.0.0/29 mynet123)
 	@echo "docker run with MinIO Version below:"
 	@echo $(MINIO_VERSION)
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} && sleep 5)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 -p 9001:9001 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --console-address ':9001' && sleep 5)
 	@(docker run --net=mynet123 --ip=173.18.0.3 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres && sleep 5)
 	@echo "execute test and get coverage"
 	@(cd integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./integration.test -test.run "^Test*" -test.coverprofile=coverage/system.out)
