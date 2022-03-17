@@ -19,30 +19,45 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { BackSettingsIcon } from "../icons";
+import { BackIcon } from "../icons";
+import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
     link: {
-      display: "flex",
+      display: "inline-block",
       alignItems: "center",
+      justifyContent: "center",
       textDecoration: "none",
-      maxWidth: "300px",
-      padding: "2rem 2rem 0rem 2rem",
-      color: theme.palette.primary.light,
-      fontSize: ".8rem",
-      "&:hover": {
-        textDecoration: "underline",
+      maxWidth: "40px",
+      "&:active": {
+        color: theme.palette.primary.light,
       },
     },
     icon: {
-      marginRight: ".3rem",
+      marginRight: "11px",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      "& svg.min-icon": {
-        width: 12,
+      height: "35px",
+      width: "35px",
+      borderRadius: "2px",
+      "&:hover": {
+        background: "rgba(234,237,238)",
       },
+      "& svg.min-icon": {
+        width: "18px",
+        height: "12px",
+      },
+    },
+    label: {
+      display: "flex",
+      alignItems: "center",
+      height: "35px",
+      padding: "0 0px 0 5px",
+      fontSize: "18px",
+      fontWeight: 600,
+      color: theme.palette.primary.light,
     },
   });
 
@@ -62,20 +77,27 @@ const BackLink = ({
   executeOnClick,
 }: IBackLink) => {
   return (
-    <Link
-      to={to}
-      className={`${classes.link} ${className ? className : ""}`}
-      onClick={() => {
-        if (executeOnClick) {
-          executeOnClick();
-        }
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
       }}
     >
-      <div className={classes.icon}>
-        <BackSettingsIcon />
-      </div>
+      <Link
+        to={to}
+        className={`${classes.link} ${className ? className : ""}`}
+        onClick={() => {
+          if (executeOnClick) {
+            executeOnClick();
+          }
+        }}
+      >
+        <div className={classes.icon}>
+          <BackIcon />
+        </div>
+      </Link>
       <div className={classes.label}>{label}</div>
-    </Link>
+    </Box>
   );
 };
 

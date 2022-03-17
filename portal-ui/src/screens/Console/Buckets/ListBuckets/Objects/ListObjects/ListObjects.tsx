@@ -60,6 +60,7 @@ import {
   completeObject,
   openList,
   resetRewind,
+  setLoadingVersions,
   setNewObject,
   setSearchObjects,
   setShowDeletedObjects,
@@ -225,6 +226,7 @@ interface IListObjectsProps {
   setSearchObjects: typeof setSearchObjects;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
   setShowDeletedObjects: typeof setShowDeletedObjects;
+  setLoadingVersions: typeof setLoadingVersions;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -276,6 +278,7 @@ const ListObjects = ({
   setVersionsModeEnabled,
   showDeleted,
   setShowDeletedObjects,
+  setLoadingVersions,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -738,6 +741,7 @@ const ListObjects = ({
     }
 
     setDetailsOpen(true);
+    setLoadingVersions(true);
     setSelectedInternalPaths(
       `${idElement ? `${encodeFileName(idElement)}` : ``}`
     );
@@ -1244,7 +1248,11 @@ const ListObjects = ({
                   color="primary"
                   variant={"outlined"}
                   onClick={() => {
-                    setLoading(true);
+                    if (versionsMode) {
+                      setLoadingVersions(true);
+                    } else {
+                      setLoading(true);
+                    }
                   }}
                   disabled={
                     !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
@@ -1421,6 +1429,7 @@ const mapDispatchToProps = {
   setSearchObjects,
   setVersionsModeEnabled,
   setShowDeletedObjects,
+  setLoadingVersions,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

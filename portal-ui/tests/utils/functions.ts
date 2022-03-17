@@ -55,7 +55,10 @@ export const setVersionedBucket = (t, name) => {
   });
 
   return new Promise((resolve, reject) => {
-    minioClient.setBucketVersioning(name, {Status:"Enabled"}).then(resolve).catch(resolve);
+    minioClient
+      .setBucketVersioning(name, { Status: "Enabled" })
+      .then(resolve)
+      .catch(resolve);
   });
 };
 

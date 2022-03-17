@@ -22,7 +22,9 @@ import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
 import * as constants from "../utils/constants";
 
-fixture("For user with Bucket Read & Write permissions").page("http://localhost:9090");
+fixture("For user with Bucket Read & Write permissions").page(
+  "http://localhost:9090"
+);
 
 test
   .before(async (t) => {
@@ -38,12 +40,20 @@ test
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000)
-      .click("div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)")
+      .click(
+        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+      )
       .click(elements.deleteButton)
       .click(elements.switchInput)
       .click(Selector("button:enabled").withExactText("Delete").nth(1))
-      .expect(Selector("div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)").exists).notOk()
-  }).after(async (t) => {
+      .expect(
+        Selector(
+          "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+        ).exists
+      )
+      .notOk();
+  })
+  .after(async (t) => {
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpBucketAndUploads(t, "bucketdelete3");
   });

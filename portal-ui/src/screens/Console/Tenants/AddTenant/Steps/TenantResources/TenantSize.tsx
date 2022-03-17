@@ -63,6 +63,7 @@ interface ITenantSizeProps {
   ecParityCalc: IErasureCodeCalc;
   limitSize: any;
   selectedStorageClass: string;
+  untouchedECField: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -104,6 +105,7 @@ const TenantSize = ({
   ecParityCalc,
   limitSize,
   selectedStorageClass,
+  untouchedECField,
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
@@ -124,6 +126,23 @@ const TenantSize = ({
   /*Debounce functions*/
 
   // Storage Quotas
+  useEffect(() => {
+    if (cleanECChoices.length > 0 && ecParityCalc.defaultEC !== "") {
+      updateField(
+        "ecParityChoices",
+        ecListTransform(cleanECChoices, ecParityCalc.defaultEC)
+      );
+    }
+  }, [ecParityCalc, cleanECChoices, updateField]);
+
+  useEffect(() => {
+    if (ecParity !== "" && ecParityCalc.defaultEC !== ecParity) {
+      updateField("untouchedECField", false);
+      return;
+    }
+
+    updateField("untouchedECField", true);
+  }, [ecParity, ecParityCalc, updateField]);
 
   useEffect(() => {
     if (ecParityChoices.length > 0 && distribution.error === "") {
@@ -135,6 +154,7 @@ const TenantSize = ({
       );
 
       updateField("ecParityCalc", ecCodeValidated);
+
       if (!cleanECChoices.includes(ecParity) || ecParity === "") {
         updateField("ecParity", ecCodeValidated.defaultEC);
       }
@@ -145,6 +165,7 @@ const TenantSize = ({
     distribution,
     cleanECChoices,
     updateField,
+    untouchedECField,
   ]);
   /*End debounce functions*/
 
@@ -245,6 +266,9 @@ const TenantSize = ({
           .then((ecList: string[]) => {
             updateField("ecParityChoices", ecListTransform(ecList));
             updateField("cleanECChoices", ecList);
+            if (untouchedECField) {
+              updateField("ecParity", "");
+            }
           })
           .catch((err: any) => {
             updateField("ecparityChoices", []);
@@ -253,7 +277,7 @@ const TenantSize = ({
           });
       }
     }
-  }, [distribution, isPageValid, updateField, nodes]);
+  }, [distribution, isPageValid, updateField, nodes, untouchedECField]);
 
   /* End Validation of pages */
 
@@ -364,23 +388,26 @@ const TenantSize = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
-  sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
-  drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
-  nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-  memoryNode: state.tenants.createTenant.fields.tenantSize.memoryNode,
-  ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
-  ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
-  cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
-
-  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
-  distribution: state.tenants.createTenant.fields.tenantSize.distribution,
-  ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
-  limitSize: state.tenants.createTenant.limitSize,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-});
+const mapState = (state: AppState) => {
+  const tenantSize = state.tenants.createTenant.fields.tenantSize;
+  return {
+    volumeSize: tenantSize.volumeSize,
+    sizeFactor: tenantSize.sizeFactor,
+    drivesPerServer: tenantSize.drivesPerServer,
+    nodes: tenantSize.nodes,
+    memoryNode: tenantSize.memoryNode,
+    ecParity: tenantSize.ecParity,
+    ecParityChoices: tenantSize.ecParityChoices,
+    cleanECChoices: tenantSize.cleanECChoices,
+    resourcesSize: tenantSize.resourcesSize,
+    distribution: tenantSize.distribution,
+    ecParityCalc: tenantSize.ecParityCalc,
+    untouchedECField: tenantSize.untouchedECField,
+    limitSize: state.tenants.createTenant.limitSize,
+    selectedStorageClass:
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+  };
+};
 
 const connector = connect(mapState, {
   updateAddField,
