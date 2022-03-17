@@ -232,25 +232,23 @@ func PutObjectTags(bucketName string, prefix string, tags map[string]string, ver
 
 func DeleteMultipleObjects(bucketName string, files []map[string]interface{}) (*http.Response, error) {
 	/*
-	   Helper function to delete multiple objects in a container.
-	   POST: /buckets/{bucket_name}/delete-objects
-	   files: [
-	     {
-	       "path": "veniam tempor in",
-	       "versionID": "ea dolor Duis",
-	       "recursive": false
-	     },
-	     {
-	       "path": "proident eu esse",
-	       "versionID": "eiusmod amet commodo",
-	       "recursive": true
-	       }
-	   ]
+		Helper function to delete multiple objects in a container.
+		POST: /buckets/{bucket_name}/delete-objects
+		Example of the data being sent:
+		[
+			{
+				"path": "testdeletemultipleobjs1.txt",
+				"versionID": "",
+				"recursive": false
+			},
+			{
+				"path": "testdeletemultipleobjs2.txt",
+				"versionID": "",
+				"recursive": false
+			},
+		]
 	*/
-	requestDataAdd := map[string]interface{}{
-		"files": files,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataJSON, _ := json.Marshal(files)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
 		"POST",
@@ -1767,20 +1765,29 @@ func TestDeleteMultipleObjects(t *testing.T) {
 		}
 	}
 
-	// 3. Delete these objects
+	// Prepare the files for deletion
+	files := make([]map[string]interface{}, numberOfFiles)
 	for i := 1; i <= numberOfFiles; i++ {
-		deleteResponse, deleteError := DeleteObject(
-			bucketName, encodeBase64(
-				fileName+strconv.Itoa(i)+".txt"), false, false)
-		assert.Nil(deleteError)
-		if deleteError != nil {
-			log.Println(deleteError)
-			return
+		files[i-1] = map[string]interface{}{
+			"path":      fileName + strconv.Itoa(i) + ".txt",
+			"versionID": "",
+			"recursive": false,
 		}
-		if deleteResponse != nil {
-			assert.Equal(200, deleteResponse.StatusCode,
-				inspectHTTPResponse(deleteResponse))
-		}
+	}
+
+	// 3. Delete these objects all at once
+	deleteResponse, deleteError := DeleteMultipleObjects(
+		bucketName,
+		files,
+	)
+	assert.Nil(deleteError)
+	if deleteError != nil {
+		log.Println(deleteError)
+		return
+	}
+	if deleteResponse != nil {
+		assert.Equal(200, deleteResponse.StatusCode,
+			inspectHTTPResponse(deleteResponse))
 	}
 
 	// 4. List the objects, empty list is expected!
