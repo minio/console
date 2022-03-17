@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import BackLink from "../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -23,9 +23,7 @@ const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
     <PageHeader
       label={
         <Fragment>
-          <Link to={IAM_PAGES.GROUPS} className={classes.breadcrumLink}>
-            Groups
-          </Link>
+          <BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />
         </Fragment>
       }
       actions={<React.Fragment />}

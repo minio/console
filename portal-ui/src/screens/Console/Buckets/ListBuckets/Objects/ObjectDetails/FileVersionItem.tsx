@@ -30,6 +30,7 @@ import {
   ShareIcon,
 } from "../../../../../../icons";
 import { niceBytes } from "../../../../../../common/utils";
+import SpecificVersionPill from "./SpecificVersionPill";
 
 interface IFileVersionItem {
   fileName: string;
@@ -51,6 +52,9 @@ const styles = (theme: Theme) =>
       padding: "1rem 0",
       margin: "0 0.5rem 0 2.5rem",
       cursor: "pointer",
+      "&.deleted": {
+        color: "#868686",
+      },
     },
     intermediateLayer: {
       margin: "0 1.5rem 0 1.5rem",
@@ -64,12 +68,13 @@ const styles = (theme: Theme) =>
     versionContainer: {
       fontSize: 16,
       fontWeight: "bold",
-      color: "#000",
       display: "flex",
       alignItems: "center",
       "& svg.min-icon": {
         width: 18,
         height: 18,
+        minWidth: 18,
+        minHeight: 18,
         marginRight: 10,
       },
     },
@@ -81,7 +86,6 @@ const styles = (theme: Theme) =>
     },
     versionID: {
       fontSize: "12px",
-      color: "#000",
       margin: "2px 0",
     },
     versionData: {
@@ -140,6 +144,16 @@ const FileVersionItem = ({
     },
   ];
 
+  let pill: "deleted" | "current" | "null" | null = null;
+
+  if (versionInfo.is_delete_marker) {
+    pill = "deleted";
+  } else if (versionInfo.is_latest) {
+    pill = "current";
+  } else if (versionInfo.version_id === "null") {
+    pill = "null";
+  }
+
   return (
     <Grid
       container
@@ -156,11 +170,18 @@ const FileVersionItem = ({
           isSelected ? "selected" : ""
         }`}
       >
-        <Grid item xs={12} className={classes.mainFileVersionItem}>
+        <Grid
+          item
+          xs={12}
+          className={`${classes.mainFileVersionItem} ${
+            versionInfo.is_delete_marker ? "deleted" : ""
+          }`}
+        >
           <Grid item xs={12} justifyContent={"space-between"}>
             <Grid container>
               <Grid item xs={4} className={classes.versionContainer}>
                 {displayFileIconName(fileName, true)} v{index.toString()}
+                {pill && <SpecificVersionPill type={pill} />}
               </Grid>
               <Grid item xs={8} className={classes.buttonContainer}>
                 {versionItemButtons.map((button, index) => {
@@ -209,7 +230,7 @@ const FileVersionItem = ({
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.versionID}>
-            {versionInfo.version_id}
+            {versionInfo.version_id !== "null" ? versionInfo.version_id : "-"}
           </Grid>
           <Grid item xs={12}>
             <span className={classes.versionData}>
@@ -220,10 +241,6 @@ const FileVersionItem = ({
             </span>
             <span className={classes.versionData}>
               <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
-            </span>
-            <span className={classes.versionData}>
-              <strong>Deleted:</strong>{" "}
-              {versionInfo.is_delete_marker ? "Yes" : "No"}
             </span>
           </Grid>
         </Grid>

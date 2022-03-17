@@ -60,7 +60,7 @@ const styles = (theme: Theme) =>
       color: "#000",
       fontSize: 18,
       fontWeight: 700,
-      marginLeft: 34,
+      marginLeft: 21,
       marginTop: 8,
     },
     rightMenu: {
