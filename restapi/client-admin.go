@@ -35,11 +35,6 @@ import (
 
 const globalAppName = "MinIO Console"
 
-// NewAdminClient gives a new madmin client interface
-func NewAdminClient(url, accessKey, secretKey, sessionToken string) (*madmin.AdminClient, *probe.Error) {
-	return NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken, false)
-}
-
 // NewAdminClientWithInsecure gives a new madmin client interface either secure or insecure based on parameter
 func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, insecure bool) (*madmin.AdminClient, *probe.Error) {
 	s3Client, err := s3AdminNew(&mcCmd.Config{
