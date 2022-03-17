@@ -23,6 +23,7 @@ import { logoutItem } from "./elements-menu";
 import * as Minio from "minio";
 
 export const setUpBucket = (t, modifier) => {
+  console.log(`${constants.TEST_BUCKET_NAME}-${modifier}`);
   return setUpNamedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
 };
 
@@ -37,6 +38,24 @@ export const setUpNamedBucket = (t, name) => {
 
   return new Promise((resolve, reject) => {
     minioClient.makeBucket(name, "us-east-1").then(resolve).catch(resolve);
+  });
+};
+
+export const setVersioned = (t, modifier) => {
+  return setVersionedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
+};
+
+export const setVersionedBucket = (t, name) => {
+  const minioClient = new Minio.Client({
+    endPoint: "localhost",
+    port: 9000,
+    useSSL: false,
+    accessKey: "minioadmin",
+    secretKey: "minioadmin",
+  });
+
+  return new Promise((resolve, reject) => {
+    minioClient.setBucketVersioning(name, {Status:"Enabled"}).then(resolve).catch(resolve);
   });
 };
 
