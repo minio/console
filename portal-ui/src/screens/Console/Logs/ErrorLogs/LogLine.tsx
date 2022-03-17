@@ -62,46 +62,55 @@ const messageForConsoleMsg = (log: LogMessage) => {
   );
 };
 const messageForError = (log: LogMessage) => {
-  const dataStyle = { color: "#C83B51", fontWeight: 400 };
+  const dataStyle = {
+    color: "#C83B51",
+    fontWeight: 400,
+    fontFamily: "'monospace'",
+    fontSize: "12px",
+  };
+  const labelStyle = {
+    fontFamily: "'monospace'",
+    fontSize: "12px",
+  };
   return (
     <Fragment>
       <div>
-        <b>API:&nbsp;</b>
+        <b style={labelStyle}>API:&nbsp;</b>
         <span style={dataStyle}>{log.api.name}</span>
       </div>
       <div>
-        <b>Time:&nbsp;</b>
+        <b style={labelStyle}>Time:&nbsp;</b>
         <span style={dataStyle}>{log.time.toString()}</span>
       </div>
       <div>
-        <b>DeploymentID:&nbsp;</b>
+        <b style={labelStyle}>DeploymentID:&nbsp;</b>
         <span style={dataStyle}>{log.deploymentid}</span>
       </div>
       <div>
-        <b>RequestID:&nbsp;</b>
+        <b style={labelStyle}>RequestID:&nbsp;</b>
         <span style={dataStyle}>{log.requestID}</span>
       </div>
       <div>
-        <b>RemoteHost:&nbsp;</b>
+        <b style={labelStyle}>RemoteHost:&nbsp;</b>
         <span style={dataStyle}>{log.remotehost}</span>
       </div>
       <div>
-        <b>UserAgent:&nbsp;</b>
+        <b style={labelStyle}>UserAgent:&nbsp;</b>
         <span style={dataStyle}>{log.userAgent}</span>
       </div>
       <div>
-        <b>Error:&nbsp;</b>
+        <b style={labelStyle}>Error:&nbsp;</b>
         <span style={dataStyle}>{log.error && log.error.message}</span>
       </div>
       <br />
       <div>
-        <b>Backtrace:&nbsp;</b>
+        <b style={labelStyle}>Backtrace:&nbsp;</b>
       </div>
       {log.error &&
         log.error.source.map((e, i) => {
           return (
             <div>
-              <b>{i}:&nbsp;</b>
+              <b style={labelStyle}>{i}:&nbsp;</b>
               <span style={dataStyle}>{e}</span>
             </div>
           );
