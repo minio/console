@@ -20,12 +20,13 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { NewServiceAccount } from "./types";
-import { Button } from "@mui/material";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import Grid from "@mui/material/Grid";
 import CredentialItem from "./CredentialItem";
 import WarnIcon from "../../../../icons/WarnIcon";
 import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
+
+import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -164,7 +165,7 @@ const CredentialsPrompt = ({
             </div>
           ) : (
             <div className={classes.warningBlock}>
-              <WarnIcon />
+             <WarnIcon />
               <span>
                 Write these down, as this is the only time the secret will be
                 displayed.
@@ -173,21 +174,13 @@ const CredentialsPrompt = ({
           )}
         </Grid>
         <Grid item xs={12} className={classes.buttonContainer}>
-          <Button
-            id={"done-button"}
-            variant="outlined"
-            className={classes.buttonSpacer}
-            onClick={() => {
-              closeModal();
-            }}
-            color="primary"
-          >
-            Done
-          </Button>
-
-          {!idp && (
-            <Button
+         {!idp && (
+            <>
+            <RBIconButton
               id={"download-button"}
+              tooltip={"Download credentials in a JSON file formatted for import using mc alias import. This will only include the default login credentials."}
+              text={"Download for import"}
+              className={classes.buttonSpacer}
               onClick={() => {
                 let consoleExtras = {};
 
@@ -221,12 +214,42 @@ const CredentialsPrompt = ({
                   })
                 );
               }}
-              endIcon={<DownloadIcon />}
+              icon={<DownloadIcon />}
               variant="contained"
               color="primary"
-            >
-              Download
-            </Button>
+            />
+              
+
+            { (Array.isArray(consoleCreds)) && consoleCreds.length > 1 &&
+              <RBIconButton
+            id={"download-all-button"}
+            tooltip={"Download all access credentials to a JSON file. NOTE: This file is not formatted for import using mc alias import. If you plan to import this alias from the file, please use the Download for Import button. "}
+              text={"Download all access credentials"}
+            className={classes.buttonSpacer}
+            onClick={() => {
+              let allCredentials = {};
+              if (consoleCreds) {
+              const cCreds = consoleCreds.map((itemMap) => {
+                return {
+                  accessKey: itemMap.accessKey,
+                  secretKey: itemMap.secretKey,
+                };
+              });
+              allCredentials = cCreds;
+            }
+              download(
+                "all_credentials.json",
+                JSON.stringify({
+                  ...allCredentials,
+                })
+              );
+            }}
+            icon={<DownloadIcon />}
+            variant="contained"
+            color="primary"            
+            />
+              
+}</>
           )}
         </Grid>
       </Grid>
