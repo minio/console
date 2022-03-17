@@ -231,12 +231,6 @@ func getPrometheusJobID() string {
 	return env.Get(PrometheusJobID, "minio-job")
 }
 
-// GetSubnetLicense returns the current subnet jwt license
-func GetSubnetLicense() string {
-	// fallback to console license env variable
-	return env.Get(ConsoleSubnetLicense, "")
-}
-
 var (
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool
