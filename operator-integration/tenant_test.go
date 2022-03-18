@@ -432,3 +432,48 @@ func TestCreateTenant(t *testing.T) {
 
 	printEndFunc("TestCreateTenant")
 }
+
+func ListTenantsByNameSpace(namespace string) (*http.Response, error) {
+	/*
+		Helper function to list buckets
+		HTTP Verb: GET
+		URL: http://localhost:9090/api/v1/namespaces/{namespace}/tenants
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/namespaces/"+namespace+"/tenants", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestListTenantsByNameSpace(t *testing.T) {
+	assert := assert.New(t)
+	namespace := "default"
+	resp, err := ListTenantsByNameSpace(namespace)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	result := models.ListTenantsResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	TenantName := &result.Tenants[0].Name // The array has to be empty, no index accessible
+	fmt.Println(*TenantName)
+	assert.Equal("new-tenant", *TenantName, *TenantName)
+}
