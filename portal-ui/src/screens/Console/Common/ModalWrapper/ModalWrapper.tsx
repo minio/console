@@ -134,6 +134,7 @@ const ModalWrapper = ({
         <div className={classes.closeContainer}>
           <IconButton
             aria-label="close"
+            id={"close"}
             className={classes.closeButton}
             onClick={onClose}
             disableRipple

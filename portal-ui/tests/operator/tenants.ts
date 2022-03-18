@@ -33,7 +33,7 @@ test("Create Tenant and List Tenants", async (t) => {
     .wait(1000)
     .click("#wizard-button-Create")
     .wait(1000)
-    .click("#done-button")
+    .click("#close")
     .expect(Selector(`#list-tenant-${tenantName}`).exists)
     .ok();
 });
@@ -55,7 +55,7 @@ test("Create Tenant Without Audit Log", async (t) => {
     .click("#log-search-enabled")
     .click("#wizard-button-Create")
     .wait(1000)
-    .click("#done-button")
+    .click("#close")
     .expect(Selector(`#list-tenant-${tenantName}`).exists)
     .ok();
 });
