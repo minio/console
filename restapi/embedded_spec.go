@@ -1315,6 +1315,11 @@ func init() {
             "type": "boolean",
             "name": "all_versions",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "non_current_versions",
+            "in": "query"
           }
         ],
         "responses": {
@@ -7798,6 +7803,11 @@ func init() {
           {
             "type": "boolean",
             "name": "all_versions",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "non_current_versions",
             "in": "query"
           }
         ],

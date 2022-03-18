@@ -570,6 +570,7 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	var rec bool
 	var version string
 	var allVersions bool
+	var nonCurrentVersions bool
 	if params.Recursive != nil {
 		rec = *params.Recursive
 	}
@@ -579,7 +580,16 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	if params.AllVersions != nil {
 		allVersions = *params.AllVersions
 	}
-	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec, allVersions)
+	if params.NonCurrentVersions != nil {
+		nonCurrentVersions = *params.NonCurrentVersions
+	}
+
+	if allVersions && nonCurrentVersions {
+		err := errors.New("cannot set delete all versions and delete non-current versions flags at the same time")
+		return prepareError(err)
+	}
+
+	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec, allVersions, nonCurrentVersions)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -606,7 +616,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		mcClient := mcClient{client: s3Client}
-		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions)
+		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions, false)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -615,7 +625,15 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 }
 
 // deleteObjects deletes either a single object or multiple objects based on recursive flag
-func deleteObjects(ctx context.Context, client MCClient, bucket string, path string, versionID string, recursive bool, allVersions bool) error {
+func deleteObjects(ctx context.Context, client MCClient, bucket string, path string, versionID string, recursive bool, allVersions bool, nonCurrentVersionsOnly bool) error {
+	// Delete All non-Current versions only.
+	if nonCurrentVersionsOnly {
+		if err := deleteNonCurrentVersions(ctx, client, bucket, path); err != nil {
+			return err
+		}
+		return nil
+	}
+
 	if allVersions {
 		if err := deleteMultipleObjects(ctx, client, recursive, true); err != nil {
 			return err
@@ -715,6 +733,25 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 			return result.Err.Cause
 		}
 	}
+	return nil
+}
+
+func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path string) error {
+	// Get current object versions
+	for lsObj := range client.list(ctx, mc.ListOptions{WithDeleteMarkers: true, WithOlderVersions: true, Recursive: true}) {
+		if lsObj.Err != nil {
+			return errors.New(lsObj.Err.String())
+		}
+
+		if !lsObj.IsLatest {
+			err := deleteSingleObject(ctx, client, bucket, path, lsObj.VersionID)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
