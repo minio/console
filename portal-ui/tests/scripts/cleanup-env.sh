@@ -11,6 +11,8 @@ remove_users() {
   mc admin user remove minio bucketassignpolicy-$TIMESTAMP
   mc admin user remove minio bucketread-$TIMESTAMP
   mc admin user remove minio bucketwrite-$TIMESTAMP
+  mc admin user remove minio bucketobjecttags-$TIMESTAMP
+  mc admin user remove minio bucketcannottag-$TIMESTAMP
   mc admin user remove minio dashboard-$TIMESTAMP
   mc admin user remove minio diagnostics-$TIMESTAMP
   mc admin user remove minio groups-$TIMESTAMP
@@ -32,6 +34,7 @@ remove_policies() {
   mc admin policy remove minio bucketassignpolicy-$TIMESTAMP
   mc admin policy remove minio bucketread-$TIMESTAMP
   mc admin policy remove minio bucketwrite-$TIMESTAMP
+  mc admin policy remove minio bucketcannottag-$TIMESTAMP
   mc admin policy remove minio dashboard-$TIMESTAMP
   mc admin policy remove minio diagnostics-$TIMESTAMP
   mc admin policy remove minio groups-$TIMESTAMP
