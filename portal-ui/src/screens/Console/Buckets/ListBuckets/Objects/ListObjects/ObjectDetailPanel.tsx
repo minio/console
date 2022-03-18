@@ -46,7 +46,9 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import {
   completeObject,
   setLoadingObjectInfo,
+  setLoadingVersions,
   setNewObject,
+  setSelectedVersion,
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
@@ -132,6 +134,8 @@ interface IObjectDetailPanelProps {
   completeObject: typeof completeObject;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
   setLoadingObjectInfo: typeof setLoadingObjectInfo;
+  setLoadingVersions: typeof setLoadingVersions;
+  setSelectedVersion: typeof setSelectedVersion;
 }
 
 const emptyFile: IFileInfo = {
@@ -162,6 +166,8 @@ const ObjectDetailPanel = ({
   setVersionsModeEnabled,
   loadingObjectInfo,
   setLoadingObjectInfo,
+  setLoadingVersions,
+  setSelectedVersion,
 }: IObjectDetailPanelProps) => {
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
@@ -313,8 +319,12 @@ const ObjectDetailPanel = ({
   const closeDeleteModal = (closeAndReload: boolean) => {
     setDeleteOpen(false);
 
-    if (closeAndReload) {
+    if (closeAndReload && selectedVersion === "") {
       onClosePanel(true);
+    } else {
+      setLoadingVersions(true);
+      setSelectedVersion("");
+      setLoadingObjectInfo(true);
     }
   };
 
@@ -466,6 +476,7 @@ const ObjectDetailPanel = ({
           selectedObject={internalPaths}
           closeDeleteModalAndRefresh={closeDeleteModal}
           versioning={distributedSetup && versioning}
+          selectedVersion={selectedVersion}
         />
       )}
       {legalholdOpen && actualInfo && (
@@ -527,34 +538,32 @@ const ObjectDetailPanel = ({
       />
 
       <Grid item xs={12} sx={{ textAlign: "center" }}>
-        {selectedVersion === "" && (
-          <SecureComponent
-            resource={bucketName}
-            scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-            matchAll
-            errorProps={{ disabled: true }}
+        <SecureComponent
+          resource={bucketName}
+          scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+          matchAll
+          errorProps={{ disabled: true }}
+        >
+          <Button
+            startIcon={<DeleteIcon />}
+            color="secondary"
+            variant={"outlined"}
+            onClick={() => {
+              setDeleteOpen(true);
+            }}
+            disabled={selectedVersion === "" && actualInfo.is_delete_marker}
+            sx={{
+              width: "calc(100% - 44px)",
+              margin: "8px 0",
+              "& svg.min-icon": {
+                width: 14,
+                height: 14,
+              },
+            }}
           >
-            <Button
-              startIcon={<DeleteIcon />}
-              color="secondary"
-              variant={"outlined"}
-              onClick={() => {
-                setDeleteOpen(true);
-              }}
-              disabled={actualInfo.is_delete_marker || selectedVersion !== ""}
-              sx={{
-                width: "calc(100% - 44px)",
-                margin: "8px 0",
-                "& svg.min-icon": {
-                  width: 14,
-                  height: 14,
-                },
-              }}
-            >
-              Delete
-            </Button>
-          </SecureComponent>
-        )}
+            Delete{selectedVersion !== "" ? " version" : ""}
+          </Button>
+        </SecureComponent>
       </Grid>
       <Grid item xs={12} className={classes.headerForSection}>
         <span>Object Info</span>
@@ -687,6 +696,8 @@ const mapDispatchToProps = {
   completeObject,
   setVersionsModeEnabled,
   setLoadingObjectInfo,
+  setLoadingVersions,
+  setSelectedVersion,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
