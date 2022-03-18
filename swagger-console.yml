@@ -341,6 +341,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: non_current_versions
+          in: query
+          required: false
+          type: boolean
       responses:
         200:
           description: A successful response.

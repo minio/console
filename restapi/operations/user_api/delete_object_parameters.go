@@ -60,6 +60,10 @@ type DeleteObjectParams struct {
 	*/
 	BucketName string
 	/*
+	  In: query
+	*/
+	NonCurrentVersions *bool
+	/*
 	  Required: true
 	  In: query
 	*/
@@ -92,6 +96,11 @@ func (o *DeleteObjectParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qNonCurrentVersions, qhkNonCurrentVersions, _ := qs.GetOK("non_current_versions")
+	if err := o.bindNonCurrentVersions(qNonCurrentVersions, qhkNonCurrentVersions, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -148,6 +157,29 @@ func (o *DeleteObjectParams) bindBucketName(rawData []string, hasKey bool, forma
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.BucketName = raw
+
+	return nil
+}
+
+// bindNonCurrentVersions binds and validates parameter NonCurrentVersions from query.
+func (o *DeleteObjectParams) bindNonCurrentVersions(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("non_current_versions", "query", "bool", raw)
+	}
+	o.NonCurrentVersions = &value
 
 	return nil
 }
