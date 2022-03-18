@@ -25,6 +25,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-openapi/swag"
+
 	iampolicy "github.com/minio/pkg/iam/policy"
 	"github.com/stretchr/testify/assert"
 )
@@ -38,7 +40,7 @@ func TestAddServiceAccount(t *testing.T) {
 		tests like users.ts can run over clean data and we don't collide against
 		it.
 	*/
-	printStartFunc("TestAddServiceAccount")
+
 	assert := assert.New(t)
 
 	client := &http.Client{
@@ -159,5 +161,115 @@ func TestAddServiceAccount(t *testing.T) {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 		assert.Equal(204, response.StatusCode, "has to be 204 when delete user")
 	}
-	printEndFunc("TestAddServiceAccount")
+
+}
+
+func Test_ServiceAccountsAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	type args struct {
+		api    string
+		policy *string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Create Service Account - Default",
+			args: args{
+				api:    "/service-accounts",
+				policy: nil,
+			},
+			expectedStatus: 201,
+			expectedError:  nil,
+		},
+		{
+			name: "Create Service Account - Valid Policy",
+			args: args{
+				api: "/service-accounts",
+				policy: swag.String(`
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}`),
+			},
+			expectedStatus: 201,
+			expectedError:  nil,
+		},
+		{
+			name: "Create Service Account - Invalid Policy",
+			args: args{
+				api: "/service-accounts",
+				policy: swag.String(`
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation"
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}`),
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			// Add service account
+
+			requestDataPolicy := map[string]interface{}{}
+			if tt.args.policy != nil {
+				requestDataPolicy["policy"] = *tt.args.policy
+			}
+
+			requestDataJSON, _ := json.Marshal(requestDataPolicy)
+			requestDataBody := bytes.NewReader(requestDataJSON)
+			request, err := http.NewRequest(
+				"POST", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), requestDataBody)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
+			}
+
+		})
+	}
+
 }
