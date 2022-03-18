@@ -65,11 +65,11 @@ const messageForError = (log: LogMessage) => {
   const dataStyle = {
     color: "#C83B51",
     fontWeight: 400,
-    fontFamily: "'monospace'",
+    fontFamily: "monospace",
     fontSize: "12px",
   };
   const labelStyle = {
-    fontFamily: "'monospace'",
+    fontFamily: "monospace",
     fontSize: "12px",
   };
   return (
