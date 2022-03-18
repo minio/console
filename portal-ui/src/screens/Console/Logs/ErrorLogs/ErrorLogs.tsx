@@ -19,7 +19,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { connect } from "react-redux";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import moment from "moment/moment";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
@@ -45,10 +45,9 @@ const styles = (theme: Theme) =>
     logList: {
       background: "#fff",
       minHeight: 400,
-      height: "calc(100vh - 280px)",
+      height: "calc(100vh - 200px)",
       overflow: "auto",
       fontSize: 13,
-      border: "1px solid #EAEDEE",
       borderRadius: 4,
     },
     tab: {
@@ -171,18 +170,38 @@ const ErrorLogs = ({
               value={filter}
             />
           </Grid>
-          <Grid item xs={12}>
-            <div id="logs-container" className={classes.logList}>
-              <TableContainer component={Paper}>
-                <Table aria-label="collapsible table">
-                  <TableBody>
-                    {filteredMessages.map((m) => {
-                      return <LogLine log={m} />;
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>
+          <Grid item xs={12} data-test-id={"logs-list-container"}>
+            {filteredMessages.length ? (
+              <div id="logs-container" className={classes.logList}>
+                <TableContainer
+                  component={Paper}
+                  sx={{
+                    borderBottom: "0px",
+                  }}
+                >
+                  <Table aria-label="collapsible table">
+                    <TableBody>
+                      {filteredMessages.map((m) => {
+                        return <LogLine key={m.key} log={m} />;
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+            ) : (
+              <Box
+                sx={{
+                  padding: "15px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {filter.trim().length
+                  ? `No matching logs for "${filter.trim()}".`
+                  : "No logs to display."}
+              </Box>
+            )}
           </Grid>
         </Grid>
       </PageLayout>

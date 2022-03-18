@@ -62,46 +62,55 @@ const messageForConsoleMsg = (log: LogMessage) => {
   );
 };
 const messageForError = (log: LogMessage) => {
-  const dataStyle = { color: "green" };
+  const dataStyle = {
+    color: "#C83B51",
+    fontWeight: 400,
+    fontFamily: "monospace",
+    fontSize: "12px",
+  };
+  const labelStyle = {
+    fontFamily: "monospace",
+    fontSize: "12px",
+  };
   return (
     <Fragment>
       <div>
-        <b>API:&nbsp;</b>
+        <b style={labelStyle}>API:&nbsp;</b>
         <span style={dataStyle}>{log.api.name}</span>
       </div>
       <div>
-        <b>Time:&nbsp;</b>
+        <b style={labelStyle}>Time:&nbsp;</b>
         <span style={dataStyle}>{log.time.toString()}</span>
       </div>
       <div>
-        <b>DeploymentID:&nbsp;</b>
+        <b style={labelStyle}>DeploymentID:&nbsp;</b>
         <span style={dataStyle}>{log.deploymentid}</span>
       </div>
       <div>
-        <b>RequestID:&nbsp;</b>
+        <b style={labelStyle}>RequestID:&nbsp;</b>
         <span style={dataStyle}>{log.requestID}</span>
       </div>
       <div>
-        <b>RemoteHost:&nbsp;</b>
+        <b style={labelStyle}>RemoteHost:&nbsp;</b>
         <span style={dataStyle}>{log.remotehost}</span>
       </div>
       <div>
-        <b>UserAgent:&nbsp;</b>
+        <b style={labelStyle}>UserAgent:&nbsp;</b>
         <span style={dataStyle}>{log.userAgent}</span>
       </div>
       <div>
-        <b>Error:&nbsp;</b>
+        <b style={labelStyle}>Error:&nbsp;</b>
         <span style={dataStyle}>{log.error && log.error.message}</span>
       </div>
       <br />
       <div>
-        <b>Backtrace:&nbsp;</b>
+        <b style={labelStyle}>Backtrace:&nbsp;</b>
       </div>
       {log.error &&
         log.error.source.map((e, i) => {
           return (
             <div>
-              <b>{i}:&nbsp;</b>
+              <b style={labelStyle}>{i}:&nbsp;</b>
               <span style={dataStyle}>{e}</span>
             </div>
           );
@@ -145,7 +154,12 @@ const LogLine = (props: { log: LogMessage }) => {
   return (
     <React.Fragment key={log.time.toString()}>
       <TableRow
-        sx={{ "& > *": { borderBottom: "unset" }, cursor: "pointer" }}
+        sx={{
+          "& > *": { borderBottom: "unset" },
+          cursor: "pointer",
+          borderLeft: "0",
+          borderRight: "0",
+        }}
         style={{ backgroundColor: "#FDFDFD" }}
       >
         <TableCell
@@ -186,45 +200,61 @@ const LogLine = (props: { log: LogMessage }) => {
           </div>
         </TableCell>
         <TableCell onClick={() => setOpen(!open)} style={{ width: 40 }}>
-          {open ? <BoxArrowUp /> : <BoxArrowDown />}
+          <Box
+            sx={{
+              "& .min-icon": {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "2px",
+              },
+              "&:hover .min-icon": {
+                fill: "#eaeaea",
+              },
+            }}
+          >
+            {open ? <BoxArrowUp /> : <BoxArrowDown />}
+          </Box>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell
-          style={{
-            paddingBottom: 0,
-            paddingTop: 0,
-            width: 200,
-            textTransform: "uppercase",
-            verticalAlign: "top",
-            textAlign: "right",
-            color: "#8399AB",
-            fontWeight: "bold",
-          }}
-        >
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <div style={{ marginTop: 10 }}>Log Details</div>
-          </Collapse>
-        </TableCell>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                style={{
-                  background: "#efefef",
-                  border: "1px solid #dedede",
-                  padding: 4,
-                  fontSize: 14,
-                  color: "#666666",
-                }}
-              >
-                {fullMessage}
-              </Typography>
-            </Box>
-          </Collapse>
-        </TableCell>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0, width: 40 }} />
-      </TableRow>
+      {open ? (
+        <TableRow>
+          <TableCell
+            style={{
+              paddingBottom: 0,
+              paddingTop: 0,
+              width: 200,
+              textTransform: "uppercase",
+              verticalAlign: "top",
+              textAlign: "right",
+              color: "#8399AB",
+              fontWeight: "bold",
+            }}
+          >
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <div style={{ marginTop: 10 }}>Log Details</div>
+            </Collapse>
+          </TableCell>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Typography
+                  style={{
+                    background: "#efefef",
+                    border: "1px solid #dedede",
+                    padding: 4,
+                    fontSize: 14,
+                    color: "#666666",
+                  }}
+                >
+                  {fullMessage}
+                </Typography>
+              </Box>
+            </Collapse>
+          </TableCell>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0, width: 40 }} />
+        </TableRow>
+      ) : null}
     </React.Fragment>
   );
 };
