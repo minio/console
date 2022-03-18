@@ -2186,7 +2186,7 @@ paths:
       summary: Stop and download profile data
       operationId: ProfilingStop
       produces:
-        - application/octet-stream
+        - application/zip
       responses:
         201:
           description: A successful response.
@@ -3469,23 +3469,13 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/startProfilingItem"
-  profilerType:
-    type: string
-    enum:
-      - cpu
-      - mem
-      - block
-      - mutex
-      - trace
-      - threads
-      - goroutines
   profilingStartRequest:
     type: object
     required:
       - type
     properties:
       type:
-        $ref: "#/definitions/profilerType"
+        type: string
   sessionResponse:
     type: object
     properties:

@@ -2984,7 +2984,7 @@ func init() {
     "/profiling/stop": {
       "post": {
         "produces": [
-          "application/octet-stream"
+          "application/zip"
         ],
         "tags": [
           "AdminAPI"
@@ -5519,18 +5519,6 @@ func init() {
         }
       }
     },
-    "profilerType": {
-      "type": "string",
-      "enum": [
-        "cpu",
-        "mem",
-        "block",
-        "mutex",
-        "trace",
-        "threads",
-        "goroutines"
-      ]
-    },
     "profilingStartRequest": {
       "type": "object",
       "required": [
@@ -5538,7 +5526,7 @@ func init() {
       ],
       "properties": {
         "type": {
-          "$ref": "#/definitions/profilerType"
+          "type": "string"
         }
       }
     },
@@ -9480,7 +9468,7 @@ func init() {
     "/profiling/stop": {
       "post": {
         "produces": [
-          "application/octet-stream"
+          "application/zip"
         ],
         "tags": [
           "AdminAPI"
@@ -12141,18 +12129,6 @@ func init() {
         }
       }
     },
-    "profilerType": {
-      "type": "string",
-      "enum": [
-        "cpu",
-        "mem",
-        "block",
-        "mutex",
-        "trace",
-        "threads",
-        "goroutines"
-      ]
-    },
     "profilingStartRequest": {
       "type": "object",
       "required": [
@@ -12160,7 +12136,7 @@ func init() {
       ],
       "properties": {
         "type": {
-          "$ref": "#/definitions/profilerType"
+          "type": "string"
         }
       }
     },
