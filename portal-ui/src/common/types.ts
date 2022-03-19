@@ -134,10 +134,21 @@ export interface IMatchExpressionItem {
   values: string[];
 }
 
+export enum ITolerationEffect {
+  "NoSchedule" = "NoSchedule",
+  "PreferNoSchedule" = "PreferNoSchedule",
+  "NoExecute" = "NoExecute",
+}
+
+export enum ITolerationOperator {
+  "Equal" = "Equal",
+  "Exists" = "Exists",
+}
+
 export interface ITolerationModel {
-  effect: string;
+  effect: ITolerationEffect;
   key: string;
-  operator: string;
+  operator: ITolerationOperator;
   value?: string;
   tolerationSeconds?: ITolerationSeconds;
 }
@@ -194,6 +205,7 @@ export interface IGCPSecretManager {
   endpoint?: string;
   credentials?: IGCPCredentials;
 }
+
 export interface IGCPConfig {
   secretmanager: IGCPSecretManager;
 }
@@ -203,6 +215,7 @@ export interface IAzureCredentials {
   client_id: string;
   client_secret: string;
 }
+
 export interface IAzureKeyVault {
   endpoint: string;
   credentials?: IAzureCredentials;
