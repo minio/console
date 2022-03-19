@@ -20,7 +20,9 @@ import * as functions from "../utils/functions";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
 
-fixture("For user with Bucket Read & Write permissions").page("http://localhost:9090");
+fixture("For user with Bucket Read & Write permissions").page(
+  "http://localhost:9090"
+);
 
 test
   .before(async (t) => {
@@ -28,7 +30,8 @@ test
     await functions.setUpBucket(t, "bucketobjecttags");
     await functions.setVersioned(t, "bucketobjecttags");
   })("Tags can be created and deleted", async (t) => {
-    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketobjecttags");
+    const testBucketBrowseButton =
+      testBucketBrowseButtonFor("bucketobjecttags");
     await t
       .useRole(roles.bucketObjectTags)
       .navigateTo("http://localhost:9090/buckets")
@@ -36,44 +39,53 @@ test
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000)
-      .click("div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)")
+      .click(
+        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+      )
       .click(Selector("button").withText("Tags"))
       .typeText("#newTagKey", "tag1")
       .typeText("#newTagLabel", "test")
       .click(Selector("button:enabled").withText("Save New Tag"))
       .click(Selector("button").withText("Tags"))
-      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists).ok()
+      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
+      .ok()
       .click(Selector(".MuiChip-deleteIcon"))
       .click(Selector("button").withText("Yes"))
       .click(Selector("button").withText("Tags"))
-      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists).notOk()
-  }).after(async (t) => {
+      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
+      .notOk();
+  })
+  .after(async (t) => {
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpBucketAndUploads(t, "bucketobjecttags");
   });
 
 test
-    .before(async (t) => {
-        // Create a bucket
-        await functions.setUpBucket(t, "bucketcannottag");
-        await functions.setVersioned(t, "bucketcannottag");
-    })("User should not be able to create tag", async (t) => {
-        const testBucketBrowseButton = testBucketBrowseButtonFor("bucketcannottag");
-        await t
-            .useRole(roles.bucketCannotTag)
-            .navigateTo("http://localhost:9090/buckets")
-            .click(testBucketBrowseButton)
-            // Upload object to bucket
-            .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
-            .wait(1000)
-            .click("div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)")
-            .click(Selector("button").withText("Tags"))
-            .typeText("#newTagKey", "tag1")
-            .typeText("#newTagLabel", "test")
-            .click(Selector("button:enabled").withText("Save New Tag"))
-            .click(Selector("button").withText("Tags"))
-            .expect(Selector(".MuiChip-label").withText("tag1 : test").exists).notOk()
-    }).after(async (t) => {
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketcannottag");
+    await functions.setVersioned(t, "bucketcannottag");
+  })("User should not be able to create tag", async (t) => {
+    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketcannottag");
+    await t
+      .useRole(roles.bucketCannotTag)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButton)
+      // Upload object to bucket
+      .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
+      .wait(1000)
+      .click(
+        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+      )
+      .click(Selector("button").withText("Tags"))
+      .typeText("#newTagKey", "tag1")
+      .typeText("#newTagLabel", "test")
+      .click(Selector("button:enabled").withText("Save New Tag"))
+      .click(Selector("button").withText("Tags"))
+      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
+      .notOk();
+  })
+  .after(async (t) => {
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpBucketAndUploads(t, "bucketcannottag");
-});
+  });
