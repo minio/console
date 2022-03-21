@@ -27,7 +27,7 @@ import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { withRouter } from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
 import {
@@ -82,7 +82,7 @@ import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 
-import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import {IAM_PERMISSIONS, IAM_ROLES, IAM_SCOPES} from "../../../../../../common/SecureComponent/permissions";
 import {
   SecureComponent,
   hasPermission,
@@ -92,7 +92,7 @@ import withSuspense from "../../../../Common/Components/withSuspense";
 import {
   BucketsIcon,
   DownloadIcon,
-  PreviewIcon,
+  PreviewIcon, SettingsIcon,
   ShareIcon,
 } from "../../../../../../icons";
 import UploadFilesButton from "../../UploadFilesButton";
@@ -1210,6 +1210,24 @@ const ListObjects = ({
             }
             actions={
               <Fragment>
+                <SecureComponent
+                    scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
+                    resource={bucketName}
+                >
+                  <Link
+                      to={`/buckets/${bucketName}/admin`}
+                      style={{ textDecoration: "none" }}
+                  >
+                    <RBIconButton
+                        tooltip={"Manage"}
+                        onClick={() => {}}
+                        text={"Manage"}
+                        icon={<SettingsIcon />}
+                        color={"primary"}
+                        variant={"outlined"}
+                    />
+                  </Link>
+                </SecureComponent>
                 <RBIconButton
                   id={"rewind-objects-list"}
                   tooltip={"Rewind Bucket"}
