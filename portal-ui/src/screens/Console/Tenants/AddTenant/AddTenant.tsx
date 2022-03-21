@@ -55,6 +55,12 @@ import BackLink from "../../../../common/BackLink";
 import TenantResources from "./Steps/TenantResources/TenantResources";
 import ConfigLogSearch from "./Steps/ConfigLogSearch";
 import ConfigPrometheus from "./Steps/ConfigPrometheus";
+import {
+  IMkEnvs,
+  resourcesConfigurations,
+} from "./Steps/TenantResources/utils";
+import HelpBox from "../../../../common/HelpBox";
+import { StorageIcon } from "../../../../icons";
 
 interface IAddTenantProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -66,6 +72,7 @@ interface IAddTenantProps {
   namespace: string;
   validPages: string[];
   classes: any;
+  features?: string[];
 }
 
 const styles = (theme: Theme) =>
@@ -87,6 +94,7 @@ const AddTenant = ({
   validPages,
   setErrorSnackMessage,
   resetAddTenantForm,
+  features,
 }: IAddTenantProps) => {
   // Modals
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
@@ -95,6 +103,27 @@ const AddTenant = ({
 
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
+  const [formRender, setFormRender] = useState<IMkEnvs | null>(null);
+
+  useEffect(() => {
+    let setConfiguration = IMkEnvs.default;
+
+    if (features && features.length !== 0) {
+      const possibleVariables = Object.keys(resourcesConfigurations);
+
+      possibleVariables.forEach((element) => {
+        if (features.includes(element)) {
+          setConfiguration = get(
+            resourcesConfigurations,
+            element,
+            IMkEnvs.default
+          );
+        }
+      });
+    }
+
+    setFormRender(setConfiguration);
+  }, [features]);
 
   /* Send Information to backend */
   useEffect(() => {
@@ -764,20 +793,47 @@ const AddTenant = ({
         />
       )}
       <PageHeader label={"Create New Tenant"} />
-      <BackLink
-        to={"/tenants"}
-        label={"Tenant List"}
-        executeOnClick={resetAddTenantForm}
-      />
+
       <PageLayout>
         {addSending && (
           <Grid item xs={12}>
             <LinearProgress />
           </Grid>
         )}
+
+        <Grid item xs={12}>
+          <BackLink
+            to={"/tenants"}
+            label={"Tenant List"}
+            executeOnClick={resetAddTenantForm}
+          />
+        </Grid>
         <Grid item xs={12} className={classes.pageBox}>
           <GenericWizard wizardSteps={filteredWizardSteps} />
         </Grid>
+        {formRender === IMkEnvs.aws && (
+          <Grid item xs={12} style={{ marginTop: 16 }}>
+            <HelpBox
+              title={"EBS Volume Configuration."}
+              iconComponent={<StorageIcon />}
+              help={
+                <Fragment>
+                  <b>Performance Optimized</b>: Uses the <i>gp3</i> EBS storage
+                  class class configured at 1,000Mi/s throughput and 16,000
+                  IOPS, however the minimum volume size for this type of EBS
+                  volume is <b>32Gi</b>.
+                  <br />
+                  <br />
+                  <b>Storage Optimized</b>: Uses the <i>sc1</i> EBS storage
+                  class, however the minimum volume size for this type of EBS
+                  volume is &nbsp;
+                  <b>16Ti</b> to unlock their maximum throughput speed of
+                  250Mi/s.
+                </Fragment>
+              }
+            />
+          </Grid>
+        )}
       </PageLayout>
     </Fragment>
   );
@@ -790,6 +846,7 @@ const mapState = (state: AppState) => ({
   certificates: state.tenants.createTenant.certificates,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+  features: state.console.session.features,
 });
 
 const connector = connect(mapState, {
