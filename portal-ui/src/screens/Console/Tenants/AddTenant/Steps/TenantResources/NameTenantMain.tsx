@@ -37,6 +37,7 @@ import { setModalErrorSnackMessage } from "../../../../../../actions";
 import {
   isPageValid,
   setLimitSize,
+  setStorageType,
   setStorageClassesList,
   updateAddField,
 } from "../../../actions";
@@ -87,6 +88,8 @@ interface INameTenantMainScreen {
   selectedStorageClass: string;
   selectedStorageType: string;
   formToRender?: IMkEnvs;
+  features?: string[];
+  setStorageType: typeof setStorageType;
 }
 
 const NameTenantMain = ({
@@ -102,6 +105,8 @@ const NameTenantMain = ({
   setLimitSize,
   isPageValid,
   setModalErrorSnackMessage,
+  features,
+  setStorageType,
 }: INameTenantMainScreen) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
@@ -350,10 +355,7 @@ const NameTenantMain = ({
                     id="storage_type"
                     name="storage_type"
                     onChange={(e: SelectChangeEvent<string>) => {
-                      updateField(
-                        "selectedStorageType",
-                        e.target.value as string
-                      );
+                      setStorageType(e.target.value as string, features);
                     }}
                     label={get(
                       mkPanelConfigurations,
@@ -399,6 +401,7 @@ const mapState = (state: AppState) => ({
   selectedStorageType:
     state.tenants.createTenant.fields.nameTenant.selectedStorageType,
   storageClasses: state.tenants.createTenant.storageClasses,
+  features: state.console.session.features,
 });
 
 const connector = connect(mapState, {
@@ -407,6 +410,7 @@ const connector = connect(mapState, {
   setStorageClassesList,
   setLimitSize,
   isPageValid,
+  setStorageType,
 });
 
 export default withStyles(styles)(connector(NameTenantMain));

@@ -36,6 +36,7 @@ import {
   ADD_TENANT_SET_KEY_PAIR_VALUE,
   ADD_TENANT_SET_LIMIT_SIZE,
   ADD_TENANT_SET_PAGE_VALID,
+  ADD_TENANT_SET_STORAGE_TYPE,
   ADD_TENANT_SET_STORAGE_CLASSES_LIST,
   ADD_TENANT_UPDATE_FIELD,
   ITenantState,
@@ -47,6 +48,7 @@ import {
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
+import { addTenantSetStorageTypeReducer } from "./reducers/add-tenant-reducer";
 
 const initialState: ITenantState = {
   createTenant: {
@@ -189,9 +191,9 @@ const initialState: ITenantState = {
         },
       },
       tenantSize: {
-        volumeSize: "100",
+        volumeSize: "1024",
         sizeFactor: "Gi",
-        drivesPerServer: "1",
+        drivesPerServer: "4",
         nodes: "4",
         memoryNode: "2",
         ecParity: "",
@@ -401,6 +403,8 @@ export function tenantsReducer(
         },
       };
       return { ...changeCL };
+    case ADD_TENANT_SET_STORAGE_TYPE:
+      return addTenantSetStorageTypeReducer(action, state);
     case ADD_TENANT_SET_LIMIT_SIZE:
       const changeSizeLimit = {
         ...state,
@@ -739,9 +743,9 @@ export function tenantsReducer(
               },
             },
             tenantSize: {
-              volumeSize: "100",
+              volumeSize: "1024",
               sizeFactor: "Gi",
-              drivesPerServer: "1",
+              drivesPerServer: "4",
               nodes: "4",
               memoryNode: "2",
               ecParity: "",

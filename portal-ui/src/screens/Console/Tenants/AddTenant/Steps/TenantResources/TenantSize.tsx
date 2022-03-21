@@ -45,6 +45,7 @@ import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/I
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import TenantSizeResources from "./TenantSizeResources";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import { IMkEnvs } from "./utils";
 
 interface ITenantSizeProps {
   classes: any;
@@ -64,6 +65,8 @@ interface ITenantSizeProps {
   limitSize: any;
   selectedStorageClass: string;
   untouchedECField: boolean;
+  formToRender?: IMkEnvs;
+  selectedStorageType: string;
 }
 
 const styles = (theme: Theme) =>
@@ -106,6 +109,8 @@ const TenantSize = ({
   limitSize,
   selectedStorageClass,
   untouchedECField,
+  formToRender,
+  selectedStorageType,
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
@@ -174,7 +179,7 @@ const TenantSize = ({
     //Validate Cluster Size
     const size = volumeSize;
     const factor = sizeFactor;
-    const limitSize = getBytes("12", "Ti", true);
+    const limitSize = getBytes("16", "Ti", true);
 
     const clusterCapacity: ICapacity = {
       unit: factor,
@@ -185,13 +190,23 @@ const TenantSize = ({
       clusterCapacity,
       parseInt(nodes),
       parseInt(limitSize),
-      parseInt(drivesPerServer)
+      parseInt(drivesPerServer),
+      formToRender,
+      selectedStorageType
     );
 
     updateField("distribution", distrCalculate);
     setErrorFlag(false);
     setNodeError("");
-  }, [nodes, volumeSize, sizeFactor, updateField, drivesPerServer]);
+  }, [
+    nodes,
+    volumeSize,
+    sizeFactor,
+    updateField,
+    drivesPerServer,
+    selectedStorageType,
+    formToRender,
+  ]);
 
   /*Calculate Allocation End*/
 
@@ -406,6 +421,8 @@ const mapState = (state: AppState) => {
     limitSize: state.tenants.createTenant.limitSize,
     selectedStorageClass:
       state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+    selectedStorageType:
+      state.tenants.createTenant.fields.nameTenant.selectedStorageType,
   };
 };
 
