@@ -24,7 +24,6 @@ import (
 
 	"errors"
 
-	"github.com/minio/console/models"
 	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"
 )
@@ -63,7 +62,7 @@ func TestStartProfiling(t *testing.T) {
 		}, nil
 	}
 	function := "startProfiling()"
-	cpuProfiler := models.ProfilerType("cpu")
+	cpuProfiler := "cpu"
 	startProfilingResults, err := startProfiling(ctx, adminClient, cpuProfiler)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())

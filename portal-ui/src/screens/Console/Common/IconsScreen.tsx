@@ -344,6 +344,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.DeleteNonCurrentIcon />
+          <br />
+          DeleteNonCurrentIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.DiagnosticsFeatureIcon />
           <br />
           DiagnosticsFeatureIcon

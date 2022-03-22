@@ -55,11 +55,13 @@ import {
 } from "../../../../ObjectBrowser/actions";
 
 import { AppState } from "../../../../../../store";
-import { VersionsIcon } from "../../../../../../icons";
+import { DeleteNonCurrentIcon, VersionsIcon } from "../../../../../../icons";
 import VirtualizedList from "../../../../Common/VirtualizedList/VirtualizedList";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import PreviewFileModal from "../Preview/PreviewFileModal";
+import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
+import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -160,6 +162,8 @@ const VersionsNavigator = ({
   const [restoreVersion, setRestoreVersion] = useState<string>("");
   const [sortValue, setSortValue] = useState<string>("date");
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [deleteNonCurrentOpen, setDeleteNonCurrentOpen] =
+    useState<boolean>(false);
 
   // calculate object name to display
   let objectNameArray: string[] = [];
@@ -283,6 +287,16 @@ const VersionsNavigator = ({
     }
   };
 
+  const closeDeleteNonCurrent = (reloadAfterDelete: boolean) => {
+    setDeleteNonCurrentOpen(false);
+
+    if (reloadAfterDelete) {
+      setLoadingVersions(true);
+      setSelectedVersion("");
+      setLoadingObjectInfo(true);
+    }
+  };
+
   const totalSpace = versions.reduce((acc: number, currValue: IFileInfo) => {
     if (currValue.size) {
       return acc + parseInt(currValue.size);
@@ -376,6 +390,14 @@ const VersionsNavigator = ({
           }}
         />
       )}
+      {deleteNonCurrentOpen && (
+        <DeleteNonCurrent
+          deleteOpen={deleteNonCurrentOpen}
+          closeDeleteModalAndRefresh={closeDeleteNonCurrent}
+          selectedBucket={bucketName}
+          selectedObject={internalPaths}
+        />
+      )}
       <Grid container className={classes.versionsContainer}>
         {!actualInfo && (
           <Grid item xs={12}>
@@ -417,6 +439,18 @@ const VersionsNavigator = ({
                 }
                 actions={
                   <Fragment>
+                    <RBIconButton
+                      id={"delete-non-current"}
+                      tooltip={"Delete Non Current Versions"}
+                      onClick={() => {
+                        setDeleteNonCurrentOpen(true);
+                      }}
+                      text={""}
+                      icon={<DeleteNonCurrentIcon />}
+                      color="secondary"
+                      style={{ marginRight: 15 }}
+                      disabled={versions.length <= 1}
+                    />
                     <span className={classes.sortByLabel}>Sort by</span>
                     <SelectWrapper
                       id={"sort-by"}

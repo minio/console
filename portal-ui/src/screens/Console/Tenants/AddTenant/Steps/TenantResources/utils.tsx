@@ -17,6 +17,7 @@
 import React from "react";
 import { Opts } from "../../../ListTenants/utils";
 import TenantSizeMK from "./TenantSizeMK";
+import TenantSize from "./TenantSize";
 
 export enum IMkEnvs {
   "aws",
@@ -38,11 +39,12 @@ export interface IntegrationConfiguration {
   memory: number;
   drivesPerServer: number;
   driveSize: IDriveSizing;
+  minimumVolumeSize?: IDriveSizing;
 }
 
 export const AWSStorageTypes: Opts[] = [
-  { label: "NVME", value: "nvme" },
-  { label: "HDD", value: "hdd" },
+  { label: "Performance Optimized", value: "performance" },
+  { label: "Capacity Optimized", value: "capacity" },
 ];
 
 export const AzureStorageTypes: Opts[] = [
@@ -59,20 +61,22 @@ export const resourcesConfigurations = {
 
 export const AWSConfigurations: IntegrationConfiguration[] = [
   {
-    typeSelection: "nvme",
-    storageClass: "nvme-i3en-12xlarge",
-    CPU: 48,
-    memory: 384,
-    driveSize: { driveSize: "7500", sizeUnit: "Gi" },
+    typeSelection: "performance",
+    storageClass: "performance-c6gn-16xlarge",
+    CPU: 64,
+    memory: 128,
+    driveSize: { driveSize: "32", sizeUnit: "Gi" },
     drivesPerServer: 4,
+    minimumVolumeSize: { driveSize: "32", sizeUnit: "Gi" },
   },
   {
-    typeSelection: "hdd",
-    storageClass: "hdd-d3en-12xlarge",
-    CPU: 8,
-    memory: 32,
-    driveSize: { driveSize: "12.7", sizeUnit: "Ti" },
-    drivesPerServer: 4,
+    typeSelection: "capacity",
+    storageClass: "capacity-c6gn-16xlarge",
+    CPU: 64,
+    memory: 128,
+    driveSize: { driveSize: "16", sizeUnit: "Ti" },
+    drivesPerServer: 18,
+    minimumVolumeSize: { driveSize: "16", sizeUnit: "Ti" },
   },
 ];
 
@@ -132,12 +136,19 @@ export const GCPConfigurations: IntegrationConfiguration[] = [
   },
 ];
 
-export const mkPanelConfigurations = {
+interface mkConfiguration {
+  variantSelectorLabel?: string;
+  variantSelectorValues?: Opts[];
+  configurations?: IntegrationConfiguration[];
+  sizingComponent?: JSX.Element;
+}
+
+export const mkPanelConfigurations: { [index: number]: mkConfiguration } = {
   [IMkEnvs.aws]: {
     variantSelectorLabel: "Storage Type",
     variantSelectorValues: AWSStorageTypes,
     configurations: AWSConfigurations,
-    sizingComponent: <TenantSizeMK formToRender={IMkEnvs.aws} />,
+    sizingComponent: <TenantSize formToRender={IMkEnvs.aws} />,
   },
   [IMkEnvs.azure]: {
     variantSelectorLabel: "VM Size",

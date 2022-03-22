@@ -27,6 +27,7 @@ create_policies() {
   mc admin policy add minio bucketread-$TIMESTAMP portal-ui/tests/policies/bucketRead.json
   mc admin policy add minio bucketwrite-$TIMESTAMP portal-ui/tests/policies/bucketWrite.json
   mc admin policy add minio bucketreadwrite-$TIMESTAMP portal-ui/tests/policies/bucketReadWrite.json
+  mc admin policy add minio bucketcannottag-$TIMESTAMP portal-ui/tests/policies/bucketCannotTag.json
   mc admin policy add minio bucketspecific-$TIMESTAMP portal-ui/tests/policies/bucketSpecific.json
   mc admin policy add minio dashboard-$TIMESTAMP portal-ui/tests/policies/dashboard.json
   mc admin policy add minio diagnostics-$TIMESTAMP portal-ui/tests/policies/diagnostics.json
@@ -51,6 +52,8 @@ create_users() {
   mc admin user add minio bucketread-$TIMESTAMP bucketread
   mc admin user add minio bucketwrite-$TIMESTAMP bucketwrite
   mc admin user add minio bucketreadwrite-$TIMESTAMP bucketreadwrite
+  mc admin user add minio bucketobjecttags-$TIMESTAMP bucketobjecttags
+  mc admin user add minio bucketcannottag-$TIMESTAMP bucketcannottag
   mc admin user add minio bucketspecific-$TIMESTAMP bucketspecific
   mc admin user add minio dashboard-$TIMESTAMP dashboard
   mc admin user add minio diagnostics-$TIMESTAMP diagnostics
@@ -79,6 +82,8 @@ assign_policies() {
   mc admin policy set minio bucketread-$TIMESTAMP user=bucketread-$TIMESTAMP
   mc admin policy set minio bucketwrite-$TIMESTAMP user=bucketwrite-$TIMESTAMP
   mc admin policy set minio bucketreadwrite-$TIMESTAMP user=bucketreadwrite-$TIMESTAMP
+  mc admin policy set minio bucketreadwrite-$TIMESTAMP user=bucketobjecttags-$TIMESTAMP
+  mc admin policy set minio bucketcannottag-$TIMESTAMP user=bucketcannottag-$TIMESTAMP
   mc admin policy set minio bucketspecific-$TIMESTAMP user=bucketspecific-$TIMESTAMP
   mc admin policy set minio dashboard-$TIMESTAMP user=dashboard-$TIMESTAMP
   mc admin policy set minio diagnostics-$TIMESTAMP user=diagnostics-$TIMESTAMP

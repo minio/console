@@ -19,43 +19,47 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { BackIcon } from "../icons";
+import { BackSettingsIcon } from "../icons";
 import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
     link: {
-      display: "inline-block",
-      alignItems: "center",
-      justifyContent: "center",
+      display: "block",
       textDecoration: "none",
-      maxWidth: "40px",
       "&:active": {
         color: theme.palette.primary.light,
       },
     },
-    icon: {
-      marginRight: "11px",
+    iconBox: {
       display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "35px",
-      width: "35px",
-      borderRadius: "2px",
+      flexDirection: "row",
       "&:hover": {
         background: "rgba(234,237,238)",
       },
-      "& svg.min-icon": {
-        width: "18px",
-        height: "12px",
+      height: "30px",
+      paddingBottom: 4,
+      paddingTop: 8,
+      paddingRight: 16,
+      paddingLeft: 0,
+      borderRadius: 4,
+    },
+    icon: {
+      lineHeight: 1,
+      marginRight: "14px",
+      alignItems: "center",
+      width: "22px",
+      "& .min-icon": {
+        color: theme.palette.primary.light,
+        width: "16px",
+        height: "16px",
       },
     },
     label: {
-      display: "flex",
+      lineHeight: 1,
       alignItems: "center",
-      height: "35px",
-      padding: "0 0px 0 5px",
-      fontSize: "18px",
+      paddingTop: 1,
+      fontSize: "14px",
       fontWeight: 600,
       color: theme.palette.primary.light,
     },
@@ -92,11 +96,13 @@ const BackLink = ({
           }
         }}
       >
-        <div className={classes.icon}>
-          <BackIcon />
+        <div className={classes.iconBox}>
+          <div className={classes.icon}>
+            <BackSettingsIcon />
+          </div>
+          <div className={classes.label}>{label}</div>
         </div>
       </Link>
-      <div className={classes.label}>{label}</div>
     </Box>
   );
 };
