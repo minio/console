@@ -539,11 +539,9 @@ const ObjectDetailPanel = ({
 
       <Grid item xs={12} sx={{ textAlign: "center" }}>
         <SecureComponent
-          resource={bucketName}
+          resource={[currentItem, [bucketName, actualInfo.name].join("/")]}
           scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-          matchAll
           errorProps={{ disabled: true }}
-          containsResource
         >
           <Button
             startIcon={<DeleteIcon />}
