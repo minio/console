@@ -47,7 +47,6 @@ var (
 
 	// LicenseKey in memory license key used by console ui
 	LicenseKey = ""
-
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool
 	// GlobalPublicCerts has certificates Console will use to serve clients

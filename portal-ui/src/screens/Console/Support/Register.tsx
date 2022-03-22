@@ -33,7 +33,6 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import OnlineRegistrationIcon from "../../../icons/OnlineRegistrationIcon";
 import OfflineRegistrationIcon from "../../../icons/OfflineRegistrationIcon";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import OnlineRegistrationBackIcon from "../../../icons/OnlineRegistrationBackIcon";
 import OfflineRegistrationBackIcon from "../../../icons/OfflineRegistrationBackIcon";
 import api from "../../../common/api";
 
@@ -63,6 +62,7 @@ import { AppState } from "../../../store";
 
 import RegisterHelpBox from "./RegisterHelpBox";
 import RegistrationStatusBanner from "./RegistrationStatusBanner";
+import BackLink from "../../../common/BackLink";
 
 interface IRegister {
   classes: any;
@@ -854,30 +854,6 @@ const Register = ({
           </Grid>
         ) : null}
 
-        {!onlineActivation ? (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              marginBottom: "30px",
-              "& .min-icon": {
-                height: "25px",
-                width: "25px",
-                marginRight: "15px",
-              },
-            }}
-          >
-            <OnlineRegistrationBackIcon />
-            <Link
-              className={classes.link}
-              onClick={() => setOnlineActivation(!onlineActivation)}
-            >
-              Back to Online Activation
-            </Link>
-          </Box>
-        ) : null}
-
         {clusterRegistered ? null : formTitle}
 
         {clusterRegistered ? null : clusterRegistrationForm}
@@ -1019,7 +995,26 @@ const Register = ({
 
   return (
     <Fragment>
-      <PageHeader label="Register" />
+      <PageHeader
+        label={
+          <Fragment>
+            {!onlineActivation ? (
+              <BackLink
+                to={IAM_PAGES.REGISTER_SUPPORT}
+                label={"Offline Registration"}
+                executeOnClick={() => {
+                  fetchSubnetRegToken();
+                  setOnlineActivation(!onlineActivation);
+                }}
+              />
+            ) : (
+              "Register"
+            )}
+          </Fragment>
+        }
+        actions={<React.Fragment />}
+      />
+
       <PageLayout>{uiToShow}</PageLayout>
     </Fragment>
   );

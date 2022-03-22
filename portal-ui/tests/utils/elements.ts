@@ -206,4 +206,4 @@ export const settingsAuditWebhookTab = Selector(".MuiTab-root").withAttribute(
 //----------------------------------------------------
 // Log window
 //----------------------------------------------------
-export const logWindow = Selector("#logs-container");
+export const logWindow = Selector('[data-test-id="logs-list-container"]');

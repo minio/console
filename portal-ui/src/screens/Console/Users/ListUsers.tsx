@@ -318,7 +318,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                     />
                   </SecureComponent>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} marginTop={"25px"}>
                   <HelpBox
                     title={"Users"}
                     iconComponent={<UsersIcon />}

@@ -20,7 +20,6 @@ import (
 	"crypto/rand"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -96,15 +95,6 @@ func UniqueKeys(a []string) []string {
 		}
 	}
 	return list
-}
-
-// FileExists verifies if a file exist on the desired location and its not a folder
-func FileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
 }
 
 func NewSessionCookieForConsole(token string) http.Cookie {

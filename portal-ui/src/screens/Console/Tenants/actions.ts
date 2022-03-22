@@ -37,6 +37,7 @@ import {
   ADD_TENANT_SET_LIMIT_SIZE,
   ADD_TENANT_SET_PAGE_VALID,
   ADD_TENANT_SET_STORAGE_CLASSES_LIST,
+  ADD_TENANT_SET_STORAGE_TYPE,
   ADD_TENANT_UPDATE_FIELD,
   TENANT_DETAILS_SET_CURRENT_TENANT,
   TENANT_DETAILS_SET_LOADING,
@@ -81,6 +82,14 @@ export const setStorageClassesList = (storageClasses: Opts[]) => {
   return {
     type: ADD_TENANT_SET_STORAGE_CLASSES_LIST,
     storageClasses,
+  };
+};
+
+export const setStorageType = (storageType: string, features?: string[]) => {
+  return {
+    type: ADD_TENANT_SET_STORAGE_TYPE,
+    storageType,
+    features,
   };
 };
 

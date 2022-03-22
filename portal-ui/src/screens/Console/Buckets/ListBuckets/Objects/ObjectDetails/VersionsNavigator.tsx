@@ -47,16 +47,21 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 import {
   completeObject,
+  setLoadingObjectInfo,
+  setLoadingVersions,
   setNewObject,
   setSelectedVersion,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
 
 import { AppState } from "../../../../../../store";
-import { VersionsIcon } from "../../../../../../icons";
+import { DeleteNonCurrentIcon, VersionsIcon } from "../../../../../../icons";
 import VirtualizedList from "../../../../Common/VirtualizedList/VirtualizedList";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import PreviewFileModal from "../Preview/PreviewFileModal";
+import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
+import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -109,12 +114,16 @@ interface IVersionsNavigatorProps {
   internalPaths: string;
   bucketName: string;
   searchVersions: string;
+  loadingVersions: boolean;
+  selectedVersion: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   setSelectedVersion: typeof setSelectedVersion;
+  setLoadingVersions: typeof setLoadingVersions;
+  setLoadingObjectInfo: typeof setLoadingObjectInfo;
 }
 
 const emptyFile: IFileInfo = {
@@ -136,12 +145,15 @@ const VersionsNavigator = ({
   setNewObject,
   updateProgress,
   searchVersions,
+  loadingVersions,
+  selectedVersion,
   completeObject,
   internalPaths,
   bucketName,
   setSelectedVersion,
+  setLoadingVersions,
+  setLoadingObjectInfo,
 }: IVersionsNavigatorProps) => {
-  const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
@@ -149,6 +161,9 @@ const VersionsNavigator = ({
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
   const [restoreVersion, setRestoreVersion] = useState<string>("");
   const [sortValue, setSortValue] = useState<string>("date");
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [deleteNonCurrentOpen, setDeleteNonCurrentOpen] =
+    useState<boolean>(false);
 
   // calculate object name to display
   let objectNameArray: string[] = [];
@@ -157,7 +172,7 @@ const VersionsNavigator = ({
   }
 
   useEffect(() => {
-    if (loadObjectData && internalPaths !== "") {
+    if (loadingVersions && internalPaths !== "") {
       api
         .invoke(
           "GET",
@@ -177,15 +192,16 @@ const VersionsNavigator = ({
             setVersions([]);
           }
 
-          setLoadObjectData(false);
+          setLoadingVersions(false);
         })
         .catch((error: ErrorResponseHandler) => {
           setErrorSnackMessage(error);
-          setLoadObjectData(false);
+          setLoadingVersions(false);
         });
     }
   }, [
-    loadObjectData,
+    setLoadingVersions,
+    loadingVersions,
     bucketName,
     internalPaths,
     setErrorSnackMessage,
@@ -199,6 +215,7 @@ const VersionsNavigator = ({
   const closeShareModal = () => {
     setObjectToShare(null);
     setShareFileModalOpen(false);
+    setPreviewOpen(false);
   };
 
   const downloadObject = (object: IFileInfo) => {
@@ -235,6 +252,11 @@ const VersionsNavigator = ({
     shareObject();
   };
 
+  const onPreviewItem = (item: IFileInfo) => {
+    setObjectToShare(item);
+    setPreviewOpen(true);
+  };
+
   const onRestoreItem = (item: IFileInfo) => {
     setRestoreVersion(item.version_id || "");
     setRestoreVersionOpen(true);
@@ -260,7 +282,18 @@ const VersionsNavigator = ({
     setRestoreVersion("");
 
     if (reloadObjectData) {
-      setLoadObjectData(true);
+      setLoadingVersions(true);
+      setLoadingObjectInfo(true);
+    }
+  };
+
+  const closeDeleteNonCurrent = (reloadAfterDelete: boolean) => {
+    setDeleteNonCurrentOpen(false);
+
+    if (reloadAfterDelete) {
+      setLoadingVersions(true);
+      setSelectedVersion("");
+      setLoadingObjectInfo(true);
     }
   };
 
@@ -273,23 +306,15 @@ const VersionsNavigator = ({
 
   filteredRecords.sort((a, b) => {
     switch (sortValue) {
-      case "version":
-        if (a.version_id && b.version_id) {
-          if (a.version_id < b.version_id) {
+      case "size":
+        if (a.size && b.size) {
+          if (a.size < b.size) {
             return -1;
           }
-          if (a.version_id > b.version_id) {
+          if (a.size > b.size) {
             return 1;
           }
           return 0;
-        }
-        return 0;
-      case "deleted":
-        if (a.is_delete_marker && !b.is_delete_marker) {
-          return -1;
-        }
-        if (!a.is_delete_marker && b.is_delete_marker) {
-          return 1;
         }
         return 0;
       default:
@@ -318,7 +343,9 @@ const VersionsNavigator = ({
         onDownload={onDownloadItem}
         onRestore={onRestoreItem}
         onShare={onShareItem}
+        onPreview={onPreviewItem}
         globalClick={onGlobalClick}
+        isSelected={selectedVersion === item.version_id}
       />
     );
   };
@@ -340,6 +367,35 @@ const VersionsNavigator = ({
           versionID={restoreVersion}
           objectPath={actualInfo.name}
           onCloseAndUpdate={closeRestoreModal}
+        />
+      )}
+      {previewOpen && actualInfo && (
+        <PreviewFileModal
+          open={previewOpen}
+          bucketName={bucketName}
+          object={{
+            name: actualInfo.name,
+            version_id:
+              objectToShare && objectToShare.version_id
+                ? objectToShare.version_id
+                : "null",
+            size: parseInt(
+              objectToShare && objectToShare.size ? objectToShare.size : "0"
+            ),
+            content_type: "",
+            last_modified: new Date(actualInfo.last_modified),
+          }}
+          onClosePreview={() => {
+            setPreviewOpen(false);
+          }}
+        />
+      )}
+      {deleteNonCurrentOpen && (
+        <DeleteNonCurrent
+          deleteOpen={deleteNonCurrentOpen}
+          closeDeleteModalAndRefresh={closeDeleteNonCurrent}
+          selectedBucket={bucketName}
+          selectedObject={internalPaths}
         />
       )}
       <Grid container className={classes.versionsContainer}>
@@ -383,6 +439,18 @@ const VersionsNavigator = ({
                 }
                 actions={
                   <Fragment>
+                    <RBIconButton
+                      id={"delete-non-current"}
+                      tooltip={"Delete Non Current Versions"}
+                      onClick={() => {
+                        setDeleteNonCurrentOpen(true);
+                      }}
+                      text={""}
+                      icon={<DeleteNonCurrentIcon />}
+                      color="secondary"
+                      style={{ marginRight: 15 }}
+                      disabled={versions.length <= 1}
+                    />
                     <span className={classes.sortByLabel}>Sort by</span>
                     <SelectWrapper
                       id={"sort-by"}
@@ -395,10 +463,9 @@ const VersionsNavigator = ({
                       options={[
                         { label: "Date", value: "date" },
                         {
-                          label: "Version ID",
-                          value: "version",
+                          label: "Size",
+                          value: "size",
                         },
-                        { label: "Deleted", value: "deleted" },
                       ]}
                     />
                   </Fragment>
@@ -411,7 +478,7 @@ const VersionsNavigator = ({
                 <VirtualizedList
                   rowRenderFunction={renderVersion}
                   totalItems={filteredRecords.length}
-                  defaultHeight={110}
+                  defaultHeight={108}
                 />
               )}
             </Grid>
@@ -425,6 +492,8 @@ const VersionsNavigator = ({
 const mapStateToProps = ({ system, objectBrowser }: AppState) => ({
   distributedSetup: get(system, "distributedSetup", false),
   searchVersions: objectBrowser.searchVersions,
+  loadingVersions: objectBrowser.loadingVersions,
+  selectedVersion: objectBrowser.selectedVersion,
 });
 
 const mapDispatchToProps = {
@@ -434,6 +503,8 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   setSelectedVersion,
+  setLoadingVersions,
+  setLoadingObjectInfo,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

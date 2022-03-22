@@ -35,10 +35,11 @@ import (
 type DeleteObjectURL struct {
 	BucketName string
 
-	AllVersions *bool
-	Path        string
-	Recursive   *bool
-	VersionID   *string
+	AllVersions        *bool
+	NonCurrentVersions *bool
+	Path               string
+	Recursive          *bool
+	VersionID          *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -87,6 +88,14 @@ func (o *DeleteObjectURL) Build() (*url.URL, error) {
 	}
 	if allVersionsQ != "" {
 		qs.Set("all_versions", allVersionsQ)
+	}
+
+	var nonCurrentVersionsQ string
+	if o.NonCurrentVersions != nil {
+		nonCurrentVersionsQ = swag.FormatBool(*o.NonCurrentVersions)
+	}
+	if nonCurrentVersionsQ != "" {
+		qs.Set("non_current_versions", nonCurrentVersionsQ)
 	}
 
 	pathQ := o.Path

@@ -34,6 +34,8 @@ export const ADD_TENANT_RESET_FORM = "ADD_TENANT/RESET_FORM";
 export const ADD_TENANT_SET_STORAGE_CLASSES_LIST =
   "ADD_TENANT/SET_STORAGE_CLASSES_LIST";
 export const ADD_TENANT_SET_LIMIT_SIZE = "ADD_TENANT/SET_LIMIT_SIZE";
+export const ADD_TENANT_SET_STORAGE_TYPE =
+  "ADD_TENANT/ADD_TENANT_SET_STORAGE_TYPE";
 
 // Security
 export const ADD_TENANT_ADD_MINIO_KEYPAIR = "ADD_TENANT/ADD_MINIO_KEYPAIR";
@@ -302,6 +304,7 @@ export interface ITenantSizeFields {
   ecParity: string;
   ecParityChoices: Opts[];
   cleanECChoices: string[];
+  untouchedECField: boolean;
   resourcesSize: IResourcesSize;
   distribution: any;
   ecParityCalc: IErasureCodeCalc;
@@ -387,6 +390,12 @@ interface SetStorageClassesList {
 interface SetLimitSize {
   type: typeof ADD_TENANT_SET_LIMIT_SIZE;
   limitSize: any;
+}
+
+export interface SetStorageType {
+  type: typeof ADD_TENANT_SET_STORAGE_TYPE;
+  storageType: string;
+  features?: string[];
 }
 
 interface AddMinioKeyPair {
@@ -518,6 +527,7 @@ export type TenantsManagementTypes =
   | UpdateATField
   | SetPageValid
   | SetStorageClassesList
+  | SetStorageType
   | SetLimitSize
   | AddMinioKeyPair
   | DeleteMinioKeyPair

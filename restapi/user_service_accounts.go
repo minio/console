@@ -128,7 +128,6 @@ func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy str
 		}
 		iamPolicy = iamp
 	}
-
 	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", "", "")
 	if err != nil {
 		return nil, err
@@ -148,12 +147,11 @@ func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, polic
 		}
 		iamPolicy = iamp
 	}
-
 	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", accessKey, secretKey)
 	if err != nil {
 		return nil, err
 	}
-	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey}, nil
+	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey, URL: getMinIOServer()}, nil
 }
 
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that
@@ -214,7 +212,7 @@ func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, 
 	if err != nil {
 		return nil, err
 	}
-	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey}, nil
+	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey, URL: getMinIOServer()}, nil
 }
 
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that

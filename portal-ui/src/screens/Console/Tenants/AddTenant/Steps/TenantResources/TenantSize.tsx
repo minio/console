@@ -45,6 +45,7 @@ import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/I
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import TenantSizeResources from "./TenantSizeResources";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import { IMkEnvs } from "./utils";
 
 interface ITenantSizeProps {
   classes: any;
@@ -63,6 +64,9 @@ interface ITenantSizeProps {
   ecParityCalc: IErasureCodeCalc;
   limitSize: any;
   selectedStorageClass: string;
+  untouchedECField: boolean;
+  formToRender?: IMkEnvs;
+  selectedStorageType: string;
 }
 
 const styles = (theme: Theme) =>
@@ -104,6 +108,9 @@ const TenantSize = ({
   ecParityCalc,
   limitSize,
   selectedStorageClass,
+  untouchedECField,
+  formToRender,
+  selectedStorageType,
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
@@ -124,6 +131,23 @@ const TenantSize = ({
   /*Debounce functions*/
 
   // Storage Quotas
+  useEffect(() => {
+    if (cleanECChoices.length > 0 && ecParityCalc.defaultEC !== "") {
+      updateField(
+        "ecParityChoices",
+        ecListTransform(cleanECChoices, ecParityCalc.defaultEC)
+      );
+    }
+  }, [ecParityCalc, cleanECChoices, updateField]);
+
+  useEffect(() => {
+    if (ecParity !== "" && ecParityCalc.defaultEC !== ecParity) {
+      updateField("untouchedECField", false);
+      return;
+    }
+
+    updateField("untouchedECField", true);
+  }, [ecParity, ecParityCalc, updateField]);
 
   useEffect(() => {
     if (ecParityChoices.length > 0 && distribution.error === "") {
@@ -135,6 +159,7 @@ const TenantSize = ({
       );
 
       updateField("ecParityCalc", ecCodeValidated);
+
       if (!cleanECChoices.includes(ecParity) || ecParity === "") {
         updateField("ecParity", ecCodeValidated.defaultEC);
       }
@@ -145,6 +170,7 @@ const TenantSize = ({
     distribution,
     cleanECChoices,
     updateField,
+    untouchedECField,
   ]);
   /*End debounce functions*/
 
@@ -153,7 +179,7 @@ const TenantSize = ({
     //Validate Cluster Size
     const size = volumeSize;
     const factor = sizeFactor;
-    const limitSize = getBytes("12", "Ti", true);
+    const limitSize = getBytes("16", "Ti", true);
 
     const clusterCapacity: ICapacity = {
       unit: factor,
@@ -164,13 +190,23 @@ const TenantSize = ({
       clusterCapacity,
       parseInt(nodes),
       parseInt(limitSize),
-      parseInt(drivesPerServer)
+      parseInt(drivesPerServer),
+      formToRender,
+      selectedStorageType
     );
 
     updateField("distribution", distrCalculate);
     setErrorFlag(false);
     setNodeError("");
-  }, [nodes, volumeSize, sizeFactor, updateField, drivesPerServer]);
+  }, [
+    nodes,
+    volumeSize,
+    sizeFactor,
+    updateField,
+    drivesPerServer,
+    selectedStorageType,
+    formToRender,
+  ]);
 
   /*Calculate Allocation End*/
 
@@ -245,6 +281,9 @@ const TenantSize = ({
           .then((ecList: string[]) => {
             updateField("ecParityChoices", ecListTransform(ecList));
             updateField("cleanECChoices", ecList);
+            if (untouchedECField) {
+              updateField("ecParity", "");
+            }
           })
           .catch((err: any) => {
             updateField("ecparityChoices", []);
@@ -253,7 +292,7 @@ const TenantSize = ({
           });
       }
     }
-  }, [distribution, isPageValid, updateField, nodes]);
+  }, [distribution, isPageValid, updateField, nodes, untouchedECField]);
 
   /* End Validation of pages */
 
@@ -364,23 +403,28 @@ const TenantSize = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
-  sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
-  drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
-  nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-  memoryNode: state.tenants.createTenant.fields.tenantSize.memoryNode,
-  ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
-  ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
-  cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
-
-  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
-  distribution: state.tenants.createTenant.fields.tenantSize.distribution,
-  ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
-  limitSize: state.tenants.createTenant.limitSize,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-});
+const mapState = (state: AppState) => {
+  const tenantSize = state.tenants.createTenant.fields.tenantSize;
+  return {
+    volumeSize: tenantSize.volumeSize,
+    sizeFactor: tenantSize.sizeFactor,
+    drivesPerServer: tenantSize.drivesPerServer,
+    nodes: tenantSize.nodes,
+    memoryNode: tenantSize.memoryNode,
+    ecParity: tenantSize.ecParity,
+    ecParityChoices: tenantSize.ecParityChoices,
+    cleanECChoices: tenantSize.cleanECChoices,
+    resourcesSize: tenantSize.resourcesSize,
+    distribution: tenantSize.distribution,
+    ecParityCalc: tenantSize.ecParityCalc,
+    untouchedECField: tenantSize.untouchedECField,
+    limitSize: state.tenants.createTenant.limitSize,
+    selectedStorageClass:
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+    selectedStorageType:
+      state.tenants.createTenant.fields.nameTenant.selectedStorageType,
+  };
+};
 
 const connector = connect(mapState, {
   updateAddField,

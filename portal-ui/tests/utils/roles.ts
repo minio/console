@@ -53,6 +53,39 @@ export const bucketWrite = Role(
   { preserveUrl: true }
 );
 
+export const bucketReadWrite = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "bucketreadwrite-" + unixTimestamp)
+      .typeText("#secretKey", "bucketreadwrite")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);
+
+export const bucketObjectTags = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "bucketobjecttags-" + unixTimestamp)
+      .typeText("#secretKey", "bucketobjecttags")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);
+
+export const bucketCannotTag = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "bucketcannottag-" + unixTimestamp)
+      .typeText("#secretKey", "bucketcannottag")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);
+
 export const bucketSpecific = Role(
   loginUrl,
   async (t) => {

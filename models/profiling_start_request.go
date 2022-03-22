@@ -38,7 +38,7 @@ type ProfilingStartRequest struct {
 
 	// type
 	// Required: true
-	Type *ProfilerType `json:"type"`
+	Type *string `json:"type"`
 }
 
 // Validate validates this profiling start request
@@ -61,51 +61,11 @@ func (m *ProfilingStartRequest) validateType(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Required("type", "body", m.Type); err != nil {
-		return err
-	}
-
-	if m.Type != nil {
-		if err := m.Type.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("type")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("type")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
-// ContextValidate validate this profiling start request based on the context it is used
+// ContextValidate validates this profiling start request based on context it is used
 func (m *ProfilingStartRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateType(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *ProfilingStartRequest) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Type != nil {
-		if err := m.Type.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("type")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("type")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

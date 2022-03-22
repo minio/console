@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../../../../actions";
@@ -32,6 +32,7 @@ interface IDeleteObjectProps {
   selectedBucket: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   versioning: boolean;
+  selectedVersion?: string;
 }
 
 const DeleteObject = ({
@@ -41,6 +42,7 @@ const DeleteObject = ({
   selectedObject,
   setErrorSnackMessage,
   versioning,
+  selectedVersion = "",
 }: IDeleteObjectProps) => {
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
@@ -57,7 +59,11 @@ const DeleteObject = ({
     const recursive = decodedSelectedObject.endsWith("/");
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&recursive=${recursive}&all_versions=${deleteVersions}`
+      `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}${
+        selectedVersion !== ""
+          ? `&version_id=${selectedVersion}`
+          : `&recursive=${recursive}&all_versions=${deleteVersions}`
+      }`
     );
   };
 
@@ -72,9 +78,22 @@ const DeleteObject = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete:{" "}
-          <b>{decodeFileName(selectedObject)}</b>? <br />
-          {versioning && (
+          Are you sure you want to delete: <br />
+          <b>{decodeFileName(selectedObject)}</b>{" "}
+          {selectedVersion !== "" ? (
+            <Fragment>
+              <br />
+              <br />
+              Version ID:
+              <br />
+              <strong>{selectedVersion}</strong>
+            </Fragment>
+          ) : (
+            ""
+          )}
+          ? <br />
+          <br />
+          {versioning && selectedVersion === "" && (
             <FormSwitchWrapper
               label={"Delete All Versions"}
               indicatorLabels={["Yes", "No"]}

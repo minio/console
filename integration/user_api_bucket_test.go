@@ -232,25 +232,23 @@ func PutObjectTags(bucketName string, prefix string, tags map[string]string, ver
 
 func DeleteMultipleObjects(bucketName string, files []map[string]interface{}) (*http.Response, error) {
 	/*
-	   Helper function to delete multiple objects in a container.
-	   POST: /buckets/{bucket_name}/delete-objects
-	   files: [
-	     {
-	       "path": "veniam tempor in",
-	       "versionID": "ea dolor Duis",
-	       "recursive": false
-	     },
-	     {
-	       "path": "proident eu esse",
-	       "versionID": "eiusmod amet commodo",
-	       "recursive": true
-	       }
-	   ]
+		Helper function to delete multiple objects in a container.
+		POST: /buckets/{bucket_name}/delete-objects
+		Example of the data being sent:
+		[
+			{
+				"path": "testdeletemultipleobjs1.txt",
+				"versionID": "",
+				"recursive": false
+			},
+			{
+				"path": "testdeletemultipleobjs2.txt",
+				"versionID": "",
+				"recursive": false
+			},
+		]
 	*/
-	requestDataAdd := map[string]interface{}{
-		"files": files,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataJSON, _ := json.Marshal(files)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
 		"POST",
@@ -656,7 +654,7 @@ func PutObjectsLegalholdStatus(bucketName string, prefix string, status string, 
 }
 
 func TestPutObjectsLegalholdStatus(t *testing.T) {
-	printStartFunc("TestPutObjectsLegalholdStatus")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testputobjectslegalholdstatus"
@@ -744,11 +742,11 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestPutObjectsLegalholdStatus")
+
 }
 
 func TestGetBucketQuota(t *testing.T) {
-	printStartFunc("TestGetBucketQuota")
+
 	// Variables
 	assert := assert.New(t)
 	validBucket := "testgetbucketquota"
@@ -823,11 +821,11 @@ func TestGetBucketQuota(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestGetBucketQuota")
+
 }
 
 func TestPutBucketQuota(t *testing.T) {
-	printStartFunc("TestPutBucketQuota")
+
 	// Variables
 	assert := assert.New(t)
 	validBucket := "testputbucketquota"
@@ -884,11 +882,11 @@ func TestPutBucketQuota(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestPutBucketQuota")
+
 }
 
 func TestListBucketEvents(t *testing.T) {
-	printStartFunc("TestListBucketEvents")
+
 	// Variables
 	assert := assert.New(t)
 	validBucket := "testlistbucketevents"
@@ -944,11 +942,11 @@ func TestListBucketEvents(t *testing.T) {
 
 		})
 	}
-	printEndFunc("TestListBucketEvents")
+
 }
 
 func TestDeleteObjectsRetentionStatus(t *testing.T) {
-	printStartFunc("TestDeleteObjectsRetentionStatus")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testdeleteobjectslegalholdstatus"
@@ -1055,11 +1053,11 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestDeleteObjectsRetentionStatus")
+
 }
 
 func TestBucketSetPolicy(t *testing.T) {
-	printStartFunc("TestBucketSetPolicy")
+
 	// Variables
 	assert := assert.New(t)
 	validBucketName := "testbucketsetpolicy"
@@ -1118,11 +1116,11 @@ func TestBucketSetPolicy(t *testing.T) {
 
 		})
 	}
-	printEndFunc("TestBucketSetPolicy")
+
 }
 
 func TestRestoreObjectToASelectedVersion(t *testing.T) {
-	printStartFunc("TestRestoreObjectToASelectedVersion")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testrestoreobjectstoselectedversion"
@@ -1210,11 +1208,11 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestRestoreObjectToASelectedVersion")
+
 }
 
 func TestPutBucketsTags(t *testing.T) {
-	printStartFunc("TestPutBucketsTags")
+
 	// Focused test for "Put Bucket's tags" endpoint
 
 	// 1. Create the bucket
@@ -1268,11 +1266,11 @@ func TestPutBucketsTags(t *testing.T) {
 
 		})
 	}
-	printEndFunc("TestPutBucketsTags")
+
 }
 
 func TestGetsTheMetadataOfAnObject(t *testing.T) {
-	printStartFunc("TestGetsTheMetadataOfAnObject")
+
 	// Vars
 	assert := assert.New(t)
 	bucketName := "testgetsthemetadataofanobject"
@@ -1345,11 +1343,11 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 
 		})
 	}
-	printEndFunc("TestGetsTheMetadataOfAnObject")
+
 }
 
 func TestPutObjectsRetentionStatus(t *testing.T) {
-	printStartFunc("TestPutObjectsRetentionStatus")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testputobjectsretentionstatus"
@@ -1438,14 +1436,14 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestPutObjectsRetentionStatus")
+
 }
 
 func TestShareObjectOnURL(t *testing.T) {
 	/*
 		Test to share an object via URL
 	*/
-	printStartFunc("TestShareObjectOnURL")
+
 	// Vars
 	assert := assert.New(t)
 	bucketName := "testshareobjectonurl"
@@ -1519,14 +1517,14 @@ func TestShareObjectOnURL(t *testing.T) {
 
 		})
 	}
-	printEndFunc("TestShareObjectOnURL")
+
 }
 
 func TestListObjects(t *testing.T) {
 	/*
 	   To test list objects end point.
 	*/
-	printStartFunc("TestListObjects")
+
 	// Test's variables
 	assert := assert.New(t)
 	bucketName := "testlistobjecttobucket1"
@@ -1566,14 +1564,14 @@ func TestListObjects(t *testing.T) {
 	assert.True(
 		strings.Contains(finalResponse, "testlistobjecttobucket1"),
 		finalResponse)
-	printEndFunc("TestListObjects")
+
 }
 
 func TestDeleteObject(t *testing.T) {
 	/*
 	   Test to delete an object from a given bucket.
 	*/
-	printStartFunc("TestDeleteObject")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testdeleteobjectbucket1"
@@ -1635,14 +1633,14 @@ func TestDeleteObject(t *testing.T) {
 		strings.Contains(
 			finalResponse,
 			"testdeleteobjectfile1.txt"), finalResponse) // Gone
-	printEndFunc("TestDeleteObject")
+
 }
 
 func TestUploadObjectToBucket(t *testing.T) {
 	/*
 		Function to test the upload of an object to a bucket.
 	*/
-	printStartFunc("TestUploadObjectToBucket")
+
 	// Test's variables
 	assert := assert.New(t)
 	bucketName := "testuploadobjecttobucket1"
@@ -1666,14 +1664,14 @@ func TestUploadObjectToBucket(t *testing.T) {
 	if uploadResponse != nil {
 		assert.Equal(200, uploadResponse.StatusCode, finalResponse)
 	}
-	printEndFunc("TestUploadObjectToBucket")
+
 }
 
 func TestDownloadObject(t *testing.T) {
 	/*
 	   Test to download an object from a given bucket.
 	*/
-	printStartFunc("TestDownloadObject")
+
 	// Vars
 	assert := assert.New(t)
 	bucketName := "testdownloadobjbucketone"
@@ -1733,14 +1731,14 @@ func TestDownloadObject(t *testing.T) {
 		// path/to/whatever does not exist
 		assert.Fail("File wasn't downloaded")
 	}
-	printEndFunc("TestDownloadObject")
+
 }
 
 func TestDeleteMultipleObjects(t *testing.T) {
 	/*
 	   Function to test the deletion of multiple objects from a given bucket.
 	*/
-	printStartFunc("TestDeleteMultipleObjects")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testdeletemultipleobjsbucket1"
@@ -1767,20 +1765,29 @@ func TestDeleteMultipleObjects(t *testing.T) {
 		}
 	}
 
-	// 3. Delete these objects
+	// Prepare the files for deletion
+	files := make([]map[string]interface{}, numberOfFiles)
 	for i := 1; i <= numberOfFiles; i++ {
-		deleteResponse, deleteError := DeleteObject(
-			bucketName, encodeBase64(
-				fileName+strconv.Itoa(i)+".txt"), false, false)
-		assert.Nil(deleteError)
-		if deleteError != nil {
-			log.Println(deleteError)
-			return
+		files[i-1] = map[string]interface{}{
+			"path":      fileName + strconv.Itoa(i) + ".txt",
+			"versionID": "",
+			"recursive": false,
 		}
-		if deleteResponse != nil {
-			assert.Equal(200, deleteResponse.StatusCode,
-				inspectHTTPResponse(deleteResponse))
-		}
+	}
+
+	// 3. Delete these objects all at once
+	deleteResponse, deleteError := DeleteMultipleObjects(
+		bucketName,
+		files,
+	)
+	assert.Nil(deleteError)
+	if deleteError != nil {
+		log.Println(deleteError)
+		return
+	}
+	if deleteResponse != nil {
+		assert.Equal(200, deleteResponse.StatusCode,
+			inspectHTTPResponse(deleteResponse))
 	}
 
 	// 4. List the objects, empty list is expected!
@@ -1799,14 +1806,14 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	// 5. Verify empty list is obtained as we deleted all the objects
 	expected := "Http Response: {\"objects\":null}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
-	printEndFunc("TestDeleteMultipleObjects")
+
 }
 
 func TestPutObjectTag(t *testing.T) {
 	/*
 		Test to put a tag to an object
 	*/
-	printStartFunc("TestPutObjectTag")
+
 	// Vars
 	assert := assert.New(t)
 	bucketName := "testputobjecttagbucketone"
@@ -1865,14 +1872,14 @@ func TestPutObjectTag(t *testing.T) {
 	assert.True(
 		strings.Contains(finalResponse, tags["tag"]),
 		finalResponse)
-	printEndFunc("TestPutObjectTag")
+
 }
 
 func TestBucketRetention(t *testing.T) {
 	/*
 		To test bucket retention feature
 	*/
-	printStartFunc("TestBucketRetention")
+
 	// 1. Create the bucket with 2 years validity retention
 	assert := assert.New(t)
 	/*
@@ -1934,14 +1941,14 @@ func TestBucketRetention(t *testing.T) {
 	}
 	expected := "Http Response: {\"mode\":\"compliance\",\"unit\":\"years\",\"validity\":3}\n"
 	assert.Equal(expected, finalResponse, finalResponse)
-	printEndFunc("TestBucketRetention")
+
 }
 
 func TestBucketInformationGenericErrorResponse(t *testing.T) {
 	/*
 		Test Bucket Info End Point with a Generic Error Response.
 	*/
-	printStartFunc("TestBucketInformationGenericErrorResponse")
+
 	// 1. Create the bucket
 	assert := assert.New(t)
 	if !BucketGotAdded("bucketinformation2", false, false, nil, nil, assert, 201) {
@@ -1980,14 +1987,14 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 	// Since bucketinformation3 hasn't been created, then it is expected that
 	// tag2 is not part of the response, this is why assert.False is used.
 	assert.False(strings.Contains(finalResponse, "tag2"), finalResponse)
-	printEndFunc("TestBucketInformationGenericErrorResponse")
+
 }
 
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	/*
 		Test Bucket Info End Point with a Successful Response.
 	*/
-	printStartFunc("TestBucketInformationSuccessfulResponse")
+
 	// 1. Create the bucket
 	assert := assert.New(t)
 	if !BucketGotAdded("bucketinformation1", false, false, nil, nil, assert, 201) {
@@ -2022,7 +2029,7 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 		assert.Equal(200, bucketInfoResponse.StatusCode,
 			debugResponse)
 	}
-	printMessage(debugResponse)
+	fmt.Println(debugResponse)
 
 	// 4. Verify the information
 	assert.True(
@@ -2031,14 +2038,14 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	assert.True(
 		strings.Contains(debugResponse, "tag1"),
 		inspectHTTPResponse(bucketInfoResponse))
-	printEndFunc("TestBucketInformationSuccessfulResponse")
+
 }
 
 func TestDeleteBucket(t *testing.T) {
 	/*
 		Test to delete a bucket
 	*/
-	printStartFunc("TestDeleteBucket")
+
 	// 1. Create the bucket
 	assert := assert.New(t)
 	if !BucketGotAdded("testdeletebucket1", false, false, nil, nil, assert, 201) {
@@ -2075,14 +2082,14 @@ func TestDeleteBucket(t *testing.T) {
 	}
 	assert.True(
 		strings.Contains(finalResponse, "The specified bucket does not exist"))
-	printEndFunc("TestDeleteBucket")
+
 }
 
 func TestListBuckets(t *testing.T) {
 	/*
 		Test the list of buckets without query parameters.
 	*/
-	printStartFunc("TestListBuckets")
+
 	assert := assert.New(t)
 
 	// 1. Create buckets
@@ -2115,11 +2122,11 @@ func TestListBuckets(t *testing.T) {
 		assert.True(strings.Contains(string(b),
 			"testlistbuckets"+strconv.Itoa(i)))
 	}
-	printEndFunc("TestListBuckets")
+
 }
 
 func TestBucketsGet(t *testing.T) {
-	printStartFunc("TestListBuckets")
+
 	assert := assert.New(t)
 
 	client := &http.Client{
@@ -2157,11 +2164,11 @@ func TestBucketsGet(t *testing.T) {
 		assert.Greater(listBuckets.Total, int64(0), "Total buckets is 0")
 
 	}
-	printEndFunc("TestListBuckets")
+
 }
 
 func TestBucketVersioning(t *testing.T) {
-	printStartFunc("TestBucketVersioning")
+
 	assert := assert.New(t)
 
 	client := &http.Client{
@@ -2261,11 +2268,11 @@ func TestBucketVersioning(t *testing.T) {
 	if response != nil {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 	}
-	printEndFunc("TestBucketVersioning")
+
 }
 
 func TestSetBucketTags(t *testing.T) {
-	printStartFunc("TestSetBucketTags")
+
 	assert := assert.New(t)
 
 	client := &http.Client{
@@ -2331,11 +2338,11 @@ func TestSetBucketTags(t *testing.T) {
 	}
 
 	assert.Equal("TAG", bucket.Details.Tags["test"], "Failed to add tag")
-	printEndFunc("TestSetBucketTags")
+
 }
 
 func TestGetBucket(t *testing.T) {
-	printStartFunc("TestGetBucket")
+
 	assert := assert.New(t)
 
 	client := &http.Client{
@@ -2366,11 +2373,11 @@ func TestGetBucket(t *testing.T) {
 	if response != nil {
 		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
 	}
-	printEndFunc("TestGetBucket")
+
 }
 
 func TestAddBucket(t *testing.T) {
-	printStartFunc("TestAddBucket")
+
 	assert := assert.New(t)
 	type args struct {
 		bucketName string
@@ -2402,7 +2409,7 @@ func TestAddBucket(t *testing.T) {
 			}
 		})
 	}
-	printEndFunc("TestAddBucket")
+
 }
 
 func CreateBucketEvent(bucketName string, ignoreExisting bool, arn string, prefix string, suffix string, events []string) (*http.Response, error) {
@@ -2484,7 +2491,7 @@ func DeleteBucketEvent(bucketName string, arn string, events []string, prefix st
 }
 
 func TestDeleteBucketEvent(t *testing.T) {
-	printStartFunc("TestDeleteBucketEvent")
+
 	// Variables
 	assert := assert.New(t)
 
@@ -2564,7 +2571,7 @@ func TestDeleteBucketEvent(t *testing.T) {
 			efinalResponseEvent,
 		)
 	}
-	printEndFunc("TestDeleteBucketEvent")
+
 }
 
 func SetMultiBucketReplication(accessKey string, secretKey string, targetURL string, region string, originBucket string, destinationBucket string, syncMode string, bandwidth int, healthCheckPeriod int, prefix string, tags string, replicateDeleteMarkers bool, replicateDeletes bool, priority int, storageClass string, replicateMetadata bool) (*http.Response, error) {
@@ -2705,7 +2712,7 @@ func DeleteBucketReplicationRule(bucketName string, ruleID string) (*http.Respon
 }
 
 func TestReplication(t *testing.T) {
-	printStartFunc("TestReplication")
+
 	// Vars
 	assert := assert.New(t)
 	originBucket := "testputobjectslegalholdstatus"
@@ -2763,6 +2770,10 @@ func TestReplication(t *testing.T) {
 		assert.Nil(err)
 	}
 
+	assert.Greater(len(structBucketRepl.Rules), 0, "Number of expected rules is 0")
+	if len(structBucketRepl.Rules) == 0 {
+		return
+	}
 	// 4. Verify rules are enabled
 	for index := 0; index < 2; index++ {
 		Status := structBucketRepl.Rules[index].Status
@@ -2800,7 +2811,7 @@ func TestReplication(t *testing.T) {
 	if response != nil {
 		assert.Equal(204, response.StatusCode, finalResponse)
 	}
-	printEndFunc("TestReplication")
+
 }
 
 func GetBucketVersioning(bucketName string) (*http.Response, error) {
@@ -2839,7 +2850,7 @@ func BaseGetFunction(bucketName string, endPoint string) (*http.Response, error)
 
 func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
 	// Test for end point: /buckets/{bucket_name}/object-locking
-	printStartFunc("TestReturnsTheStatusOfObjectLockingSupportOnTheBucket")
+
 	// Vars
 	assert := assert.New(t)
 	bucketName := "testputobjectslegalholdstatus"
@@ -2870,7 +2881,7 @@ func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
 		true,
 		structBucketLocking,
 	)
-	printEndFunc("TestReturnsTheStatusOfObjectLockingSupportOnTheBucket")
+
 }
 
 func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, error) {
@@ -2898,7 +2909,7 @@ func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, er
 }
 
 func TestSetBucketVersioning(t *testing.T) {
-	printStartFunc("TestSetBucketVersioning")
+
 	// Variables
 	assert := assert.New(t)
 	bucket := "test-set-bucket-versioning"
@@ -2941,7 +2952,7 @@ func TestSetBucketVersioning(t *testing.T) {
 		assert.Nil(err)
 	}
 	assert.Equal(false, result.IsVersioned, result)
-	printEndFunc("TestSetBucketVersioning")
+
 }
 
 func EnableBucketEncryption(bucketName string, encType string, kmsKeyID string) (*http.Response, error) {
@@ -2978,7 +2989,7 @@ func EnableBucketEncryption(bucketName string, encType string, kmsKeyID string) 
 }
 
 func TestEnableBucketEncryption(t *testing.T) {
-	printStartFunc("TestEnableBucketEncryption")
+
 	// Variables
 	assert := assert.New(t)
 	bucketName := "test-enable-bucket-encryption"
@@ -3023,7 +3034,6 @@ func TestEnableBucketEncryption(t *testing.T) {
 		assert.Nil(err)
 	}
 	assert.Equal("AES256", result.Algorithm, result)
-	printEndFunc("TestEnableBucketEncryption")
 
 	// 4. Disable Bucket's Encryption
 	resp, err = DisableBucketEncryption(bucketName)
@@ -3057,7 +3067,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 	}
 	dereferencedPointerDetailedMessage := *result2.DetailedMessage
 	assert.Equal("error server side encryption configuration not found", dereferencedPointerDetailedMessage, dereferencedPointerDetailedMessage)
-	printEndFunc("TestEnableBucketEncryption")
+
 }
 
 func GetBucketEncryptionInformation(bucketName string) (*http.Response, error) {
@@ -3102,4 +3112,464 @@ func DisableBucketEncryption(bucketName string) (*http.Response, error) {
 	}
 	response, err := client.Do(request)
 	return response, err
+}
+
+func UpdateLifecycleRule(bucketName string, Type string, disable bool, prefix string, tags string, expiredObjectDeleteMarker bool, expiryDays int64, noncurrentversionExpirationDays int64, lifecycleID string) (*http.Response, error) {
+	/*
+		Helper function to update lifecycle rule
+		HTTP Verb: PUT
+		URL: /buckets/{bucket_name}/lifecycle/{lifecycle_id}
+		Body Example:
+		{
+			"type":"expiry",
+			"disable":false,
+			"prefix":"",
+			"tags":"",
+			"expired_object_delete_marker":false,
+			"expiry_days":2,
+			"noncurrentversion_expiration_days":0
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"type":                              Type,
+		"disable":                           disable,
+		"prefix":                            prefix,
+		"tags":                              tags,
+		"expired_object_delete_marker":      expiredObjectDeleteMarker,
+		"expiry_days":                       expiryDays,
+		"noncurrentversion_expiration_days": noncurrentversionExpirationDays,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest("PUT",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle/"+lifecycleID,
+		requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func GetBucketLifeCycle(bucketName string) (*http.Response, error) {
+	/*
+		Get Bucket Lifecycle
+		HTTP Verb: GET
+		URL: /buckets/{bucket_name}/lifecycle
+		Response Example:
+		{
+			"lifecycle": [
+				{
+					"expiration": {
+						"date": "0001-01-01T00:00:00Z",
+						"days": 1
+					},
+					"id": "c8nmpte49b3m6uu3pac0",
+					"status": "Enabled",
+					"tags": null,
+					"transition": {
+						"date": "0001-01-01T00:00:00Z"
+					}
+				}
+			]
+		}
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func AddBucketLifecycle(bucketName string, Type string, prefix string, tags string, expiredObjectDeleteMarker bool, expiryDays int64, noncurrentversionExpirationDays int64) (*http.Response, error) {
+	/*
+		Helper function to add bucket lifecycle
+		URL: /buckets/{bucket_name}/lifecycle
+		HTTP Verb: POST
+		Body Example:
+		{
+			"type":"expiry",
+			"prefix":"",
+			"tags":"",
+			"expired_object_delete_marker":false,
+			"expiry_days":1,
+			"noncurrentversion_expiration_days":null
+		}
+	*/
+	// Needed Parameters for API Call
+	requestDataAdd := map[string]interface{}{
+		"type":                              Type,
+		"prefix":                            prefix,
+		"tags":                              tags,
+		"expired_object_delete_marker":      expiredObjectDeleteMarker,
+		"expiry_days":                       expiryDays,
+		"noncurrentversion_expiration_days": noncurrentversionExpirationDays,
+	}
+
+	// Creating the Call by adding the URL and Headers
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteLifecycleRule(bucketName string, lifecycleID string) (*http.Response, error) {
+	/*
+		Helper function to delete lifecycle rule
+		HTTP Verb: DELETE
+		URL: /buckets/{bucket_name}/lifecycle/{lifecycle_id}
+	*/
+	request, err := http.NewRequest(
+		"DELETE", "http://localhost:9090/api/v1/buckets/"+bucketName+"/lifecycle/"+lifecycleID, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestBucketLifeCycle(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "test-bucket-life-cycle"
+	locking := false
+	versioning := false
+	Type := "expiry"
+	prefix := ""
+	tags := ""
+	var expiryDays int64 = 1
+	var expiryDays2 int64 = 2
+	disable := false
+	expiredObjectDeleteMarker := false
+	var noncurrentversionExpirationDays int64
+
+	// 1. Add bucket
+	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Add Bucket Lifecycle
+	resp, err := AddBucketLifecycle(
+		bucketName,
+		Type,
+		prefix,
+		tags,
+		expiredObjectDeleteMarker,
+		expiryDays,
+		noncurrentversionExpirationDays,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			201, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. Get Bucket LifeCycle
+	resp, err = GetBucketLifeCycle(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	result := models.BucketLifecycleResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	Status := &result.Lifecycle[0].Status
+	Days := &result.Lifecycle[0].Expiration.Days
+	lifecycleID := &result.Lifecycle[0].ID
+	assert.Equal(expiryDays, *Days, *Days)    // Checking it is one day expiration
+	assert.Equal("Enabled", *Status, *Status) // Checking it's enabled
+
+	// 4. Update from 1 day expiration to 2 days expiration
+	resp, err = UpdateLifecycleRule(
+		bucketName,
+		Type,
+		disable,
+		prefix,
+		tags,
+		expiredObjectDeleteMarker,
+		expiryDays2,
+		noncurrentversionExpirationDays,
+		*lifecycleID,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 5. Verify 2 expiration days got updated
+	resp, err = GetBucketLifeCycle(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	result = models.BucketLifecycleResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	Days = &result.Lifecycle[0].Expiration.Days
+	assert.Equal(expiryDays2, *Days, *Days) // Checking it is two days expiration
+
+	// 6. Delete Bucket Lifecycle
+	resp, err = DeleteLifecycleRule(bucketName, *lifecycleID)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			204, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 6. Verify bucket lifecycle got deleted
+	resp, err = GetBucketLifeCycle(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			404, resp.StatusCode, "Status Code is incorrect")
+	}
+
+}
+
+func SetAccessRuleWithBucket(bucketName string, prefix string, access string) (*http.Response, error) {
+	/*
+		Helper function to Set Access Rule within Bucket
+		HTTP Verb: PUT
+		URL: /bucket/{bucket}/access-rules
+		Data Example:
+		{
+			"prefix":"prefix",
+			"access":"readonly"
+		}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"prefix": prefix,
+		"access": access,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT",
+		"http://localhost:9090/api/v1/bucket/"+bucketName+"/access-rules",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ListAccessRulesWithBucket(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to List Access Rules Within Bucket
+		HTTP Verb: GET
+		URL: /bucket/{bucket}/access-rules
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/bucket/"+bucketName+"/access-rules", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteAccessRuleWithBucket(bucketName string, prefix string) (*http.Response, error) {
+	/*
+		Helper function to Delete Access Rule With Bucket
+		HTTP Verb: DELETE
+		URL: /bucket/{bucket}/access-rules
+		Data Example: {"prefix":"prefix"}
+	*/
+	requestDataAdd := map[string]interface{}{
+		"prefix": prefix,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/bucket/"+bucketName+"/access-rules",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestAccessRule(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "test-access-rule-bucket"
+	locking := false
+	versioning := false
+	prefix := "prefix"
+	access := "readonly"
+
+	// 1. Add bucket
+	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Set Access Rule With Bucket
+	resp, err := SetAccessRuleWithBucket(
+		bucketName,
+		prefix,
+		access,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 3. List Access Rule
+	resp, err = ListAccessRulesWithBucket(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	result := models.ListAccessRulesResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	Access := &result.AccessRules[0].Access
+	Prefix := &result.AccessRules[0].Prefix
+	assert.Equal("readonly", *Access, *Access)
+	assert.Equal("prefix", *Prefix, *Prefix)
+
+	// 4. Delete Access Rule
+	resp, err = DeleteAccessRuleWithBucket(
+		bucketName,
+		prefix,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 5. Verify access rule was deleted
+	resp, err = ListAccessRulesWithBucket(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	result = models.ListAccessRulesResponse{}
+	err = json.Unmarshal(bodyBytes, &result)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	AccessRules := &result.AccessRules // The array has to be empty, no index accessible
+	if len(*AccessRules) == 0 {
+		fmt.Println("Cool, access rules are gone from this bucket")
+	} else {
+		assert.Fail("Access Rule not deleted")
+	}
+
 }

@@ -20,29 +20,48 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { BackSettingsIcon } from "../icons";
+import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
     link: {
-      display: "flex",
-      alignItems: "center",
+      display: "block",
       textDecoration: "none",
-      maxWidth: "300px",
-      padding: "2rem 2rem 0rem 2rem",
-      color: theme.palette.primary.light,
-      fontSize: ".8rem",
-      "&:hover": {
-        textDecoration: "underline",
+      "&:active": {
+        color: theme.palette.primary.light,
       },
     },
-    icon: {
-      marginRight: ".3rem",
+    iconBox: {
       display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      "& svg.min-icon": {
-        width: 12,
+      flexDirection: "row",
+      "&:hover": {
+        background: "rgba(234,237,238)",
       },
+      height: "30px",
+      paddingBottom: 4,
+      paddingTop: 8,
+      paddingRight: 16,
+      paddingLeft: 0,
+      borderRadius: 4,
+    },
+    icon: {
+      lineHeight: 1,
+      marginRight: "14px",
+      alignItems: "center",
+      width: "22px",
+      "& .min-icon": {
+        color: theme.palette.primary.light,
+        width: "16px",
+        height: "16px",
+      },
+    },
+    label: {
+      lineHeight: 1,
+      alignItems: "center",
+      paddingTop: 1,
+      fontSize: "14px",
+      fontWeight: 600,
+      color: theme.palette.primary.light,
     },
   });
 
@@ -62,20 +81,29 @@ const BackLink = ({
   executeOnClick,
 }: IBackLink) => {
   return (
-    <Link
-      to={to}
-      className={`${classes.link} ${className ? className : ""}`}
-      onClick={() => {
-        if (executeOnClick) {
-          executeOnClick();
-        }
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
       }}
     >
-      <div className={classes.icon}>
-        <BackSettingsIcon />
-      </div>
-      <div className={classes.label}>{label}</div>
-    </Link>
+      <Link
+        to={to}
+        className={`${classes.link} ${className ? className : ""}`}
+        onClick={() => {
+          if (executeOnClick) {
+            executeOnClick();
+          }
+        }}
+      >
+        <div className={classes.iconBox}>
+          <div className={classes.icon}>
+            <BackSettingsIcon />
+          </div>
+          <div className={classes.label}>{label}</div>
+        </div>
+      </Link>
+    </Box>
   );
 };
 
