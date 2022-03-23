@@ -467,6 +467,7 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 			var errorReturn = ""
 
 			if err != nil {
+				deleteRemoteBucket(ctx, client, sourceBucket, arn)
 				errorReturn = err.Error()
 			}
 
