@@ -105,6 +105,7 @@ export const IAM_SCOPES = {
   ADMIN_SERVER_TRACE: "admin:ServerTrace",
   ADMIN_HEALTH_INFO: "admin:OBDInfo",
   ADMIN_HEAL: "admin:Heal",
+  ADMIN_INSPECT_DATA: "admin:InspectData",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
 };
