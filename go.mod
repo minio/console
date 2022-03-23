@@ -22,7 +22,7 @@ require (
 	github.com/minio/madmin-go v1.3.5
 	github.com/minio/mc v0.0.0-20220302011226-f13defa54577
 	github.com/minio/minio-go/v7 v7.0.23
-	github.com/minio/operator v0.0.0-20220110040724-a5d59a342b7f
+	github.com/minio/operator v0.0.0-20220322220228-ae7a32a7c19e
 	github.com/minio/pkg v1.1.20
 	github.com/minio/selfupdate v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0
