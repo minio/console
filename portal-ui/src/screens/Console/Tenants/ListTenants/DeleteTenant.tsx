@@ -25,6 +25,7 @@ import Grid from "@mui/material/Grid";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
+import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
@@ -45,6 +46,8 @@ const DeleteTenant = ({
   const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
   const onClose = () => closeDeleteModalAndRefresh(false);
 
+  const [deletePVCs, setDeletePVCs] = useState<boolean>(false);
+
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
   const onConfirmDelete = () => {
@@ -57,7 +60,8 @@ const DeleteTenant = ({
     }
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`
+      `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`,
+      {delete_pvcs: deletePVCs}
     );
   };
 
@@ -85,6 +89,16 @@ const DeleteTenant = ({
               }}
               label=""
               value={retypeTenant}
+            />
+            <CheckboxWrapper
+                checked={deletePVCs}
+                id={`delete-pvcs`}
+                label={"Delete PVCs"}
+                name={`delete-pvcs`}
+                onChange={() => {
+                  setDeletePVCs(!deletePVCs)
+                }}
+                value={deletePVCs}
             />
           </Grid>
         </DialogContentText>
