@@ -23,6 +23,7 @@ import {
   ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
   ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR,
   ADD_TENANT_ADD_MINIO_KEYPAIR,
+  ADD_TENANT_ADD_NEW_TOLERATION,
   ADD_TENANT_DELETE_CA_KEYPAIR,
   ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
   ADD_TENANT_DELETE_MINIO_KEYPAIR,
@@ -31,13 +32,15 @@ import {
   ADD_TENANT_ENCRYPTION_SERVER_CERT,
   ADD_TENANT_ENCRYPTION_VAULT_CA,
   ADD_TENANT_ENCRYPTION_VAULT_CERT,
+  ADD_TENANT_REMOVE_TOLERATION_ROW,
   ADD_TENANT_RESET_FORM,
   ADD_TENANT_SET_CURRENT_PAGE,
   ADD_TENANT_SET_KEY_PAIR_VALUE,
   ADD_TENANT_SET_LIMIT_SIZE,
   ADD_TENANT_SET_PAGE_VALID,
-  ADD_TENANT_SET_STORAGE_TYPE,
   ADD_TENANT_SET_STORAGE_CLASSES_LIST,
+  ADD_TENANT_SET_STORAGE_TYPE,
+  ADD_TENANT_SET_TOLERATION_VALUE,
   ADD_TENANT_UPDATE_FIELD,
   ITenantState,
   TENANT_DETAILS_SET_CURRENT_TENANT,
@@ -49,6 +52,7 @@ import {
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
 import { addTenantSetStorageTypeReducer } from "./reducers/add-tenant-reducer";
+import { ITolerationEffect, ITolerationOperator } from "../../../common/types";
 
 const initialState: ITenantState = {
   createTenant: {
@@ -334,6 +338,15 @@ const initialState: ITenantState = {
       },
     },
     nodeSelectorPairs: [{ key: "", value: "" }],
+    tolerations: [
+      {
+        key: "",
+        tolerationSeconds: { seconds: 0 },
+        value: "",
+        effect: ITolerationEffect.NoSchedule,
+        operator: ITolerationOperator.Equal,
+      },
+    ],
   },
   tenantDetails: {
     currentTenant: "",
@@ -886,6 +899,15 @@ export function tenantsReducer(
             },
           },
           nodeSelectorPairs: [{ key: "", value: "" }],
+          tolerations: [
+            {
+              key: "",
+              tolerationSeconds: { seconds: 0 },
+              value: "",
+              effect: ITolerationEffect.NoSchedule,
+              operator: ITolerationOperator.Equal,
+            },
+          ],
         },
       };
     case ADD_TENANT_SET_KEY_PAIR_VALUE:
@@ -939,6 +961,51 @@ export function tenantsReducer(
           ...newTab,
         },
       };
+    case ADD_TENANT_SET_TOLERATION_VALUE:
+      const newSetTolerationValue = [...state.createTenant.tolerations];
+
+      newSetTolerationValue[action.index] = action.toleration;
+
+      return {
+        ...state,
+        createTenant: {
+          ...state.createTenant,
+          tolerations: [...newSetTolerationValue],
+        },
+      };
+    case ADD_TENANT_ADD_NEW_TOLERATION:
+      const newTolerationArray = [
+        ...state.createTenant.tolerations,
+        {
+          key: "",
+          tolerationSeconds: { seconds: 0 },
+          value: "",
+          effect: ITolerationEffect.NoSchedule,
+          operator: ITolerationOperator.Equal,
+        },
+      ];
+      return {
+        ...state,
+        createTenant: {
+          ...state.createTenant,
+          tolerations: [...newTolerationArray],
+        },
+      };
+    case ADD_TENANT_REMOVE_TOLERATION_ROW:
+      const cleanTolerationArray = state.createTenant.tolerations.filter(
+        (_, index) => index !== action.index
+      );
+
+      console.log("action", action.index, cleanTolerationArray)
+
+      return {
+        ...state,
+        createTenant: {
+          ...state.createTenant,
+          tolerations: [...cleanTolerationArray],
+        },
+      };
+
     default:
       return state;
   }
