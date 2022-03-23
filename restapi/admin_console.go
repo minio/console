@@ -28,11 +28,6 @@ import (
 
 const logTimeFormat string = "15:04:05 MST 01/02/2006"
 
-type logRequest struct {
-	node    string
-	logType string
-}
-
 // startConsoleLog starts log of the servers
 func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin, logRequest LogRequest) error {
 
