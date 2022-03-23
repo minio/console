@@ -34,11 +34,11 @@ import {
 import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState } from "../../../../store";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import { AddIcon, DeleteIcon, BucketsIcon, TrashIcon } from "../../../../icons";
+import { AddIcon, BucketsIcon, TrashIcon } from "../../../../icons";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
