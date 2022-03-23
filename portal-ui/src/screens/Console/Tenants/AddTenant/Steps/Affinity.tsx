@@ -21,7 +21,14 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
 import { AppState } from "../../../../../store";
-import { isPageValid, setKeyValuePairs, updateAddField } from "../../actions";
+import {
+  addNewToleration,
+  isPageValid,
+  removeToleration,
+  setKeyValuePairs,
+  setTolerationInfo,
+  updateAddField,
+} from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
 import {
   modalBasic,
@@ -31,7 +38,10 @@ import {
   commonFormValidation,
   IValidation,
 } from "../../../../../utils/validationFunctions";
-import { ErrorResponseHandler } from "../../../../../common/types";
+import {
+  ErrorResponseHandler,
+  ITolerationModel,
+} from "../../../../../common/types";
 import { LabelKeyPair } from "../../types";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -40,6 +50,7 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import AddIcon from "../../../../../icons/AddIcon";
 import RemoveIcon from "../../../../../icons/RemoveIcon";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import TolerationSelector from "../../../Common/TolerationSelector/TolerationSelector";
 
 interface IAffinityProps {
   classes: any;
@@ -47,16 +58,22 @@ interface IAffinityProps {
   nodeSelectorLabels: string;
   withPodAntiAffinity: boolean;
   keyValuePairs: LabelKeyPair[];
+  tolerations: ITolerationModel[];
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
   setKeyValuePairs: typeof setKeyValuePairs;
+  setTolerationInfo: typeof setTolerationInfo;
+  addNewToleration: typeof addNewToleration;
+  removeToleration: typeof removeToleration;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
     overlayAction: {
       marginLeft: 10,
+      display: "flex",
+      alignItems: "center",
       "& svg": {
         maxWidth: 15,
         maxHeight: 15,
@@ -125,6 +142,10 @@ const Affinity = ({
   keyValuePairs,
   setKeyValuePairs,
   isPageValid,
+  tolerations,
+  setTolerationInfo,
+  addNewToleration,
+  removeToleration,
 }: IAffinityProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -222,6 +243,12 @@ const Affinity = ({
 
     setValidationErrors(commonVal);
   }, [isPageValid, podAffinity, nodeSelectorLabels]);
+
+  const updateToleration = (index: number, field: string, value: any) => {
+    const alterToleration = { ...tolerations[index], [field]: value };
+
+    setTolerationInfo(index, alterToleration);
+  };
 
   return (
     <Paper className={classes.paperWrapper}>
@@ -415,6 +442,72 @@ const Affinity = ({
           </Grid>
         </Fragment>
       )}
+      <Grid item xs={12} className={classes.affinityConfigField}>
+        <Grid item className={classes.affinityFieldLabel}>
+          <h3>Tolerations</h3>
+          <span className={classes.error}>
+            {validationErrors["tolerations"]}
+          </span>
+          <Grid container>
+            {tolerations &&
+              tolerations.map((tol, i) => {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    className={classes.affinityRow}
+                    key={`affinity-keyVal-${i.toString()}`}
+                  >
+                    <TolerationSelector
+                      effect={tol.effect}
+                      onEffectChange={(value) => {
+                        updateToleration(i, "effect", value);
+                      }}
+                      tolerationKey={tol.key}
+                      onTolerationKeyChange={(value) => {
+                        updateToleration(i, "key", value);
+                      }}
+                      operator={tol.operator}
+                      onOperatorChange={(value) => {
+                        updateToleration(i, "operator", value);
+                      }}
+                      value={tol.value}
+                      onValueChange={(value) => {
+                        updateToleration(i, "value", value);
+                      }}
+                      tolerationSeconds={tol.tolerationSeconds?.seconds || 0}
+                      onSecondsChange={(value) => {
+                        updateToleration(i, "tolerationSeconds", {
+                          seconds: value,
+                        });
+                      }}
+                      index={i}
+                    />
+                    <div className={classes.overlayAction}>
+                      <IconButton
+                        size={"small"}
+                        onClick={addNewToleration}
+                        disabled={i !== tolerations.length - 1}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </div>
+
+                    <div className={classes.overlayAction}>
+                      <IconButton
+                        size={"small"}
+                        onClick={() => removeToleration(i)}
+                        disabled={tolerations.length <= 1}
+                      >
+                        <RemoveIcon />
+                      </IconButton>
+                    </div>
+                  </Grid>
+                );
+              })}
+          </Grid>
+        </Grid>
+      </Grid>
     </Paper>
   );
 };
@@ -427,6 +520,7 @@ const mapState = (state: AppState) => {
     nodeSelectorLabels: createTenant.fields.affinity.nodeSelectorLabels,
     withPodAntiAffinity: createTenant.fields.affinity.withPodAntiAffinity,
     keyValuePairs: createTenant.nodeSelectorPairs,
+    tolerations: createTenant.tolerations,
   };
 };
 
@@ -435,6 +529,9 @@ const connector = connect(mapState, {
   updateAddField,
   isPageValid,
   setKeyValuePairs,
+  setTolerationInfo,
+  addNewToleration,
+  removeToleration,
 });
 
 export default withStyles(styles)(connector(Affinity));

@@ -33,7 +33,11 @@ import { generatePoolName, getBytes } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import { ErrorResponseHandler, ITenantCreator } from "../../../../common/types";
+import {
+  ErrorResponseHandler,
+  ITenantCreator,
+  ITolerationModel,
+} from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
 import { setErrorSnackMessage } from "../../../../actions";
@@ -73,6 +77,7 @@ interface IAddTenantProps {
   validPages: string[];
   classes: any;
   features?: string[];
+  tolerations: ITolerationModel[];
 }
 
 const styles = (theme: Theme) =>
@@ -95,6 +100,7 @@ const AddTenant = ({
   setErrorSnackMessage,
   resetAddTenantForm,
   features,
+  tolerations,
 }: IAddTenantProps) => {
   // Modals
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
@@ -232,6 +238,10 @@ const AddTenant = ({
     const kesReplicas = fields.encryption.replicas;
 
     if (addSending) {
+    const tolerationValues = tolerations.filter(
+      (toleration) => toleration.key.trim() !== ""
+    );
+
       const poolName = generatePoolName([]);
 
       let affinityObject = {};
@@ -281,6 +291,7 @@ const AddTenant = ({
             },
             securityContext: tenantCustom ? tenantSecurityContext : null,
             ...affinityObject,
+            tolerations: tolerationValues,
           },
         ],
         erasureCodingParity: parseInt(erasureCode, 10),
@@ -847,6 +858,7 @@ const mapState = (state: AppState) => ({
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
   features: state.console.session.features,
+  tolerations: state.tenants.createTenant.tolerations,
 });
 
 const connector = connect(mapState, {

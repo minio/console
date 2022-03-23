@@ -20,6 +20,7 @@ import {
   IErasureCodeCalc,
   IGCPConfig,
   IGemaltoCredentials,
+  ITolerationModel,
 } from "../../../common/types";
 import { IResourcesSize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
@@ -68,6 +69,12 @@ export const ADD_TENANT_ENCRYPTION_GEMALTO_CA =
 
 // Affinity Node Selector KeyPairs
 export const ADD_TENANT_SET_KEY_PAIR_VALUE = "ADD_TENANT/SET_KEY_PAIR_VALUE";
+
+// Affinity Tolerations
+export const ADD_TENANT_SET_TOLERATION_VALUE =
+  "ADD_TENANT/SET_TOLERATION_VALUE";
+export const ADD_TENANT_ADD_NEW_TOLERATION = "ADD_TENANT/ADD_NEW_TOLERATION";
+export const ADD_TENANT_REMOVE_TOLERATION_ROW = "ADD_TENANT/REMOVE_TOLERATION_ROW";
 
 // Tenant Details
 export const TENANT_DETAILS_SET_LOADING = "TENANT_DETAILS/SET_LOADING";
@@ -130,6 +137,7 @@ export interface IKeysecureConfiguration {
   credentials: IGemaltoCredentials;
   tls: IGemaltoTLS;
 }
+
 export interface IGemaltoConfiguration {
   keysecure: IKeysecureConfiguration;
 }
@@ -155,6 +163,7 @@ export interface ICreateTenant {
   fields: IFieldStore;
   certificates: ICertificatesItems;
   nodeSelectorPairs: LabelKeyPair[];
+  tolerations: ITolerationModel[];
 }
 
 export interface ICertificatesItems {
@@ -520,6 +529,21 @@ interface SetTenantTab {
   tab: string;
 }
 
+interface SetTolerationValue {
+  type: typeof ADD_TENANT_SET_TOLERATION_VALUE;
+  index: number;
+  toleration: ITolerationModel;
+}
+
+interface AddNewToleration {
+  type: typeof ADD_TENANT_ADD_NEW_TOLERATION;
+}
+
+interface RemoveTolerationRow {
+  type: typeof ADD_TENANT_REMOVE_TOLERATION_ROW;
+  index: number;
+}
+
 export type FieldsToHandle = INameTenantFields;
 
 export type TenantsManagementTypes =
@@ -549,4 +573,7 @@ export type TenantsManagementTypes =
   | SetLoadingTenant
   | SetTenantName
   | SetTenantDetails
-  | SetTenantTab;
+  | SetTenantTab
+  | SetTolerationValue
+  | AddNewToleration
+  | RemoveTolerationRow;
