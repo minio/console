@@ -34,11 +34,11 @@ import {
 import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState } from "../../../../store";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import { AddIcon, DeleteIcon, BucketsIcon } from "../../../../icons";
+import { AddIcon, BucketsIcon, TrashIcon } from "../../../../icons";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
@@ -236,12 +236,12 @@ const BucketReplicationPanel = ({
               errorProps={{ disabled: true }}
             >
               <RBIconButton
-                tooltip={"Remove All Replication Rules"}
+                tooltip={"Delete All Replication Rules"}
                 onClick={() => {
                   confirmDeleteAllReplicationRules();
                 }}
-                text={"Remove All Rules"}
-                icon={<DeleteIcon />}
+                text={"Delete All Rules"}
+                icon={<TrashIcon />}
                 color={"secondary"}
                 variant={"outlined"}
                 disabled={replicationRules.length === 0}
