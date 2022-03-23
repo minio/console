@@ -202,7 +202,7 @@ export function objectBrowserReducer(
       };
     case OBJECT_MANAGER_CLEAN_LIST:
       const nonCompletedList = state.objectManager.objectsToManage.filter(
-        (item) => !item.done
+        (item) => item.percentage !== 100
       );
 
       return {

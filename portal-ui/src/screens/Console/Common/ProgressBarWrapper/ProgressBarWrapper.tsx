@@ -68,10 +68,18 @@ const ProgressBarWrapper = ({
   withLabel,
   size = "regular",
 }: IProgressBarWrapper) => {
+  let color: any;
+  if (value === 100 && ready) {
+    color = "success";
+  } else if (value === 100 && !ready) {
+    color = "error";
+  } else {
+    color = "primary";
+  }
   const propsComponent: LinearProgressProps = {
     variant: indeterminate && !ready ? "indeterminate" : "determinate",
     value: ready ? 100 : value,
-    color: ready ? "success" : "primary",
+    color: color,
   };
   if (withLabel) {
     return <LinearProgressWithLabel {...propsComponent} />;
