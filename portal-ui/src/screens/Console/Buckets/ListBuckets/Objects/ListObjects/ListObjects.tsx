@@ -1243,7 +1243,7 @@ const ListObjects = ({
                 <RBIconButton
                   id={"refresh-objects-list"}
                   tooltip={"Reload List"}
-                  text={"Reload"}
+                  text={"Refresh"}
                   icon={<RefreshIcon />}
                   color="primary"
                   variant={"outlined"}
@@ -1305,7 +1305,7 @@ const ListObjects = ({
                     name={"deleted_objects"}
                     id={"showDeletedObjects"}
                     value={"deleted_on"}
-                    label={"Show deleted objects on this bucket"}
+                    label={"Show deleted objects"}
                     onChange={setDeletedAction}
                     checked={showDeleted}
                     overrideLabelClasses={classes.labelStyle}
