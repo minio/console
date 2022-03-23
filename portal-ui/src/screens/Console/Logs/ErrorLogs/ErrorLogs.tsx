@@ -146,7 +146,7 @@ const ErrorLogs = ({
       `${wsProt}://${
         url.hostname
       }:${port}/ws/console/?logType=${logType}&?node=${
-        selectedNode == "Select node" ? "" : selectedNode
+        selectedNode === "Select node" ? "" : selectedNode
       }`
     );
 
@@ -280,7 +280,7 @@ const ErrorLogs = ({
                 disabled={false}
               />
               <CheckboxWrapper
-                checked={logType == "application" || allTypes}
+                checked={logType === "application" || allTypes}
                 id={"application_type"}
                 name={"application_type"}
                 label={"Application"}
@@ -294,7 +294,7 @@ const ErrorLogs = ({
                 disabled={false}
               />
               <CheckboxWrapper
-                checked={logType == "minio" || allTypes}
+                checked={logType === "minio" || allTypes}
                 id={"minio_type"}
                 name={"minio_type"}
                 label={"Minio"}
