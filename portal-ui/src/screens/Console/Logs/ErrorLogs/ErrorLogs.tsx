@@ -308,7 +308,11 @@ const ErrorLogs = ({
             </div>
           </Grid>
           <Grid item xs={12}>
-            <div id="logs-container" className={classes.logList}>
+            <div
+              id="logs-container"
+              className={classes.logList}
+              data-test-id="logs-list-container"
+            >
               <TableContainer component={Paper}>
                 <Table aria-label="collapsible table">
                   <TableBody>
