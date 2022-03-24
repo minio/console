@@ -74,7 +74,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import { BucketInfo, BucketQuota, BucketVersioning } from "../../../types";
+import {BucketInfo, BucketObjectLocking, BucketQuota, BucketVersioning} from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
@@ -290,6 +290,8 @@ const ListObjects = ({
     useState<React.ReactNode>(defLoading);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
+  const [loadingLocking, setLoadingLocking] = useState<boolean>(true);
+  const [lockingEnabled, setLockingEnabled] = useState<boolean>(false);
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
   const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
@@ -435,6 +437,25 @@ const ListObjects = ({
       }
     }
   }, [bucketName, loadingVersioning, setErrorSnackMessage, displayListObjects]);
+
+  useEffect(() => {
+    if (loadingLocking) {
+      if (displayListObjects) {
+        api
+            .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
+            .then((res: BucketObjectLocking) => {
+              setLockingEnabled(res.object_locking_enabled);
+              setLoadingLocking(false);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+              setLoadingLocking(false);
+            });
+      } else {
+        setLoadingLocking(false);
+      }
+    }
+  }, [bucketName, loadingLocking, setErrorSnackMessage, displayListObjects]);
 
   // Rewind
   useEffect(() => {
@@ -1392,6 +1413,7 @@ const ListObjects = ({
                     bucketName={bucketName}
                     onClosePanel={onClosePanel}
                     versioning={isVersioned}
+                    locking={lockingEnabled}
                   />
                 )}
               </DetailsListPanel>
