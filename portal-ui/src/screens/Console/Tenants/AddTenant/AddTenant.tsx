@@ -238,9 +238,9 @@ const AddTenant = ({
     const kesReplicas = fields.encryption.replicas;
 
     if (addSending) {
-    const tolerationValues = tolerations.filter(
-      (toleration) => toleration.key.trim() !== ""
-    );
+      const tolerationValues = tolerations.filter(
+        (toleration) => toleration.key.trim() !== ""
+      );
 
       const poolName = generatePoolName([]);
 

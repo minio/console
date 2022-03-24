@@ -31,6 +31,8 @@ export const addTenantSetStorageTypeReducer = (
   let size = state.createTenant.fields.tenantSize.volumeSize;
   let sizeFactor = state.createTenant.fields.tenantSize.sizeFactor;
   let volumeSize = state.createTenant.fields.tenantSize.volumeSize;
+  let selectedStorageClass =
+    state.createTenant.fields.nameTenant.selectedStorageClass;
   // for the aws marketplace integration we have some constraints
   // on the minimum cluster size
 
@@ -60,27 +62,35 @@ export const addTenantSetStorageTypeReducer = (
         const mainSelection = configs.find(
           (item) => item.typeSelection === action.storageType
         );
-        if (mainSelection !== undefined && mainSelection.minimumVolumeSize) {
-          const minimumSize = getBytesNumber(
-            mainSelection.minimumVolumeSize?.driveSize,
-            mainSelection.minimumVolumeSize?.sizeUnit,
-            true
-          );
+        if (mainSelection !== undefined) {
+          // store the selected storage class
+          selectedStorageClass = mainSelection.storageClass;
+          if (mainSelection.minimumVolumeSize) {
+            const minimumSize = getBytesNumber(
+              mainSelection.minimumVolumeSize?.driveSize,
+              mainSelection.minimumVolumeSize?.sizeUnit,
+              true
+            );
 
-          const drivesPerServer =
-            state.createTenant.fields.tenantSize.drivesPerServer;
-          const nodes = state.createTenant.fields.tenantSize.drivesPerServer;
+            const drivesPerServer =
+              state.createTenant.fields.tenantSize.drivesPerServer;
+            const nodes = state.createTenant.fields.tenantSize.drivesPerServer;
 
-          const currentSize = getBytesNumber(size.toString(), sizeFactor, true);
-          if (currentSize < minimumSize) {
-            size = minimumSize.toString(10);
-            const totalSize =
-              parseInt(nodes) *
-              parseInt(drivesPerServer) *
-              parseInt(mainSelection.minimumVolumeSize.driveSize);
+            const currentSize = getBytesNumber(
+              size.toString(),
+              sizeFactor,
+              true
+            );
+            if (currentSize < minimumSize) {
+              size = minimumSize.toString(10);
+              const totalSize =
+                parseInt(nodes) *
+                parseInt(drivesPerServer) *
+                parseInt(mainSelection.minimumVolumeSize.driveSize);
 
-            volumeSize = totalSize.toString(10);
-            sizeFactor = mainSelection.minimumVolumeSize.sizeUnit;
+              volumeSize = totalSize.toString(10);
+              sizeFactor = mainSelection.minimumVolumeSize.sizeUnit;
+            }
           }
         }
       }
@@ -96,6 +106,7 @@ export const addTenantSetStorageTypeReducer = (
         nameTenant: {
           ...state.createTenant.fields.nameTenant,
           selectedStorageType: action.storageType,
+          selectedStorageClass: selectedStorageClass,
         },
         tenantSize: {
           ...state.createTenant.fields.tenantSize,
