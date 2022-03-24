@@ -46,9 +46,10 @@ import {
   ADD_TENANT_SET_KEY_PAIR_VALUE,
   ADD_TENANT_SET_TOLERATION_VALUE,
   ADD_TENANT_ADD_NEW_TOLERATION,
-  LabelKeyPair, ADD_TENANT_REMOVE_TOLERATION_ROW,
+  LabelKeyPair,
+  ADD_TENANT_REMOVE_TOLERATION_ROW,
 } from "./types";
-import {ITolerationModel} from "../../../common/types";
+import { ITolerationModel } from "../../../common/types";
 
 // Basic actions
 export const setWizardPage = (page: number) => {
@@ -299,23 +300,26 @@ export const setKeyValuePairs = (newArray: LabelKeyPair[]) => {
   };
 };
 
-export const setTolerationInfo = (index: number, tolerationValue: ITolerationModel) => {
+export const setTolerationInfo = (
+  index: number,
+  tolerationValue: ITolerationModel
+) => {
   return {
     type: ADD_TENANT_SET_TOLERATION_VALUE,
     index,
     toleration: tolerationValue,
-  }
+  };
 };
 
 export const addNewToleration = () => {
   return {
     type: ADD_TENANT_ADD_NEW_TOLERATION,
-  }
+  };
 };
 
 export const removeToleration = (index: number) => {
   return {
     type: ADD_TENANT_REMOVE_TOLERATION_ROW,
-    index
-  }
+    index,
+  };
 };

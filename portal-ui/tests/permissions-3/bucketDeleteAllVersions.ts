@@ -31,15 +31,23 @@ test
     // Create a bucket
     await functions.setUpBucket(t, "bucketdelete3");
     await functions.setVersioned(t, "bucketdelete3");
-  })("All versions of an object can be deleted from a bucket", async (t) => {
-    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketdelete3");
     await t
       .useRole(roles.bucketReadWrite)
       .navigateTo("http://localhost:9090/buckets")
-      .click(testBucketBrowseButton)
+      .click(testBucketBrowseButtonFor("bucketdelete3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButtonFor("bucketdelete3"))
+      // Upload object to bucket
+      .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
+      .wait(1000);
+  })("All versions of an object can be deleted from a bucket", async (t) => {
+    await t
+      .useRole(roles.bucketReadWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButtonFor("bucketdelete3"))
       .click(
         "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
       )

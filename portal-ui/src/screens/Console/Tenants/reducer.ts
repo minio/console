@@ -996,8 +996,6 @@ export function tenantsReducer(
         (_, index) => index !== action.index
       );
 
-      console.log("action", action.index, cleanTolerationArray)
-
       return {
         ...state,
         createTenant: {
