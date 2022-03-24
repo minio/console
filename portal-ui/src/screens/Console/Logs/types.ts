@@ -41,4 +41,5 @@ export interface LogMessage {
   error: logError;
   ConsoleMsg: string;
   key: number;
+  errKind: string;
 }
