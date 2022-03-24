@@ -25,6 +25,8 @@ import Grid from "@mui/material/Grid";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
+import WarningMessage from "../../Common/WarningMessage/WarningMessage";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
@@ -45,6 +47,8 @@ const DeleteTenant = ({
   const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
   const onClose = () => closeDeleteModalAndRefresh(false);
 
+  const [deleteVolumes, setDeleteVolumes] = useState<boolean>(false);
+
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
   const onConfirmDelete = () => {
@@ -57,7 +61,8 @@ const DeleteTenant = ({
     }
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`
+      `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`,
+      {delete_pvcs: deleteVolumes}
     );
   };
 
@@ -75,6 +80,13 @@ const DeleteTenant = ({
       }}
       confirmationContent={
         <DialogContentText>
+          {deleteVolumes && (<Grid item xs={12}>
+            <WarningMessage
+              title={"WARNING"}
+              label={"Delete Volumes: Data will be permanently deleted. Please proceed with caution."}
+            />
+          </Grid>
+          )}
           To continue please type <b>{selectedTenant.name}</b> in the box.
           <Grid item xs={12}>
             <InputBoxWrapper
@@ -85,6 +97,17 @@ const DeleteTenant = ({
               }}
               label=""
               value={retypeTenant}
+            />
+            <br/>
+            <FormSwitchWrapper
+                checked={deleteVolumes}
+                id={`delete-volumes`}
+                label={"Delete Volumes"}
+                name={`delete-volumes`}
+                onChange={() => {
+                  setDeleteVolumes(!deleteVolumes)
+                }}
+                value={deleteVolumes}
             />
           </Grid>
         </DialogContentText>
