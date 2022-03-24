@@ -44,11 +44,10 @@ test
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000);
   })("All versions of an object can be deleted from a bucket", async (t) => {
-    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketdelete3");
     await t
       .useRole(roles.bucketReadWrite)
       .navigateTo("http://localhost:9090/buckets")
-      .click(testBucketBrowseButton)
+      .click(testBucketBrowseButtonFor("bucketdelete3"))
       .click(
         "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
       )
