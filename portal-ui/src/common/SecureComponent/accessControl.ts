@@ -54,16 +54,15 @@ const hasPermission = (
         const replaceWildcard = wildcardItemSection
           .replace("/", "\\/")
           .replace("*", "($|\\/?(.*?))");
-
-        const inRegExp = new RegExp(`${replaceWildcard}$`, "gm");
-
-        if (inRegExp.exec(path)) {
+        const inRegExp = new RegExp(`${replaceWildcard}`, "gm");
+        // Avoid calling inRegExp multiple times and instead use the stored value if need it:
+        // https://stackoverflow.com/questions/59694142/regex-testvalue-returns-true-when-logged-but-false-within-an-if-statement
+        const matches = inRegExp.test(path);
+        if (matches) {
           return element;
         }
-
         return null;
       });
-
       return items.filter((itm) => itm !== null);
     };
 
