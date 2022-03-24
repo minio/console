@@ -37,6 +37,11 @@ test
       .click(testBucketBrowseButtonFor("bucketdelete3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
+      .wait(1000)
+      .navigateTo("http://localhost:9090/buckets")
+      .click(testBucketBrowseButtonFor("bucketdelete3"))
+      // Upload object to bucket
+      .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000);
   })("All versions of an object can be deleted from a bucket", async (t) => {
     const testBucketBrowseButton = testBucketBrowseButtonFor("bucketdelete3");
