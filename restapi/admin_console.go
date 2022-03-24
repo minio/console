@@ -31,7 +31,6 @@ const logTimeFormat string = "15:04:05 MST 01/02/2006"
 // startConsoleLog starts log of the servers
 func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin, logRequest LogRequest) error {
 
-	// TODO: accept parameters as variables
 	// name of node, default = "" (all)
 	node := logRequest.node
 	// number of log lines

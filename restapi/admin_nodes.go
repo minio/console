@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	//"sort"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
