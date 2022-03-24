@@ -164,6 +164,7 @@ const ErrorLogs = ({
         // console.log(message.data.toString())
         // FORMAT: 00:35:17 UTC 01/01/2021
         let m: LogMessage = JSON.parse(message.data.toString());
+        console.log("Raw message is : ", message.data.toString());
         m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
         logMessageReceived(m);
