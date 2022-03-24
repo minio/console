@@ -123,6 +123,7 @@ interface IObjectDetailPanelProps {
   bucketToRewind: string;
   distributedSetup: boolean;
   versioning: boolean;
+  locking: boolean;
   versionsMode: boolean;
   selectedVersion: string;
   loadingObjectInfo: boolean;
@@ -156,6 +157,7 @@ const ObjectDetailPanel = ({
   bucketName,
   distributedSetup,
   versioning,
+  locking,
   setErrorSnackMessage,
   setNewObject,
   updateProgress,
@@ -405,11 +407,8 @@ const ObjectDetailPanel = ({
       },
       label: "Legal Hold",
       disabled:
-        !distributedSetup ||
-        !!actualInfo.is_delete_marker ||
-        !hasPermission(objectResources, [
-          IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
-        ]) ||
+        !locking || !distributedSetup || !!actualInfo.is_delete_marker ||
+        !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]) ||
         selectedVersion !== "",
       icon: <LegalHoldIcon />,
       tooltip: "Change Legal Hold rules for this File",
