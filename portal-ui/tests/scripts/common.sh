@@ -45,6 +45,7 @@ create_policies() {
   mc admin policy add minio inspect-allowed-$TIMESTAMP portal-ui/tests/policies/inspect-allowed.json
   mc admin policy add minio inspect-not-allowed-$TIMESTAMP portal-ui/tests/policies/inspect-not-allowed.json
   mc admin policy add minio fix-prefix-policy-ui-crash-$TIMESTAMP portal-ui/tests/policies/fix-prefix-policy-ui-crash.json
+  mc admin policy add minio delete-object-with-prefix-$TIMESTAMP portal-ui/tests/policies/deleteObjectWithPrefix.json
 }
 
 create_users() {
@@ -71,10 +72,12 @@ create_users() {
   mc admin user add minio inspect-allowed-$TIMESTAMP insallowed1234
   mc admin user add minio inspect-not-allowed-$TIMESTAMP insnotallowed1234
   mc admin user add minio prefix-policy-ui-crash-$TIMESTAMP poluicrashfix1234
+  mc admin user add minio delete-object-with-prefix-$TIMESTAMP deleteobjectwithprefix1234
 }
 
 create_buckets() {
   mc mb minio/testcafe && mc cp ./portal-ui/tests/uploads/test.txt minio/testcafe/write/test.txt
+  mc mb minio/test && mc cp ./portal-ui/tests/uploads/test.txt minio/test/test.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/test/digitalinsights/test.txt
 }
 
 assign_policies() {
@@ -100,4 +103,5 @@ assign_policies() {
   mc admin policy set minio bucketwriteprefixonlypolicy-$TIMESTAMP user=bucketwriteprefixonlypolicy-$TIMESTAMP
   mc admin policy set minio inspect-allowed-$TIMESTAMP user=inspect-allowed-$TIMESTAMP
   mc admin policy set minio inspect-not-allowed-$TIMESTAMP user=inspect-not-allowed-$TIMESTAMP
+  mc admin policy set minio delete-object-with-prefix-$TIMESTAMP user=delete-object-with-prefix-$TIMESTAMP
 }

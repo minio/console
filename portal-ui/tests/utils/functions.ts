@@ -40,6 +40,23 @@ export const setUpNamedBucket = (t, name) => {
   });
 };
 
+export const uploadObjectToBucket = (t, modifier, objectName, objectPath) => {
+  const bucketName = `${constants.TEST_BUCKET_NAME}-${modifier}`;
+  const minioClient = new Minio.Client({
+    endPoint: "localhost",
+    port: 9000,
+    useSSL: false,
+    accessKey: "minioadmin",
+    secretKey: "minioadmin",
+  });
+  return new Promise((resolve, reject) => {
+    minioClient
+      .fPutObject(bucketName, objectName, objectPath, {})
+      .then(resolve)
+      .catch(resolve);
+  });
+};
+
 export const setVersioned = (t, modifier) => {
   return setVersionedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
 };
