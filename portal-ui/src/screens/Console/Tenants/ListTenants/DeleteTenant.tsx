@@ -62,7 +62,7 @@ const DeleteTenant = ({
     invokeDeleteApi(
       "DELETE",
       `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`,
-      {delete_pvcs: deleteVolumes}
+      { delete_pvcs: deleteVolumes }
     );
   };
 
@@ -80,12 +80,15 @@ const DeleteTenant = ({
       }}
       confirmationContent={
         <DialogContentText>
-          {deleteVolumes && (<Grid item xs={12}>
-            <WarningMessage
-              title={"WARNING"}
-              label={"Delete Volumes: Data will be permanently deleted. Please proceed with caution."}
-            />
-          </Grid>
+          {deleteVolumes && (
+            <Grid item xs={12}>
+              <WarningMessage
+                title={"WARNING"}
+                label={
+                  "Delete Volumes: Data will be permanently deleted. Please proceed with caution."
+                }
+              />
+            </Grid>
           )}
           To continue please type <b>{selectedTenant.name}</b> in the box.
           <Grid item xs={12}>
@@ -98,16 +101,16 @@ const DeleteTenant = ({
               label=""
               value={retypeTenant}
             />
-            <br/>
+            <br />
             <FormSwitchWrapper
-                checked={deleteVolumes}
-                id={`delete-volumes`}
-                label={"Delete Volumes"}
-                name={`delete-volumes`}
-                onChange={() => {
-                  setDeleteVolumes(!deleteVolumes)
-                }}
-                value={deleteVolumes}
+              checked={deleteVolumes}
+              id={`delete-volumes`}
+              label={"Delete Volumes"}
+              name={`delete-volumes`}
+              onChange={() => {
+                setDeleteVolumes(!deleteVolumes);
+              }}
+              value={deleteVolumes}
             />
           </Grid>
         </DialogContentText>
