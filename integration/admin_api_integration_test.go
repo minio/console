@@ -169,3 +169,47 @@ func TestRestartService(t *testing.T) {
 	}
 
 }
+
+func ListPoliciesWithBucket(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to List Policies With Given Bucket
+		HTTP Verb: GET
+		URL: /bucket-policy/{bucket}
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/bucket-policy/"+bucketName, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestListPoliciesWithBucket(t *testing.T) {
+
+	// Test Variables
+	bucketName := "testlistpolicieswithbucket"
+	assert := assert.New(t)
+
+	// Test
+	response, err := ListPoliciesWithBucket(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	parsedResponse := inspectHTTPResponse(response)
+	if response != nil {
+		assert.Equal(
+			200,
+			response.StatusCode,
+			parsedResponse,
+		)
+	}
+
+}
