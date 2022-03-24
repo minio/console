@@ -908,7 +908,7 @@ jobs:
   coverage:
     name: "Coverage Limit Check"
     needs:
-      - integration-tests
+      - b-integration-tests
       - test-restapi-on-go
       - c-operator-api-tests
       - test-pkg-on-go
