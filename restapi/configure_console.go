@@ -129,7 +129,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	//Register Inspect Handler
 	registerInspectHandler(api)
 	// Register nodes handlers
-	registersNodesHandler(api)
+	registerNodesHandler(api)
 
 	// Operator Console
 

@@ -26,7 +26,7 @@ import (
 	"github.com/minio/console/restapi/operations/admin_api"
 )
 
-func registersNodesHandler(api *operations.ConsoleAPI) {
+func registerNodesHandler(api *operations.ConsoleAPI) {
 
 	api.AdminAPIListNodesHandler = admin_api.ListNodesHandlerFunc(func(params admin_api.ListNodesParams, session *models.Principal) middleware.Responder {
 		listNodesResponse, err := getListNodesResponse(session)
