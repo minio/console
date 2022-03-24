@@ -910,7 +910,7 @@ jobs:
     needs:
       - integration-tests
       - test-restapi-on-go
-      - operator-api-tests
+      - c-operator-api-tests
       - test-pkg-on-go
     runs-on: ${{ matrix.os }}
     strategy:
