@@ -763,135 +763,135 @@ const ListObjects = ({
         path: string,
         folderPath: string
       ) => {
-        if (files.length > 0) {
-          openList();
-          let nextFile = files.pop();
-          let uploadPromise = (file: File) => {
-            return new Promise((resolve, reject) => {
-              let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
-              const fileName = file.name;
-              const blobFile = new Blob([file], { type: file.type });
+        let uploadPromise = (file: File) => {
+          return new Promise((resolve, reject) => {
+            let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
+            const fileName = file.name;
+            const blobFile = new Blob([file], { type: file.type });
 
-              let encodedPath = "";
-              const relativeFolderPath =
-                get(file, "webkitRelativePath", "") !== ""
-                  ? get(file, "webkitRelativePath", "")
-                  : folderPath;
+            let encodedPath = "";
+            const relativeFolderPath =
+              get(file, "webkitRelativePath", "") !== ""
+                ? get(file, "webkitRelativePath", "")
+                : folderPath;
 
-              if (path !== "" || relativeFolderPath !== "") {
-                const finalFolderPath = relativeFolderPath
-                  .split("/")
-                  .slice(0, -1)
-                  .join("/");
+            if (path !== "" || relativeFolderPath !== "") {
+              const finalFolderPath = relativeFolderPath
+                .split("/")
+                .slice(0, -1)
+                .join("/");
 
-                encodedPath = encodeFileName(
-                  `${path}${finalFolderPath}${
-                    !finalFolderPath.endsWith("/") ? "/" : ""
-                  }`
-                );
-              }
-
-              if (encodedPath !== "") {
-                uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
-              }
-
-              const identity = encodeFileName(
-                `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
+              encodedPath = encodeFileName(
+                `${path}${finalFolderPath}${
+                  !finalFolderPath.endsWith("/") ? "/" : ""
+                }`
               );
+            }
 
-              setNewObject({
-                bucketName,
-                done: false,
-                instanceID: identity,
-                percentage: 0,
-                prefix: `${decodeFileName(encodedPath)}${fileName}`,
-                type: "upload",
-                waitingForFile: false,
-              });
+            if (encodedPath !== "") {
+              uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
+            }
 
-              let xhr = new XMLHttpRequest();
-              xhr.open("POST", uploadUrl, true);
+            const identity = encodeFileName(
+              `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
+            );
 
-              const areMultipleFiles = files.length > 1;
-              const errorMessage = `An error occurred while uploading the file${
-                areMultipleFiles ? "s" : ""
-              }.`;
-              const okMessage = `Object${
-                areMultipleFiles ? "s" : ``
-              } uploaded successfully.`;
-
-              xhr.withCredentials = false;
-              xhr.onload = function (event) {
-                if (
-                  xhr.status === 401 ||
-                  xhr.status === 403 ||
-                  xhr.status === 400 ||
-                  xhr.status === 500
-                ) {
-                  if (xhr.response) {
-                    const err = JSON.parse(xhr.response);
-                    setSnackBarMessage(err.detailedMessage);
-                  } else {
-                    setSnackBarMessage(errorMessage);
-                  }
-                }
-                if (xhr.status === 413) {
-                  setSnackBarMessage("Error - File size too large");
-                }
-                if (xhr.status === 200) {
-                  completeObject(identity);
-                  if (files.length === 0) {
-                    setSnackBarMessage(okMessage);
-                  }
-                }
-                resolve(xhr.status);
-                if (files.length > 0) {
-                  let nFile = files.pop();
-                  if (nFile) {
-                    return uploadPromise(nFile);
-                  }
-                }
-              };
-
-              xhr.upload.addEventListener("error", (event) => {
-                setSnackBarMessage(errorMessage);
-              });
-
-              xhr.upload.addEventListener("progress", (event) => {
-                const progress = Math.floor((event.loaded * 100) / event.total);
-
-                updateProgress(identity, progress);
-              });
-
-              xhr.onerror = () => {
-                setSnackBarMessage(errorMessage);
-                reject(errorMessage);
-              };
-              xhr.onloadend = () => {
-                if (files.length === 0) {
-                  setLoading(true);
-                }
-              };
-
-              const formData = new FormData();
-              if (file.size !== undefined) {
-                formData.append(file.size.toString(), blobFile, fileName);
-
-                xhr.send(formData);
-              }
+            setNewObject({
+              bucketName,
+              done: false,
+              instanceID: identity,
+              percentage: 0,
+              prefix: `${decodeFileName(encodedPath)}${fileName}`,
+              type: "upload",
+              waitingForFile: false,
             });
-          };
 
-          if (nextFile) {
-            uploadPromise(nextFile!)
-              .then(() => {
-                console.info("done uploading file");
-              })
-              .catch((err) => {
-                console.error("error uploading file,", err);
-              });
-          }
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", uploadUrl, true);
+
+            const areMultipleFiles = files.length > 1;
+            let errorMessage = `An error occurred while uploading the file${
+              areMultipleFiles ? "s" : ""
+            }.`;
+
+            const errorMessages: any = {
+              413: "Error - File size too large",
+            };
+
+            xhr.withCredentials = false;
+            xhr.onload = function (event) {
+              // resolve promise only when HTTP code is ok
+              if (xhr.status >= 200 && xhr.status < 300) {
+                completeObject(identity);
+                resolve({ status: xhr.status });
+              } else {
+                // reject promise if there was a server error
+                if (errorMessages[xhr.status]) {
+                  errorMessage = errorMessages[xhr.status];
+                } else if (xhr.response) {
+                  try {
+                    const err = JSON.parse(xhr.response);
+                    errorMessage = err.detailedMessage;
+                  } catch (e) {
+                    errorMessage = "something went wrong";
+                  }
+                }
+                reject({ status: xhr.status, message: errorMessage });
+              }
+            };
+
+            xhr.upload.addEventListener("error", (event) => {
+              reject(errorMessage);
+              return;
+            });
+
+            xhr.upload.addEventListener("progress", (event) => {
+              const progress = Math.floor((event.loaded * 100) / event.total);
+
+              updateProgress(identity, progress);
+            });
+
+            xhr.onerror = () => {
+              reject(errorMessage);
+              return;
+            };
+            xhr.onloadend = () => {
+              if (files.length === 0) {
+                setLoading(true);
+              }
+            };
+
+            const formData = new FormData();
+            if (file.size !== undefined) {
+              formData.append(file.size.toString(), blobFile, fileName);
+              xhr.send(formData);
+            }
+          });
+        };
+
+        const uploadFilePromises: any = [];
+        // open object manager
+        openList();
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          uploadFilePromises.push(uploadPromise(file));
         }
+        Promise.allSettled(uploadFilePromises).then((results: Array<any>) => {
+          const errors = results.filter(
+            (result) => result.status === "rejected"
+          );
+          if (errors.length > 0) {
+            const totalFiles = uploadFilePromises.length;
+            const successUploadedFiles =
+              uploadFilePromises.length - errors.length;
+            const err: ErrorResponseHandler = {
+              errorMessage: "There were some errors during file upload",
+              detailedError: `Uploaded files ${successUploadedFiles}/${totalFiles}`,
+            };
+            console.log("upload results", results);
+            setErrorSnackMessage(err);
+          }
+        });
       };
 
       upload(files, bucketName, pathPrefix, folderPath);
@@ -902,7 +902,7 @@ const ListObjects = ({
       internalPaths,
       openList,
       setNewObject,
-      setSnackBarMessage,
+      setErrorSnackMessage,
       updateProgress,
     ]
   );
