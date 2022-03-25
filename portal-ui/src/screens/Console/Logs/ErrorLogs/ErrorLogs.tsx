@@ -295,12 +295,12 @@ const ErrorLogs = ({
                 checked={logType === "minio" || allTypes}
                 id={"minio_type"}
                 name={"minio_type"}
-                label={"Minio"}
+                label={"MinIO"}
                 onChange={(item) => {
                   setAllTypes(false);
                   item.target.checked ? setLogType("minio") : setLogType("");
                 }}
-                value={"Minio"}
+                value={"MinIO"}
                 disabled={false}
               />
             </div>
