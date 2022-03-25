@@ -53,6 +53,7 @@ import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { TrashIcon } from "../../../../icons";
 
+
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
 
@@ -76,6 +77,10 @@ const BucketReplicationPanel = withSuspense(
 );
 const BucketLifecyclePanel = withSuspense(
   React.lazy(() => import("./BucketLifecyclePanel"))
+);
+
+const EditReplication = withSuspense(
+    React.lazy(() => import("./EditReplication"))
 );
 
 const styles = (theme: Theme) =>
@@ -321,6 +326,13 @@ const BucketDetails = ({
                         path="/buckets/:bucketName/admin/replication"
                         component={BucketReplicationPanel}
                       />
+                    )}
+                    {distributedSetup && (
+                        <Route
+                            exact
+                            path="/buckets/:bucketName/admin/replication/:rule/edit"
+                            component={EditReplication}
+                        />
                     )}
                     {distributedSetup && (
                       <Route

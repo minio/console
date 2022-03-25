@@ -45,7 +45,7 @@ import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
-import EditReplicationModal from "./EditReplicationModal";
+import EditReplication from "./EditReplication";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -55,6 +55,7 @@ const DeleteReplicationRule = withSuspense(
 );
 
 interface IBucketReplicationProps {
+  history: any;
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -72,6 +73,7 @@ const styles = (theme: Theme) =>
   });
 
 const BucketReplicationPanel = ({
+  history,
   classes,
   match,
   setErrorSnackMessage,
@@ -84,8 +86,6 @@ const BucketReplicationPanel = ({
   const [deleteReplicationModal, setDeleteReplicationModal] =
     useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
-  const [editReplicationModal, setEditReplicationModal] =
-    useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
   const [deleteAllRules, setDeleteAllRules] = useState<boolean>(false);
 
@@ -146,13 +146,6 @@ const BucketReplicationPanel = ({
     }
   };
 
-  const closeEditReplication = (refresh: boolean) => {
-    setEditReplicationModal(false);
-
-    if (refresh) {
-      setLoadingReplication(true);
-    }
-  };
 
   const confirmDeleteReplication = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
@@ -168,7 +161,9 @@ const BucketReplicationPanel = ({
 
   const editReplicationRule = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
-    setEditReplicationModal(true);
+    history.push(
+        `/buckets/${bucketName}/admin/replication/${replication.id}/edit`
+    );
   };
 
   const ruleDestDisplay = (events: BucketReplicationDestination) => {
@@ -214,15 +209,6 @@ const BucketReplicationPanel = ({
           ruleToDelete={selectedRRule}
           remainingRules={replicationRules.length}
           deleteAllRules={deleteAllRules}
-        />
-      )}
-
-      {editReplicationModal && (
-        <EditReplicationModal
-          closeModalAndRefresh={closeEditReplication}
-          open={editReplicationModal}
-          bucketName={bucketName}
-          ruleID={selectedRRule}
         />
       )}
       <Grid container>
