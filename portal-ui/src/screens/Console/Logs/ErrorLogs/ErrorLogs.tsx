@@ -237,6 +237,7 @@ const ErrorLogs = ({
                 <Select
                   id="node"
                   name="node"
+                  data-test-id="node-selector"
                   value={selectedNode}
                   onChange={(e) => {
                     setSelectedNode(e.target.value as string);

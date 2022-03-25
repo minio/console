@@ -52,3 +52,11 @@ test("Log window exists in Logs page", async (t) => {
     .expect(logWindowExists)
     .ok();
 });
+
+test("Node selector exists in Logs page", async (t) => {
+  const nodeSelectorExists = elements.nodeSelector.exists;
+  await t
+    .navigateTo("http://localhost:9090/tools/logs")
+    .expect(nodeSelectorExists)
+    .ok();
+});
