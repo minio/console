@@ -407,7 +407,9 @@ const ObjectDetailPanel = ({
       },
       label: "Legal Hold",
       disabled:
-        !locking || !distributedSetup || !!actualInfo.is_delete_marker ||
+        !locking ||
+        !distributedSetup ||
+        !!actualInfo.is_delete_marker ||
         !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]) ||
         selectedVersion !== "",
       icon: <LegalHoldIcon />,
