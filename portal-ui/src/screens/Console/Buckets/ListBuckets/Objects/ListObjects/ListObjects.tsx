@@ -74,7 +74,12 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import {BucketInfo, BucketObjectLocking, BucketQuota, BucketVersioning} from "../../../types";
+import {
+  BucketInfo,
+  BucketObjectLocking,
+  BucketQuota,
+  BucketVersioning,
+} from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
@@ -442,15 +447,15 @@ const ListObjects = ({
     if (loadingLocking) {
       if (displayListObjects) {
         api
-            .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-            .then((res: BucketObjectLocking) => {
-              setLockingEnabled(res.object_locking_enabled);
-              setLoadingLocking(false);
-            })
-            .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
-              setLoadingLocking(false);
-            });
+          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
+          .then((res: BucketObjectLocking) => {
+            setLockingEnabled(res.object_locking_enabled);
+            setLoadingLocking(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setErrorSnackMessage(err);
+            setLoadingLocking(false);
+          });
       } else {
         setLoadingLocking(false);
       }
