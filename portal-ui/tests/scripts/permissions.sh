@@ -16,51 +16,54 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/common.sh"
 
 remove_users() {
-  mc admin user remove minio bucketassignpolicy-$TIMESTAMP
-  mc admin user remove minio bucketread-$TIMESTAMP
-  mc admin user remove minio bucketwrite-$TIMESTAMP
-  mc admin user remove minio dashboard-$TIMESTAMP
-  mc admin user remove minio diagnostics-$TIMESTAMP
-  mc admin user remove minio groups-$TIMESTAMP
-  mc admin user remove minio heal-$TIMESTAMP
-  mc admin user remove minio iampolicies-$TIMESTAMP
-  mc admin user remove minio logs-$TIMESTAMP
-  mc admin user remove minio notificationendpoints-$TIMESTAMP
-  mc admin user remove minio settings-$TIMESTAMP
-  mc admin user remove minio tiers-$TIMESTAMP
-  mc admin user remove minio trace-$TIMESTAMP
-  mc admin user remove minio users-$TIMESTAMP
-  mc admin user remove minio watch-$TIMESTAMP
-  mc admin user remove minio bucketwriteprefixonlypolicy-$TIMESTAMP
-  mc admin user remove minio inspect-allowed-$TIMESTAMP
-  mc admin user remove minio inspect-not-allowed-$TIMESTAMP
-  mc admin user remove minio prefix-policy-ui-crash-$TIMESTAMP
+  mc admin user remove minio bucketassignpolicy-"$TIMESTAMP"
+  mc admin user remove minio bucketread-"$TIMESTAMP"
+  mc admin user remove minio bucketwrite-"$TIMESTAMP"
+  mc admin user remove minio dashboard-"$TIMESTAMP"
+  mc admin user remove minio diagnostics-"$TIMESTAMP"
+  mc admin user remove minio groups-"$TIMESTAMP"
+  mc admin user remove minio heal-"$TIMESTAMP"
+  mc admin user remove minio iampolicies-"$TIMESTAMP"
+  mc admin user remove minio logs-"$TIMESTAMP"
+  mc admin user remove minio notificationendpoints-"$TIMESTAMP"
+  mc admin user remove minio settings-"$TIMESTAMP"
+  mc admin user remove minio tiers-"$TIMESTAMP"
+  mc admin user remove minio trace-"$TIMESTAMP"
+  mc admin user remove minio users-"$TIMESTAMP"
+  mc admin user remove minio watch-"$TIMESTAMP"
+  mc admin user remove minio bucketwriteprefixonlypolicy-"$TIMESTAMP"
+  mc admin user remove minio inspect-allowed-"$TIMESTAMP"
+  mc admin user remove minio inspect-not-allowed-"$TIMESTAMP"
+  mc admin user remove minio prefix-policy-ui-crash-"$TIMESTAMP"
+  mc admin user remove minio delete-object-with-prefix-"$TIMESTAMP"
 }
 
 remove_policies() {
-  mc admin policy remove minio bucketassignpolicy-$TIMESTAMP
-  mc admin policy remove minio bucketread-$TIMESTAMP
-  mc admin policy remove minio bucketwrite-$TIMESTAMP
-  mc admin policy remove minio dashboard-$TIMESTAMP
-  mc admin policy remove minio diagnostics-$TIMESTAMP
-  mc admin policy remove minio groups-$TIMESTAMP
-  mc admin policy remove minio heal-$TIMESTAMP
-  mc admin policy remove minio iampolicies-$TIMESTAMP
-  mc admin policy remove minio logs-$TIMESTAMP
-  mc admin policy remove minio notificationendpoints-$TIMESTAMP
-  mc admin policy remove minio settings-$TIMESTAMP
-  mc admin policy remove minio tiers-$TIMESTAMP
-  mc admin policy remove minio trace-$TIMESTAMP
-  mc admin policy remove minio users-$TIMESTAMP
-  mc admin policy remove minio watch-$TIMESTAMP
-  mc admin policy remove minio bucketwriteprefixonlypolicy-$TIMESTAMP
-  mc admin policy remove minio inspect-allowed-$TIMESTAMP
-  mc admin policy remove minio inspect-not-allowed-$TIMESTAMP
-  mc admin policy remove minio fix-prefix-policy-ui-crash-$TIMESTAMP
+  mc admin policy remove minio bucketassignpolicy-"$TIMESTAMP"
+  mc admin policy remove minio bucketread-"$TIMESTAMP"
+  mc admin policy remove minio bucketwrite-"$TIMESTAMP"
+  mc admin policy remove minio dashboard-"$TIMESTAMP"
+  mc admin policy remove minio diagnostics-"$TIMESTAMP"
+  mc admin policy remove minio groups-"$TIMESTAMP"
+  mc admin policy remove minio heal-"$TIMESTAMP"
+  mc admin policy remove minio iampolicies-"$TIMESTAMP"
+  mc admin policy remove minio logs-"$TIMESTAMP"
+  mc admin policy remove minio notificationendpoints-"$TIMESTAMP"
+  mc admin policy remove minio settings-"$TIMESTAMP"
+  mc admin policy remove minio tiers-"$TIMESTAMP"
+  mc admin policy remove minio trace-"$TIMESTAMP"
+  mc admin policy remove minio users-"$TIMESTAMP"
+  mc admin policy remove minio watch-"$TIMESTAMP"
+  mc admin policy remove minio bucketwriteprefixonlypolicy-"$TIMESTAMP"
+  mc admin policy remove minio inspect-allowed-"$TIMESTAMP"
+  mc admin policy remove minio inspect-not-allowed-"$TIMESTAMP"
+  mc admin policy remove minio fix-prefix-policy-ui-crash-"$TIMESTAMP"
+  mc admin policy remove minio delete-object-with-prefix-"$TIMESTAMP"
 }
 
 remove_buckets() {
   mc rm minio/testcafe/write/test.txt && mc rm minio/testcafe
+  mc rm minio/test/test.txt && mc rm minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc rm minio/test/digitalinsights/test.txt && mc rm minio/test
 }
 
 cleanup() {
@@ -70,8 +73,8 @@ cleanup() {
 }
 
 __init__() {
-  export TIMESTAMP=$(date "+%s")
-  echo $TIMESTAMP > portal-ui/tests/constants/timestamp.txt
+  TIMESTAMP=$(date "+%s")
+  echo "$TIMESTAMP" > portal-ui/tests/constants/timestamp.txt
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
 

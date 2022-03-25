@@ -80,6 +80,57 @@ test-integration:
 	@(docker stop minio)
 	@(docker network rm mynet123)
 
+test-sso-integration:
+	@echo "create the network in bridge mode to communicate all containers"
+	@(docker network create my-net)
+	@echo "execute latest keycloak container"
+	@(docker run \
+	--rm \
+	--name keycloak-container \
+	--network my-net \
+	-p 8080:8080 \
+	-e KEYCLOAK_USER=admin \
+	-e KEYCLOAK_PASSWORD=admin jboss/keycloak:latest -b 0.0.0.0 -bprivate 127.0.0.1 &)
+	@echo "wait 60 sec until keycloak is listenning on port, then go for minio server"
+	@(sleep 60)
+	@echo "execute keycloak-config-cli container to configure keycloak for Single Sign On with MinIO"
+	@(docker run \
+	--rm \
+	--network my-net \
+	--name keycloak-config-cli \
+	-e KEYCLOAK_URL=http://keycloak-container:8080/auth \
+	-e KEYCLOAK_USER="admin" \
+	-e KEYCLOAK_PASSWORD="admin" \
+	-e KEYCLOAK_AVAILABILITYCHECK_ENABLED=true \
+	-e KEYCLOAK_AVAILABILITYCHECK_TIMEOUT=120s \
+	-e IMPORT_FILES_LOCATIONS='/config/realm-export.json' \
+	-v /home/runner/work/console/console/sso-integration/config:/config \
+	adorsys/keycloak-config-cli:latest)
+	@echo "running minio server"
+	@(docker run \
+	-v /data1 -v /data2 -v /data3 -v /data4 \
+	--network my-net \
+	-d \
+	--name minio \
+	--rm \
+	-p 9000:9000 \
+	-p 9001:9001 \
+	-e MINIO_IDENTITY_OPENID_CLIENT_SECRET=0nfJuqIt0iPnRIUJkvetve5l38C6gi9W \
+	-e MINIO_ROOT_USER=minio \
+	-e MINIO_ROOT_PASSWORD=minio123 $(MINIO_VERSION) server /data{1...4} --address :9000 --console-address :9001)
+	@(sleep 60)
+	@echo "run mc commands"
+	@(docker run --name minio-client --network my-net -dit --entrypoint=/bin/sh minio/mc)
+	@(docker exec minio-client mc alias set myminio/ http://minio:9000 minio minio123)
+	@(docker exec minio-client mc admin config set myminio identity_openid config_url="http://keycloak-container:8080/auth/realms/myrealm/.well-known/openid-configuration" client_id="account")
+	@(docker exec minio-client mc admin service restart myminio)
+	@echo "starting bash script"
+	@(env bash $(PWD)/sso-integration/set-sso.sh)
+	@echo "install jq"
+	@(sudo apt install jq)
+	@echo "Executing the test:"
+	@(cd sso-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./sso-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/sso-system.out)
+
 test-operator-integration:
 	@(echo "Start cd operator-integration && go test:")
 	@(pwd)

@@ -116,6 +116,23 @@ const setPolicy3 = () => {
   });
 };
 
+const setPolicy4 = () => {
+  store.dispatch({
+    type: SESSION_RESPONSE,
+    message: {
+      distributedMode: true,
+      features: [],
+      permissions: {
+        "arn:aws:s3:::test/*": ["s3:ListBucket"],
+        "arn:aws:s3:::test": ["s3:GetBucketLocation"],
+        "arn:aws:s3:::test/digitalinsights/xref_cust_guid_actd*": ["s3:*"],
+      },
+      status: "ok",
+      operator: false,
+    },
+  });
+};
+
 test("Upload button disabled", () => {
   setPolicy1();
   expect(hasPermission("testcafe", ["s3:PutObject"])).toBe(false);
@@ -156,4 +173,27 @@ test("Can browse a bucket for a policy with a wildcard", () => {
       IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
     )
   ).toBe(true);
+});
+
+test("Can delete an object inside a bucket prefix", () => {
+  setPolicy4();
+  expect(
+    hasPermission(
+      [
+        "xref_cust_guid_actd-v1.jpg",
+        "test/digitalinsights/xref_cust_guid_actd-v1.jpg",
+      ],
+      [IAM_SCOPES.S3_DELETE_OBJECT]
+    )
+  ).toBe(true);
+});
+
+test("Can't delete an object inside a bucket prefix", () => {
+  setPolicy4();
+  expect(
+    hasPermission(
+      ["xref_cust_guid_actd-v1.jpg", "test/xref_cust_guid_actd-v1.jpg"],
+      [IAM_SCOPES.S3_DELETE_OBJECT]
+    )
+  ).toBe(false);
 });

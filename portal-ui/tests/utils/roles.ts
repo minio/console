@@ -239,3 +239,14 @@ export const watch = Role(
   },
   { preserveUrl: true }
 );
+
+export const deleteObjectWithPrefixOnly = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "delete-object-with-prefix-" + unixTimestamp)
+      .typeText("#secretKey", "deleteobjectwithprefix1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);

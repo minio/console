@@ -47,19 +47,11 @@ const styles = (theme: Theme) =>
     },
   });
 
-const WarningMessage = ({
-  classes,
-  label,
-    title,
-}: IWarningMessage) => {
+const WarningMessage = ({ classes, label, title }: IWarningMessage) => {
   return (
     <div className={classes.headerContainer}>
-      <h4 className={classes.labelHeadline}>
-        {title}
-      </h4>
-      <div className={classes.labelText}>
-        {label}
-      </div>
+      <h4 className={classes.labelHeadline}>{title}</h4>
+      <div className={classes.labelText}>{label}</div>
     </div>
   );
 };
