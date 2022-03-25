@@ -3573,3 +3573,47 @@ func TestAccessRule(t *testing.T) {
 	}
 
 }
+
+func GetBucketRewind(bucketName string, date string) (*http.Response, error) {
+	/*
+		Helper function to get objects in a bucket for a rewind date
+		HTTP Verb: GET
+		URL: /buckets/{bucket_name}/rewind/{date}
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/rewind/"+date,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestGetBucketRewind(t *testing.T) {
+
+	// Variables
+	assert := assert.New(t)
+	bucketName := "test-get-bucket-rewind"
+	date := "2006-01-02T15:04:05Z"
+
+	// Test
+	resp, err := GetBucketRewind(bucketName, date)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, inspectHTTPResponse(resp))
+	}
+
+}
