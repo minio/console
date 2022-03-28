@@ -2688,6 +2688,34 @@ func DeletesAllReplicationRulesOnABucket(bucketName string) (*http.Response, err
 	return response, err
 }
 
+func DeleteMultipleReplicationRules(bucketName string, rules []string) (*http.Response, error) {
+	/*
+		Helper function to delete multiple replication rules in a bucket
+		URL: /buckets/{bucket_name}/delete-multiple-replication-rules
+		HTTP Verb: DELETE
+	*/
+	body := map[string]interface{}{
+		"rules": rules,
+	}
+	requestDataJSON, _ := json.Marshal(body)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-selected-replication-rules",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func DeleteBucketReplicationRule(bucketName string, ruleID string) (*http.Response, error) {
 	/*
 		Helper function to delete a bucket's replication rule
@@ -2716,7 +2744,7 @@ func TestReplication(t *testing.T) {
 	// Vars
 	assert := assert.New(t)
 	originBucket := "testputobjectslegalholdstatus"
-	destinationBuckets := []string{"testgetbucketquota", "testputbucketquota"} // an array of strings to iterate over
+	destinationBuckets := []string{"testgetbucketquota", "testputbucketquota", "testlistbucketevents"} // an array of strings to iterate over
 
 	// 1. Set replication rules with DIFFERENT PRIORITY <------- NOT SAME BUT DIFFERENT! 1, 2, etc.
 	for index, destinationBucket := range destinationBuckets {
@@ -2750,7 +2778,7 @@ func TestReplication(t *testing.T) {
 
 	}
 
-	// 2. Get replication, at this point two rules are expected
+	// 2. Get replication, at this point four rules are expected
 	response, err := GetBucketReplication(originBucket)
 	assert.Nil(err)
 	if err != nil {
@@ -2775,17 +2803,17 @@ func TestReplication(t *testing.T) {
 		return
 	}
 	// 4. Verify rules are enabled
-	for index := 0; index < 2; index++ {
+	for index := 0; index < 3; index++ {
 		Status := structBucketRepl.Rules[index].Status
 		assert.Equal(Status, "Enabled")
 	}
 
-	// 5. Delete 2nd rule only with dedicated end point for single rules:
+	// 5. Delete 3rd and 4th rules with endpoint for multiple rules:
 	// /buckets/{bucket_name}/replication/{rule_id}
-	ruleID := structBucketRepl.Rules[1].ID // To delete 2nd rule in a single way
-	response, err = DeleteBucketReplicationRule(
+	ruleIDs := []string{structBucketRepl.Rules[2].ID} // To delete 3rd rule with the multi delete function
+	response, err = DeleteMultipleReplicationRules(
 		originBucket,
-		ruleID,
+		ruleIDs,
 	)
 	assert.Nil(err)
 	if err != nil {
@@ -2797,7 +2825,24 @@ func TestReplication(t *testing.T) {
 		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
-	// 6. Delete remaining Bucket Replication Rule with generic end point:
+	// 6. Delete 2nd rule only with dedicated end point for single rules:
+	// /buckets/{bucket_name}/replication/{rule_id}
+	ruleID := structBucketRepl.Rules[1].ID // To delete 2nd rule in a single way
+	response, err = DeleteBucketReplicationRule(
+		originBucket,
+		ruleID,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse = inspectHTTPResponse(response)
+	if response != nil {
+		assert.Equal(204, response.StatusCode, finalResponse)
+	}
+
+	// 7. Delete remaining Bucket Replication Rule with generic end point:
 	// /buckets/{bucket_name}/delete-all-replication-rules
 	response, err = DeletesAllReplicationRulesOnABucket(
 		originBucket,
@@ -2812,6 +2857,27 @@ func TestReplication(t *testing.T) {
 		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
+	// 8. Get replication, at this point zero rules are expected
+	response, err = GetBucketReplication(originBucket)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, "error invalid status")
+	}
+
+	// 9. Get rule ID and status from response's body
+	bodyBytes, _ = ioutil.ReadAll(response.Body)
+	structBucketRepl = models.BucketReplicationResponse{}
+	err = json.Unmarshal(bodyBytes, &structBucketRepl)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+
+	assert.Equal(len(structBucketRepl.Rules), 0, "Delete failed")
 }
 
 func GetBucketVersioning(bucketName string) (*http.Response, error) {
