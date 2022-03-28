@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// DeleteAllReplicationRulesHandlerFunc turns a function with the right signature into a delete all replication rules handler
-type DeleteAllReplicationRulesHandlerFunc func(DeleteAllReplicationRulesParams, *models.Principal) middleware.Responder
+// DeleteSelectedReplicationRulesHandlerFunc turns a function with the right signature into a delete selected replication rules handler
+type DeleteSelectedReplicationRulesHandlerFunc func(DeleteSelectedReplicationRulesParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteAllReplicationRulesHandlerFunc) Handle(params DeleteAllReplicationRulesParams, principal *models.Principal) middleware.Responder {
+func (fn DeleteSelectedReplicationRulesHandlerFunc) Handle(params DeleteSelectedReplicationRulesParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// DeleteAllReplicationRulesHandler interface for that can handle valid delete all replication rules params
-type DeleteAllReplicationRulesHandler interface {
-	Handle(DeleteAllReplicationRulesParams, *models.Principal) middleware.Responder
+// DeleteSelectedReplicationRulesHandler interface for that can handle valid delete selected replication rules params
+type DeleteSelectedReplicationRulesHandler interface {
+	Handle(DeleteSelectedReplicationRulesParams, *models.Principal) middleware.Responder
 }
 
-// NewDeleteAllReplicationRules creates a new http.Handler for the delete all replication rules operation
-func NewDeleteAllReplicationRules(ctx *middleware.Context, handler DeleteAllReplicationRulesHandler) *DeleteAllReplicationRules {
-	return &DeleteAllReplicationRules{Context: ctx, Handler: handler}
+// NewDeleteSelectedReplicationRules creates a new http.Handler for the delete selected replication rules operation
+func NewDeleteSelectedReplicationRules(ctx *middleware.Context, handler DeleteSelectedReplicationRulesHandler) *DeleteSelectedReplicationRules {
+	return &DeleteSelectedReplicationRules{Context: ctx, Handler: handler}
 }
 
-/* DeleteAllReplicationRules swagger:route DELETE /buckets/{bucket_name}/delete-all-replication-rules UserAPI deleteAllReplicationRules
+/* DeleteSelectedReplicationRules swagger:route DELETE /buckets/{bucket_name}/delete-selected-replication-rules UserAPI deleteSelectedReplicationRules
 
-Deletes all replication rules from a bucket
+Deletes selected replication rules from a bucket
 
 */
-type DeleteAllReplicationRules struct {
+type DeleteSelectedReplicationRules struct {
 	Context *middleware.Context
-	Handler DeleteAllReplicationRulesHandler
+	Handler DeleteSelectedReplicationRulesHandler
 }
 
-func (o *DeleteAllReplicationRules) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *DeleteSelectedReplicationRules) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewDeleteAllReplicationRulesParams()
+	var Params = NewDeleteSelectedReplicationRulesParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
