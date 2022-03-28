@@ -968,13 +968,37 @@ paths:
 
   /buckets/{bucket_name}/delete-all-replication-rules:
     delete:
-      summary: Deletes all replication rules on a bucket
+      summary: Deletes all replication rules from a bucket
       operationId: DeleteAllReplicationRules
       parameters:
         - name: bucket_name
           in: path
           required: true
           type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/delete-selected-replication-rules:
+    delete:
+      summary: Deletes selected replication rules from a bucket
+      operationId: DeleteSelectedReplicationRules
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: rules
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/bucketReplicationRuleList"
       responses:
         204:
           description: A successful response.
@@ -3211,6 +3235,14 @@ definitions:
         type: string
       destination:
         $ref: "#/definitions/bucketReplicationDestination"
+
+  bucketReplicationRuleList:
+    type: object
+    properties:
+      rules:
+        type: array
+        items:
+          type: string
 
   bucketReplicationResponse:
     type: object
