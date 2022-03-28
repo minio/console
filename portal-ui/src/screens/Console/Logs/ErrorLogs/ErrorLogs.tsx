@@ -127,7 +127,12 @@ const ErrorLogs = ({
   const [filter, setFilter] = useState<string>("");
   const [nodes, setNodes] = useState<string[]>([""]);
   const [selectedNode, setSelectedNode] = useState<string>("Select node");
-
+  const [selectedUserAgent, setSelectedUserAgent] =
+    useState<string>("Select user agent");
+  const [userAgents, setUserAgents] = useState<string[]>([
+    "All User Agents",
+    "fake",
+  ]);
   const [allTypes, setAllTypes] = useState<boolean>(false);
   const [logType, setLogType] = useState<string>("all");
   const [loadingNodes, setLoadingNodes] = useState<boolean>(false);
@@ -161,9 +166,14 @@ const ErrorLogs = ({
       c.onmessage = (message: IMessageEvent) => {
         // console.log(message.data.toString())
         // FORMAT: 00:35:17 UTC 01/01/2021
+
         let m: LogMessage = JSON.parse(message.data.toString());
         m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
+        if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent != undefined) {
+          userAgents.push(m.userAgent);
+          setUserAgents(userAgents);
+        }
         logMessageReceived(m);
       };
       c.onclose = () => {
@@ -180,28 +190,34 @@ const ErrorLogs = ({
 
   const filtLow = filter.toLowerCase();
   let filteredMessages = messages.filter((m) => {
-    if (filter !== "") {
-      if (m.ConsoleMsg.toLowerCase().indexOf(filtLow) >= 0) {
-        return true;
-      } else if (
-        m.error &&
-        m.error.source &&
-        m.error.source.filter((x) => {
-          return x.toLowerCase().indexOf(filtLow) >= 0;
-        }).length > 0
-      ) {
-        return true;
-      } else if (
-        m.error &&
-        m.error.message.toLowerCase().indexOf(filtLow) >= 0
-      ) {
-        return true;
-      } else if (m.api && m.api.name.toLowerCase().indexOf(filtLow) >= 0) {
-        return true;
+    if (
+      m.userAgent === selectedUserAgent ||
+      selectedUserAgent === "All User Agents" ||
+      selectedUserAgent === "Select user agent"
+    ) {
+      if (filter !== "") {
+        if (m.ConsoleMsg.toLowerCase().indexOf(filtLow) >= 0) {
+          return true;
+        } else if (
+          m.error &&
+          m.error.source &&
+          m.error.source.filter((x) => {
+            return x.toLowerCase().indexOf(filtLow) >= 0;
+          }).length > 0
+        ) {
+          return true;
+        } else if (
+          m.error &&
+          m.error.message.toLowerCase().indexOf(filtLow) >= 0
+        ) {
+          return true;
+        } else if (m.api && m.api.name.toLowerCase().indexOf(filtLow) >= 0) {
+          return true;
+        }
+        return false;
       }
-      return false;
+      return true;
     }
-    return true;
   });
 
   useEffect(() => {
@@ -263,7 +279,36 @@ const ErrorLogs = ({
             ) : (
               <h3> Loading nodes</h3>
             )}
-
+            <FormControl variant="outlined" className={classes.nodeField}>
+              <Select
+                id="userAgent"
+                name="userAgent"
+                data-test-id="user-agent"
+                value={selectedUserAgent}
+                onChange={(e) => {
+                  setSelectedUserAgent(e.target.value as string);
+                }}
+                className={classes.searchField}
+                disabled={userAgents.length < 1}
+                input={<SelectStyled />}
+              >
+                <MenuItem
+                  value={selectedUserAgent}
+                  key={`select-user-agent-default`}
+                  disabled={true}
+                >
+                  Select User Agent
+                </MenuItem>
+                {userAgents.map((anAgent) => (
+                  <MenuItem
+                    value={anAgent}
+                    key={`select-user-agent-${anAgent}`}
+                  >
+                    {anAgent}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <div className={classes.checkBoxLabel}>Log type to display:</div>
             <div className={classes.midColumnCheckboxes}>
               <CheckboxWrapper
