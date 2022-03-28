@@ -213,3 +213,47 @@ func TestListPoliciesWithBucket(t *testing.T) {
 	}
 
 }
+
+func ListUsersWithAccessToBucket(bucketName string) (*http.Response, error) {
+	/*
+		Helper function to List Users With Access to a Given Bucket
+		HTTP Verb: GET
+		URL: /bucket-users/{bucket}
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/bucket-users/"+bucketName, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestListUsersWithAccessToBucket(t *testing.T) {
+
+	// Test Variables
+	bucketName := "testlistuserswithaccesstobucket1"
+	assert := assert.New(t)
+
+	// Test
+	response, err := ListUsersWithAccessToBucket(bucketName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	parsedResponse := inspectHTTPResponse(response)
+	if response != nil {
+		assert.Equal(
+			200,
+			response.StatusCode,
+			parsedResponse,
+		)
+	}
+
+}
