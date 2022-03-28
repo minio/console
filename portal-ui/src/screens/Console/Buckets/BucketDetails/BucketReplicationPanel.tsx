@@ -87,7 +87,8 @@ const BucketReplicationPanel = ({
   const [editReplicationModal, setEditReplicationModal] =
     useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
-  const [deleteAllRules, setDeleteAllRules] = useState<boolean>(false);
+  const [selectedRepRules, setSelectedRepRules] = useState<string[]>([]);
+  const [deleteSelectedRules, setDeleteSelectedRules] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
 
@@ -156,13 +157,13 @@ const BucketReplicationPanel = ({
 
   const confirmDeleteReplication = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
-    setDeleteAllRules(false);
+    setDeleteSelectedRules(false);
     setDeleteReplicationModal(true);
   };
 
-  const confirmDeleteAllReplicationRules = () => {
-    setSelectedRRule("allRules");
-    setDeleteAllRules(true);
+  const confirmDeleteSelectedReplicationRules = () => {
+    setSelectedRRule("selectedRules");
+    setDeleteSelectedRules(true);
     setDeleteReplicationModal(true);
   };
 
@@ -178,6 +179,34 @@ const BucketReplicationPanel = ({
   const tagDisplay = (events: BucketReplicationRule) => {
     return <Fragment>{events && events.tags !== "" ? "Yes" : "No"}</Fragment>;
   };
+
+  const selectAllItems = () => {
+    if (selectedRepRules.length === replicationRules.length) {
+      setSelectedRepRules([]);
+      return;
+    }
+    setSelectedRepRules(replicationRules.map(x => x.id))
+  };
+
+  const selectRules = (
+      e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...selectedRepRules]; // We clone the selectedSAs array
+    if (checked) {
+      // If the user has checked this field we need to push this to selectedSAs
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+    setSelectedRepRules(elements);
+    return elements;
+  };
+
 
   const replicationTableActions: any = [
     {
@@ -212,8 +241,10 @@ const BucketReplicationPanel = ({
           selectedBucket={bucketName}
           closeDeleteModalAndRefresh={closeReplicationModalDelete}
           ruleToDelete={selectedRRule}
+          rulesToDelete={selectedRepRules}
           remainingRules={replicationRules.length}
-          deleteAllRules={deleteAllRules}
+          allSelected={selectedRepRules.length === replicationRules.length}
+          deleteSelectedRules={deleteSelectedRules}
         />
       )}
 
@@ -236,15 +267,15 @@ const BucketReplicationPanel = ({
               errorProps={{ disabled: true }}
             >
               <RBIconButton
-                tooltip={"Delete All Replication Rules"}
+                tooltip={"Remove Selected Replication Rules"}
                 onClick={() => {
-                  confirmDeleteAllReplicationRules();
+                  confirmDeleteSelectedReplicationRules();
                 }}
-                text={"Delete All Rules"}
+                text={"Remove Selected Rules"}
                 icon={<TrashIcon />}
                 color={"secondary"}
                 variant={"outlined"}
-                disabled={replicationRules.length === 0}
+                disabled={selectedRepRules.length === 0}
               />
             </SecureComponent>
             <SecureComponent
@@ -305,6 +336,9 @@ const BucketReplicationPanel = ({
               idField="id"
               customPaperHeight={classes.twHeight}
               textSelectable
+              selectedItems={selectedRepRules}
+              onSelect={(e) => selectRules(e)}
+              onSelectAll={selectAllItems}
             />
           </SecureComponent>
         </Grid>

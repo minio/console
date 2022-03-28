@@ -24,14 +24,17 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import WarningMessage from "../../Common/WarningMessage/WarningMessage";
 
 interface IDeleteReplicationProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
   ruleToDelete?: string;
+  rulesToDelete?: string[];
   remainingRules: number;
-  deleteAllRules?: boolean;
+  allSelected: boolean;
+  deleteSelectedRules?: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
@@ -40,9 +43,11 @@ const DeleteReplicationRule = ({
   deleteOpen,
   selectedBucket,
   ruleToDelete,
+  rulesToDelete,
   remainingRules,
+  allSelected,
   setErrorSnackMessage,
-  deleteAllRules = false,
+  deleteSelectedRules = false,
 }: IDeleteReplicationProps) => {
   const [confirmationText, setConfirmationText] = useState<string>("");
 
@@ -59,18 +64,26 @@ const DeleteReplicationRule = ({
   const onConfirmDelete = () => {
     let url = `/api/v1/buckets/${selectedBucket}/replication/${ruleToDelete}`;
 
-    if (deleteAllRules || remainingRules === 1) {
+    if (deleteSelectedRules) {
+      if (allSelected) {
+        url = `/api/v1/buckets/${selectedBucket}/delete-all-replication-rules`;
+      } else {
+        url = `/api/v1/buckets/${selectedBucket}/delete-selected-replication-rules`;
+        invokeDeleteApi("DELETE", url, {rules: rulesToDelete});
+        return
+      }
+    } else if (remainingRules === 1) {
       url = `/api/v1/buckets/${selectedBucket}/delete-all-replication-rules`;
     }
 
-    invokeDeleteApi("DELETE", url);
+    invokeDeleteApi("DELETE", url)
   };
 
   return (
     <ConfirmDialog
       title={
-        deleteAllRules
-          ? "Delete all Replication Rules"
+        deleteSelectedRules
+          ? "Delete Selected Replication Rules"
           : "Delete Replication Rule"
       }
       confirmText={"Delete"}
@@ -80,15 +93,20 @@ const DeleteReplicationRule = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmButtonProps={{
-        disabled: deleteAllRules && confirmationText !== "Yes, I am sure",
+        disabled: deleteSelectedRules && confirmationText !== "Yes, I am sure",
       }}
       confirmationContent={
         <DialogContentText>
-          {deleteAllRules ? (
+          {deleteSelectedRules ? (
             <Fragment>
-              Are you sure you want to remove all replication rules for bucket{" "}
+              <WarningMessage
+                  title={"Warning"}
+                  label={"The corresponding remote buckets will also be deleted."}
+              />
+              Are you sure you want to remove the selected replication rules for bucket{" "}
               <b>{selectedBucket}</b>?<br />
               <br />
+
               To continue please type <b>Yes, I am sure</b> in the box.
               <Grid item xs={12}>
                 <InputBoxWrapper
@@ -104,6 +122,10 @@ const DeleteReplicationRule = ({
             </Fragment>
           ) : (
             <Fragment>
+              <WarningMessage
+                  title={"Warning"}
+                  label={"The corresponding remote bucket will also be deleted."}
+              />
               Are you sure you want to delete replication rule{" "}
               <b>{ruleToDelete}</b>?
             </Fragment>

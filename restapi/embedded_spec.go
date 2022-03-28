@@ -781,7 +781,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Deletes all replication rules on a bucket",
+        "summary": "Deletes all replication rules from a bucket",
         "operationId": "DeleteAllReplicationRules",
         "parameters": [
           {
@@ -837,6 +837,42 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/delete-selected-replication-rules": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Deletes selected replication rules from a bucket",
+        "operationId": "DeleteSelectedReplicationRules",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "rules",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationRuleList"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -4535,6 +4571,17 @@ func init() {
         }
       }
     },
+    "bucketReplicationRuleList": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
@@ -7270,7 +7317,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Deletes all replication rules on a bucket",
+        "summary": "Deletes all replication rules from a bucket",
         "operationId": "DeleteAllReplicationRules",
         "parameters": [
           {
@@ -7326,6 +7373,42 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/delete-selected-replication-rules": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Deletes selected replication rules from a bucket",
+        "operationId": "DeleteSelectedReplicationRules",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "rules",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationRuleList"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -11147,6 +11230,17 @@ func init() {
         },
         "tags": {
           "type": "string"
+        }
+      }
+    },
+    "bucketReplicationRuleList": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
