@@ -170,7 +170,7 @@ const ErrorLogs = ({
         let m: LogMessage = JSON.parse(message.data.toString());
         m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
-        if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent != undefined) {
+        if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent !== undefined) {
           userAgents.push(m.userAgent);
           setUserAgents(userAgents);
         }
@@ -186,7 +186,7 @@ const ErrorLogs = ({
         console.log("closing websockets");
       };
     }
-  }, [logMessageReceived, logResetMessages, selectedNode, logType]);
+  }, [logMessageReceived, logResetMessages, selectedNode, logType, userAgents]);
 
   const filtLow = filter.toLowerCase();
   let filteredMessages = messages.filter((m) => {
@@ -217,7 +217,7 @@ const ErrorLogs = ({
         return false;
       }
       return true;
-    }
+    } else return false;
   });
 
   useEffect(() => {
