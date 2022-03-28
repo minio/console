@@ -17,7 +17,6 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { Button } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -167,6 +166,7 @@ const EditReplication = ({
     metadataSync,
     targetStorageClass,
     setErrorSnackMessage,
+    history,
   ]);
 
   return (
