@@ -35,9 +35,12 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import BackLink from "../../../../common/BackLink";
+import RBIconButton from "./SummaryItems/RBIconButton";
+import {Save} from "@mui/icons-material";
 
 interface IEditReplication {
-  closeAndRefresh: (refresh: boolean) => void;
+  history: any;
   match: any;
   open: boolean;
   classes: any;
@@ -53,6 +56,9 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
+    submitButton: {
+      alignContent: "right",
+    },
     sizeFactorContainer: {
       "& label": {
         display: "none",
@@ -67,7 +73,7 @@ const styles = (theme: Theme) =>
   });
 
 const EditReplication = ({
-  closeAndRefresh,
+  history,
   match,
   classes,
   setErrorSnackMessage,
@@ -139,7 +145,7 @@ const EditReplication = ({
         )
         .then(() => {
           setSaveEdit(false);
-          closeAndRefresh(true);
+          history.push(`/buckets/${bucketName}/admin/replication`)
         })
         .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
@@ -160,180 +166,163 @@ const EditReplication = ({
     ruleState,
     metadataSync,
     targetStorageClass,
-    closeAndRefresh,
     setErrorSnackMessage,
   ]);
 
   return (
-      <form
-        noValidate
-        autoComplete="off"
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          setSaveEdit(true);
-        }}
-      >
-        <Grid container>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <PanelTitle>{`Replication Rule ${ruleID}`}</PanelTitle>
-          </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <FormSwitchWrapper
-                checked={ruleState}
-                id="ruleState"
-                name="ruleState"
-                label="Rule State"
-                onChange={(e) => {
-                  setRuleState(e.target.checked);
-                }}
-                value={ruleState}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <PredefinedList label={"Destination"} content={destination} />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="priority"
-                name="priority"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  if (e.target.validity.valid) {
-                    setPriority(e.target.value);
-                  }
-                }}
-                label="Priority"
-                value={priority}
-                pattern={"[0-9]*"}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              className={`${classes.spacerTop} ${classes.formFieldRow}`}
-            >
-              <InputBoxWrapper
-                id="storageClass"
-                name="storageClass"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetStorageClass(e.target.value);
-                }}
-                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
-                label="Storage Class"
-                value={targetStorageClass}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <fieldset className={classes.fieldGroup}>
-                <legend className={classes.descriptionText}>
-                  Object Filters
-                </legend>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="prefix"
-                    name="prefix"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setPrefix(e.target.value);
-                    }}
-                    placeholder="prefix"
-                    label="Prefix"
-                    value={prefix}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <QueryMultiSelector
-                    name="tags"
-                    label="Tags"
-                    elements={initialTags}
-                    onChange={(vl: string) => {
-                      setTags(vl);
-                    }}
-                    keyPlaceholder="Tag Key"
-                    valuePlaceholder="Tag Value"
-                    withBorder
-                  />
-                </Grid>
-              </fieldset>
-            </Grid>
-            <Grid item xs={12}>
-              <fieldset className={classes.fieldGroup}>
-                <legend className={classes.descriptionText}>
-                  Replication Options
-                </legend>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    checked={repExisting}
-                    id="repExisting"
-                    name="repExisting"
-                    label="Existing Objects"
-                    onChange={(e) => {
-                      setRepExisting(e.target.checked);
-                    }}
-                    value={repExisting}
-                    description={"Replicate existing objects"}
-                  />
-                </Grid>
-                <FormSwitchWrapper
-                  checked={metadataSync}
-                  id="metadatataSync"
-                  name="metadatataSync"
-                  label="Metadata Sync"
-                  onChange={(e) => {
-                    setMetadataSync(e.target.checked);
-                  }}
-                  value={metadataSync}
-                  description={"Metadata Sync"}
-                />
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    checked={repDeleteMarker}
-                    id="deleteMarker"
-                    name="deleteMarker"
-                    label="Delete Marker"
-                    onChange={(e) => {
-                      setRepDeleteMarker(e.target.checked);
-                    }}
-                    value={repDeleteMarker}
-                    description={"Replicate soft deletes"}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    checked={repDelete}
-                    id="repDelete"
-                    name="repDelete"
-                    label="Deletes"
-                    onChange={(e) => {
-                      setRepDelete(e.target.checked);
-                    }}
-                    value={repDelete}
-                    description={"Replicate versioned deletes"}
-                  />
-                </Grid>
-              </fieldset>
-            </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button
-              type="button"
-              variant="outlined"
-              color="primary"
-              disabled={editLoading || saveEdit}
-              onClick={() => {
-                closeAndRefresh(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={editLoading || saveEdit}
-            >
-              Save
-            </Button>
-          </Grid>
+      <Grid container>
+          <BackLink to={`/buckets/${bucketName}/admin/replication`} label={"Back to Replication Panel"} />
+        <Grid item xs={12} className={classes.actionsTray}>
+          <PanelTitle>{`Replication Rule ${ruleID}`}</PanelTitle>
         </Grid>
-      </form>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <FormSwitchWrapper
+              checked={ruleState}
+              id="ruleState"
+              name="ruleState"
+              label="Rule State"
+              onChange={(e) => {
+                setRuleState(e.target.checked);
+              }}
+              value={ruleState}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <PredefinedList label={"Destination"} content={destination} />
+          </Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <InputBoxWrapper
+              id="priority"
+              name="priority"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.target.validity.valid) {
+                  setPriority(e.target.value);
+                }
+              }}
+              label="Priority"
+              value={priority}
+              pattern={"[0-9]*"}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            className={`${classes.spacerTop} ${classes.formFieldRow}`}
+          >
+            <InputBoxWrapper
+              id="storageClass"
+              name="storageClass"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setTargetStorageClass(e.target.value);
+              }}
+              placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
+              label="Storage Class"
+              value={targetStorageClass}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <fieldset className={classes.fieldGroup}>
+              <legend className={classes.descriptionText}>
+                Object Filters
+              </legend>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="prefix"
+                  name="prefix"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setPrefix(e.target.value);
+                  }}
+                  placeholder="prefix"
+                  label="Prefix"
+                  value={prefix}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <QueryMultiSelector
+                  name="tags"
+                  label="Tags"
+                  elements={initialTags}
+                  onChange={(vl: string) => {
+                    setTags(vl);
+                  }}
+                  keyPlaceholder="Tag Key"
+                  valuePlaceholder="Tag Value"
+                  withBorder
+                />
+              </Grid>
+            </fieldset>
+          </Grid>
+          <Grid item xs={12}>
+            <fieldset className={classes.fieldGroup}>
+              <legend className={classes.descriptionText}>
+                Replication Options
+              </legend>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  checked={repExisting}
+                  id="repExisting"
+                  name="repExisting"
+                  label="Existing Objects"
+                  onChange={(e) => {
+                    setRepExisting(e.target.checked);
+                  }}
+                  value={repExisting}
+                  description={"Replicate existing objects"}
+                />
+              </Grid>
+              <FormSwitchWrapper
+                checked={metadataSync}
+                id="metadatataSync"
+                name="metadatataSync"
+                label="Metadata Sync"
+                onChange={(e) => {
+                  setMetadataSync(e.target.checked);
+                }}
+                value={metadataSync}
+                description={"Metadata Sync"}
+              />
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  checked={repDeleteMarker}
+                  id="deleteMarker"
+                  name="deleteMarker"
+                  label="Delete Marker"
+                  onChange={(e) => {
+                    setRepDeleteMarker(e.target.checked);
+                  }}
+                  value={repDeleteMarker}
+                  description={"Replicate soft deletes"}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  checked={repDelete}
+                  id="repDelete"
+                  name="repDelete"
+                  label="Deletes"
+                  onChange={(e) => {
+                    setRepDelete(e.target.checked);
+                  }}
+                  value={repDelete}
+                  description={"Replicate versioned deletes"}
+                />
+              </Grid>
+            </fieldset>
+          </Grid>
+        <div className={classes.submitButton}>
+            <RBIconButton
+                tooltip={"Save"}
+                onClick={(e: any) => {
+                    e.preventDefault();
+                    setSaveEdit(true);
+                }}
+                text={"Save"}
+                icon={<Save />}
+                color={"primary"}
+                variant={"outlined"}
+            />
+        </div>
+      </Grid>
   );
 };
 const connector = connect(null, {
