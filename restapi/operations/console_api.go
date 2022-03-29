@@ -171,6 +171,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
 		}),
+		UserAPIDeleteSelectedReplicationRulesHandler: user_api.DeleteSelectedReplicationRulesHandlerFunc(func(params user_api.DeleteSelectedReplicationRulesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteSelectedReplicationRules has not yet been implemented")
+		}),
 		UserAPIDeleteServiceAccountHandler: user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteServiceAccount has not yet been implemented")
 		}),
@@ -537,6 +540,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteObjectRetentionHandler user_api.DeleteObjectRetentionHandler
 	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
 	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
+	// UserAPIDeleteSelectedReplicationRulesHandler sets the operation handler for the delete selected replication rules operation
+	UserAPIDeleteSelectedReplicationRulesHandler user_api.DeleteSelectedReplicationRulesHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// UserAPIDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
@@ -888,6 +893,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteRemoteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
+	}
+	if o.UserAPIDeleteSelectedReplicationRulesHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteSelectedReplicationRulesHandler")
 	}
 	if o.UserAPIDeleteServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteServiceAccountHandler")
@@ -1369,6 +1377,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/remote-buckets/{source-bucket-name}/{arn}"] = user_api.NewDeleteRemoteBucket(o.context, o.UserAPIDeleteRemoteBucketHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/buckets/{bucket_name}/delete-selected-replication-rules"] = user_api.NewDeleteSelectedReplicationRules(o.context, o.UserAPIDeleteSelectedReplicationRulesHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
