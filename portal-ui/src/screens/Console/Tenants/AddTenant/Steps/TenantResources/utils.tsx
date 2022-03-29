@@ -62,7 +62,7 @@ export const resourcesConfigurations = {
 export const AWSConfigurations: IntegrationConfiguration[] = [
   {
     typeSelection: "performance",
-    storageClass: "performance-c6gn-16xlarge",
+    storageClass: "performance-optimized",
     CPU: 64,
     memory: 128,
     driveSize: { driveSize: "32", sizeUnit: "Gi" },
@@ -71,7 +71,7 @@ export const AWSConfigurations: IntegrationConfiguration[] = [
   },
   {
     typeSelection: "capacity",
-    storageClass: "capacity-c6gn-16xlarge",
+    storageClass: "capacity-optimized",
     CPU: 64,
     memory: 128,
     driveSize: { driveSize: "16", sizeUnit: "Ti" },

@@ -123,6 +123,7 @@ interface IObjectDetailPanelProps {
   bucketToRewind: string;
   distributedSetup: boolean;
   versioning: boolean;
+  locking: boolean;
   versionsMode: boolean;
   selectedVersion: string;
   loadingObjectInfo: boolean;
@@ -156,6 +157,7 @@ const ObjectDetailPanel = ({
   bucketName,
   distributedSetup,
   versioning,
+  locking,
   setErrorSnackMessage,
   setNewObject,
   updateProgress,
@@ -358,13 +360,21 @@ const ObjectDetailPanel = ({
       ? objectNameArray[objectNameArray.length - 1]
       : actualInfo.name;
 
+  const objectResources = [
+    bucketName,
+    currentItem,
+    [bucketName, actualInfo.name].join("/"),
+  ];
+
   const multiActionButtons = [
     {
       action: () => {
         downloadObject(actualInfo);
       },
       label: "Download",
-      disabled: !!actualInfo.is_delete_marker,
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT]),
       icon: <DownloadIcon />,
       tooltip: "Download this Object",
     },
@@ -373,7 +383,9 @@ const ObjectDetailPanel = ({
         shareObject();
       },
       label: "Share",
-      disabled: !!actualInfo.is_delete_marker,
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT]),
       icon: <ShareIcon />,
       tooltip: "Share this File",
     },
@@ -384,7 +396,8 @@ const ObjectDetailPanel = ({
       label: "Preview",
       disabled:
         !!actualInfo.is_delete_marker ||
-        extensionPreview(currentItem) === "none",
+        extensionPreview(currentItem) === "none" ||
+        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT]),
       icon: <PreviewIcon />,
       tooltip: "Preview this File",
     },
@@ -394,6 +407,8 @@ const ObjectDetailPanel = ({
       },
       label: "Legal Hold",
       disabled:
+        !locking ||
+        !distributedSetup ||
         !!actualInfo.is_delete_marker ||
         !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]) ||
         selectedVersion !== "",
@@ -404,8 +419,9 @@ const ObjectDetailPanel = ({
       action: openRetentionModal,
       label: "Retention",
       disabled:
+        !distributedSetup ||
         !!actualInfo.is_delete_marker ||
-        !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT_RETENTION]) ||
+        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT_RETENTION]) ||
         selectedVersion !== "",
       icon: <RetentionIcon />,
       tooltip: "Change Retention rules for this File",
@@ -415,7 +431,10 @@ const ObjectDetailPanel = ({
         setTagModalOpen(true);
       },
       label: "Tags",
-      disabled: !!actualInfo.is_delete_marker || selectedVersion !== "",
+      disabled:
+        !!actualInfo.is_delete_marker ||
+        selectedVersion !== "" ||
+        !hasPermission(objectResources, [IAM_SCOPES.S3_PUT_OBJECT_TAGGING]),
       icon: <TagsIcon />,
       tooltip: "Change Tags for this File",
     },
@@ -424,7 +443,11 @@ const ObjectDetailPanel = ({
         setInspectModalOpen(true);
       },
       label: "Inspect",
-      disabled: !!actualInfo.is_delete_marker || selectedVersion !== "",
+      disabled:
+        !distributedSetup ||
+        !!actualInfo.is_delete_marker ||
+        selectedVersion !== "" ||
+        !hasPermission(objectResources, [IAM_SCOPES.ADMIN_INSPECT_DATA]),
       icon: <InspectMenuIcon />,
       tooltip: "Inspect this file",
     },
@@ -434,7 +457,14 @@ const ObjectDetailPanel = ({
       },
       label: versionsMode ? "Hide Object Versions" : "Display Object Versions",
       icon: <VersionsIcon />,
-      disabled: !(actualInfo.version_id && actualInfo.version_id !== "null"),
+      disabled:
+        !distributedSetup ||
+        !(actualInfo.version_id && actualInfo.version_id !== "null") ||
+        !hasPermission(objectResources, [
+          IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+          IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+          IAM_SCOPES.S3_GET_OBJECT_VERSION,
+        ]),
       tooltip: "Display Versions for this file",
     },
   ];
@@ -539,11 +569,13 @@ const ObjectDetailPanel = ({
 
       <Grid item xs={12} sx={{ textAlign: "center" }}>
         <SecureComponent
-          resource={bucketName}
+          resource={[
+            bucketName,
+            currentItem,
+            [bucketName, actualInfo.name].join("/"),
+          ]}
           scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-          matchAll
           errorProps={{ disabled: true }}
-          containsResource
         >
           <Button
             startIcon={<DeleteIcon />}

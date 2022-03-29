@@ -120,7 +120,7 @@ const ObjectHandled = ({
     <Fragment>
       <div
         className={`${classes.container} ${
-          !objectToDisplay.done ? "inProgress" : ""
+          objectToDisplay.percentage !== 100 ? "inProgress" : ""
         }`}
       >
         <div className={classes.clearListIcon}>
@@ -129,9 +129,9 @@ const ObjectHandled = ({
               deleteFromList(objectToDisplay.instanceID);
             }}
             className={`${classes.closeButton} hideOnProgress showOnHover`}
-            disabled={!objectToDisplay.done}
+            disabled={objectToDisplay.percentage !== 100}
           >
-            <span className={classes.closeIcon}></span>
+            <span className={classes.closeIcon} />
           </button>
         </div>
         <div className={classes.objectDetails}>
