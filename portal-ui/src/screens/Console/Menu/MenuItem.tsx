@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Suspense } from "react";
+import React, { Suspense, useCallback } from "react";
 import {
   Collapse,
   ListItem,
@@ -44,20 +44,24 @@ const MenuItem = ({
   page,
   stateClsName = "",
   onExpand,
-  selectedMenuGroup,
+  selectedMenuItem,
   pathValue = "",
   expandedGroup = "",
-  setSelectedMenuGroup,
+  setSelectedMenuItem,
   id = `${Math.random()}`,
+  setPreviewMenuGroup,
+  previewMenuGroup,
 }: {
   page: any;
   stateClsName?: string;
-  onExpand?: (id: any) => void;
-  selectedMenuGroup?: any;
+  setSelectedMenuItem: (value: string) => void;
+  selectedMenuItem?: any;
   pathValue?: string;
+  onExpand: (id: any) => void;
   expandedGroup?: string;
-  setSelectedMenuGroup?: (value: string) => void;
   id?: string;
+  setPreviewMenuGroup: (value: string) => void;
+  previewMenuGroup: string;
 }) => {
   const childrenMenuList = page?.children?.filter(
     (item: any) =>
@@ -70,35 +74,55 @@ const MenuItem = ({
 
   let hasChildren = childrenMenuList?.length;
 
-  const expandCollapseHandler = (e: any) => {
-    e.preventDefault();
-    if (page.id === selectedMenuGroup && selectedMenuGroup === expandedGroup) {
-      onExpand && onExpand(null);
-    } else if (page.id === selectedMenuGroup) {
-      onExpand && onExpand(selectedMenuGroup);
-    } else {
-      onExpand && onExpand(page.id);
-    }
-  };
+  const expandCollapseHandler = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      if (previewMenuGroup === page.id) {
+        setPreviewMenuGroup("");
+      } else if (page.id !== selectedMenuItem) {
+        setPreviewMenuGroup(page.id);
+        onExpand("");
+      }
 
-  const onClickHandler = hasChildren ? expandCollapseHandler : page.onClick;
+      if (page.id === selectedMenuItem && selectedMenuItem === expandedGroup) {
+        onExpand(null);
+      } else if (page.id === selectedMenuItem) {
+        onExpand(selectedMenuItem);
+        setPreviewMenuGroup("");
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [page, selectedMenuItem, previewMenuGroup, expandedGroup]
+  );
 
+  const selectMenuHandler = useCallback(
+    (e) => {
+      onExpand(page.id);
+      setSelectedMenuItem(page.id);
+      page.onClick && page.onClick(e);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [page]
+  );
+
+  const onClickHandler = hasChildren
+    ? expandCollapseHandler
+    : selectMenuHandler;
+
+  const isActiveGroup = expandedGroup === page.id;
   const activeClsName =
-    pathValue.includes(selectedMenuGroup) && page.id === selectedMenuGroup
+    pathValue.includes(selectedMenuItem) && page.id === selectedMenuItem
       ? "active"
       : "";
 
-  const isActiveGroup =
-    selectedMenuGroup === page.id || expandedGroup === page.id;
   return (
     <React.Fragment>
       <ListItem
         key={page.to}
         button
         onClick={(e: any) => {
-          onExpand && onExpand(null);
-          onClickHandler && onClickHandler(e);
-          setSelectedMenuGroup && setSelectedMenuGroup(selectedMenuGroup);
+          onClickHandler(e);
+          setSelectedMenuItem(selectedMenuItem);
         }}
         component={page.component}
         to={page.to}
@@ -138,7 +162,7 @@ const MenuItem = ({
         )}
 
         {hasChildren ? (
-          isActiveGroup ? (
+          isActiveGroup || previewMenuGroup === page.id ? (
             <MenuCollapsedIcon
               height={15}
               width={15}
@@ -156,11 +180,11 @@ const MenuItem = ({
         ) : null}
       </ListItem>
 
-      {hasChildren ? (
+      {(isActiveGroup || previewMenuGroup === page.id) && hasChildren ? (
         <Collapse
           key={page.id}
           id={`${page.id}-children`}
-          in={expandedGroup === page.id}
+          in={true}
           timeout="auto"
           unmountOnExit
         >
@@ -183,6 +207,12 @@ const MenuItem = ({
                   button
                   component={item.component}
                   to={item.to}
+                  onClick={(e: any) => {
+                    if (page.id) {
+                      setPreviewMenuGroup("");
+                      setSelectedMenuItem(page.id);
+                    }
+                  }}
                   disableRipple
                   sx={{
                     ...menuItemStyle,
