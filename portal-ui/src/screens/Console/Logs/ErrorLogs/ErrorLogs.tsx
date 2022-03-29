@@ -19,13 +19,24 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { connect } from "react-redux";
-import { Grid, FormControl, MenuItem, Select, InputBase } from "@mui/material";
+import {
+  Grid,
+  FormControl,
+  MenuItem,
+  Select,
+  InputBase,
+  Button,
+} from "@mui/material";
 
 import moment from "moment/moment";
 import { ErrorResponseHandler } from "../../../../../src/common/types";
 import api from "../../../../../src/common/api";
 import { AppState } from "../../../../store";
-import { logMessageReceived, logResetMessages } from "../actions";
+import {
+  logMessageReceived,
+  logResetMessages,
+  setLogsStarted,
+} from "../actions";
 import { LogMessage } from "../types";
 import { wsProtocol } from "../../../../utils/wsUtils";
 import {
@@ -43,7 +54,6 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import LogLine from "./LogLine";
-import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -115,29 +125,31 @@ interface ILogs {
   classes: any;
   logMessageReceived: typeof logMessageReceived;
   logResetMessages: typeof logResetMessages;
+  setLogsStarted: typeof setLogsStarted;
   messages: LogMessage[];
+  logsStarted: boolean;
 }
+var c: any = null;
 
 const ErrorLogs = ({
   classes,
   logMessageReceived,
   logResetMessages,
+  setLogsStarted,
   messages,
+  logsStarted,
 }: ILogs) => {
   const [filter, setFilter] = useState<string>("");
   const [nodes, setNodes] = useState<string[]>([""]);
   const [selectedNode, setSelectedNode] = useState<string>("Select node");
   const [selectedUserAgent, setSelectedUserAgent] =
     useState<string>("Select user agent");
-  const [userAgents, setUserAgents] = useState<string[]>([
-    "All User Agents",
-    "fake",
-  ]);
-  const [allTypes, setAllTypes] = useState<boolean>(false);
-  const [logType, setLogType] = useState<string>("all");
+  const [userAgents, setUserAgents] = useState<string[]>(["All User Agents"]);
+  // const [logsStarted, setLogsStarted] = useState<boolean>(false);
+  const [logType, setLogType] = useState<string>("Select Log Type");
   const [loadingNodes, setLoadingNodes] = useState<boolean>(false);
 
-  useEffect(() => {
+  const startLogs = () => {
     logResetMessages();
     const url = new URL(window.location.toString());
     const isDev = process.env.NODE_ENV === "development";
@@ -145,19 +157,18 @@ const ErrorLogs = ({
 
     const wsProt = wsProtocol(url.protocol);
 
-    const c = new W3CWebSocket(
+    c = new W3CWebSocket(
       `${wsProt}://${
         url.hostname
       }:${port}/ws/console/?logType=${logType}&?node=${
         selectedNode === "Select node" ? "" : selectedNode
       }`
     );
-
     let interval: any | null = null;
     if (c !== null) {
       c.onopen = () => {
-        console.log("WebSocket Client Connected");
-
+        console.log("WebSocket Client Connected c:", c);
+        c.setLogsStarted(true);
         c.send("ok");
         interval = setInterval(() => {
           c.send("ok");
@@ -179,14 +190,24 @@ const ErrorLogs = ({
       c.onclose = () => {
         clearInterval(interval);
         console.log("connection closed by server");
+        c.setLogsStarted(false);
       };
       return () => {
         c.close(1000);
         clearInterval(interval);
         console.log("closing websockets");
+        c.setLogsStarted(false);
       };
     }
-  }, [logMessageReceived, logResetMessages, selectedNode, logType, userAgents]);
+  };
+
+  const stopLogs = () => {
+    console.log("You hit stopLogs! c: ", c);
+    if (c !== null && c !== undefined) {
+      c.close(1000);
+      setLogsStarted(false);
+    }
+  };
 
   const filtLow = filter.toLowerCase();
   let filteredMessages = messages.filter((m) => {
@@ -309,47 +330,60 @@ const ErrorLogs = ({
                 ))}
               </Select>
             </FormControl>
-            <div className={classes.checkBoxLabel}>Log type to display:</div>
-            <div className={classes.midColumnCheckboxes}>
-              <CheckboxWrapper
-                checked={allTypes}
-                id={"all_calls"}
-                name={"all_calls"}
-                label={"All"}
-                onChange={(item) => {
-                  setAllTypes(!allTypes);
-                  item.target.checked ? setLogType("all") : setLogType("");
+            <FormControl variant="outlined" className={classes.nodeField}>
+              <Select
+                id="logType"
+                name="logType"
+                data-test-id="log-type"
+                value={logType}
+                onChange={(e) => {
+                  setLogType(e.target.value as string);
                 }}
-                value={"all"}
-                disabled={false}
-              />
-              <CheckboxWrapper
-                checked={logType === "application" || allTypes}
-                id={"application_type"}
-                name={"application_type"}
-                label={"Application"}
-                onChange={(item) => {
-                  setAllTypes(false);
-                  item.target.checked
-                    ? setLogType("application")
-                    : setLogType("");
-                }}
-                value={"s3"}
-                disabled={false}
-              />
-              <CheckboxWrapper
-                checked={logType === "minio" || allTypes}
-                id={"minio_type"}
-                name={"minio_type"}
-                label={"MinIO"}
-                onChange={(item) => {
-                  setAllTypes(false);
-                  item.target.checked ? setLogType("minio") : setLogType("");
-                }}
-                value={"MinIO"}
-                disabled={false}
-              />
-            </div>
+                className={classes.searchField}
+                disabled={loadingNodes}
+                input={<SelectStyled />}
+              >
+                <MenuItem
+                  value={logType}
+                  key={`select-log-type-default`}
+                  disabled={true}
+                >
+                  Select Log Type
+                </MenuItem>
+                <MenuItem value="all" key="all-log-types">
+                  All
+                </MenuItem>
+                <MenuItem value="minio" key="minio-log-type">
+                  MinIO
+                </MenuItem>
+                <MenuItem value="application" key="app-log-type">
+                  Application
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <Grid item xs={12} className={classes.startButton}>
+              {!logsStarted && (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={false}
+                  onClick={startLogs}
+                >
+                  Start
+                </Button>
+              )}
+              {!logsStarted && (
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="primary"
+                  onClick={stopLogs}
+                >
+                  Stop
+                </Button>
+              )}
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <div
