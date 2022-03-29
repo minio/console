@@ -233,7 +233,10 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 		if lsObj.Err != nil {
 			return nil, lsObj.Err
 		}
-
+		// don't list objects matching the filtering prefix
+		if lsObj.Key == prefix {
+			continue
+		}
 		obj := &models.BucketObject{
 			Name:           lsObj.Key,
 			Size:           lsObj.Size,
