@@ -265,8 +265,7 @@ const AddBucket = ({
 
   return (
     <Fragment>
-      <PageHeader label={"Create a Bucket"} />
-      <BackLink label={"Buckets"} to={"/buckets"} />
+      <PageHeader label={<BackLink to={"/buckets"} label={"Buckets"} />} />
       <PageLayout>
         <Grid item xs={12} className={classes.boxy}>
           <form
