@@ -78,7 +78,7 @@ const Tools = () => {
             );
           }}
         />
-        <Route path={IAM_PAGES.TOOLS_INSPECT} exact component={Inspect} />
+        <Route path={IAM_PAGES.SUPPORT_INSPECT} exact component={Inspect} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>

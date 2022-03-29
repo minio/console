@@ -44,7 +44,7 @@ insNotAllowedSeckey = "minio123";
 /* End Local Testing config block */
 
 const loginUrl = `${testDomainUrl}/login`;
-const inspectScreenUrl = `${testDomainUrl}/tools/inspect`;
+const inspectScreenUrl = `${testDomainUrl}${IAM_PAGES.SUPPORT_INSPECT}`;
 
 const loginSubmitBtn = Selector("form button");
 
@@ -55,7 +55,7 @@ export const supportSidebarEl = Selector(".MuiPaper-root")
 export const supportChildren = Selector("#support-children");
 export const inspectEl = supportChildren
   .find("a")
-  .withAttribute("href", IAM_PAGES.TOOLS_INSPECT);
+  .withAttribute("href", IAM_PAGES.SUPPORT_INSPECT);
 
 export const inspect_volume_input = Selector('[data-test-id="inspect_volume"]');
 export const inspect_path_input = Selector('[data-test-id="inspect_path"]');
