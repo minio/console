@@ -249,7 +249,7 @@ const LogLine = (props: { log: LogMessage }) => {
               <div style={{ marginTop: 10 }}>Log Details</div>
             </Collapse>
           </TableCell>
-          <TableCell colSpan={3} style={{ paddingBottom: 0, paddingTop: 0 }}>
+          <TableCell colSpan={2} style={{ paddingBottom: 0, paddingTop: 0 }}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
                 <Typography
