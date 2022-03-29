@@ -44,7 +44,7 @@ insNotAllowedSeckey = "minio123";
 /* End Local Testing config block */
 
 const loginUrl = `${testDomainUrl}/login`;
-const inspectScreenUrl = `${testDomainUrl}/tools/inspect`;
+const inspectScreenUrl = `${testDomainUrl}${IAM_PAGES.SUPPORT_INSPECT}`;
 
 const loginSubmitBtn = Selector("form button");
 
