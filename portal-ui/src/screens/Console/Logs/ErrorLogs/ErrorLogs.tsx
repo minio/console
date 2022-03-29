@@ -359,29 +359,28 @@ const ErrorLogs = ({
                 </MenuItem>
               </Select>
             </FormControl>
-            <Grid item xs={12} className={classes.startButton}>
-              {!logsStarted && (
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={false}
-                  onClick={startLogs}
-                >
-                  Start
-                </Button>
-              )}
-              {logsStarted && (
-                <Button
-                  type="button"
-                  variant="contained"
-                  color="primary"
-                  onClick={stopLogs}
-                >
-                  Stop
-                </Button>
-              )}
-            </Grid>
+            {/*<Grid item xs={12} className={classes.startButton}>*/}
+            {!logsStarted && (
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={false}
+                onClick={startLogs}
+              >
+                Start Logs
+              </Button>
+            )}
+            {logsStarted && (
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={stopLogs}
+              >
+                Stop Logs
+              </Button>
+            )}
           </Grid>
           <Grid item xs={12}>
             <div
