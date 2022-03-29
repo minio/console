@@ -214,13 +214,7 @@ const BucketDetails = ({
         />
       )}
       <PageHeader
-        label={
-          <Fragment>
-            <Link to={"/buckets"} className={classes.breadcrumLink}>
-              Buckets
-            </Link>
-          </Fragment>
-        }
+        label={<BackLink to={"/buckets"} label={"Buckets"} />}
         actions={
           <Fragment>
             <Tooltip title={"Browse Bucket"}>
@@ -237,7 +231,6 @@ const BucketDetails = ({
           </Fragment>
         }
       />
-      <BackLink to={"/buckets"} label={"Back to Buckets"} />
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
