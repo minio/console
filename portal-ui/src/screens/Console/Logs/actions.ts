@@ -18,7 +18,7 @@ import { LogMessage } from "./types";
 
 export const LOG_MESSAGE_RECEIVED = "LOG_MESSAGE_RECEIVED";
 export const LOG_RESET_MESSAGES = "LOG_RESET_MESSAGES";
-export const LOG_SET_STARTED = "LOG/SET_STARTED";
+export const LOG_SET_STARTED = "LOG_SET_STARTED";
 
 interface LogMessageReceivedAction {
   type: typeof LOG_MESSAGE_RECEIVED;

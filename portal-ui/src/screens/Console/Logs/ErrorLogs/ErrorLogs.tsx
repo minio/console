@@ -145,7 +145,6 @@ const ErrorLogs = ({
   const [selectedUserAgent, setSelectedUserAgent] =
     useState<string>("Select user agent");
   const [userAgents, setUserAgents] = useState<string[]>(["All User Agents"]);
-  // const [logsStarted, setLogsStarted] = useState<boolean>(false);
   const [logType, setLogType] = useState<string>("Select Log Type");
   const [loadingNodes, setLoadingNodes] = useState<boolean>(false);
 
@@ -167,8 +166,8 @@ const ErrorLogs = ({
     let interval: any | null = null;
     if (c !== null) {
       c.onopen = () => {
-        console.log("WebSocket Client Connected c:", c);
-        c.setLogsStarted(true);
+        console.log("WebSocket Client Connected");
+        setLogsStarted(true);
         c.send("ok");
         interval = setInterval(() => {
           c.send("ok");
@@ -190,19 +189,18 @@ const ErrorLogs = ({
       c.onclose = () => {
         clearInterval(interval);
         console.log("connection closed by server");
-        c.setLogsStarted(false);
+        setLogsStarted(false);
       };
       return () => {
         c.close(1000);
         clearInterval(interval);
         console.log("closing websockets");
-        c.setLogsStarted(false);
+        setLogsStarted(false);
       };
     }
   };
 
   const stopLogs = () => {
-    console.log("You hit stopLogs! c: ", c);
     if (c !== null && c !== undefined) {
       c.close(1000);
       setLogsStarted(false);
@@ -280,7 +278,7 @@ const ErrorLogs = ({
                     setSelectedNode(e.target.value as string);
                   }}
                   className={classes.searchField}
-                  disabled={loadingNodes}
+                  disabled={loadingNodes || logsStarted}
                   input={<SelectStyled />}
                 >
                   <MenuItem
@@ -310,7 +308,7 @@ const ErrorLogs = ({
                   setSelectedUserAgent(e.target.value as string);
                 }}
                 className={classes.searchField}
-                disabled={userAgents.length < 1}
+                disabled={userAgents.length < 1 || logsStarted}
                 input={<SelectStyled />}
               >
                 <MenuItem
@@ -340,7 +338,7 @@ const ErrorLogs = ({
                   setLogType(e.target.value as string);
                 }}
                 className={classes.searchField}
-                disabled={loadingNodes}
+                disabled={loadingNodes || logsStarted}
                 input={<SelectStyled />}
               >
                 <MenuItem
@@ -373,7 +371,7 @@ const ErrorLogs = ({
                   Start
                 </Button>
               )}
-              {!logsStarted && (
+              {logsStarted && (
                 <Button
                   type="button"
                   variant="contained"
@@ -409,12 +407,15 @@ const ErrorLogs = ({
 };
 
 const mapState = (state: AppState) => ({
-  messages: state.logs.messages,
+  messages: state.logs.logMessages,
+  logsStarted: state.logs.logsStarted,
 });
 
 const connector = connect(mapState, {
   logMessageReceived: logMessageReceived,
   logResetMessages: logResetMessages,
+  setLogsStarted,
 });
 
-export default withStyles(styles)(connector(ErrorLogs));
+//export default withStyles(styles)(connector(ErrorLogs));
+export default connector(withStyles(styles)(ErrorLogs));
