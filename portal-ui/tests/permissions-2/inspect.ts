@@ -55,7 +55,7 @@ export const supportSidebarEl = Selector(".MuiPaper-root")
 export const supportChildren = Selector("#support-children");
 export const inspectEl = supportChildren
   .find("a")
-  .withAttribute("href", IAM_PAGES.TOOLS_INSPECT);
+  .withAttribute("href", IAM_PAGES.SUPPORT_INSPECT);
 
 export const inspect_volume_input = Selector('[data-test-id="inspect_volume"]');
 export const inspect_path_input = Selector('[data-test-id="inspect_path"]');

@@ -205,7 +205,7 @@ export const validRoutes = (
         {
           name: "Inspect",
           id: "inspectObjects",
-          to: IAM_PAGES.TOOLS_INSPECT,
+          to: IAM_PAGES.SUPPORT_INSPECT,
           icon: InspectMenuIcon,
           component: NavLink,
         },
