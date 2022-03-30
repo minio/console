@@ -122,8 +122,8 @@ func EditSiteReplicationInfo() (*http.Response, error) {
 	fmt.Println("Editing::", secondDeploymentID)
 	pSiteInfo := map[string]interface{}{
 		"deploymentID": secondDeploymentID,
-		"endpoint":  "http://localhost:9002",
-		"name":      "sitellhost9002",
+		"endpoint":     "http://localhost:9002",
+		"name":         "sitellhost9002",
 	}
 
 	requestDataJSON, _ := json.Marshal(pSiteInfo)

@@ -18,10 +18,8 @@ package replication
 
 import (
 	"bytes"
-	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -35,25 +33,6 @@ import (
 )
 
 var token string
-
-func encodeBase64(fileName string) string {
-	/*
-		Helper function to encode in base64 the file name so we can get the path
-	*/
-	path := b64.StdEncoding.EncodeToString([]byte(fileName))
-	return path
-}
-
-func inspectHTTPResponse(httpResponse *http.Response) string {
-	/*
-		Helper function to inspect the content of a HTTP response.
-	*/
-	b, err := io.ReadAll(httpResponse.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return "Http Response: " + string(b)
-}
 
 func initConsoleServer() (*restapi.Server, error) {
 
