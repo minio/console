@@ -27,38 +27,110 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
       viewBox="0 0 14 13.088"
       {...props}
     >
-      <g transform="translate(-231.827 -340.123)">
-        <line className="a" x2="14" transform="translate(231.827 346.667)" />
-        <g transform="translate(240.693 344.614)">
-          <circle className="b" cx="2.053" cy="2.053" r="2.053" />
+      <g id="filter-icon.a949c200" transform="translate(-231.827 -340.123)">
+        <line
+          id="Línea_659"
+          data-name="Línea 659"
+          x2="14"
+          transform="translate(231.827 346.667)"
+          fill="none"
+          stroke="#434343"
+          stroke-width="1"
+        />
+        <g
+          id="Grupo_2472"
+          data-name="Grupo 2472"
+          transform="translate(240.693 344.614)"
+        >
           <circle
-            className="c"
+            id="Elipse_611"
+            data-name="Elipse 611"
+            cx="2.053"
+            cy="2.053"
+            r="2.053"
+            transform="translate(0 0)"
+            fill="#fff"
+          />
+          <circle
+            id="Elipse_612"
+            data-name="Elipse 612"
             cx="1.597"
             cy="1.597"
             r="1.597"
             transform="translate(0.456 0.456)"
+            fill="none"
+            stroke="#414141"
+            stroke-width="1"
           />
         </g>
-        <line className="a" x2="14" transform="translate(231.827 342.22)" />
-        <g transform="translate(232.394 340.167)">
-          <circle className="b" cx="2.053" cy="2.053" r="2.053" />
+        <line
+          id="Línea_660"
+          data-name="Línea 660"
+          x2="14"
+          transform="translate(231.827 342.22)"
+          fill="none"
+          stroke="#434343"
+          stroke-width="1"
+        />
+        <g
+          id="Grupo_2473"
+          data-name="Grupo 2473"
+          transform="translate(232.394 340.167)"
+        >
           <circle
-            className="c"
+            id="Elipse_613"
+            data-name="Elipse 613"
+            cx="2.053"
+            cy="2.053"
+            r="2.053"
+            transform="translate(0 0)"
+            fill="#fff"
+          />
+          <circle
+            id="Elipse_614"
+            data-name="Elipse 614"
             cx="1.597"
             cy="1.597"
             r="1.597"
             transform="translate(0.456 0.456)"
+            fill="none"
+            stroke="#414141"
+            stroke-width="1"
           />
         </g>
-        <line className="a" x2="14" transform="translate(231.827 351.114)" />
-        <g transform="translate(235.161 349.061)">
-          <circle className="b" cx="2.053" cy="2.053" r="2.053" />
+        <line
+          id="Línea_661"
+          data-name="Línea 661"
+          x2="14"
+          transform="translate(231.827 351.114)"
+          fill="none"
+          stroke="#434343"
+          stroke-width="1"
+        />
+        <g
+          id="Grupo_2474"
+          data-name="Grupo 2474"
+          transform="translate(235.161 349.061)"
+        >
           <circle
-            className="c"
+            id="Elipse_615"
+            data-name="Elipse 615"
+            cx="2.053"
+            cy="2.053"
+            r="2.053"
+            transform="translate(0 0)"
+            fill="#fff"
+          />
+          <circle
+            id="Elipse_616"
+            data-name="Elipse 616"
             cx="1.597"
             cy="1.597"
             r="1.597"
             transform="translate(0.456 0.456)"
+            fill="none"
+            stroke="#414141"
+            stroke-width="1"
           />
         </g>
       </g>
