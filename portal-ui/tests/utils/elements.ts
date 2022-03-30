@@ -67,8 +67,8 @@ export const startDiagnosticButton =
   Selector("button:enabled").withText("Start Diagnostic");
 export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
 export const downloadButton = Selector("button:enabled").withText("Download");
-export const startButton = Selector('[data-test-id="trace-start-button"]');
-export const stopButton = Selector('[data-test-id="trace-stop-button"]');
+export const startButton = Selector("button:enabled").withText("Start");
+export const stopButton = Selector("button:enabled").withText("Stop");
 
 //----------------------------------------------------
 // Links
