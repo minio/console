@@ -80,6 +80,54 @@ test-integration:
 	@(docker stop minio)
 	@(docker network rm mynet123)
 
+test-replication:
+	@(docker stop minio || true)
+	@(docker stop minio1 || true)
+	@(docker stop minio2 || true)
+	@(docker network rm mynet123 || true)
+	@(docker network create mynet123)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
+	  --net=mynet123 -d \
+	  --name minio \
+	  --rm \
+	  -p 9000:9000 \
+	  -p 6000:6000 \
+	  -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= \
+	  -e MINIO_ROOT_USER="minioadmin" \
+	  -e MINIO_ROOT_PASSWORD="minioadmin" \
+	  $(MINIO_VERSION) server /data{1...4} \
+	  --address :9000 \
+	  --console-address :6000)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
+	  --net=mynet123 -d \
+	  --name minio1 \
+	  --rm \
+	  -p 9001:9001 \
+	  -p 6001:6001 \
+	  -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= \
+	  -e MINIO_ROOT_USER="minioadmin" \
+	  -e MINIO_ROOT_PASSWORD="minioadmin" \
+	  $(MINIO_VERSION) server /data{1...4} \
+	  --address :9001 \
+	  --console-address :6001)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
+	  --net=mynet123 -d \
+	  --name minio2 \
+	  --rm \
+	  -p 9002:9002 \
+	  -p 6002:6002 \
+	  -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= \
+	  -e MINIO_ROOT_USER="minioadmin" \
+	  -e MINIO_ROOT_PASSWORD="minioadmin" \
+	  $(MINIO_VERSION) server /data{1...4} \
+	  --address :9002 \
+	  --console-address :6002)
+	@(cd replication && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./replication.test -test.v -test.run "^Test*" -test.coverprofile=coverage/replication.out)
+	@(docker stop minio || true)
+	@(docker stop minio1 || true)
+	@(docker stop minio2 || true)
+	@(docker network rm mynet123 || true)
+
 test-sso-integration:
 	@echo "create the network in bridge mode to communicate all containers"
 	@(docker network create my-net)
