@@ -1049,6 +1049,7 @@ jobs:
       - c-operator-api-tests
       - test-pkg-on-go
       - sso-integration
+      - replication
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
