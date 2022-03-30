@@ -191,10 +191,8 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 func TestDeleteSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 
-	response, err := DeleteSiteReplicationInfo()
-
 	fmt.Println("Delete Site Replication")
-	response, err = DeleteSiteReplicationInfo()
+	response, err := DeleteSiteReplicationInfo()
 	if err != nil {
 		log.Println(err)
 		return
