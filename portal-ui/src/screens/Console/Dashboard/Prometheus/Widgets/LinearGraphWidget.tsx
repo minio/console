@@ -92,7 +92,10 @@ const styles = (theme: Theme) =>
       fontSize: 12,
     },
     loadingAlign: {
-      margin: "auto",
+      width: 40,
+      height: 40,
+      textAlign: "center",
+      margin: "15px auto",
     },
   });
 
