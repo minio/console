@@ -239,10 +239,15 @@ const Trace = ({
               Calls to Trace
             </Box>
             <Box
+              className={`${traceStarted ? "inactive-state" : ""}`}
               sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
+
+                "&.inactive-state .trace-checkbox-label": {
+                  color: "#a6a5a5",
+                },
               }}
             >
               <Box
@@ -395,6 +400,7 @@ const Trace = ({
           {toggleFilter ? (
             <Grid
               item
+              className={`${traceStarted ? "inactive-state" : ""}`}
               xs={12}
               sx={{
                 marginTop: "25px",
@@ -402,6 +408,10 @@ const Trace = ({
                 flexFlow: "column",
                 background: "#FBFAFA",
                 padding: "30px",
+
+                "&.inactive-state label": {
+                  color: "#a6a5a5",
+                },
 
                 "& .orient-vertical": {
                   flexFlow: "column",
@@ -544,81 +554,78 @@ const Trace = ({
               </Box>
             </Grid>
           ) : null}
-          {traceStarted ? (
-            <Fragment>
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    fontSize: "16px",
-                    fontWeight: 600,
-                    marginBottom: "30px",
-                    marginTop: "30px",
-                  }}
-                >
-                  Trace Results
-                </Box>
-              </Grid>
-              <Grid item xs={12} className={classes.tableBlock}>
-                <TableWrapper
-                  itemActions={[]}
-                  columns={[
-                    {
-                      label: "Time",
-                      elementKey: "ptime",
-                      renderFunction: (time: Date) => {
-                        const timeParse = new Date(time);
-                        return timeFromDate(timeParse);
-                      },
-                      globalClass: classes.timeItem,
-                    },
-                    { label: "Name", elementKey: "api" },
-                    {
-                      label: "Status",
-                      elementKey: "",
-                      renderFunction: (fullElement: TraceMessage) =>
-                        `${fullElement.statusCode} ${fullElement.statusMsg}`,
-                      renderFullObject: true,
-                    },
-                    {
-                      label: "Location",
-                      elementKey: "configuration_id",
-                      renderFunction: (fullElement: TraceMessage) =>
-                        `${fullElement.host} ${fullElement.client}`,
-                      renderFullObject: true,
-                    },
-                    {
-                      label: "Load Time",
-                      elementKey: "callStats.duration",
-                      globalClass: classes.timeItem,
-                    },
-                    {
-                      label: "Upload",
-                      elementKey: "callStats.rx",
-                      renderFunction: niceBytes,
-                      globalClass: classes.sizeItem,
-                    },
-                    {
-                      label: "Download",
-                      elementKey: "callStats.tx",
-                      renderFunction: niceBytes,
-                      globalClass: classes.sizeItem,
-                    },
-                  ]}
-                  isLoading={false}
-                  records={messages}
-                  entityName="Traces"
-                  idField="api"
-                  customEmptyMessage={
-                    traceStarted
-                      ? "No Traced elements received yet"
-                      : "Trace is not started yet"
-                  }
-                  customPaperHeight={classes.tableWrapper}
-                  autoScrollToBottom
-                />
-              </Grid>
-            </Fragment>
-          ) : null}
+
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                fontSize: "16px",
+                fontWeight: 600,
+                marginBottom: "30px",
+                marginTop: "30px",
+              }}
+            >
+              Trace Results
+            </Box>
+          </Grid>
+          <Grid item xs={12} className={classes.tableBlock}>
+            <TableWrapper
+              itemActions={[]}
+              columns={[
+                {
+                  label: "Time",
+                  elementKey: "ptime",
+                  renderFunction: (time: Date) => {
+                    const timeParse = new Date(time);
+                    return timeFromDate(timeParse);
+                  },
+                  globalClass: classes.timeItem,
+                },
+                { label: "Name", elementKey: "api" },
+                {
+                  label: "Status",
+                  elementKey: "",
+                  renderFunction: (fullElement: TraceMessage) =>
+                    `${fullElement.statusCode} ${fullElement.statusMsg}`,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Location",
+                  elementKey: "configuration_id",
+                  renderFunction: (fullElement: TraceMessage) =>
+                    `${fullElement.host} ${fullElement.client}`,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Load Time",
+                  elementKey: "callStats.duration",
+                  globalClass: classes.timeItem,
+                },
+                {
+                  label: "Upload",
+                  elementKey: "callStats.rx",
+                  renderFunction: niceBytes,
+                  globalClass: classes.sizeItem,
+                },
+                {
+                  label: "Download",
+                  elementKey: "callStats.tx",
+                  renderFunction: niceBytes,
+                  globalClass: classes.sizeItem,
+                },
+              ]}
+              isLoading={false}
+              records={messages}
+              entityName="Traces"
+              idField="api"
+              customEmptyMessage={
+                traceStarted
+                  ? "No Traced elements received yet"
+                  : "Trace is not started yet"
+              }
+              customPaperHeight={classes.tableWrapper}
+              autoScrollToBottom
+            />
+          </Grid>
         </Grid>
       </PageLayout>
     </Fragment>
