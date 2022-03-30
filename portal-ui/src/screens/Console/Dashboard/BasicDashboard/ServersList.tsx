@@ -27,7 +27,9 @@ import { Box } from "@mui/material";
 import DriveInfoItem from "./DriveInfoItem";
 
 const ServersList = ({ data }: { data: ServerInfo[] }) => {
-  const [expanded, setExpanded] = React.useState<string>(data.length >1 ? "" : data[0].endpoint+"-0");
+  const [expanded, setExpanded] = React.useState<string>(
+    data.length > 1 ? "" : data[0].endpoint + "-0"
+  );
 
   const handleClick = (key: string) => {
     setExpanded(key);

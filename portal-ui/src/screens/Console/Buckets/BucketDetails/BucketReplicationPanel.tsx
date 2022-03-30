@@ -88,7 +88,8 @@ const BucketReplicationPanel = ({
     useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
   const [selectedRepRules, setSelectedRepRules] = useState<string[]>([]);
-  const [deleteSelectedRules, setDeleteSelectedRules] = useState<boolean>(false);
+  const [deleteSelectedRules, setDeleteSelectedRules] =
+    useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
 
@@ -185,12 +186,10 @@ const BucketReplicationPanel = ({
       setSelectedRepRules([]);
       return;
     }
-    setSelectedRepRules(replicationRules.map(x => x.id))
+    setSelectedRepRules(replicationRules.map((x) => x.id));
   };
 
-  const selectRules = (
-      e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const selectRules = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
     const value = targetD.value;
     const checked = targetD.checked;
@@ -206,7 +205,6 @@ const BucketReplicationPanel = ({
     setSelectedRepRules(elements);
     return elements;
   };
-
 
   const replicationTableActions: any = [
     {
