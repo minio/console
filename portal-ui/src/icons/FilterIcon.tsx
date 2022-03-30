@@ -35,7 +35,7 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
           transform="translate(231.827 346.667)"
           fill="none"
           stroke="#434343"
-          stroke-width="1"
+          strokeWidth="1"
         />
         <g
           id="Grupo_2472"
@@ -60,7 +60,7 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
             transform="translate(0.456 0.456)"
             fill="none"
             stroke="#414141"
-            stroke-width="1"
+            strokeWidth="1"
           />
         </g>
         <line
@@ -70,7 +70,7 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
           transform="translate(231.827 342.22)"
           fill="none"
           stroke="#434343"
-          stroke-width="1"
+          strokeWidth="1"
         />
         <g
           id="Grupo_2473"
@@ -95,7 +95,7 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
             transform="translate(0.456 0.456)"
             fill="none"
             stroke="#414141"
-            stroke-width="1"
+            strokeWidth="1"
           />
         </g>
         <line
@@ -105,7 +105,7 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
           transform="translate(231.827 351.114)"
           fill="none"
           stroke="#434343"
-          stroke-width="1"
+          strokeWidth="1"
         />
         <g
           id="Grupo_2474"
@@ -130,7 +130,7 @@ const FilterIcon = (props: SVGProps<SVGSVGElement>) => {
             transform="translate(0.456 0.456)"
             fill="none"
             stroke="#414141"
-            stroke-width="1"
+            strokeWidth="1"
           />
         </g>
       </g>

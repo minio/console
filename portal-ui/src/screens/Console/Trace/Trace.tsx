@@ -366,6 +366,7 @@ const Trace = ({
                 {!traceStarted && (
                   <RBIconButton
                     text={"Start"}
+                    data-test-id={"trace-start-button"}
                     icon={null}
                     color={"primary"}
                     variant="contained"
@@ -378,6 +379,7 @@ const Trace = ({
                 {traceStarted && (
                   <RBIconButton
                     text={"Stop"}
+                    data-test-id={"trace-stop-button"}
                     icon={null}
                     color={"primary"}
                     variant="contained"
