@@ -75,7 +75,7 @@ jobs:
           echo "We are going to use the built image on test-integration";
           VERSION="minio/minio:$VERSION";
           echo $VERSION;
-          make replication MINIO_VERSION=$VERSION;
+          make test-replication MINIO_VERSION=$VERSION;
       - uses: actions/cache@v2
         id: coverage-cache-replication
         name: Coverage Cache Replication
