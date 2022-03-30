@@ -83,19 +83,6 @@ func AddSiteReplicationInfo() (*http.Response, error) {
 
 }
 
-// This function is currently not working not even on bare metal...
-/*
-API: SiteReplicationEdit()
-Time: 14:10:55 UTC 03/30/2022
-DeploymentID: f90a6e62-4d83-4fde-a4c5-5a93d07c1517
-RequestID: 16E12DF1C8762F48
-RemoteHost: ::1
-Host: localhost:9000
-UserAgent: MinIO (darwin; amd64) madmin-go/0.0.1
-Error: Endpoint http://localhost:9002 not reachable: The Access Key Id you provided does not exist in our records. (cmd.SRError)
-       2: cmd/admin-handlers-site-replication.go:389:cmd.adminAPIHandlers.SiteReplicationEdit()
-       1: net/http/server.go:2047:http.HandlerFunc.ServeHTTP()
-*/
 func EditSiteReplicationInfo() (*http.Response, error) {
 
 	getResponse, err := makeExecuteReq("GET", nil)
@@ -122,7 +109,7 @@ func EditSiteReplicationInfo() (*http.Response, error) {
 	fmt.Println("Editing::", secondDeploymentID)
 	pSiteInfo := map[string]interface{}{
 		"deploymentID": secondDeploymentID,
-		"endpoint":     "http://localhost:9002",
+		"endpoint":     "http://minio2:9002",
 		"name":         "sitellhost9002",
 	}
 
@@ -139,6 +126,7 @@ func DeleteSiteReplicationInfo() (*http.Response, error) {
 		"sites": []string{
 			"sitellhost9000",
 			"sitellhost9001",
+			"sitellhost9002",
 		},
 	}
 	requestDataJSON, _ := json.Marshal(delReq)
@@ -181,6 +169,29 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
 	}
 	fmt.Println("TestAddSiteReplicationInfo: ", response.StatusCode)
+
+}
+
+func TestEditSiteReplicationInfo(t *testing.T) {
+	assert := assert.New(t)
+
+	response, err := EditSiteReplicationInfo()
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.NotEmpty(response)
+		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
+	}
+
+}
+
+func TestDeleteSiteReplicationInfo(t *testing.T) {
+	assert := assert.New(t)
+
+	response, err := DeleteSiteReplicationInfo()
 
 	fmt.Println("Delete Site Replication")
 	response, err = DeleteSiteReplicationInfo()
