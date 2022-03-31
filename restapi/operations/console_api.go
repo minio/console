@@ -222,6 +222,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetServiceAccountPolicyHandler: user_api.GetServiceAccountPolicyHandlerFunc(func(params user_api.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetServiceAccountPolicy has not yet been implemented")
 		}),
+		AdminAPIGetSiteReplicationInfoHandler: admin_api.GetSiteReplicationInfoHandlerFunc(func(params admin_api.GetSiteReplicationInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetSiteReplicationInfo has not yet been implemented")
+		}),
 		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
 		}),
@@ -380,6 +383,15 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
+		}),
+		AdminAPISiteReplicationEditHandler: admin_api.SiteReplicationEditHandlerFunc(func(params admin_api.SiteReplicationEditParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SiteReplicationEdit has not yet been implemented")
+		}),
+		AdminAPISiteReplicationInfoAddHandler: admin_api.SiteReplicationInfoAddHandlerFunc(func(params admin_api.SiteReplicationInfoAddParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SiteReplicationInfoAdd has not yet been implemented")
+		}),
+		AdminAPISiteReplicationRemoveHandler: admin_api.SiteReplicationRemoveHandlerFunc(func(params admin_api.SiteReplicationRemoveParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SiteReplicationRemove has not yet been implemented")
 		}),
 		AdminAPISubnetInfoHandler: admin_api.SubnetInfoHandlerFunc(func(params admin_api.SubnetInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SubnetInfo has not yet been implemented")
@@ -574,6 +586,8 @@ type ConsoleAPI struct {
 	UserAPIGetObjectMetadataHandler user_api.GetObjectMetadataHandler
 	// UserAPIGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
 	UserAPIGetServiceAccountPolicyHandler user_api.GetServiceAccountPolicyHandler
+	// AdminAPIGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
+	AdminAPIGetSiteReplicationInfoHandler admin_api.GetSiteReplicationInfoHandler
 	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
 	AdminAPIGetTierHandler admin_api.GetTierHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
@@ -680,6 +694,12 @@ type ConsoleAPI struct {
 	UserAPISetServiceAccountPolicyHandler user_api.SetServiceAccountPolicyHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
+	// AdminAPISiteReplicationEditHandler sets the operation handler for the site replication edit operation
+	AdminAPISiteReplicationEditHandler admin_api.SiteReplicationEditHandler
+	// AdminAPISiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
+	AdminAPISiteReplicationInfoAddHandler admin_api.SiteReplicationInfoAddHandler
+	// AdminAPISiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
+	AdminAPISiteReplicationRemoveHandler admin_api.SiteReplicationRemoveHandler
 	// AdminAPISubnetInfoHandler sets the operation handler for the subnet info operation
 	AdminAPISubnetInfoHandler admin_api.SubnetInfoHandler
 	// AdminAPISubnetLoginHandler sets the operation handler for the subnet login operation
@@ -945,6 +965,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIGetServiceAccountPolicyHandler == nil {
 		unregistered = append(unregistered, "user_api.GetServiceAccountPolicyHandler")
 	}
+	if o.AdminAPIGetSiteReplicationInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetSiteReplicationInfoHandler")
+	}
 	if o.AdminAPIGetTierHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTierHandler")
 	}
@@ -1103,6 +1126,15 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
+	}
+	if o.AdminAPISiteReplicationEditHandler == nil {
+		unregistered = append(unregistered, "admin_api.SiteReplicationEditHandler")
+	}
+	if o.AdminAPISiteReplicationInfoAddHandler == nil {
+		unregistered = append(unregistered, "admin_api.SiteReplicationInfoAddHandler")
+	}
+	if o.AdminAPISiteReplicationRemoveHandler == nil {
+		unregistered = append(unregistered, "admin_api.SiteReplicationRemoveHandler")
 	}
 	if o.AdminAPISubnetInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.SubnetInfoHandler")
@@ -1448,6 +1480,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/admin/site-replication"] = admin_api.NewGetSiteReplicationInfo(o.context, o.AdminAPIGetSiteReplicationInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/admin/tiers/{type}/{name}"] = admin_api.NewGetTier(o.context, o.AdminAPIGetTierHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1657,6 +1693,18 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = user_api.NewShareObject(o.context, o.UserAPIShareObjectHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/admin/site-replication"] = admin_api.NewSiteReplicationEdit(o.context, o.AdminAPISiteReplicationEditHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/admin/site-replication"] = admin_api.NewSiteReplicationInfoAdd(o.context, o.AdminAPISiteReplicationInfoAddHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/admin/site-replication"] = admin_api.NewSiteReplicationRemove(o.context, o.AdminAPISiteReplicationRemoveHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
