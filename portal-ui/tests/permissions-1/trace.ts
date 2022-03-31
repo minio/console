@@ -16,11 +16,11 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import {
-  monitoringElement,
-  supportElement,
-  traceElement,
-} from "../utils/elements-menu";
+import { monitoringElement, traceElement } from "../utils/elements-menu";
+import { Selector } from "testcafe";
+
+export const traceStartButton = Selector('[data-test-id="trace-start-button"]');
+export const traceStopButton = Selector('[data-test-id="trace-stop-button"]');
 
 fixture("For user with Trace permissions")
   .page("http://localhost:9090")
@@ -48,14 +48,14 @@ test("Trace page can be opened", async (t) => {
 test("Start button can be clicked", async (t) => {
   await t
     .navigateTo("http://localhost:9090/tools/trace")
-    .click(elements.startButton);
+    .click(traceStartButton);
 });
 
 test("Stop button appears after Start button has been clicked", async (t) => {
-  const stopButtonExists = elements.stopButton.exists;
+  const stopButtonExists = traceStopButton.exists;
   await t
     .navigateTo("http://localhost:9090/tools/trace")
-    .click(elements.startButton)
+    .click(traceStartButton)
     .expect(stopButtonExists)
     .ok();
 });
@@ -63,6 +63,6 @@ test("Stop button appears after Start button has been clicked", async (t) => {
 test("Stop button can be clicked after Start button has been clicked", async (t) => {
   await t
     .navigateTo("http://localhost:9090/tools/trace")
-    .click(elements.startButton)
-    .click(elements.stopButton);
+    .click(traceStartButton)
+    .click(traceStopButton);
 });

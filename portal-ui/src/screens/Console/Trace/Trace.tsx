@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Button, Grid, TextField } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -43,6 +43,9 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import moment from "moment/moment";
 import PageLayout from "../Common/Layout/PageLayout";
+import { FilterIcon } from "../../../icons";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -89,8 +92,17 @@ const styles = (theme: Theme) =>
     },
     formBox: {
       border: "1px solid #EAEAEA",
-      padding: 15,
+      padding: 25,
       marginBottom: 15,
+    },
+    traceCheckedIcon: {
+      width: "14px",
+      height: "14px",
+      marginLeft: "0px",
+    },
+    unCheckedIcon: {
+      width: "14px",
+      height: "14px",
     },
     midColumnCheckboxes: {
       display: "flex",
@@ -138,6 +150,8 @@ const Trace = ({
   const [storage, setStorage] = useState<boolean>(false);
   const [os, setOS] = useState<boolean>(false);
   const [errors, setErrors] = useState<boolean>(false);
+
+  const [toggleFilter, setToggleFilter] = useState<boolean>(false);
 
   const startTrace = () => {
     traceResetMessages();
@@ -201,240 +215,417 @@ const Trace = ({
     <Fragment>
       <PageHeader label={"Trace"} />
       <PageLayout>
-        <Grid xs={12} className={classes.formBox}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              className={classes.searchField}
-              id="status-code"
-              label="Status Code"
-              InputProps={{
-                disableUnderline: true,
-              }}
-              value={statusCode}
-              onChange={(e) => {
-                setStatusCode(e.target.value);
-              }}
-              disabled={traceStarted}
-              variant="standard"
-            />
-            <TextField
-              className={classes.searchField}
-              id="method"
-              label="Method"
-              InputProps={{
-                disableUnderline: true,
-              }}
-              value={method}
-              onChange={(e) => {
-                setMethod(e.target.value);
-              }}
-              disabled={traceStarted}
-              variant="standard"
-            />
-            <TextField
-              label="Function Name"
-              className={classes.searchField}
-              id="func-name"
-              disabled={traceStarted}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              value={func}
-              onChange={(e) => {
-                setFunc(e.target.value);
-              }}
-              variant="standard"
-            />
-            <TextField
-              className={classes.searchField}
-              id="path"
-              label="Path"
-              disabled={traceStarted}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              value={path}
-              onChange={(e) => {
-                setPath(e.target.value);
-              }}
-              variant="standard"
-            />
-            <TextField
-              type="number"
-              className={classes.searchField}
-              id="fthreshold"
-              label="Response Threshold"
-              disabled={traceStarted}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              inputProps={{
-                min: 0,
-              }}
-              value={threshold}
-              onChange={(e) => {
-                setThreshold(parseInt(e.target.value));
-              }}
-              variant="standard"
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.inlineCheckboxes}>
-            <div className={classes.checkBoxLabel}>Calls to trace:</div>
-            <div className={classes.midColumnCheckboxes}>
-              <CheckboxWrapper
-                checked={all}
-                id={"all_calls"}
-                name={"all_calls"}
-                label={"All"}
-                onChange={(item) => {
-                  setAll(item.target.checked);
-                }}
-                value={"all"}
-                disabled={traceStarted}
-              />
-              <CheckboxWrapper
-                checked={s3 || all}
-                id={"s3_calls"}
-                name={"s3_calls"}
-                label={"S3"}
-                onChange={(item) => {
-                  setS3(item.target.checked);
-                }}
-                value={"s3"}
-                disabled={all || traceStarted}
-              />
-              <CheckboxWrapper
-                checked={internal || all}
-                id={"internal_calls"}
-                name={"internal_calls"}
-                label={"Internal"}
-                onChange={(item) => {
-                  setInternal(item.target.checked);
-                }}
-                value={"internal"}
-                disabled={all || traceStarted}
-              />
-              <CheckboxWrapper
-                checked={storage || all}
-                id={"storage_calls"}
-                name={"storage_calls"}
-                label={"Storage"}
-                onChange={(item) => {
-                  setStorage(item.target.checked);
-                }}
-                value={"storage"}
-                disabled={all || traceStarted}
-              />
-              <CheckboxWrapper
-                checked={os || all}
-                id={"os_calls"}
-                name={"os_calls"}
-                label={"OS"}
-                onChange={(item) => {
-                  setOS(item.target.checked);
-                }}
-                value={"os"}
-                disabled={all || traceStarted}
-              />
-              <span className={classes.separatorBar}>
-                &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
-              </span>
-            </div>
-            <CheckboxWrapper
-              checked={errors}
-              id={"only_errors"}
-              name={"only_errors"}
-              label={"Display only Errors"}
-              onChange={(item) => {
-                setErrors(item.target.checked);
-              }}
-              value={"only_errors"}
-              disabled={traceStarted}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.startButton}>
-            {!traceStarted && (
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={traceStarted}
-                onClick={startTrace}
-              >
-                Start
-              </Button>
-            )}
-            {traceStarted && (
-              <Button
-                type="button"
-                variant="contained"
-                color="primary"
-                onClick={stopTrace}
-              >
-                Stop
-              </Button>
-            )}
-          </Grid>
-        </Grid>
+        <Grid className={classes.formBox}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              flexFlow: "column",
 
-        <Grid item xs={12} className={classes.tableBlock}>
-          <TableWrapper
-            itemActions={[]}
-            columns={[
-              {
-                label: "Time",
-                elementKey: "ptime",
-                renderFunction: (time: Date) => {
-                  const timeParse = new Date(time);
-                  return timeFromDate(timeParse);
+              "& .trace-checkbox-label": {
+                fontSize: "14px",
+                fontWeight: "normal",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                fontSize: "16px",
+                fontWeight: 600,
+                padding: "20px 0px 20px 0",
+              }}
+            >
+              Calls to Trace
+            </Box>
+            <Box
+              className={`${traceStarted ? "inactive-state" : ""}`}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+
+                "&.inactive-state .trace-checkbox-label": {
+                  color: "#a6a5a5",
                 },
-                globalClass: classes.timeItem,
-              },
-              { label: "Name", elementKey: "api" },
-              {
-                label: "Status",
-                elementKey: "",
-                renderFunction: (fullElement: TraceMessage) =>
-                  `${fullElement.statusCode} ${fullElement.statusMsg}`,
-                renderFullObject: true,
-              },
-              {
-                label: "Location",
-                elementKey: "configuration_id",
-                renderFunction: (fullElement: TraceMessage) =>
-                  `${fullElement.host} ${fullElement.client}`,
-                renderFullObject: true,
-              },
-              {
-                label: "Load Time",
-                elementKey: "callStats.duration",
-                globalClass: classes.timeItem,
-              },
-              {
-                label: "Upload",
-                elementKey: "callStats.rx",
-                renderFunction: niceBytes,
-                globalClass: classes.sizeItem,
-              },
-              {
-                label: "Download",
-                elementKey: "callStats.tx",
-                renderFunction: niceBytes,
-                globalClass: classes.sizeItem,
-              },
-            ]}
-            isLoading={false}
-            records={messages}
-            entityName="Traces"
-            idField="api"
-            customEmptyMessage={
-              traceStarted
-                ? "No Traced elements received yet"
-                : "Trace is not started yet"
-            }
-            customPaperHeight={classes.tableWrapper}
-            autoScrollToBottom
-          />
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexFlow: "row",
+                  gap: {
+                    md: "30px",
+                  },
+
+                  "& .trace-checked-icon": {
+                    border: "1px solid red",
+                  },
+                }}
+              >
+                <CheckboxWrapper
+                  checked={all}
+                  id={"all_calls"}
+                  name={"all_calls"}
+                  label={"All"}
+                  onChange={(item) => {
+                    setAll(item.target.checked);
+                  }}
+                  value={"all"}
+                  disabled={traceStarted}
+                  overrideLabelClasses="trace-checkbox-label"
+                  classes={{
+                    checkedIcon: classes.traceCheckedIcon,
+                    unCheckedIcon: classes.unCheckedIcon,
+                  }}
+                />
+                <CheckboxWrapper
+                  checked={s3 || all}
+                  id={"s3_calls"}
+                  name={"s3_calls"}
+                  label={"S3"}
+                  onChange={(item) => {
+                    setS3(item.target.checked);
+                  }}
+                  value={"s3"}
+                  disabled={traceStarted}
+                  overrideLabelClasses="trace-checkbox-label"
+                  classes={{
+                    checkedIcon: classes.traceCheckedIcon,
+                    unCheckedIcon: classes.unCheckedIcon,
+                  }}
+                />
+                <CheckboxWrapper
+                  checked={internal || all}
+                  id={"internal_calls"}
+                  name={"internal_calls"}
+                  label={"Internal"}
+                  onChange={(item) => {
+                    setInternal(item.target.checked);
+                  }}
+                  value={"internal"}
+                  disabled={all || traceStarted}
+                  overrideLabelClasses="trace-checkbox-label"
+                  classes={{
+                    checkedIcon: classes.traceCheckedIcon,
+                    unCheckedIcon: classes.unCheckedIcon,
+                  }}
+                />
+                <CheckboxWrapper
+                  checked={storage || all}
+                  id={"storage_calls"}
+                  name={"storage_calls"}
+                  label={"Storage"}
+                  onChange={(item) => {
+                    setStorage(item.target.checked);
+                  }}
+                  value={"storage"}
+                  disabled={all || traceStarted}
+                  overrideLabelClasses="trace-checkbox-label"
+                  classes={{
+                    checkedIcon: classes.traceCheckedIcon,
+                    unCheckedIcon: classes.unCheckedIcon,
+                  }}
+                />
+                <CheckboxWrapper
+                  checked={os || all}
+                  id={"os_calls"}
+                  name={"os_calls"}
+                  label={"OS"}
+                  onChange={(item) => {
+                    setOS(item.target.checked);
+                  }}
+                  value={"os"}
+                  disabled={all || traceStarted}
+                  overrideLabelClasses="trace-checkbox-label"
+                  classes={{
+                    checkedIcon: classes.traceCheckedIcon,
+                    unCheckedIcon: classes.unCheckedIcon,
+                  }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "15px",
+                }}
+              >
+                <RBIconButton
+                  tooltip={"More filter options"}
+                  onClick={() => {
+                    setToggleFilter(!toggleFilter);
+                  }}
+                  text={"Filters"}
+                  icon={<FilterIcon />}
+                  color={"primary"}
+                  variant={"outlined"}
+                  className={"filters-toggle-button"}
+                  style={{
+                    width: "118px",
+                    background: toggleFilter ? "rgba(8, 28, 66, 0.04)" : "",
+                  }}
+                />
+
+                {!traceStarted && (
+                  <RBIconButton
+                    text={"Start New Trace"}
+                    data-test-id={"trace-start-button"}
+                    icon={null}
+                    color={"primary"}
+                    variant="contained"
+                    onClick={startTrace}
+                    style={{
+                      width: "118px",
+                    }}
+                  />
+                )}
+                {traceStarted && (
+                  <RBIconButton
+                    text={"Stop Trace"}
+                    data-test-id={"trace-stop-button"}
+                    icon={null}
+                    color={"primary"}
+                    variant="contained"
+                    onClick={stopTrace}
+                    style={{
+                      width: "118px",
+                    }}
+                  />
+                )}
+              </Box>
+            </Box>
+          </Grid>
+          {toggleFilter ? (
+            <Grid
+              item
+              className={`${traceStarted ? "inactive-state" : ""}`}
+              xs={12}
+              sx={{
+                marginTop: "25px",
+                display: "flex",
+                flexFlow: "column",
+                background: "#FBFAFA",
+                padding: "30px",
+
+                "&.inactive-state label": {
+                  color: "#a6a5a5",
+                },
+
+                "& .orient-vertical": {
+                  flexFlow: "column",
+                  "& label": {
+                    marginBottom: "10px",
+                    fontWeight: 600,
+                  },
+                },
+
+                "& .trace-checkbox-label": {
+                  fontSize: "14px",
+                  fontWeight: "normal",
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  gap: "30px",
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  width: "100%",
+                }}
+              >
+                <InputBoxWrapper
+                  className="orient-vertical"
+                  id="trace-status-code"
+                  name="trace-status-code"
+                  label="Status Code"
+                  classes={{}}
+                  placeholder="e.g. 503"
+                  value={statusCode}
+                  onChange={(e) => {
+                    setStatusCode(e.target.value);
+                  }}
+                  disabled={traceStarted}
+                />
+
+                <InputBoxWrapper
+                  className="orient-vertical"
+                  id="trace-function-name"
+                  name="trace-function-name"
+                  label="Function Name"
+                  classes={{}}
+                  placeholder="e.g. FunctionName2055"
+                  value={func}
+                  onChange={(e) => {
+                    setFunc(e.target.value);
+                  }}
+                  disabled={traceStarted}
+                />
+
+                <InputBoxWrapper
+                  className="orient-vertical"
+                  id="trace-method"
+                  name="trace-method"
+                  label="Method"
+                  classes={{}}
+                  placeholder="e.g. Method 2056"
+                  value={method}
+                  onChange={(e) => {
+                    setMethod(e.target.value);
+                  }}
+                  disabled={traceStarted}
+                />
+              </Box>
+              <Box
+                sx={{
+                  gap: "30px",
+                  display: "grid",
+                  gridTemplateColumns: "2fr 1fr",
+                  width: "100%",
+                  marginTop: "33px",
+                }}
+              >
+                <Box
+                  flex="2"
+                  style={{
+                    width: "calc( 100% + 10px)",
+                  }}
+                >
+                  <InputBoxWrapper
+                    className="orient-vertical"
+                    id="trace-path"
+                    name="trace-path"
+                    label="Path"
+                    classes={{}}
+                    placeholder="e.g. my-bucket/my-prefix/*"
+                    value={path}
+                    onChange={(e) => {
+                      setPath(e.target.value);
+                    }}
+                    disabled={traceStarted}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    marginLeft: "15px",
+                  }}
+                >
+                  <InputBoxWrapper
+                    className="orient-vertical"
+                    id="trace-fthreshold"
+                    name="trace-fthreshold"
+                    label="Response Threshold"
+                    type="number"
+                    classes={{}}
+                    placeholder="e.g. website.io.3249.114.12"
+                    value={`${threshold}`}
+                    onChange={(e) => {
+                      setThreshold(parseInt(e.target.value));
+                    }}
+                    disabled={traceStarted}
+                  />
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  marginTop: "40px",
+                }}
+              >
+                <CheckboxWrapper
+                  checked={errors}
+                  id={"only_errors"}
+                  name={"only_errors"}
+                  label={"Display only Errors"}
+                  onChange={(item) => {
+                    setErrors(item.target.checked);
+                  }}
+                  value={"only_errors"}
+                  disabled={traceStarted}
+                  overrideLabelClasses="trace-checkbox-label"
+                  classes={{
+                    checkedIcon: classes.traceCheckedIcon,
+                    unCheckedIcon: classes.unCheckedIcon,
+                  }}
+                />
+              </Box>
+            </Grid>
+          ) : null}
+
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                fontSize: "16px",
+                fontWeight: 600,
+                marginBottom: "30px",
+                marginTop: "30px",
+              }}
+            >
+              Trace Results
+            </Box>
+          </Grid>
+          <Grid item xs={12} className={classes.tableBlock}>
+            <TableWrapper
+              itemActions={[]}
+              columns={[
+                {
+                  label: "Time",
+                  elementKey: "ptime",
+                  renderFunction: (time: Date) => {
+                    const timeParse = new Date(time);
+                    return timeFromDate(timeParse);
+                  },
+                  globalClass: classes.timeItem,
+                },
+                { label: "Name", elementKey: "api" },
+                {
+                  label: "Status",
+                  elementKey: "",
+                  renderFunction: (fullElement: TraceMessage) =>
+                    `${fullElement.statusCode} ${fullElement.statusMsg}`,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Location",
+                  elementKey: "configuration_id",
+                  renderFunction: (fullElement: TraceMessage) =>
+                    `${fullElement.host} ${fullElement.client}`,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Load Time",
+                  elementKey: "callStats.duration",
+                  globalClass: classes.timeItem,
+                },
+                {
+                  label: "Upload",
+                  elementKey: "callStats.rx",
+                  renderFunction: niceBytes,
+                  globalClass: classes.sizeItem,
+                },
+                {
+                  label: "Download",
+                  elementKey: "callStats.tx",
+                  renderFunction: niceBytes,
+                  globalClass: classes.sizeItem,
+                },
+              ]}
+              isLoading={false}
+              records={messages}
+              entityName="Traces"
+              idField="api"
+              customEmptyMessage={
+                traceStarted
+                  ? "No Traced elements received yet"
+                  : "Trace is not started yet"
+              }
+              customPaperHeight={classes.tableWrapper}
+              autoScrollToBottom
+            />
+          </Grid>
         </Grid>
       </PageLayout>
     </Fragment>
