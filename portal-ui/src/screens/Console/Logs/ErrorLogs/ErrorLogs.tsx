@@ -263,15 +263,7 @@ const ErrorLogs = ({
       <PageHeader label="Logs" />
       <PageLayout>
         <Grid container spacing={1}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <SearchBox
-              placeholder="Filter"
-              onChange={(e) => {
-                setFilter(e);
-              }}
-              value={filter}
-            />
-          </Grid>
+      
           <Grid item xs={4}>
             {!loadingNodes ? (
               <FormControl variant="outlined" className={classes.nodeField}>
@@ -386,6 +378,15 @@ const ErrorLogs = ({
                 Stop Logs
               </Button>
             )}
+          </Grid>
+              <Grid item xs={12} className={classes.actionsTray}>
+            <SearchBox
+              placeholder="Filter"
+              onChange={(e) => {
+                setFilter(e);
+              }}
+              value={filter}
+            />
           </Grid>
           <Grid item xs={12}>
             <div
