@@ -42,7 +42,11 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import { encodeFileName, niceBytesInt } from "../../../../../../common/utils";
+import {
+  decodeFileName,
+  encodeFileName,
+  niceBytesInt,
+} from "../../../../../../common/utils";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 import {
@@ -62,11 +66,11 @@ import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/Selec
 import PreviewFileModal from "../Preview/PreviewFileModal";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
+import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 
 const styles = (theme: Theme) =>
   createStyles({
     versionsContainer: {
-      border: "#EAEDEE 1px solid",
       padding: 10,
     },
     noBottomBorder: {
@@ -86,7 +90,7 @@ const styles = (theme: Theme) =>
         width: "2px",
         backgroundColor: "#F8F8F8",
         left: "24px",
-        height: "52px",
+        height: "40px",
         bottom: 0,
       },
     },
@@ -407,6 +411,14 @@ const VersionsNavigator = ({
 
         {actualInfo && (
           <Fragment>
+            <Grid item xs={12}>
+              <BrowserBreadcrumbs
+                bucketName={bucketName}
+                internalPaths={decodeFileName(internalPaths)}
+                existingFiles={[]}
+                hidePathButton={true}
+              />
+            </Grid>
             <Grid item xs={12} className={classes.screenTitleContainer}>
               <ScreenTitle
                 icon={
