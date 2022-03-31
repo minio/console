@@ -181,6 +181,8 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/trace",
   NAMESPACE_TENANT_POOLS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
+  NAMESPACE_TENANT_POOLS_ADD:
+      "/namespaces/:tenantNamespace/tenants/:tenantName/add-pool",
   NAMESPACE_TENANT_VOLUMES:
     "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
   NAMESPACE_TENANT_LICENSE:

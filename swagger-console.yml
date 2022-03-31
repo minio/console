@@ -2428,6 +2428,83 @@ paths:
       tags:
         - AdminAPI
 
+  /admin/site-replication:
+    get:
+      summary: Get list of Replication Sites
+      operationId: GetSiteReplicationInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/siteReplicationInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Add a Replication Site
+      operationId: SiteReplicationInfoAdd
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/siteReplicationAddRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/siteReplicationAddResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    put:
+      summary: Edit a Replication Site
+      operationId: SiteReplicationEdit
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/peerInfo"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/peerSiteEditResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    delete:
+      summary: Remove a Replication Site
+      operationId: SiteReplicationRemove
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/peerInfoRemove"
+      responses:
+        204:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/peerSiteRemoveResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+
   /admin/tiers:
     get:
       summary: Returns a list of tiers for ilm
@@ -3744,6 +3821,90 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/notificationEndpointItem"
+
+  peerSiteRemoveResponse:
+    type: object
+    properties:
+      status:
+        type : string
+      errorDetail:
+        type : string
+
+  peerSiteEditResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      status:
+        type: string
+      errorDetail:
+        type: string
+
+  peerSite:
+    type: object
+    properties:
+      name:
+        type : string
+      endpoint:
+        type : string
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+
+  peerInfo:
+    type: object
+    properties:
+      endpoint:
+       type : string
+      name:
+        type: string
+      deploymentID:
+        type: string
+
+  peerInfoRemove:
+    type: object
+    required:
+      - sites
+    properties:
+      all:
+        type: boolean
+      sites:
+        type : array
+        items:
+          type: string
+
+  siteReplicationAddRequest:
+    type: array
+    items:
+      $ref: "#/definitions/peerSite"
+
+  siteReplicationAddResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      status:
+        type: string
+      errorDetail:
+        type: string
+      initialSyncErrorMessage:
+        type: string
+
+  siteReplicationInfoResponse:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      name:
+       type: string
+      sites :
+        type: array
+        items:
+          $ref: "#/definitions/peerInfo"
+      serviceAccountAccessKey:
+        type: string
+
   updateUser:
     type: object
     required:

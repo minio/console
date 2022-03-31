@@ -112,6 +112,11 @@ type MinioAdmin interface {
 	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
 	// Speedtest
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
+	// Site Relication
+	getSiteReplicationInfo(ctx context.Context) (*madmin.SiteReplicationInfo, error)
+	addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error)
+	editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error)
+	deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
 }
 
 // Interface implementation
@@ -476,4 +481,61 @@ func GetConsoleHTTPClient() *http.Client {
 
 func (ac AdminClient) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
 	return ac.Client.Speedtest(ctx, opts)
+}
+
+//Site Replication
+func (ac AdminClient) getSiteReplicationInfo(ctx context.Context) (*madmin.SiteReplicationInfo, error) {
+
+	res, err := ac.Client.SiteReplicationInfo(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+	return &madmin.SiteReplicationInfo{
+		Enabled:                 res.Enabled,
+		Name:                    res.Name,
+		Sites:                   res.Sites,
+		ServiceAccountAccessKey: res.ServiceAccountAccessKey,
+	}, nil
+}
+
+func (ac AdminClient) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error) {
+
+	res, err := ac.Client.SiteReplicationAdd(ctx, sites)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &madmin.ReplicateAddStatus{
+		Success:                 res.Success,
+		Status:                  res.Status,
+		ErrDetail:               res.ErrDetail,
+		InitialSyncErrorMessage: res.InitialSyncErrorMessage,
+	}, nil
+}
+
+func (ac AdminClient) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error) {
+
+	res, err := ac.Client.SiteReplicationEdit(ctx, site)
+	if err != nil {
+		return nil, err
+	}
+	return &madmin.ReplicateEditStatus{
+		Success:   res.Success,
+		Status:    res.Status,
+		ErrDetail: res.ErrDetail,
+	}, nil
+}
+
+func (ac AdminClient) deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error) {
+
+	res, err := ac.Client.SiteReplicationRemove(ctx, removeReq)
+	if err != nil {
+		return nil, err
+	}
+	return &madmin.ReplicateRemoveStatus{
+		Status:    res.Status,
+		ErrDetail: res.ErrDetail,
+	}, nil
 }

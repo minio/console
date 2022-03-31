@@ -113,6 +113,9 @@ const License = React.lazy(() => import("./License/License"));
 const ConfigurationOptions = React.lazy(
   () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
 );
+const AddPool = React.lazy(
+  () => import("./Tenants/TenantDetails/Pools/AddPool")
+);
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -429,6 +432,11 @@ const Console = ({
     {
       component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_POOLS,
+      forceDisplay: true,
+    },
+    {
+      component: AddPool,
+      path: IAM_PAGES.NAMESPACE_TENANT_POOLS_ADD,
       forceDisplay: true,
     },
     {
