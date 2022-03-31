@@ -76,8 +76,7 @@ const styles = (theme: Theme) =>
       paddingLeft: 25,
     },
     nodeField: {
-      flexGrow: 2,
-      minWidth: 200,
+      width: "100%",
     },
     ansidefault: {
       color: "#000",
@@ -96,6 +95,10 @@ const styles = (theme: Theme) =>
       },
     },
     ...actionsTray,
+    actionsTray: {
+      ...actionsTray.actionsTray,
+      marginBottom: 0,
+    },
     ...searchField,
     ...logsCommon,
     ...inlineCheckboxes,
@@ -145,7 +148,7 @@ const ErrorLogs = ({
   const [selectedUserAgent, setSelectedUserAgent] =
     useState<string>("Select user agent");
   const [userAgents, setUserAgents] = useState<string[]>(["All User Agents"]);
-  const [logType, setLogType] = useState<string>("Select Log Type");
+  const [logType, setLogType] = useState<string>("all");
   const [loadingNodes, setLoadingNodes] = useState<boolean>(false);
 
   const startLogs = () => {
@@ -245,6 +248,9 @@ const ErrorLogs = ({
       .invoke("GET", `/api/v1/nodes`)
       .then((res: string[]) => {
         setNodes(res);
+        if (res.length > 0) {
+          setSelectedNode(res[0]);
+        }
         setLoadingNodes(false);
       })
       .catch((err: ErrorResponseHandler) => {
@@ -256,7 +262,7 @@ const ErrorLogs = ({
     <Fragment>
       <PageHeader label="Logs" />
       <PageLayout>
-        <Grid container>
+        <Grid container spacing={1}>
           <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox
               placeholder="Filter"
@@ -266,7 +272,7 @@ const ErrorLogs = ({
               value={filter}
             />
           </Grid>
-          <Grid>
+          <Grid item xs={4}>
             {!loadingNodes ? (
               <FormControl variant="outlined" className={classes.nodeField}>
                 <Select
@@ -298,6 +304,8 @@ const ErrorLogs = ({
             ) : (
               <h3> Loading nodes</h3>
             )}
+          </Grid>
+          <Grid item xs={3}>
             <FormControl variant="outlined" className={classes.nodeField}>
               <Select
                 id="userAgent"
@@ -328,6 +336,8 @@ const ErrorLogs = ({
                 ))}
               </Select>
             </FormControl>
+          </Grid>
+          <Grid item xs={3}>
             <FormControl variant="outlined" className={classes.nodeField}>
               <Select
                 id="logType"
@@ -340,14 +350,8 @@ const ErrorLogs = ({
                 className={classes.searchField}
                 disabled={loadingNodes || logsStarted}
                 input={<SelectStyled />}
+                placeholder={"Select Log Type"}
               >
-                <MenuItem
-                  value={logType}
-                  key={`select-log-type-default`}
-                  disabled={true}
-                >
-                  Select Log Type
-                </MenuItem>
                 <MenuItem value="all" key="all-log-types">
                   All
                 </MenuItem>
@@ -359,7 +363,8 @@ const ErrorLogs = ({
                 </MenuItem>
               </Select>
             </FormControl>
-            {/*<Grid item xs={12} className={classes.startButton}>*/}
+          </Grid>
+          <Grid item xs={2} textAlign={"right"}>
             {!logsStarted && (
               <Button
                 type="submit"
@@ -396,6 +401,11 @@ const ErrorLogs = ({
                     })}
                   </TableBody>
                 </Table>
+                {filteredMessages.length == 0 && (
+                  <div style={{ padding: 20, textAlign: "center" }}>
+                    No logs to display
+                  </div>
+                )}
               </TableContainer>
             </div>
           </Grid>
