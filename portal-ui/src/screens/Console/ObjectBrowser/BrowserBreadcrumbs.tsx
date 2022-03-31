@@ -26,7 +26,7 @@ import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrar
 import { Link } from "react-router-dom";
 import { encodeFileName } from "../../../common/utils";
 import { BackCaretIcon, NewPathIcon } from "../../../icons";
-import { IconButton, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import history from "../../../history";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
@@ -51,6 +51,7 @@ interface IObjectBrowser {
   rewindEnabled?: boolean;
   versionsMode: boolean;
   versionedFile: string;
+  hidePathButton?: boolean;
   existingFiles: BucketObject[];
   additionalOptions?: React.ReactNode;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
@@ -69,6 +70,7 @@ const BrowserBreadcrumbs = ({
   existingFiles,
   versionsMode,
   versionedFile,
+  hidePathButton,
   setVersionsModeEnabled,
   additionalOptions,
 }: IObjectBrowser) => {
@@ -139,7 +141,7 @@ const BrowserBreadcrumbs = ({
   };
 
   return (
-    <React.Fragment>
+    <div className={classes.breadcrumbsMain}>
       {createFolderOpen && (
         <CreateFolderModal
           modalOpen={createFolderOpen}
@@ -157,15 +159,21 @@ const BrowserBreadcrumbs = ({
             backgroundColor: "#fff",
             borderLeft: 0,
             borderRadius: 0,
-            width: 39,
-            height: 39,
+            width: 38,
+            height: 38,
             marginRight: "10px",
           }}
         >
           <BackCaretIcon />
         </IconButton>
+        <div className={classes.breadcrumbsList} dir="rtl">
+          {listBreadcrumbs}
+        </div>
+        <div className={classes.additionalOptions}>{additionalOptions}</div>
+      </Grid>
+      {!hidePathButton && (
         <Tooltip title={"Choose or create a new path"}>
-          <IconButton
+          <Button
             id={"new-path"}
             onClick={() => {
               setCreateFolderOpen(true);
@@ -174,25 +182,23 @@ const BrowserBreadcrumbs = ({
               rewindEnabled ||
               !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
             }
+            endIcon={<NewPathIcon />}
             disableTouchRipple
             disableRipple
             focusRipple={false}
             sx={{
-              padding: 0,
-              paddingLeft: "6px",
+              color: "#969FA8",
+              border: "#969FA8 1px solid",
+              whiteSpace: "nowrap",
+              minWidth: "160px",
             }}
+            variant={"outlined"}
           >
-            <NewPathIcon />
-          </IconButton>
+            Create new path
+          </Button>
         </Tooltip>
-        <div className={classes.breadcrumbsList} dir="rtl">
-          {listBreadcrumbs}
-        </div>
-        {additionalOptions && (
-          <div className={classes.additionalOptions}>{additionalOptions}</div>
-        )}
-      </Grid>
-    </React.Fragment>
+      )}
+    </div>
   );
 };
 
