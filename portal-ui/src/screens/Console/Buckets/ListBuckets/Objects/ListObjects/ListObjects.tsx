@@ -493,7 +493,12 @@ const ListObjects = ({
           .then((res: RewindObjectList) => {
             setLoadingRewind(false);
             if (res.objects) {
-              setRewind(res.objects);
+              // We omit files from the same path
+              const filteredObjects = res.objects.filter((object) => {
+                 return object.name !== decodeFileName(internalPaths)
+              })
+
+              setRewind(filteredObjects);
             } else {
               setRewind([]);
             }
@@ -558,12 +563,15 @@ const ListObjects = ({
             const files: BucketObject[] = [];
 
             records.forEach((record) => {
-              // this is a folder
-              if (record.name.endsWith("/")) {
-                folders.push(record);
-              } else {
-                // this is a file
-                files.push(record);
+              // We omit files from the same path
+              if (record.name !== decodeFileName(internalPaths)) {
+                // this is a folder
+                if (record.name.endsWith("/")) {
+                  folders.push(record);
+                } else {
+                  // this is a file
+                  files.push(record);
+                }
               }
             });
             const recordsInElement = [...folders, ...files];
@@ -1051,7 +1059,6 @@ const ListObjects = ({
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
 
   const plSelect = rewindEnabled ? rewind : filteredRecords;
-
   const sortASC = plSelect.sort(sortListObjects(currentSortField));
 
   let payload: BucketObject[] | RewindObject[] = [];
