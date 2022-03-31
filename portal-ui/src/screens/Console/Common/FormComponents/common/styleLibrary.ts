@@ -362,7 +362,6 @@ export const objectBrowserCommon = {
   },
   breadcrumbsMain: {
     display: "flex",
-
   },
   breadcrumbs: {
     fontSize: 12,

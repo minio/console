@@ -370,7 +370,7 @@ const Trace = ({
 
                 {!traceStarted && (
                   <RBIconButton
-                    text={"Start New Trace"}
+                    text={"Start"}
                     data-test-id={"trace-start-button"}
                     icon={null}
                     color={"primary"}
