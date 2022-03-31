@@ -360,17 +360,20 @@ export const objectBrowserCommon = {
     height: 40,
     lineHeight: "40px",
   },
+  breadcrumbsMain: {
+    display: "flex",
+
+  },
   breadcrumbs: {
     fontSize: 12,
     color: "#969FA8",
     fontWeight: "bold",
-    marginTop: 2,
     border: "#EAEDEE 1px solid",
-    borderBottom: 0,
     height: 38,
     display: "flex",
     alignItems: "center",
     backgroundColor: "#FCFCFD",
+    marginRight: 10,
     "& a": {
       textDecoration: "none",
       color: "#969FA8",
@@ -385,6 +388,8 @@ export const objectBrowserCommon = {
   },
   additionalOptions: {
     paddingRight: "10px",
+    display: "flex",
+    alignItems: "center",
   },
   smallLabel: {
     color: "#9C9C9C",
