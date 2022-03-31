@@ -39,15 +39,24 @@ import {
   ADD_TENANT_SET_STORAGE_CLASSES_LIST,
   ADD_TENANT_SET_STORAGE_TYPE,
   ADD_TENANT_UPDATE_FIELD,
+  ADD_TENANT_SET_KEY_PAIR_VALUE,
+  ADD_TENANT_SET_TOLERATION_VALUE,
+  ADD_TENANT_ADD_NEW_TOLERATION,
+  ADD_TENANT_REMOVE_TOLERATION_ROW,
   TENANT_DETAILS_SET_CURRENT_TENANT,
   TENANT_DETAILS_SET_LOADING,
   TENANT_DETAILS_SET_TAB,
   TENANT_DETAILS_SET_TENANT,
-  ADD_TENANT_SET_KEY_PAIR_VALUE,
-  ADD_TENANT_SET_TOLERATION_VALUE,
-  ADD_TENANT_ADD_NEW_TOLERATION,
   LabelKeyPair,
-  ADD_TENANT_REMOVE_TOLERATION_ROW,
+  ADD_POOL_SET_LOADING,
+  ADD_POOL_RESET_FORM,
+  ADD_POOL_SET_VALUE,
+  IAddPoolFields,
+  ADD_POOL_SET_PAGE_VALID,
+  ADD_POOL_SET_POOL_STORAGE_CLASSES,
+  ADD_POOL_SET_TOLERATION_VALUE,
+  ADD_POOL_ADD_NEW_TOLERATION,
+  ADD_POOL_REMOVE_TOLERATION_ROW, ADD_POOL_SET_KEY_PAIR_VALUE,
 } from "./types";
 import { ITolerationModel } from "../../../common/types";
 
@@ -321,5 +330,79 @@ export const removeToleration = (index: number) => {
   return {
     type: ADD_TENANT_REMOVE_TOLERATION_ROW,
     index,
+  };
+};
+
+// Add Pool
+
+export const setPoolLoading = (state: boolean) => {
+  return {
+    type: ADD_POOL_SET_LOADING,
+    state,
+  };
+};
+
+export const resetPoolForm = () => {
+  return {
+    type: ADD_POOL_RESET_FORM,
+  };
+};
+
+export const setPoolField = (
+  page: keyof IAddPoolFields,
+  field: string,
+  value: any
+) => {
+  return {
+    type: ADD_POOL_SET_VALUE,
+    page,
+    field,
+    value,
+  };
+};
+
+export const isPoolPageValid = (page: string, status: boolean) => {
+  return {
+    type: ADD_POOL_SET_PAGE_VALID,
+    page,
+    status,
+  };
+};
+
+export const setPoolStorageClasses = (storageClasses: Opts[]) => {
+  return {
+    type: ADD_POOL_SET_POOL_STORAGE_CLASSES,
+    storageClasses,
+  };
+};
+
+export const setPoolTolerationInfo = (
+  index: number,
+  tolerationValue: ITolerationModel
+) => {
+  return {
+    type: ADD_POOL_SET_TOLERATION_VALUE,
+    index,
+    toleration: tolerationValue,
+  };
+};
+
+export const addNewPoolToleration = () => {
+  return {
+    type: ADD_POOL_ADD_NEW_TOLERATION,
+  };
+};
+
+export const removePoolToleration = (index: number) => {
+  return {
+    type: ADD_POOL_REMOVE_TOLERATION_ROW,
+    index,
+  };
+};
+
+export const setPoolKeyValuePairs = (newArray: LabelKeyPair[]) => {
+  return {
+    type: ADD_POOL_SET_KEY_PAIR_VALUE,
+    newArray,
   };
 };
