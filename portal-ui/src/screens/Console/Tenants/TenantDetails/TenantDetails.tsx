@@ -174,7 +174,6 @@ const TenantDetails = ({
   match,
   history,
   loadingTenant,
-  currentTab,
   selectedTenant,
   tenantInfo,
   selectedNamespace,
@@ -183,7 +182,6 @@ const TenantDetails = ({
   setTenantDetailsLoad,
   setTenantName,
   setTenantInfo,
-  setTenantTab,
 }: ITenantDetailsProps) => {
   const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
 
@@ -589,7 +587,6 @@ const TenantDetails = ({
 
 const mapState = (state: AppState) => ({
   loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  currentTab: state.tenants.tenantDetails.currentTab,
   selectedTenant: state.tenants.tenantDetails.currentTenant,
   selectedNamespace: state.tenants.tenantDetails.currentNamespace,
   tenantInfo: state.tenants.tenantDetails.tenantInfo,
@@ -601,7 +598,6 @@ const connector = connect(mapState, {
   setTenantDetailsLoad,
   setTenantName,
   setTenantInfo,
-  setTenantTab,
 });
 
 export default withStyles(styles)(connector(TenantDetails));

@@ -42,12 +42,21 @@ import {
   ADD_TENANT_SET_STORAGE_TYPE,
   ADD_TENANT_SET_TOLERATION_VALUE,
   ADD_TENANT_UPDATE_FIELD,
-  ITenantState,
   TENANT_DETAILS_SET_CURRENT_TENANT,
   TENANT_DETAILS_SET_LOADING,
   TENANT_DETAILS_SET_TAB,
   TENANT_DETAILS_SET_TENANT,
+  ADD_POOL_SET_LOADING,
+  ADD_POOL_SET_VALUE,
+  ADD_POOL_RESET_FORM,
+  ITenantState,
   TenantsManagementTypes,
+  ADD_POOL_SET_PAGE_VALID,
+  ADD_POOL_SET_POOL_STORAGE_CLASSES,
+  ADD_POOL_ADD_NEW_TOLERATION,
+  ADD_POOL_SET_TOLERATION_VALUE,
+  ADD_POOL_REMOVE_TOLERATION_ROW,
+  ADD_POOL_SET_KEY_PAIR_VALUE,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
@@ -354,6 +363,44 @@ const initialState: ITenantState = {
     loadingTenant: false,
     tenantInfo: null,
     currentTab: "summary",
+  },
+  addPool: {
+    addPoolLoading: false,
+    validPages: ["affinity", "configure"],
+    storageClasses: [],
+    limitSize: {},
+    fields: {
+      setup: {
+        numberOfNodes: 0,
+        storageClass: "",
+        volumeSize: 0,
+        volumesPerServer: 0,
+      },
+      affinity: {
+        nodeSelectorLabels: "",
+        podAffinity: "default",
+        withPodAntiAffinity: true,
+      },
+      configuration: {
+        securityContextEnabled: false,
+        securityContext: {
+          runAsUser: "1000",
+          runAsGroup: "1000",
+          fsGroup: "1000",
+          runAsNonRoot: true,
+        },
+      },
+      nodeSelectorPairs: [{ key: "", value: "" }],
+      tolerations: [
+        {
+          key: "",
+          tolerationSeconds: { seconds: 0 },
+          value: "",
+          effect: ITolerationEffect.NoSchedule,
+          operator: ITolerationOperator.Equal,
+        },
+      ],
+    },
   },
 };
 
@@ -995,7 +1042,7 @@ export function tenantsReducer(
       const cleanTolerationArray = state.createTenant.tolerations.filter(
         (_, index) => index !== action.index
       );
-
+      
       return {
         ...state,
         createTenant: {
@@ -1003,7 +1050,161 @@ export function tenantsReducer(
           tolerations: [...cleanTolerationArray],
         },
       };
+    case ADD_POOL_SET_LOADING:
+      return {
+        ...state,
+        addPool: {
+          ...state.addPool,
+          addPoolLoading: action.state,
+        },
+      };
+    case ADD_POOL_SET_VALUE:
+      if (has(newState.addPool.fields, `${action.page}.${action.field}`)) {
+        const originPageNameItems = get(
+          newState.addPool.fields,
+          `${action.page}`,
+          {}
+        );
 
+        let newValue: any = {};
+        newValue[action.field] = action.value;
+
+        const joinValue = { ...originPageNameItems, ...newValue };
+
+        newState.addPool.fields[action.page] = { ...joinValue };
+
+        return { ...newState };
+      }
+
+      return state;
+    case ADD_POOL_SET_PAGE_VALID:
+      const nvPoolPV = [...state.addPool.validPages];
+
+      if (action.status) {
+        if (!nvPoolPV.includes(action.page)) {
+          nvPoolPV.push(action.page);
+
+          newState.addPool.validPages = [...nvPoolPV];
+        }
+      } else {
+        const newSetOfPages = nvPoolPV.filter((elm) => elm !== action.page);
+
+        newState.addPool.validPages = [...newSetOfPages];
+      }
+
+      return { ...newState };
+    case ADD_POOL_SET_POOL_STORAGE_CLASSES:
+      return {
+        ...newState,
+        addPool: {
+          ...newState.addPool,
+          storageClasses:  action.storageClasses,
+        },
+      };
+    case ADD_POOL_SET_TOLERATION_VALUE:
+      const newPoolTolerationValue = [...state.addPool.fields.tolerations];
+
+      newPoolTolerationValue[action.index] = action.toleration;
+
+      return {
+        ...state,
+        addPool: {
+          ...state.addPool,
+          fields: {
+            ...state.addPool.fields,
+            tolerations: [...newPoolTolerationValue],
+          },
+        },
+      };
+    case ADD_POOL_ADD_NEW_TOLERATION:
+      const newPoolTolerationArray = [
+        ...state.addPool.fields.tolerations,
+        {
+          key: "",
+          tolerationSeconds: { seconds: 0 },
+          value: "",
+          effect: ITolerationEffect.NoSchedule,
+          operator: ITolerationOperator.Equal,
+        },
+      ];
+      return {
+        ...state,
+        addPool: {
+          ...state.addPool,
+          fields: {
+            ...state.addPool.fields,
+            tolerations: [...newPoolTolerationArray],
+          },
+        },
+      };
+    case ADD_POOL_REMOVE_TOLERATION_ROW:
+      const cleanPoolTolerationArray = state.addPool.fields.tolerations.filter(
+        (_, index) => index !== action.index
+      );
+
+      return {
+        ...state,
+        addPool: {
+          ...state.addPool,
+          fields: {
+            ...state.addPool.fields,
+            tolerations: [...cleanPoolTolerationArray],
+          },
+        },
+      };
+    case ADD_POOL_SET_KEY_PAIR_VALUE:
+      return {
+        ...state,
+        addPool: {
+          ...state.addPool,
+          fields: {
+            ...state.addPool.fields,
+            nodeSelectorPairs: action.newArray,
+          },
+        },
+      };
+    case ADD_POOL_RESET_FORM:
+      return {
+        ...state,
+        addPool: {
+          addPoolLoading: false,
+          validPages: ["affinity", "configure"],
+          storageClasses: [],
+          limitSize: {},
+          fields: {
+            setup: {
+              numberOfNodes: 0,
+              storageClass: "",
+              volumeSize: 0,
+              volumesPerServer: 0,
+            },
+            affinity: {
+              nodeSelectorLabels: "",
+              podAffinity: "default",
+              withPodAntiAffinity: true,
+            },
+            configuration: {
+              securityContextEnabled: false,
+              securityContext: {
+                runAsUser: "1000",
+                runAsGroup: "1000",
+                fsGroup: "1000",
+                runAsNonRoot: true,
+              },
+            },
+            nodeSelectorPairs: [{ key: "", value: "" }],
+            tolerations: [
+              {
+                key: "",
+                tolerationSeconds: { seconds: 0 },
+                value: "",
+                effect: ITolerationEffect.NoSchedule,
+                operator: ITolerationOperator.Equal,
+              },
+            ],
+          },
+        },
+      };
     default:
       return state;
   }
