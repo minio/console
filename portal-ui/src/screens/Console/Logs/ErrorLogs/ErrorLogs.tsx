@@ -162,7 +162,7 @@ const ErrorLogs = ({
     c = new W3CWebSocket(
       `${wsProt}://${
         url.hostname
-      }:${port}/ws/console/?logType=${logType}&?node=${
+      }:${port}/ws/console/?logType=${logType}&node=${
         selectedNode === "Select node" ? "" : selectedNode
       }`
     );
@@ -183,9 +183,11 @@ const ErrorLogs = ({
         let m: LogMessage = JSON.parse(message.data.toString());
         m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
+        console.log("Found userAgents:", m.userAgent)
         if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent !== undefined) {
           userAgents.push(m.userAgent);
           setUserAgents(userAgents);
+          console.log("Added to userAgents:", m.userAgent)
         }
         logMessageReceived(m);
       };
@@ -402,7 +404,7 @@ const ErrorLogs = ({
                     })}
                   </TableBody>
                 </Table>
-                {filteredMessages.length == 0 && (
+                {filteredMessages.length === 0 && (
                   <div style={{ padding: 20, textAlign: "center" }}>
                     No logs to display
                   </div>
