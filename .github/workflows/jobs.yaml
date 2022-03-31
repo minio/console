@@ -16,6 +16,74 @@ concurrency:
 
 jobs:
 
+  replication:
+
+    name: Site Replication Test
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      # To build minio image, we need to clone the repository first
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+
+          # Repository name with owner. For example, actions/checkout
+          # Default: ${{ github.repository }}
+          repository: minio/minio
+          
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          # To have two repositories under the same test
+          path: 'minio_repository'
+
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
+      - name: Build on ${{ matrix.os }}
+        run: |
+          echo "The idea is to build minio image from downloaded repository";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          VERSION=`git rev-parse HEAD`;
+          echo $VERSION;
+          echo "Create minio image";
+          make docker VERSION=$VERSION;
+          echo "Jumping back to console repository to run the integration test"
+          cd $GITHUB_WORKSPACE;
+          echo "We are going to use the built image on test-integration";
+          VERSION="minio/minio:$VERSION";
+          echo $VERSION;
+          make test-replication MINIO_VERSION=$VERSION;
+      - uses: actions/cache@v2
+        id: coverage-cache-replication
+        name: Coverage Cache Replication
+        with:
+          path: |
+            ./replication/coverage/
+          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
+
   sso-integration:
 
     name: SSO Integration Test
@@ -981,6 +1049,7 @@ jobs:
       - c-operator-api-tests
       - test-pkg-on-go
       - sso-integration
+      - replication
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -1024,6 +1093,14 @@ jobs:
           key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
 
       - uses: actions/cache@v2
+        id: coverage-cache-replication
+        name: Coverage Cache Replication
+        with:
+          path: |
+            ./replication/coverage/
+          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
+
+      - uses: actions/cache@v2
         id: coverage-cache-operator
         name: Coverage Cache Operator
         with:
@@ -1058,7 +1135,7 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out > all.out
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
