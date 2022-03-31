@@ -26,11 +26,9 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import Chip from "@mui/material/Chip";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { Button, DialogContentText, Typography } from "@mui/material";
+import { Button, DialogContentText } from "@mui/material";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
@@ -42,6 +40,7 @@ import { setTenantDetailsLoad } from "../actions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { AddIcon, ConfirmModalIcon } from "../../../../icons";
 import Loader from "../../Common/Loader/Loader";
+import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 
 interface ITenantSecurity {
   classes: any;
@@ -65,10 +64,6 @@ const styles = (theme: Theme) =>
     italic: { fontStyle: "italic" },
     paperContainer: {
       padding: "15px 15px 15px 50px",
-    },
-    certificateInfo: {
-      height: "auto",
-      margin: 5,
     },
     fileItem: {
       marginRight: 10,
@@ -388,45 +383,8 @@ const TenantSecurity = ({
                 <Grid container item xs={12}>
                   {minioTLSCertificateSecrets.map(
                     (certificateInfo: ICertificateInfo) => (
-                      <Chip
-                        key={certificateInfo.name}
-                        variant="outlined"
-                        color="primary"
-                        className={classes.certificateInfo}
-                        label={
-                          <div>
-                            <Typography
-                              variant="subtitle1"
-                              display="block"
-                              gutterBottom
-                            >
-                              {certificateInfo.name}
-                            </Typography>
-                            <Typography
-                              className={classes.italic}
-                              variant="caption"
-                              display="block"
-                              gutterBottom
-                            >
-                              {certificateInfo.domains &&
-                                certificateInfo.domains.map((dom) => {
-                                  return <div key={`domain-${dom}`}>{dom}</div>;
-                                })}
-                            </Typography>
-                            <Typography
-                              className={classes.bold}
-                              variant="overline"
-                              gutterBottom
-                            >
-                              Expiry:&nbsp;
-                            </Typography>
-                            <Typography variant="caption" gutterBottom>
-                              <Moment format="YYYY-MM-DD">
-                                {certificateInfo.expiry}
-                              </Moment>
-                            </Typography>
-                          </div>
-                        }
+                      <TLSCertificate
+                        certificateInfo={certificateInfo}
                         onDelete={() => removeCertificate(certificateInfo)}
                       />
                     )
@@ -508,47 +466,8 @@ const TenantSecurity = ({
                 <Grid container item xs={12}>
                   {minioTLSCaCertificateSecrets.map(
                     (certificateInfo: ICertificateInfo) => (
-                      <Chip
-                        key={certificateInfo.name}
-                        variant="outlined"
-                        color="primary"
-                        className={classes.certificateInfo}
-                        label={
-                          <div>
-                            <Typography
-                              variant="subtitle1"
-                              display="block"
-                              gutterBottom
-                            >
-                              {certificateInfo.name}
-                            </Typography>
-                            <Typography
-                              className={classes.italic}
-                              variant="caption"
-                              display="block"
-                              gutterBottom
-                            >
-                              {certificateInfo.domains &&
-                                certificateInfo.domains.map((dom) => {
-                                  return (
-                                    <div key={`CA-domain-${dom}`}>{dom}</div>
-                                  );
-                                })}
-                            </Typography>
-                            <Typography
-                              className={classes.bold}
-                              variant="overline"
-                              gutterBottom
-                            >
-                              Expiry:&nbsp;
-                            </Typography>
-                            <Typography variant="caption" gutterBottom>
-                              <Moment format="YYYY-MM-DD">
-                                {certificateInfo.expiry}
-                              </Moment>
-                            </Typography>
-                          </div>
-                        }
+                      <TLSCertificate
+                        certificateInfo={certificateInfo}
                         onDelete={() => removeCertificate(certificateInfo)}
                       />
                     )

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { SubnetInfo } from "../../License/types";
-import { IAffinityModel } from "../../../../common/types";
+import {IAffinityModel, IResourceModel, ITolerationModel} from "../../../../common/types";
 import {
   ICertificateInfo,
   ISecurityContext,
@@ -60,6 +60,8 @@ export interface IAddPoolRequest {
   volumes_per_server: number;
   volume_configuration: IVolumeConfiguration;
   affinity?: IAffinityModel;
+  tolerations?: ITolerationModel[];
+  securityContext?: ISecurityContext | null;
 }
 
 export interface IVolumeConfiguration {

@@ -46,9 +46,7 @@ import Grid from "@mui/material/Grid";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { Button, DialogContentText, Typography } from "@mui/material";
-import Chip from "@mui/material/Chip";
-import Moment from "react-moment";
+import { Button, DialogContentText } from "@mui/material";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { KeyPair } from "../ListTenants/utils";
@@ -58,6 +56,7 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 
 interface ITenantEncryption {
   classes: any;
@@ -913,47 +912,8 @@ const TenantEncryption = ({
                         Mutual TLS authentication with KMS (optional)
                       </legend>
                       {vaultClientCertificateSecret ? (
-                        <Chip
-                          key={vaultClientCertificateSecret.name}
-                          variant="outlined"
-                          color="primary"
-                          className={classes.certificateInfo}
-                          label={
-                            <div>
-                              <Typography
-                                variant="subtitle1"
-                                display="block"
-                                gutterBottom
-                              >
-                                {vaultClientCertificateSecret.name}
-                              </Typography>
-                              <Typography
-                                className={classes.italic}
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                {vaultClientCertificateSecret.domains &&
-                                  vaultClientCertificateSecret.domains.map(
-                                    (dom) => {
-                                      return <div>{dom}</div>;
-                                    }
-                                  )}
-                              </Typography>
-                              <Typography
-                                className={classes.bold}
-                                variant="overline"
-                                gutterBottom
-                              >
-                                Expiry:&nbsp;
-                              </Typography>
-                              <Typography variant="caption" gutterBottom>
-                                <Moment format="YYYY-MM-DD">
-                                  {vaultClientCertificateSecret.expiry}
-                                </Moment>
-                              </Typography>
-                            </div>
-                          }
+                        <TLSCertificate
+                          certificateInfo={vaultClientCertificateSecret}
                           onDelete={() =>
                             removeCertificate(vaultClientCertificateSecret)
                           }
@@ -1002,47 +962,8 @@ const TenantEncryption = ({
                         KMS CA certificate (optional)
                       </legend>
                       {vaultCACertificateSecret ? (
-                        <Chip
-                          key={vaultCACertificateSecret.name}
-                          variant="outlined"
-                          color="primary"
-                          className={classes.certificateInfo}
-                          label={
-                            <div>
-                              <Typography
-                                variant="subtitle1"
-                                display="block"
-                                gutterBottom
-                              >
-                                {vaultCACertificateSecret.name}
-                              </Typography>
-                              <Typography
-                                className={classes.italic}
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                {vaultCACertificateSecret.domains &&
-                                  vaultCACertificateSecret.domains.map(
-                                    (dom) => {
-                                      return <div>{dom}</div>;
-                                    }
-                                  )}
-                              </Typography>
-                              <Typography
-                                className={classes.bold}
-                                variant="overline"
-                                gutterBottom
-                              >
-                                Expiry:&nbsp;
-                              </Typography>
-                              <Typography variant="caption" gutterBottom>
-                                <Moment format="YYYY-MM-DD">
-                                  {vaultCACertificateSecret.expiry}
-                                </Moment>
-                              </Typography>
-                            </div>
-                          }
+                        <TLSCertificate
+                          certificateInfo={vaultCACertificateSecret}
                           onDelete={() =>
                             removeCertificate(vaultCACertificateSecret)
                           }
@@ -1617,47 +1538,8 @@ const TenantEncryption = ({
                         value={""}
                       />
                       {gemaltoCACertificateSecret ? (
-                        <Chip
-                          key={gemaltoCACertificateSecret.name}
-                          variant="outlined"
-                          color="primary"
-                          className={classes.certificateInfo}
-                          label={
-                            <div>
-                              <Typography
-                                variant="subtitle1"
-                                display="block"
-                                gutterBottom
-                              >
-                                {gemaltoCACertificateSecret.name}
-                              </Typography>
-                              <Typography
-                                className={classes.italic}
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                {gemaltoCACertificateSecret.domains &&
-                                  gemaltoCACertificateSecret.domains.map(
-                                    (dom) => {
-                                      return <div>{dom}</div>;
-                                    }
-                                  )}
-                              </Typography>
-                              <Typography
-                                className={classes.bold}
-                                variant="overline"
-                                gutterBottom
-                              >
-                                Expiry:&nbsp;
-                              </Typography>
-                              <Typography variant="caption" gutterBottom>
-                                <Moment format="YYYY-MM-DD">
-                                  {gemaltoCACertificateSecret.expiry}
-                                </Moment>
-                              </Typography>
-                            </div>
-                          }
+                        <TLSCertificate
+                          certificateInfo={gemaltoCACertificateSecret}
                           onDelete={() =>
                             removeCertificate(gemaltoCACertificateSecret)
                           }
@@ -1709,47 +1591,8 @@ const TenantEncryption = ({
                           Encryption Service Certificates
                         </legend>
                         {serverTLSCertificateSecret ? (
-                          <Chip
-                            key={serverTLSCertificateSecret.name}
-                            variant="outlined"
-                            color="primary"
-                            className={classes.certificateInfo}
-                            label={
-                              <div>
-                                <Typography
-                                  variant="subtitle1"
-                                  display="block"
-                                  gutterBottom
-                                >
-                                  {serverTLSCertificateSecret.name}
-                                </Typography>
-                                <Typography
-                                  className={classes.italic}
-                                  variant="caption"
-                                  display="block"
-                                  gutterBottom
-                                >
-                                  {serverTLSCertificateSecret.domains &&
-                                    serverTLSCertificateSecret.domains.map(
-                                      (dom) => {
-                                        return <div>{dom}</div>;
-                                      }
-                                    )}
-                                </Typography>
-                                <Typography
-                                  className={classes.bold}
-                                  variant="overline"
-                                  gutterBottom
-                                >
-                                  Expiry:&nbsp;
-                                </Typography>
-                                <Typography variant="caption" gutterBottom>
-                                  <Moment format="YYYY-MM-DD">
-                                    {serverTLSCertificateSecret.expiry}
-                                  </Moment>
-                                </Typography>
-                              </div>
-                            }
+                          <TLSCertificate
+                            certificateInfo={serverTLSCertificateSecret}
                             onDelete={() =>
                               removeCertificate(serverTLSCertificateSecret)
                             }
@@ -1804,45 +1647,8 @@ const TenantEncryption = ({
                           Mutual TLS authentication with MinIO
                         </legend>
                         {mTLSCertificateSecret ? (
-                          <Chip
-                            key={mTLSCertificateSecret.name}
-                            variant="outlined"
-                            color="primary"
-                            className={classes.certificateInfo}
-                            label={
-                              <div>
-                                <Typography
-                                  variant="subtitle1"
-                                  display="block"
-                                  gutterBottom
-                                >
-                                  {mTLSCertificateSecret.name}
-                                </Typography>
-                                <Typography
-                                  className={classes.italic}
-                                  variant="caption"
-                                  display="block"
-                                  gutterBottom
-                                >
-                                  {mTLSCertificateSecret.domains &&
-                                    mTLSCertificateSecret.domains.map((dom) => {
-                                      return <div>{dom}</div>;
-                                    })}
-                                </Typography>
-                                <Typography
-                                  className={classes.bold}
-                                  variant="overline"
-                                  gutterBottom
-                                >
-                                  Expiry:&nbsp;
-                                </Typography>
-                                <Typography variant="caption" gutterBottom>
-                                  <Moment format="YYYY-MM-DD">
-                                    {mTLSCertificateSecret.expiry}
-                                  </Moment>
-                                </Typography>
-                              </div>
-                            }
+                          <TLSCertificate
+                            certificateInfo={mTLSCertificateSecret}
                             onDelete={() =>
                               removeCertificate(mTLSCertificateSecret)
                             }
