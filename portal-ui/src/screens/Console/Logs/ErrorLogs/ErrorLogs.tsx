@@ -183,11 +183,9 @@ const ErrorLogs = ({
         let m: LogMessage = JSON.parse(message.data.toString());
         m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
-        console.log("Found userAgents:", m.userAgent)
         if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent !== undefined) {
           userAgents.push(m.userAgent);
           setUserAgents(userAgents);
-          console.log("Added to userAgents:", m.userAgent)
         }
         logMessageReceived(m);
       };
@@ -265,7 +263,6 @@ const ErrorLogs = ({
       <PageHeader label="Logs" />
       <PageLayout>
         <Grid container spacing={1}>
-      
           <Grid item xs={4}>
             {!loadingNodes ? (
               <FormControl variant="outlined" className={classes.nodeField}>
@@ -381,7 +378,7 @@ const ErrorLogs = ({
               </Button>
             )}
           </Grid>
-              <Grid item xs={12} className={classes.actionsTray}>
+          <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox
               placeholder="Filter"
               onChange={(e) => {
