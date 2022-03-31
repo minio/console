@@ -84,6 +84,20 @@ export const TENANT_DETAILS_SET_CURRENT_TENANT =
 export const TENANT_DETAILS_SET_TENANT = "TENANT_DETAILS/SET_TENANT";
 export const TENANT_DETAILS_SET_TAB = "TENANT_DETAILS/SET_TAB";
 
+// Add Pool
+export const ADD_POOL_SET_POOL_STORAGE_CLASSES =
+  "ADD_POOL/SET_POOL_STORAGE_CLASSES";
+export const ADD_POOL_SET_PAGE_VALID = "ADD_POOL/SET_PAGE_VALID";
+export const ADD_POOL_SET_VALUE = "ADD_POOL/SET_VALUE";
+export const ADD_POOL_SET_LOADING = "ADD_POOL/SET_LOADING";
+export const ADD_POOL_RESET_FORM = "ADD_POOL/RESET_FORM";
+export const ADD_POOL_SET_KEY_PAIR_VALUE = "ADD_POOL/SET_KEY_PAIR_VALUE";
+
+// Pool Tolerations
+export const ADD_POOL_SET_TOLERATION_VALUE = "ADD_POOL/SET_TOLERATION_VALUE";
+export const ADD_POOL_ADD_NEW_TOLERATION = "ADD_POOL/ADD_NEW_TOLERATION";
+export const ADD_POOL_REMOVE_TOLERATION_ROW = "ADD_POOL/REMOVE_TOLERATION_ROW";
+
 export interface ICertificateInfo {
   name: string;
   serialNumber: string;
@@ -355,6 +369,7 @@ export interface ITenantDetails {
 export interface ITenantState {
   createTenant: ICreateTenant;
   tenantDetails: ITenantDetails;
+  addPool: IAddPool;
 }
 
 export interface ILabelKeyPair {
@@ -372,6 +387,34 @@ export interface AllocableResourcesResponse {
 export interface NodeMaxAllocatableResources {
   max_allocatable_cpu: number;
   max_allocatable_mem: number;
+}
+
+export interface IAddPoolSetup {
+  numberOfNodes: number;
+  volumeSize: number;
+  volumesPerServer: number;
+  storageClass: string;
+}
+
+export interface IPoolConfiguration {
+  securityContextEnabled: boolean;
+  securityContext: ISecurityContext;
+}
+
+export interface IAddPoolFields {
+  setup: IAddPoolSetup;
+  affinity: ITenantAffinity;
+  configuration: IPoolConfiguration;
+  tolerations: ITolerationModel[];
+  nodeSelectorPairs: LabelKeyPair[];
+}
+
+export interface IAddPool {
+  addPoolLoading: boolean;
+  validPages: string[];
+  storageClasses: Opts[];
+  limitSize: any;
+  fields: IAddPoolFields;
 }
 
 interface SetTenantWizardPage {
@@ -545,6 +588,53 @@ interface RemoveTolerationRow {
   index: number;
 }
 
+interface SetPoolLoading {
+  type: typeof ADD_POOL_SET_LOADING;
+  state: boolean;
+}
+
+interface ResetPoolForm {
+  type: typeof ADD_POOL_RESET_FORM;
+}
+
+interface SetFieldValue {
+  type: typeof ADD_POOL_SET_VALUE;
+  page: keyof IAddPoolFields;
+  field: string;
+  value: any;
+}
+
+interface SetPoolPageValid {
+  type: typeof ADD_POOL_SET_PAGE_VALID;
+  page: string;
+  status: boolean;
+}
+
+interface SetPoolStorageClasses {
+  type: typeof ADD_POOL_SET_POOL_STORAGE_CLASSES;
+  storageClasses: Opts[];
+}
+
+interface SetPoolTolerationValue {
+  type: typeof ADD_POOL_SET_TOLERATION_VALUE;
+  index: number;
+  toleration: ITolerationModel;
+}
+
+interface AddNewPoolToleration {
+  type: typeof ADD_POOL_ADD_NEW_TOLERATION;
+}
+
+interface RemovePoolTolerationRow {
+  type: typeof ADD_POOL_REMOVE_TOLERATION_ROW;
+  index: number;
+}
+
+interface SetPoolSelectorKeyPairValueArray {
+  type: typeof ADD_POOL_SET_KEY_PAIR_VALUE;
+  newArray: LabelKeyPair[];
+}
+
 export type FieldsToHandle = INameTenantFields;
 
 export type TenantsManagementTypes =
@@ -577,4 +667,13 @@ export type TenantsManagementTypes =
   | SetTenantTab
   | SetTolerationValue
   | AddNewToleration
-  | RemoveTolerationRow;
+  | RemoveTolerationRow
+  | SetPoolLoading
+  | ResetPoolForm
+  | SetFieldValue
+  | SetPoolPageValid
+  | SetPoolStorageClasses
+  | SetPoolTolerationValue
+  | AddNewPoolToleration
+  | RemovePoolTolerationRow
+  | SetPoolSelectorKeyPairValueArray;

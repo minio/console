@@ -31,7 +31,6 @@ import { AddIcon } from "../../../../icons";
 import { IPool, ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import AddPoolModal from "./AddPoolModal";
 import InputAdornment from "@mui/material/InputAdornment";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
@@ -42,6 +41,7 @@ interface IPoolsSummary {
   classes: any;
   tenant: ITenant | null;
   loadingTenant: boolean;
+  history: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
@@ -59,9 +59,9 @@ const PoolsSummary = ({
   tenant,
   loadingTenant,
   setTenantDetailsLoad,
+  history,
 }: IPoolsSummary) => {
   const [pools, setPools] = useState<IPool[]>([]);
-  const [addPoolOpen, setAddPool] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
 
   useEffect(() => {
@@ -70,14 +70,6 @@ const PoolsSummary = ({
       setPools(resPools);
     }
   }, [tenant]);
-
-  const onClosePoolAndRefresh = (reload: boolean) => {
-    setAddPool(false);
-
-    if (reload) {
-      setTenantDetailsLoad(true);
-    }
-  };
 
   const filteredPools = pools.filter((pool) => {
     if (pool.name.toLowerCase().includes(filter.toLowerCase())) {
@@ -89,14 +81,6 @@ const PoolsSummary = ({
 
   return (
     <Fragment>
-      {addPoolOpen && tenant !== null && (
-        <AddPoolModal
-          open={addPoolOpen}
-          onClosePoolAndReload={onClosePoolAndRefresh}
-          tenant={tenant}
-        />
-      )}
-
       <h1 className={classes.sectionTitle}>Pools</h1>
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
@@ -123,7 +107,11 @@ const PoolsSummary = ({
             tooltip={"Expand Tenant"}
             text={"Expand Tenant"}
             onClick={() => {
-              setAddPool(true);
+              history.push(
+                `/namespaces/${tenant?.namespace || ""}/tenants/${
+                  tenant?.name || ""
+                }/add-pool`
+              );
             }}
             icon={<AddIcon />}
             color="primary"
