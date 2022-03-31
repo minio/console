@@ -66,9 +66,6 @@ const GlobalCss = withStyles({
     ".MuiButton-root": {
       height: 38,
     },
-    ".MuiButtonBase-root": {
-      textTransform: "capitalize",
-    },
     ".MuiButton-contained": {
       fontSize: "14px",
       textTransform: "capitalize",

@@ -94,13 +94,13 @@ export const bucketsAccessInput = Selector(
 );
 export const bucketsAccessReadOnlyInput = Selector(
   'li[class*="MuiMenuItem-root"]'
-).withText("Readonly");
+).withText("readonly");
 export const bucketsAccessWriteOnlyInput = Selector(
   'li[class*="MuiMenuItem-root"]'
-).withText("Writeonly");
+).withText("writeonly");
 export const bucketsAccessReadWriteInput = Selector(
   'li[class*="MuiMenuItem-root"]'
-).withText("Readwrite");
+).withText("readwrite");
 export const uploadInput = Selector("input").withAttribute("type", "file");
 export const createPolicyName = Selector("#policy-name");
 export const createPolicyTextfield = Selector(".cm-content");
