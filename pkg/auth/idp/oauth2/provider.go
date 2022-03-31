@@ -143,30 +143,33 @@ func getLoginCallbackURL(r *http.Request) string {
 	return redirectURL
 }
 
-var supportedResponseTypes = set.CreateStringSet([]string{
-	"code id_token",
-	"code token id_token",
-}...)
+var requiredResponseTypes = set.CreateStringSet("code")
 
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
 // it returns a *Provider object that contains the necessary configuration to initiate an
-// oauth2 authentication flow
+// oauth2 authentication flow.
+//
+// We only support Authentication with the Authorization Code Flow - spec:
+// https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
 func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.Client) (*Provider, error) {
 	ddoc, err := parseDiscoveryDoc(GetIDPURL(), httpClient)
 	if err != nil {
 		return nil, err
 	}
 
-	var supported bool
+	supportedResponseTypes := set.NewStringSet()
 	for _, responseType := range ddoc.ResponseTypesSupported {
-		if supportedResponseTypes.Contains(responseType) {
-			supported = true
-			break // one support is enough
+		// FIXME: ResponseTypesSupported is a JSON array of strings - it
+		// may not actually have strings with spaces inside them -
+		// making the following code unnecessary.
+		for _, s := range strings.Fields(responseType) {
+			supportedResponseTypes.Add(s)
 		}
 	}
+	isSupported := requiredResponseTypes.Difference(supportedResponseTypes).IsEmpty()
 
-	if !supported {
-		return nil, fmt.Errorf("expected 'code id_token' response type - got %s, login not allowed", ddoc.ResponseTypesSupported)
+	if !isSupported {
+		return nil, fmt.Errorf("expected 'code' response type - got %s, login not allowed", ddoc.ResponseTypesSupported)
 	}
 
 	// If provided scopes are empty we use a default list or the user configured list
