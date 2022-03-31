@@ -313,6 +313,122 @@ func init() {
         }
       }
     },
+    "/admin/site-replication": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get list of Replication Sites",
+        "operationId": "GetSiteReplicationInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/siteReplicationInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Edit a Replication Site",
+        "operationId": "SiteReplicationEdit",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/peerInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/peerSiteEditResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Add a Replication Site",
+        "operationId": "SiteReplicationInfoAdd",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/siteReplicationAddRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/siteReplicationAddResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove a Replication Site",
+        "operationId": "SiteReplicationRemove",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/peerInfoRemove"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/peerSiteRemoveResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/tiers": {
       "get": {
         "tags": [
@@ -5525,6 +5641,79 @@ func init() {
         "years"
       ]
     },
+    "peerInfo": {
+      "type": "object",
+      "properties": {
+        "deploymentID": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "peerInfoRemove": {
+      "type": "object",
+      "required": [
+        "sites"
+      ],
+      "properties": {
+        "all": {
+          "type": "boolean"
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "peerSite": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
+        }
+      }
+    },
+    "peerSiteEditResponse": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "peerSiteRemoveResponse": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
     "policy": {
       "type": "object",
       "properties": {
@@ -6076,6 +6265,49 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "siteReplicationAddRequest": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/peerSite"
+      }
+    },
+    "siteReplicationAddResponse": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "type": "string"
+        },
+        "initialSyncErrorMessage": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "siteReplicationInfoResponse": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "serviceAccountAccessKey": {
+          "type": "string"
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/peerInfo"
+          }
         }
       }
     },
@@ -6864,6 +7096,122 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/setNotificationEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/site-replication": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get list of Replication Sites",
+        "operationId": "GetSiteReplicationInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/siteReplicationInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Edit a Replication Site",
+        "operationId": "SiteReplicationEdit",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/peerInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/peerSiteEditResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Add a Replication Site",
+        "operationId": "SiteReplicationInfoAdd",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/siteReplicationAddRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/siteReplicationAddResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove a Replication Site",
+        "operationId": "SiteReplicationRemove",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/peerInfoRemove"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/peerSiteRemoveResponse"
             }
           },
           "default": {
@@ -12213,6 +12561,79 @@ func init() {
         "years"
       ]
     },
+    "peerInfo": {
+      "type": "object",
+      "properties": {
+        "deploymentID": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "peerInfoRemove": {
+      "type": "object",
+      "required": [
+        "sites"
+      ],
+      "properties": {
+        "all": {
+          "type": "boolean"
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "peerSite": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
+        }
+      }
+    },
+    "peerSiteEditResponse": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "peerSiteRemoveResponse": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
     "policy": {
       "type": "object",
       "properties": {
@@ -12764,6 +13185,49 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "siteReplicationAddRequest": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/peerSite"
+      }
+    },
+    "siteReplicationAddResponse": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "type": "string"
+        },
+        "initialSyncErrorMessage": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "siteReplicationInfoResponse": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "serviceAccountAccessKey": {
+          "type": "string"
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/peerInfo"
+          }
         }
       }
     },
