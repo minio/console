@@ -36,7 +36,12 @@ func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin, logReq
 	// number of log lines
 	lineCount := 100
 	// type of logs "minio"|"application"|"all" default = "all"
-	logKind := logRequest.logType
+	var logKind string
+	if logRequest.logType == "minio" || logRequest.logType == "application" || logRequest.logType == "all" {
+		logKind = logRequest.logType
+	} else {
+		logKind = "all"
+	}
 	// Start listening on all Console Log activity.
 	logCh := client.getLogs(ctx, node, lineCount, logKind)
 
