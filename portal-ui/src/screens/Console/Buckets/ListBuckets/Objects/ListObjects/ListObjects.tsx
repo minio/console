@@ -135,6 +135,7 @@ const PreviewFileModal = withSuspense(
 const styles = (theme: Theme) =>
   createStyles({
     browsePaper: {
+      border: 0,
       height: "calc(100vh - 210px)",
       "&.actionsPanelOpen": {
         minHeight: "100%",
@@ -174,12 +175,14 @@ const styles = (theme: Theme) =>
     },
     screenTitleContainer: {
       border: "#EAEDEE 1px solid",
-      borderBottom: 0,
       padding: "0.8rem 15px 0",
     },
     labelStyle: {
       color: "#969FA8",
       fontSize: "12px",
+    },
+    breadcrumbsContainer: {
+      padding: "12px 14px 5px",
     },
     ...objectBrowserExtras,
     ...objectBrowserCommon,
@@ -1319,35 +1322,17 @@ const ListObjects = ({
             }
           />
         </Grid>
-        <Grid item xs={12}>
-          <BrowserBreadcrumbs
-            bucketName={bucketName}
-            internalPaths={pageTitle}
-            existingFiles={records || []}
-            additionalOptions={
-              !isVersioned || rewindEnabled ? null : (
-                <div>
-                  <CheckboxWrapper
-                    name={"deleted_objects"}
-                    id={"showDeletedObjects"}
-                    value={"deleted_on"}
-                    label={"Show deleted objects"}
-                    onChange={setDeletedAction}
-                    checked={showDeleted}
-                    overrideLabelClasses={classes.labelStyle}
-                    noTopMargin
-                  />
-                </div>
-              )
-            }
-          />
-        </Grid>
         <div
           id="object-list-wrapper"
           {...getRootProps({ style: { ...dndStyles } })}
         >
           <input {...getInputProps()} />
-          <Grid item xs={12} className={classes.tableBlock}>
+          <Grid
+            item
+            xs={12}
+            className={classes.tableBlock}
+            sx={{ border: "#EAEDEE 1px solid", borderTop: 0 }}
+          >
             {versionsMode ? (
               <Fragment>
                 {selectedInternalPaths !== null && (
@@ -1363,36 +1348,64 @@ const ListObjects = ({
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
-                <TableWrapper
-                  itemActions={tableActions}
-                  columns={rewindEnabled ? rewindModeColumns : listModeColumns}
-                  isLoading={rewindEnabled ? loadingRewind : loading}
-                  loadingMessage={loadingMessage}
-                  entityName="Objects"
-                  idField="name"
-                  records={payload}
-                  customPaperHeight={`${classes.browsePaper} ${
-                    detailsOpen ? "actionsPanelOpen" : ""
-                  }`}
-                  selectedItems={selectedObjects}
-                  onSelect={selectListObjects}
-                  customEmptyMessage={`This location is empty${
-                    !rewindEnabled ? ", please try uploading a new file" : ""
-                  }`}
-                  sortConfig={{
-                    currentSort: currentSortField,
-                    currentDirection: sortDirection,
-                    triggerSort: sortChange,
-                  }}
-                  onSelectAll={selectAllItems}
-                  rowStyle={({ index }) => {
-                    if (payload[index]?.delete_flag) {
-                      return "deleted";
+                <Grid item xs={12}>
+                  <Grid item xs={12} className={classes.breadcrumbsContainer}>
+                    <BrowserBreadcrumbs
+                      bucketName={bucketName}
+                      internalPaths={pageTitle}
+                      existingFiles={records || []}
+                      additionalOptions={
+                        !isVersioned || rewindEnabled ? null : (
+                          <div>
+                            <CheckboxWrapper
+                              name={"deleted_objects"}
+                              id={"showDeletedObjects"}
+                              value={"deleted_on"}
+                              label={"Show deleted objects"}
+                              onChange={setDeletedAction}
+                              checked={showDeleted}
+                              overrideLabelClasses={classes.labelStyle}
+                              noTopMargin
+                            />
+                          </div>
+                        )
+                      }
+                      hidePathButton={false}
+                    />
+                  </Grid>
+                  <TableWrapper
+                    itemActions={tableActions}
+                    columns={
+                      rewindEnabled ? rewindModeColumns : listModeColumns
                     }
+                    isLoading={rewindEnabled ? loadingRewind : loading}
+                    loadingMessage={loadingMessage}
+                    entityName="Objects"
+                    idField="name"
+                    records={payload}
+                    customPaperHeight={`${classes.browsePaper} ${
+                      detailsOpen ? "actionsPanelOpen" : ""
+                    }`}
+                    selectedItems={selectedObjects}
+                    onSelect={selectListObjects}
+                    customEmptyMessage={`This location is empty${
+                      !rewindEnabled ? ", please try uploading a new file" : ""
+                    }`}
+                    sortConfig={{
+                      currentSort: currentSortField,
+                      currentDirection: sortDirection,
+                      triggerSort: sortChange,
+                    }}
+                    onSelectAll={selectAllItems}
+                    rowStyle={({ index }) => {
+                      if (payload[index]?.delete_flag) {
+                        return "deleted";
+                      }
 
-                    return "";
-                  }}
-                />
+                      return "";
+                    }}
+                  />
+                </Grid>
               </SecureComponent>
             )}
             <SecureComponent
