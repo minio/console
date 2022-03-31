@@ -572,32 +572,44 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 		}
 		// Extract public key from certificate TLS secret
 		if rawCert, ok := keyPair.Data[publicKey]; ok {
-			block, _ := pem.Decode(rawCert)
-			if block == nil {
-				// If certificate failed to decode skip
-				continue
+			var blocks []byte
+			for {
+				var block *pem.Block
+				block, rawCert = pem.Decode(rawCert)
+				if block == nil {
+					break
+				}
+				if block.Type == "CERTIFICATE" {
+					blocks = append(blocks, block.Bytes...)
+				}
 			}
-			cert, err := x509.ParseCertificate(block.Bytes)
+			// parse all certificates we found on this k8s secret
+			certs, err := x509.ParseCertificates(blocks)
 			if err != nil {
 				return nil, err
 			}
-			domains := []string{}
-			// append certificate domain names
-			if len(cert.DNSNames) > 0 {
-				domains = append(domains, cert.DNSNames...)
-			}
-			// append certificate IPs
-			if len(cert.IPAddresses) > 0 {
-				for _, ip := range cert.IPAddresses {
-					domains = append(domains, ip.String())
+			for _, cert := range certs {
+				var domains []string
+				if cert.Subject.CommonName != "" {
+					domains = append(domains, cert.Subject.CommonName)
 				}
+				// append certificate domain names
+				if len(cert.DNSNames) > 0 {
+					domains = append(domains, cert.DNSNames...)
+				}
+				// append certificate IPs
+				if len(cert.IPAddresses) > 0 {
+					for _, ip := range cert.IPAddresses {
+						domains = append(domains, ip.String())
+					}
+				}
+				certificates = append(certificates, &models.CertificateInfo{
+					SerialNumber: cert.SerialNumber.String(),
+					Name:         secret.Name,
+					Domains:      domains,
+					Expiry:       cert.NotAfter.Format(time.RFC3339),
+				})
 			}
-			certificates = append(certificates, &models.CertificateInfo{
-				SerialNumber: cert.SerialNumber.String(),
-				Name:         secret.Name,
-				Domains:      domains,
-				Expiry:       cert.NotAfter.Format(time.RFC3339),
-			})
 		}
 	}
 	return certificates, nil
@@ -627,8 +639,6 @@ func getTenantSecurityResponse(session *models.Principal, params operator_api.Te
 	// 5 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	//ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	//defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
