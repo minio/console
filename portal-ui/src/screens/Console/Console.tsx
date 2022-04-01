@@ -237,6 +237,38 @@ const Console = ({
     },
     {
       component: Buckets,
+      path: IAM_PAGES.BUCKETS_EDIT_REPLICATION,
+      customPermissionFnc: () => {
+        const path = window.location.pathname;
+        const resource = path.match(/buckets\/(.*)\/replication\/(.*)\/edit*/);
+        return (
+            resource &&
+            resource.length > 0 &&
+            hasPermission(
+                resource[1],
+                IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_ADMIN_VIEW]
+            )
+        );
+      },
+    },
+    {
+      component: Buckets,
+      path: IAM_PAGES.BUCKETS_ADD_REPLICATION,
+      customPermissionFnc: () => {
+        const path = window.location.pathname;
+        const resource = path.match(/buckets\/(.*)\/replication\/add*/);
+        return (
+            resource &&
+            resource.length > 0 &&
+            hasPermission(
+                resource[1],
+                IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_ADMIN_VIEW]
+            )
+        );
+      },
+    },
+    {
+      component: Buckets,
       path: IAM_PAGES.BUCKETS_BROWSE_VIEW,
       customPermissionFnc: () => {
         const path = window.location.pathname;

@@ -14,74 +14,76 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { Button } from "@mui/material";
+import {Button} from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import { BucketReplicationIcon } from "../../../../icons";
 import {
-  createTenantCommon,
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
+    containerForHeader,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketReplicationRule } from "../types";
 import { connect } from "react-redux";
-import { setModalErrorSnackMessage } from "../../../../actions";
+import {setErrorSnackMessage, setSnackBarMessage} from "../../../../actions";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import BackLink from "../../../../common/BackLink";
+import PageLayout from "../../Common/Layout/PageLayout";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import {BucketReplicationIcon} from "../../../../icons";
 
-interface IEditReplicationModal {
-  closeModalAndRefresh: (refresh: boolean) => void;
-  open: boolean;
+interface IEditReplication {
+  setErrorSnackMessage: typeof setErrorSnackMessage;
+  setSnackBarMessage: typeof setSnackBarMessage;
+  match: any;
+  history: any;
   classes: any;
-  bucketName: string;
-  ruleID: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center",
-    },
-    sizeFactorContainer: {
-      "& label": {
-        display: "none",
-      },
-      "& div:first-child": {
-        marginBottom: 0,
-      },
-    },
-    ...spacingUtils,
-    ...createTenantCommon,
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    modalFormScrollable: {
-      ...modalStyleUtils.modalFormScrollable,
-      paddingRight: 10,
-    },
-  });
+    createStyles({
+        buttonContainer: {
+            marginTop: 24,
+            textAlign: "right",
+            "& .MuiButton-root": {
+                marginLeft: 8,
+            },
+        },
+        error: {
+            color: "#b53b4b",
+            border: "1px solid #b53b4b",
+            padding: 8,
+            borderRadius: 3,
+        },
+        title: {
+            marginBottom: 8,
+        },
+        headTitle: {
+            fontWeight: "bold",
+            fontSize: 16,
+            paddingLeft: 8,
+        },
+        h6title: {
+            fontWeight: "bold",
+            color: "#000000",
+            fontSize: 20,
+            paddingBottom: 8,
+        },
+        ...containerForHeader(theme.spacing(4)),
+    });
 
-const EditReplicationModal = ({
-  closeModalAndRefresh,
-  open,
+const EditReplication = ({
+  setErrorSnackMessage,
+  setSnackBarMessage,
+  match,
+  history,
   classes,
-  bucketName,
-  ruleID,
-  setModalErrorSnackMessage,
-}: IEditReplicationModal) => {
+}: IEditReplication) => {
   const [editLoading, setEditLoading] = useState<boolean>(true);
   const [saveEdit, setSaveEdit] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("1");
@@ -95,6 +97,8 @@ const EditReplicationModal = ({
   const [repExisting, setRepExisting] = useState<boolean>(false);
   const [repDelete, setRepDelete] = useState<boolean>(false);
   const [ruleState, setRuleState] = useState<boolean>(false);
+  const bucketName = match.params["bucketName"]
+  const ruleID = match.params["rule"]
 
   useEffect(() => {
     if (editLoading) {
@@ -118,11 +122,11 @@ const EditReplicationModal = ({
           setEditLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
+          setErrorSnackMessage(err);
           setEditLoading(false);
         });
     }
-  }, [editLoading, setModalErrorSnackMessage, bucketName, ruleID]);
+  }, [editLoading, setErrorSnackMessage, bucketName, ruleID]);
 
   useEffect(() => {
     if (saveEdit) {
@@ -147,10 +151,10 @@ const EditReplicationModal = ({
         )
         .then(() => {
           setSaveEdit(false);
-          closeModalAndRefresh(true);
+          setSnackBarMessage("Successfully modified replication rule")
         })
         .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
+          setErrorSnackMessage(err);
           setSaveEdit(false);
         });
     }
@@ -168,29 +172,30 @@ const EditReplicationModal = ({
     ruleState,
     metadataSync,
     targetStorageClass,
-    closeModalAndRefresh,
-    setModalErrorSnackMessage,
+    setSnackBarMessage,
+    setErrorSnackMessage,
   ]);
 
   return (
-    <ModalWrapper
-      modalOpen={open}
-      onClose={() => {
-        closeModalAndRefresh(false);
-      }}
-      title="Edit Bucket Replication"
-      titleIcon={<BucketReplicationIcon />}
-    >
-      <form
-        noValidate
-        autoComplete="off"
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          setSaveEdit(true);
-        }}
-      >
-        <Grid container>
-          <Grid item xs={12} className={classes.modalFormScrollable}>
+      <Fragment>
+          <PageHeader label={<BackLink label={"Back to Replication Rules"} to={`/buckets/${bucketName}/admin/replication`} />} />
+      <PageLayout>
+        <Grid item xs={12} className={classes.boxy} >
+          <Grid container spacing={1}>
+              <Grid
+                  item
+                  xs={12}
+                  container
+                  className={classes.title}
+                  alignItems={"center"}
+              >
+              <Grid item xs={"auto"}>
+                <BucketReplicationIcon />
+              </Grid>
+              <Grid item xs className={classes.headTitle}>
+                Edit Replication Rule
+              </Grid>
+            </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
               <FormSwitchWrapper
                 checked={ruleState}
@@ -326,34 +331,38 @@ const EditReplicationModal = ({
               </fieldset>
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+          <Grid item xs={12} className={classes.buttonContainer}>
             <Button
               type="button"
               variant="outlined"
               color="primary"
               disabled={editLoading || saveEdit}
               onClick={() => {
-                closeModalAndRefresh(false);
+                  history.push(`/buckets/${bucketName}/admin/replication`)
               }}
             >
               Cancel
             </Button>
             <Button
-              type="submit"
+              type="button"
               variant="contained"
               color="primary"
               disabled={editLoading || saveEdit}
+              onClick={() => {
+                  setSaveEdit(true);
+              }}
             >
               Save
             </Button>
           </Grid>
         </Grid>
-      </form>
-    </ModalWrapper>
+      </PageLayout>
+      </Fragment>
   );
 };
 const connector = connect(null, {
-  setModalErrorSnackMessage,
+  setErrorSnackMessage,
+  setSnackBarMessage,
 });
 
-export default withStyles(styles)(connector(EditReplicationModal));
+export default connector(withStyles(styles)(EditReplication));

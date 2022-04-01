@@ -22,6 +22,8 @@ import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 import LoadingComponent from "../../../common/LoadingComponent";
+import EditReplication from "./BucketDetails/EditReplication";
+import AddReplication from "./BucketDetails/AddReplication";
 
 const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
 const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
@@ -62,6 +64,22 @@ const Buckets = () => {
             <Suspense fallback={<LoadingComponent />}>
               <BucketDetails {...routerProps} />
             </Suspense>
+          )}
+        />
+        <Route
+          path="/buckets/:bucketName/replication/add"
+          children={(routerProps) => (
+              <Suspense fallback={<LoadingComponent />}>
+                  <AddReplication {...routerProps} />
+              </Suspense>
+          )}
+        />
+        <Route
+          path="/buckets/:bucketName/replication/:rule/edit"
+          children={(routerProps) => (
+              <Suspense fallback={<LoadingComponent />}>
+                  <EditReplication {...routerProps} />
+              </Suspense>
           )}
         />
         <Route

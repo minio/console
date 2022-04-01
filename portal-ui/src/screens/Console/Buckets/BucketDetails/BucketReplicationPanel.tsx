@@ -45,11 +45,7 @@ import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
-import EditReplicationModal from "./EditReplicationModal";
 
-const AddReplicationModal = withSuspense(
-  React.lazy(() => import("./AddReplicationModal"))
-);
 const DeleteReplicationRule = withSuspense(
   React.lazy(() => import("./DeleteReplicationRule"))
 );
@@ -60,6 +56,7 @@ interface IBucketReplicationProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
   loadingBucket: boolean;
   bucketInfo: BucketInfo | null;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -76,15 +73,13 @@ const BucketReplicationPanel = ({
   match,
   setErrorSnackMessage,
   loadingBucket,
+  history,
 }: IBucketReplicationProps) => {
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
   const [deleteReplicationModal, setDeleteReplicationModal] =
-    useState<boolean>(false);
-  const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
-  const [editReplicationModal, setEditReplicationModal] =
     useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
   const [selectedRepRules, setSelectedRepRules] = useState<string[]>([]);
@@ -131,13 +126,8 @@ const BucketReplicationPanel = ({
     displayReplicationRules,
   ]);
 
-  const closeAddReplication = () => {
-    setOpenReplicationOpen(false);
-    setLoadingReplication(true);
-  };
-
   const setOpenReplicationOpen = (open = false) => {
-    setOpenSetReplication(open);
+    history.push(`/buckets/${bucketName}/replication/add`)
   };
 
   const closeReplicationModalDelete = (refresh: boolean) => {
@@ -148,13 +138,6 @@ const BucketReplicationPanel = ({
     }
   };
 
-  const closeEditReplication = (refresh: boolean) => {
-    setEditReplicationModal(false);
-
-    if (refresh) {
-      setLoadingReplication(true);
-    }
-  };
 
   const confirmDeleteReplication = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
@@ -170,7 +153,7 @@ const BucketReplicationPanel = ({
 
   const editReplicationRule = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
-    setEditReplicationModal(true);
+    history.push(`/buckets/${bucketName}/replication/${replication.id}/edit`)
   };
 
   const ruleDestDisplay = (events: BucketReplicationDestination) => {
@@ -224,15 +207,6 @@ const BucketReplicationPanel = ({
 
   return (
     <Fragment>
-      {openSetReplication && (
-        <AddReplicationModal
-          closeModalAndRefresh={closeAddReplication}
-          open={openSetReplication}
-          bucketName={bucketName}
-          setReplicationRules={replicationRules}
-        />
-      )}
-
       {deleteReplicationModal && (
         <DeleteReplicationRule
           deleteOpen={deleteReplicationModal}
@@ -246,14 +220,6 @@ const BucketReplicationPanel = ({
         />
       )}
 
-      {editReplicationModal && (
-        <EditReplicationModal
-          closeModalAndRefresh={closeEditReplication}
-          open={editReplicationModal}
-          bucketName={bucketName}
-          ruleID={selectedRRule}
-        />
-      )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Replication</PanelTitle>
