@@ -808,6 +808,18 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			deletion = tenant.ObjectMeta.DeletionTimestamp.Format(time.RFC3339)
 		}
 
+		var tiers []*models.TenantTierElement
+
+		for _, tier := range tenant.Status.Usage.Tiers {
+			tierItem := &models.TenantTierElement{
+				Name: tier.Name,
+				Type: tier.Type,
+				Size: tier.TotalSize,
+			}
+
+			tiers = append(tiers, tierItem)
+		}
+
 		tenants = append(tenants, &models.TenantList{
 			CreationDate:     tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
 			DeletionDate:     deletion,
@@ -823,6 +835,7 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			CapacityRawUsage: tenant.Status.Usage.RawUsage,
 			Capacity:         tenant.Status.Usage.Capacity,
 			CapacityUsage:    tenant.Status.Usage.Usage,
+			Tiers:            tiers,
 		})
 	}
 

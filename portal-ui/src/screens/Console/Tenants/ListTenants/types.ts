@@ -35,6 +35,15 @@ export interface IEvent {
   reason: string;
 }
 
+interface IRequestResource {
+  cpu: number;
+  memory: number;
+}
+
+export interface IResources {
+  requests: IRequestResource;
+}
+
 export interface IPool {
   name: string;
   servers: number;
@@ -44,6 +53,7 @@ export interface IPool {
   capacity: string;
   volumes: number;
   label?: string;
+  resources?: IResources;
 }
 
 export interface IPodListElement {
@@ -85,6 +95,7 @@ export interface ITenantStatusUsage {
   capacity: number;
   capacity_usage: number;
 }
+
 export interface ITenantStatus {
   write_quorum: string;
   drives_online: string;
@@ -101,24 +112,30 @@ export interface ITenantEncryptionResponse {
   server: ICertificateInfo[];
   client: ICertificateInfo[];
   /*
-          gemalto:
-            type: object
-            $ref: "#/definitions/gemaltoConfiguration"
-          aws:
-            type: object
-            $ref: "#/definitions/awsConfiguration"
-          vault:
-            type: object
-            $ref: "#/definitions/vaultConfiguration"
-          gcp:
-            type: object
-            $ref: "#/definitions/gcpConfiguration"
-          azure:
-            type: object
-            $ref: "#/definitions/azureConfiguration"
-          securityContext:
-            type: object
-            $ref: "#/definitions/securityContext"*/
+            gemalto:
+              type: object
+              $ref: "#/definitions/gemaltoConfiguration"
+            aws:
+              type: object
+              $ref: "#/definitions/awsConfiguration"
+            vault:
+              type: object
+              $ref: "#/definitions/vaultConfiguration"
+            gcp:
+              type: object
+              $ref: "#/definitions/gcpConfiguration"
+            azure:
+              type: object
+              $ref: "#/definitions/azureConfiguration"
+            securityContext:
+              type: object
+              $ref: "#/definitions/securityContext"*/
+}
+
+export interface ITenantTier {
+  name: string;
+  type: string;
+  size: number;
 }
 
 export interface ITenant {
@@ -129,7 +146,7 @@ export interface ITenant {
   pool_count: number;
   currentState: string;
   instance_count: 4;
-  creation_date: Date;
+  creation_date: string;
   volume_size: number;
   volume_count: number;
   volumes_per_server: number;
@@ -149,6 +166,7 @@ export interface ITenant {
   capacity_raw_usage?: number;
   capacity?: number;
   capacity_usage?: number;
+  tiers?: ITenantTier[];
   // computed
   total_capacity: string;
   subnet_license: SubnetInfo;
@@ -223,4 +241,15 @@ export interface ITenantLogsStruct {
 export interface ValueUnit {
   value: string;
   unit: string;
+}
+
+export interface CapacityValues {
+  value: number;
+  variant: string;
+}
+
+export interface CapacityValue {
+  value: number;
+  label: string;
+  color: string;
 }
