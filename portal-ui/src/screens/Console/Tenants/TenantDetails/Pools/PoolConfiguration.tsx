@@ -220,8 +220,7 @@ const PoolConfiguration = ({
                     value={securityContext.runAsGroup}
                     required
                     error={
-                      validationErrors["pool_securityContext_runAsGroup"] ||
-                      ""
+                      validationErrors["pool_securityContext_runAsGroup"] || ""
                     }
                     min="0"
                   />
