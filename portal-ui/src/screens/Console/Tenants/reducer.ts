@@ -1042,7 +1042,7 @@ export function tenantsReducer(
       const cleanTolerationArray = state.createTenant.tolerations.filter(
         (_, index) => index !== action.index
       );
-      
+
       return {
         ...state,
         createTenant: {
@@ -1098,7 +1098,7 @@ export function tenantsReducer(
         ...newState,
         addPool: {
           ...newState.addPool,
-          storageClasses:  action.storageClasses,
+          storageClasses: action.storageClasses,
         },
       };
     case ADD_POOL_SET_TOLERATION_VALUE:
