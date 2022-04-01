@@ -495,8 +495,8 @@ const ListObjects = ({
             if (res.objects) {
               // We omit files from the same path
               const filteredObjects = res.objects.filter((object) => {
-                 return object.name !== decodeFileName(internalPaths)
-              })
+                return object.name !== decodeFileName(internalPaths);
+              });
 
               setRewind(filteredObjects);
             } else {
