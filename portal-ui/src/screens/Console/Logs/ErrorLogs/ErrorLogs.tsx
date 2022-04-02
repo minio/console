@@ -144,7 +144,7 @@ const ErrorLogs = ({
 }: ILogs) => {
   const [filter, setFilter] = useState<string>("");
   const [nodes, setNodes] = useState<string[]>([""]);
-  const [selectedNode, setSelectedNode] = useState<string>("allS");
+  const [selectedNode, setSelectedNode] = useState<string>("all");
   const [selectedUserAgent, setSelectedUserAgent] =
     useState<string>("Select user agent");
   const [userAgents, setUserAgents] = useState<string[]>(["All User Agents"]);
@@ -263,7 +263,7 @@ const ErrorLogs = ({
       <PageHeader label="Logs" />
       <PageLayout>
         <Grid container spacing={1}>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             {!loadingNodes ? (
               <FormControl variant="outlined" className={classes.nodeField}>
                 <Select
