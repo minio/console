@@ -141,6 +141,7 @@ const styles = (theme: Theme) =>
       "& .min-icon": {
         height: 48,
         width: 48,
+        color: theme.palette.primary.main,
       },
     },
     bucketInfo: {
@@ -285,7 +286,9 @@ const BucketListItem = ({
       <Grid item xs={12} className={classes.bucketStats}>
         <Grid container justifyContent={"flex-start"} spacing={4}>
           <Grid item className={classes.bucketIcon}>
-            <BucketsIcon />
+            <Link to={`/buckets/${bucket.name}/browse`}>
+              <BucketsIcon />
+            </Link>
           </Grid>
           <Grid item textAlign={"left"} className={classes.metric}>
             <ReportedUsageIcon />
