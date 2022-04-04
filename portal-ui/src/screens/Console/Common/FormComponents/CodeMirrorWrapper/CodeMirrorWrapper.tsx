@@ -219,6 +219,7 @@ const CodeMirrorWrapper = ({
           }}
         >
           <Box
+            className={isDarkTheme ? "dark-theme" : ""}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -232,6 +233,10 @@ const CodeMirrorWrapper = ({
                 " .min-icon": {
                   marginLeft: "0",
                 },
+              },
+
+              "&.dark-theme button": {
+                background: "#FFFFFF",
               },
             }}
           >
