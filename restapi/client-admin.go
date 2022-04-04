@@ -280,6 +280,7 @@ func (ac AdminClient) serviceTrace(ctx context.Context, threshold int64, s3, int
 
 // implements madmin.GetLogs()
 func (ac AdminClient) getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
+
 	return ac.Client.GetLogs(ctx, node, lineCnt, logKind)
 }
 

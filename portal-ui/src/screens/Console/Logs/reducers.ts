@@ -17,16 +17,19 @@
 import {
   LOG_MESSAGE_RECEIVED,
   LOG_RESET_MESSAGES,
+  LOG_SET_STARTED,
   LogActionTypes,
 } from "./actions";
 import { LogMessage } from "./types";
 
 export interface LogState {
-  messages: LogMessage[];
+  logMessages: LogMessage[];
+  logsStarted: boolean;
 }
 
 const initialState: LogState = {
-  messages: [],
+  logMessages: [],
+  logsStarted: false,
 };
 
 export function logReducer(
@@ -37,7 +40,7 @@ export function logReducer(
     case LOG_MESSAGE_RECEIVED:
       // if it's a simple ConsoleMsg, append it to the current ConsoleMsg in the
       // state if any
-      let msgs = [...state.messages];
+      let msgs = [...state.logMessages];
 
       if (
         msgs.length > 0 &&
@@ -57,12 +60,17 @@ export function logReducer(
 
       return {
         ...state,
-        messages: msgs,
+        logMessages: msgs,
       };
     case LOG_RESET_MESSAGES:
       return {
         ...state,
-        messages: [],
+        logMessages: [],
+      };
+    case LOG_SET_STARTED:
+      return {
+        ...state,
+        logsStarted: action.status,
       };
     default:
       return state;

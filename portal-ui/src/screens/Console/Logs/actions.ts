@@ -18,6 +18,7 @@ import { LogMessage } from "./types";
 
 export const LOG_MESSAGE_RECEIVED = "LOG_MESSAGE_RECEIVED";
 export const LOG_RESET_MESSAGES = "LOG_RESET_MESSAGES";
+export const LOG_SET_STARTED = "LOG_SET_STARTED";
 
 interface LogMessageReceivedAction {
   type: typeof LOG_MESSAGE_RECEIVED;
@@ -28,7 +29,15 @@ interface LogResetMessagesAction {
   type: typeof LOG_RESET_MESSAGES;
 }
 
-export type LogActionTypes = LogMessageReceivedAction | LogResetMessagesAction;
+interface LogSetStarted {
+  type: typeof LOG_SET_STARTED;
+  status: boolean;
+}
+
+export type LogActionTypes =
+  | LogMessageReceivedAction
+  | LogResetMessagesAction
+  | LogSetStarted;
 
 export function logMessageReceived(message: LogMessage) {
   return {
@@ -40,5 +49,12 @@ export function logMessageReceived(message: LogMessage) {
 export function logResetMessages() {
   return {
     type: LOG_RESET_MESSAGES,
+  };
+}
+
+export function setLogsStarted(status: boolean) {
+  return {
+    type: LOG_SET_STARTED,
+    status,
   };
 }

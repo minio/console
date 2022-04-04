@@ -177,6 +177,20 @@ const LogLine = (props: { log: LogMessage }) => {
             {dateStr}
           </Box>
         </TableCell>
+        <TableCell
+          onClick={() => setOpen(!open)}
+          style={{ width: 200, color: "#989898", fontSize: 12 }}
+        >
+          <Box
+            sx={{
+              "& .min-icon": { width: 12, marginRight: 1 },
+              fontWeight: "bold",
+              lineHeight: 1,
+            }}
+          >
+            {log.errKind}
+          </Box>
+        </TableCell>
         <TableCell onClick={() => setOpen(!open)}>
           <div
             style={{
@@ -235,7 +249,7 @@ const LogLine = (props: { log: LogMessage }) => {
               <div style={{ marginTop: 10 }}>Log Details</div>
             </Collapse>
           </TableCell>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }}>
+          <TableCell colSpan={2} style={{ paddingBottom: 0, paddingTop: 0 }}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
                 <Typography
