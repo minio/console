@@ -79,11 +79,13 @@ const RBIconButton = (props: RBIconProps) => {
     disabled = false,
     tooltip,
     icon = null,
+    className = "",
     ...restProps
   } = props;
 
   return (
     <BoxIconButton
+      className={className}
       classes={classes}
       tooltip={tooltip || text}
       variant="outlined"

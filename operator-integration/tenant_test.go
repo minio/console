@@ -21,12 +21,14 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -38,6 +40,17 @@ import (
 )
 
 var token string
+
+func inspectHTTPResponse(httpResponse *http.Response) string {
+	/*
+		Helper function to inspect the content of a HTTP response.
+	*/
+	b, err := io.ReadAll(httpResponse.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return "Http Response: " + string(b)
+}
 
 func decodeBase64(value string) string {
 	/*
@@ -476,4 +489,43 @@ func TestListTenantsByNameSpace(t *testing.T) {
 	TenantName := &result.Tenants[0].Name // The array has to be empty, no index accessible
 	fmt.Println(*TenantName)
 	assert.Equal("new-tenant", *TenantName, *TenantName)
+}
+
+func ListNodeLabels() (*http.Response, error) {
+	/*
+		Helper function to list buckets
+		HTTP Verb: GET
+		URL: http://localhost:9090/api/v1/nodes/labels
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/nodes/labels", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestListNodeLabels(t *testing.T) {
+	assert := assert.New(t)
+	resp, err := ListNodeLabels()
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, finalResponse)
+	}
+	// "beta.kubernetes.io/arch" is a label of our nodes and is expected
+	assert.True(
+		strings.Contains(finalResponse, "beta.kubernetes.io/arch"),
+		finalResponse)
 }

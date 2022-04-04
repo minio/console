@@ -121,7 +121,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           gridTemplateColumns: "1fr",
           gap: "27px",
           marginBottom: "40px",
-          marginTop: "80px",
+          marginTop: "40px",
           marginLeft: "60px",
           marginRight: "60px",
         }}

@@ -224,9 +224,6 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             />
           </SecureComponent>
         </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
         <Grid item xs={12} className={classes.tableBlock}>
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}

@@ -133,7 +133,7 @@ export const IAM_PAGES = {
   DASHBOARD: "/tools/metrics",
   TOOLS_HEAL: "/tools/heal",
   TOOLS_WATCH: "/tools/watch",
-  TOOLS_INSPECT: "/tools/inspect",
+
   /* Health */
   HEALTH: "/health",
 
@@ -144,6 +144,7 @@ export const IAM_PAGES = {
   TOOLS_SPEEDTEST: "/support/speedtest",
   CALL_HOME: "/support/call-home",
   PROFILE: "/support/profile",
+  SUPPORT_INSPECT: "/support/inspect",
 
   /** License **/
   LICENSE: "/license",
@@ -180,6 +181,8 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/trace",
   NAMESPACE_TENANT_POOLS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
+  NAMESPACE_TENANT_POOLS_ADD:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/add-pool",
   NAMESPACE_TENANT_VOLUMES:
     "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
   NAMESPACE_TENANT_LICENSE:
@@ -367,7 +370,7 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.CALL_HOME]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.PROFILE]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.HEALTH]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
-  [IAM_PAGES.TOOLS_INSPECT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
+  [IAM_PAGES.SUPPORT_INSPECT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.LICENSE]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,

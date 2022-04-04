@@ -69,14 +69,14 @@ const DeleteReplicationRule = ({
         url = `/api/v1/buckets/${selectedBucket}/delete-all-replication-rules`;
       } else {
         url = `/api/v1/buckets/${selectedBucket}/delete-selected-replication-rules`;
-        invokeDeleteApi("DELETE", url, {rules: rulesToDelete});
-        return
+        invokeDeleteApi("DELETE", url, { rules: rulesToDelete });
+        return;
       }
     } else if (remainingRules === 1) {
       url = `/api/v1/buckets/${selectedBucket}/delete-all-replication-rules`;
     }
 
-    invokeDeleteApi("DELETE", url)
+    invokeDeleteApi("DELETE", url);
   };
 
   return (
@@ -100,13 +100,12 @@ const DeleteReplicationRule = ({
           {deleteSelectedRules ? (
             <Fragment>
               <WarningMessage
-                  title={"Warning"}
-                  label={"The corresponding remote buckets will also be deleted."}
+                title={"Warning"}
+                label={"The corresponding remote buckets will also be deleted."}
               />
-              Are you sure you want to remove the selected replication rules for bucket{" "}
-              <b>{selectedBucket}</b>?<br />
+              Are you sure you want to remove the selected replication rules for
+              bucket <b>{selectedBucket}</b>?<br />
               <br />
-
               To continue please type <b>Yes, I am sure</b> in the box.
               <Grid item xs={12}>
                 <InputBoxWrapper
@@ -123,8 +122,8 @@ const DeleteReplicationRule = ({
           ) : (
             <Fragment>
               <WarningMessage
-                  title={"Warning"}
-                  label={"The corresponding remote bucket will also be deleted."}
+                title={"Warning"}
+                label={"The corresponding remote bucket will also be deleted."}
               />
               Are you sure you want to delete replication rule{" "}
               <b>{ruleToDelete}</b>?

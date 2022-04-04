@@ -290,9 +290,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             />
           </SecureComponent>
         </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
+
         {loading && <LinearProgress />}
         {!loading && (
           <Fragment>

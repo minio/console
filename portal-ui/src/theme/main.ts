@@ -71,6 +71,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
+          textTransform: "none",
           borderRadius: 3,
           height: 40,
           padding: "0 20px",
@@ -109,6 +110,13 @@ const theme = createTheme({
               fontWeight: "bold",
             },
           },
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
         },
       },
     },
