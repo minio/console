@@ -81,7 +81,7 @@ func TestAdminConsoleLog(t *testing.T) {
 		writesCount++
 		return nil
 	}
-	if err := startConsoleLog(ctx, mockWSConn, adminClient); err != nil {
+	if err := startConsoleLog(ctx, mockWSConn, adminClient, LogRequest{node: "", logType: "all"}); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from Console.
@@ -93,7 +93,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startConsoleLog(ctx, mockWSConn, adminClient); assert.Error(err) {
+	if err := startConsoleLog(ctx, mockWSConn, adminClient, LogRequest{node: "", logType: "all"}); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
@@ -119,7 +119,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return nil
 	}
-	if err := startConsoleLog(ctx, mockWSConn, adminClient); assert.Error(err) {
+	if err := startConsoleLog(ctx, mockWSConn, adminClient, LogRequest{node: "", logType: "all"}); assert.Error(err) {
 		assert.Equal("error on Console", err.Error())
 	}
 }
