@@ -20,7 +20,6 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import * as reactMoment from "react-moment";
 import Grid from "@mui/material/Grid";
 import { BucketInfo, LifeCycleItem } from "../types";
 import { AddIcon, TiersIcon } from "../../../../icons";
@@ -38,8 +37,8 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import RBIconButton from "./SummaryItems/RBIconButton";
@@ -142,61 +141,95 @@ const BucketLifecyclePanel = ({
     }
   };
 
-  const expirationRender = (expiration: any) => {
-    if (expiration.days) {
-      return `${expiration.days} day${expiration.days > 1 ? "s" : ""}`;
-    }
-
-    if (expiration.date === "0001-01-01T00:00:00Z") {
-      return "";
-    }
-
-    return <reactMoment.default>{expiration.date}</reactMoment.default>;
-  };
-
-  const transitionRender = (transition: any) => {
-    if (transition.days) {
-      return `${transition.days} day${transition.days > 1 ? "s" : ""}`;
-    }
-
-    if (transition.date === "0001-01-01T00:00:00Z") {
-      return "";
-    }
-
-    return <reactMoment.default>{transition.date}</reactMoment.default>;
-  };
-
   const renderStorageClass = (objectST: any) => {
-    const stClass = get(objectST, "transition.storage_class", "");
+    let stClass = get(objectST, "transition.storage_class", "");
+    stClass = get(objectST, "transition.noncurrent_storage_class", stClass);
 
     return stClass;
   };
 
   const lifecycleColumns = [
-    { label: "ID", elementKey: "id" },
+    {
+      label: "Type",
+      renderFullObject: true,
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (
+          el.expiration &&
+          (el.expiration.days > 0 || el.expiration.noncurrent_expiration_days)
+        ) {
+          return <span>Expiry</span>;
+        }
+        if (
+          el.transition &&
+          (el.transition.days > 0 || el.transition.noncurrent_transition_days)
+        ) {
+          return <span>Transition</span>;
+        }
+        return <Fragment />;
+      },
+    },
+    {
+      label: "Version",
+      renderFullObject: true,
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (el.expiration) {
+          if (el.expiration.days > 0) {
+            return <span>Current</span>;
+          } else if (el.expiration.noncurrent_expiration_days) {
+            return <span>Non-Current</span>;
+          }
+        }
+        if (el.transition) {
+          if (el.transition.days > 0) {
+            return <span>Current</span>;
+          } else if (el.transition.noncurrent_transition_days) {
+            return <span>Non-Current</span>;
+          }
+        }
+      },
+    },
+    {
+      label: "Tier",
+      elementKey: "storage_class",
+      renderFunction: renderStorageClass,
+      renderFullObject: true,
+    },
     {
       label: "Prefix",
       elementKey: "prefix",
     },
     {
+      label: "After",
+      renderFullObject: true,
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (el.expiration) {
+          if (el.expiration.days > 0) {
+            return <span>{el.expiration.days} days</span>;
+          } else if (el.expiration.noncurrent_expiration_days) {
+            return <span>{el.expiration.noncurrent_expiration_days} days</span>;
+          }
+        }
+        if (el.transition) {
+          if (el.transition.days > 0) {
+            return <span>{el.transition.days} days</span>;
+          } else if (el.transition.noncurrent_transition_days) {
+            return <span>{el.transition.noncurrent_transition_days} days</span>;
+          }
+        }
+      },
+    },
+    {
       label: "Status",
       elementKey: "status",
-    },
-    {
-      label: "Expiration",
-      elementKey: "expiration",
-      renderFunction: expirationRender,
-    },
-    {
-      label: "Transition",
-      elementKey: "transition",
-      renderFunction: transitionRender,
-    },
-    {
-      label: "Storage Class",
-      elementKey: "storage_class",
-      renderFunction: renderStorageClass,
-      renderFullObject: true,
     },
   ];
 
@@ -226,7 +259,7 @@ const BucketLifecyclePanel = ({
           open={editLifecycleOpen}
           closeModalAndRefresh={closeEditLCAndRefresh}
           selectedBucket={bucketName}
-          lifecycle={selectedLifecycleRule}
+          lifecycleRule={selectedLifecycleRule}
         />
       )}
       {addLifecycleOpen && (

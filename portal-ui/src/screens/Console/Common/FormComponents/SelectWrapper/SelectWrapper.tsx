@@ -51,12 +51,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    inputLabel: {
-      ...fieldBasic.inputLabel,
-      "& span": {
-        fontWeight: "normal",
-      },
-    },
     fieldContainer: {
       display: "flex",
       "@media (max-width: 600px)": {

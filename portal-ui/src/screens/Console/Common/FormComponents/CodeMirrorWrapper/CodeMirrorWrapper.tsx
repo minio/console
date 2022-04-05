@@ -50,10 +50,6 @@ interface ICodeWrapper {
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
-    inputLabel: {
-      ...fieldBasic.inputLabel,
-      fontWeight: "normal",
-    },
   });
 
 const langHighlight: Record<string, any> = {
