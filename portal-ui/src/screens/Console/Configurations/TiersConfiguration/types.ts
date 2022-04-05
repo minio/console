@@ -23,6 +23,9 @@ export interface ITierS3 {
   prefix: string;
   region: string;
   storageclass: string;
+  usage: string;
+  objects: string;
+  versions: string;
 }
 
 export interface ITierGCS {
@@ -33,6 +36,9 @@ export interface ITierGCS {
   prefix: string;
   region: string;
   storageclass: string;
+  usage: string;
+  objects: string;
+  versions: string;
 }
 
 export interface ITierAzure {
@@ -44,6 +50,9 @@ export interface ITierAzure {
   prefix: string;
   region: string;
   storageclass: string;
+  usage: string;
+  objects: string;
+  versions: string;
 }
 
 export interface ITierElement {
