@@ -123,7 +123,7 @@ const TenantCapacity = ({
           fontSize: 12,
         }}
       >
-        {niceBytesInt(totalUsedSpace)}
+        {!isNaN(totalUsedSpace) ? niceBytesInt(totalUsedSpace) : "N/A"}
       </span>
       <div>
         <PieChart width={110} height={110}>
