@@ -23,7 +23,7 @@ import history from "../../../../history";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import {niceBytes, niceBytesInt} from "../../../../common/utils";
+import { niceBytes, niceBytesInt } from "../../../../common/utils";
 import { tenantIsOnline } from "./utils";
 import { Button } from "@mui/material";
 import InformationItem from "./InformationItem";
@@ -177,7 +177,9 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   let spaceVariants: CapacityValues[] = [];
 
   if (!tenant.tiers || tenant.tiers.length === 0) {
-    spaceVariants = [{ value: tenant.capacity_usage || 0, variant: "STANDARD" }];
+    spaceVariants = [
+      { value: tenant.capacity_usage || 0, variant: "STANDARD" },
+    ];
   } else {
     spaceVariants = tenant.tiers.map((itemTenant) => {
       return { value: itemTenant.size, variant: itemTenant.name };
