@@ -174,48 +174,40 @@ const FormSwitchWrapper = ({
   return (
     <div className={classes.divContainer}>
       <Grid container alignItems={"center"}>
-        <Grid item xs>
-          <Grid container>
-            <Grid
-              item
-              xs={12}
-              sm={description !== "" ? 4 : 10}
-              md={description !== "" ? 3 : 9}
-            >
-              {label !== "" && (
-                <InputLabel htmlFor={id} className={classes.inputLabel}>
-                  <span>{label}</span>
-                  {tooltip !== "" && (
-                    <div className={classes.tooltipContainer}>
-                      <Tooltip title={tooltip} placement="top-start">
-                        <div className={classes.tooltip}>
-                          <HelpIcon />
-                        </div>
-                      </Tooltip>
+        <Grid item xs={12} sm={8} md={8}>
+          {label !== "" && (
+            <InputLabel htmlFor={id} className={classes.inputLabel}>
+              <span>{label}</span>
+              {tooltip !== "" && (
+                <div className={classes.tooltipContainer}>
+                  <Tooltip title={tooltip} placement="top-start">
+                    <div className={classes.tooltip}>
+                      <HelpIcon />
                     </div>
-                  )}
-                </InputLabel>
+                  </Tooltip>
+                </div>
               )}
-            </Grid>
-            <Grid item xs={12} sm textAlign={"left"}>
-              {description !== "" && (
-                <Typography component="p" className={classes.fieldDescription}>
-                  {description}
-                </Typography>
-              )}
-            </Grid>
-          </Grid>
+            </InputLabel>
+          )}
         </Grid>
-
         <Grid
           item
           xs={12}
-          sm={2}
+          sm={4}
+          md={4}
           textAlign={"right"}
+          justifyContent={"end"}
           className={classes.switchContainer}
         >
           {switchComponent}
         </Grid>
+        {description !== "" && (
+          <Grid item xs={12} textAlign={"left"}>
+            <Typography component="p" className={classes.fieldDescription}>
+              {description}
+            </Typography>
+          </Grid>
+        )}
       </Grid>
     </div>
   );
