@@ -20,7 +20,6 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import * as reactMoment from "react-moment";
 import Grid from "@mui/material/Grid";
 import { BucketInfo, LifeCycleItem } from "../types";
 import { AddIcon, TiersIcon } from "../../../../icons";
@@ -38,8 +37,8 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import RBIconButton from "./SummaryItems/RBIconButton";
@@ -140,30 +139,6 @@ const BucketLifecyclePanel = ({
     if (refresh) {
       setLoadingLifecycle(true);
     }
-  };
-
-  const expirationRender = (expiration: any) => {
-    if (expiration.days) {
-      return `${expiration.days} day${expiration.days > 1 ? "s" : ""}`;
-    }
-
-    if (expiration.date === "0001-01-01T00:00:00Z") {
-      return "";
-    }
-
-    return <reactMoment.default>{expiration.date}</reactMoment.default>;
-  };
-
-  const transitionRender = (transition: any) => {
-    if (transition.days) {
-      return `${transition.days} day${transition.days > 1 ? "s" : ""}`;
-    }
-
-    if (transition.date === "0001-01-01T00:00:00Z") {
-      return "";
-    }
-
-    return <reactMoment.default>{transition.date}</reactMoment.default>;
   };
 
   const renderStorageClass = (objectST: any) => {
