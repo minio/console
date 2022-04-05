@@ -34,8 +34,8 @@ export const StatusCountCard = ({
       sx={{
         fontFamily: "Lato,sans-serif",
         color: "#07193E",
-        maxWidth: "300px",
-        minHeight: "200px",
+        maxWidth: "260px",
+        minHeight: "143px",
         display: "flex",
         marginLeft: "auto",
         marginRight: "auto",
@@ -45,7 +45,6 @@ export const StatusCountCard = ({
       <Box
         sx={{
           flex: 1,
-          height: "200px",
           display: "flex",
           padding: {
             sm: "0 8px 0 8px",
@@ -58,14 +57,13 @@ export const StatusCountCard = ({
             flex: 1,
             display: "flex",
             flexFlow: "column",
-            marginTop: "32px",
+            marginTop: "22px",
           }}
         >
           <Box
             sx={{
               fontSize: "16px",
               fontWeight: 600,
-              marginBottom: "24px",
             }}
           >
             {label}
@@ -76,25 +74,38 @@ export const StatusCountCard = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              paddingBottom: {
+                md: "0px",
+                xs: "10px",
+              },
               fontSize: {
+                xl: "55px",
                 lg: "50px",
                 md: "45px",
                 xs: "35px",
               },
+              flexFlow: "row",
               fontWeight: 600,
 
-              "& .stat-text": { color: "#696969", fontSize: "12px" },
+              "& .stat-text": {
+                color: "#696969",
+                fontSize: "12px",
+                marginTop: "25px",
+              },
               "& .stat-value": {
                 textAlign: "center",
+                height: "50px",
               },
               "& .min-icon": {
                 marginRight: "8px",
+                marginTop: "25px",
                 height: "10px",
                 width: "10px",
               },
             }}
           >
             <Box>
+              <Box className="stat-value">{onlineCount}</Box>
               <Box
                 sx={{
                   display: "flex",
@@ -106,10 +117,10 @@ export const StatusCountCard = ({
               >
                 <CircleIcon /> <div className="stat-text">Online</div>
               </Box>
-              <Box className="stat-value">{onlineCount}</Box>
             </Box>
 
             <Box>
+              <Box className="stat-value">{offlineCount}</Box>
               <Box
                 sx={{
                   display: "flex",
@@ -121,7 +132,6 @@ export const StatusCountCard = ({
               >
                 <CircleIcon /> <div className="stat-text">Offline</div>
               </Box>
-              <Box className="stat-value">{offlineCount}</Box>
             </Box>
           </Box>
         </Box>

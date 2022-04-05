@@ -959,7 +959,7 @@ const commonStateIcon = {
   marginTop: 6,
 };
 
-export const commonDashboardInfocard = {
+export const commonDashboardInfocard: any = {
   cardIconContainer: {
     display: "flex" as const,
     position: "relative" as const,

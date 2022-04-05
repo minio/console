@@ -19,12 +19,14 @@ import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import Collapse from "@mui/material/Collapse";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import { ServerInfo } from "../types";
 import ServerInfoItem from "./ServerInfoItem";
 import { Box } from "@mui/material";
 import DriveInfoItem from "./DriveInfoItem";
+import {
+  MenuCollapsedIcon,
+  MenuExpandedIcon,
+} from "../../../../icons/SidebarMenus";
 
 const ServersList = ({ data }: { data: ServerInfo[] }) => {
   const [expanded, setExpanded] = React.useState<string>(
@@ -36,112 +38,129 @@ const ServersList = ({ data }: { data: ServerInfo[] }) => {
   };
 
   return (
-    <List
-      sx={{ width: "100%", flex: 1 }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      subheader={
-        <ListSubheader
-          component="div"
-          sx={{
-            borderBottom: "1px solid #F8F8F8",
-          }}
-        >
-          Servers ({data.length})
-        </ListSubheader>
-      }
-    >
-      {data.map((serverInfo, index) => {
-        const key = `${serverInfo.endpoint}-${index}`;
-        const isExpanded = expanded === key;
-        return (
-          <React.Fragment key={key}>
-            <ListItemButton
-              disableRipple
-              onClick={() => {
-                if (!isExpanded) {
-                  handleClick(key);
-                } else {
-                  handleClick("");
-                }
-              }}
-              className={isExpanded ? "expanded" : ""}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                borderBottom: "1px solid #eaeaea",
-                "&:hover": {
-                  background: "#F8F8F8",
-                },
-                "&.expanded": {
-                  borderBottom: "none",
-                },
-              }}
-            >
-              <ServerInfoItem server={serverInfo} index={index} />
-              <Box
+    <Box>
+      <Box
+        sx={{
+          marginBottom: "10px",
+        }}
+      >
+        Servers ({data.length})
+      </Box>
+      <List
+        sx={{ width: "100%", flex: 1, padding: "0" }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+      >
+        {data.map((serverInfo, index) => {
+          const key = `${serverInfo.endpoint}-${index}`;
+          const isExpanded = expanded === key;
+          return (
+            <React.Fragment key={key}>
+              <ListItemButton
+                disableRipple
+                onClick={() => {
+                  if (!isExpanded) {
+                    handleClick(key);
+                  } else {
+                    handleClick("");
+                  }
+                }}
+                className={isExpanded ? "expanded" : ""}
                 sx={{
-                  height: "25px",
-                  width: "25px",
-                  marginLeft: "25px",
-                  background: "#FBFAFA",
-                  borderRadius: "2px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  border: "1px solid #f1f1f1",
+                  padding: "3px 10px 3px 10px",
+
                   "&:hover": {
-                    background: "#fafafa",
-                  },
-                  display: {
-                    md: "block",
-                    xs: "none",
+                    background: "#bebbbb0d",
                   },
                 }}
               >
-                {isExpanded ? <ExpandLess /> : <ExpandMore />}
-              </Box>
-            </ListItemButton>
-            {isExpanded ? (
-              <React.Fragment key={`${serverInfo.endpoint}-${index}`}>
-                <ListSubheader
-                  key={`${index}-drive-details`}
-                  component="div"
+                <ServerInfoItem server={serverInfo} index={index} />
+                <Box
                   sx={{
-                    borderBottom: "1px solid #F8F8F8",
-                  }}
-                >
-                  Drives ({serverInfo.drives.length})
-                </ListSubheader>
-
-                <Collapse
-                  in={isExpanded}
-                  timeout="auto"
-                  unmountOnExit
-                  sx={{
-                    width: "100%",
-                    flex: 1,
-                    display: "flex",
-                    padding: { md: "20px 50px", xs: "15px 15px" },
-                    "& .MuiCollapse-wrapperInner": {
-                      display: "flex",
-                      flexFlow: "column",
-                      gap: "15px",
+                    height: "25px",
+                    width: "25px",
+                    background: "#FBFAFA",
+                    borderRadius: "2px",
+                    "&:hover": {
+                      background: "#fafafa",
+                    },
+                    display: {
+                      md: "block",
+                      xs: "none",
+                    },
+                    "& .collapse-icon": {
+                      fill: "#494949",
+                      "& g  rect": {
+                        fill: "#ffffff",
+                      },
+                    },
+                    "& .expand-icon": {
+                      fill: "#494949",
+                      "& rect": {
+                        fill: "#ffffff",
+                      },
                     },
                   }}
                 >
-                  {serverInfo.drives.map((driveInfo, index) => {
-                    return (
-                      <DriveInfoItem
-                        drive={driveInfo}
-                        key={`${driveInfo.endpoint}-${index}`}
-                      />
-                    );
-                  })}
-                </Collapse>
-              </React.Fragment>
-            ) : null}
-          </React.Fragment>
-        );
-      })}
-    </List>
+                  {isExpanded ? (
+                    <MenuCollapsedIcon className="collapse-icon" />
+                  ) : (
+                    <MenuExpandedIcon className="expand-icon" />
+                  )}
+                </Box>
+              </ListItemButton>
+              {isExpanded ? (
+                <Box
+                  key={`${serverInfo.endpoint}-${index}`}
+                  sx={{
+                    border: "1px solid #f1f1f1",
+                    borderTop: "0",
+                  }}
+                >
+                  <ListSubheader
+                    key={`${index}-drive-details`}
+                    component="div"
+                    sx={{ paddingLeft: "30px" }}
+                  >
+                    Drives ({serverInfo.drives.length})
+                  </ListSubheader>
+
+                  <Collapse
+                    in={isExpanded}
+                    timeout="auto"
+                    unmountOnExit
+                    sx={{
+                      width: "100%",
+                      flex: 1,
+                      display: "flex",
+                      padding: { md: "15px 30px", xs: "10px 10px" },
+                      "& .MuiCollapse-wrapperInner": {
+                        display: "flex",
+                        flexFlow: "column",
+                        gap: "15px",
+                      },
+                    }}
+                  >
+                    {serverInfo.drives.map((driveInfo, index) => {
+                      return (
+                        <DriveInfoItem
+                          drive={driveInfo}
+                          key={`${driveInfo.endpoint}-${index}`}
+                        />
+                      );
+                    })}
+                  </Collapse>
+                </Box>
+              ) : null}
+            </React.Fragment>
+          );
+        })}
+      </List>
+    </Box>
   );
 };
 
