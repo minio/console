@@ -182,3 +182,4 @@ export { default as SelectAllIcon } from "./SelectAllIcon";
 export { default as BackIcon } from "./BackIcon";
 export { default as DeleteNonCurrentIcon } from "./DeleteNonCurrentIcon";
 export { default as FilterIcon } from "./FilterIcon";
+export { default as EditTenantIcon } from "./EditTenantIcon";

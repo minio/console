@@ -3454,6 +3454,12 @@ func init() {
         "pool_count": {
           "type": "integer"
         },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tenantTierElement"
+          }
+        },
         "total_size": {
           "type": "integer"
         },
@@ -3693,6 +3699,21 @@ func init() {
         "write_quorum": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "tenantTierElement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -8044,6 +8065,12 @@ func init() {
         "pool_count": {
           "type": "integer"
         },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tenantTierElement"
+          }
+        },
         "total_size": {
           "type": "integer"
         },
@@ -8283,6 +8310,21 @@ func init() {
         "write_quorum": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "tenantTierElement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },

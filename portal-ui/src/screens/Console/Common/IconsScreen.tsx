@@ -404,6 +404,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.EditTenantIcon />
+          <br />
+          EditTenantIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.EditYamlIcon />
           <br />
           EditYamlIcon
@@ -1075,7 +1081,8 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           WatchIcon
         </Grid>
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.AlertCloseIcon /> <br />
+          <cicons.AlertCloseIcon />
+          <br />
           AlertCloseIcon
         </Grid>
         <Grid item xs={3} sm={2} md={1}>

@@ -57,6 +57,7 @@ import {
   ADD_POOL_SET_TOLERATION_VALUE,
   ADD_POOL_REMOVE_TOLERATION_ROW,
   ADD_POOL_SET_KEY_PAIR_VALUE,
+  POOL_DETAILS_SET_SELECTED_POOL,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
@@ -363,6 +364,7 @@ const initialState: ITenantState = {
     loadingTenant: false,
     tenantInfo: null,
     currentTab: "summary",
+    selectedPool: null,
   },
   addPool: {
     addPoolLoading: false,
@@ -1161,6 +1163,14 @@ export function tenantsReducer(
             ...state.addPool.fields,
             nodeSelectorPairs: action.newArray,
           },
+        },
+      };
+    case POOL_DETAILS_SET_SELECTED_POOL:
+      return {
+        ...state,
+        tenantDetails: {
+          ...state.tenantDetails,
+          selectedPool: action.pool,
         },
       };
     case ADD_POOL_RESET_FORM:

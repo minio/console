@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -25,25 +25,23 @@ import {
   tableStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { TextField } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { AddIcon } from "../../../../icons";
-import { IPool, ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import InputAdornment from "@mui/material/InputAdornment";
 import { AppState } from "../../../../store";
-import { setTenantDetailsLoad } from "../actions";
-import SearchIcon from "../../../../icons/SearchIcon";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { setSelectedPool, setTenantDetailsLoad } from "../actions";
+import PoolsListing from "./Pools/Details/PoolsListing";
+import PoolDetails from "./Pools/Details/PoolDetails";
+import BackLink from "../../../../common/BackLink";
 
 interface IPoolsSummary {
   classes: any;
-  tenant: ITenant | null;
   loadingTenant: boolean;
   history: any;
+  match: any;
+  selectedPool: string | null;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
+  setSelectedPool: typeof setSelectedPool;
 }
 
 const styles = (theme: Theme) =>
@@ -56,88 +54,42 @@ const styles = (theme: Theme) =>
 
 const PoolsSummary = ({
   classes,
-  tenant,
-  loadingTenant,
-  setTenantDetailsLoad,
   history,
+  selectedPool,
+  match,
 }: IPoolsSummary) => {
-  const [pools, setPools] = useState<IPool[]>([]);
-  const [filter, setFilter] = useState<string>("");
-
-  useEffect(() => {
-    if (tenant) {
-      const resPools = !tenant.pools ? [] : tenant.pools;
-      setPools(resPools);
-    }
-  }, [tenant]);
-
-  const filteredPools = pools.filter((pool) => {
-    if (pool.name.toLowerCase().includes(filter.toLowerCase())) {
-      return true;
-    }
-
-    return false;
-  });
-
+  const [poolDetailsOpen, setPoolDetailsOpen] = useState<boolean>(false);
   return (
     <Fragment>
-      <h1 className={classes.sectionTitle}>Pools</h1>
-      <Grid container>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
-          />
-
-          <RBIconButton
-            tooltip={"Expand Tenant"}
-            text={"Expand Tenant"}
-            onClick={() => {
-              history.push(
-                `/namespaces/${tenant?.namespace || ""}/tenants/${
-                  tenant?.name || ""
-                }/add-pool`
-              );
-            }}
-            icon={<AddIcon />}
-            color="primary"
-            variant={"contained"}
-          />
-        </Grid>
+      {poolDetailsOpen && (
         <Grid item xs={12}>
-          <br />
-        </Grid>
-
-        <Grid item xs={12} className={classes.tableBlock}>
-          <TableWrapper
-            itemActions={[]}
-            columns={[
-              { label: "Name", elementKey: "name" },
-              { label: "Capacity", elementKey: "capacity" },
-              { label: "# of Instances", elementKey: "servers" },
-              { label: "# of Drives", elementKey: "volumes" },
-            ]}
-            isLoading={loadingTenant}
-            records={filteredPools}
-            entityName="Servers"
-            idField="name"
-            customEmptyMessage="No Pools found"
+          <BackLink
+            executeOnClick={() => {
+              setPoolDetailsOpen(false);
+            }}
+            label={"Back to Pools list"}
+            to={match.url}
           />
         </Grid>
+      )}
+      <h1 className={classes.sectionTitle}>
+        {poolDetailsOpen ? `Pool Details - ${selectedPool || ""}` : "Pools"}
+      </h1>
+      <Grid container>
+        {poolDetailsOpen ? (
+          <PoolDetails
+            closeDetailsView={() => {
+              setPoolDetailsOpen(false);
+            }}
+          />
+        ) : (
+          <PoolsListing
+            setPoolDetailsView={() => {
+              setPoolDetailsOpen(true);
+            }}
+            history={history}
+          />
+        )}
       </Grid>
     </Fragment>
   );
@@ -146,12 +98,14 @@ const PoolsSummary = ({
 const mapState = (state: AppState) => ({
   loadingTenant: state.tenants.tenantDetails.loadingTenant,
   selectedTenant: state.tenants.tenantDetails.currentTenant,
+  selectedPool: state.tenants.tenantDetails.selectedPool,
   tenant: state.tenants.tenantDetails.tenantInfo,
 });
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
   setTenantDetailsLoad,
+  setSelectedPool,
 });
 
 export default withStyles(styles)(connector(PoolsSummary));
