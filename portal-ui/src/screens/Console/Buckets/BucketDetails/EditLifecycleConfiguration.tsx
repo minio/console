@@ -16,7 +16,15 @@
 
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
-import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  LinearProgress,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
@@ -62,6 +70,9 @@ const styles = (theme: Theme) =>
         },
       },
     },
+    formFieldRowAccordion: {
+      "& .MuiPaper-root": { padding: 0 },
+    },
     ...spacingUtils,
     ...modalStyleUtils,
     ...formFieldStyles,
@@ -72,7 +83,7 @@ interface IAddUserContentProps {
   classes: any;
   closeModalAndRefresh: (reload: boolean) => void;
   selectedBucket: string;
-  lifecycle: LifeCycleItem;
+  lifecycleRule: LifeCycleItem;
   open: boolean;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
@@ -81,7 +92,7 @@ const EditLifecycleConfiguration = ({
   classes,
   closeModalAndRefresh,
   selectedBucket,
-  lifecycle,
+  lifecycleRule,
   open,
   setModalErrorSnackMessage,
 }: IAddUserContentProps) => {
@@ -141,40 +152,66 @@ const EditLifecycleConfiguration = ({
   }, [ilmType, expiryDays, transitionDays, storageClass]);
 
   useEffect(() => {
-    if (lifecycle.status === "Enabled") {
+    if (lifecycleRule.status === "Enabled") {
       setEnabled(true);
     }
 
     let transitionMode = false;
 
-    if (lifecycle.transition) {
-      if (lifecycle.transition.days && lifecycle.transition.days !== 0) {
-        setTransitionDays(lifecycle.transition.days.toString());
+    if (lifecycleRule.transition) {
+      if (
+        lifecycleRule.transition.days &&
+        lifecycleRule.transition.days !== 0
+      ) {
+        setTransitionDays(lifecycleRule.transition.days.toString());
+        setIlmType("transition");
+        transitionMode = true;
+      }
+      if (
+        lifecycleRule.transition.noncurrent_transition_days &&
+        lifecycleRule.transition.noncurrent_transition_days !== 0
+      ) {
+        setNCTransitionDays(
+          lifecycleRule.transition.noncurrent_transition_days.toString()
+        );
         setIlmType("transition");
         transitionMode = true;
       }
 
       // Fallback to old rules by date
       if (
-        lifecycle.transition.date &&
-        lifecycle.transition.date !== "0001-01-01T00:00:00Z"
+        lifecycleRule.transition.date &&
+        lifecycleRule.transition.date !== "0001-01-01T00:00:00Z"
       ) {
         setIlmType("transition");
         transitionMode = true;
       }
     }
 
-    if (lifecycle.expiration) {
-      if (lifecycle.expiration.days && lifecycle.expiration.days !== 0) {
-        setExpiryDays(lifecycle.expiration.days.toString());
+    if (lifecycleRule.expiration) {
+      if (
+        lifecycleRule.expiration.days &&
+        lifecycleRule.expiration.days !== 0
+      ) {
+        setExpiryDays(lifecycleRule.expiration.days.toString());
+        setIlmType("expiry");
+        transitionMode = false;
+      }
+      if (
+        lifecycleRule.expiration.noncurrent_expiration_days &&
+        lifecycleRule.expiration.noncurrent_expiration_days !== 0
+      ) {
+        setNCExpirationDays(
+          lifecycleRule.expiration.noncurrent_expiration_days.toString()
+        );
         setIlmType("expiry");
         transitionMode = false;
       }
 
       // Fallback to old rules by date
       if (
-        lifecycle.expiration.date &&
-        lifecycle.expiration.date !== "0001-01-01T00:00:00Z"
+        lifecycleRule.expiration.date &&
+        lifecycleRule.expiration.date !== "0001-01-01T00:00:00Z"
       ) {
         setIlmType("expiry");
         transitionMode = false;
@@ -183,23 +220,25 @@ const EditLifecycleConfiguration = ({
 
     // Transition fields
     if (transitionMode) {
-      setStorageClass(lifecycle.transition?.storage_class || "");
+      setStorageClass(lifecycleRule.transition?.storage_class || "");
       setNCTransitionDays(
-        lifecycle.transition?.noncurrent_transition_days?.toString() || "0"
+        lifecycleRule.transition?.noncurrent_transition_days?.toString() || "0"
       );
-      setNCTransitionSC(lifecycle.transition?.noncurrent_storage_class || "");
+      setNCTransitionSC(
+        lifecycleRule.transition?.noncurrent_storage_class || ""
+      );
     } else {
       // Expiry fields
       setNCExpirationDays(
-        lifecycle.expiration?.noncurrent_expiration_days?.toString() || "0"
+        lifecycleRule.expiration?.noncurrent_expiration_days?.toString() || "0"
       );
     }
 
-    setExpiredObjectDM(!!lifecycle.expiration?.delete_marker);
-    setPrefix(lifecycle.prefix || "");
+    setExpiredObjectDM(!!lifecycleRule.expiration?.delete_marker);
+    setPrefix(lifecycleRule.prefix || "");
 
-    if (lifecycle.tags) {
-      const tgs = lifecycle.tags.reduce(
+    if (lifecycleRule.tags) {
+      const tgs = lifecycleRule.tags.reduce(
         (stringLab: string, currItem: any, index: number) => {
           return `${stringLab}${index !== 0 ? "&" : ""}${currItem.key}=${
             currItem.value
@@ -210,7 +249,7 @@ const EditLifecycleConfiguration = ({
 
       setTags(tgs);
     }
-  }, [lifecycle]);
+  }, [lifecycleRule]);
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -219,28 +258,45 @@ const EditLifecycleConfiguration = ({
       return;
     }
     setAddLoading(true);
-    if (selectedBucket !== null && lifecycle !== null) {
+    if (selectedBucket !== null && lifecycleRule !== null) {
       let rules = {};
 
       if (ilmType === "expiry") {
-        let expiry = {
-          expiry_days: parseInt(expiryDays),
-        };
+        let expiry: { [key: string]: number } = {};
+
+        if (
+          lifecycleRule.expiration?.days &&
+          lifecycleRule.expiration?.days > 0
+        ) {
+          expiry["expiry_days"] = parseInt(expiryDays);
+        }
+        if (lifecycleRule.expiration?.noncurrent_expiration_days) {
+          expiry["noncurrentversion_expiration_days"] =
+            parseInt(NCExpirationDays);
+        }
 
         rules = {
           ...expiry,
-          noncurrentversion_expiration_days: parseInt(NCExpirationDays),
         };
       } else {
-        let transition = {
-          transition_days: parseInt(transitionDays),
-        };
+        let transition: { [key: string]: number | string } = {};
+
+        if (
+          lifecycleRule.expiration?.days &&
+          lifecycleRule.expiration?.days > 0
+        ) {
+          transition["transition_days"] = parseInt(expiryDays);
+          transition["storage_class"] = storageClass;
+        }
+        if (lifecycleRule.expiration?.noncurrent_expiration_days) {
+          transition["noncurrentversion_transition_days"] =
+            parseInt(NCExpirationDays);
+          transition["noncurrentversion_transition_storage_class"] =
+            NCTransitionSC;
+        }
 
         rules = {
           ...transition,
-          noncurrentversion_transition_days: parseInt(NCTransitionDays),
-          noncurrentversion_transition_storage_class: NCTransitionSC,
-          storage_class: storageClass,
         };
       }
 
@@ -256,7 +312,7 @@ const EditLifecycleConfiguration = ({
       api
         .invoke(
           "PUT",
-          `/api/v1/buckets/${selectedBucket}/lifecycle/${lifecycle.id}`,
+          `/api/v1/buckets/${selectedBucket}/lifecycle/${lifecycleRule.id}`,
           lifecycleUpdate
         )
         .then((res) => {
@@ -288,95 +344,111 @@ const EditLifecycleConfiguration = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="id"
-                name="id"
-                label="Id"
-                value={lifecycle.id}
-                onChange={() => {}}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <FormSwitchWrapper
-                label="Rule State"
-                indicatorLabels={["Enabled", "Disabled"]}
-                checked={enabled}
-                value={"user_enabled"}
-                id="user-status"
-                name="user-status"
-                onChange={(e) => {
-                  setEnabled(e.target.checked);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <fieldset className={classes.fieldGroup}>
-                <legend className={classes.descriptionText}>
-                  Lifecycle Configuration
-                </legend>
-
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="id"
+                  name="id"
+                  label="Id"
+                  value={lifecycleRule.id}
+                  onChange={() => {}}
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormSwitchWrapper
+                  label="Status"
+                  indicatorLabels={["Enabled", "Disabled"]}
+                  checked={enabled}
+                  value={"user_enabled"}
+                  id="rule_status"
+                  name="rule_status"
+                  onChange={(e) => {
+                    setEnabled(e.target.checked);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <RadioGroupSelector
+                  currentSelection={ilmType}
+                  id="rule_type"
+                  name="rule_type"
+                  label="Rule Type"
+                  selectorOptions={[
+                    { value: "expiry", label: "Expiry" },
+                    { value: "transition", label: "Transition" },
+                  ]}
+                  onChange={() => {}}
+                  disableOptions
+                />
+              </Grid>
+              {ilmType === "expiry" && lifecycleRule.expiration?.days && (
                 <Grid item xs={12}>
-                  <RadioGroupSelector
-                    currentSelection={ilmType}
-                    id="quota_type"
-                    name="quota_type"
-                    label="ILM Rule"
-                    selectorOptions={[
-                      { value: "expiry", label: "Expiry" },
-                      { value: "transition", label: "Transition" },
-                    ]}
-                    onChange={() => {}}
-                    disableOptions
+                  <InputBoxWrapper
+                    type="number"
+                    id="expiry_days"
+                    name="expiry_days"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setExpiryDays(e.target.value);
+                    }}
+                    label="Expiry Days"
+                    value={expiryDays}
+                    min="0"
                   />
                 </Grid>
-                {ilmType === "expiry" ? (
-                  <Fragment>
-                    <Grid item xs={12} className={classes.formFieldRow}>
-                      <InputBoxWrapper
-                        type="number"
-                        id="expiry_days"
-                        name="expiry_days"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setExpiryDays(e.target.value);
-                        }}
-                        label="Expiry Days"
-                        value={expiryDays}
-                        min="0"
-                      />
-                    </Grid>
+              )}
 
-                    <Grid item xs={12} className={classes.formFieldRow}>
-                      <InputBoxWrapper
-                        type="number"
-                        id="noncurrentversion_expiration_days"
-                        name="noncurrentversion_expiration_days"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setNCExpirationDays(e.target.value);
-                        }}
-                        label="Non-current Expiration Days"
-                        value={NCExpirationDays}
-                        min="0"
-                      />
-                    </Grid>
-                  </Fragment>
-                ) : (
+              {ilmType === "expiry" &&
+                lifecycleRule.expiration?.noncurrent_expiration_days && (
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      type="number"
+                      id="noncurrentversion_expiration_days"
+                      name="noncurrentversion_expiration_days"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setNCExpirationDays(e.target.value);
+                      }}
+                      label="Non-current Expiration Days"
+                      value={NCExpirationDays}
+                      min="0"
+                    />
+                  </Grid>
+                )}
+              {ilmType === "transition" && lifecycleRule.transition?.days && (
+                <Fragment>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      type="number"
+                      id="transition_days"
+                      name="transition_days"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setTransitionDays(e.target.value);
+                      }}
+                      label="Transition Days"
+                      value={transitionDays}
+                      min="0"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <SelectWrapper
+                      label="Storage Class"
+                      id="storage_class"
+                      name="storage_class"
+                      value={storageClass}
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        setStorageClass(e.target.value as string);
+                      }}
+                      options={tiersList}
+                    />
+                  </Grid>
+                </Fragment>
+              )}
+
+              {ilmType === "transition" &&
+                lifecycleRule.transition?.noncurrent_transition_days && (
                   <Fragment>
-                    <Grid item xs={12} className={classes.formFieldRow}>
-                      <InputBoxWrapper
-                        type="number"
-                        id="transition_days"
-                        name="transition_days"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setTransitionDays(e.target.value);
-                        }}
-                        label="Transition Days"
-                        value={transitionDays}
-                        min="0"
-                      />
-                    </Grid>
-                    <Grid item xs={12} className={classes.formFieldRow}>
+                    <Grid item xs={12}>
                       <InputBoxWrapper
                         type="number"
                         id="noncurrentversion_transition_days"
@@ -389,7 +461,8 @@ const EditLifecycleConfiguration = ({
                         min="0"
                       />
                     </Grid>
-                    <Grid item xs={12} className={classes.formFieldRow}>
+
+                    <Grid item xs={12}>
                       <InputBoxWrapper
                         id="noncurrentversion_t_SC"
                         name="noncurrentversion_t_SC"
@@ -401,65 +474,69 @@ const EditLifecycleConfiguration = ({
                         value={NCTransitionSC}
                       />
                     </Grid>
-                    <Grid item xs={12} className={classes.formFieldRow}>
-                      <SelectWrapper
-                        label="Storage Class"
-                        id="storage_class"
-                        name="storage_class"
-                        value={storageClass}
-                        onChange={(e: SelectChangeEvent<string>) => {
-                          setStorageClass(e.target.value as string);
-                        }}
-                        options={tiersList}
-                      />
-                    </Grid>
                   </Fragment>
                 )}
-              </fieldset>
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <fieldset className={classes.fieldGroup}>
-                <legend className={classes.descriptionText}>
-                  File Configuration
-                </legend>
+              <Grid item xs={12} className={classes.formFieldRowAccordion}>
+                <Accordion>
+                  <AccordionSummary>
+                    <Typography>Filters</Typography>
+                  </AccordionSummary>
 
-                <Grid item xs={12}>
-                  <InputBoxWrapper
-                    id="prefix"
-                    name="prefix"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setPrefix(e.target.value);
-                    }}
-                    label="Prefix"
-                    value={prefix}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <QueryMultiSelector
-                    name="tags"
-                    label="Tags"
-                    elements={tags}
-                    onChange={(vl: string) => {
-                      setTags(vl);
-                    }}
-                    keyPlaceholder="Tag Key"
-                    valuePlaceholder="Tag Value"
-                    withBorder
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
-                    value="expired_delete_marker"
-                    id="expired_delete_marker"
-                    name="expired_delete_marker"
-                    checked={expiredObjectDM}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setExpiredObjectDM(event.target.checked);
-                    }}
-                    label={"Expired Object Delete Marker"}
-                  />
-                </Grid>
-              </fieldset>
+                  <AccordionDetails>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="prefix"
+                        name="prefix"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setPrefix(e.target.value);
+                        }}
+                        label="Prefix"
+                        value={prefix}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <QueryMultiSelector
+                        name="tags"
+                        label="Tags"
+                        elements={tags}
+                        onChange={(vl: string) => {
+                          setTags(vl);
+                        }}
+                        keyPlaceholder="Tag Key"
+                        valuePlaceholder="Tag Value"
+                        withBorder
+                      />
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+              {ilmType === "expiry" &&
+                lifecycleRule.expiration?.noncurrent_expiration_days && (
+                  <Grid item xs={12} className={classes.formFieldRowAccordion}>
+                    <Accordion>
+                      <AccordionSummary>
+                        <Typography>Advanced</Typography>
+                      </AccordionSummary>
+
+                      <AccordionDetails>
+                        <Grid item xs={12}>
+                          <FormSwitchWrapper
+                            value="expired_delete_marker"
+                            id="expired_delete_marker"
+                            name="expired_delete_marker"
+                            checked={expiredObjectDM}
+                            onChange={(
+                              event: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                              setExpiredObjectDM(event.target.checked);
+                            }}
+                            label={"Expired Object Delete Marker"}
+                          />
+                        </Grid>
+                      </AccordionDetails>
+                    </Accordion>
+                  </Grid>
+                )}
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>

@@ -2912,6 +2912,32 @@ func init() {
         }
       }
     },
+    "/nodes": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Lists Nodes",
+        "operationId": "ListNodes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -9669,6 +9695,32 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/logSearchResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/nodes": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Lists Nodes",
+        "operationId": "ListNodes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "default": {

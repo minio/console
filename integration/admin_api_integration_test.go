@@ -55,6 +55,29 @@ func RestartService() (*http.Response, error) {
 	return response, err
 }
 
+func GetNodes() (*http.Response, error) {
+	/*
+		Helper function to get nodes
+		HTTP Verb: GET
+		URL: /api/v1/nodes
+	*/
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/nodes",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2000 * time.Second, // increased timeout since restart takes time, more than other APIs.
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func NotifyPostgres() (*http.Response, error) {
 	/*
 		Helper function to add Postgres Notification
@@ -253,6 +276,26 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 			200,
 			response.StatusCode,
 			parsedResponse,
+		)
+	}
+
+}
+
+func TestGetNodes(t *testing.T) {
+
+	assert := assert.New(t)
+	getNodesResponse, getNodesError := GetNodes()
+	assert.Nil(getNodesError)
+	if getNodesError != nil {
+		log.Println(getNodesError)
+		return
+	}
+	addObjRsp := inspectHTTPResponse(getNodesResponse)
+	if getNodesResponse != nil {
+		assert.Equal(
+			200,
+			getNodesResponse.StatusCode,
+			addObjRsp,
 		)
 	}
 
