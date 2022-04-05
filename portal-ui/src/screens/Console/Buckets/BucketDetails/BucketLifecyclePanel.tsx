@@ -167,36 +167,94 @@ const BucketLifecyclePanel = ({
   };
 
   const renderStorageClass = (objectST: any) => {
-    const stClass = get(objectST, "transition.storage_class", "");
+    let stClass = get(objectST, "transition.storage_class", "");
+    stClass = get(objectST, "transition.noncurrent_storage_class", stClass);
 
     return stClass;
   };
 
   const lifecycleColumns = [
-    { label: "ID", elementKey: "id" },
+    {
+      label: "Type",
+      renderFullObject: true,
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (
+          el.expiration &&
+          (el.expiration.days > 0 || el.expiration.noncurrent_expiration_days)
+        ) {
+          return <span>Expiry</span>;
+        }
+        if (
+          el.transition &&
+          (el.transition.days > 0 || el.transition.noncurrent_transition_days)
+        ) {
+          return <span>Transition</span>;
+        }
+        return <Fragment />;
+      },
+    },
+    {
+      label: "Version",
+      renderFullObject: true,
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (el.expiration) {
+          if (el.expiration.days > 0) {
+            return <span>Current</span>;
+          } else if (el.expiration.noncurrent_expiration_days) {
+            return <span>Non-Current</span>;
+          }
+        }
+        if (el.transition) {
+          if (el.transition.days > 0) {
+            return <span>Current</span>;
+          } else if (el.transition.noncurrent_transition_days) {
+            return <span>Non-Current</span>;
+          }
+        }
+      },
+    },
+    {
+      label: "Tier",
+      elementKey: "storage_class",
+      renderFunction: renderStorageClass,
+      renderFullObject: true,
+    },
     {
       label: "Prefix",
       elementKey: "prefix",
     },
     {
+      label: "After",
+      renderFullObject: true,
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (el.expiration) {
+          if (el.expiration.days > 0) {
+            return <span>{el.expiration.days} days</span>;
+          } else if (el.expiration.noncurrent_expiration_days) {
+            return <span>{el.expiration.noncurrent_expiration_days} days</span>;
+          }
+        }
+        if (el.transition) {
+          if (el.transition.days > 0) {
+            return <span>{el.transition.days} days</span>;
+          } else if (el.transition.noncurrent_transition_days) {
+            return <span>{el.transition.noncurrent_transition_days} days</span>;
+          }
+        }
+      },
+    },
+    {
       label: "Status",
       elementKey: "status",
-    },
-    {
-      label: "Expiration",
-      elementKey: "expiration",
-      renderFunction: expirationRender,
-    },
-    {
-      label: "Transition",
-      elementKey: "transition",
-      renderFunction: transitionRender,
-    },
-    {
-      label: "Storage Class",
-      elementKey: "storage_class",
-      renderFunction: renderStorageClass,
-      renderFullObject: true,
     },
   ];
 
@@ -226,7 +284,7 @@ const BucketLifecyclePanel = ({
           open={editLifecycleOpen}
           closeModalAndRefresh={closeEditLCAndRefresh}
           selectedBucket={bucketName}
-          lifecycle={selectedLifecycleRule}
+          lifecycleRule={selectedLifecycleRule}
         />
       )}
       {addLifecycleOpen && (
