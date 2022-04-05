@@ -19,10 +19,10 @@ package restapi
 import (
 	"context"
 	"encoding/base64"
-	"github.com/dustin/go-humanize"
 	"strconv"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/minio/madmin-go"
 
 	"github.com/go-openapi/runtime/middleware"

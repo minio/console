@@ -89,14 +89,14 @@ func TestGetTiers(t *testing.T) {
 
 	returnStatsMock := []madmin.TierInfo{
 		{
-			Name:    "STANDARD",
-			Type:    "internal",
-			Stats:   madmin.TierStats{NumObjects: 2, NumVersions: 2, TotalSize: 228915},
+			Name:  "STANDARD",
+			Type:  "internal",
+			Stats: madmin.TierStats{NumObjects: 2, NumVersions: 2, TotalSize: 228915},
 		},
 		{
-			Name:    "S3 Tier",
-			Type:    "s3",
-			Stats:   madmin.TierStats{NumObjects: 0, NumVersions: 0, TotalSize: 0},
+			Name:  "S3 Tier",
+			Type:  "s3",
+			Stats: madmin.TierStats{NumObjects: 0, NumVersions: 0, TotalSize: 0},
 		},
 	}
 
@@ -124,7 +124,7 @@ func TestGetTiers(t *testing.T) {
 	minioListTiersMock = func(ctx context.Context) ([]*madmin.TierConfig, error) {
 		return returnListMock, nil
 	}
-	
+
 	minioTierStatsMock = func(ctx context.Context) ([]madmin.TierInfo, error) {
 		return returnStatsMock, nil
 	}
