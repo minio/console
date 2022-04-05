@@ -67,7 +67,7 @@ const Event = (props: { event: IEvent }) => {
         <TableCell onClick={() => setOpen(!open)}>{event.seen}</TableCell>
         <TableCell onClick={() => setOpen(!open)}>
           {event.message.length >= 30
-            ? `${event.message.substr(0, 30)}...`
+            ? `${event.message.slice(0, 30)}...`
             : event.message}
         </TableCell>
         <TableCell onClick={() => setOpen(!open)}>

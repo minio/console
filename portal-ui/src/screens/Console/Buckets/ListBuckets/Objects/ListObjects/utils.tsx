@@ -139,7 +139,7 @@ export const displayFileIconName = (
   // Element is a folder
   if (element.endsWith("/")) {
     icon = <ObjectBrowserFolderIcon />;
-    elementString = element.substr(0, element.length - 1);
+    elementString = element.slice(0, -1);
   }
 
   const lowercaseElement = element.toLowerCase();

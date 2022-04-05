@@ -96,12 +96,9 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     for (let i = 0; i < valueIndexes.length; i++) {
       const j = i + 1;
       if (j < valueIndexes.length) {
-        fields[i] = input.substr(
-          valueIndexes[i],
-          valueIndexes[j] - valueIndexes[i]
-        );
+        fields[i] = input.slice(valueIndexes[i], valueIndexes[j]);
       } else {
-        fields[i] = input.substr(valueIndexes[i]);
+        fields[i] = input.slice(valueIndexes[i]);
       }
     }
 
@@ -109,8 +106,8 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
       if (field === undefined) {
         continue;
       }
-      const key = field.substr(0, field.indexOf("="));
-      const value = field.substr(field.indexOf("=") + 1).trim();
+      const key = field.slice(0, field.indexOf("="));
+      const value = field.slice(field.indexOf("=") + 1).trim();
       kvFields.set(key, value);
     }
     return kvFields;
