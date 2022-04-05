@@ -98,6 +98,9 @@ export const ADD_POOL_SET_TOLERATION_VALUE = "ADD_POOL/SET_TOLERATION_VALUE";
 export const ADD_POOL_ADD_NEW_TOLERATION = "ADD_POOL/ADD_NEW_TOLERATION";
 export const ADD_POOL_REMOVE_TOLERATION_ROW = "ADD_POOL/REMOVE_TOLERATION_ROW";
 
+// Pool Details
+export const POOL_DETAILS_SET_SELECTED_POOL = "POOL_DETAILS/SET_SELECTED_POOL";
+
 export interface ICertificateInfo {
   name: string;
   serialNumber: string;
@@ -364,6 +367,7 @@ export interface ITenantDetails {
   loadingTenant: boolean;
   tenantInfo: ITenant | null;
   currentTab: string;
+  selectedPool: string | null;
 }
 
 export interface ITenantState {
@@ -635,6 +639,11 @@ interface SetPoolSelectorKeyPairValueArray {
   newArray: LabelKeyPair[];
 }
 
+interface SetSelectedPool {
+  type: typeof POOL_DETAILS_SET_SELECTED_POOL;
+  pool: string | null;
+}
+
 export type FieldsToHandle = INameTenantFields;
 
 export type TenantsManagementTypes =
@@ -676,4 +685,5 @@ export type TenantsManagementTypes =
   | SetPoolTolerationValue
   | AddNewPoolToleration
   | RemovePoolTolerationRow
-  | SetPoolSelectorKeyPairValueArray;
+  | SetPoolSelectorKeyPairValueArray
+  | SetSelectedPool;
