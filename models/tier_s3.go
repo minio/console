@@ -46,6 +46,9 @@ type TierS3 struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// objects
+	Objects string `json:"objects,omitempty"`
+
 	// prefix
 	Prefix string `json:"prefix,omitempty"`
 
@@ -57,6 +60,12 @@ type TierS3 struct {
 
 	// storageclass
 	Storageclass string `json:"storageclass,omitempty"`
+
+	// usage
+	Usage string `json:"usage,omitempty"`
+
+	// versions
+	Versions string `json:"versions,omitempty"`
 }
 
 // Validate validates this tier s3

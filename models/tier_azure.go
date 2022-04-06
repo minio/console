@@ -49,11 +49,20 @@ type TierAzure struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// objects
+	Objects string `json:"objects,omitempty"`
+
 	// prefix
 	Prefix string `json:"prefix,omitempty"`
 
 	// region
 	Region string `json:"region,omitempty"`
+
+	// usage
+	Usage string `json:"usage,omitempty"`
+
+	// versions
+	Versions string `json:"versions,omitempty"`
 }
 
 // Validate validates this tier azure
