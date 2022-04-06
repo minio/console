@@ -4454,6 +4454,12 @@ definitions:
         type: string
       storageclass:
         type: string
+      usage:
+        type: string
+      objects:
+        type: string
+      versions:
+        type: string
 
   tier_azure:
     type: object
@@ -4472,6 +4478,12 @@ definitions:
         type: string
       region:
         type: string
+      usage:
+        type: string
+      objects:
+        type: string
+      versions:
+        type: string
 
   tier_gcs:
     type: object
@@ -4487,6 +4499,12 @@ definitions:
       prefix:
         type: string
       region:
+        type: string
+      usage:
+        type: string
+      objects:
+        type: string
+      versions:
         type: string
 
   deleteFile:
