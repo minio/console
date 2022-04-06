@@ -32,21 +32,14 @@ import ServersList from "./ServersList";
 import CounterCard from "./CounterCard";
 import ReportedUsage from "./ReportedUsage";
 
-const BoxItem = ({
-  children,
-  background = "#ffffff",
-}: {
-  children: any;
-  background?: string;
-}) => {
+const BoxItem = ({ children }: { children: any }) => {
   return (
     <Box
       sx={{
         border: "1px solid #f1f1f1",
-        background: background,
+        padding: "25px",
         maxWidth: {
           sm: "100%",
-          xs: "250px",
         },
       }}
     >
@@ -204,22 +197,14 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               gap: "40px",
             }}
           >
-            <BoxItem
-              background={
-                "linear-gradient(-15deg, #2781b0 0%, #ffffff 30%) 0% 0% no-repeat padding-box"
-              }
-            >
+            <BoxItem>
               <CounterCard
                 label={"Buckets"}
                 icon={<BucketsIcon />}
                 counterValue={usage ? representationNumber(usage.buckets) : 0}
               />
             </BoxItem>
-            <BoxItem
-              background={
-                "linear-gradient(-15deg, #4CCB92 0%, #ffffff 30%) 0% 0% no-repeat padding-box"
-              }
-            >
+            <BoxItem>
               <CounterCard
                 label={"Objects"}
                 icon={<TotalObjectsIcon />}
@@ -259,9 +244,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               gap: "auto",
             }}
           >
-            <BoxItem>
-              <ServersList data={serverList} />
-            </BoxItem>
+            <ServersList data={serverList} />
           </Box>
         </Box>
       </Box>
