@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: console
-          image: 'minio/console:v0.15.8'
+          image: 'minio/console:v0.15.9'
           imagePullPolicy: "IfNotPresent"
           env:
             - name: CONSOLE_MINIO_SERVER

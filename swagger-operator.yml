@@ -1420,6 +1420,10 @@ definitions:
       capacity_usage:
         type: integer
         format: int64
+      tiers:
+        type: array
+        items:
+          $ref: "#/definitions/tenantTierElement"
 
   listTenantsResponse:
     type: object
@@ -2857,3 +2861,14 @@ definitions:
         type: string
       latest_version:
         type: string
+
+  tenantTierElement:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      size:
+        type: integer
+        format: int64
