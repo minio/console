@@ -23,7 +23,7 @@ import withStyles from "@mui/styles/withStyles";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import {
-    containerForHeader,
+    containerForHeader, createTenantCommon
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketReplicationRule } from "../types";
 import { connect } from "react-redux";
@@ -73,6 +73,9 @@ const styles = (theme: Theme) =>
             color: "#000000",
             fontSize: 20,
             paddingBottom: 8,
+        },
+        fieldGroup: {
+            ...createTenantCommon.fieldGroup,
         },
         ...containerForHeader(theme.spacing(4)),
     });

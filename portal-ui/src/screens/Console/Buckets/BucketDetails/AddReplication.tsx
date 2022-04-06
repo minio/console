@@ -23,7 +23,7 @@ import { Button, SelectChangeEvent } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import {
-  containerForHeader,
+    containerForHeader, createTenantCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import {BucketReplication, BulkReplicationResponse} from "../types";
 import {setErrorSnackMessage} from "../../../../actions";
@@ -75,6 +75,9 @@ const styles = (theme: Theme) =>
         color: "#000000",
         fontSize: 20,
         paddingBottom: 8,
+      },
+      fieldGroup: {
+        ...createTenantCommon.fieldGroup,
       },
 
         ...containerForHeader(theme.spacing(4)),
