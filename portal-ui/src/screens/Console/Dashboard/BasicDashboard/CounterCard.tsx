@@ -32,19 +32,20 @@ const CounterCard = ({
         fontFamily: "Lato,sans-serif",
         color: "#07193E",
         maxWidth: "300px",
-        minHeight: "200px",
+        minHeight: "143px",
         display: "flex",
         marginLeft: "auto",
         marginRight: "auto",
         cursor: "default",
         position: "relative",
         width: "100%",
+        //marginLeft: "25px",
       }}
     >
       <Box
         sx={{
           flex: 1,
-          height: "200px",
+          minHeight: "200px",
           display: "flex",
           width: "100%",
           padding: {
@@ -59,7 +60,7 @@ const CounterCard = ({
             flex: 1,
             display: "flex",
             flexFlow: "column",
-            marginTop: "32px",
+            marginTop: "22px",
             zIndex: 10,
             overflow: "hidden",
           }}
@@ -78,10 +79,10 @@ const CounterCard = ({
               sx={{
                 fontSize: {
                   xl: "55px",
-                  lg: "40px",
+                  lg: "50px",
                   md: "36px",
-                  sm: "22px",
-                  xs: "14px",
+                  sm: "35px",
+                  xs: "35px",
                 },
                 fontWeight: 600,
                 overflow: "hidden",
@@ -89,6 +90,10 @@ const CounterCard = ({
                 maxWidth: {
                   md: 187,
                   xs: 200,
+                },
+                flexFlow: {
+                  md: "row",
+                  xs: "column",
                 },
               }}
             >

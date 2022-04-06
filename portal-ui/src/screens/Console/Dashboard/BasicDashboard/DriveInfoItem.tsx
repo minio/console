@@ -19,9 +19,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IDriveInfo } from "../types";
-import { niceBytes } from "../../../../common/utils";
+import { niceBytes, niceBytesInt } from "../../../../common/utils";
 import { Box } from "@mui/material";
-import { CircleIcon, DrivesIcon } from "../../../../icons";
+import { Cell, Pie, PieChart } from "recharts";
+import { CircleIcon } from "../../../../icons";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 import { STATUS_COLORS } from "./Utils";
 
@@ -46,7 +47,15 @@ const driveStatusColor = (health_status: string) => {
   }
 };
 
-const DriveInfoItem = ({ classes, drive }: ICardProps) => {
+const DriveInfoItem = ({ drive }: ICardProps) => {
+  const plotValues = [
+    { value: drive.totalSpace, color: "#D6D6D6", label: "Free Space" },
+    {
+      value: drive.usedSpace,
+      color: "#073052",
+      label: "Used Space",
+    },
+  ];
   return (
     <Box
       sx={{
@@ -54,21 +63,10 @@ const DriveInfoItem = ({ classes, drive }: ICardProps) => {
         flex: 1,
         alignItems: "center",
         paddingBottom: "10px",
-        borderBottom: {
-          xs: "1px solid #eaeaea",
-        },
+        padding: "20px",
+        border: "1px solid #eaeaea",
       }}
     >
-      <Box
-        sx={{
-          "& .min-icon": {
-            fill: "#848484",
-          },
-        }}
-      >
-        <DrivesIcon />
-      </Box>
-
       <Box
         sx={{
           display: "flex",
@@ -97,15 +95,17 @@ const DriveInfoItem = ({ classes, drive }: ICardProps) => {
               textOverflow: "ellipsis",
               whiteSpace: "normal",
               wordBreak: "break-all",
+              marginRight: "8px",
+              fontWeight: 600,
               fontSize: {
-                md: "14px",
+                md: "16px",
                 xs: "10px",
               },
             },
           }}
         >
-          {drive.state && <CircleIcon />}
           <div className="drive-endpoint">{drive.endpoint || ""}</div>
+          {drive.state && <CircleIcon />}
         </Box>
 
         <Box
@@ -113,7 +113,6 @@ const DriveInfoItem = ({ classes, drive }: ICardProps) => {
             flex: 1,
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
             paddingLeft: "20px",
             marginTop: "10px",
             flexFlow: {
@@ -121,50 +120,105 @@ const DriveInfoItem = ({ classes, drive }: ICardProps) => {
               xs: "column",
             },
             "& .info-label": {
-              color: "#8399AB",
+              color: "#5E5E5E",
+              fontSize: "12px",
+              textAlign: "center",
             },
             "& .info-value": {
-              color: "#073052",
-              fontSize: "14px",
+              fontSize: "18px",
+              color: "#07193E",
+              display: "flex",
               fontWeight: 500,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             },
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexFlow: "column",
-            }}
-          >
-            <label className="info-label">Capacity:</label>
-            <div className="info-value">
-              {niceBytes(drive.totalSpace ? drive.totalSpace.toString() : "0")}
+          <Box sx={{ flex: 1 }}>
+            <div style={{ position: "relative", width: 110, height: 110 }}>
+              <span
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  fontWeight: "bold",
+                  color: "#000",
+                  fontSize: 12,
+                }}
+              >
+                {niceBytesInt(drive.usedSpace)}
+              </span>
+              <div>
+                <PieChart width={110} height={110}>
+                  <Pie
+                    data={plotValues}
+                    cx={"50%"}
+                    cy={"50%"}
+                    dataKey="value"
+                    outerRadius={50}
+                    innerRadius={40}
+                    startAngle={-70}
+                    endAngle={360}
+                    animationDuration={1}
+                  >
+                    {plotValues.map((entry, index) => (
+                      <Cell key={`cellCapacity-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </div>
             </div>
           </Box>
 
           <Box
             sx={{
               display: "flex",
-              flexFlow: "column",
+              gap: "5%",
+              alignItems: "center",
+              flex: 2,
+              flexGrow: 1,
             }}
           >
-            <label className="info-label">Used:</label>
-            <div className="info-value">
-              {niceBytes(drive.usedSpace ? drive.usedSpace.toString() : "0")}
-            </div>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexFlow: "column",
-            }}
-          >
-            <label className="info-label">Available:</label>
-            <div className="info-value">
-              {niceBytes(
-                drive.availableSpace ? drive.availableSpace.toString() : "0"
-              )}
-            </div>
+            <Box
+              sx={{
+                display: "flex",
+                flexFlow: "column",
+              }}
+            >
+              <div className="info-value">
+                {niceBytes(
+                  drive.totalSpace ? drive.totalSpace.toString() : "0"
+                )}
+              </div>
+              <label className="info-label">Capacity</label>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexFlow: "column",
+              }}
+            >
+              <div className="info-value">
+                {niceBytes(drive.usedSpace ? drive.usedSpace.toString() : "0")}
+              </div>
+              <label className="info-label">Used</label>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexFlow: "column",
+              }}
+            >
+              <div className="info-value">
+                {niceBytes(
+                  drive.availableSpace ? drive.availableSpace.toString() : "0"
+                )}
+              </div>
+              <label className="info-label">Available</label>
+            </Box>
           </Box>
         </Box>
       </Box>

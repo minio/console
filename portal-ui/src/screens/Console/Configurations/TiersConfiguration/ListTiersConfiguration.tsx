@@ -218,6 +218,36 @@ const ListTiersConfiguration = ({
     return "";
   };
 
+  const renderTierUsage = (item: ITierElement) => {
+    const endpoint = get(item, `${item.type}.usage`, "");
+
+    if (endpoint !== null) {
+      return endpoint;
+    }
+
+    return "";
+  };
+
+  const renderTierObjects = (item: ITierElement) => {
+    const endpoint = get(item, `${item.type}.objects`, "");
+
+    if (endpoint !== null) {
+      return endpoint;
+    }
+
+    return "";
+  };
+
+  const renderTierVersions = (item: ITierElement) => {
+    const endpoint = get(item, `${item.type}.versions`, "");
+
+    if (endpoint !== null) {
+      return endpoint;
+    }
+
+    return "";
+  };
+
   const closeTierCredentials = () => {
     setUpdateCredentialsOpen(false);
   };
@@ -328,6 +358,24 @@ const ListTiersConfiguration = ({
                               label: "Region",
                               elementKey: "type",
                               renderFunction: renderTierRegion,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Usage",
+                              elementKey: "type",
+                              renderFunction: renderTierUsage,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Objects",
+                              elementKey: "type",
+                              renderFunction: renderTierObjects,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Versions",
+                              elementKey: "type",
+                              renderFunction: renderTierVersions,
                               renderFullObject: true,
                             },
                           ]}

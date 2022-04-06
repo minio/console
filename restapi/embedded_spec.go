@@ -6502,10 +6502,19 @@ func init() {
         "name": {
           "type": "string"
         },
+        "objects": {
+          "type": "string"
+        },
         "prefix": {
           "type": "string"
         },
         "region": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
           "type": "string"
         }
       }
@@ -6525,10 +6534,19 @@ func init() {
         "name": {
           "type": "string"
         },
+        "objects": {
+          "type": "string"
+        },
         "prefix": {
           "type": "string"
         },
         "region": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
           "type": "string"
         }
       }
@@ -6548,6 +6566,9 @@ func init() {
         "name": {
           "type": "string"
         },
+        "objects": {
+          "type": "string"
+        },
         "prefix": {
           "type": "string"
         },
@@ -6558,6 +6579,12 @@ func init() {
           "type": "string"
         },
         "storageclass": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
           "type": "string"
         }
       }
@@ -13422,10 +13449,19 @@ func init() {
         "name": {
           "type": "string"
         },
+        "objects": {
+          "type": "string"
+        },
         "prefix": {
           "type": "string"
         },
         "region": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
           "type": "string"
         }
       }
@@ -13445,10 +13481,19 @@ func init() {
         "name": {
           "type": "string"
         },
+        "objects": {
+          "type": "string"
+        },
         "prefix": {
           "type": "string"
         },
         "region": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
           "type": "string"
         }
       }
@@ -13468,6 +13513,9 @@ func init() {
         "name": {
           "type": "string"
         },
+        "objects": {
+          "type": "string"
+        },
         "prefix": {
           "type": "string"
         },
@@ -13478,6 +13526,12 @@ func init() {
           "type": "string"
         },
         "storageclass": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
           "type": "string"
         }
       }

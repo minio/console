@@ -19,8 +19,10 @@ package restapi
 import (
 	"context"
 	"encoding/base64"
+	"strconv"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/minio/madmin-go"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -71,10 +73,12 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 	if err != nil {
 		return nil, err
 	}
-
+	tierInfo, err := client.tierStats(ctx)
+	if err != nil {
+		return nil, err
+	}
 	var tiersList []*models.Tier
 	for i := range tiers {
-
 		switch tiers[i].Type {
 		case madmin.S3:
 			tiersList = append(tiersList, &models.Tier{
@@ -88,6 +92,9 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Region:       tiers[i].S3.Region,
 					Secretkey:    tiers[i].S3.SecretKey,
 					Storageclass: tiers[i].S3.StorageClass,
+					Usage:        humanize.IBytes(tierInfo[i+1].Stats.TotalSize),
+					Objects:      strconv.Itoa(tierInfo[i+1].Stats.NumObjects),
+					Versions:     strconv.Itoa(tierInfo[i+1].Stats.NumVersions),
 				},
 			})
 		case madmin.GCS:
@@ -100,6 +107,9 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Name:     tiers[i].Name,
 					Prefix:   tiers[i].GCS.Prefix,
 					Region:   tiers[i].GCS.Region,
+					Usage:    humanize.IBytes(tierInfo[i+1].Stats.TotalSize),
+					Objects:  strconv.Itoa(tierInfo[i+1].Stats.NumObjects),
+					Versions: strconv.Itoa(tierInfo[i+1].Stats.NumVersions),
 				},
 			})
 		case madmin.Azure:
@@ -113,6 +123,9 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Name:        tiers[i].Name,
 					Prefix:      tiers[i].Azure.Prefix,
 					Region:      tiers[i].Azure.Region,
+					Usage:       humanize.IBytes(tierInfo[i+1].Stats.TotalSize),
+					Objects:     strconv.Itoa(tierInfo[i+1].Stats.NumObjects),
+					Versions:    strconv.Itoa(tierInfo[i+1].Stats.NumVersions),
 				},
 			})
 		case madmin.Unsupported:

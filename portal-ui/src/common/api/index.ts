@@ -23,7 +23,7 @@ export class API {
   invoke(method: string, url: string, data?: object) {
     let targetURL = url;
     if (targetURL[0] === "/") {
-      targetURL = targetURL.substr(1);
+      targetURL = targetURL.slice(1);
     }
     return request(method, targetURL)
       .send(data)
