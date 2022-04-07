@@ -21,8 +21,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
+  createTenantCommon,
+  formFieldStyles,
+  modalBasic,
   spacingUtils,
   tenantDetailsStyles,
+  wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -36,7 +40,6 @@ import { setErrorSnackMessage } from "../../../../actions";
 import { connect } from "react-redux";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { setTenantDetailsLoad } from "../actions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { AddIcon, ConfirmModalIcon } from "../../../../icons";
 import Loader from "../../Common/Loader/Loader";
@@ -47,7 +50,6 @@ interface ITenantSecurity {
   loadingTenant: boolean;
   tenant: ITenant | null;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -89,6 +91,10 @@ const styles = (theme: Theme) =>
       marginBottom: 10,
     },
     ...containerForHeader(theme.spacing(4)),
+    ...createTenantCommon,
+    ...formFieldStyles,
+    ...modalBasic,
+    ...wizardCommon,
   });
 
 const TenantSecurity = ({
@@ -96,7 +102,6 @@ const TenantSecurity = ({
   tenant,
   loadingTenant,
   setErrorSnackMessage,
-  setTenantDetailsLoad,
 }: ITenantSecurity) => {
   const [isSending, setIsSending] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -346,41 +351,45 @@ const TenantSecurity = ({
           <h1 className={classes.sectionTitle}>Security</h1>
           <Paper className={classes.paperContainer}>
             <Grid item xs={12} className={classes.title}>
-              <FormSwitchWrapper
-                value="enableAutoCert"
-                id="enableAutoCert"
-                name="enableAutoCert"
-                checked={enableAutoCert}
-                onChange={(e) => {
-                  const targetD = e.target;
-                  const checked = targetD.checked;
-                  setEnableAutoCert(checked);
-                }}
-                label={"TLS"}
-                description={
-                  "The internode certificates will be generated and managed by MinIO Operator"
-                }
-              />
-              <FormSwitchWrapper
-                value="enableCustomCerts"
-                id="enableCustomCerts"
-                name="enableCustomCerts"
-                checked={enableCustomCerts}
-                onChange={(e) => {
-                  const targetD = e.target;
-                  const checked = targetD.checked;
-                  setEnableCustomCerts(checked);
-                }}
-                label={"Custom Certificates"}
-              />
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  value="enableAutoCert"
+                  id="enableAutoCert"
+                  name="enableAutoCert"
+                  checked={enableAutoCert}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    setEnableAutoCert(checked);
+                  }}
+                  label={"TLS"}
+                  description={
+                    "The internode certificates will be generated and managed by MinIO Operator"
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  value="enableCustomCerts"
+                  id="enableCustomCerts"
+                  name="enableCustomCerts"
+                  checked={enableCustomCerts}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    setEnableCustomCerts(checked);
+                  }}
+                  label={"Custom Certificates"}
+                />
+              </Grid>
             </Grid>
 
             {enableCustomCerts && (
-              <Grid container>
-                <Grid container item xs={12}>
+              <Fragment>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   <h4>MinIO Certificates</h4>
                 </Grid>
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   {minioTLSCertificateSecrets.map(
                     (certificateInfo: ICertificateInfo) => (
                       <TLSCertificate
@@ -391,7 +400,7 @@ const TenantSecurity = ({
                   )}
                 </Grid>
 
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   {minioCertificates.map((keyPair) => (
                     <Grid
                       item
@@ -449,7 +458,7 @@ const TenantSecurity = ({
                     </Grid>
                   ))}
                 </Grid>
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   <Button
                     variant="outlined"
                     color="primary"
@@ -460,10 +469,10 @@ const TenantSecurity = ({
                   </Button>
                 </Grid>
 
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   <h4>MinIO CA Certificates</h4>
                 </Grid>
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   {minioTLSCaCertificateSecrets.map(
                     (certificateInfo: ICertificateInfo) => (
                       <TLSCertificate
@@ -474,7 +483,7 @@ const TenantSecurity = ({
                   )}
                 </Grid>
 
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   {minioCaCertificates.map((keyPair: KeyPair) => (
                     <Grid
                       item
@@ -512,7 +521,7 @@ const TenantSecurity = ({
                     </Grid>
                   ))}
                 </Grid>
-                <Grid container item xs={12}>
+                <Grid container item xs={12} className={classes.formFieldRow}>
                   <Button
                     variant="outlined"
                     color="primary"
@@ -522,7 +531,7 @@ const TenantSecurity = ({
                     Add CA Certificate
                   </Button>
                 </Grid>
-              </Grid>
+              </Fragment>
             )}
 
             <Grid item xs={12} className={classes.buttonContainer}>
@@ -551,7 +560,6 @@ const mapState = (state: AppState) => ({
 
 const mapDispatchToProps = {
   setErrorSnackMessage,
-  setTenantDetailsLoad,
 };
 
 const connector = connect(mapState, mapDispatchToProps);
