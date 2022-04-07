@@ -17,8 +17,8 @@
 import { ITenant } from "../ListTenants/types";
 import {
   ICertificateInfo,
-  ITenantEncryptionResponse,
   ISecurityContext,
+  ITenantEncryptionResponse,
 } from "../types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -32,7 +32,6 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Paper from "@mui/material/Paper";
 import React, { Fragment, useEffect, useState } from "react";
 import { setErrorSnackMessage } from "../../../../actions";
 import { connect } from "react-redux";
