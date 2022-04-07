@@ -803,7 +803,15 @@ const AddTenant = ({
           entity="Tenant"
         />
       )}
-      <PageHeader label={"Create New Tenant"} />
+      <PageHeader
+        label={
+          <BackLink
+            to={"/tenants"}
+            label={"Tenants"}
+            executeOnClick={resetAddTenantForm}
+          />
+        }
+      />
 
       <PageLayout>
         {addSending && (
@@ -811,14 +819,6 @@ const AddTenant = ({
             <LinearProgress />
           </Grid>
         )}
-
-        <Grid item xs={12}>
-          <BackLink
-            to={"/tenants"}
-            label={"Tenant List"}
-            executeOnClick={resetAddTenantForm}
-          />
-        </Grid>
         <Grid item xs={12} className={classes.pageBox}>
           <GenericWizard wizardSteps={filteredWizardSteps} />
         </Grid>

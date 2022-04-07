@@ -128,10 +128,6 @@ const PoolsListing = ({
           variant={"contained"}
         />
       </Grid>
-      <Grid item xs={12}>
-        <br />
-      </Grid>
-
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
           itemActions={listActions}
