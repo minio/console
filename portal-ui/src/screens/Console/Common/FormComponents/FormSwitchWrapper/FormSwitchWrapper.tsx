@@ -44,9 +44,6 @@ interface IFormSwitch {
 
 const styles = (theme: Theme) =>
   createStyles({
-    divContainer: {
-      marginBottom: 20,
-    },
     indicatorLabelOn: {
       fontWeight: "bold",
       color: "#081C42 !important",
@@ -172,7 +169,7 @@ const FormSwitchWrapper = ({
   }
 
   return (
-    <div className={classes.divContainer}>
+    <div>
       <Grid container alignItems={"center"}>
         <Grid item xs={12} sm={8} md={8}>
           {label !== "" && (
@@ -193,8 +190,8 @@ const FormSwitchWrapper = ({
         <Grid
           item
           xs={12}
-          sm={4}
-          md={4}
+          sm={label !== "" ? 4 : 12}
+          md={label !== "" ? 4 : 12}
           textAlign={"right"}
           justifyContent={"end"}
           className={classes.switchContainer}

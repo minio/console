@@ -95,7 +95,6 @@ const styles = (theme: Theme) =>
       marginBottom: 8,
     },
     tenantsList: {
-      marginTop: 25,
       height: "calc(100vh - 195px)",
     },
   });

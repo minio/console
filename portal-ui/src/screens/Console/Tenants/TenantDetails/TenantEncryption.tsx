@@ -17,8 +17,8 @@
 import { ITenant } from "../ListTenants/types";
 import {
   ICertificateInfo,
-  ITenantEncryptionResponse,
   ISecurityContext,
+  ITenantEncryptionResponse,
 } from "../types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -32,7 +32,6 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Paper from "@mui/material/Paper";
 import React, { Fragment, useEffect, useState } from "react";
 import { setErrorSnackMessage } from "../../../../actions";
 import { connect } from "react-redux";
@@ -46,7 +45,7 @@ import Grid from "@mui/material/Grid";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { Button, DialogContentText } from "@mui/material";
+import { Button, DialogContentText, Stack } from "@mui/material";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { KeyPair } from "../ListTenants/utils";
@@ -57,6 +56,7 @@ import {
 } from "../../../../utils/validationFunctions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
+import StackRow from "../../Common/UsageBarWrapper/StackRow";
 
 interface ITenantEncryption {
   classes: any;
@@ -100,13 +100,13 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
       borderBottom: "1px solid #eaeaea",
-      marginBottom: 10,
+      marginBottom: 8,
     },
     caCertsRow: {
       borderBottom: "1px solid #eaeaea",
       display: "flex",
       alignItems: "center",
-      marginBottom: 10,
+      marginBottom: 8,
     },
     ...containerForHeader(theme.spacing(4)),
     ...createTenantCommon,
@@ -705,109 +705,124 @@ const TenantEncryption = ({
             }
           />
         )}
-        <h1 className={classes.sectionTitle}>Encryption</h1>
-        <div className={classes.actionsTray}>
-          <FormSwitchWrapper
-            label={"Encryption at rest"}
-            indicatorLabels={["Enabled", "Disabled"]}
-            checked={encryptionEnabled}
-            value={"tenant_encryption"}
-            id="tenant-encryption"
-            name="tenant-encryption"
-            onChange={(e) => {
-              setEncryptionEnabled(!encryptionEnabled);
-            }}
-            description=""
-          />
-        </div>
+        <Grid container alignItems={"center"}>
+          <Grid item xs>
+            <h1 className={classes.sectionTitle}>Encryption</h1>
+          </Grid>
+          <Grid item xs={4} justifyContent={"end"} textAlign={"right"}>
+            <FormSwitchWrapper
+              label={""}
+              indicatorLabels={["Enabled", "Disabled"]}
+              checked={encryptionEnabled}
+              value={"tenant_encryption"}
+              id="tenant-encryption"
+              name="tenant-encryption"
+              onChange={(e) => {
+                setEncryptionEnabled(!encryptionEnabled);
+              }}
+              description=""
+            />
+          </Grid>
+        </Grid>
         {encryptionEnabled && (
-          <Paper className={classes.paperWrapper} style={{ marginBottom: 15 }}>
-            <Grid container style={{}}>
-              <Grid item xs={12} className={classes.encryptionTypeOptions}>
-                <RadioGroupSelector
-                  currentSelection={encryptionType}
-                  id="encryptionType"
-                  name="encryptionType"
-                  label="Encryption Options"
-                  onChange={(e) => {
-                    setEncryptionType(e.target.value);
-                  }}
-                  selectorOptions={[
-                    { label: "Vault", value: "vault" },
-                    { label: "AWS", value: "aws" },
-                    { label: "Gemalto", value: "gemalto" },
-                    { label: "GCP", value: "gcp" },
-                    { label: "Azure", value: "azure" },
-                  ]}
-                />
-              </Grid>
-              {encryptionType === "vault" && (
-                <Fragment>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="vault_endpoint"
-                      name="vault_endpoint"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setVaultConfiguration({
-                          ...vaultConfiguration,
-                          endpoint: e.target.value,
-                        })
-                      }
-                      label="Endpoint"
-                      value={vaultConfiguration?.endpoint || ""}
-                      error={validationErrors["vault_ping"] || ""}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="vault_engine"
-                      name="vault_engine"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setVaultConfiguration({
-                          ...vaultConfiguration,
-                          engine: e.target.value,
-                        })
-                      }
-                      label="Engine"
-                      value={vaultConfiguration?.engine || ""}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="vault_namespace"
-                      name="vault_namespace"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setVaultConfiguration({
-                          ...vaultConfiguration,
-                          namespace: e.target.value,
-                        })
-                      }
-                      label="Namespace"
-                      value={vaultConfiguration?.namespace || ""}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="vault_prefix"
-                      name="vault_prefix"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setVaultConfiguration({
-                          ...vaultConfiguration,
-                          prefix: e.target.value,
-                        })
-                      }
-                      label="Prefix"
-                      value={vaultConfiguration?.prefix || ""}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} className={classes.encryptionTypeOptions}>
+              <RadioGroupSelector
+                currentSelection={encryptionType}
+                id="encryptionType"
+                name="encryptionType"
+                label="Encryption Options"
+                onChange={(e) => {
+                  setEncryptionType(e.target.value);
+                }}
+                selectorOptions={[
+                  { label: "Vault", value: "vault" },
+                  { label: "AWS", value: "aws" },
+                  { label: "Gemalto", value: "gemalto" },
+                  { label: "GCP", value: "gcp" },
+                  { label: "Azure", value: "azure" },
+                ]}
+              />
+            </Grid>
+            {encryptionType === "vault" && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="vault_endpoint"
+                    name="vault_endpoint"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        endpoint: e.target.value,
+                      })
+                    }
+                    label="Endpoint"
+                    value={vaultConfiguration?.endpoint || ""}
+                    error={validationErrors["vault_ping"] || ""}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="vault_engine"
+                    name="vault_engine"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        engine: e.target.value,
+                      })
+                    }
+                    label="Engine"
+                    value={vaultConfiguration?.engine || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="vault_namespace"
+                    name="vault_namespace"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        namespace: e.target.value,
+                      })
+                    }
+                    label="Namespace"
+                    value={vaultConfiguration?.namespace || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="vault_prefix"
+                    name="vault_prefix"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        prefix: e.target.value,
+                      })
+                    }
+                    label="Prefix"
+                    value={vaultConfiguration?.prefix || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack>
+                    <StackRow
+                      sx={{
+                        borderBottom: "1px solid #eaeaea",
+                        margin: 0,
+                        marginBottom: 1,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          marginBottom: 8,
+                        }}
+                      >
                         App Role
-                      </legend>
-                      <Grid item xs={12} className={classes.formFieldRow}>
+                      </h3>
+                    </StackRow>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12}>
                         <InputBoxWrapper
                           id="vault_approle_engine"
                           name="vault_approle_engine"
@@ -824,7 +839,7 @@ const TenantEncryption = ({
                           value={vaultConfiguration?.approle?.engine || ""}
                         />
                       </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
+                      <Grid item xs={12}>
                         <InputBoxWrapper
                           type={showVaultAppRoleID ? "text" : "password"}
                           id="vault_id"
@@ -854,7 +869,7 @@ const TenantEncryption = ({
                           }
                         />
                       </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
+                      <Grid item xs={12}>
                         <InputBoxWrapper
                           type={showVaultAppRoleSecret ? "text" : "password"}
                           id="vault_secret"
@@ -884,7 +899,7 @@ const TenantEncryption = ({
                           }
                         />
                       </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
+                      <Grid item xs={12}>
                         <InputBoxWrapper
                           type="number"
                           min="0"
@@ -904,673 +919,699 @@ const TenantEncryption = ({
                           value={vaultConfiguration?.approle?.retry || ""}
                         />
                       </Grid>
-                    </fieldset>
-                  </Grid>
-                  <Grid container className={classes.mutualTlsConfig}>
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
+                    </Grid>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack>
+                    <StackRow
+                      sx={{
+                        borderBottom: "1px solid #eaeaea",
+                        margin: 0,
+                        marginBottom: 1,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          marginBottom: 8,
+                        }}
+                      >
                         Mutual TLS authentication with KMS (optional)
-                      </legend>
-                      {vaultClientCertificateSecret ? (
-                        <TLSCertificate
-                          certificateInfo={vaultClientCertificateSecret}
-                          onDelete={() =>
-                            removeCertificate(vaultClientCertificateSecret)
-                          }
-                        />
-                      ) : (
-                        <Fragment>
-                          <FileSelector
-                            onChange={(encodedValue, fileName) =>
-                              setVaultClientCertificate({
-                                encoded_key: encodedValue || "",
-                                id: vaultClientCertificate?.id || "",
-                                key: fileName || "",
-                                cert: vaultClientCertificate?.cert || "",
-                                encoded_cert:
-                                  vaultClientCertificate?.encoded_cert || "",
-                              })
-                            }
-                            accept=".key,.pem"
-                            id="vault_key"
-                            name="vault_key"
-                            label="Key"
-                            value={vaultClientCertificate?.key || ""}
-                          />
-                          <FileSelector
-                            onChange={(encodedValue, fileName) =>
-                              setVaultClientCertificate({
-                                encoded_key:
-                                  vaultClientCertificate?.encoded_key || "",
-                                id: vaultClientCertificate?.id || "",
-                                key: vaultClientCertificate?.key || "",
-                                cert: fileName || "",
-                                encoded_cert: encodedValue || "",
-                              })
-                            }
-                            accept=".cer,.crt,.cert,.pem"
-                            id="vault_cert"
-                            name="vault_cert"
-                            label="Cert"
-                            value={vaultClientCertificate?.cert || ""}
-                          />
-                        </Fragment>
-                      )}
-                    </fieldset>
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
-                        KMS CA certificate (optional)
-                      </legend>
-                      {vaultCACertificateSecret ? (
-                        <TLSCertificate
-                          certificateInfo={vaultCACertificateSecret}
-                          onDelete={() =>
-                            removeCertificate(vaultCACertificateSecret)
-                          }
-                        />
-                      ) : (
+                      </h3>
+                    </StackRow>
+                    {vaultClientCertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={vaultClientCertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(vaultClientCertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <Fragment>
                         <FileSelector
                           onChange={(encodedValue, fileName) =>
-                            setVaultCACertificate({
+                            setVaultClientCertificate({
+                              encoded_key: encodedValue || "",
+                              id: vaultClientCertificate?.id || "",
+                              key: fileName || "",
+                              cert: vaultClientCertificate?.cert || "",
+                              encoded_cert:
+                                vaultClientCertificate?.encoded_cert || "",
+                            })
+                          }
+                          accept=".key,.pem"
+                          id="vault_key"
+                          name="vault_key"
+                          label="Key"
+                          value={vaultClientCertificate?.key || ""}
+                        />
+                        <FileSelector
+                          onChange={(encodedValue, fileName) =>
+                            setVaultClientCertificate({
                               encoded_key:
-                                vaultCACertificate?.encoded_key || "",
-                              id: vaultCACertificate?.id || "",
-                              key: vaultCACertificate?.key || "",
+                                vaultClientCertificate?.encoded_key || "",
+                              id: vaultClientCertificate?.id || "",
+                              key: vaultClientCertificate?.key || "",
                               cert: fileName || "",
                               encoded_cert: encodedValue || "",
                             })
                           }
                           accept=".cer,.crt,.cert,.pem"
-                          id="vault_ca"
-                          name="vault_ca"
-                          label="CA"
-                          value={vaultCACertificate?.cert || ""}
+                          id="vault_cert"
+                          name="vault_cert"
+                          label="Cert"
+                          value={vaultClientCertificate?.cert || ""}
                         />
-                      )}
-                    </fieldset>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    className={classes.formFieldRow}
-                    style={{ marginTop: 15 }}
-                  >
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
+                      </Fragment>
+                    )}
+                  </Stack>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      KMS CA certificate (optional)
+                    </legend>
+                    {vaultCACertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={vaultCACertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(vaultCACertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <FileSelector
+                        onChange={(encodedValue, fileName) =>
+                          setVaultCACertificate({
+                            encoded_key: vaultCACertificate?.encoded_key || "",
+                            id: vaultCACertificate?.id || "",
+                            key: vaultCACertificate?.key || "",
+                            cert: fileName || "",
+                            encoded_cert: encodedValue || "",
+                          })
+                        }
+                        accept=".cer,.crt,.cert,.pem"
+                        id="vault_ca"
+                        name="vault_ca"
+                        label="CA"
+                        value={vaultCACertificate?.cert || ""}
+                      />
+                    )}
+                  </fieldset>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack>
+                    <StackRow
+                      sx={{
+                        borderBottom: "1px solid #eaeaea",
+                        margin: 0,
+                        marginBottom: 1,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          marginBottom: 8,
+                        }}
+                      >
                         Status
-                      </legend>
+                      </h3>
+                    </StackRow>
+                    <InputBoxWrapper
+                      type="number"
+                      min="0"
+                      id="vault_ping"
+                      name="vault_ping"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setVaultConfiguration({
+                          ...vaultConfiguration,
+                          status: {
+                            ...vaultConfiguration?.status,
+                            ping: e.target.value,
+                          },
+                        })
+                      }
+                      label="Ping (Seconds)"
+                      error={validationErrors["vault_ping"] || ""}
+                      value={vaultConfiguration?.status?.ping || ""}
+                    />
+                  </Stack>
+                </Grid>
+              </Fragment>
+            )}
+            {encryptionType === "azure" && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="azure_endpoint"
+                    name="azure_endpoint"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setAzureConfiguration({
+                        ...azureConfiguration,
+                        keyvault: {
+                          ...azureConfiguration?.keyvault,
+                          endpoint: e.target.value,
+                        },
+                      })
+                    }
+                    label="Endpoint"
+                    error={validationErrors["azure_endpoint"] || ""}
+                    value={azureConfiguration?.keyvault?.endpoint || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Credentials
+                    </legend>
+                    <Grid item xs={12}>
                       <InputBoxWrapper
-                        type="number"
-                        min="0"
-                        id="vault_ping"
-                        name="vault_ping"
+                        id="azure_tenant_id"
+                        name="azure_tenant_id"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setVaultConfiguration({
-                            ...vaultConfiguration,
-                            status: {
-                              ...vaultConfiguration?.status,
-                              ping: e.target.value,
+                          setAzureConfiguration({
+                            ...azureConfiguration,
+                            keyvault: {
+                              ...azureConfiguration?.keyvault,
+                              credentials: {
+                                ...azureConfiguration?.keyvault?.credentials,
+                                tenant_id: e.target.value,
+                              },
                             },
                           })
                         }
-                        label="Ping (Seconds)"
-                        error={validationErrors["vault_ping"] || ""}
-                        value={vaultConfiguration?.status?.ping || ""}
+                        label="Tenant ID"
+                        value={
+                          azureConfiguration?.keyvault?.credentials
+                            ?.tenant_id || ""
+                        }
+                        error={validationErrors["azure_tenant_id"] || ""}
                       />
-                    </fieldset>
-                  </Grid>
-                </Fragment>
-              )}
-              {encryptionType === "azure" && (
-                <Fragment>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="azure_endpoint"
-                      name="azure_endpoint"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setAzureConfiguration({
-                          ...azureConfiguration,
-                          keyvault: {
-                            ...azureConfiguration?.keyvault,
-                            endpoint: e.target.value,
-                          },
-                        })
-                      }
-                      label="Endpoint"
-                      error={validationErrors["azure_endpoint"] || ""}
-                      value={azureConfiguration?.keyvault?.endpoint || ""}
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="azure_client_id"
+                        name="azure_client_id"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setAzureConfiguration({
+                            ...azureConfiguration,
+                            keyvault: {
+                              ...azureConfiguration?.keyvault,
+                              credentials: {
+                                ...azureConfiguration?.keyvault?.credentials,
+                                client_id: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Client ID"
+                        value={
+                          azureConfiguration?.keyvault?.credentials
+                            ?.client_id || ""
+                        }
+                        error={validationErrors["azure_client_id"] || ""}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="azure_client_secret"
+                        name="azure_client_secret"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setAzureConfiguration({
+                            ...azureConfiguration,
+                            keyvault: {
+                              ...azureConfiguration?.keyvault,
+                              credentials: {
+                                ...azureConfiguration?.keyvault?.credentials,
+                                client_secret: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Client Secret"
+                        value={
+                          azureConfiguration?.keyvault?.credentials
+                            ?.client_secret || ""
+                        }
+                        error={validationErrors["azure_client_secret"] || ""}
+                      />
+                    </Grid>
+                  </fieldset>
+                </Grid>
+              </Fragment>
+            )}
+            {encryptionType === "gcp" && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="gcp_project_id"
+                    name="gcp_project_id"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setGCPConfiguration({
+                        ...gcpConfiguration,
+                        secretmanager: {
+                          ...gcpConfiguration?.secretmanager,
+                          project_id: e.target.value,
+                        },
+                      })
+                    }
+                    label="Project ID"
+                    value={gcpConfiguration?.secretmanager.project_id || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="gcp_endpoint"
+                    name="gcp_endpoint"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setGCPConfiguration({
+                        ...gcpConfiguration,
+                        secretmanager: {
+                          ...gcpConfiguration?.secretmanager,
+                          endpoint: e.target.value,
+                        },
+                      })
+                    }
+                    label="Endpoint"
+                    value={gcpConfiguration?.secretmanager.endpoint || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Credentials
+                    </legend>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="gcp_client_email"
+                        name="gcp_client_email"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGCPConfiguration({
+                            ...gcpConfiguration,
+                            secretmanager: {
+                              ...gcpConfiguration?.secretmanager,
+                              credentials: {
+                                ...gcpConfiguration?.secretmanager.credentials,
+                                client_email: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Client Email"
+                        value={
+                          gcpConfiguration?.secretmanager.credentials
+                            ?.client_email || ""
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="gcp_client_id"
+                        name="gcp_client_id"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGCPConfiguration({
+                            ...gcpConfiguration,
+                            secretmanager: {
+                              ...gcpConfiguration?.secretmanager,
+                              credentials: {
+                                ...gcpConfiguration?.secretmanager.credentials,
+                                client_id: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Client ID"
+                        value={
+                          gcpConfiguration?.secretmanager.credentials
+                            ?.client_id || ""
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="gcp_private_key_id"
+                        name="gcp_private_key_id"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGCPConfiguration({
+                            ...gcpConfiguration,
+                            secretmanager: {
+                              ...gcpConfiguration?.secretmanager,
+                              credentials: {
+                                ...gcpConfiguration?.secretmanager.credentials,
+                                private_key_id: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Private Key ID"
+                        value={
+                          gcpConfiguration?.secretmanager.credentials
+                            ?.private_key_id || ""
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="gcp_private_key"
+                        name="gcp_private_key"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGCPConfiguration({
+                            ...gcpConfiguration,
+                            secretmanager: {
+                              ...gcpConfiguration?.secretmanager,
+                              credentials: {
+                                ...gcpConfiguration?.secretmanager.credentials,
+                                private_key: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Private Key"
+                        value={
+                          gcpConfiguration?.secretmanager.credentials
+                            ?.private_key || ""
+                        }
+                      />
+                    </Grid>
+                  </fieldset>
+                </Grid>
+              </Fragment>
+            )}
+            {encryptionType === "aws" && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="aws_endpoint"
+                    name="aws_endpoint"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setAWSConfiguration({
+                        ...awsConfiguration,
+                        secretsmanager: {
+                          ...awsConfiguration?.secretsmanager,
+                          endpoint: e.target.value,
+                        },
+                      })
+                    }
+                    label="Endpoint"
+                    value={awsConfiguration?.secretsmanager?.endpoint || ""}
+                    required
+                    error={validationErrors["aws_endpoint"] || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="aws_region"
+                    name="aws_region"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setAWSConfiguration({
+                        ...awsConfiguration,
+                        secretsmanager: {
+                          ...awsConfiguration?.secretsmanager,
+                          region: e.target.value,
+                        },
+                      })
+                    }
+                    label="Region"
+                    value={awsConfiguration?.secretsmanager?.region || ""}
+                    error={validationErrors["aws_region"] || ""}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="aws_kmsKey"
+                    name="aws_kmsKey"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setAWSConfiguration({
+                        ...awsConfiguration,
+                        secretsmanager: {
+                          ...awsConfiguration?.secretsmanager,
+                          kmskey: e.target.value,
+                        },
+                      })
+                    }
+                    label="KMS Key"
+                    value={awsConfiguration?.secretsmanager?.kmskey || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Credentials
+                    </legend>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="aws_accessKey"
+                        name="aws_accessKey"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setAWSConfiguration({
+                            ...awsConfiguration,
+                            secretsmanager: {
+                              ...awsConfiguration?.secretsmanager,
+                              credentials: {
+                                ...awsConfiguration?.secretsmanager
+                                  ?.credentials,
+                                accesskey: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Access Key"
+                        value={
+                          awsConfiguration?.secretsmanager?.credentials
+                            ?.accesskey || ""
+                        }
+                        error={validationErrors["aws_accessKey"] || ""}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="aws_secretKey"
+                        name="aws_secretKey"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setAWSConfiguration({
+                            ...awsConfiguration,
+                            secretsmanager: {
+                              ...awsConfiguration?.secretsmanager,
+                              credentials: {
+                                ...awsConfiguration?.secretsmanager
+                                  ?.credentials,
+                                secretkey: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Secret Key"
+                        value={
+                          awsConfiguration?.secretsmanager?.credentials
+                            ?.secretkey || ""
+                        }
+                        error={validationErrors["aws_secretKey"] || ""}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="aws_token"
+                        name="aws_token"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setAWSConfiguration({
+                            ...awsConfiguration,
+                            secretsmanager: {
+                              ...awsConfiguration?.secretsmanager,
+                              credentials: {
+                                ...awsConfiguration?.secretsmanager
+                                  ?.credentials,
+                                token: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Token"
+                        value={
+                          awsConfiguration?.secretsmanager?.credentials
+                            ?.token || ""
+                        }
+                      />
+                    </Grid>
+                  </fieldset>
+                </Grid>
+              </Fragment>
+            )}
+            {encryptionType === "gemalto" && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="gemalto_endpoint"
+                    name="gemalto_endpoint"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setGemaltoConfiguration({
+                        ...gemaltoConfiguration,
+                        keysecure: {
+                          ...gemaltoConfiguration?.keysecure,
+                          endpoint: e.target.value,
+                        },
+                      })
+                    }
+                    label="Endpoint"
+                    value={gemaltoConfiguration?.keysecure?.endpoint || ""}
+                    error={validationErrors["gemalto_endpoint"] || ""}
+                    required
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  style={{
+                    marginBottom: 15,
+                  }}
+                >
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Credentials
+                    </legend>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="gemalto_token"
+                        name="gemalto_token"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGemaltoConfiguration({
+                            ...gemaltoConfiguration,
+                            keysecure: {
+                              ...gemaltoConfiguration?.keysecure,
+                              credentials: {
+                                ...gemaltoConfiguration?.keysecure?.credentials,
+                                token: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Token"
+                        value={
+                          gemaltoConfiguration?.keysecure?.credentials?.token ||
+                          ""
+                        }
+                        error={validationErrors["gemalto_token"] || ""}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        id="gemalto_domain"
+                        name="gemalto_domain"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGemaltoConfiguration({
+                            ...gemaltoConfiguration,
+                            keysecure: {
+                              ...gemaltoConfiguration?.keysecure,
+                              credentials: {
+                                ...gemaltoConfiguration?.keysecure?.credentials,
+                                domain: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Domain"
+                        value={
+                          gemaltoConfiguration?.keysecure?.credentials
+                            ?.domain || ""
+                        }
+                        error={validationErrors["gemalto_domain"] || ""}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <InputBoxWrapper
+                        type="number"
+                        min="0"
+                        id="gemalto_retry"
+                        name="gemalto_retry"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGemaltoConfiguration({
+                            ...gemaltoConfiguration,
+                            keysecure: {
+                              ...gemaltoConfiguration?.keysecure,
+                              credentials: {
+                                ...gemaltoConfiguration?.keysecure?.credentials,
+                                retry: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        label="Retry (seconds)"
+                        value={
+                          gemaltoConfiguration?.keysecure?.credentials?.retry ||
+                          ""
+                        }
+                        error={validationErrors["gemalto_retry"] || ""}
+                      />
+                    </Grid>
+                  </fieldset>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  style={{
+                    marginBottom: 15,
+                  }}
+                >
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Custom CA Root certificate verification
+                    </legend>
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {}}
+                      accept=".cer,.crt,.cert,.pem"
+                      id="gemalto_ca"
+                      name="gemalto_ca"
+                      label="CA"
+                      value={""}
                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
-                        Credentials
-                      </legend>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="azure_tenant_id"
-                          name="azure_tenant_id"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setAzureConfiguration({
-                              ...azureConfiguration,
-                              keyvault: {
-                                ...azureConfiguration?.keyvault,
-                                credentials: {
-                                  ...azureConfiguration?.keyvault?.credentials,
-                                  tenant_id: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Tenant ID"
-                          value={
-                            azureConfiguration?.keyvault?.credentials
-                              ?.tenant_id || ""
-                          }
-                          error={validationErrors["azure_tenant_id"] || ""}
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="azure_client_id"
-                          name="azure_client_id"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setAzureConfiguration({
-                              ...azureConfiguration,
-                              keyvault: {
-                                ...azureConfiguration?.keyvault,
-                                credentials: {
-                                  ...azureConfiguration?.keyvault?.credentials,
-                                  client_id: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Client ID"
-                          value={
-                            azureConfiguration?.keyvault?.credentials
-                              ?.client_id || ""
-                          }
-                          error={validationErrors["azure_client_id"] || ""}
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="azure_client_secret"
-                          name="azure_client_secret"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setAzureConfiguration({
-                              ...azureConfiguration,
-                              keyvault: {
-                                ...azureConfiguration?.keyvault,
-                                credentials: {
-                                  ...azureConfiguration?.keyvault?.credentials,
-                                  client_secret: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Client Secret"
-                          value={
-                            azureConfiguration?.keyvault?.credentials
-                              ?.client_secret || ""
-                          }
-                          error={validationErrors["azure_client_secret"] || ""}
-                        />
-                      </Grid>
-                    </fieldset>
-                  </Grid>
-                </Fragment>
-              )}
-              {encryptionType === "gcp" && (
-                <Fragment>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="gcp_project_id"
-                      name="gcp_project_id"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setGCPConfiguration({
-                          ...gcpConfiguration,
-                          secretmanager: {
-                            ...gcpConfiguration?.secretmanager,
-                            project_id: e.target.value,
-                          },
-                        })
-                      }
-                      label="Project ID"
-                      value={gcpConfiguration?.secretmanager.project_id || ""}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="gcp_endpoint"
-                      name="gcp_endpoint"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setGCPConfiguration({
-                          ...gcpConfiguration,
-                          secretmanager: {
-                            ...gcpConfiguration?.secretmanager,
-                            endpoint: e.target.value,
-                          },
-                        })
-                      }
-                      label="Endpoint"
-                      value={gcpConfiguration?.secretmanager.endpoint || ""}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
-                        Credentials
-                      </legend>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="gcp_client_email"
-                          name="gcp_client_email"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGCPConfiguration({
-                              ...gcpConfiguration,
-                              secretmanager: {
-                                ...gcpConfiguration?.secretmanager,
-                                credentials: {
-                                  ...gcpConfiguration?.secretmanager
-                                    .credentials,
-                                  client_email: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Client Email"
-                          value={
-                            gcpConfiguration?.secretmanager.credentials
-                              ?.client_email || ""
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="gcp_client_id"
-                          name="gcp_client_id"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGCPConfiguration({
-                              ...gcpConfiguration,
-                              secretmanager: {
-                                ...gcpConfiguration?.secretmanager,
-                                credentials: {
-                                  ...gcpConfiguration?.secretmanager
-                                    .credentials,
-                                  client_id: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Client ID"
-                          value={
-                            gcpConfiguration?.secretmanager.credentials
-                              ?.client_id || ""
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="gcp_private_key_id"
-                          name="gcp_private_key_id"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGCPConfiguration({
-                              ...gcpConfiguration,
-                              secretmanager: {
-                                ...gcpConfiguration?.secretmanager,
-                                credentials: {
-                                  ...gcpConfiguration?.secretmanager
-                                    .credentials,
-                                  private_key_id: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Private Key ID"
-                          value={
-                            gcpConfiguration?.secretmanager.credentials
-                              ?.private_key_id || ""
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="gcp_private_key"
-                          name="gcp_private_key"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGCPConfiguration({
-                              ...gcpConfiguration,
-                              secretmanager: {
-                                ...gcpConfiguration?.secretmanager,
-                                credentials: {
-                                  ...gcpConfiguration?.secretmanager
-                                    .credentials,
-                                  private_key: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Private Key"
-                          value={
-                            gcpConfiguration?.secretmanager.credentials
-                              ?.private_key || ""
-                          }
-                        />
-                      </Grid>
-                    </fieldset>
-                  </Grid>
-                </Fragment>
-              )}
-              {encryptionType === "aws" && (
-                <Fragment>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="aws_endpoint"
-                      name="aws_endpoint"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setAWSConfiguration({
-                          ...awsConfiguration,
-                          secretsmanager: {
-                            ...awsConfiguration?.secretsmanager,
-                            endpoint: e.target.value,
-                          },
-                        })
-                      }
-                      label="Endpoint"
-                      value={awsConfiguration?.secretsmanager?.endpoint || ""}
-                      required
-                      error={validationErrors["aws_endpoint"] || ""}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="aws_region"
-                      name="aws_region"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setAWSConfiguration({
-                          ...awsConfiguration,
-                          secretsmanager: {
-                            ...awsConfiguration?.secretsmanager,
-                            region: e.target.value,
-                          },
-                        })
-                      }
-                      label="Region"
-                      value={awsConfiguration?.secretsmanager?.region || ""}
-                      error={validationErrors["aws_region"] || ""}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="aws_kmsKey"
-                      name="aws_kmsKey"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setAWSConfiguration({
-                          ...awsConfiguration,
-                          secretsmanager: {
-                            ...awsConfiguration?.secretsmanager,
-                            kmskey: e.target.value,
-                          },
-                        })
-                      }
-                      label="KMS Key"
-                      value={awsConfiguration?.secretsmanager?.kmskey || ""}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
-                        Credentials
-                      </legend>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="aws_accessKey"
-                          name="aws_accessKey"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setAWSConfiguration({
-                              ...awsConfiguration,
-                              secretsmanager: {
-                                ...awsConfiguration?.secretsmanager,
-                                credentials: {
-                                  ...awsConfiguration?.secretsmanager
-                                    ?.credentials,
-                                  accesskey: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Access Key"
-                          value={
-                            awsConfiguration?.secretsmanager?.credentials
-                              ?.accesskey || ""
-                          }
-                          error={validationErrors["aws_accessKey"] || ""}
-                          required
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="aws_secretKey"
-                          name="aws_secretKey"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setAWSConfiguration({
-                              ...awsConfiguration,
-                              secretsmanager: {
-                                ...awsConfiguration?.secretsmanager,
-                                credentials: {
-                                  ...awsConfiguration?.secretsmanager
-                                    ?.credentials,
-                                  secretkey: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Secret Key"
-                          value={
-                            awsConfiguration?.secretsmanager?.credentials
-                              ?.secretkey || ""
-                          }
-                          error={validationErrors["aws_secretKey"] || ""}
-                          required
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="aws_token"
-                          name="aws_token"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setAWSConfiguration({
-                              ...awsConfiguration,
-                              secretsmanager: {
-                                ...awsConfiguration?.secretsmanager,
-                                credentials: {
-                                  ...awsConfiguration?.secretsmanager
-                                    ?.credentials,
-                                  token: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Token"
-                          value={
-                            awsConfiguration?.secretsmanager?.credentials
-                              ?.token || ""
-                          }
-                        />
-                      </Grid>
-                    </fieldset>
-                  </Grid>
-                </Fragment>
-              )}
-              {encryptionType === "gemalto" && (
-                <Fragment>
-                  <Grid item xs={12} className={classes.formFieldRow}>
-                    <InputBoxWrapper
-                      id="gemalto_endpoint"
-                      name="gemalto_endpoint"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setGemaltoConfiguration({
-                          ...gemaltoConfiguration,
-                          keysecure: {
-                            ...gemaltoConfiguration?.keysecure,
-                            endpoint: e.target.value,
-                          },
-                        })
-                      }
-                      label="Endpoint"
-                      value={gemaltoConfiguration?.keysecure?.endpoint || ""}
-                      error={validationErrors["gemalto_endpoint"] || ""}
-                      required
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    style={{
-                      marginBottom: 15,
-                    }}
-                  >
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
-                        Credentials
-                      </legend>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="gemalto_token"
-                          name="gemalto_token"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGemaltoConfiguration({
-                              ...gemaltoConfiguration,
-                              keysecure: {
-                                ...gemaltoConfiguration?.keysecure,
-                                credentials: {
-                                  ...gemaltoConfiguration?.keysecure
-                                    ?.credentials,
-                                  token: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Token"
-                          value={
-                            gemaltoConfiguration?.keysecure?.credentials
-                              ?.token || ""
-                          }
-                          error={validationErrors["gemalto_token"] || ""}
-                          required
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="gemalto_domain"
-                          name="gemalto_domain"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGemaltoConfiguration({
-                              ...gemaltoConfiguration,
-                              keysecure: {
-                                ...gemaltoConfiguration?.keysecure,
-                                credentials: {
-                                  ...gemaltoConfiguration?.keysecure
-                                    ?.credentials,
-                                  domain: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Domain"
-                          value={
-                            gemaltoConfiguration?.keysecure?.credentials
-                              ?.domain || ""
-                          }
-                          error={validationErrors["gemalto_domain"] || ""}
-                          required
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          type="number"
-                          min="0"
-                          id="gemalto_retry"
-                          name="gemalto_retry"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGemaltoConfiguration({
-                              ...gemaltoConfiguration,
-                              keysecure: {
-                                ...gemaltoConfiguration?.keysecure,
-                                credentials: {
-                                  ...gemaltoConfiguration?.keysecure
-                                    ?.credentials,
-                                  retry: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          label="Retry (seconds)"
-                          value={
-                            gemaltoConfiguration?.keysecure?.credentials
-                              ?.retry || ""
-                          }
-                          error={validationErrors["gemalto_retry"] || ""}
-                        />
-                      </Grid>
-                    </fieldset>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    style={{
-                      marginBottom: 15,
-                    }}
-                  >
-                    <fieldset className={classes.fieldGroup}>
-                      <legend className={classes.descriptionText}>
-                        Custom CA Root certificate verification
-                      </legend>
+                    {gemaltoCACertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={gemaltoCACertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(gemaltoCACertificateSecret)
+                        }
+                      />
+                    ) : (
                       <FileSelector
-                        onChange={(encodedValue, fileName) => {}}
+                        onChange={(encodedValue, fileName) =>
+                          setGemaltotCACertificate({
+                            encoded_key:
+                              gemaltoCACertificate?.encoded_key || "",
+                            id: gemaltoCACertificate?.id || "",
+                            key: gemaltoCACertificate?.key || "",
+                            cert: fileName || "",
+                            encoded_cert: encodedValue || "",
+                          })
+                        }
                         accept=".cer,.crt,.cert,.pem"
                         id="gemalto_ca"
                         name="gemalto_ca"
                         label="CA"
-                        value={""}
+                        value={gemaltoCACertificate?.cert || ""}
                       />
-                      {gemaltoCACertificateSecret ? (
-                        <TLSCertificate
-                          certificateInfo={gemaltoCACertificateSecret}
-                          onDelete={() =>
-                            removeCertificate(gemaltoCACertificateSecret)
-                          }
-                        />
-                      ) : (
-                        <FileSelector
-                          onChange={(encodedValue, fileName) =>
-                            setGemaltotCACertificate({
-                              encoded_key:
-                                gemaltoCACertificate?.encoded_key || "",
-                              id: gemaltoCACertificate?.id || "",
-                              key: gemaltoCACertificate?.key || "",
-                              cert: fileName || "",
-                              encoded_cert: encodedValue || "",
-                            })
-                          }
-                          accept=".cer,.crt,.cert,.pem"
-                          id="gemalto_ca"
-                          name="gemalto_ca"
-                          label="CA"
-                          value={gemaltoCACertificate?.cert || ""}
-                        />
-                      )}
-                    </fieldset>
-                  </Grid>
-                </Fragment>
-              )}
-              <div className={classes.headerElement}>
-                <h4 className={classes.h3Section}>Additional Configurations</h4>
-              </div>
-              <Grid item xs={12}>
+                    )}
+                  </fieldset>
+                </Grid>
+              </Fragment>
+            )}
+            <Grid item xs={12}>
+              <Stack>
+                <StackRow
+                  sx={{
+                    borderBottom: "1px solid #eaeaea",
+                    margin: 0,
+                    marginBottom: 1,
+                  }}
+                >
+                  <h3
+                    style={{
+                      marginBottom: 8,
+                    }}
+                  >
+                    Additional Configurations
+                  </h3>
+                </StackRow>
+
                 <FormSwitchWrapper
                   value="enableCustomCertsForKES"
                   id="enableCustomCertsForKES"
@@ -1581,266 +1622,266 @@ const TenantEncryption = ({
                   }
                   label={"Custom Certificates"}
                 />
-              </Grid>
-              {enabledCustomCertificates && (
-                <Fragment>
-                  <Grid container>
-                    <Grid item xs={12} style={{ marginBottom: 15 }}>
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Encryption Service Certificates
-                        </legend>
-                        {serverTLSCertificateSecret ? (
-                          <TLSCertificate
-                            certificateInfo={serverTLSCertificateSecret}
-                            onDelete={() =>
-                              removeCertificate(serverTLSCertificateSecret)
-                            }
-                          />
-                        ) : (
-                          <Fragment>
-                            <FileSelector
-                              onChange={(encodedValue, fileName) => {
-                                setServerCertificate({
-                                  encoded_key: encodedValue || "",
-                                  id: serverCertificate?.id || "",
-                                  key: fileName || "",
-                                  cert: serverCertificate?.cert || "",
-                                  encoded_cert:
-                                    serverCertificate?.encoded_cert || "",
-                                });
-                                cleanValidation("serverKey");
-                              }}
-                              accept=".key,.pem"
-                              id="serverKey"
-                              name="serverKey"
-                              label="Key"
-                              value={serverCertificate?.key}
-                            />
-                            <FileSelector
-                              onChange={(encodedValue, fileName) => {
-                                setServerCertificate({
-                                  encoded_key:
-                                    serverCertificate?.encoded_key || "",
-                                  id: serverCertificate?.id || "",
-                                  key: serverCertificate?.key || "",
-                                  cert: fileName || "",
-                                  encoded_cert: encodedValue || "",
-                                });
-                                cleanValidation("serverCert");
-                              }}
-                              accept=".cer,.crt,.cert,.pem"
-                              id="serverCert"
-                              name="serverCert"
-                              label="Cert"
-                              value={serverCertificate?.cert}
-                            />
-                          </Fragment>
-                        )}
-                      </fieldset>
-                    </Grid>
-                  </Grid>
-                  <Grid container style={{ marginBottom: 15 }}>
-                    <Grid item xs={12}>
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Mutual TLS authentication with MinIO
-                        </legend>
-                        {mTLSCertificateSecret ? (
-                          <TLSCertificate
-                            certificateInfo={mTLSCertificateSecret}
-                            onDelete={() =>
-                              removeCertificate(mTLSCertificateSecret)
-                            }
-                          />
-                        ) : (
-                          <Fragment>
-                            <FileSelector
-                              onChange={(encodedValue, fileName) => {
-                                setMTLSCertificate({
-                                  encoded_key: encodedValue || "",
-                                  id: mTLSCertificate?.id || "",
-                                  key: fileName || "",
-                                  cert: mTLSCertificate?.cert || "",
-                                  encoded_cert:
-                                    mTLSCertificate?.encoded_cert || "",
-                                });
-                                cleanValidation("clientKey");
-                              }}
-                              accept=".key,.pem"
-                              id="clientKey"
-                              name="clientKey"
-                              label="Key"
-                              value={mTLSCertificate?.key}
-                            />
-                            <FileSelector
-                              onChange={(encodedValue, fileName) => {
-                                setMTLSCertificate({
-                                  encoded_key:
-                                    mTLSCertificate?.encoded_key || "",
-                                  id: mTLSCertificate?.id || "",
-                                  key: mTLSCertificate?.key || "",
-                                  cert: fileName || "",
-                                  encoded_cert: encodedValue || "",
-                                });
-                                cleanValidation("clientCert");
-                              }}
-                              accept=".cer,.crt,.cert,.pem"
-                              id="clientCert"
-                              name="clientCert"
-                              label="Cert"
-                              value={mTLSCertificate?.cert}
-                            />
-                          </Fragment>
-                        )}
-                      </fieldset>
-                    </Grid>
-                  </Grid>
-                </Fragment>
-              )}
-              <Grid item xs={12}>
-                <Grid item xs={12} classes={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    type="text"
-                    id="image"
-                    name="image"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setImage(e.target.value)
-                    }
-                    label="Image"
-                    placeholder="minio/kes:v0.17.6"
-                    value={image}
-                  />
+              </Stack>
+            </Grid>
+            {enabledCustomCertificates && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Encryption Service Certificates
+                    </legend>
+                    {serverTLSCertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={serverTLSCertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(serverTLSCertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <Fragment>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setServerCertificate({
+                              encoded_key: encodedValue || "",
+                              id: serverCertificate?.id || "",
+                              key: fileName || "",
+                              cert: serverCertificate?.cert || "",
+                              encoded_cert:
+                                serverCertificate?.encoded_cert || "",
+                            });
+                            cleanValidation("serverKey");
+                          }}
+                          accept=".key,.pem"
+                          id="serverKey"
+                          name="serverKey"
+                          label="Key"
+                          value={serverCertificate?.key}
+                        />
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setServerCertificate({
+                              encoded_key: serverCertificate?.encoded_key || "",
+                              id: serverCertificate?.id || "",
+                              key: serverCertificate?.key || "",
+                              cert: fileName || "",
+                              encoded_cert: encodedValue || "",
+                            });
+                            cleanValidation("serverCert");
+                          }}
+                          accept=".cer,.crt,.cert,.pem"
+                          id="serverCert"
+                          name="serverCert"
+                          label="Cert"
+                          value={serverCertificate?.cert}
+                        />
+                      </Fragment>
+                    )}
+                  </fieldset>
                 </Grid>
-                <Grid item xs={12} classes={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    type="number"
-                    min="1"
-                    id="replicas"
-                    name="replicas"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setReplicas(e.target.value)
-                    }
-                    label="Replicas"
-                    value={replicas}
-                    required
-                    error={validationErrors["replicas"] || ""}
-                  />
-                </Grid>
-
-                <fieldset
-                  className={classes.fieldGroup}
-                  style={{ marginTop: 15 }}
-                >
-                  <legend className={classes.descriptionText}>
-                    SecurityContext for KES pods
-                  </legend>
-                  <Grid item xs={12} className={classes.kesSecurityContext}>
-                    <div
-                      className={`${classes.multiContainer} ${classes.responsiveContainer}`}
-                    >
-                      <div
-                        className={`${classes.formFieldRow} ${classes.rightSpacer}`}
-                      >
-                        <InputBoxWrapper
-                          type="number"
-                          id="kes_securityContext_runAsUser"
-                          name="kes_securityContext_runAsUser"
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setSecurityContext({
-                              ...securityContext,
-                              runAsUser: e.target.value,
-                            });
-                          }}
-                          label="Run As User"
-                          value={securityContext.runAsUser}
-                          required
-                          error={
-                            validationErrors["kes_securityContext_runAsUser"] ||
-                            ""
-                          }
-                          min="0"
-                        />
-                      </div>
-                      <div
-                        className={`${classes.formFieldRow} ${classes.rightSpacer}`}
-                      >
-                        <InputBoxWrapper
-                          type="number"
-                          id="kes_securityContext_runAsGroup"
-                          name="kes_securityContext_runAsGroup"
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setSecurityContext({
-                              ...securityContext,
-                              runAsGroup: e.target.value,
-                            });
-                          }}
-                          label="Run As Group"
-                          value={securityContext.runAsGroup}
-                          required
-                          error={
-                            validationErrors[
-                              "kes_securityContext_runAsGroup"
-                            ] || ""
-                          }
-                          min="0"
-                        />
-                      </div>
-                      <div
-                        className={`${classes.formFieldRow} ${classes.rightSpacer}`}
-                      >
-                        <InputBoxWrapper
-                          type="number"
-                          id="kes_securityContext_fsGroup"
-                          name="kes_securityContext_fsGroup"
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setSecurityContext({
-                              ...securityContext,
-                              fsGroup: e.target.value,
-                            });
-                          }}
-                          label="FsGroup"
-                          value={securityContext.fsGroup}
-                          required
-                          error={
-                            validationErrors["kes_securityContext_fsGroup"] ||
-                            ""
-                          }
-                          min="0"
-                        />
-                      </div>
-                    </div>
-                  </Grid>
-                  <br />
+                <Grid container spacing={1} style={{ marginBottom: 15 }}>
                   <Grid item xs={12}>
-                    <div className={classes.multiContainer}>
-                      <FormSwitchWrapper
-                        value="kesSecurityContextRunAsNonRoot"
-                        id="kes_securityContext_runAsNonRoot"
-                        name="kes_securityContext_runAsNonRoot"
-                        checked={securityContext.runAsNonRoot}
-                        onChange={(e) => {
-                          const targetD = e.target;
-                          const checked = targetD.checked;
+                    <Stack>
+                      <StackRow
+                        sx={{
+                          borderBottom: "1px solid #eaeaea",
+                          margin: 0,
+                          marginBottom: 1,
+                        }}
+                      >
+                        Mutual TLS authentication with MinIO
+                      </StackRow>
+                      {mTLSCertificateSecret ? (
+                        <TLSCertificate
+                          certificateInfo={mTLSCertificateSecret}
+                          onDelete={() =>
+                            removeCertificate(mTLSCertificateSecret)
+                          }
+                        />
+                      ) : (
+                        <Fragment>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              setMTLSCertificate({
+                                encoded_key: encodedValue || "",
+                                id: mTLSCertificate?.id || "",
+                                key: fileName || "",
+                                cert: mTLSCertificate?.cert || "",
+                                encoded_cert:
+                                  mTLSCertificate?.encoded_cert || "",
+                              });
+                              cleanValidation("clientKey");
+                            }}
+                            accept=".key,.pem"
+                            id="clientKey"
+                            name="clientKey"
+                            label="Key"
+                            value={mTLSCertificate?.key}
+                          />
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              setMTLSCertificate({
+                                encoded_key: mTLSCertificate?.encoded_key || "",
+                                id: mTLSCertificate?.id || "",
+                                key: mTLSCertificate?.key || "",
+                                cert: fileName || "",
+                                encoded_cert: encodedValue || "",
+                              });
+                              cleanValidation("clientCert");
+                            }}
+                            accept=".cer,.crt,.cert,.pem"
+                            id="clientCert"
+                            name="clientCert"
+                            label="Cert"
+                            value={mTLSCertificate?.cert}
+                          />
+                        </Fragment>
+                      )}
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </Fragment>
+            )}
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                type="text"
+                id="image"
+                name="image"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setImage(e.target.value)
+                }
+                label="Image"
+                placeholder="minio/kes:v0.17.6"
+                value={image}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                type="number"
+                min="1"
+                id="replicas"
+                name="replicas"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setReplicas(e.target.value)
+                }
+                label="Replicas"
+                value={replicas}
+                required
+                error={validationErrors["replicas"] || ""}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Stack>
+                <StackRow
+                  sx={{
+                    borderBottom: "1px solid #eaeaea",
+                    margin: 0,
+                    marginBottom: 1,
+                  }}
+                >
+                  <h3
+                    style={{
+                      marginBottom: 10,
+                    }}
+                  >
+                    SecurityContext for KES pods
+                  </h3>
+                </StackRow>
+                <Grid item xs={12} className={classes.kesSecurityContext}>
+                  <div
+                    className={`${classes.multiContainer} ${classes.responsiveContainer}`}
+                  >
+                    <div
+                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                    >
+                      <InputBoxWrapper
+                        type="number"
+                        id="kes_securityContext_runAsUser"
+                        name="kes_securityContext_runAsUser"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setSecurityContext({
                             ...securityContext,
-                            runAsNonRoot: checked,
+                            runAsUser: e.target.value,
                           });
                         }}
-                        label={"Do not run as Root"}
+                        label="Run As User"
+                        value={securityContext.runAsUser}
+                        required
+                        error={
+                          validationErrors["kes_securityContext_runAsUser"] ||
+                          ""
+                        }
+                        min="0"
                       />
                     </div>
-                  </Grid>
-                </fieldset>
-              </Grid>
+                    <div
+                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                    >
+                      <InputBoxWrapper
+                        type="number"
+                        id="kes_securityContext_runAsGroup"
+                        name="kes_securityContext_runAsGroup"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setSecurityContext({
+                            ...securityContext,
+                            runAsGroup: e.target.value,
+                          });
+                        }}
+                        label="Run As Group"
+                        value={securityContext.runAsGroup}
+                        required
+                        error={
+                          validationErrors["kes_securityContext_runAsGroup"] ||
+                          ""
+                        }
+                        min="0"
+                      />
+                    </div>
+                    <div
+                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                    >
+                      <InputBoxWrapper
+                        type="number"
+                        id="kes_securityContext_fsGroup"
+                        name="kes_securityContext_fsGroup"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setSecurityContext({
+                            ...securityContext,
+                            fsGroup: e.target.value,
+                          });
+                        }}
+                        label="FsGroup"
+                        value={securityContext.fsGroup}
+                        required
+                        error={
+                          validationErrors["kes_securityContext_fsGroup"] || ""
+                        }
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                </Grid>
+                <br />
+                <Grid item xs={12}>
+                  <FormSwitchWrapper
+                    value="kesSecurityContextRunAsNonRoot"
+                    id="kes_securityContext_runAsNonRoot"
+                    name="kes_securityContext_runAsNonRoot"
+                    checked={securityContext.runAsNonRoot}
+                    onChange={(e) => {
+                      const targetD = e.target;
+                      const checked = targetD.checked;
+                      setSecurityContext({
+                        ...securityContext,
+                        runAsNonRoot: checked,
+                      });
+                    }}
+                    label={"Do not run as Root"}
+                  />
+                </Grid>
+              </Stack>
             </Grid>
-          </Paper>
+          </Grid>
         )}
         <Grid item xs={12} className={classes.buttonContainer}>
           <Button
