@@ -14,31 +14,38 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
-import {InputAdornment, LinearProgress, TextFieldProps} from "@mui/material";
-import {Theme} from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { InputAdornment, LinearProgress, TextFieldProps } from "@mui/material";
+import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import withStyles from "@mui/styles/withStyles";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import {ILoginDetails, loginStrategyType} from "./types";
-import {SystemState} from "../../types";
-import {setErrorSnackMessage, userLoggedIn} from "../../actions";
-import {ErrorResponseHandler} from "../../common/types";
+import { ILoginDetails, loginStrategyType } from "./types";
+import { SystemState } from "../../types";
+import { setErrorSnackMessage, userLoggedIn } from "../../actions";
+import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
 import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
-import {encodeFileName} from "../../common/utils";
-import {ArrowRightIcon, DocumentationIcon, DownloadIcon, LockIcon, LoginMinIOLogo, MinIOTierIconXs,} from "../../icons";
-import {spacingUtils} from "../Console/Common/FormComponents/common/styleLibrary";
+import { encodeFileName } from "../../common/utils";
+import {
+  ArrowRightIcon,
+  DocumentationIcon,
+  DownloadIcon,
+  LockIcon,
+  LoginMinIOLogo,
+  MinIOTierIconXs,
+} from "../../icons";
+import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import CssBaseline from "@mui/material/CssBaseline";
 import LockFilledIcon from "../../icons/LockFilledIcon";
 import UserFilledIcon from "../../icons/UsersFilledIcon";
-import {SupportMenuIcon} from "../../icons/SidebarMenus";
+import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
@@ -515,19 +522,19 @@ const Login = ({
     }
     case loginStrategyType.redirectServiceAccount: {
       loginComponent = (
-          <React.Fragment>
-            <Button
-                component={"a"}
-                href={loginStrategy.redirect}
-                type="submit"
-                variant="contained"
-                color="primary"
-                id="sso-login"
-                className={classes.submit}
-            >
-              Login with SSO
-            </Button>
-          </React.Fragment>
+        <React.Fragment>
+          <Button
+            component={"a"}
+            href={loginStrategy.redirect}
+            type="submit"
+            variant="contained"
+            color="primary"
+            id="sso-login"
+            className={classes.submit}
+          >
+            Login with SSO
+          </Button>
+        </React.Fragment>
       );
       break;
     }
@@ -616,7 +623,8 @@ const Login = ({
   }
 
   const consoleText =
-    loginStrategy.loginStrategy === loginStrategyType.serviceAccount || loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount
+    loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
+    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount
       ? "Operator"
       : "Console";
 
