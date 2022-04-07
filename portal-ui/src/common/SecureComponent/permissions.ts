@@ -161,6 +161,7 @@ export const IAM_PAGES = {
   TIERS: "/settings/tiers",
   TIERS_ADD: "/settings/tiers/add",
   TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
+  SITE_REPLICATION: "/settings/site-replication",
 
   /* Operator */
   TENANTS: "/tenants",
@@ -379,6 +380,10 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],
+  [IAM_PAGES.SITE_REPLICATION]:[
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ]
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";

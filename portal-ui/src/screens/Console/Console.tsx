@@ -118,7 +118,7 @@ const ConfigurationOptions = React.lazy(
 const AddPool = React.lazy(
   () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
-
+const SiteReplication = React.lazy(() => import("./Configurations/SiteReplication/SiteReplication"));
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -367,6 +367,10 @@ const Console = ({
     {
       component: ListTiersConfiguration,
       path: IAM_PAGES.TIERS,
+    },
+    {
+      component: SiteReplication,
+      path: IAM_PAGES.SITE_REPLICATION,
     },
     {
       component: Account,
