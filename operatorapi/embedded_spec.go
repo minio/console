@@ -2658,7 +2658,8 @@ func init() {
           "enum": [
             "form",
             "redirect",
-            "service-account"
+            "service-account",
+            "redirect-service-account"
           ]
         },
         "redirect": {
@@ -7404,7 +7405,8 @@ func init() {
           "enum": [
             "form",
             "redirect",
-            "service-account"
+            "service-account",
+            "redirect-service-account"
           ]
         },
         "redirect": {
