@@ -39,7 +39,7 @@ import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import { CircleIcon, TrashIcon } from "../../../../icons";
+import { CircleIcon, MinIOTierIconXs, TrashIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
@@ -51,6 +51,7 @@ import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
+import { tenantIsOnline } from "../ListTenants/utils";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -377,7 +378,7 @@ const TenantDetails = ({
                   }}
                   size="large"
                 >
-                  <span>Delete Tenant</span> <TrashIcon />
+                  <span>Delete</span> <TrashIcon />
                 </BoxIconButton>
                 <BoxIconButton
                   classes={{
@@ -392,8 +393,25 @@ const TenantDetails = ({
                   }}
                   size="large"
                 >
-                  <span>Edit Tenant</span>
+                  <span>YAML</span>
                   <EditIcon />
+                </BoxIconButton>
+                <BoxIconButton
+                  classes={{
+                    root: classes.tenantActionButton,
+                  }}
+                  tooltip={"Management Console"}
+                  onClick={() => {
+                    history.push(
+                      `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
+                    );
+                  }}
+                  disabled={!tenantInfo || !tenantIsOnline(tenantInfo)}
+                  variant={"outlined"}
+                  color="primary"
+                >
+                  <span>Console</span>{" "}
+                  <MinIOTierIconXs style={{ height: 16 }} />
                 </BoxIconButton>
                 <BoxIconButton
                   classes={{
@@ -407,7 +425,7 @@ const TenantDetails = ({
                     setTenantDetailsLoad(true);
                   }}
                 >
-                  <span>Reload</span> <RefreshIcon />
+                  <span>Refresh</span> <RefreshIcon />
                 </BoxIconButton>
               </div>
             }

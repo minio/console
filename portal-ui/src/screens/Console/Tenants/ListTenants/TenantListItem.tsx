@@ -24,10 +24,9 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { niceBytes, niceBytesInt } from "../../../../common/utils";
-import { tenantIsOnline } from "./utils";
-import { Button } from "@mui/material";
 import InformationItem from "./InformationItem";
 import TenantCapacity from "./TenantCapacity";
+import { DrivesIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,9 +75,8 @@ const styles = (theme: Theme) =>
       height: 10,
     },
     tenantItem: {
-      border: "1px solid #EAEDEE",
-      borderRadius: 3,
-      marginBottom: 20,
+      border: "1px solid #EAEAEA",
+      marginBottom: 16,
       padding: "15px 30px",
       "&:hover": {
         backgroundColor: "#FAFAFA",
@@ -154,6 +152,8 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
+  let localUse: ValueUnit = { value: "n/a", unit: "" };
+  let tieredUse: ValueUnit = { value: "n/a", unit: "" };
 
   if (tenant.capacity_raw) {
     const b = niceBytes(`${tenant.capacity_raw}`, true);
@@ -175,7 +175,6 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   }
 
   let spaceVariants: CapacityValues[] = [];
-
   if (!tenant.tiers || tenant.tiers.length === 0) {
     spaceVariants = [
       { value: tenant.capacity_usage || 0, variant: "STANDARD" },
@@ -184,6 +183,26 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
     spaceVariants = tenant.tiers.map((itemTenant) => {
       return { value: itemTenant.size, variant: itemTenant.name };
     });
+    let internalUsage = tenant.tiers
+      .filter((itemTenant) => {
+        return itemTenant.type === "internal";
+      })
+      .reduce((sum, itemTenant) => sum + itemTenant.size, 0);
+    let tieredUsage = tenant.tiers
+      .filter((itemTenant) => {
+        return itemTenant.type !== "internal";
+      })
+      .reduce((sum, itemTenant) => sum + itemTenant.size, 0);
+
+    const t = niceBytesInt(tieredUsage, true);
+    const parts = t.split(" ");
+    tieredUse.value = parts[0];
+    tieredUse.unit = parts[1];
+
+    const is = niceBytesInt(internalUsage, true);
+    const partsInternal = is.split(" ");
+    localUse.value = partsInternal[0];
+    localUse.unit = partsInternal[1];
   }
 
   const openTenantDetails = () => {
@@ -239,13 +258,9 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                     unit={capacity.unit}
                   />
                   <InformationItem
-                    label={"Usage"}
-                    value={used.value}
-                    unit={used.unit}
-                  />
-                  <InformationItem
                     label={"Pools"}
                     value={tenant.pool_count.toString()}
+                    variant={"faded"}
                   />
                 </Grid>
                 <Grid
@@ -258,40 +273,86 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                   </span>
                 </Grid>
               </Grid>
-              <Grid
-                item
-                xs={2}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <Button
-                  id={"manage-tenant-" + tenant.name}
-                  disabled={!tenantIsOnline(tenant)}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+              <Grid item xs={3}>
+                <Fragment>
+                  <Grid container>
+                    <Grid
+                      item
+                      xs={2}
+                      textAlign={"center"}
+                      justifyContent={"center"}
+                      justifyItems={"center"}
+                    >
+                      <DrivesIcon
+                        style={{ width: 25, color: "rgb(91,91,91)" }}
+                      />
+                      <div
+                        style={{
+                          color: "rgb(118, 118, 118)",
+                          fontSize: 12,
+                          fontWeight: "400",
+                        }}
+                      >
+                        Usage
+                      </div>
+                    </Grid>
+                    <Grid item xs={1} />
+                    <Grid item style={{ paddingTop: 8 }}>
+                      {(!tenant.tiers || tenant.tiers.length === 0) && (
+                        <div
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 400,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "rgb(62,62,62)",
+                            }}
+                          >
+                            Internal:{" "}
+                          </span>{" "}
+                          {`${used.value} ${used.unit}`}
+                        </div>
+                      )}
 
-                    history.push(
-                      `/namespaces/${tenant.namespace}/tenants/${tenant.name}/hop`
-                    );
-                  }}
-                  disableTouchRipple
-                  disableRipple
-                  focusRipple={false}
-                  sx={{
-                    color: "#5E5E5E",
-                    border: "#5E5E5E 1px solid",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 4.5,
-                    paddingRight: 4.5,
-                  }}
-                  variant={"outlined"}
-                >
-                  Manage
-                </Button>
+                      {tenant.tiers && tenant.tiers.length > 0 && (
+                        <Fragment>
+                          <div
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 400,
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "rgb(62,62,62)",
+                              }}
+                            >
+                              Internal:{" "}
+                            </span>{" "}
+                            {`${localUse.value} ${localUse.unit}`}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 400,
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "rgb(62,62,62)",
+                              }}
+                            >
+                              Tiered:{" "}
+                            </span>{" "}
+                            {`${tieredUse.value} ${tieredUse.unit}`}
+                          </div>
+                        </Fragment>
+                      )}
+                    </Grid>
+                  </Grid>
+                </Fragment>
               </Grid>
             </Grid>
           </Grid>

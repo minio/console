@@ -20,13 +20,25 @@ interface IInformationItemProps {
   label: string;
   value: string;
   unit?: string;
+  variant?: "normal" | "faded";
 }
 
-const InformationItem = ({ label, value, unit }: IInformationItemProps) => {
+const InformationItem = ({
+  label,
+  value,
+  unit,
+  variant = "normal",
+}: IInformationItemProps) => {
   return (
     <div style={{ margin: "0px 20px" }}>
       <div style={{ textAlign: "center" }}>
-        <span style={{ fontSize: 18, color: "#000", fontWeight: 400 }}>
+        <span
+          style={{
+            fontSize: 18,
+            color: variant === "normal" ? "#000" : "#999",
+            fontWeight: 400,
+          }}
+        >
           {value}
         </span>
         {unit && (
@@ -43,7 +55,7 @@ const InformationItem = ({ label, value, unit }: IInformationItemProps) => {
       <div
         style={{
           textAlign: "center",
-          color: "#767676",
+          color: variant === "normal" ? "#767676" : "#bababa",
           fontSize: 12,
           whiteSpace: "nowrap",
         }}
