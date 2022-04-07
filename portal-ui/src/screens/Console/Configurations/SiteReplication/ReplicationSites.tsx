@@ -362,16 +362,11 @@ const ReplicationSites = ({
               {editSite?.name === key ? (
                 <ModalWrapper
                   title={`Edit Replication Endpoint `}
-                  //confirmText={"Update"}
                   modalOpen={true}
                   titleIcon={<EditIcon />}
-                  // onConfirm={updatePeerSite}
                   onClose={() => {
                     setEditSite(null);
                   }}
-                  /* confirmButtonProps={{
-                    disabled: !isValidEndPointUrl,
-                  }}*/
                 >
                   <DialogContentText>
                     <Box
