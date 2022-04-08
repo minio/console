@@ -709,7 +709,13 @@ const TenantEncryption = ({
           <Grid item xs>
             <h1 className={classes.sectionTitle}>Encryption</h1>
           </Grid>
-          <Grid item xs={4} justifyContent={"end"} textAlign={"right"}>
+          <Grid
+            item
+            xs={4}
+            justifyContent={"end"}
+            textAlign={"right"}
+            className={classes.formFieldRow}
+          >
             <FormSwitchWrapper
               label={""}
               indicatorLabels={["Enabled", "Disabled"]}
@@ -717,7 +723,7 @@ const TenantEncryption = ({
               value={"tenant_encryption"}
               id="tenant-encryption"
               name="tenant-encryption"
-              onChange={(e) => {
+              onChange={() => {
                 setEncryptionEnabled(!encryptionEnabled);
               }}
               description=""
@@ -746,7 +752,7 @@ const TenantEncryption = ({
             </Grid>
             {encryptionType === "vault" && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="vault_endpoint"
                     name="vault_endpoint"
@@ -762,7 +768,7 @@ const TenantEncryption = ({
                     required
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="vault_engine"
                     name="vault_engine"
@@ -776,7 +782,7 @@ const TenantEncryption = ({
                     value={vaultConfiguration?.engine || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="vault_namespace"
                     name="vault_namespace"
@@ -790,7 +796,7 @@ const TenantEncryption = ({
                     value={vaultConfiguration?.namespace || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="vault_prefix"
                     name="vault_prefix"
@@ -804,7 +810,7 @@ const TenantEncryption = ({
                     value={vaultConfiguration?.prefix || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <Stack>
                     <StackRow
                       sx={{
@@ -922,7 +928,7 @@ const TenantEncryption = ({
                     </Grid>
                   </Stack>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <Stack>
                     <StackRow
                       sx={{
@@ -936,9 +942,14 @@ const TenantEncryption = ({
                           marginBottom: 8,
                         }}
                       >
-                        Mutual TLS authentication with KMS (optional)
+                        Vault Certificates (optional)
                       </h3>
                     </StackRow>
+                  </Stack>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Mutual TLS authentication with Vault (optional)
+                    </legend>
                     {vaultClientCertificateSecret ? (
                       <TLSCertificate
                         certificateInfo={vaultClientCertificateSecret}
@@ -984,10 +995,10 @@ const TenantEncryption = ({
                         />
                       </Fragment>
                     )}
-                  </Stack>
+                  </fieldset>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      KMS CA certificate (optional)
+                      Vault CA certificate (optional)
                     </legend>
                     {vaultCACertificateSecret ? (
                       <TLSCertificate
@@ -1016,7 +1027,7 @@ const TenantEncryption = ({
                     )}
                   </fieldset>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <Stack>
                     <StackRow
                       sx={{
@@ -1057,7 +1068,7 @@ const TenantEncryption = ({
             )}
             {encryptionType === "azure" && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="azure_endpoint"
                     name="azure_endpoint"
@@ -1075,12 +1086,12 @@ const TenantEncryption = ({
                     value={azureConfiguration?.keyvault?.endpoint || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
                       Credentials
                     </legend>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="azure_tenant_id"
                         name="azure_tenant_id"
@@ -1104,7 +1115,7 @@ const TenantEncryption = ({
                         error={validationErrors["azure_tenant_id"] || ""}
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="azure_client_id"
                         name="azure_client_id"
@@ -1128,7 +1139,7 @@ const TenantEncryption = ({
                         error={validationErrors["azure_client_id"] || ""}
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="azure_client_secret"
                         name="azure_client_secret"
@@ -1158,7 +1169,7 @@ const TenantEncryption = ({
             )}
             {encryptionType === "gcp" && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="gcp_project_id"
                     name="gcp_project_id"
@@ -1175,7 +1186,7 @@ const TenantEncryption = ({
                     value={gcpConfiguration?.secretmanager.project_id || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="gcp_endpoint"
                     name="gcp_endpoint"
@@ -1192,12 +1203,12 @@ const TenantEncryption = ({
                     value={gcpConfiguration?.secretmanager.endpoint || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
                       Credentials
                     </legend>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="gcp_client_email"
                         name="gcp_client_email"
@@ -1220,7 +1231,7 @@ const TenantEncryption = ({
                         }
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="gcp_client_id"
                         name="gcp_client_id"
@@ -1243,7 +1254,7 @@ const TenantEncryption = ({
                         }
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="gcp_private_key_id"
                         name="gcp_private_key_id"
@@ -1266,7 +1277,7 @@ const TenantEncryption = ({
                         }
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="gcp_private_key"
                         name="gcp_private_key"
@@ -1295,7 +1306,7 @@ const TenantEncryption = ({
             )}
             {encryptionType === "aws" && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="aws_endpoint"
                     name="aws_endpoint"
@@ -1314,7 +1325,7 @@ const TenantEncryption = ({
                     error={validationErrors["aws_endpoint"] || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="aws_region"
                     name="aws_region"
@@ -1333,7 +1344,7 @@ const TenantEncryption = ({
                     required
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="aws_kmsKey"
                     name="aws_kmsKey"
@@ -1350,12 +1361,12 @@ const TenantEncryption = ({
                     value={awsConfiguration?.secretsmanager?.kmskey || ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
                       Credentials
                     </legend>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="aws_accessKey"
                         name="aws_accessKey"
@@ -1381,7 +1392,7 @@ const TenantEncryption = ({
                         required
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="aws_secretKey"
                         name="aws_secretKey"
@@ -1407,7 +1418,7 @@ const TenantEncryption = ({
                         required
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="aws_token"
                         name="aws_token"
@@ -1437,7 +1448,7 @@ const TenantEncryption = ({
             )}
             {encryptionType === "gemalto" && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="gemalto_endpoint"
                     name="gemalto_endpoint"
@@ -1462,12 +1473,13 @@ const TenantEncryption = ({
                   style={{
                     marginBottom: 15,
                   }}
+                  className={classes.formFieldRow}
                 >
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
                       Credentials
                     </legend>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="gemalto_token"
                         name="gemalto_token"
@@ -1492,7 +1504,7 @@ const TenantEncryption = ({
                         required
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         id="gemalto_domain"
                         name="gemalto_domain"
@@ -1517,7 +1529,7 @@ const TenantEncryption = ({
                         required
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.formFieldRow}>
                       <InputBoxWrapper
                         type="number"
                         min="0"
@@ -1551,19 +1563,12 @@ const TenantEncryption = ({
                   style={{
                     marginBottom: 15,
                   }}
+                  className={classes.formFieldRow}
                 >
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
                       Custom CA Root certificate verification
                     </legend>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {}}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="gemalto_ca"
-                      name="gemalto_ca"
-                      label="CA"
-                      value={""}
-                    />
                     {gemaltoCACertificateSecret ? (
                       <TLSCertificate
                         certificateInfo={gemaltoCACertificateSecret}
@@ -1594,7 +1599,7 @@ const TenantEncryption = ({
                 </Grid>
               </Fragment>
             )}
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <Stack>
                 <StackRow
                   sx={{
@@ -1608,7 +1613,7 @@ const TenantEncryption = ({
                       marginBottom: 8,
                     }}
                   >
-                    Additional Configurations
+                    Additional Configuration for KES
                   </h3>
                 </StackRow>
 
@@ -1617,7 +1622,7 @@ const TenantEncryption = ({
                   id="enableCustomCertsForKES"
                   name="enableCustomCertsForKES"
                   checked={enabledCustomCertificates}
-                  onChange={(e) =>
+                  onChange={() =>
                     setEnabledCustomCertificates(!enabledCustomCertificates)
                   }
                   label={"Custom Certificates"}
@@ -1626,10 +1631,10 @@ const TenantEncryption = ({
             </Grid>
             {enabledCustomCertificates && (
               <Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.formFieldRow}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      Encryption Service Certificates
+                      KES server TLS Certificates (optional)
                     </legend>
                     {serverTLSCertificateSecret ? (
                       <TLSCertificate
@@ -1679,70 +1684,61 @@ const TenantEncryption = ({
                     )}
                   </fieldset>
                 </Grid>
-                <Grid container spacing={1} style={{ marginBottom: 15 }}>
-                  <Grid item xs={12}>
-                    <Stack>
-                      <StackRow
-                        sx={{
-                          borderBottom: "1px solid #eaeaea",
-                          margin: 0,
-                          marginBottom: 1,
-                        }}
-                      >
-                        Mutual TLS authentication with MinIO
-                      </StackRow>
-                      {mTLSCertificateSecret ? (
-                        <TLSCertificate
-                          certificateInfo={mTLSCertificateSecret}
-                          onDelete={() =>
-                            removeCertificate(mTLSCertificateSecret)
-                          }
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Mutual TLS authentication with MinIO (optional)
+                    </legend>
+                    {mTLSCertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={mTLSCertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(mTLSCertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <Fragment>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setMTLSCertificate({
+                              encoded_key: encodedValue || "",
+                              id: mTLSCertificate?.id || "",
+                              key: fileName || "",
+                              cert: mTLSCertificate?.cert || "",
+                              encoded_cert: mTLSCertificate?.encoded_cert || "",
+                            });
+                            cleanValidation("clientKey");
+                          }}
+                          accept=".key,.pem"
+                          id="clientKey"
+                          name="clientKey"
+                          label="Key"
+                          value={mTLSCertificate?.key}
                         />
-                      ) : (
-                        <Fragment>
-                          <FileSelector
-                            onChange={(encodedValue, fileName) => {
-                              setMTLSCertificate({
-                                encoded_key: encodedValue || "",
-                                id: mTLSCertificate?.id || "",
-                                key: fileName || "",
-                                cert: mTLSCertificate?.cert || "",
-                                encoded_cert:
-                                  mTLSCertificate?.encoded_cert || "",
-                              });
-                              cleanValidation("clientKey");
-                            }}
-                            accept=".key,.pem"
-                            id="clientKey"
-                            name="clientKey"
-                            label="Key"
-                            value={mTLSCertificate?.key}
-                          />
-                          <FileSelector
-                            onChange={(encodedValue, fileName) => {
-                              setMTLSCertificate({
-                                encoded_key: mTLSCertificate?.encoded_key || "",
-                                id: mTLSCertificate?.id || "",
-                                key: mTLSCertificate?.key || "",
-                                cert: fileName || "",
-                                encoded_cert: encodedValue || "",
-                              });
-                              cleanValidation("clientCert");
-                            }}
-                            accept=".cer,.crt,.cert,.pem"
-                            id="clientCert"
-                            name="clientCert"
-                            label="Cert"
-                            value={mTLSCertificate?.cert}
-                          />
-                        </Fragment>
-                      )}
-                    </Stack>
-                  </Grid>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setMTLSCertificate({
+                              encoded_key: mTLSCertificate?.encoded_key || "",
+                              id: mTLSCertificate?.id || "",
+                              key: mTLSCertificate?.key || "",
+                              cert: fileName || "",
+                              encoded_cert: encodedValue || "",
+                            });
+                            cleanValidation("clientCert");
+                          }}
+                          accept=".cer,.crt,.cert,.pem"
+                          id="clientCert"
+                          name="clientCert"
+                          label="Cert"
+                          value={mTLSCertificate?.cert}
+                        />
+                      </Fragment>
+                    )}
+                  </fieldset>
                 </Grid>
               </Fragment>
             )}
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 type="text"
                 id="image"
@@ -1755,7 +1751,7 @@ const TenantEncryption = ({
                 value={image}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
                 type="number"
                 min="1"
@@ -1770,7 +1766,7 @@ const TenantEncryption = ({
                 error={validationErrors["replicas"] || ""}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.formFieldRow}>
               <Stack>
                 <StackRow
                   sx={{
@@ -1784,7 +1780,7 @@ const TenantEncryption = ({
                       marginBottom: 10,
                     }}
                   >
-                    SecurityContext for KES pods
+                    SecurityContext for KES
                   </h3>
                 </StackRow>
                 <Grid item xs={12} className={classes.kesSecurityContext}>

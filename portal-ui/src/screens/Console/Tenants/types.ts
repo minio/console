@@ -421,6 +421,29 @@ export interface IAddPool {
   fields: IAddPoolFields;
 }
 
+export interface ITenantIdentityProviderResponse {
+  oidc?: {
+    callback_url: string;
+    claim_name: string;
+    client_id: string;
+    configuration_url: string;
+    scopes: string;
+    secret_id: string;
+  };
+  active_directory?: {
+    lookup_bind_dn: string;
+    lookup_bind_password: string;
+    server_start_tls: boolean;
+    skip_tls_verification: boolean;
+    url: string;
+    group_search_base_dn: string;
+    group_search_filter: string;
+    server_insecure: boolean;
+    user_dn_search_base_dn: string;
+    user_dn_search_filter: string;
+  };
+}
+
 interface SetTenantWizardPage {
   type: typeof ADD_TENANT_SET_CURRENT_PAGE;
   page: number;
