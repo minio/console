@@ -183,10 +183,14 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
   NAMESPACE_TENANT_POOLS_ADD:
     "/namespaces/:tenantNamespace/tenants/:tenantName/add-pool",
+  NAMESPACE_TENANT_POOLS_EDIT:
+      "/namespaces/:tenantNamespace/tenants/:tenantName/edit-pool",
   NAMESPACE_TENANT_VOLUMES:
     "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
   NAMESPACE_TENANT_LICENSE:
     "/namespaces/:tenantNamespace/tenants/:tenantName/license",
+  NAMESPACE_TENANT_IDENTITY_PROVIDER:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/identity-provider",
   NAMESPACE_TENANT_SECURITY:
     "/namespaces/:tenantNamespace/tenants/:tenantName/security",
   NAMESPACE_TENANT_ENCRYPTION:

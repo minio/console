@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -20,37 +20,37 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
-import { AppState } from "../../../../../store";
+import { AppState } from "../../../../../../store";
 import {
-  addNewToleration,
-  isPageValid,
-  removeToleration,
-  setKeyValuePairs,
-  setTolerationInfo,
-  updateAddField,
-} from "../../actions";
-import { setModalErrorSnackMessage } from "../../../../../actions";
+  isPoolPageValid,
+  setPoolField,
+  setPoolTolerationInfo,
+  addNewPoolToleration,
+  removePoolToleration,
+  setPoolKeyValuePairs,
+} from "../../../actions";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
 import {
   modalBasic,
   wizardCommon,
-} from "../../../Common/FormComponents/common/styleLibrary";
+} from "../../../../Common/FormComponents/common/styleLibrary";
 import {
   commonFormValidation,
   IValidation,
-} from "../../../../../utils/validationFunctions";
+} from "../../../../../../utils/validationFunctions";
 import {
   ErrorResponseHandler,
   ITolerationModel,
-} from "../../../../../common/types";
-import { LabelKeyPair } from "../../types";
-import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import api from "../../../../../common/api";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import AddIcon from "../../../../../icons/AddIcon";
-import RemoveIcon from "../../../../../icons/RemoveIcon";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import TolerationSelector from "../../../Common/TolerationSelector/TolerationSelector";
+} from "../../../../../../common/types";
+import { LabelKeyPair } from "../../../types";
+import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import api from "../../../../../../common/api";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import AddIcon from "../../../../../../icons/AddIcon";
+import RemoveIcon from "../../../../../../icons/RemoveIcon";
+import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import TolerationSelector from "../../../../Common/TolerationSelector/TolerationSelector";
 
 interface IAffinityProps {
   classes: any;
@@ -60,12 +60,12 @@ interface IAffinityProps {
   keyValuePairs: LabelKeyPair[];
   tolerations: ITolerationModel[];
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  setKeyValuePairs: typeof setKeyValuePairs;
-  setTolerationInfo: typeof setTolerationInfo;
-  addNewToleration: typeof addNewToleration;
-  removeToleration: typeof removeToleration;
+  setPoolField: typeof setPoolField;
+  isPoolPageValid: typeof isPoolPageValid;
+  setPoolKeyValuePairs: typeof setPoolKeyValuePairs;
+  setPoolTolerationInfo: typeof setPoolTolerationInfo;
+  removePoolToleration: typeof removePoolToleration;
+  addNewPoolToleration: typeof addNewPoolToleration;
 }
 
 const styles = (theme: Theme) =>
@@ -138,14 +138,14 @@ const Affinity = ({
   nodeSelectorLabels,
   withPodAntiAffinity,
   setModalErrorSnackMessage,
-  updateAddField,
   keyValuePairs,
-  setKeyValuePairs,
-  isPageValid,
+  setPoolKeyValuePairs,
+  setPoolField,
+  isPoolPageValid,
   tolerations,
-  setTolerationInfo,
-  addNewToleration,
-  removeToleration,
+  setPoolTolerationInfo,
+  removePoolToleration,
+  addNewPoolToleration,
 }: IAffinityProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -157,9 +157,9 @@ const Affinity = ({
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("affinity", field, value);
+      setPoolField("affinity", field, value);
     },
-    [updateAddField]
+    [setPoolField]
   );
 
   useEffect(() => {
@@ -239,15 +239,15 @@ const Affinity = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isPageValid("affinity", Object.keys(commonVal).length === 0);
+    isPoolPageValid("affinity", Object.keys(commonVal).length === 0);
 
     setValidationErrors(commonVal);
-  }, [isPageValid, podAffinity, nodeSelectorLabels]);
+  }, [isPoolPageValid, podAffinity, nodeSelectorLabels]);
 
   const updateToleration = (index: number, field: string, value: any) => {
     const alterToleration = { ...tolerations[index], [field]: value };
 
-    setTolerationInfo(index, alterToleration);
+    setPoolTolerationInfo(index, alterToleration);
   };
 
   return (
@@ -327,7 +327,7 @@ const Affinity = ({
 
                               arrCp[i].key = e.target.value as string;
                               arrCp[i].value = keyValueMap[newKey][0];
-                              setKeyValuePairs(arrCp);
+                              setPoolKeyValuePairs(arrCp);
                             }}
                             id="select-access-policy"
                             name="select-access-policy"
@@ -348,7 +348,7 @@ const Affinity = ({
                                 keyValuePairs
                               );
                               arrCp[i].key = e.target.value;
-                              setKeyValuePairs(arrCp);
+                              setPoolKeyValuePairs(arrCp);
                             }}
                             index={i}
                             placeholder={"Key"}
@@ -364,7 +364,7 @@ const Affinity = ({
                                 keyValuePairs
                               );
                               arrCp[i].value = e.target.value as string;
-                              setKeyValuePairs(arrCp);
+                              setPoolKeyValuePairs(arrCp);
                             }}
                             id="select-access-policy"
                             name="select-access-policy"
@@ -391,7 +391,7 @@ const Affinity = ({
                                 keyValuePairs
                               );
                               arrCp[i].value = e.target.value;
-                              setKeyValuePairs(arrCp);
+                              setPoolKeyValuePairs(arrCp);
                             }}
                             index={i}
                             placeholder={"value"}
@@ -413,7 +413,7 @@ const Affinity = ({
                                 arrCp.push({ key: "", value: "" });
                               }
 
-                              setKeyValuePairs(arrCp);
+                              setPoolKeyValuePairs(arrCp);
                             }}
                           >
                             <AddIcon />
@@ -427,7 +427,7 @@ const Affinity = ({
                                 const arrCp = keyValuePairs.filter(
                                   (item, index) => index !== i
                                 );
-                                setKeyValuePairs(arrCp);
+                                setPoolKeyValuePairs(arrCp);
                               }}
                             >
                               <RemoveIcon />
@@ -486,7 +486,7 @@ const Affinity = ({
                     <div className={classes.overlayAction}>
                       <IconButton
                         size={"small"}
-                        onClick={addNewToleration}
+                        onClick={addNewPoolToleration}
                         disabled={i !== tolerations.length - 1}
                       >
                         <AddIcon />
@@ -496,7 +496,7 @@ const Affinity = ({
                     <div className={classes.overlayAction}>
                       <IconButton
                         size={"small"}
-                        onClick={() => removeToleration(i)}
+                        onClick={() => removePoolToleration(i)}
                         disabled={tolerations.length <= 1}
                       >
                         <RemoveIcon />
@@ -513,25 +513,25 @@ const Affinity = ({
 };
 
 const mapState = (state: AppState) => {
-  const createTenant = state.tenants.createTenant;
+  const addPool = state.tenants.addPool;
 
   return {
-    podAffinity: createTenant.fields.affinity.podAffinity,
-    nodeSelectorLabels: createTenant.fields.affinity.nodeSelectorLabels,
-    withPodAntiAffinity: createTenant.fields.affinity.withPodAntiAffinity,
-    keyValuePairs: createTenant.nodeSelectorPairs,
-    tolerations: createTenant.tolerations,
+    podAffinity: addPool.fields.affinity.podAffinity,
+    nodeSelectorLabels: addPool.fields.affinity.nodeSelectorLabels,
+    withPodAntiAffinity: addPool.fields.affinity.withPodAntiAffinity,
+    keyValuePairs: addPool.fields.nodeSelectorPairs,
+    tolerations: addPool.fields.tolerations,
   };
 };
 
 const connector = connect(mapState, {
   setModalErrorSnackMessage,
-  updateAddField,
-  isPageValid,
-  setKeyValuePairs,
-  setTolerationInfo,
-  addNewToleration,
-  removeToleration,
+  setPoolField,
+  isPoolPageValid,
+  setPoolKeyValuePairs,
+  setPoolTolerationInfo,
+  addNewPoolToleration,
+  removePoolToleration,
 });
 
 export default withStyles(styles)(connector(Affinity));

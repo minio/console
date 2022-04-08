@@ -153,7 +153,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			serverAddress := *tenantReq.Idp.ActiveDirectory.URL
 			tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipTLSVerification
 			serverInsecure := tenantReq.Idp.ActiveDirectory.ServerInsecure
-			lookupBindDN := tenantReq.Idp.ActiveDirectory.LookupBindDn
+			lookupBindDN := *tenantReq.Idp.ActiveDirectory.LookupBindDn
 			lookupBindPassword := tenantReq.Idp.ActiveDirectory.LookupBindPassword
 			userDNSearchBaseDN := tenantReq.Idp.ActiveDirectory.UserDnSearchBaseDn
 			userDNSearchFilter := tenantReq.Idp.ActiveDirectory.UserDnSearchFilter

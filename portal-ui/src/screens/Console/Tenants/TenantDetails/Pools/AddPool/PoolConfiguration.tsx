@@ -24,17 +24,17 @@ import {
   createTenantCommon,
   modalBasic,
   wizardCommon,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import { isPoolPageValid, setPoolField } from "../../actions";
-import { AppState } from "../../../../../store";
-import { clearValidationError } from "../../utils";
+} from "../../../../Common/FormComponents/common/styleLibrary";
+import { isPoolPageValid, setPoolField } from "../../../actions";
+import { AppState } from "../../../../../../store";
+import { clearValidationError } from "../../../utils";
 import {
   commonFormValidation,
   IValidation,
-} from "../../../../../utils/validationFunctions";
-import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { ISecurityContext } from "../../types";
+} from "../../../../../../utils/validationFunctions";
+import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { ISecurityContext } from "../../../types";
 
 interface IConfigureProps {
   setPoolField: typeof setPoolField;

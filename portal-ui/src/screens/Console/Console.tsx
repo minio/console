@@ -50,6 +50,8 @@ import {
 import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import LoadingComponent from "../../common/LoadingComponent";
+import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
+import ComponentsScreen from "./Common/ComponentsScreen";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -114,7 +116,7 @@ const ConfigurationOptions = React.lazy(
   () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
 );
 const AddPool = React.lazy(
-  () => import("./Tenants/TenantDetails/Pools/AddPool")
+  () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
 
 const styles = (theme: Theme) =>
@@ -440,6 +442,11 @@ const Console = ({
       forceDisplay: true,
     },
     {
+      component: EditPool,
+      path: IAM_PAGES.NAMESPACE_TENANT_POOLS_EDIT,
+      forceDisplay: true,
+    },
+    {
       component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_VOLUMES,
       forceDisplay: true,
@@ -447,6 +454,11 @@ const Console = ({
     {
       component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_LICENSE,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_IDENTITY_PROVIDER,
       forceDisplay: true,
     },
     {
@@ -600,6 +612,11 @@ const Console = ({
                 <Route key={"/icons"} exact path={"/icons"}>
                   <Suspense fallback={<LoadingComponent />}>
                     <IconsScreen />
+                  </Suspense>
+                </Route>
+                <Route key={"/components"} exact path={"/components"}>
+                  <Suspense fallback={<LoadingComponent />}>
+                    <ComponentsScreen />
                   </Suspense>
                 </Route>
                 {allowedRoutes.length > 0 ? (

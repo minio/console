@@ -125,7 +125,7 @@ export interface INodeAffinityTerms {
 }
 
 export interface INodeAffinityLabelsSelector {
-  matchExpressions: object[];
+  matchExpressions: IMatchExpressionItem[];
 }
 
 export interface IMatchExpressionItem {

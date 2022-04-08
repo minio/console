@@ -32,15 +32,15 @@ const TenantCapacity = ({
   statusClass,
 }: ITenantCapacity) => {
   const colors = [
-    "#C4D4E9",
-    "#DCD1EE",
-    "#D1EEE7",
-    "#EEDED1",
-    "#AAF38F",
-    "#F9E6C5",
+    "#8dacd3",
+    "#bca1ea",
+    "#92e8d2",
+    "#efc9ac",
+    "#97f274",
+    "#f7d291",
     "#71ACCB",
-    "#F4CECE",
-    "#D6D6D6",
+    "#f28282",
+    "#e28cc1",
     "#2781B0",
   ];
 
@@ -88,7 +88,7 @@ const TenantCapacity = ({
   }
 
   const plotValues: CapacityValue[] = [
-    { value: emptySpace, color: "#D6D6D6", label: "Empty Space" },
+    { value: emptySpace, color: "transparent", label: "Empty Space" },
     {
       value: standardTier.value,
       color: standardTierColor,
@@ -128,6 +128,17 @@ const TenantCapacity = ({
       <div>
         <PieChart width={110} height={110}>
           <Pie
+            data={[{ value: 100 }]}
+            cx={"50%"}
+            cy={"50%"}
+            dataKey="value"
+            outerRadius={50}
+            innerRadius={40}
+            fill="#ededed"
+            isAnimationActive={false}
+            stroke={"none"}
+          />
+          <Pie
             data={plotValues}
             cx={"50%"}
             cy={"50%"}
@@ -136,7 +147,7 @@ const TenantCapacity = ({
             innerRadius={40}
           >
             {plotValues.map((entry, index) => (
-              <Cell key={`cellCapacity-${index}`} fill={entry.color} />
+              <Cell key={`cellCapacity-${index}`} fill={entry.color} stroke={"none"} />
             ))}
           </Pie>
         </PieChart>
