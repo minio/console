@@ -145,24 +145,28 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
-      <Grid item xs={12}>
-        <PredefinedList
-          label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}
-          content={selectedGroup !== null ? selectedGroup : userName}
-        />
+      <Grid container>
+        <Grid item xs={12}>
+          <PredefinedList
+            label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}
+            content={selectedGroup !== null ? selectedGroup : userName}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <PredefinedList
+            label={"Current Policy"}
+            content={actualPolicy.join(", ")}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <div className={classes.tableBlock}>
+            <PolicySelectors
+              selectedPolicy={selectedPolicy}
+              setSelectedPolicy={setSelectedPolicy}
+            />
+          </div>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <PredefinedList
-          label={"Current Policy"}
-          content={actualPolicy.join(", ")}
-        />
-      </Grid>
-      <div className={classes.tableBlock}>
-        <PolicySelectors
-          selectedPolicy={selectedPolicy}
-          setSelectedPolicy={setSelectedPolicy}
-        />
-      </div>
       <Grid item xs={12} className={classes.buttonContainer}>
         <Button
           type="button"
