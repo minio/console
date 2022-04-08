@@ -24,17 +24,15 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { Box, Grid, Stack } from "@mui/material";
-import Paper from "@mui/material/Paper";
+import { Box, Grid } from "@mui/material";
 import { ITenant } from "../ListTenants/types";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
 import AButton from "../../Common/AButton/AButton";
-import { styled } from "@mui/styles";
 import SummaryUsageBar from "../../Common/UsageBarWrapper/SummaryUsageBar";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import StackRow from "../../Common/UsageBarWrapper/StackRow";
+import SectionTitle from "../../Common/SectionTitle";
 
 interface ITenantsSummary {
   classes: any;
@@ -113,10 +111,6 @@ const styles = (theme: Theme) =>
     },
     ...containerForHeader(theme.spacing(4)),
   });
-
-const StackItem = styled(Paper)(({ theme }) => ({
-  border: 0,
-}));
 
 const healthStatusToClass = (health_status: string = "red", classes: any) => {
   return health_status === "red"
@@ -226,15 +220,7 @@ const TenantSummary = ({
         />
       )}
 
-      <Stack
-        direction={{ xs: "column-reverse", sm: "row" }}
-        justifyContent="space-between"
-      >
-        <StackItem>
-          <h3>Details</h3>
-        </StackItem>
-        <StackItem></StackItem>
-      </Stack>
+      <SectionTitle separator={false}>Details</SectionTitle>
 
       <StorageSummary tenant={tenant} classes={classes} />
 
@@ -361,64 +347,49 @@ const TenantSummary = ({
         </Grid>
       </Grid>
 
-      <Stack>
-        <StackRow
-          sx={{
-            borderBottom: "1px solid #eaeaea",
-            margin: 0,
-          }}
-        >
-          <h3
-            style={{
-              marginBottom: 10,
-            }}
-          >
-            Features
-          </h3>
-        </StackRow>
-        <Box sx={{ ...featureRowStyle }}>
-          <LabelValuePair
-            orientation="row"
-            label="Logs:"
-            value={getToggle(logEnabled, "tenant-log")}
-            {...featureItemStyleProps}
-          />
+      <SectionTitle>Features</SectionTitle>
+      <Box sx={{ ...featureRowStyle }}>
+        <LabelValuePair
+          orientation="row"
+          label="Logs:"
+          value={getToggle(logEnabled, "tenant-log")}
+          {...featureItemStyleProps}
+        />
 
-          <LabelValuePair
-            orientation="row"
-            label={"AD/LDAP:"}
-            value={getToggle(adEnabled, "tenant-sts")}
-            {...featureItemStyleProps}
-          />
-          <LabelValuePair
-            orientation="row"
-            label={"Encryption:"}
-            value={getToggle(encryptionEnabled, "tenant-enc")}
-            {...featureItemStyleProps}
-          />
-        </Box>
-        <Box sx={{ ...featureRowStyle }}>
-          <LabelValuePair
-            orientation="row"
-            label="MinIO TLS:"
-            value={getToggle(minioTLS, "tenant-tls")}
-            {...featureItemStyleProps}
-          />
+        <LabelValuePair
+          orientation="row"
+          label={"AD/LDAP:"}
+          value={getToggle(adEnabled, "tenant-sts")}
+          {...featureItemStyleProps}
+        />
+        <LabelValuePair
+          orientation="row"
+          label={"Encryption:"}
+          value={getToggle(encryptionEnabled, "tenant-enc")}
+          {...featureItemStyleProps}
+        />
+      </Box>
+      <Box sx={{ ...featureRowStyle }}>
+        <LabelValuePair
+          orientation="row"
+          label="MinIO TLS:"
+          value={getToggle(minioTLS, "tenant-tls")}
+          {...featureItemStyleProps}
+        />
 
-          <LabelValuePair
-            orientation="row"
-            label={"Monitoring:"}
-            value={getToggle(monitoringEnabled, "tenant-monitor")}
-            {...featureItemStyleProps}
-          />
-          <LabelValuePair
-            orientation="row"
-            label={"OpenID:"}
-            value={getToggle(oidcEnabled, "tenant-oidc")}
-            {...featureItemStyleProps}
-          />
-        </Box>
-      </Stack>
+        <LabelValuePair
+          orientation="row"
+          label={"Monitoring:"}
+          value={getToggle(monitoringEnabled, "tenant-monitor")}
+          {...featureItemStyleProps}
+        />
+        <LabelValuePair
+          orientation="row"
+          label={"OpenID:"}
+          value={getToggle(oidcEnabled, "tenant-oidc")}
+          {...featureItemStyleProps}
+        />
+      </Box>
     </Fragment>
   );
 };
