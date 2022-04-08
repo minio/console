@@ -15,51 +15,57 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
+import PageHeader from "../../../../Common/PageHeader/PageHeader";
+import PageLayout from "../../../../Common/Layout/PageLayout";
+import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
+import api from "../../../../../../common/api";
+import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
+import TenantsIcon from "../../../../../../icons/TenantsIcon";
+import BackLink from "../../../../../../common/BackLink";
+import EditPoolResources from "./EditPoolResources";
+import EditPoolConfiguration from "./EditPoolConfiguration";
+import EditPoolPlacement from "./EditPoolPlacement";
+import history from "../../../../../../history";
+import { IWizardElement } from "../../../../Common/GenericWizard/types";
+import { LinearProgress } from "@mui/material";
+import { generatePoolName, niceBytes } from "../../../../../../common/utils";
 import {
   formFieldStyles,
   modalStyleUtils,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
-import { generatePoolName, niceBytes } from "../../../../../common/utils";
-import { LinearProgress } from "@mui/material";
-import { IAddPoolRequest, ITenant } from "../../ListTenants/types";
-import PageHeader from "../../../Common/PageHeader/PageHeader";
-import PageLayout from "../../../Common/Layout/PageLayout";
-import GenericWizard from "../../../Common/GenericWizard/GenericWizard";
-import { IWizardElement } from "../../../Common/GenericWizard/types";
-import history from "../../../../../history";
-import PoolResources from "./PoolResources";
-import ScreenTitle from "../../../Common/ScreenTitle/ScreenTitle";
-import TenantsIcon from "../../../../../icons/TenantsIcon";
+} from "../../../../Common/FormComponents/common/styleLibrary";
+import {
+  IEditPoolItem,
+  IEditPoolRequest,
+  ITenant,
+} from "../../../ListTenants/types";
 import {
   isPoolPageValid,
   resetPoolForm,
+  setInitialPoolDetails,
   setPoolField,
   setTenantDetailsLoad,
-} from "../../actions";
-import { AppState } from "../../../../../store";
-import { connect } from "react-redux";
-import PoolConfiguration from "./PoolConfiguration";
-import PoolPodPlacement from "./PoolPodPlacement";
+} from "../../../actions";
+import { AppState } from "../../../../../../store";
 import {
   ErrorResponseHandler,
   ITolerationModel,
-} from "../../../../../common/types";
-import { getDefaultAffinity, getNodeSelector } from "../utils";
-import api from "../../../../../common/api";
-import { ISecurityContext } from "../../types";
-import BackLink from "../../../../../common/BackLink";
-import { setErrorSnackMessage } from "../../../../../actions";
+} from "../../../../../../common/types";
+import { getDefaultAffinity, getNodeSelector } from "../../utils";
+import { ISecurityContext } from "../../../types";
+import { setErrorSnackMessage } from "../../../../../../actions";
 
-interface IAddPoolProps {
+interface IEditPoolProps {
   tenant: ITenant | null;
   classes: any;
   open: boolean;
   match: any;
   selectedStorageClass: string;
+  selectedPool: string | null;
   validPages: string[];
   numberOfNodes: number;
   volumeSize: number;
@@ -73,6 +79,7 @@ interface IAddPoolProps {
   resetPoolForm: typeof resetPoolForm;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
+  setInitialPoolDetails: typeof setInitialPoolDetails;
 }
 
 const styles = (theme: Theme) =>
@@ -112,7 +119,7 @@ const styles = (theme: Theme) =>
       border: "1px solid #EAEAEA",
       borderTop: 0,
     },
-    addPoolTitle: {
+    editPoolTitle: {
       border: "1px solid #EAEAEA",
       borderBottom: 0,
     },
@@ -122,10 +129,11 @@ const styles = (theme: Theme) =>
 
 const requiredPages = ["setup", "affinity", "configure"];
 
-const AddPool = ({
+const EditPool = ({
   tenant,
   classes,
   resetPoolForm,
+  selectedPool,
   selectedStorageClass,
   validPages,
   numberOfNodes,
@@ -138,15 +146,31 @@ const AddPool = ({
   securityContext,
   volumesPerServer,
   setTenantDetailsLoad,
-}: IAddPoolProps) => {
-  const [addSending, setAddSending] = useState<boolean>(false);
+  setInitialPoolDetails,
+  setErrorSnackMessage,
+}: IEditPoolProps) => {
+  const [editSending, setEditSending] = useState<boolean>(false);
 
   const poolsURL = `/namespaces/${tenant?.namespace || ""}/tenants/${
     tenant?.name || ""
   }/pools`;
 
   useEffect(() => {
-    if (addSending && tenant) {
+    if (selectedPool) {
+      const poolDetails = tenant?.pools.find(
+        (pool) => pool.name === selectedPool
+      );
+
+      if (poolDetails) {
+        setInitialPoolDetails(poolDetails);
+      } else {
+        history.push("/tenants");
+      }
+    }
+  }, [selectedPool, setInitialPoolDetails, tenant]);
+
+  useEffect(() => {
+    if (editSending && tenant) {
       const poolName = generatePoolName(tenant.pools);
 
       let affinityObject = {};
@@ -173,39 +197,69 @@ const AddPool = ({
         (toleration) => toleration.key.trim() !== ""
       );
 
-      const data: IAddPoolRequest = {
-        name: poolName,
-        servers: numberOfNodes,
-        volumes_per_server: volumesPerServer,
-        volume_configuration: {
-          size: volumeSize * 1073741824,
-          storage_class_name: selectedStorageClass,
-          labels: null,
-        },
-        tolerations: tolerationValues,
-        securityContext: securityContextEnabled ? securityContext : null,
-        ...affinityObject,
+      const cleanPools = tenant.pools
+        .filter((pool) => pool.name !== selectedPool)
+        .map((pool) => {
+          let securityContextOption = null;
+
+          if (pool.securityContext) {
+            if (
+              !!pool.securityContext.runAsUser ||
+              !!pool.securityContext.runAsGroup ||
+              !!pool.securityContext.fsGroup
+            ) {
+              securityContextOption = { ...pool.securityContext };
+            }
+          }
+
+          const request: IEditPoolItem = {
+            ...pool,
+            securityContext: securityContextOption,
+          };
+
+          return request;
+        });
+
+      const data: IEditPoolRequest = {
+        pools: [
+          ...cleanPools,
+          {
+            name: selectedPool || poolName,
+            servers: numberOfNodes,
+            volumes_per_server: volumesPerServer,
+            volume_configuration: {
+              size: volumeSize * 1073741824,
+              storage_class_name: selectedStorageClass,
+              labels: null,
+            },
+            tolerations: tolerationValues,
+            securityContext: securityContextEnabled ? securityContext : null,
+            ...affinityObject,
+          },
+        ],
       };
 
       api
         .invoke(
-          "POST",
+          "PUT",
           `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/pools`,
           data
         )
         .then(() => {
-          setAddSending(false);
+          setEditSending(false);
           resetPoolForm();
           setTenantDetailsLoad(true);
           history.push(poolsURL);
         })
         .catch((err: ErrorResponseHandler) => {
-          setAddSending(false);
+          setEditSending(false);
           setErrorSnackMessage(err);
         });
     }
   }, [
-    addSending,
+    selectedPool,
+    setErrorSnackMessage,
+    editSending,
     poolsURL,
     resetPoolForm,
     setTenantDetailsLoad,
@@ -233,33 +287,33 @@ const AddPool = ({
   };
 
   const createButton = {
-    label: "Create",
+    label: "Update",
     type: "submit",
     enabled:
-      !addSending &&
+      !editSending &&
       selectedStorageClass !== "" &&
       requiredPages.every((v) => validPages.includes(v)),
     action: () => {
-      setAddSending(true);
+      setEditSending(true);
     },
   };
 
   const wizardSteps: IWizardElement[] = [
     {
-      label: "Setup",
-      componentRender: <PoolResources />,
+      label: "Pool Resources",
+      componentRender: <EditPoolResources />,
       buttons: [cancelButton, createButton],
     },
     {
       label: "Configuration",
       advancedOnly: true,
-      componentRender: <PoolConfiguration />,
+      componentRender: <EditPoolConfiguration />,
       buttons: [cancelButton, createButton],
     },
     {
       label: "Pod Placement",
       advancedOnly: true,
-      componentRender: <PoolPodPlacement />,
+      componentRender: <EditPoolPlacement />,
       buttons: [cancelButton, createButton],
     },
   ];
@@ -270,25 +324,26 @@ const AddPool = ({
         <PageHeader
           label={
             <Fragment>
-              <BackLink to={poolsURL} label={`Tenant Pools`} />
+              <BackLink to={poolsURL} label={`Pool Details`} />
             </Fragment>
           }
         />
         <PageLayout>
-          <Grid item xs={12} className={classes.addPoolTitle}>
+          <Grid item xs={12} className={classes.editPoolTitle}>
             <ScreenTitle
               icon={<TenantsIcon />}
-              title={`Add New Pool to ${tenant?.name || ""}`}
+              title={`Edit Pool - ${selectedPool}`}
               subTitle={
                 <Fragment>
                   Namespace: {tenant?.namespace || ""} / Current Capacity:{" "}
-                  {niceBytes((tenant?.total_size || 0).toString(10))}
+                  {niceBytes((tenant?.total_size || 0).toString(10))} / Tenant:{" "}
+                  {tenant?.name || ""}
                 </Fragment>
               }
             />
           </Grid>
 
-          {addSending && (
+          {editSending && (
             <Grid item xs={12}>
               <LinearProgress />
             </Grid>
@@ -303,21 +358,23 @@ const AddPool = ({
 };
 
 const mapState = (state: AppState) => {
-  const addPool = state.tenants.addPool;
+  const editPool = state.tenants.editPool;
   return {
     tenant: state.tenants.tenantDetails.tenantInfo,
-    selectedStorageClass: addPool.fields.setup.storageClass,
-    validPages: addPool.validPages,
-    storageClasses: addPool.storageClasses,
-    numberOfNodes: addPool.fields.setup.numberOfNodes,
-    volumeSize: addPool.fields.setup.volumeSize,
-    volumesPerServer: addPool.fields.setup.volumesPerServer,
-    affinityType: addPool.fields.affinity.podAffinity,
-    nodeSelectorLabels: addPool.fields.affinity.nodeSelectorLabels,
-    withPodAntiAffinity: addPool.fields.affinity.withPodAntiAffinity,
-    tolerations: addPool.fields.tolerations,
-    securityContextEnabled: addPool.fields.configuration.securityContextEnabled,
-    securityContext: addPool.fields.configuration.securityContext,
+    selectedPool: state.tenants.tenantDetails.selectedPool,
+    selectedStorageClass: editPool.fields.setup.storageClass,
+    validPages: editPool.validPages,
+    storageClasses: editPool.storageClasses,
+    numberOfNodes: editPool.fields.setup.numberOfNodes,
+    volumeSize: editPool.fields.setup.volumeSize,
+    volumesPerServer: editPool.fields.setup.volumesPerServer,
+    affinityType: editPool.fields.affinity.podAffinity,
+    nodeSelectorLabels: editPool.fields.affinity.nodeSelectorLabels,
+    withPodAntiAffinity: editPool.fields.affinity.withPodAntiAffinity,
+    tolerations: editPool.fields.tolerations,
+    securityContextEnabled:
+      editPool.fields.configuration.securityContextEnabled,
+    securityContext: editPool.fields.configuration.securityContext,
   };
 };
 
@@ -327,6 +384,7 @@ const connector = connect(mapState, {
   isPoolPageValid,
   setErrorSnackMessage,
   setTenantDetailsLoad,
+  setInitialPoolDetails,
 });
 
-export default withStyles(styles)(connector(AddPool));
+export default withStyles(styles)(connector(EditPool));

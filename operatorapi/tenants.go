@@ -2321,6 +2321,21 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 		tolerations = append(tolerations, toleration)
 	}
 
+	var securityContext models.SecurityContext
+
+	if pool.SecurityContext != nil {
+		fsGroup := strconv.Itoa(int(*pool.SecurityContext.FSGroup))
+		runAsGroup := strconv.Itoa(int(*pool.SecurityContext.RunAsGroup))
+		runAsUser := strconv.Itoa(int(*pool.SecurityContext.RunAsUser))
+
+		securityContext = models.SecurityContext{
+			FsGroup:      &fsGroup,
+			RunAsGroup:   &runAsGroup,
+			RunAsNonRoot: pool.SecurityContext.RunAsNonRoot,
+			RunAsUser:    &runAsUser,
+		}
+	}
+
 	poolModel := &models.Pool{
 		Name:             pool.Name,
 		Servers:          swag.Int64(int64(pool.Servers)),
@@ -2329,10 +2344,11 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 			Size:             size,
 			StorageClassName: storageClassName,
 		},
-		NodeSelector: pool.NodeSelector,
-		Resources:    resources,
-		Affinity:     affinity,
-		Tolerations:  tolerations,
+		NodeSelector:    pool.NodeSelector,
+		Resources:       resources,
+		Affinity:        affinity,
+		Tolerations:     tolerations,
+		SecurityContext: &securityContext,
 	}
 	return poolModel
 }

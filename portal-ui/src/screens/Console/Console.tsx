@@ -50,6 +50,7 @@ import {
 import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import LoadingComponent from "../../common/LoadingComponent";
+import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -114,7 +115,7 @@ const ConfigurationOptions = React.lazy(
   () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
 );
 const AddPool = React.lazy(
-  () => import("./Tenants/TenantDetails/Pools/AddPool")
+  () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
 
 const styles = (theme: Theme) =>
@@ -437,6 +438,11 @@ const Console = ({
     {
       component: AddPool,
       path: IAM_PAGES.NAMESPACE_TENANT_POOLS_ADD,
+      forceDisplay: true,
+    },
+    {
+      component: EditPool,
+      path: IAM_PAGES.NAMESPACE_TENANT_POOLS_EDIT,
       forceDisplay: true,
     },
     {

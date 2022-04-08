@@ -22,7 +22,7 @@ import {
   IGemaltoCredentials,
   ITolerationModel,
 } from "../../../common/types";
-import { IResourcesSize, ITenant } from "./ListTenants/types";
+import { IPool, IResourcesSize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
 import { IntegrationConfiguration } from "./AddTenant/Steps/TenantResources/utils";
 
@@ -99,7 +99,22 @@ export const ADD_POOL_ADD_NEW_TOLERATION = "ADD_POOL/ADD_NEW_TOLERATION";
 export const ADD_POOL_REMOVE_TOLERATION_ROW = "ADD_POOL/REMOVE_TOLERATION_ROW";
 
 // Pool Details
+export const POOL_DETAILS_SET_OPEN_DETAILS = "POOL_DETAILS/SET_OPEN_DETAILS";
 export const POOL_DETAILS_SET_SELECTED_POOL = "POOL_DETAILS/SET_SELECTED_POOL";
+
+// Edit Pool
+export const EDIT_POOL_SET_INITIAL_INFO = "EDIT_POOL/SET_INITIAL_INFO";
+export const EDIT_POOL_SET_POOL_STORAGE_CLASSES =
+  "EDIT_POOL/SET_POOL_STORAGE_CLASSES";
+export const EDIT_POOL_SET_PAGE_VALID = "EDIT_POOL/SET_PAGE_VALID";
+export const EDIT_POOL_SET_VALUE = "EDIT_POOL/SET_VALUE";
+export const EDIT_POOL_SET_LOADING = "EDIT_POOL/SET_LOADING";
+export const EDIT_POOL_RESET_FORM = "EDIT_POOL/RESET_FORM";
+export const EDIT_POOL_SET_KEY_PAIR_VALUE = "EDIT_POOL/SET_KEY_PAIR_VALUE";
+export const EDIT_POOL_SET_TOLERATION_VALUE = "EDIT_POOL/SET_TOLERATION_VALUE";
+export const EDIT_POOL_ADD_NEW_TOLERATION = "EDIT_POOL/ADD_NEW_TOLERATION";
+export const EDIT_POOL_REMOVE_TOLERATION_ROW =
+  "EDIT_POOL/REMOVE_TOLERATION_ROW";
 
 export interface ICertificateInfo {
   name: string;
@@ -367,6 +382,7 @@ export interface ITenantDetails {
   loadingTenant: boolean;
   tenantInfo: ITenant | null;
   currentTab: string;
+  poolDetailsOpen: boolean;
   selectedPool: string | null;
 }
 
@@ -374,6 +390,7 @@ export interface ITenantState {
   createTenant: ICreateTenant;
   tenantDetails: ITenantDetails;
   addPool: IAddPool;
+  editPool: IEditPool;
 }
 
 export interface ILabelKeyPair {
@@ -419,6 +436,29 @@ export interface IAddPool {
   storageClasses: Opts[];
   limitSize: any;
   fields: IAddPoolFields;
+}
+
+export interface IEditPoolSetup {
+  numberOfNodes: number;
+  volumeSize: number;
+  volumesPerServer: number;
+  storageClass: string;
+}
+
+export interface IEditPoolFields {
+  setup: IEditPoolSetup;
+  affinity: ITenantAffinity;
+  configuration: IPoolConfiguration;
+  tolerations: ITolerationModel[];
+  nodeSelectorPairs: LabelKeyPair[];
+}
+
+export interface IEditPool {
+  editPoolLoading: boolean;
+  validPages: string[];
+  storageClasses: Opts[];
+  limitSize: any;
+  fields: IEditPoolFields;
 }
 
 export interface ITenantIdentityProviderResponse {
@@ -662,9 +702,66 @@ interface SetPoolSelectorKeyPairValueArray {
   newArray: LabelKeyPair[];
 }
 
+interface SetDetailsOpen {
+  type: typeof POOL_DETAILS_SET_OPEN_DETAILS;
+  state: boolean;
+}
+
 interface SetSelectedPool {
   type: typeof POOL_DETAILS_SET_SELECTED_POOL;
   pool: string | null;
+}
+
+interface EditPoolSetInitialInformation {
+  type: typeof EDIT_POOL_SET_INITIAL_INFO;
+  pool: IPool;
+}
+
+interface EditPoolLoading {
+  type: typeof EDIT_POOL_SET_LOADING;
+  state: boolean;
+}
+
+interface ResetEditPoolForm {
+  type: typeof EDIT_POOL_RESET_FORM;
+}
+
+interface SetEditPoolFieldValue {
+  type: typeof EDIT_POOL_SET_VALUE;
+  page: keyof IAddPoolFields;
+  field: string;
+  value: any;
+}
+
+interface EditPoolPageValid {
+  type: typeof EDIT_POOL_SET_PAGE_VALID;
+  page: string;
+  status: boolean;
+}
+
+interface EditPoolStorageClasses {
+  type: typeof EDIT_POOL_SET_POOL_STORAGE_CLASSES;
+  storageClasses: Opts[];
+}
+
+interface EditPoolTolerationValue {
+  type: typeof EDIT_POOL_SET_TOLERATION_VALUE;
+  index: number;
+  toleration: ITolerationModel;
+}
+
+interface EditPoolToleration {
+  type: typeof EDIT_POOL_ADD_NEW_TOLERATION;
+}
+
+interface EditRemovePoolTolerationRow {
+  type: typeof EDIT_POOL_REMOVE_TOLERATION_ROW;
+  index: number;
+}
+
+interface EditPoolSelectorKeyPairValueArray {
+  type: typeof EDIT_POOL_SET_KEY_PAIR_VALUE;
+  newArray: LabelKeyPair[];
 }
 
 export type FieldsToHandle = INameTenantFields;
@@ -709,4 +806,15 @@ export type TenantsManagementTypes =
   | AddNewPoolToleration
   | RemovePoolTolerationRow
   | SetPoolSelectorKeyPairValueArray
-  | SetSelectedPool;
+  | SetSelectedPool
+  | SetDetailsOpen
+  | EditPoolLoading
+  | ResetEditPoolForm
+  | SetEditPoolFieldValue
+  | EditPoolPageValid
+  | EditPoolStorageClasses
+  | EditPoolTolerationValue
+  | EditPoolToleration
+  | EditRemovePoolTolerationRow
+  | EditPoolSelectorKeyPairValueArray
+  | EditPoolSetInitialInformation;

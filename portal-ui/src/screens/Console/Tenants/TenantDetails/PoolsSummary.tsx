@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -28,7 +28,11 @@ import {
 import Grid from "@mui/material/Grid";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
-import { setSelectedPool, setTenantDetailsLoad } from "../actions";
+import {
+  setOpenPoolDetails,
+  setSelectedPool,
+  setTenantDetailsLoad,
+} from "../actions";
 import PoolsListing from "./Pools/Details/PoolsListing";
 import PoolDetails from "./Pools/Details/PoolDetails";
 import BackLink from "../../../../common/BackLink";
@@ -39,9 +43,11 @@ interface IPoolsSummary {
   history: any;
   match: any;
   selectedPool: string | null;
+  poolDetailsOpen: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
   setSelectedPool: typeof setSelectedPool;
+  setOpenPoolDetails: typeof setOpenPoolDetails;
 }
 
 const styles = (theme: Theme) =>
@@ -57,15 +63,16 @@ const PoolsSummary = ({
   history,
   selectedPool,
   match,
+  poolDetailsOpen,
+  setOpenPoolDetails,
 }: IPoolsSummary) => {
-  const [poolDetailsOpen, setPoolDetailsOpen] = useState<boolean>(false);
   return (
     <Fragment>
       {poolDetailsOpen && (
         <Grid item xs={12}>
           <BackLink
             executeOnClick={() => {
-              setPoolDetailsOpen(false);
+              setOpenPoolDetails(false);
             }}
             label={"Back to Pools list"}
             to={match.url}
@@ -77,15 +84,11 @@ const PoolsSummary = ({
       </h1>
       <Grid container>
         {poolDetailsOpen ? (
-          <PoolDetails
-            closeDetailsView={() => {
-              setPoolDetailsOpen(false);
-            }}
-          />
+          <PoolDetails history={history} />
         ) : (
           <PoolsListing
             setPoolDetailsView={() => {
-              setPoolDetailsOpen(true);
+              setOpenPoolDetails(true);
             }}
             history={history}
           />
@@ -100,12 +103,14 @@ const mapState = (state: AppState) => ({
   selectedTenant: state.tenants.tenantDetails.currentTenant,
   selectedPool: state.tenants.tenantDetails.selectedPool,
   tenant: state.tenants.tenantDetails.tenantInfo,
+  poolDetailsOpen: state.tenants.tenantDetails.poolDetailsOpen,
 });
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
   setTenantDetailsLoad,
   setSelectedPool,
+  setOpenPoolDetails,
 });
 
 export default withStyles(styles)(connector(PoolsSummary));

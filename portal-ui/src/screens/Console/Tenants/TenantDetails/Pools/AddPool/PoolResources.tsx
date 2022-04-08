@@ -22,28 +22,28 @@ import withStyles from "@mui/styles/withStyles";
 import {
   formFieldStyles,
   wizardCommon,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+} from "../../../../Common/FormComponents/common/styleLibrary";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
-import { niceBytes } from "../../../../../common/utils";
+import { niceBytes } from "../../../../../../common/utils";
 import { Paper, SelectChangeEvent } from "@mui/material";
-import api from "../../../../../common/api";
-import { ITenant } from "../../ListTenants/types";
-import { ErrorResponseHandler } from "../../../../../common/types";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { IQuotaElement, IQuotas, Opts } from "../../ListTenants/utils";
-import { AppState } from "../../../../../store";
+import api from "../../../../../../common/api";
+import { ITenant } from "../../../ListTenants/types";
+import { ErrorResponseHandler } from "../../../../../../common/types";
+import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { IQuotaElement, IQuotas, Opts } from "../../../ListTenants/utils";
+import { AppState } from "../../../../../../store";
 import { connect } from "react-redux";
 import {
   isPoolPageValid,
   setPoolField,
   setPoolStorageClasses,
-} from "../../actions";
+} from "../../../actions";
 import {
   commonFormValidation,
   IValidation,
-} from "../../../../../utils/validationFunctions";
-import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+} from "../../../../../../utils/validationFunctions";
+import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IPoolResourcesProps {
   tenant: ITenant | null;
