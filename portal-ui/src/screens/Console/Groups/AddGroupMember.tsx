@@ -80,17 +80,20 @@ const AddGroupMember = ({
       title={title}
       titleIcon={<AddMembersToGroupIcon />}
     >
-      <div className={classes.formFieldRow}>
-        <PredefinedList label={`Selected Group`} content={selectedGroup} />
-      </div>
-      <div className={classes.userSelector}>
-        <UsersSelectors
-          selectedUsers={selectedUsers}
-          setSelectedUsers={setSelectedUsers}
-          editMode={!selectedGroup}
-        />
-      </div>
-
+      <Grid container>
+        <Grid item xs={12}>
+          <div className={classes.formFieldRow}>
+            <PredefinedList label={`Selected Group`} content={selectedGroup} />
+          </div>
+          <div className={classes.userSelector}>
+            <UsersSelectors
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+              editMode={!selectedGroup}
+            />
+          </div>
+        </Grid>
+      </Grid>
       <Grid item xs={12} className={classes.modalButtonBar}>
         <Button
           type="button"
