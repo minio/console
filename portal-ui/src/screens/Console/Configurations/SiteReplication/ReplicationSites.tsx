@@ -27,7 +27,7 @@ import {
 import { ReplicationSite } from "./SiteReplication";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import TrashIcon from "../../../../icons/TrashIcon";
-import {CircleIcon, ConfirmDeleteIcon, EditIcon} from "../../../../icons";
+import { CircleIcon, ConfirmDeleteIcon, EditIcon } from "../../../../icons";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
@@ -103,7 +103,7 @@ const ReplicationSites = ({
     });
   };
 
-  const hasExpand = false //siteInfo.isCurrent to b
+  const hasExpand = false; //siteInfo.isCurrent to b
   let isValidEndPointUrl = false;
 
   try {
@@ -160,7 +160,7 @@ const ReplicationSites = ({
                   borderLeft: "0",
                   borderRight: "0",
                   borderTop: "0",
-                  padding: "8px 10px 8px 20px",
+                  padding: "6px 10px 6px 20px",
                   "&:hover": {
                     background: "#bebbbb0d",
                   },
@@ -230,6 +230,20 @@ const ReplicationSites = ({
                     marginRight: "25px",
                     width: "60px",
                     flexShrink: 0,
+
+                    "& button": {
+                      borderRadius: "50%",
+                      background: "#F8F8F8",
+                      border: "none",
+
+                      "&:hover": {
+                        background: "#E2E2E2",
+                      },
+
+                      "& svg": {
+                        fill: "#696565",
+                      },
+                    },
                   }}
                 >
                   <RBIconButton
@@ -260,43 +274,50 @@ const ReplicationSites = ({
                     }}
                   />
                 </Box>
-                  {hasExpand ?<Box
-                  sx={{
-                    height: "25px",
-                    width: "25px",
-                    background: "#FBFAFA",
-                    borderRadius: "2px",
-                    border: "1px solid #eaeaea",
-                    "&:hover": {
-                      background: "#fafafa",
-                    },
-                    display: {
-                      md: "block",
-                      xs: "none",
-                    },
-                    "& .collapse-icon": {
-                      fill: "#494949",
-                      "& g  rect": {
-                        fill: "#ffffff",
+                {hasExpand ? (
+                  <Box
+                    sx={{
+                      height: "25px",
+                      width: "25px",
+                      background: "#FBFAFA",
+                      borderRadius: "2px",
+                      border: "1px solid #eaeaea",
+                      "&:hover": {
+                        background: "#fafafa",
                       },
-                    },
-                    "& .expand-icon": {
-                      fill: "#494949",
-                      "& rect": {
-                        fill: "#ffffff",
+                      display: {
+                        md: "block",
+                        xs: "none",
                       },
-                    },
-                  }}
-                  onClick={handleToggle}
-                >
-                  {isExpanded ? (
-                    <MenuCollapsedIcon className="collapse-icon" />
-                  ) : (
-                    <MenuExpandedIcon className="expand-icon" />
-                  )}
-                </Box>:<Box sx={{
-                          height: "25px",
-                          width: "25px",}}/>}
+                      "& .collapse-icon": {
+                        fill: "#494949",
+                        "& g  rect": {
+                          fill: "#ffffff",
+                        },
+                      },
+                      "& .expand-icon": {
+                        fill: "#494949",
+                        "& rect": {
+                          fill: "#ffffff",
+                        },
+                      },
+                    }}
+                    onClick={handleToggle}
+                  >
+                    {isExpanded ? (
+                      <MenuCollapsedIcon className="collapse-icon" />
+                    ) : (
+                      <MenuExpandedIcon className="expand-icon" />
+                    )}
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      height: "25px",
+                      width: "25px",
+                    }}
+                  />
+                )}
               </ListItemButton>
               {isExpanded ? (
                 <Box

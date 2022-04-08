@@ -71,9 +71,10 @@ const AddReplicationSitesModal = ({
 
   const isAllEndpointsValid =
     siteConfig.reduce((acc: string[], cv, i) => {
-      const isEpValid = isValidEndPoint(siteConfig[i].endpoint);
+      const epValue = siteConfig[i].endpoint;
+      const isEpValid = isValidEndPoint(epValue);
 
-      if (isEpValid === "") {
+      if (isEpValid === "" && epValue !== "") {
         acc.push(isEpValid);
       }
       return acc;
