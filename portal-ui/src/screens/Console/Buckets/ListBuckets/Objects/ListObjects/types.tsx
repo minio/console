@@ -14,29 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface BucketObject {
+export interface BucketObjectItem {
   name: string;
   size: number;
   etag?: string;
   last_modified: Date;
-  content_type: string;
+  content_type?: string;
   version_id: string;
   delete_flag?: boolean;
 }
 
-export interface BucketObjectsList {
-  objects: BucketObject[];
-  total: number;
-}
-
-export interface RewindObject {
-  last_modified: string;
-  delete_flag: boolean;
-  name: string;
-  version_id: string;
-  size: number;
-}
-
-export interface RewindObjectList {
-  objects: RewindObject[];
+export interface BucketObjectItemsList {
+  objects: BucketObjectItem[];
+  total?: number;
 }

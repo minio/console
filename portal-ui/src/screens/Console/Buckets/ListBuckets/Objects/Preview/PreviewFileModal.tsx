@@ -17,13 +17,13 @@
 import React, { Fragment } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PreviewFileContent from "./PreviewFileContent";
-import { BucketObject } from "../ListObjects/types";
+import { BucketObjectItem } from "../ListObjects/types";
 import { ObjectPreviewIcon } from "../../../../../../icons";
 
 interface IPreviewFileProps {
   open: boolean;
   bucketName: string;
-  object: BucketObject | null;
+  object: BucketObjectItem | null;
   onClosePreview: () => void;
 }
 

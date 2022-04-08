@@ -201,7 +201,7 @@ const ObjectDetailPanel = ({
   }, [internalPaths, bucketName, setLoadingObjectInfo]);
 
   useEffect(() => {
-    if (distributedSetup && allInfoElements.length >= 1) {
+    if (distributedSetup && allInfoElements && allInfoElements.length >= 1) {
       let infoElement =
         allInfoElements.find((el: IFileInfo) => el.is_latest) || emptyFile;
 

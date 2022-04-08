@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { ObjectBrowserReducer } from "../../../../ObjectBrowser/reducers";
+import { ObjectBrowserReducer } from "../../../../ObjectBrowser/types";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import {
   resetRewind,
@@ -32,7 +32,7 @@ import DateTimePickerWrapper from "../../../../Common/FormComponents/DateTimePic
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IRewindEnable {
-  closeModalAndRefresh: (reload: boolean) => void;
+  closeModalAndRefresh: () => void;
   classes: any;
   open: boolean;
   bucketName: string;
@@ -80,14 +80,14 @@ const RewindEnable = ({
       setRewindEnabling(true);
       setRewindEnable(true, bucketName, dateSelected);
     }
-    closeModalAndRefresh(true);
+    closeModalAndRefresh();
   };
 
   return (
     <ModalWrapper
       modalOpen={open}
       onClose={() => {
-        closeModalAndRefresh(false);
+        closeModalAndRefresh();
       }}
       title={`Rewind - ${bucketName}`}
     >

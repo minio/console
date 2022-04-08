@@ -53,6 +53,7 @@ const styles = (theme: Theme) =>
       margin: "15px 0",
       marginBottom: 0,
       flexBasis: "initial",
+      flexWrap: "nowrap",
     },
     noTopMargin: {
       marginTop: 0,
