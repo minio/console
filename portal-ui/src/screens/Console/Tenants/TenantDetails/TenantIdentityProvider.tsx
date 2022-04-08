@@ -28,7 +28,6 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Button, DialogContentText, Typography } from "@mui/material";
@@ -50,6 +49,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../icons";
+
 interface ITenantIdentityProvider {
   classes: any;
   loadingTenant: boolean;
@@ -298,304 +298,302 @@ const TenantIdentityProvider = ({
         }
       />
       {loadingTenant ? (
-        <Paper className={classes.paperContainer}>
-          <div className={classes.loaderAlign}>
-            <Loader />
-          </div>
-        </Paper>
+        <div className={classes.loaderAlign}>
+          <Loader />
+        </div>
       ) : (
         <Fragment>
-          <h1 className={classes.sectionTitle}>Identity Provider</h1>
-          <Paper className={classes.paperContainer}>
-            <Grid item xs={12} className={classes.protocolRadioOptions}>
-              <label>Protocol</label>
-              <RadioGroupSelector
-                currentSelection={idpSelection}
-                id="idp-options"
-                name="idp-options"
-                label=" "
-                onChange={(e) => {
-                  setIdpSelection(e.target.value);
-                }}
-                selectorOptions={[
-                  { label: "Built-in", value: "Built-in" },
-                  { label: "OpenID", value: "OpenID" },
-                  { label: "Active Directory", value: "AD" },
-                ]}
-              />
-            </Grid>
+          <Grid item xs={12}>
+            <h1 className={classes.sectionTitle}>Identity Provider</h1>
+            <hr className={classes.hrClass} />
+          </Grid>
+          <Grid item xs={12} className={classes.protocolRadioOptions}>
+            <RadioGroupSelector
+              currentSelection={idpSelection}
+              id="idp-options"
+              name="idp-options"
+              label="Protocol"
+              onChange={(e) => {
+                setIdpSelection(e.target.value);
+              }}
+              selectorOptions={[
+                { label: "Built-in", value: "Built-in" },
+                { label: "OpenID", value: "OpenID" },
+                { label: "Active Directory", value: "AD" },
+              ]}
+            />
+          </Grid>
 
-            {idpSelection === "OpenID" && (
-              <Fragment>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="openID_CONFIGURATION_URL"
-                    name="openID_CONFIGURATION_URL"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setOpenIDConfigurationURL(e.target.value);
-                      cleanValidation("openID_CONFIGURATION_URL");
-                    }}
-                    label="Configuration URL"
-                    value={openIDConfigurationURL}
-                    placeholder="https://your-identity-provider.com/.well-known/openid-configuration"
-                    error={validationErrors["openID_CONFIGURATION_URL"] || ""}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="openID_clientID"
-                    name="openID_clientID"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setOpenIDClientID(e.target.value);
-                      cleanValidation("openID_clientID");
-                    }}
-                    label="Client ID"
-                    value={openIDClientID}
-                    error={validationErrors["openID_clientID"] || ""}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    type={showOIDCSecretID ? "text" : "password"}
-                    id="openID_secretID"
-                    name="openID_secretID"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setOpenIDSecretID(e.target.value);
-                      cleanValidation("openID_secretID");
-                    }}
-                    label="Secret ID"
-                    value={openIDSecretID}
-                    error={validationErrors["openID_secretID"] || ""}
-                    required
-                    overlayIcon={
-                      showOIDCSecretID ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <RemoveRedEyeIcon />
-                      )
-                    }
-                    overlayAction={() => setShowOIDCSecretID(!showOIDCSecretID)}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="openID_callbackURL"
-                    name="openID_callbackURL"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setOpenIDCallbackURL(e.target.value);
-                      cleanValidation("openID_callbackURL");
-                    }}
-                    label="Callback URL"
-                    value={openIDCallbackURL}
-                    placeholder="https://your-console-endpoint:9443/oauth_callback"
-                    error={validationErrors["openID_callbackURL"] || ""}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="openID_claimName"
-                    name="openID_claimName"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setOpenIDClaimName(e.target.value);
-                      cleanValidation("openID_claimName");
-                    }}
-                    label="Claim Name"
-                    value={openIDClaimName}
-                    error={validationErrors["openID_claimName"] || ""}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="openID_scopes"
-                    name="openID_scopes"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setOpenIDScopes(e.target.value);
-                      cleanValidation("openID_scopes");
-                    }}
-                    label="Scopes"
-                    value={openIDScopes}
-                  />
-                </Grid>
-              </Fragment>
-            )}
+          {idpSelection === "OpenID" && (
+            <Fragment>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="openID_CONFIGURATION_URL"
+                  name="openID_CONFIGURATION_URL"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setOpenIDConfigurationURL(e.target.value);
+                    cleanValidation("openID_CONFIGURATION_URL");
+                  }}
+                  label="Configuration URL"
+                  value={openIDConfigurationURL}
+                  placeholder="https://your-identity-provider.com/.well-known/openid-configuration"
+                  error={validationErrors["openID_CONFIGURATION_URL"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="openID_clientID"
+                  name="openID_clientID"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setOpenIDClientID(e.target.value);
+                    cleanValidation("openID_clientID");
+                  }}
+                  label="Client ID"
+                  value={openIDClientID}
+                  error={validationErrors["openID_clientID"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  type={showOIDCSecretID ? "text" : "password"}
+                  id="openID_secretID"
+                  name="openID_secretID"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setOpenIDSecretID(e.target.value);
+                    cleanValidation("openID_secretID");
+                  }}
+                  label="Secret ID"
+                  value={openIDSecretID}
+                  error={validationErrors["openID_secretID"] || ""}
+                  required
+                  overlayIcon={
+                    showOIDCSecretID ? (
+                      <VisibilityOffIcon />
+                    ) : (
+                      <RemoveRedEyeIcon />
+                    )
+                  }
+                  overlayAction={() => setShowOIDCSecretID(!showOIDCSecretID)}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="openID_callbackURL"
+                  name="openID_callbackURL"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setOpenIDCallbackURL(e.target.value);
+                    cleanValidation("openID_callbackURL");
+                  }}
+                  label="Callback URL"
+                  value={openIDCallbackURL}
+                  placeholder="https://your-console-endpoint:9443/oauth_callback"
+                  error={validationErrors["openID_callbackURL"] || ""}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="openID_claimName"
+                  name="openID_claimName"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setOpenIDClaimName(e.target.value);
+                    cleanValidation("openID_claimName");
+                  }}
+                  label="Claim Name"
+                  value={openIDClaimName}
+                  error={validationErrors["openID_claimName"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="openID_scopes"
+                  name="openID_scopes"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setOpenIDScopes(e.target.value);
+                    cleanValidation("openID_scopes");
+                  }}
+                  label="Scopes"
+                  value={openIDScopes}
+                />
+              </Grid>
+            </Fragment>
+          )}
 
-            {idpSelection === "AD" && (
-              <Fragment>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="AD_URL"
-                    name="AD_URL"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADURL(e.target.value);
-                      cleanValidation("AD_URL");
-                    }}
-                    label="LDAP Server Address"
-                    value={ADURL}
-                    placeholder="ldap-server:636"
-                    error={validationErrors["AD_URL"] || ""}
-                    required
-                  />
+          {idpSelection === "AD" && (
+            <Fragment>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="AD_URL"
+                  name="AD_URL"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADURL(e.target.value);
+                    cleanValidation("AD_URL");
+                  }}
+                  label="LDAP Server Address"
+                  value={ADURL}
+                  placeholder="ldap-server:636"
+                  error={validationErrors["AD_URL"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  value="ad_skipTLS"
+                  id="ad_skipTLS"
+                  name="ad_skipTLS"
+                  checked={ADSkipTLS}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    setADSkipTLS(checked);
+                  }}
+                  label={"Skip TLS Verification"}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  value="ad_serverInsecure"
+                  id="ad_serverInsecure"
+                  name="ad_serverInsecure"
+                  checked={ADServerInsecure}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    setADServerInsecure(checked);
+                  }}
+                  label={"Server Insecure"}
+                />
+              </Grid>
+              {ADServerInsecure ? (
+                <Grid item xs={12}>
+                  <Typography
+                    className={classes.error}
+                    variant="caption"
+                    display="block"
+                    gutterBottom
+                  >
+                    Warning: All traffic with Active Directory will be
+                    unencrypted
+                  </Typography>
+                  <br />
                 </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    value="ad_skipTLS"
-                    id="ad_skipTLS"
-                    name="ad_skipTLS"
-                    checked={ADSkipTLS}
-                    onChange={(e) => {
-                      const targetD = e.target;
-                      const checked = targetD.checked;
-                      setADSkipTLS(checked);
-                    }}
-                    label={"Skip TLS Verification"}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    value="ad_serverInsecure"
-                    id="ad_serverInsecure"
-                    name="ad_serverInsecure"
-                    checked={ADServerInsecure}
-                    onChange={(e) => {
-                      const targetD = e.target;
-                      const checked = targetD.checked;
-                      setADServerInsecure(checked);
-                    }}
-                    label={"Server Insecure"}
-                  />
-                </Grid>
-                {ADServerInsecure ? (
-                  <Grid item xs={12}>
-                    <Typography
-                      className={classes.error}
-                      variant="caption"
-                      display="block"
-                      gutterBottom
-                    >
-                      Warning: All traffic with Active Directory will be
-                      unencrypted
-                    </Typography>
-                    <br />
-                  </Grid>
-                ) : null}
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    value="ad_serverStartTLS"
-                    id="ad_serverStartTLS"
-                    name="ad_serverStartTLS"
-                    checked={ADServerStartTLS}
-                    onChange={(e) => {
-                      const targetD = e.target;
-                      const checked = targetD.checked;
-                      setADServerStartTLS(checked);
-                    }}
-                    label={"Start TLS connection to AD/LDAP server"}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="ad_lookupBindDN"
-                    name="ad_lookupBindDN"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADLookupBindDN(e.target.value);
-                      cleanValidation("ad_lookupBindDN");
-                    }}
-                    label="Lookup Bind DN"
-                    value={ADLookupBindDN}
-                    placeholder="cn=admin,dc=min,dc=io"
-                    error={validationErrors["ad_lookupBindDN"] || ""}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    type={showADLookupBindPassword ? "text" : "password"}
-                    id="ad_lookupBindPassword"
-                    name="ad_lookupBindPassword"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADLookupBindPassword(e.target.value);
-                    }}
-                    label="Lookup Bind Password"
-                    value={ADLookupBindPassword}
-                    placeholder="admin"
-                    overlayIcon={
-                      showADLookupBindPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <RemoveRedEyeIcon />
-                      )
-                    }
-                    overlayAction={() =>
-                      setShowADLookupBindPassword(!showADLookupBindPassword)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="ad_userDNSearchBaseDN"
-                    name="ad_userDNSearchBaseDN"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADUserDNSearchBaseDN(e.target.value);
-                    }}
-                    label="User DN Search Base DN"
-                    value={ADUserDNSearchBaseDN}
-                    placeholder="dc=min,dc=io"
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="ad_userDNSearchFilter"
-                    name="ad_userDNSearchFilter"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADUserDNSearchFilter(e.target.value);
-                    }}
-                    label="User DN Search Filter"
-                    value={ADUserDNSearchFilter}
-                    placeholder="(sAMAcountName=%s)"
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="ad_groupSearchBaseDN"
-                    name="ad_groupSearchBaseDN"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADGroupSearchBaseDN(e.target.value);
-                    }}
-                    label="Group Search Base DN"
-                    value={ADGroupSearchBaseDN}
-                    placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="ad_groupSearchFilter"
-                    name="ad_groupSearchFilter"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setADGroupSearchFilter(e.target.value);
-                    }}
-                    label="Group Search Filter"
-                    value={ADGroupSearchFilter}
-                    placeholder="(&(objectclass=groupOfNames)(member=%s))"
-                  />
-                </Grid>
-              </Fragment>
-            )}
+              ) : null}
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <FormSwitchWrapper
+                  value="ad_serverStartTLS"
+                  id="ad_serverStartTLS"
+                  name="ad_serverStartTLS"
+                  checked={ADServerStartTLS}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    setADServerStartTLS(checked);
+                  }}
+                  label={"Start TLS connection to AD/LDAP server"}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="ad_lookupBindDN"
+                  name="ad_lookupBindDN"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADLookupBindDN(e.target.value);
+                    cleanValidation("ad_lookupBindDN");
+                  }}
+                  label="Lookup Bind DN"
+                  value={ADLookupBindDN}
+                  placeholder="cn=admin,dc=min,dc=io"
+                  error={validationErrors["ad_lookupBindDN"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  type={showADLookupBindPassword ? "text" : "password"}
+                  id="ad_lookupBindPassword"
+                  name="ad_lookupBindPassword"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADLookupBindPassword(e.target.value);
+                  }}
+                  label="Lookup Bind Password"
+                  value={ADLookupBindPassword}
+                  placeholder="admin"
+                  overlayIcon={
+                    showADLookupBindPassword ? (
+                      <VisibilityOffIcon />
+                    ) : (
+                      <RemoveRedEyeIcon />
+                    )
+                  }
+                  overlayAction={() =>
+                    setShowADLookupBindPassword(!showADLookupBindPassword)
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="ad_userDNSearchBaseDN"
+                  name="ad_userDNSearchBaseDN"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADUserDNSearchBaseDN(e.target.value);
+                  }}
+                  label="User DN Search Base DN"
+                  value={ADUserDNSearchBaseDN}
+                  placeholder="dc=min,dc=io"
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="ad_userDNSearchFilter"
+                  name="ad_userDNSearchFilter"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADUserDNSearchFilter(e.target.value);
+                  }}
+                  label="User DN Search Filter"
+                  value={ADUserDNSearchFilter}
+                  placeholder="(sAMAcountName=%s)"
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="ad_groupSearchBaseDN"
+                  name="ad_groupSearchBaseDN"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADGroupSearchBaseDN(e.target.value);
+                  }}
+                  label="Group Search Base DN"
+                  value={ADGroupSearchBaseDN}
+                  placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="ad_groupSearchFilter"
+                  name="ad_groupSearchFilter"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setADGroupSearchFilter(e.target.value);
+                  }}
+                  label="Group Search Filter"
+                  value={ADGroupSearchFilter}
+                  placeholder="(&(objectclass=groupOfNames)(member=%s))"
+                />
+              </Grid>
+            </Fragment>
+          )}
 
-            <Grid item xs={12} className={classes.buttonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={!isFormValid || isSending}
-                onClick={() => setDialogOpen(true)}
-              >
-                Save
-              </Button>
-            </Grid>
-          </Paper>
+          <Grid item xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!isFormValid || isSending}
+              onClick={() => setDialogOpen(true)}
+            >
+              Save
+            </Button>
+          </Grid>
         </Fragment>
       )}
     </React.Fragment>

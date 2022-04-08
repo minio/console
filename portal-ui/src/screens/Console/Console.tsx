@@ -51,6 +51,7 @@ import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import LoadingComponent from "../../common/LoadingComponent";
 import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
+import ComponentsScreen from "./Common/ComponentsScreen";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -611,6 +612,11 @@ const Console = ({
                 <Route key={"/icons"} exact path={"/icons"}>
                   <Suspense fallback={<LoadingComponent />}>
                     <IconsScreen />
+                  </Suspense>
+                </Route>
+                <Route key={"/components"} exact path={"/components"}>
+                  <Suspense fallback={<LoadingComponent />}>
+                    <ComponentsScreen />
                   </Suspense>
                 </Route>
                 {allowedRoutes.length > 0 ? (
