@@ -185,7 +185,7 @@ export const IAM_PAGES = {
   NAMESPACE_TENANT_POOLS_ADD:
     "/namespaces/:tenantNamespace/tenants/:tenantName/add-pool",
   NAMESPACE_TENANT_POOLS_EDIT:
-      "/namespaces/:tenantNamespace/tenants/:tenantName/edit-pool",
+    "/namespaces/:tenantNamespace/tenants/:tenantName/edit-pool",
   NAMESPACE_TENANT_VOLUMES:
     "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
   NAMESPACE_TENANT_LICENSE:
@@ -380,10 +380,10 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],
-  [IAM_PAGES.SITE_REPLICATION]:[
+  [IAM_PAGES.SITE_REPLICATION]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ]
+  ],
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";

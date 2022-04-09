@@ -118,7 +118,9 @@ const ConfigurationOptions = React.lazy(
 const AddPool = React.lazy(
   () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
-const SiteReplication = React.lazy(() => import("./Configurations/SiteReplication/SiteReplication"));
+const SiteReplication = React.lazy(
+  () => import("./Configurations/SiteReplication/SiteReplication")
+);
 const styles = (theme: Theme) =>
   createStyles({
     root: {
