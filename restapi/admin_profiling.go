@@ -83,7 +83,8 @@ func startProfiling(ctx context.Context, client MinioAdmin, profilerType string)
 
 // getProfilingStartResponse performs startProfiling() and serializes it to the handler's output
 func getProfilingStartResponse(session *models.Principal, params *models.ProfilingStartRequest) (*models.StartProfilingList, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if params == nil {
 		return nil, prepareError(errPolicyBodyNotInRequest)
 	}
@@ -117,7 +118,8 @@ func stopProfiling(ctx context.Context, client MinioAdmin) (io.ReadCloser, error
 
 // getProfilingStopResponse() performs setPolicy() and serializes it to the handler's output
 func getProfilingStopResponse(session *models.Principal) (io.ReadCloser, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)

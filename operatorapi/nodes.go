@@ -358,7 +358,8 @@ OUTER:
 // Get allocatable resources response
 
 func getAllocatableResourcesResponse(numNodes int32, session *models.Principal) (*models.AllocatableResourcesResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)

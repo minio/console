@@ -58,7 +58,8 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "getSiteReplicationInfo()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	retValueMock := madmin.SiteReplicationInfo{
 		Enabled: true,
@@ -116,7 +117,8 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "addSiteReplicationInfo()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	retValueMock := &madmin.ReplicateAddStatus{
 		Success:                 true,
@@ -167,7 +169,8 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "editSiteReplicationInfo()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	retValueMock := &madmin.ReplicateEditStatus{
 		Success:   true,
@@ -207,7 +210,8 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "deleteSiteReplicationInfo()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	retValueMock := &madmin.ReplicateRemoveStatus{
 		Status:    "success",

@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
@@ -169,7 +168,7 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 }
 
 func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	if oauth2.IsIDPEnabled() {
 		// initialize new oauth2 client
