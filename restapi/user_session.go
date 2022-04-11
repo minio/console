@@ -17,12 +17,15 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	policies "github.com/minio/console/restapi/policy"
 
 	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/minio/pkg/bucket/policy/condition"
@@ -95,6 +98,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	if session == nil {
 		return nil, prepareError(errorGenericInvalidSession)
 	}
+	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
 
 	// initialize admin client
 	mAdminClient, err := NewMinioAdminClient(&models.Principal{
@@ -108,7 +112,13 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	userAdminClient := AdminClient{Client: mAdminClient}
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
-	policy, err := getAccountPolicy(ctx, userAdminClient)
+	accountInfo, err := getAccountInfo(ctx, userAdminClient)
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+
+	}
+	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
+	policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(rawPolicy))
 	if err != nil {
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
@@ -210,12 +220,12 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		resourcePermissions[key] = resourceActions
 
 	}
-	rawPolicy, err := json.Marshal(policy)
+	serializedPolicy, err := json.Marshal(policy)
 	if err != nil {
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
 	var sessionPolicy *models.IamPolicy
-	err = json.Unmarshal(rawPolicy, &sessionPolicy)
+	err = json.Unmarshal(serializedPolicy, &sessionPolicy)
 	if err != nil {
 		return nil, prepareError(err)
 	}
