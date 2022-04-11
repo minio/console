@@ -40,6 +40,7 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 10 * time.Second,
+		DisableCompression:    true,
 		TLSClientConfig: &tls.Config{
 			// Can't use SSLv3 because of POODLE and BEAST
 			// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
