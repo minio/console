@@ -38,7 +38,8 @@ func (ac adminClientMock) serverHealthInfo(ctx context.Context, healthDataTypes 
 func Test_serverHealthInfo(t *testing.T) {
 	var testReceiver chan madmin.HealthInfo
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := adminClientMock{}
 	mockWSConn := mockConn{}
 	deadlineDuration, _ := time.ParseDuration("1h")

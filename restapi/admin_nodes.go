@@ -38,7 +38,8 @@ func registerNodesHandler(api *operations.ConsoleAPI) {
 
 // getListNodesResponse returns a list of available node endpoints .
 func getListNodesResponse(session *models.Principal) ([]string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)

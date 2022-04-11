@@ -142,7 +142,8 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 
 // getBucketLifecycleResponse performs getBucketLifecycle() and serializes it to the handler's output
 func getBucketLifecycleResponse(session *models.Principal, params user_api.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -240,7 +241,8 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params user_api
 
 // getAddBucketLifecycleResponse returns the response of adding a bucket lifecycle response
 func getAddBucketLifecycleResponse(session *models.Principal, params user_api.AddBucketLifecycleParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -338,7 +340,8 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params user_ap
 
 // getEditBucketLifecycleRule returns the response of bucket lifecycle tier edit
 func getEditBucketLifecycleRule(session *models.Principal, params user_api.UpdateBucketLifecycleParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -391,7 +394,8 @@ func deleteBucketLifecycle(ctx context.Context, client MinioClient, params user_
 
 // getDeleteBucketLifecycleRule returns the response of bucket lifecycle tier delete
 func getDeleteBucketLifecycleRule(session *models.Principal, params user_api.DeleteBucketLifecycleRuleParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -476,7 +480,8 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params use
 
 // getAddMultiBucketLifecycleResponse returns the response of multibucket lifecycle assignment
 func getAddMultiBucketLifecycleResponse(session *models.Principal, params user_api.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return nil, prepareError(err)

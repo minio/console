@@ -33,9 +33,10 @@ import (
 	"strings"
 	"time"
 
-	utils2 "github.com/minio/console/pkg/utils"
-
 	"github.com/dustin/go-humanize"
+	"github.com/minio/madmin-go"
+
+	utils2 "github.com/minio/console/pkg/utils"
 
 	"github.com/minio/console/restapi"
 
@@ -51,11 +52,9 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/minio/console/cluster"
-	"github.com/minio/madmin-go"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
+	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
@@ -433,7 +432,8 @@ func deleteTenantAction(
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
 func getDeletePodResponse(session *models.Principal, params operator_api.DeletePodParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
@@ -833,8 +833,8 @@ func updateTenantIdentityProvider(ctx context.Context, operatorClient OperatorCl
 }
 
 func getTenantIdentityProviderResponse(session *models.Principal, params operator_api.TenantIdentityProviderParams) (*models.IdpConfiguration, *models.Error) {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -864,8 +864,8 @@ func getTenantIdentityProviderResponse(session *models.Principal, params operato
 }
 
 func getUpdateTenantIdentityProviderResponse(session *models.Principal, params operator_api.UpdateTenantIdentityProviderParams) *models.Error {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -889,8 +889,8 @@ func getUpdateTenantIdentityProviderResponse(session *models.Principal, params o
 }
 
 func getTenantSecurityResponse(session *models.Principal, params operator_api.TenantSecurityParams) (*models.TenantSecurityResponse, *models.Error) {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -919,8 +919,8 @@ func getTenantSecurityResponse(session *models.Principal, params operator_api.Te
 }
 
 func getUpdateTenantSecurityResponse(session *models.Principal, params operator_api.UpdateTenantSecurityParams) *models.Error {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -1099,7 +1099,8 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 }
 
 func getListAllTenantsResponse(session *models.Principal, params operator_api.ListAllTenantsParams) (*models.ListTenantsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1116,7 +1117,8 @@ func getListAllTenantsResponse(session *models.Principal, params operator_api.Li
 
 // getListTenantsResponse list tenants by namespace
 func getListTenantsResponse(session *models.Principal, params operator_api.ListTenantsParams) (*models.ListTenantsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1213,7 +1215,8 @@ func removeAnnotations(annotationsOne, annotationsTwo map[string]string) map[str
 }
 
 func getUpdateTenantResponse(session *models.Principal, params operator_api.UpdateTenantParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err)
@@ -1263,7 +1266,8 @@ func addTenantPool(ctx context.Context, operatorClient OperatorClientI, params o
 }
 
 func getTenantAddPoolResponse(session *models.Principal, params operator_api.TenantAddPoolParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err)
@@ -1279,8 +1283,8 @@ func getTenantAddPoolResponse(session *models.Principal, params operator_api.Ten
 
 // getTenantUsageResponse returns the usage of a tenant
 func getTenantUsageResponse(session *models.Principal, params operator_api.GetTenantUsageParams) (*models.TenantUsage, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1330,8 +1334,8 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 
 // getTenantLogsResponse returns the logs of a tenant
 func getTenantLogsResponse(session *models.Principal, params operator_api.GetTenantLogsParams) (*models.TenantLogs, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1428,8 +1432,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 // setTenantLogsResponse returns the logs of a tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
 
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1595,8 +1598,8 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 
 // enableTenantLoggingResponse enables Tenant Logging
 func enableTenantLoggingResponse(session *models.Principal, params operator_api.EnableTenantLoggingParams) (bool, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1656,8 +1659,8 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 
 // disableTenantLoggingResponse disables Tenant Logging
 func disableTenantLoggingResponse(session *models.Principal, params operator_api.DisableTenantLoggingParams) (bool, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1687,7 +1690,8 @@ func disableTenantLoggingResponse(session *models.Principal, params operator_api
 }
 
 func getTenantPodsResponse(session *models.Principal, params operator_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1721,7 +1725,8 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 }
 
 func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLogsParams) (string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return "", prepareError(err)
@@ -1736,7 +1741,8 @@ func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLog
 }
 
 func getPodEventsResponse(session *models.Principal, params operator_api.GetPodEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1767,7 +1773,8 @@ func getPodEventsResponse(session *models.Principal, params operator_api.GetPodE
 
 //get values for prometheus metrics
 func getTenantMonitoringResponse(session *models.Principal, params operator_api.GetTenantMonitoringParams) (*models.TenantMonitoringInfo, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -1860,8 +1867,8 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 //sets tenant Prometheus monitoring cofiguration fields to values provided
 func setTenantMonitoringResponse(session *models.Principal, params operator_api.SetTenantMonitoringParams) (bool, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -2397,7 +2404,8 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 }
 
 func getTenantUpdatePoolResponse(session *models.Principal, params operator_api.TenantUpdatePoolsParams) (*models.Tenant, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -2537,7 +2545,8 @@ func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenan
 }
 
 func getTenantEventsResponse(session *models.Principal, params operator_api.GetTenantEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)

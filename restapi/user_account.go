@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/minio/console/pkg/auth"
 
@@ -54,9 +53,8 @@ func changePassword(ctx context.Context, client MinioAdmin, session *models.Prin
 // getChangePasswordResponse will validate user knows what is the current password (avoid account hijacking), update user account password
 // and authenticate the user generating a new session token/cookie
 func getChangePasswordResponse(session *models.Principal, params user_api.AccountChangePasswordParams) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	// changePassword operations requires an AdminClient initialized with parent account credentials not
 	// STS credentials
 	parentAccountClient, err := NewMinioAdminClient(&models.Principal{

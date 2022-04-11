@@ -117,7 +117,8 @@ func SubnetLogin(client utils.HTTPClientI, username, password string) (string, s
 }
 
 func GetSubnetLoginResponse(session *models.Principal, params admin_api.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -212,7 +213,8 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*utils.HT
 }
 
 func GetSubnetLoginWithMFAResponse(session *models.Principal, params admin_api.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -278,7 +280,8 @@ func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient u
 }
 
 func GetSubnetRegisterResponse(session *models.Principal, params admin_api.SubnetRegisterParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -296,7 +299,8 @@ func GetSubnetRegisterResponse(session *models.Principal, params admin_api.Subne
 }
 
 func GetSubnetInfoResponse(session *models.Principal) (*models.License, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -342,7 +346,8 @@ func GetSubnetRegToken(ctx context.Context, minioClient MinioAdmin) (string, err
 }
 
 func GetSubnetRegTokenResponse(session *models.Principal) (*models.SubnetRegTokenResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)

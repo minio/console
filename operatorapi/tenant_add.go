@@ -41,7 +41,8 @@ import (
 func getTenantCreatedResponse(session *models.Principal, params operator_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
 		// we can live without figuring out the latest version of MinIO, Operator will use a hardcoded value

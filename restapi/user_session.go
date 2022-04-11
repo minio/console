@@ -89,7 +89,7 @@ func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
 func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	if session == nil {
