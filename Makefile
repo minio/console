@@ -182,7 +182,7 @@ test-sso-integration:
 test-operator-integration:
 	@(echo "Start cd operator-integration && go test:")
 	@(pwd)
-	@(cd operator-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./operator-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/operator-api.out)
+	@(cd operator-integration && go test -coverpkg=../operatorapi -c -tags testrunmain . && mkdir -p coverage && ./operator-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/operator-api.out)
 
 test-operator:
 	@(env bash $(PWD)/portal-ui/tests/scripts/operator.sh)
