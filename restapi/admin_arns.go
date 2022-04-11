@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -59,8 +58,8 @@ func getArnsResponse(session *models.Principal) (*models.ArnsResponse, *models.E
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	arnsList, err := getArns(ctx, adminClient)

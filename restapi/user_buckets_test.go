@@ -143,7 +143,8 @@ func TestMakeBucket(t *testing.T) {
 	// mock minIO client
 	minClient := minioClientMock{}
 	function := "makeBucket()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1: makeBucket() create a bucket
 	// mock function response from makeBucketWithContext(ctx)
 	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
@@ -192,7 +193,8 @@ func TestBucketInfo(t *testing.T) {
 	// mock minIO client
 	minClient := minioClientMock{}
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	function := "getBucketInfo()"
 
 	// Test-1: getBucketInfo() get a bucket with PRIVATE access
@@ -325,7 +327,8 @@ func TestBucketInfo(t *testing.T) {
 
 func TestSetBucketAccess(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// mock minIO client
 	minClient := minioClientMock{}
 
@@ -370,7 +373,8 @@ func TestSetBucketAccess(t *testing.T) {
 }
 
 func Test_enableBucketEncryption(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                            context.Context
@@ -423,7 +427,8 @@ func Test_enableBucketEncryption(t *testing.T) {
 }
 
 func Test_disableBucketEncryption(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                   context.Context
@@ -472,7 +477,8 @@ func Test_disableBucketEncryption(t *testing.T) {
 }
 
 func Test_getBucketEncryptionInfo(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                     context.Context
@@ -552,7 +558,8 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 
 func Test_SetBucketRetentionConfig(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                     context.Context
@@ -675,7 +682,8 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 
 func Test_GetBucketRetentionConfig(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx              context.Context
@@ -811,7 +819,8 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 
 func Test_SetBucketVersioning(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	errorMsg := "Error Message"
 	minClient := s3ClientMock{}
 	type args struct {

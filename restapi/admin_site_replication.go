@@ -71,7 +71,8 @@ func getSRInfoResponse(session *models.Principal) (info *models.SiteReplicationI
 		return nil, err
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	res, err := getSRConfig(ctx, adminClient)
 
@@ -88,7 +89,8 @@ func getSRAddResponse(session *models.Principal, params *admin_api.SiteReplicati
 		return nil, prepareError(err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	res, err := addSiteReplication(ctx, adminClient, params)
 	if err != nil {
@@ -103,7 +105,8 @@ func getSREditResponse(session *models.Principal, params *admin_api.SiteReplicat
 		return nil, prepareError(err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	eRes, err := editSiteReplication(ctx, adminClient, params)
 
 	if err != nil {
@@ -120,7 +123,8 @@ func getSRRemoveResponse(session *models.Principal, params *admin_api.SiteReplic
 	}
 	adminClient := AdminClient{Client: mAdmin}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	rRes, err := removeSiteReplication(ctx, adminClient, params)
 	if err != nil {
 		return nil, prepareError(err)

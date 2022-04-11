@@ -41,7 +41,8 @@ func TestWatch(t *testing.T) {
 	assert := assert.New(t)
 	client := s3ClientMock{}
 	mockWSConn := mockConn{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	function := "startWatch()"
 	testStreamSize := 5
 	testReceiver := make(chan []mc.EventInfo, testStreamSize)

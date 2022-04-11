@@ -32,6 +32,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/minio-go/v7"
+
 	"errors"
 
 	"github.com/go-openapi/runtime"
@@ -41,7 +43,6 @@ import (
 	"github.com/minio/console/restapi/operations/user_api"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/tags"
 	"github.com/minio/pkg/mimedb"
 )
@@ -366,7 +367,8 @@ func parseRange(s string, size int64) ([]httpRange, error) {
 }
 
 func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	var prefix string
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -466,7 +468,8 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	}), nil
 }
 func getDownloadFolderResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	var prefix string
 	mClient, err := newMinioClient(session)
 	if params.Prefix != "" {
@@ -550,7 +553,8 @@ func getDownloadFolderResponse(session *models.Principal, params user_api.Downlo
 
 // getDeleteObjectResponse returns whether there was an error on deletion of object
 func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteObjectParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	var prefix string
 	if params.Path != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Path)
@@ -598,7 +602,8 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 
 // getDeleteMultiplePathsResponse returns whether there was an error on deletion of any object
 func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.DeleteMultipleObjectsParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	var version string
 	var allVersions bool
 	if params.AllVersions != nil {
@@ -756,7 +761,8 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path
 }
 
 func getUploadObjectResponse(session *models.Principal, params user_api.PostBucketsBucketNameObjectsUploadParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -820,7 +826,8 @@ func uploadFiles(ctx context.Context, client MinioClient, params user_api.PostBu
 
 // getShareObjectResponse returns a share object url
 func getShareObjectResponse(session *models.Principal, params user_api.ShareObjectParams) (*string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	var prefix string
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
@@ -866,7 +873,7 @@ func getShareObjectURL(ctx context.Context, client MCClient, versionID string, d
 }
 
 func getSetObjectLegalHoldResponse(session *models.Principal, params user_api.PutObjectLegalHoldParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -902,7 +909,7 @@ func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, pre
 }
 
 func getSetObjectRetentionResponse(session *models.Principal, params user_api.PutObjectRetentionParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -955,7 +962,7 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, ver
 }
 
 func deleteObjectRetentionResponse(session *models.Principal, params user_api.DeleteObjectRetentionParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -990,7 +997,7 @@ func deleteObjectRetention(ctx context.Context, client MinioClient, bucketName, 
 }
 
 func getPutObjectTagsResponse(session *models.Principal, params user_api.PutObjectTagsParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -1028,7 +1035,7 @@ func putObjectTags(ctx context.Context, client MinioClient, bucketName, prefix, 
 
 // Restore Object Version
 func getPutObjectRestoreResponse(session *models.Principal, params user_api.PutObjectRestoreParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -1085,7 +1092,7 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 
 // Metadata Response from minio-go API
 func getObjectMetadataResponse(session *models.Principal, params user_api.GetObjectMetadataParams) (*models.Metadata, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {

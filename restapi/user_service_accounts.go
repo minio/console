@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
-	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -158,7 +157,7 @@ func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, polic
 //   is requestingit ,it first gets the credentials of the user and creates a client which is going to
 //   make the call to create the Service Account
 func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequest) (*models.ServiceAccountCreds, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -219,7 +218,7 @@ func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, 
 //   is requesting it ,it first gets the credentials of the user and creates a client which is going to
 //   make the call to create the Service Account
 func getCreateAUserServiceAccountResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequest, user string) (*models.ServiceAccountCreds, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -240,7 +239,7 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, serviceAcco
 // getCreateServiceAccountCredsResponse creates a service account with the defined policy for the user that
 //   is requesting it, and with the credentials provided
 func getCreateAUserServiceAccountCredsResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequestCreds, user string) (*models.ServiceAccountCreds, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -274,7 +273,7 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, servic
 }
 
 func getCreateServiceAccountCredsResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequestCreds) (*models.ServiceAccountCreds, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -323,7 +322,7 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user str
 // getUserServiceAccountsResponse authenticates the user and calls
 // getUserServiceAccounts to list the user's service accounts
 func getUserServiceAccountsResponse(session *models.Principal, user string) (models.ServiceAccounts, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -348,7 +347,7 @@ func deleteServiceAccount(ctx context.Context, userClient MinioAdmin, accessKey 
 
 // getDeleteServiceAccountResponse authenticates the user and calls deleteServiceAccount
 func getDeleteServiceAccountResponse(session *models.Principal, accessKey string) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -382,7 +381,7 @@ func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 // getServiceAccountPolicyResponse authenticates the user and calls
 // getServiceAccountPolicy to get the policy for a service account
 func getServiceAccountPolicyResponse(session *models.Principal, accessKey string) (string, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -409,7 +408,7 @@ func setServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 // getSetServiceAccountPolicyResponse authenticates the user and calls
 // getSetServiceAccountPolicy to set the policy for a service account
 func getSetServiceAccountPolicyResponse(session *models.Principal, accessKey string, policy string) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	userAdmin, err := NewMinioAdminClient(session)
@@ -429,7 +428,7 @@ func getSetServiceAccountPolicyResponse(session *models.Principal, accessKey str
 
 // getDeleteMultipleServiceAccountsResponse authenticates the user and calls deleteServiceAccount for each account listed in selectedSAs
 func getDeleteMultipleServiceAccountsResponse(session *models.Principal, selectedSAs []string) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
