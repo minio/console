@@ -66,7 +66,8 @@ func TestAddServiceAccount(t *testing.T) {
 	client := adminClientMock{}
 	function := "createServiceAccount()"
 	// Test-1: createServiceAccount create a service account by assigning it a policy
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	policyDefinition := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::bucket1/*\"]}]}"
 	mockResponse := madmin.Credentials{
 		AccessKey: "minio",
@@ -116,7 +117,8 @@ func TestListServiceAccounts(t *testing.T) {
 	function := "getUserServiceAccounts()"
 
 	// Test-1: getUserServiceAccounts list serviceaccounts for a user
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mockResponse := madmin.ListServiceAccountsResp{
 		Accounts: []string{"accesskey1", "accesskey2"},
 	}
@@ -146,7 +148,8 @@ func TestDeleteServiceAccount(t *testing.T) {
 	// mock minIO client
 	client := adminClientMock{}
 	function := "deleteServiceAccount()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test-1: deleteServiceAccount receive a service account to delete
 	testServiceAccount := "accesskeytest"
@@ -174,7 +177,8 @@ func TestGetServiceAccountPolicy(t *testing.T) {
 	function := "getServiceAccountPolicy()"
 
 	// Test-1: getServiceAccountPolicy list serviceaccounts for a user
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mockResponse := madmin.InfoServiceAccountResp{
 		Policy: `
 {

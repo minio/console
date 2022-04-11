@@ -855,8 +855,9 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
-		// 20 seconds timeout
-		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
 		defer cancel()
 		// serialize output
 		usage, err := GetAdminInfo(ctx, adminClient)
@@ -923,9 +924,8 @@ func unmarshalPrometheus(endpoint string, data interface{}) bool {
 }
 
 func testPrometheusURL(url string) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/-/healthy", nil)
 
 	if err != nil {

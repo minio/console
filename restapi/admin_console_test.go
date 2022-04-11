@@ -39,8 +39,8 @@ func TestAdminConsoleLog(t *testing.T) {
 	adminClient := adminClientMock{}
 	mockWSConn := mockConn{}
 	function := "startConsoleLog(ctx, )"
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	testReceiver := make(chan madmin.LogInfo, 5)
 	textToReceive := "test message"
 	testStreamSize := 5
