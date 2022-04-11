@@ -33,6 +33,7 @@ import api from "../../../common/api";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { AccountIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -123,6 +124,7 @@ const AddUserServiceAccount = ({
         closeModalAndRefresh(null);
       }}
       title={`Create Service Account`}
+       titleIcon={<AccountIcon />}
     >
       <form
         noValidate
