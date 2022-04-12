@@ -253,7 +253,7 @@ const ConfigLogSearch = ({
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Audit Log</h3>
         <span className={classes.descriptionText}>
-          Audit log deploys a small PostgreSQL database and store access logs of
+          Audit log deploys a small PostgreSQL database and stores access logs of
           all calls into the tenant.
         </span>
       </div>
