@@ -19,8 +19,8 @@ require (
 	github.com/klauspost/compress v1.14.4
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.18.0
-	github.com/minio/madmin-go v1.3.5
-	github.com/minio/mc v0.0.0-20220302011226-f13defa54577
+	github.com/minio/madmin-go v1.3.11
+	github.com/minio/mc v0.0.0-20220412070834-8df32e87d634
 	github.com/minio/minio-go/v7 v7.0.23
 	github.com/minio/operator v0.0.0-20220408011517-5adaef906d93
 	github.com/minio/pkg v1.1.20
@@ -46,6 +46,7 @@ require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/briandowns/spinner v1.18.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/charmbracelet/bubbles v0.10.3 // indirect
 	github.com/charmbracelet/bubbletea v0.20.0 // indirect
@@ -97,7 +98,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
-	github.com/minio/argon2 v1.0.0 // indirect
 	github.com/minio/colorjson v1.0.1 // indirect
 	github.com/minio/filepath v1.0.0 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
