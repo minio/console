@@ -17,13 +17,12 @@
 package restapi
 
 import (
-	"bytes"
 	"context"
 	"net/http"
 
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/madmin-go"
 
-	iampolicy "github.com/minio/pkg/iam/policy"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -88,15 +87,13 @@ func login(credentials ConsoleCredentialsI, sessionFeatures *auth.SessionFeature
 	return &token, nil
 }
 
-// getAccountPolicy will return the associated policy of the current account
-func getAccountPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy, error) {
-	// Obtain the current policy assigned to this user
-	// necessary for generating the list of allowed endpoints
+// getAccountInfo will return the current user information
+func getAccountInfo(ctx context.Context, client MinioAdmin) (*madmin.AccountInfo, error) {
 	accountInfo, err := client.AccountInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return iampolicy.ParseConfig(bytes.NewReader(accountInfo.Policy))
+	return &accountInfo, nil
 }
 
 // getConsoleCredentials will return ConsoleCredentials interface
