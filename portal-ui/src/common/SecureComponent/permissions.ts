@@ -161,6 +161,7 @@ export const IAM_PAGES = {
   TIERS: "/settings/tiers",
   TIERS_ADD: "/settings/tiers/add",
   TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
+  SITE_REPLICATION: "/settings/site-replication",
 
   /* Operator */
   TENANTS: "/tenants",
@@ -183,10 +184,14 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
   NAMESPACE_TENANT_POOLS_ADD:
     "/namespaces/:tenantNamespace/tenants/:tenantName/add-pool",
+  NAMESPACE_TENANT_POOLS_EDIT:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/edit-pool",
   NAMESPACE_TENANT_VOLUMES:
     "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
   NAMESPACE_TENANT_LICENSE:
     "/namespaces/:tenantNamespace/tenants/:tenantName/license",
+  NAMESPACE_TENANT_IDENTITY_PROVIDER:
+    "/namespaces/:tenantNamespace/tenants/:tenantName/identity-provider",
   NAMESPACE_TENANT_SECURITY:
     "/namespaces/:tenantNamespace/tenants/:tenantName/security",
   NAMESPACE_TENANT_ENCRYPTION:
@@ -372,6 +377,10 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.HEALTH]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.SUPPORT_INSPECT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.LICENSE]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.SITE_REPLICATION]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],

@@ -444,7 +444,7 @@ const ListTiersConfiguration = ({
                             <br />
                             <br />
                             To get started,{" "}
-                            <AButton onClick={addTier}>Add A Tier</AButton>.
+                            <AButton onClick={addTier}>Create Tier</AButton>.
                           </Fragment>
                         }
                       />

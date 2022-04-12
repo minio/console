@@ -34,13 +34,16 @@ import { ITenant } from "../../../ListTenants/types";
 import Grid from "@mui/material/Grid";
 import LabelValuePair from "../../../../Common/UsageBarWrapper/LabelValuePair";
 import { niceBytesInt } from "../../../../../../common/utils";
+import StackRow from "../../../../Common/UsageBarWrapper/StackRow";
+import RBIconButton from "../../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { EditTenantIcon } from "../../../../../../icons";
 
 interface IPoolDetails {
   classes: any;
+  history: any;
   loadingTenant: boolean;
   tenant: ITenant | null;
   selectedPool: string | null;
-  closeDetailsView: () => void;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
@@ -53,18 +56,22 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
+const stylingLayout = {
+  border: "#EAEAEA 1px solid",
+  borderRadius: "3px",
+  padding: "0px 20px",
+  position: "relative",
+};
+
 const twoColCssGridLayoutConfig = {
   display: "grid",
   gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
   gridAutoFlow: { xs: "dense", sm: "row" },
   gap: 2,
+  padding: "15px",
 };
 
-const PoolDetails = ({
-  closeDetailsView,
-  tenant,
-  selectedPool,
-}: IPoolDetails) => {
+const PoolDetails = ({ tenant, selectedPool, history }: IPoolDetails) => {
   const poolInformation =
     tenant?.pools.find((pool) => pool.name === selectedPool) || null;
 
@@ -72,17 +79,50 @@ const PoolDetails = ({
     return null;
   }
 
+  let affinityType = "None";
+
+  if (poolInformation.affinity) {
+    if (poolInformation.affinity.nodeAffinity) {
+      affinityType = "Node Selector";
+    } else {
+      affinityType = "Default (Pod Anti-Affinity)";
+    }
+  }
+
+  const HeaderSection = ({ title }: { title: string }) => {
+    return (
+      <StackRow
+        sx={{
+          borderBottom: "1px solid #eaeaea",
+          margin: 0,
+          marginBottom: "20px",
+        }}
+      >
+        <h3>{title}</h3>
+      </StackRow>
+    );
+  };
+
   return (
     <Fragment>
-      <Grid item xs={12}>
-        <Grid container>
-          <Grid item xs={8}>
-            <h4>Pool Configuration</h4>
-          </Grid>
-          <Grid item xs={4} />
-        </Grid>
+      <Grid item xs={12} sx={{ ...stylingLayout }}>
+        <div style={{ position: "absolute", right: 20, top: 18 }}>
+          <RBIconButton
+            icon={<EditTenantIcon />}
+            onClick={() => {
+              history.push(
+                `/namespaces/${tenant?.namespace || ""}/tenants/${
+                  tenant?.name || ""
+                }/edit-pool`
+              );
+            }}
+            text={"Edit Pool"}
+            id={"editPool"}
+          />
+        </div>
+        <HeaderSection title={"Pool Configuration"} />
         <Box sx={{ ...twoColCssGridLayoutConfig }}>
-          <LabelValuePair label={"Pool Name"} value={poolInformation.label} />
+          <LabelValuePair label={"Pool Name"} value={poolInformation.name} />
           <LabelValuePair
             label={"Total Volumes"}
             value={poolInformation.volumes}
@@ -93,12 +133,7 @@ const PoolDetails = ({
           />
           <LabelValuePair label={"Capacity"} value={poolInformation.capacity} />
         </Box>
-        <Grid container>
-          <Grid item xs={8}>
-            <h4>Resources</h4>
-          </Grid>
-          <Grid item xs={4} />
-        </Grid>
+        <HeaderSection title={"Resources"} />
         <Box sx={{ ...twoColCssGridLayoutConfig }}>
           {poolInformation.resources && (
             <Fragment>
@@ -121,6 +156,123 @@ const PoolDetails = ({
             value={poolInformation.volume_configuration.storage_class_name}
           />
         </Box>
+        {poolInformation.securityContext &&
+          (poolInformation.securityContext.runAsNonRoot ||
+            poolInformation.securityContext.runAsUser ||
+            poolInformation.securityContext.runAsGroup ||
+            poolInformation.securityContext.fsGroup) && (
+            <Fragment>
+              <HeaderSection title={"Security Context"} />
+              <Box>
+                {poolInformation.securityContext.runAsNonRoot !== null && (
+                  <Box sx={{ ...twoColCssGridLayoutConfig }}>
+                    <LabelValuePair
+                      label={"Run as Non Root"}
+                      value={
+                        poolInformation.securityContext.runAsNonRoot
+                          ? "Yes"
+                          : "No"
+                      }
+                    />
+                  </Box>
+                )}
+                <Box
+                  sx={{
+                    ...twoColCssGridLayoutConfig,
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: "2fr 1fr",
+                      md: "1fr 1fr 1fr",
+                    },
+                  }}
+                >
+                  {poolInformation.securityContext.runAsUser && (
+                    <LabelValuePair
+                      label={"Run as User"}
+                      value={poolInformation.securityContext.runAsUser}
+                    />
+                  )}
+                  {poolInformation.securityContext.runAsGroup && (
+                    <LabelValuePair
+                      label={"Run as Group"}
+                      value={poolInformation.securityContext.runAsGroup}
+                    />
+                  )}
+                  {poolInformation.securityContext.fsGroup && (
+                    <LabelValuePair
+                      label={"FsGroup"}
+                      value={poolInformation.securityContext.fsGroup}
+                    />
+                  )}
+                </Box>
+              </Box>
+            </Fragment>
+          )}
+        <HeaderSection title={"Affinity"} />
+        <Box>
+          <Box sx={{ ...twoColCssGridLayoutConfig }}>
+            <LabelValuePair label={"Type"} value={affinityType} />
+            {poolInformation.affinity?.nodeAffinity &&
+            poolInformation.affinity?.podAntiAffinity ? (
+              <LabelValuePair label={"With Pod Anti affinity"} value={"Yes"} />
+            ) : (
+              <span />
+            )}
+          </Box>
+          {poolInformation.affinity?.nodeAffinity && (
+            <Fragment>
+              <HeaderSection title={"Labels"} />
+              <ul>
+                {poolInformation.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.map(
+                  (term) => {
+                    return term.matchExpressions.map((trm) => {
+                      return (
+                        <li>
+                          {trm.key} - {trm.values.join(", ")}
+                        </li>
+                      );
+                    });
+                  }
+                )}
+              </ul>
+            </Fragment>
+          )}
+        </Box>
+        {poolInformation.tolerations && poolInformation.tolerations.length > 0 && (
+          <Fragment>
+            <HeaderSection title={"Tolerations"} />
+            <Box>
+              <ul>
+                {poolInformation.tolerations.map((tolItem) => {
+                  return (
+                    <li>
+                      {tolItem.operator === "Equal" ? (
+                        <Fragment>
+                          If <strong>{tolItem.key}</strong> is equal to{" "}
+                          <strong>{tolItem.value}</strong> then{" "}
+                          <strong>{tolItem.effect}</strong> after{" "}
+                          <strong>
+                            {tolItem.tolerationSeconds?.seconds || 0}
+                          </strong>{" "}
+                          seconds
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          If <strong>{tolItem.key}</strong> exists then{" "}
+                          <strong>{tolItem.effect}</strong> after{" "}
+                          <strong>
+                            {tolItem.tolerationSeconds?.seconds || 0}
+                          </strong>{" "}
+                          seconds
+                        </Fragment>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </Box>
+          </Fragment>
+        )}
       </Grid>
     </Fragment>
   );

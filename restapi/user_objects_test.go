@@ -103,7 +103,8 @@ func (c s3ClientMock) shareDownload(ctx context.Context, versionID string, expir
 }
 
 func Test_listObjects(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	t1 := time.Now()
 	tretention := time.Now()
 	minClient := minioClientMock{}
@@ -576,7 +577,8 @@ func Test_listObjects(t *testing.T) {
 }
 
 func Test_deleteObjects(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	s3Client1 := s3ClientMock{}
 	type args struct {
 		bucket     string
@@ -765,7 +767,8 @@ func Test_deleteObjects(t *testing.T) {
 
 func Test_shareObject(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := s3ClientMock{}
 	type args struct {
 		versionID string
@@ -844,7 +847,8 @@ func Test_shareObject(t *testing.T) {
 }
 
 func Test_putObjectLegalHold(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := minioClientMock{}
 	type args struct {
 		bucket        string
@@ -913,7 +917,8 @@ func Test_putObjectLegalHold(t *testing.T) {
 
 func Test_putObjectRetention(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := minioClientMock{}
 	type args struct {
 		bucket        string
@@ -1044,7 +1049,8 @@ func Test_putObjectRetention(t *testing.T) {
 
 func Test_deleteObjectRetention(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := minioClientMock{}
 	type args struct {
 		bucket        string
@@ -1085,7 +1091,8 @@ func Test_deleteObjectRetention(t *testing.T) {
 
 func Test_getObjectInfo(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := minioClientMock{}
 
 	type args struct {

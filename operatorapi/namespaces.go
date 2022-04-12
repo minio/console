@@ -44,8 +44,8 @@ func registerNamespaceHandlers(api *operations.OperatorAPI) {
 }
 
 func getNamespaceCreatedResponse(session *models.Principal, params operator_api.CreateNamespaceParams) *models.Error {
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {

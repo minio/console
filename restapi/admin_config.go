@@ -68,7 +68,8 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 
 // listConfig gets all configurations' names and their descriptions
 func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	configKeysHelp, err := client.helpConfigKV(ctx, "", "", false)
 	if err != nil {
 		return nil, err
@@ -133,7 +134,8 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
 func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoParams) (*models.Configuration, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -199,7 +201,8 @@ func setConfigResponse(session *models.Principal, name string, configRequest *mo
 	adminClient := AdminClient{Client: mAdmin}
 	configName := name
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	needsRestart, err := setConfigWithARNAccountID(ctx, adminClient, &configName, configRequest.KeyValues, configRequest.ArnResourceID)
 	if err != nil {
@@ -223,7 +226,8 @@ func resetConfigResponse(session *models.Principal, configName string) (*models.
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	err = resetConfig(ctx, adminClient, &configName)
 

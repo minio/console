@@ -36,7 +36,8 @@ func TestAdminInfo(t *testing.T) {
 			Usage:   madmin.Usage{Size: 10},
 		}, nil
 	}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	serverInfo, err := GetAdminInfo(ctx, adminClient)
 	assert.NotNil(serverInfo, "server info was returned nil")
 	if serverInfo != nil {

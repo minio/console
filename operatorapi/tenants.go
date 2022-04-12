@@ -33,9 +33,10 @@ import (
 	"strings"
 	"time"
 
-	utils2 "github.com/minio/console/pkg/utils"
-
 	"github.com/dustin/go-humanize"
+	"github.com/minio/madmin-go"
+
+	utils2 "github.com/minio/console/pkg/utils"
 
 	"github.com/minio/console/restapi"
 
@@ -51,11 +52,9 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/minio/console/cluster"
-	"github.com/minio/madmin-go"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
+	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
@@ -129,6 +128,26 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewUpdateTenantSecurityDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewUpdateTenantSecurityNoContent()
+
+	})
+
+	// Tenant identity provider details
+	api.OperatorAPITenantIdentityProviderHandler = operator_api.TenantIdentityProviderHandlerFunc(func(params operator_api.TenantIdentityProviderParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantIdentityProviderResponse(session, params)
+		if err != nil {
+			return operator_api.NewTenantIdentityProviderDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewTenantIdentityProviderOK().WithPayload(resp)
+
+	})
+
+	// Update Tenant identity provider configuration
+	api.OperatorAPIUpdateTenantIdentityProviderHandler = operator_api.UpdateTenantIdentityProviderHandlerFunc(func(params operator_api.UpdateTenantIdentityProviderParams, session *models.Principal) middleware.Responder {
+		err := getUpdateTenantIdentityProviderResponse(session, params)
+		if err != nil {
+			return operator_api.NewUpdateTenantIdentityProviderDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewUpdateTenantIdentityProviderNoContent()
 
 	})
 
@@ -413,7 +432,8 @@ func deleteTenantAction(
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
 func getDeletePodResponse(session *models.Principal, params operator_api.DeletePodParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
@@ -635,9 +655,242 @@ func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov
 	}, nil
 }
 
+func getTenantIdentityProvider(ctx context.Context, clientSet K8sClientI, tenant *miniov2.Tenant) (response *models.IdpConfiguration, err error) {
+	tenantConfiguration, err := GetTenantConfiguration(ctx, clientSet, tenant)
+	if err != nil {
+		return nil, err
+	}
+
+	var idpConfiguration *models.IdpConfiguration
+
+	if tenantConfiguration["MINIO_IDENTITY_OPENID_CONFIG_URL"] != "" {
+
+		callbackURL := tenantConfiguration["MINIO_IDENTITY_OPENID_REDIRECT_URI"]
+		claimName := tenantConfiguration["MINIO_IDENTITY_OPENID_CLAIM_NAME"]
+		clientID := tenantConfiguration["MINIO_IDENTITY_OPENID_CLIENT_ID"]
+		configurationURL := tenantConfiguration["MINIO_IDENTITY_OPENID_CONFIG_URL"]
+		scopes := tenantConfiguration["MINIO_IDENTITY_OPENID_SCOPES"]
+		secretID := tenantConfiguration["MINIO_IDENTITY_OPENID_CLIENT_SECRET"]
+
+		idpConfiguration = &models.IdpConfiguration{
+			Oidc: &models.IdpConfigurationOidc{
+				CallbackURL:      callbackURL,
+				ClaimName:        &claimName,
+				ClientID:         &clientID,
+				ConfigurationURL: &configurationURL,
+				Scopes:           scopes,
+				SecretID:         &secretID,
+			},
+		}
+	}
+	if tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_ADDR"] != "" {
+
+		groupSearchBaseDN := tenantConfiguration["MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN"]
+		groupSearchFilter := tenantConfiguration["MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER"]
+		lookupBindDN := tenantConfiguration["MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN"]
+		lookupBindPassword := tenantConfiguration["MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD"]
+		serverInsecure := tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_INSECURE"] == "on"
+		serverStartTLS := tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_STARTTLS"] == "on"
+		tlsSkipVerify := tenantConfiguration["MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY"] == "on"
+		serverAddress := tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_ADDR"]
+		userDNSearchBaseDN := tenantConfiguration["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN"]
+		userDNSearchFilter := tenantConfiguration["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER"]
+
+		idpConfiguration = &models.IdpConfiguration{
+			ActiveDirectory: &models.IdpConfigurationActiveDirectory{
+				GroupSearchBaseDn:   groupSearchBaseDN,
+				GroupSearchFilter:   groupSearchFilter,
+				LookupBindDn:        &lookupBindDN,
+				LookupBindPassword:  lookupBindPassword,
+				ServerInsecure:      serverInsecure,
+				ServerStartTLS:      serverStartTLS,
+				SkipTLSVerification: tlsSkipVerify,
+				URL:                 &serverAddress,
+				UserDnSearchBaseDn:  userDNSearchBaseDN,
+				UserDnSearchFilter:  userDNSearchFilter,
+			},
+		}
+	}
+	return idpConfiguration, nil
+}
+
+func updateTenantIdentityProvider(ctx context.Context, operatorClient OperatorClientI, client K8sClientI, namespace string, params operator_api.UpdateTenantIdentityProviderParams) error {
+	tenant, err := operatorClient.TenantGet(ctx, namespace, params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	tenantConfiguration, err := GetTenantConfiguration(ctx, client, tenant)
+	if err != nil {
+		return err
+	}
+
+	delete(tenantConfiguration, "accesskey")
+	delete(tenantConfiguration, "secretkey")
+
+	oidcConfig := params.Body.Oidc
+	// set new oidc configuration fields
+	if oidcConfig != nil {
+		configurationURL := *oidcConfig.ConfigurationURL
+		clientID := *oidcConfig.ClientID
+		secretID := *oidcConfig.SecretID
+		claimName := *oidcConfig.ClaimName
+		scopes := oidcConfig.Scopes
+		callbackURL := oidcConfig.CallbackURL
+		// oidc config
+		tenantConfiguration["MINIO_IDENTITY_OPENID_CONFIG_URL"] = configurationURL
+		tenantConfiguration["MINIO_IDENTITY_OPENID_CLIENT_ID"] = clientID
+		tenantConfiguration["MINIO_IDENTITY_OPENID_CLIENT_SECRET"] = secretID
+		tenantConfiguration["MINIO_IDENTITY_OPENID_CLAIM_NAME"] = claimName
+		tenantConfiguration["MINIO_IDENTITY_OPENID_REDIRECT_URI"] = callbackURL
+		if scopes == "" {
+			scopes = "openid,profile,email"
+		}
+		tenantConfiguration["MINIO_IDENTITY_OPENID_SCOPES"] = scopes
+	} else {
+		// reset oidc configuration fields
+		delete(tenantConfiguration, "MINIO_IDENTITY_OPENID_CLAIM_NAME")
+		delete(tenantConfiguration, "MINIO_IDENTITY_OPENID_CLIENT_ID")
+		delete(tenantConfiguration, "MINIO_IDENTITY_OPENID_CONFIG_URL")
+		delete(tenantConfiguration, "MINIO_IDENTITY_OPENID_SCOPES")
+		delete(tenantConfiguration, "MINIO_IDENTITY_OPENID_CLIENT_SECRET")
+		delete(tenantConfiguration, "MINIO_IDENTITY_OPENID_REDIRECT_URI")
+	}
+	ldapConfig := params.Body.ActiveDirectory
+	// set new active directory configuration fields
+	if ldapConfig != nil {
+		// ldap config
+		serverAddress := *ldapConfig.URL
+		tlsSkipVerify := ldapConfig.SkipTLSVerification
+		serverInsecure := ldapConfig.ServerInsecure
+		lookupBindDN := *ldapConfig.LookupBindDn
+		lookupBindPassword := ldapConfig.LookupBindPassword
+		userDNSearchBaseDN := ldapConfig.UserDnSearchBaseDn
+		userDNSearchFilter := ldapConfig.UserDnSearchFilter
+		groupSearchBaseDN := ldapConfig.GroupSearchBaseDn
+		groupSearchFilter := ldapConfig.GroupSearchFilter
+		serverStartTLS := ldapConfig.ServerStartTLS
+		// LDAP Server
+		tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_ADDR"] = serverAddress
+		if tlsSkipVerify {
+			tenantConfiguration["MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY"] = "on"
+		}
+		if serverInsecure {
+			tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_INSECURE"] = "on"
+		}
+		if serverStartTLS {
+			tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_STARTTLS"] = "on"
+		}
+		// LDAP Lookup
+		tenantConfiguration["MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN"] = lookupBindDN
+		tenantConfiguration["MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD"] = lookupBindPassword
+		// LDAP User DN
+		tenantConfiguration["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN"] = userDNSearchBaseDN
+		tenantConfiguration["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER"] = userDNSearchFilter
+		// LDAP Group
+		tenantConfiguration["MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN"] = groupSearchBaseDN
+		tenantConfiguration["MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER"] = groupSearchFilter
+	} else {
+		// reset active directory configuration fields
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_SERVER_INSECURE")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_SERVER_STARTTLS")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_SERVER_ADDR")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN")
+		delete(tenantConfiguration, "MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER")
+	}
+	// write tenant configuration to secret that contains config.env
+	tenantConfigurationName := fmt.Sprintf("%s-env-configuration", tenant.Name)
+	_, err = createOrReplaceSecrets(ctx, client, tenant.Namespace, []tenantSecret{
+		{
+			Name: tenantConfigurationName,
+			Content: map[string][]byte{
+				"config.env": []byte(GenerateTenantConfigurationFile(tenantConfiguration)),
+			},
+		},
+	}, tenant.Name)
+	if err != nil {
+		return err
+	}
+	tenant.Spec.Configuration = &corev1.LocalObjectReference{Name: tenantConfigurationName}
+	tenant.EnsureDefaults()
+	// update tenant CRD
+	_, err = operatorClient.TenantUpdate(ctx, tenant, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+	// restart all MinIO pods at the same time
+	err = client.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenant.Name),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getTenantIdentityProviderResponse(session *models.Principal, params operator_api.TenantIdentityProviderParams) (*models.IdpConfiguration, *models.Error) {
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	k8sClient := k8sClient{
+		client: clientSet,
+	}
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	info, err := getTenantIdentityProvider(ctx, &k8sClient, minTenant)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return info, nil
+}
+
+func getUpdateTenantIdentityProviderResponse(session *models.Principal, params operator_api.UpdateTenantIdentityProviderParams) *models.Error {
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+	k8sClient := k8sClient{
+		client: clientSet,
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	if err := updateTenantIdentityProvider(ctx, opClient, &k8sClient, params.Namespace, params); err != nil {
+		return prepareError(err, errors.New("unable to update tenant"))
+	}
+	return nil
+}
+
 func getTenantSecurityResponse(session *models.Principal, params operator_api.TenantSecurityParams) (*models.TenantSecurityResponse, *models.Error) {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -666,8 +919,8 @@ func getTenantSecurityResponse(session *models.Principal, params operator_api.Te
 }
 
 func getUpdateTenantSecurityResponse(session *models.Principal, params operator_api.UpdateTenantSecurityParams) *models.Error {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -764,12 +1017,12 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	if err != nil {
 		return err
 	}
-	// Remove Certificate Secrets from Tenant namespace
-	for _, secretName := range params.Body.CustomCertificates.SecretsToBeDeleted {
-		err = client.deleteSecret(ctx, minInst.Namespace, secretName, metav1.DeleteOptions{})
-		if err != nil {
-			restapi.LogError("error deleting secret: %v", err)
-		}
+	// restart all MinIO pods at the same time
+	err = client.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, minInst.Name),
+	})
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -846,7 +1099,8 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 }
 
 func getListAllTenantsResponse(session *models.Principal, params operator_api.ListAllTenantsParams) (*models.ListTenantsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -863,7 +1117,8 @@ func getListAllTenantsResponse(session *models.Principal, params operator_api.Li
 
 // getListTenantsResponse list tenants by namespace
 func getListTenantsResponse(session *models.Principal, params operator_api.ListTenantsParams) (*models.ListTenantsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -960,7 +1215,8 @@ func removeAnnotations(annotationsOne, annotationsTwo map[string]string) map[str
 }
 
 func getUpdateTenantResponse(session *models.Principal, params operator_api.UpdateTenantParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err)
@@ -1002,7 +1258,7 @@ func addTenantPool(ctx context.Context, operatorClient OperatorClientI, params o
 		return err
 	}
 
-	_, err = operatorClient.TenantPatch(ctx, params.Namespace, tenant.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	_, err = operatorClient.TenantPatch(ctx, tenant.Namespace, tenant.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
 	if err != nil {
 		return err
 	}
@@ -1010,7 +1266,8 @@ func addTenantPool(ctx context.Context, operatorClient OperatorClientI, params o
 }
 
 func getTenantAddPoolResponse(session *models.Principal, params operator_api.TenantAddPoolParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err)
@@ -1026,8 +1283,8 @@ func getTenantAddPoolResponse(session *models.Principal, params operator_api.Ten
 
 // getTenantUsageResponse returns the usage of a tenant
 func getTenantUsageResponse(session *models.Principal, params operator_api.GetTenantUsageParams) (*models.TenantUsage, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1077,8 +1334,8 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 
 // getTenantLogsResponse returns the logs of a tenant
 func getTenantLogsResponse(session *models.Principal, params operator_api.GetTenantLogsParams) (*models.TenantLogs, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1175,8 +1432,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 // setTenantLogsResponse returns the logs of a tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
 
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1342,8 +1598,8 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 
 // enableTenantLoggingResponse enables Tenant Logging
 func enableTenantLoggingResponse(session *models.Principal, params operator_api.EnableTenantLoggingParams) (bool, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1403,8 +1659,8 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 
 // disableTenantLoggingResponse disables Tenant Logging
 func disableTenantLoggingResponse(session *models.Principal, params operator_api.DisableTenantLoggingParams) (bool, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1434,7 +1690,8 @@ func disableTenantLoggingResponse(session *models.Principal, params operator_api
 }
 
 func getTenantPodsResponse(session *models.Principal, params operator_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1468,7 +1725,8 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 }
 
 func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLogsParams) (string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return "", prepareError(err)
@@ -1483,7 +1741,8 @@ func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLog
 }
 
 func getPodEventsResponse(session *models.Principal, params operator_api.GetPodEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -1514,7 +1773,8 @@ func getPodEventsResponse(session *models.Principal, params operator_api.GetPodE
 
 //get values for prometheus metrics
 func getTenantMonitoringResponse(session *models.Principal, params operator_api.GetTenantMonitoringParams) (*models.TenantMonitoringInfo, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -1607,8 +1867,8 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 //sets tenant Prometheus monitoring cofiguration fields to values provided
 func setTenantMonitoringResponse(session *models.Principal, params operator_api.SetTenantMonitoringParams) (bool, *models.Error) {
-	// 30 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -2068,6 +2328,21 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 		tolerations = append(tolerations, toleration)
 	}
 
+	var securityContext models.SecurityContext
+
+	if pool.SecurityContext != nil {
+		fsGroup := strconv.Itoa(int(*pool.SecurityContext.FSGroup))
+		runAsGroup := strconv.Itoa(int(*pool.SecurityContext.RunAsGroup))
+		runAsUser := strconv.Itoa(int(*pool.SecurityContext.RunAsUser))
+
+		securityContext = models.SecurityContext{
+			FsGroup:      &fsGroup,
+			RunAsGroup:   &runAsGroup,
+			RunAsNonRoot: pool.SecurityContext.RunAsNonRoot,
+			RunAsUser:    &runAsUser,
+		}
+	}
+
 	poolModel := &models.Pool{
 		Name:             pool.Name,
 		Servers:          swag.Int64(int64(pool.Servers)),
@@ -2076,10 +2351,11 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 			Size:             size,
 			StorageClassName: storageClassName,
 		},
-		NodeSelector: pool.NodeSelector,
-		Resources:    resources,
-		Affinity:     affinity,
-		Tolerations:  tolerations,
+		NodeSelector:    pool.NodeSelector,
+		Resources:       resources,
+		Affinity:        affinity,
+		Tolerations:     tolerations,
+		SecurityContext: &securityContext,
 	}
 	return poolModel
 }
@@ -2128,7 +2404,8 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 }
 
 func getTenantUpdatePoolResponse(session *models.Principal, params operator_api.TenantUpdatePoolsParams) (*models.Tenant, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -2207,7 +2484,7 @@ func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLP
 	tenant.ManagedFields = []metav1.ManagedFieldsEntry{}
 
 	//yb, err := yaml.Marshal(tenant)
-	serializer := k8sJson.NewSerializerWithOptions(
+	j8sJSONSerializer := k8sJson.NewSerializerWithOptions(
 		k8sJson.DefaultMetaFactory, nil, nil,
 		k8sJson.SerializerOptions{
 			Yaml:   true,
@@ -2217,7 +2494,7 @@ func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLP
 	)
 	buf := new(bytes.Buffer)
 
-	err = serializer.Encode(tenant, buf)
+	err = j8sJSONSerializer.Encode(tenant, buf)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -2259,7 +2536,7 @@ func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenan
 	upTenant.Finalizers = inTenant.Finalizers
 	upTenant.Spec = inTenant.Spec
 
-	_, err = opClient.MinioV2().Tenants(params.Namespace).Update(params.HTTPRequest.Context(), upTenant, metav1.UpdateOptions{})
+	_, err = opClient.MinioV2().Tenants(upTenant.Namespace).Update(params.HTTPRequest.Context(), upTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return &models.Error{Code: 400, Message: swag.String(err.Error())}
 	}
@@ -2268,7 +2545,8 @@ func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenan
 }
 
 func getTenantEventsResponse(session *models.Principal, params operator_api.GetTenantEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)

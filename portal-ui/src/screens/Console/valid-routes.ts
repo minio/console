@@ -49,6 +49,7 @@ import {
   DocumentationIcon,
   LambdaIcon,
   LicenseIcon,
+  RecoverIcon,
   TenantsOutlineIcon,
   TiersIcon,
 } from "../../icons";
@@ -244,6 +245,13 @@ export const validRoutes = (
           name: "Tiers",
           icon: TiersIcon,
           id: "tiers",
+        },
+        {
+          component: NavLink,
+          to: IAM_PAGES.SITE_REPLICATION,
+          name: "Site Replication",
+          icon: RecoverIcon,
+          id: "sitereplication",
         },
       ],
     },

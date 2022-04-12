@@ -52,7 +52,8 @@ func TestGetLifecycleRules(t *testing.T) {
 
 	function := "getBucketLifecycle()"
 	bucketName := "testBucket"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test-1 : getBucketLifecycle() get list of events for a particular bucket only one config
 	// mock lifecycle response from MinIO
@@ -144,7 +145,8 @@ func TestSetLifecycleRule(t *testing.T) {
 	minClient := minioClientMock{}
 
 	function := "addBucketLifecycle()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test-1 : addBucketLifecycle() get list of events for a particular bucket only one config
 	// mock create request
@@ -207,7 +209,8 @@ func TestUpdateLifecycleRule(t *testing.T) {
 	minClient := minioClientMock{}
 
 	function := "editBucketLifecycle()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test-1 : editBucketLifecycle() get list of events for a particular bucket only one config (get lifecycle mock)
 	// mock create request
@@ -299,7 +302,8 @@ func TestDeleteLifecycleRule(t *testing.T) {
 	minClient := minioClientMock{}
 
 	function := "deleteBucketLifecycle()"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
 		return nil
