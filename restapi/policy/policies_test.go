@@ -18,10 +18,11 @@ package policy
 
 import (
 	"bytes"
-	"github.com/minio/madmin-go"
-	minioIAMPolicy "github.com/minio/pkg/iam/policy"
 	"reflect"
 	"testing"
+
+	"github.com/minio/madmin-go"
+	minioIAMPolicy "github.com/minio/pkg/iam/policy"
 )
 
 func TestReplacePolicyVariables(t *testing.T) {
