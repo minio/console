@@ -148,7 +148,7 @@ export interface ITenant {
   image: string;
   pool_count: number;
   currentState: string;
-  instance_count: 4;
+  instance_count: number;
   creation_date: string;
   volume_size: number;
   volume_count: number;
@@ -269,4 +269,8 @@ export interface IEditPoolItem {
 
 export interface IEditPoolRequest {
   pools: IEditPoolItem[];
+}
+
+export interface IPlotBarValues {
+  [key: string]: CapacityValue;
 }

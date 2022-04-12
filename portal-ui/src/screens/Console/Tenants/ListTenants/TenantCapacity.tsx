@@ -19,17 +19,20 @@ import { Cell, Pie, PieChart } from "recharts";
 import { CapacityValue, CapacityValues } from "./types";
 import { niceBytesInt } from "../../../../common/utils";
 import { CircleIcon } from "../../../../icons";
+import UsageBar, { ISizeBarItem } from "../../Common/UsageBar/UsageBar";
 
 interface ITenantCapacity {
   totalCapacity: number;
   usedSpaceVariants: CapacityValues[];
   statusClass: string;
+  render?: "pie" | "bar";
 }
 
 const TenantCapacity = ({
   totalCapacity,
   usedSpaceVariants,
   statusClass,
+  render = "pie",
 }: ITenantCapacity) => {
   const colors = [
     "#8dacd3",
@@ -43,6 +46,8 @@ const TenantCapacity = ({
     "#e28cc1",
     "#2781B0",
   ];
+
+  const BGColor = "#ededed";
 
   const totalUsedSpace = usedSpaceVariants.reduce((acc, currValue) => {
     return acc + currValue.value;
@@ -88,14 +93,38 @@ const TenantCapacity = ({
   }
 
   const plotValues: CapacityValue[] = [
-    { value: emptySpace, color: "transparent", label: "Empty Space" },
     {
       value: standardTier.value,
       color: standardTierColor,
       label: "Used Space by Tenant",
     },
     ...tiersList,
+    {
+      value: emptySpace,
+      color: render === "bar" ? BGColor : "transparent",
+      label: "Empty Space",
+    },
   ];
+
+  if (render === "bar") {
+    const plotValuesForUsageBar: ISizeBarItem[] = plotValues.map((plotVal) => {
+      return {
+        value: plotVal.value,
+        color: plotVal.color,
+        itemName: plotVal.label,
+      };
+    });
+
+    return (
+      <div style={{ width: "100%", marginBottom: 15 }}>
+        <UsageBar
+          totalValue={totalCapacity}
+          sizeItems={plotValuesForUsageBar}
+          bgColor={BGColor}
+        />
+      </div>
+    );
+  }
 
   return (
     <div style={{ position: "relative", width: 110, height: 110 }}>
@@ -134,7 +163,7 @@ const TenantCapacity = ({
             dataKey="value"
             outerRadius={50}
             innerRadius={40}
-            fill="#ededed"
+            fill={BGColor}
             isAnimationActive={false}
             stroke={"none"}
           />
