@@ -124,7 +124,7 @@ const AddUserServiceAccount = ({
         closeModalAndRefresh(null);
       }}
       title={`Create Service Account`}
-       titleIcon={<AccountIcon />}
+      titleIcon={<AccountIcon />}
     >
       <form
         noValidate
