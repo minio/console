@@ -128,9 +128,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		errors.ServeError(w, req, errors.New(http.StatusUnauthorized, err.Error()))
 		return
 	}
-	upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
 
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
