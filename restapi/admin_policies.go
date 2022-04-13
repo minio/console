@@ -122,7 +122,8 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 }
 
 func getListAccessRulesWithBucketResponse(session *models.Principal, bucket string) (*models.ListAccessRulesResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := newS3BucketClient(session, bucket, "")
 	if err != nil {
 		return nil, prepareError(err)
@@ -136,7 +137,8 @@ func getListAccessRulesWithBucketResponse(session *models.Principal, bucket stri
 }
 
 func getSetAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefixAccess *models.PrefixAccessPair) (bool, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := newS3BucketClient(session, bucket, prefixAccess.Prefix)
 	if err != nil {
 		return false, prepareError(err)
@@ -149,7 +151,8 @@ func getSetAccessRuleWithBucketResponse(session *models.Principal, bucket string
 }
 
 func getDeleteAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefix *models.PrefixWrapper) (bool, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := newS3BucketClient(session, bucket, prefix.Prefix)
 	if err != nil {
 		return false, prepareError(err)
@@ -162,7 +165,8 @@ func getDeleteAccessRuleWithBucketResponse(session *models.Principal, bucket str
 }
 
 func getListPoliciesWithBucketResponse(session *models.Principal, bucket string) (*models.ListPoliciesResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -247,7 +251,8 @@ func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, err
 
 // getListPoliciesResponse performs listPolicies() and serializes it to the handler's output
 func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -270,7 +275,8 @@ func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesRes
 
 // getListUsersForPoliciesResponse performs lists users affected by a given policy.
 func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -298,7 +304,8 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 }
 
 func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -337,7 +344,8 @@ func removePolicy(ctx context.Context, client MinioAdmin, name string) error {
 
 // getRemovePolicyResponse() performs removePolicy() and serializes it to the handler's output
 func getRemovePolicyResponse(session *models.Principal, params admin_api.RemovePolicyParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if params.Name == "" {
 		return prepareError(errPolicyNameNotInRequest)
 	}
@@ -376,7 +384,8 @@ func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*mo
 
 // getAddPolicyResponse performs addPolicy() and serializes it to the handler's output
 func getAddPolicyResponse(session *models.Principal, params *models.AddPolicyRequest) (*models.Policy, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if params == nil {
 		return nil, prepareError(errPolicyBodyNotInRequest)
 	}
@@ -413,7 +422,8 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
 func getPolicyInfoResponse(session *models.Principal, params admin_api.PolicyInfoParams) (*models.Policy, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -439,7 +449,8 @@ func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, 
 
 // getSetPolicyResponse() performs setPolicy() and serializes it to the handler's output
 func getSetPolicyResponse(session *models.Principal, params *models.SetPolicyNameRequest) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// if len(params.Name) == 0 {
 	//   return prepareError(errPolicyNameNotInRequest)
 	// }
@@ -459,7 +470,8 @@ func getSetPolicyResponse(session *models.Principal, params *models.SetPolicyNam
 }
 
 func getSetPolicyMultipleResponse(session *models.Principal, params *models.SetPolicyMultipleNameRequest) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)

@@ -268,5 +268,5 @@ export interface IEditPoolItem {
 }
 
 export interface IEditPoolRequest {
-  pools: IEditPoolItem[]
+  pools: IEditPoolItem[];
 }

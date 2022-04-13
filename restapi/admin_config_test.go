@@ -140,7 +140,8 @@ func TestSetConfig(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : setConfig() sets a config with two key value pairs
 	restart, err := setConfig(ctx, adminClient, &configName, kvs)
 	if err != nil {
@@ -180,7 +181,8 @@ func TestDelConfig(t *testing.T) {
 	}
 	configName := "region"
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : resetConfig() resets a config with the config name
 	err := resetConfig(ctx, adminClient, &configName)
 	if err != nil {

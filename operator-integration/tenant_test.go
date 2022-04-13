@@ -34,8 +34,8 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/minio/console/models"
-	"github.com/minio/console/restapi"
-	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/operatorapi"
+	"github.com/minio/console/operatorapi/operations"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -87,11 +87,11 @@ func printEndFunc(functionName string) {
 	fmt.Println("")
 }
 
-func initConsoleServer() (*restapi.Server, error) {
+func initConsoleServer() (*operatorapi.Server, error) {
 
 	//os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
 
-	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
+	swaggerSpec, err := loads.Embedded(operatorapi.SwaggerJSON, operatorapi.FlatSwaggerJSON)
 	if err != nil {
 		return nil, err
 	}
@@ -101,24 +101,22 @@ func initConsoleServer() (*restapi.Server, error) {
 	}
 
 	// Initialize MinIO loggers
-	restapi.LogInfo = noLog
-	restapi.LogError = noLog
+	operatorapi.LogInfo = noLog
+	operatorapi.LogError = noLog
 
-	api := operations.NewConsoleAPI(swaggerSpec)
+	api := operations.NewOperatorAPI(swaggerSpec)
 	api.Logger = noLog
 
-	server := restapi.NewServer(api)
+	server := operatorapi.NewServer(api)
 	// register all APIs
 	server.ConfigureAPI()
-
-	//restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = globalRootCAs, globalPublicCerts, globalTLSCerts
 
 	consolePort, _ := strconv.Atoi("9090")
 
 	server.Host = "0.0.0.0"
 	server.Port = consolePort
-	restapi.Port = "9090"
-	restapi.Hostname = "0.0.0.0"
+	operatorapi.Port = "9090"
+	operatorapi.Hostname = "0.0.0.0"
 
 	return server, nil
 }
@@ -528,4 +526,41 @@ func TestListNodeLabels(t *testing.T) {
 	assert.True(
 		strings.Contains(finalResponse, "beta.kubernetes.io/arch"),
 		finalResponse)
+}
+
+func GetPodEvents(nameSpace string, tenant string, podName string) (*http.Response, error) {
+	/*
+		Helper function to get events for pod
+		URL: /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events
+		HTTP Verb: GET
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/namespaces/"+nameSpace+"/tenants/"+tenant+"/pods/"+podName+"/events", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestGetPodEvents(t *testing.T) {
+	assert := assert.New(t)
+	namespace := "tenant-lite"
+	tenant := "storage-lite"
+	podName := "storage-lite-pool-0-0"
+	resp, err := GetPodEvents(namespace, tenant, podName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
 }

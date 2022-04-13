@@ -139,12 +139,12 @@ const Affinity = ({
   withPodAntiAffinity,
   setModalErrorSnackMessage,
   keyValuePairs,
-                    setEditPoolField,
-                    isEditPoolPageValid,
-                    setEditPoolKeyValuePairs,
-                    setEditPoolTolerationInfo,
-                    addNewEditPoolToleration,
-                    removeEditPoolToleration,
+  setEditPoolField,
+  isEditPoolPageValid,
+  setEditPoolKeyValuePairs,
+  setEditPoolTolerationInfo,
+  addNewEditPoolToleration,
+  removeEditPoolToleration,
   tolerations,
 }: IAffinityProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});

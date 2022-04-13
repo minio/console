@@ -17,7 +17,9 @@
 package integration
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -68,5 +70,68 @@ func TestLoginStrategy(t *testing.T) {
 		assert.Equal(models.LoginDetailsLoginStrategyForm, loginDetails.LoginStrategy, "Login Details don't match")
 
 	}
+
+}
+
+func TestLogout(t *testing.T) {
+
+	assert := assert.New(t)
+
+	// image for now:
+	// minio: 9000
+	// console: 9090
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	requestData := map[string]string{
+		"accessKey": "minioadmin",
+		"secretKey": "minioadmin",
+	}
+
+	requestDataJSON, _ := json.Marshal(requestData)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/login", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+
+	assert.NotNil(response, "Login response is nil")
+	assert.Nil(err, "Login errored out")
+
+	var loginToken string
+
+	for _, cookie := range response.Cookies() {
+		if cookie.Name == "token" {
+			loginToken = cookie.Value
+			break
+		}
+	}
+
+	if loginToken == "" {
+		log.Println("authentication token not found in cookies response")
+		return
+	}
+
+	request, err = http.NewRequest("POST", "http://localhost:9090/api/v1/logout", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", loginToken))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err = client.Do(request)
+
+	assert.NotNil(response, "Logout response is nil")
+	assert.Nil(err, "Logout errored out")
+	assert.Equal(response.StatusCode, 200)
 
 }

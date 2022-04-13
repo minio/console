@@ -94,7 +94,8 @@ func getResourceQuota(ctx context.Context, client K8sClientI, namespace, resourc
 }
 
 func getResourceQuotaResponse(session *models.Principal, params operator_api.GetResourceQuotaParams) (*models.ResourceQuota, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)

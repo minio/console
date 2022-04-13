@@ -74,7 +74,8 @@ func Test_ResourceQuota(t *testing.T) {
 	// k8sclientGetResourceQuotaMock = func(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {
 	// 	return nil, nil
 	// }
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	kClient := k8sClientMock{}
 	type args struct {
 		ctx    context.Context

@@ -147,7 +147,11 @@ const TenantCapacity = ({
             innerRadius={40}
           >
             {plotValues.map((entry, index) => (
-              <Cell key={`cellCapacity-${index}`} fill={entry.color} stroke={"none"} />
+              <Cell
+                key={`cellCapacity-${index}`}
+                fill={entry.color}
+                stroke={"none"}
+              />
             ))}
           </Pie>
         </PieChart>

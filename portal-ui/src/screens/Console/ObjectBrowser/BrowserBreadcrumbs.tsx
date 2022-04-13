@@ -85,14 +85,13 @@ const BrowserBreadcrumbs = ({
   const splitPaths = paths.split("/").filter((path) => path !== "");
   const lastBreadcrumbsIndex = splitPaths.length - 1;
 
-
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = splitPaths.slice(0, index + 1).join("/");
     const route = `/buckets/${bucketName}/browse/${
       subSplit ? `${encodeFileName(subSplit)}` : ``
     }`;
 
-    if(index === lastBreadcrumbsIndex && objectItem === versionedFile) {
+    if (index === lastBreadcrumbsIndex && objectItem === versionedFile) {
       return null;
     }
 

@@ -17,15 +17,19 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
+	b64 "encoding/base64"
 	"encoding/json"
 	"net/http"
 	"time"
 
 	"errors"
 
+	"github.com/klauspost/compress/gzip"
+
 	"github.com/gorilla/websocket"
-	madmin "github.com/minio/madmin-go"
+	"github.com/minio/madmin-go"
 )
 
 // startHealthInfo starts fetching mc.ServerHealthInfo and
@@ -51,19 +55,60 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		madmin.HealthDataTypeSysProcess,
 	}
 
-	healthInfo, _, err := client.serverHealthInfo(ctx, healthDataTypes, *deadline)
+	var err error
+	// Fetch info of all servers (cluster or single server)
+	healthInfo, version, err := client.serverHealthInfo(ctx, healthDataTypes, *deadline)
 	if err != nil {
 		return err
 	}
 
-	// Serialize message to be sent
-	bytes, err := json.Marshal(healthInfo)
+	compressedDiag, err := tarGZ(healthInfo, version)
+	if err != nil {
+		return err
+	}
+	encodedDiag := b64.StdEncoding.EncodeToString(compressedDiag)
+
+	type messageReport struct {
+		Encoded          string      `json:"encoded"`
+		ServerHealthInfo interface{} `json:"serverHealthInfo"`
+	}
+
+	report := messageReport{
+		Encoded:          encodedDiag,
+		ServerHealthInfo: healthInfo,
+	}
+	message, err := json.Marshal(report)
 	if err != nil {
 		return err
 	}
 
 	// Send Message through websocket connection
-	return conn.writeMessage(websocket.TextMessage, bytes)
+	return conn.writeMessage(websocket.TextMessage, message)
+}
+
+// compress and tar MinIO diagnostics output
+func tarGZ(healthInfo interface{}, version string) ([]byte, error) {
+	buffer := bytes.NewBuffer(nil)
+	gzWriter := gzip.NewWriter(buffer)
+
+	enc := json.NewEncoder(gzWriter)
+
+	header := struct {
+		Version string `json:"version"`
+	}{Version: version}
+
+	if err := enc.Encode(header); err != nil {
+		return nil, err
+	}
+
+	if err := enc.Encode(healthInfo); err != nil {
+		return nil, err
+	}
+	err := gzWriter.Close()
+	if err != nil {
+		return nil, err
+	}
+	return buffer.Bytes(), nil
 }
 
 // getHealthInfoOptionsFromReq gets duration for startHealthInfo request
