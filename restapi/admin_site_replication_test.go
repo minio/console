@@ -52,6 +52,12 @@ func (ac adminClientMock) deleteSiteReplicationInfo(ctx context.Context, removeR
 	return deleteSiteReplicationInfoMock(ctx, removeReq)
 }
 
+var getSiteReplicationStatusMock func(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
+
+func (ac adminClientMock) getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error) {
+	return getSiteReplicationStatusMock(ctx, params)
+}
+
 func TestGetSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client

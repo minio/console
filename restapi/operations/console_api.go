@@ -225,6 +225,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGetSiteReplicationInfoHandler: admin_api.GetSiteReplicationInfoHandlerFunc(func(params admin_api.GetSiteReplicationInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetSiteReplicationInfo has not yet been implemented")
 		}),
+		AdminAPIGetSiteReplicationStatusHandler: admin_api.GetSiteReplicationStatusHandlerFunc(func(params admin_api.GetSiteReplicationStatusParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetSiteReplicationStatus has not yet been implemented")
+		}),
 		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
 		}),
@@ -591,6 +594,8 @@ type ConsoleAPI struct {
 	UserAPIGetServiceAccountPolicyHandler user_api.GetServiceAccountPolicyHandler
 	// AdminAPIGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
 	AdminAPIGetSiteReplicationInfoHandler admin_api.GetSiteReplicationInfoHandler
+	// AdminAPIGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
+	AdminAPIGetSiteReplicationStatusHandler admin_api.GetSiteReplicationStatusHandler
 	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
 	AdminAPIGetTierHandler admin_api.GetTierHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
@@ -972,6 +977,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGetSiteReplicationInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetSiteReplicationInfoHandler")
+	}
+	if o.AdminAPIGetSiteReplicationStatusHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetSiteReplicationStatusHandler")
 	}
 	if o.AdminAPIGetTierHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTierHandler")
@@ -1489,6 +1497,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/admin/site-replication"] = admin_api.NewGetSiteReplicationInfo(o.context, o.AdminAPIGetSiteReplicationInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/site-replication/status"] = admin_api.NewGetSiteReplicationStatus(o.context, o.AdminAPIGetSiteReplicationStatusHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

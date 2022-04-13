@@ -23,6 +23,8 @@ let testDomainUrl = "http://localhost:9090";
 const screenUrl = `${testDomainUrl}${IAM_PAGES.SITE_REPLICATION}`;
 const siteReplicationEl = Selector("span").withText("Site Replication");
 export const addSitesBtn = Selector("button").withText("Add Sites");
+export const replicationStatusBtn =
+  Selector("button").withText("Replication Status");
 
 /* Begin Local Testing config block */
 // For local Testing Create users and assign policies then update here.
@@ -46,7 +48,13 @@ test("Site replication sidebar item exists", async (t) => {
 
 test("Add Sites button exists", async (t) => {
   const addSitesBtnExists = addSitesBtn.exists;
-  await t.navigateTo(screenUrl).expect(addSitesBtnExists).ok();
+  const replicationStatusBtnPresent = replicationStatusBtn.exists;
+  await t
+    .navigateTo(screenUrl)
+    .expect(addSitesBtnExists)
+    .ok()
+    .expect(replicationStatusBtnPresent)
+    .ok();
 });
 
 test("Add Sites button is clickable", async (t) => {

@@ -429,6 +429,71 @@ func init() {
         }
       }
     },
+    "/admin/site-replication/status": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Display overall site replication status",
+        "operationId": "GetSiteReplicationStatus",
+        "parameters": [
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Bucket stats",
+            "name": "buckets",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Group stats",
+            "name": "groups",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Policies stats",
+            "name": "policies",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Policies stats",
+            "name": "users",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Entity Type to lookup",
+            "name": "entityType",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Entity Value to lookup",
+            "name": "entityValue",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/siteReplicationStatusResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/tiers": {
       "get": {
         "tags": [
@@ -6311,6 +6376,44 @@ func init() {
         }
       }
     },
+    "siteReplicationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "bucketStats": {
+          "type": "object"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "groupStats": {
+          "type": "object"
+        },
+        "maxBuckets": {
+          "type": "integer"
+        },
+        "maxGroups": {
+          "type": "integer"
+        },
+        "maxPolicies": {
+          "type": "integer"
+        },
+        "maxUsers": {
+          "type": "integer"
+        },
+        "policyStats": {
+          "type": "object"
+        },
+        "sites": {
+          "type": "object"
+        },
+        "statsSummary": {
+          "type": "object"
+        },
+        "userStats": {
+          "type": "object"
+        }
+      }
+    },
     "startProfilingItem": {
       "type": "object",
       "properties": {
@@ -7239,6 +7342,71 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/peerSiteRemoveResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/site-replication/status": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Display overall site replication status",
+        "operationId": "GetSiteReplicationStatus",
+        "parameters": [
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Bucket stats",
+            "name": "buckets",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Group stats",
+            "name": "groups",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Policies stats",
+            "name": "policies",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Policies stats",
+            "name": "users",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Entity Type to lookup",
+            "name": "entityType",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Entity Value to lookup",
+            "name": "entityValue",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/siteReplicationStatusResponse"
             }
           },
           "default": {
@@ -13255,6 +13423,44 @@ func init() {
           "items": {
             "$ref": "#/definitions/peerInfo"
           }
+        }
+      }
+    },
+    "siteReplicationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "bucketStats": {
+          "type": "object"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "groupStats": {
+          "type": "object"
+        },
+        "maxBuckets": {
+          "type": "integer"
+        },
+        "maxGroups": {
+          "type": "integer"
+        },
+        "maxPolicies": {
+          "type": "integer"
+        },
+        "maxUsers": {
+          "type": "integer"
+        },
+        "policyStats": {
+          "type": "object"
+        },
+        "sites": {
+          "type": "object"
+        },
+        "statsSummary": {
+          "type": "object"
+        },
+        "userStats": {
+          "type": "object"
         }
       }
     },
