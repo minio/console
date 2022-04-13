@@ -60,14 +60,10 @@ func Test_serverHealthInfo(t *testing.T) {
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
 					{
-						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{},
-						},
+						Perf: madmin.SpeedTestResults{},
 					},
 					{
-						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{},
-						},
+						Perf: madmin.SpeedTestResults{},
 					},
 				},
 				wsWriteMock: func(messageType int, data []byte) error {
@@ -88,9 +84,7 @@ func Test_serverHealthInfo(t *testing.T) {
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
 					{
-						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{},
-						},
+						Perf: madmin.SpeedTestResults{},
 					},
 				},
 				wsWriteMock: func(messageType int, data []byte) error {
@@ -111,9 +105,7 @@ func Test_serverHealthInfo(t *testing.T) {
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
 					{
-						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{},
-						},
+						Perf: madmin.SpeedTestResults{},
 					},
 				},
 				wsWriteMock: func(messageType int, data []byte) error {

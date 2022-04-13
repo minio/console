@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
@@ -34,7 +35,32 @@ var mcWatchMock func(ctx context.Context, options mc.WatchOptions) (*mc.WatchObj
 
 // implements mc.S3Client.Watch()
 func (c s3ClientMock) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
-	return mcWatchMock(ctx, options)
+	if options.Prefix == "file/" {
+		return mcWatchMock(ctx, options)
+	}
+	wo := &mc.WatchObject{
+		EventInfoChan: make(chan []mc.EventInfo),
+		ErrorChan:     make(chan *probe.Error),
+		DoneChan:      make(chan struct{}),
+	}
+	return wo, nil
+}
+
+func TestWatchOnContextDone(t *testing.T) {
+	assert := assert.New(t)
+	client := s3ClientMock{}
+	mockWSConn := mockConn{}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	testOptions := &watchOptions{}
+	testOptions.BucketName = "bucktest"
+	testOptions.Prefix = "file2/"
+	testOptions.Suffix = ".png"
+
+	// Test-0: Test closing a done channel
+	ctxWithTimeout, cancelFunction := context.WithTimeout(ctx, time.Duration(1)*time.Millisecond)
+	defer cancelFunction()
+	assert.Equal(startWatch(ctxWithTimeout, mockWSConn, client, testOptions), nil)
 }
 
 func TestWatch(t *testing.T) {
