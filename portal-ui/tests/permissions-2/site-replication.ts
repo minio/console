@@ -23,15 +23,13 @@ let testDomainUrl = "http://localhost:9090";
 const screenUrl = `${testDomainUrl}${IAM_PAGES.SITE_REPLICATION}`;
 const siteReplicationEl = Selector("span").withText("Site Replication");
 export const addSitesBtn = Selector("button").withText("Add Sites");
-export const replicationStatusBtn =
-  Selector("button").withText("Replication Status");
 
 /* Begin Local Testing config block */
 // For local Testing Create users and assign policies then update here.
 // Command to invoke the test locally: testcafe chrome tests/permissions/site-replication.ts
 /* End Local Testing config block */
 
-fixture("Site Replication for user with Admin permissions")
+fixture("Site Replication Status for user with Admin permissions")
   .page(testDomainUrl)
   .beforeEach(async (t) => {
     await t.useRole(roles.settings);
@@ -48,13 +46,7 @@ test("Site replication sidebar item exists", async (t) => {
 
 test("Add Sites button exists", async (t) => {
   const addSitesBtnExists = addSitesBtn.exists;
-  const replicationStatusBtnPresent = replicationStatusBtn.exists;
-  await t
-    .navigateTo(screenUrl)
-    .expect(addSitesBtnExists)
-    .ok()
-    .expect(replicationStatusBtnPresent)
-    .ok();
+  await t.navigateTo(screenUrl).expect(addSitesBtnExists).ok();
 });
 
 test("Add Sites button is clickable", async (t) => {
