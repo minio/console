@@ -1073,6 +1073,15 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			tiers = append(tiers, tierItem)
 		}
 
+		var domains models.DomainsConfiguration
+
+		if tenant.Spec.Features != nil && tenant.Spec.Features.Domains != nil {
+			domains = models.DomainsConfiguration{
+				Console: tenant.Spec.Features.Domains.Console,
+				Minio:   tenant.Spec.Features.Domains.Minio,
+			}
+		}
+
 		tenants = append(tenants, &models.TenantList{
 			CreationDate:     tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
 			DeletionDate:     deletion,
@@ -1089,6 +1098,7 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			Capacity:         tenant.Status.Usage.Capacity,
 			CapacityUsage:    tenant.Status.Usage.Usage,
 			Tiers:            tiers,
+			Domains:          &domains,
 		})
 	}
 
