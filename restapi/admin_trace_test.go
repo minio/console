@@ -39,7 +39,8 @@ func TestAdminTrace(t *testing.T) {
 	adminClient := adminClientMock{}
 	mockWSConn := mockConn{}
 	function := "startTraceInfo(ctx, )"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	testReceiver := make(chan shortTraceMsg, 5)
 	textToReceive := "test"

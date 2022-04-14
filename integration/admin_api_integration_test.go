@@ -300,3 +300,41 @@ func TestGetNodes(t *testing.T) {
 	}
 
 }
+
+func ArnList() (*http.Response, error) {
+	/*
+		Helper function to get arn list
+		HTTP Verb: GET
+		URL: /api/v1/admin/arns
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/admin/arns", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestArnList(t *testing.T) {
+	assert := assert.New(t)
+	resp, err := ArnList()
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	objRsp := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			200,
+			resp.StatusCode,
+			objRsp,
+		)
+	}
+}

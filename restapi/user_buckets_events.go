@@ -176,7 +176,8 @@ func createBucketEvent(ctx context.Context, client MCClient, arn string, notific
 
 // getCreateBucketEventsResponse calls createBucketEvent to add a bucket event notification
 func getCreateBucketEventsResponse(session *models.Principal, bucketName string, eventReq *models.BucketEventRequest) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
 		return prepareError(err)
@@ -211,7 +212,8 @@ func joinNotificationEvents(events []models.NotificationEventType) string {
 
 // getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
 func getDeleteBucketEventsResponse(session *models.Principal, bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
 		return prepareError(err)

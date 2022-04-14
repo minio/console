@@ -144,7 +144,8 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 
 // getListUsersResponse performs listUsers() and serializes it to the handler's output
 func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -205,7 +206,8 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 }
 
 func getUserAddResponse(session *models.Principal, params admin_api.AddUserParams) (*models.User, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -241,7 +243,8 @@ func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error 
 }
 
 func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUserParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -274,7 +277,8 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 }
 
 func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfoParams) (*models.User, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -419,7 +423,8 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 }
 
 func getUpdateUserGroupsResponse(session *models.Principal, params admin_api.UpdateUserGroupsParams) (*models.User, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -455,7 +460,8 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 }
 
 func getUpdateUserResponse(session *models.Principal, params admin_api.UpdateUserInfoParams) (*models.User, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -526,7 +532,8 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 }
 
 func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api.BulkUpdateUsersGroupsParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -548,7 +555,8 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api
 }
 
 func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket string) ([]string, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -655,7 +663,8 @@ func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser str
 
 // getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey
 func getChangeUserPasswordResponse(session *models.Principal, params admin_api.ChangeUserPasswordParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)

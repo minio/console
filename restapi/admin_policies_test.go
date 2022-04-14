@@ -64,7 +64,8 @@ func (ac adminClientMock) setPolicy(ctx context.Context, policyName, entityName 
 }
 
 func TestListPolicies(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	// mock function response from listPolicies()
@@ -110,7 +111,8 @@ func TestListPolicies(t *testing.T) {
 }
 
 func TestRemovePolicy(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	// Test-1 : removePolicy() remove an existing policy
@@ -132,7 +134,8 @@ func TestRemovePolicy(t *testing.T) {
 }
 
 func TestAddPolicy(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	policyName := "new-policy"
@@ -188,7 +191,8 @@ func TestAddPolicy(t *testing.T) {
 }
 
 func TestSetPolicy(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	policyName := "readOnly"
@@ -228,7 +232,8 @@ func TestSetPolicy(t *testing.T) {
 }
 
 func Test_SetPolicyMultiple(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	adminClient := adminClientMock{}
 
 	type args struct {

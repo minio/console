@@ -49,7 +49,8 @@ func registerInspectHandler(api *operations.ConsoleAPI) {
 }
 
 func getInspectResult(session *models.Principal, params *admin_api.InspectParams) (*[32]byte, io.ReadCloser, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, nil, prepareError(err)

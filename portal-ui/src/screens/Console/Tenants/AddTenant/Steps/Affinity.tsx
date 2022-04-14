@@ -277,7 +277,7 @@ const Affinity = ({
               }}
               selectorOptions={[
                 { label: "None", value: "none" },
-                { label: "Default (Pod Anti-Affinnity)", value: "default" },
+                { label: "Default (Pod Anti-Affinity)", value: "default" },
                 { label: "Node Selector", value: "nodeSelector" },
               ]}
             />

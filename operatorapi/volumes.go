@@ -73,7 +73,8 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 }
 
 func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
@@ -120,7 +121,8 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 }
 
 func getPVCsForTenantResponse(session *models.Principal, params operator_api.ListPVCsForTenantParams) (*models.ListPVCsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
@@ -167,7 +169,8 @@ func getPVCsForTenantResponse(session *models.Principal, params operator_api.Lis
 }
 
 func getDeletePVCResponse(session *models.Principal, params operator_api.DeletePVCParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
@@ -184,7 +187,8 @@ func getDeletePVCResponse(session *models.Principal, params operator_api.DeleteP
 }
 
 func getPVCEventsResponse(session *models.Principal, params operator_api.GetPVCEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)

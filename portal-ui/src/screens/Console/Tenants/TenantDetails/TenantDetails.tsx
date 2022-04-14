@@ -68,6 +68,9 @@ const TenantTrace = withSuspense(React.lazy(() => import("./TenantTrace")));
 const TenantVolumes = withSuspense(
   React.lazy(() => import("./pvcs/TenantVolumes"))
 );
+const TenantIdentityProvider = withSuspense(
+  React.lazy(() => import("./TenantIdentityProvider"))
+);
 const TenantSecurity = withSuspense(
   React.lazy(() => import("./TenantSecurity"))
 );
@@ -452,6 +455,10 @@ const TenantDetails = ({
                     component={TenantTrace}
                   />
                   <Route
+                    path={IAM_PAGES.NAMESPACE_TENANT_IDENTITY_PROVIDER}
+                    component={TenantIdentityProvider}
+                  />
+                  <Route
                     path={IAM_PAGES.NAMESPACE_TENANT_SECURITY}
                     component={TenantSecurity}
                   />
@@ -522,6 +529,14 @@ const TenantDetails = ({
               value: "metrics",
               component: Link,
               to: getRoutePath("metrics"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Identity Provider",
+              value: "identity-provider",
+              component: Link,
+              to: getRoutePath("identity-provider"),
             },
           }}
           {{
