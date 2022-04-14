@@ -124,6 +124,11 @@ const SiteReplication = React.lazy(
 const SiteReplicationStatus = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplicationStatus")
 );
+
+const AddReplicationSites = React.lazy(
+  () => import("./Configurations/SiteReplication/AddReplicationSites")
+);
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -379,6 +384,10 @@ const Console = ({
     {
       component: SiteReplicationStatus,
       path: IAM_PAGES.SITE_REPLICATION_STATUS,
+    },
+    {
+      component: AddReplicationSites,
+      path: IAM_PAGES.SITE_REPLICATION_ADD,
     },
     {
       component: Account,
