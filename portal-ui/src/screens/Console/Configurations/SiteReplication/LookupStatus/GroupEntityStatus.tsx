@@ -17,7 +17,7 @@
 import React from "react";
 import { StatsResponseType } from "../SiteReplicationStatus";
 import LookupStatusTable from "./LookupStatusTable";
-import { EntityNotFound, syncStatus } from "./Utils";
+import { EntityNotFound, isEntityNotFound, syncStatus } from "./Utils";
 
 type GroupEntityStatusProps = Partial<StatsResponseType> & {
   lookupValue?: string;
@@ -34,11 +34,7 @@ const UserEntityStatus = ({
   if (!lookupValue) return null;
 
   const siteKeys = Object.keys(sites);
-
-  const notFound = siteKeys.find((sk) => {
-    // @ts-ignore
-    return !groupSites[sk]?.HasGroup;
-  });
+  const notFound = isEntityNotFound(sites, groupSites, "HasGroup");
   const resultMatrix: any = [];
   if (notFound) {
     return <EntityNotFound entityType={"Group"} entityValue={lookupValue} />;

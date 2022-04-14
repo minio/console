@@ -17,7 +17,7 @@
 import React from "react";
 import { StatsResponseType } from "../SiteReplicationStatus";
 import LookupStatusTable from "./LookupStatusTable";
-import { EntityNotFound, syncStatus } from "./Utils";
+import { EntityNotFound, isEntityNotFound, syncStatus } from "./Utils";
 
 type PolicyEntityStatusProps = Partial<StatsResponseType> & {
   lookupValue?: string;
@@ -34,11 +34,7 @@ const PolicyEntityStatus = ({
   if (!lookupValue) return null;
 
   const siteKeys = Object.keys(sites);
-
-  const notFound = siteKeys.find((sk) => {
-    // @ts-ignore
-    return !policySites[sk]?.HasPolicy;
-  });
+  const notFound = isEntityNotFound(sites, policySites, "HasPolicy");
   const resultMatrix: any = [];
   if (notFound) {
     return <EntityNotFound entityType={"Policy"} entityValue={lookupValue} />;

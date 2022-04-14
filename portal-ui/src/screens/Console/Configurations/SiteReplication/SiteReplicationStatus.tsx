@@ -43,7 +43,7 @@ export type StatsResponseType = {
   userStats?: Record<string, any>;
   maxPolicies?: number;
   policyStats?: Record<string, any>;
-  sites?: any;
+  sites?: Record<string, any>;
 };
 
 const SREntityStatus = ({

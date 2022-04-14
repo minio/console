@@ -17,7 +17,7 @@
 import React from "react";
 import { StatsResponseType } from "../SiteReplicationStatus";
 import LookupStatusTable from "./LookupStatusTable";
-import { EntityNotFound, syncStatus } from "./Utils";
+import { EntityNotFound, isEntityNotFound, syncStatus } from "./Utils";
 
 type BucketEntityStatusProps = Partial<StatsResponseType> & {
   lookupValue?: string;
@@ -42,10 +42,7 @@ const BucketEntityStatus = ({
 
   const siteKeys = Object.keys(sites);
 
-  const notFound = siteKeys.find((sk) => {
-    // @ts-ignore
-    return !bucketSites[sk]?.HasBucket;
-  });
+  const notFound = isEntityNotFound(sites, bucketSites, "HasBucket");
   const resultMatrix: any = [];
   if (notFound) {
     return <EntityNotFound entityType={"Bucket"} entityValue={lookupValue} />;
@@ -124,7 +121,7 @@ const BucketEntityStatus = ({
     <LookupStatusTable
       matrixData={resultMatrix}
       entityName={lookupValue}
-      entityType={"Policy"}
+      entityType={"Bucket"}
     />
   );
 };

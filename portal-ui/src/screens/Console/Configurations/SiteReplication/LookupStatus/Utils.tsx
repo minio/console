@@ -1,11 +1,26 @@
 import { Box } from "@mui/material";
 import React from "react";
+import { StatsResponseType } from "../SiteReplicationStatus";
 
 export function syncStatus(mismatch: boolean, set: boolean): string | boolean {
   if (!set) {
     return "";
   }
   return !mismatch;
+}
+
+export function isEntityNotFound(
+  sites: Partial<StatsResponseType>,
+  lookupList: Partial<StatsResponseType>,
+  lookupKey: string
+) {
+  const siteKeys: string[] = Object.keys(sites);
+  return siteKeys.find((sk: string) => {
+    // there is no way to find the type of this ! as it is an entry in the structure itself.
+    // @ts-ignore
+    const result: Record<string, any> = lookupList[sk] || {};
+    return !result[lookupKey];
+  });
 }
 
 export const EntityNotFound = ({
