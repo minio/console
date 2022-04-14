@@ -99,7 +99,7 @@ const BrowserBreadcrumbs = ({
       <Fragment key={`breadcrumbs-${index.toString()}`}>
         <span> / </span>
         {index === lastBreadcrumbsIndex ? (
-          <span style={{cursor: "default"}}>{objectItem}</span>
+          <span style={{ cursor: "default" }}>{objectItem}</span>
         ) : (
           <Link
             to={route}

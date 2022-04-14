@@ -66,7 +66,7 @@ const SummaryUsageBar = ({
   loading,
   error,
 }: ISummaryUsageBar) => {
-  console.log("TENANT", tenant)
+  console.log("TENANT", tenant);
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
@@ -102,15 +102,15 @@ const SummaryUsageBar = ({
       return { value: itemTenant.size, variant: itemTenant.name };
     });
     let internalUsage = tenant.tiers
-        .filter((itemTenant) => {
-          return itemTenant.type === "internal";
-        })
-        .reduce((sum, itemTenant) => sum + itemTenant.size, 0);
+      .filter((itemTenant) => {
+        return itemTenant.type === "internal";
+      })
+      .reduce((sum, itemTenant) => sum + itemTenant.size, 0);
     let tieredUsage = tenant.tiers
-        .filter((itemTenant) => {
-          return itemTenant.type !== "internal";
-        })
-        .reduce((sum, itemTenant) => sum + itemTenant.size, 0);
+      .filter((itemTenant) => {
+        return itemTenant.type !== "internal";
+      })
+      .reduce((sum, itemTenant) => sum + itemTenant.size, 0);
 
     const t = niceBytesInt(tieredUsage, true);
     const parts = t.split(" ");

@@ -34,7 +34,8 @@ import {
   REWIND_RESET_REWIND,
   REWIND_SET_ENABLE,
   IFileItem,
-  BUCKET_BROWSER_SET_SELECTED_OBJECT, OBJECT_MANAGER_SET_LOADING,
+  BUCKET_BROWSER_SET_SELECTED_OBJECT,
+  OBJECT_MANAGER_SET_LOADING,
 } from "./types";
 
 export const setRewindEnable = (
@@ -180,5 +181,5 @@ export const setLoadingObjectsList = (status: boolean) => {
   return {
     type: OBJECT_MANAGER_SET_LOADING,
     status,
-  }
+  };
 };
