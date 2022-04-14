@@ -20,14 +20,15 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
 	"math/rand"
 	"net/http"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -77,7 +78,7 @@ func TestObjectGet(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
 		encodedPrefix string
-		versionId     string
+		versionID     string
 		bytesRange    string
 	}
 	tests := []struct {
@@ -159,7 +160,7 @@ func TestObjectGet(t *testing.T) {
 			name: "Bad Version Preview Object",
 			args: args{
 				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject")),
-				versionId:     "garble",
+				versionID:     "garble",
 			},
 			expectedStatus: 400,
 			expectedError:  nil,
@@ -171,9 +172,9 @@ func TestObjectGet(t *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
-			destination := fmt.Sprintf("/api/v1/buckets/%s/objects/download?preview=true&prefix=%s&version_id=%s", bucketName, tt.args.encodedPrefix, tt.args.versionId)
-			finalUrl := fmt.Sprintf("http://localhost:9090%s", destination)
-			request, err := http.NewRequest("GET", finalUrl, nil)
+			destination := fmt.Sprintf("/api/v1/buckets/%s/objects/download?preview=true&prefix=%s&version_id=%s", bucketName, tt.args.encodedPrefix, tt.args.versionID)
+			finalURL := fmt.Sprintf("http://localhost:9090%s", destination)
+			request, err := http.NewRequest("GET", finalURL, nil)
 			if err != nil {
 				log.Println(err)
 				return
