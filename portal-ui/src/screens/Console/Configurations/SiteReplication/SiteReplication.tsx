@@ -23,8 +23,12 @@ import ReplicationSites from "./ReplicationSites";
 import TrashIcon from "../../../../icons/TrashIcon";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import Loader from "../../Common/Loader/Loader";
-import { AddIcon, ConfirmDeleteIcon, RecoverIcon } from "../../../../icons";
-import AddReplicationSitesModal from "./AddReplicationSitesModal";
+import {
+  AddIcon,
+  ClustersIcon,
+  ConfirmDeleteIcon,
+  RecoverIcon,
+} from "../../../../icons";
 import { connect } from "react-redux";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -46,8 +50,6 @@ const SiteReplication = ({
   setSnackBarMessage: (msg: string) => void;
 }) => {
   const [sites, setSites] = useState([]);
-
-  const [isAddOpen, setIsAddOpen] = useState(false);
 
   const [deleteAll, setIsDeleteAll] = useState(false);
   const [isSiteInfoLoading, invokeSiteInfoApi] = useApi(
@@ -148,7 +150,7 @@ const SiteReplication = ({
             disabled={isRemoving}
             icon={<AddIcon />}
             onClick={() => {
-              setIsAddOpen(true);
+              history.push(IAM_PAGES.SITE_REPLICATION_ADD);
             }}
           />
         </Box>
@@ -185,19 +187,9 @@ const SiteReplication = ({
           </Box>
         ) : null}
 
-        {isAddOpen ? (
-          <AddReplicationSitesModal
-            existingSites={sites}
-            onClose={() => {
-              setIsAddOpen(false);
-              getSites();
-            }}
-          />
-        ) : null}
-
         <HelpBox
           title={"Site Replication"}
-          iconComponent={<RecoverIcon />}
+          iconComponent={<ClustersIcon />}
           help={
             <Fragment>
               This feature allows multiple independent MinIO sites (or clusters)
@@ -205,6 +197,28 @@ const SiteReplication = ({
               configured as replicas. In this situation the set of replica sites
               are referred to as peer sites or just sites.
               <br />
+              <Box>
+                <ul>
+                  <li>
+                    Initially, only one of the sites added for replication may
+                    have data. After site-replication is successfully
+                    configured, this data is replicated to the other (initially
+                    empty) sites. Subsequently, objects may be written to any of
+                    the sites, and they will be replicated to all other sites.
+                  </li>
+                  <li>
+                    All sites must have the same deployment credentials (i.e.
+                    MINIO_ROOT_USER, MINIO_ROOT_PASSWORD).
+                  </li>
+                  <li>
+                    All sites must be using the same external IDP(s) if any.
+                  </li>
+                  <li>
+                    For SSE-S3 or SSE-KMS encryption via KMS, all sites must
+                    have access to a central KMS deployment. server.
+                  </li>
+                </ul>
+              </Box>
               <br />
               You can learn more at our{" "}
               <a
