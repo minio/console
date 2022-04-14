@@ -468,8 +468,8 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	}), nil
 }
 func getDownloadFolderResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
+
 	var prefix string
 	mClient, err := newMinioClient(session)
 	if params.Prefix != "" {
