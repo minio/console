@@ -21,7 +21,10 @@ import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { ITenant, ITenantsResponse } from "./types";
+import {
+  ITenant,
+  ITenantsResponse,
+} from "./types";
 import { niceBytes } from "../../../../common/utils";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import {
