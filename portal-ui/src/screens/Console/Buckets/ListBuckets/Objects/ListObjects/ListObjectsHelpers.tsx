@@ -16,20 +16,20 @@
 
 import React from "react";
 import * as reactMoment from "react-moment";
-import { BucketObject } from "./types";
+import { BucketObjectItem } from "./types";
 import { niceBytes } from "../../../../../../common/utils";
 import { displayFileIconName } from "./utils";
 
 // Functions
 
-export const displayParsedDate = (object: BucketObject) => {
+export const displayParsedDate = (object: BucketObjectItem) => {
   if (object.name.endsWith("/")) {
     return "";
   }
   return <reactMoment.default>{object.last_modified}</reactMoment.default>;
 };
 
-export const displayNiceBytes = (object: BucketObject) => {
+export const displayNiceBytes = (object: BucketObjectItem) => {
   if (object.name.endsWith("/") || !object.size) {
     return "-";
   }

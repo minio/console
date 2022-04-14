@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -30,12 +30,7 @@ import withStyles from "@mui/styles/withStyles";
 import { withRouter } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
-import {
-  BucketObject,
-  BucketObjectsList,
-  RewindObject,
-  RewindObjectList,
-} from "./types";
+import { BucketObjectItem, BucketObjectItemsList } from "./types";
 import api from "../../../../../../common/api";
 import TableWrapper, {
   ItemActions,
@@ -60,14 +55,18 @@ import {
   completeObject,
   openList,
   resetRewind,
+  setLoadingObjectInfo,
+  setLoadingObjectsList,
   setLoadingVersions,
   setNewObject,
+  setObjectDetailsView,
   setSearchObjects,
+  setSelectedObjectView,
   setShowDeletedObjects,
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
-import { Route } from "../../../../ObjectBrowser/reducers";
+import { Route } from "../../../../ObjectBrowser/types";
 
 import { download, extensionPreview, sortListObjects } from "../utils";
 import {
@@ -219,6 +218,7 @@ interface IListObjectsProps {
   bucketToRewind: string;
   searchObjects: string;
   showDeleted: boolean;
+  loading: boolean;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   resetRewind: typeof resetRewind;
@@ -226,15 +226,21 @@ interface IListObjectsProps {
   setBucketInfo: typeof setBucketInfo;
   bucketInfo: BucketInfo | null;
   versionsMode: boolean;
+  detailsOpen: boolean;
   setBucketDetailsLoad: typeof setBucketDetailsLoad;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
   completeObject: typeof completeObject;
   openList: typeof openList;
   setSearchObjects: typeof setSearchObjects;
+  selectedInternalPaths: string | null;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
   setShowDeletedObjects: typeof setShowDeletedObjects;
   setLoadingVersions: typeof setLoadingVersions;
+  setObjectDetailsView: typeof setObjectDetailsView;
+  setSelectedObjectView: typeof setSelectedObjectView;
+  setLoadingObjectInfo: typeof setLoadingObjectInfo;
+  setLoadingObjectsList: typeof setLoadingObjectsList;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -268,6 +274,7 @@ const ListObjects = ({
   history,
   rewindEnabled,
   rewindDate,
+  loading,
   bucketToRewind,
   setSnackBarMessage,
   setErrorSnackMessage,
@@ -285,13 +292,16 @@ const ListObjects = ({
   openList,
   setVersionsModeEnabled,
   showDeleted,
+  detailsOpen,
   setShowDeletedObjects,
   setLoadingVersions,
+  setObjectDetailsView,
+  selectedInternalPaths,
+  setSelectedObjectView,
+  setLoadingObjectInfo,
+  setLoadingObjectsList,
 }: IListObjectsProps) => {
-  const [records, setRecords] = useState<BucketObject[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [rewind, setRewind] = useState<RewindObject[]>([]);
-  const [loadingRewind, setLoadingRewind] = useState<boolean>(false);
+  const [records, setRecords] = useState<BucketObjectItem[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
@@ -303,9 +313,8 @@ const ListObjects = ({
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
   const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-  const [selectedPreview, setSelectedPreview] = useState<BucketObject | null>(
-    null
-  );
+  const [selectedPreview, setSelectedPreview] =
+    useState<BucketObjectItem | null>(null);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [sortDirection, setSortDirection] = useState<
     "ASC" | "DESC" | undefined
@@ -314,10 +323,6 @@ const ListObjects = ({
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [canShareFile, setCanShareFile] = useState<boolean>(false);
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
-  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
-  const [selectedInternalPaths, setSelectedInternalPaths] = useState<
-    string | null
-  >(null);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
   const internalPaths = get(match.params, "subpaths", "");
@@ -375,14 +380,14 @@ const ListObjects = ({
 
   useEffect(() => {
     if (selectedObjects.length > 0) {
-      setDetailsOpen(true);
+      setObjectDetailsView(true);
       return;
     }
 
     if (selectedObjects.length === 0 && selectedInternalPaths === null) {
-      setDetailsOpen(false);
+      setObjectDetailsView(false);
     }
-  }, [selectedObjects, selectedInternalPaths]);
+  }, [selectedObjects, selectedInternalPaths, setObjectDetailsView]);
 
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
@@ -442,6 +447,7 @@ const ListObjects = ({
           });
       } else {
         setLoadingVersioning(false);
+        setRecords([]);
       }
     }
   }, [bucketName, loadingVersioning, setErrorSnackMessage, displayListObjects]);
@@ -460,74 +466,44 @@ const ListObjects = ({
             setLoadingLocking(false);
           });
       } else {
+        setRecords([]);
         setLoadingLocking(false);
       }
     }
   }, [bucketName, loadingLocking, setErrorSnackMessage, displayListObjects]);
 
-  // Rewind
   useEffect(() => {
-    if (rewindEnabled) {
-      if (bucketToRewind !== bucketName) {
-        resetRewind();
-        return;
-      }
+    const decodedIPaths = decodeFileName(internalPaths);
 
-      if (rewindDate) {
-        setLoadingRewind(true);
-        const rewindParsed = rewindDate.toISOString();
-        let pathPrefix = "";
-        if (internalPaths) {
-          const decodedPath = decodeFileName(internalPaths);
-          pathPrefix = decodedPath.endsWith("/")
-            ? decodedPath
-            : decodedPath + "/";
-        }
-        api
-          .invoke(
-            "GET",
-            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-              pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
-            }`
-          )
-          .then((res: RewindObjectList) => {
-            setLoadingRewind(false);
-            if (res.objects) {
-              // We omit files from the same path
-              const filteredObjects = res.objects.filter((object) => {
-                return object.name !== decodeFileName(internalPaths);
-              });
-
-              setRewind(filteredObjects);
-            } else {
-              setRewind([]);
-            }
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setLoadingRewind(false);
-            setErrorSnackMessage(err);
-          });
-      }
+    if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
+      setLoadingObjectsList(true);
+      setObjectDetailsView(false);
+      setSearchObjects("");
+    } else {
+      console.log("AQUI", decodedIPaths);
+      setLoadingObjectInfo(true);
+      setObjectDetailsView(true);
+      setLoadingVersions(true);
+      setSelectedObjectView(
+        `${decodedIPaths ? `${encodeFileName(decodedIPaths)}` : ``}`
+      );
     }
   }, [
-    rewindEnabled,
-    rewindDate,
-    bucketToRewind,
-    bucketName,
-    match,
-    setErrorSnackMessage,
-    resetRewind,
     internalPaths,
+    setSearchObjects,
+    rewindDate,
+    rewindEnabled,
+    setLoadingObjectInfo,
+    setLoadingVersions,
+    setObjectDetailsView,
+    setSelectedObjectView,
+    setLoadingObjectsList,
   ]);
 
   useEffect(() => {
-    setLoading(true);
-    setDetailsOpen(false);
-    setSearchObjects("");
-  }, [internalPaths, setSearchObjects]);
-
-  useEffect(() => {
+    console.log("SET PATH");
     if (loading) {
+      console.log("STE");
       if (displayListObjects) {
         let pathPrefix = "";
         if (internalPaths) {
@@ -541,9 +517,23 @@ const ListObjects = ({
         setLoadingStartTime(currentTimestamp);
         setLoadingMessage(defLoading);
 
+        // We get URL to look into
         let urlTake = `/api/v1/buckets/${bucketName}/objects`;
 
-        if (showDeleted) {
+        // Is rewind enabled?, we use Rewind API
+        if (rewindEnabled) {
+          if (bucketToRewind !== bucketName) {
+            resetRewind();
+            return;
+          }
+
+          if (rewindDate) {
+            const rewindParsed = rewindDate.toISOString();
+
+            urlTake = `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}`;
+          }
+        } else if (showDeleted) {
+          // Do we want to display deleted items too?, we use rewind to current time to show everything
           const currDate = new Date();
           const currDateISO = currDate.toISOString();
 
@@ -557,11 +547,12 @@ const ListObjects = ({
               pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
             }`
           )
-          .then((res: BucketObjectsList) => {
-            const records: BucketObject[] = res.objects || [];
-            const folders: BucketObject[] = [];
-            const files: BucketObject[] = [];
+          .then((res: BucketObjectItemsList) => {
+            const records: BucketObjectItem[] = res.objects || [];
+            const folders: BucketObjectItem[] = [];
+            const files: BucketObjectItem[] = [];
 
+            // We separate items between folders or files to display folders at the beginning always.
             records.forEach((record) => {
               // We omit files from the same path
               if (record.name !== decodeFileName(internalPaths)) {
@@ -574,10 +565,14 @@ const ListObjects = ({
                 }
               }
             });
+
             const recordsInElement = [...folders, ...files];
-            setRecords(recordsInElement);
-            // In case no objects were retrieved, We check if item is a file
-            if (!res.objects && pathPrefix !== "") {
+
+            if (recordsInElement.length === 0 && pathPrefix !== "") {
+              let pathTest = `/api/v1/buckets/${bucketName}/objects${
+                internalPaths ? `?prefix=${internalPaths}` : ""
+              }`;
+
               if (rewindEnabled) {
                 const rewindParsed = rewindDate.toISOString();
 
@@ -588,89 +583,96 @@ const ListObjects = ({
                     ? decodedPath
                     : decodedPath + "/";
                 }
-                api
-                  .invoke(
-                    "GET",
-                    `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-                      pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
-                    }`
-                  )
-                  .then((res: RewindObjectList) => {
-                    //It is a file since it has elements in the object, setting file flag and waiting for component mount
-                    if (res.objects === null) {
-                      //setFileModeEnabled(true);
-                      setLoadingRewind(false);
-                      setLoading(false);
-                    } else {
-                      // It is a folder, we remove loader
-                      setLoadingRewind(false);
-                      setLoading(false);
-                      //setFileModeEnabled(false);
-                    }
-                  })
-                  .catch((err: ErrorResponseHandler) => {
-                    setLoadingRewind(false);
-                    setLoading(false);
-                    setErrorSnackMessage(err);
-                  });
-              } else {
-                api
-                  .invoke(
-                    "GET",
-                    `/api/v1/buckets/${bucketName}/objects${
-                      internalPaths ? `?prefix=${internalPaths}` : ``
-                    }`
-                  )
-                  .then((res: BucketObjectsList) => {
-                    //It is a file since it has elements in the object, setting file flag and waiting for component mount
-                    if (!res.objects) {
-                      // It is a folder, we remove loader
-                      //setFileModeEnabled(false);
-                      setLoading(false);
-                    } else {
-                      // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
-                      // Previously, if there was a file test1.txt and the folder test was created with the same prefix, the program
-                      // would open test1.txt instead
-                      let found = false;
-                      let pathPrefixChopped = pathPrefix.slice(
-                        0,
-                        pathPrefix.length - 1
-                      );
-                      for (let i = 0; i < res.objects.length; i++) {
-                        if (res.objects[i].name === pathPrefixChopped) {
-                          found = true;
-                        }
-                      }
-                      if (
-                        (res.objects.length === 1 &&
-                          res.objects[0].name.endsWith("/")) ||
-                        !found
-                      ) {
-                        //setFileModeEnabled(false);
-                      } else {
-                        //setFileModeEnabled(true);
-                      }
 
-                      setLoading(false);
-                    }
-                  })
-                  .catch((err: ErrorResponseHandler) => {
-                    setLoading(false);
-                    setErrorSnackMessage(err);
-                  });
+                pathTest = `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
+                  pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+                }`;
               }
+
+              api
+                .invoke("GET", pathTest)
+                .then((res: BucketObjectItemsList) => {
+                  //It is a file since it has elements in the object, setting file flag and waiting for component mount
+                  if (!res.objects) {
+                    // It is a folder, we remove loader & set original results list
+                    setLoadingObjectsList(false);
+                    setRecords(recordsInElement);
+                    console.log("1");
+                  } else {
+                    // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
+                    // Previously, if there was a file test1.txt and the folder test was created with the same prefix, the program
+                    // would open test1.txt instead
+                    let found = false;
+                    let pathPrefixChopped = pathPrefix.slice(
+                      0,
+                      pathPrefix.length - 1
+                    );
+                    for (let i = 0; i < res.objects.length; i++) {
+                      if (res.objects[i].name === pathPrefixChopped) {
+                        found = true;
+                      }
+                    }
+                    if (
+                      (res.objects.length === 1 &&
+                        res.objects[0].name.endsWith("/")) ||
+                      !found
+                    ) {
+                      // This is a folder, we set the original results list
+                      console.log("2");
+                      setRecords(recordsInElement);
+                    } else {
+                      console.log("3");
+                      // This is a file. We change URL & Open file details view.
+                      setObjectDetailsView(true);
+                      setSelectedObjectView(internalPaths);
+
+                      // We split the selected object URL & remove the last item to fetch the files list for the parent folder
+                      const parentPath = `${decodeFileName(internalPaths)
+                        .split("/")
+                        .slice(0, -1)
+                        .join("/")}/`;
+
+                      api
+                        .invoke(
+                          "GET",
+                          `${urlTake}${
+                            pathPrefix
+                              ? `?prefix=${encodeFileName(parentPath)}`
+                              : ``
+                          }`
+                        )
+                        .then((res: BucketObjectItemsList) => {
+                          console.log("4");
+                          const records: BucketObjectItem[] = res.objects || [];
+
+                          setRecords(records);
+                        })
+                        .catch(() => {
+                          console.log("5");
+                        });
+                    }
+
+                    setLoadingObjectsList(false);
+                  }
+                })
+                .catch((err: ErrorResponseHandler) => {
+                  console.log("6");
+                  setLoadingObjectsList(false);
+                  setErrorSnackMessage(err);
+                });
             } else {
-              //setFileModeEnabled(false);
-              setLoading(false);
+              console.log("7", recordsInElement);
+              setRecords(recordsInElement);
+              setLoadingObjectsList(false);
             }
           })
           .catch((err: ErrorResponseHandler) => {
-            setLoading(false);
+            setLoadingObjectsList(false);
             setErrorSnackMessage(err);
           });
       } else {
-        setLoadingRewind(false);
-        setLoading(false);
+        console.log("8");
+        setLoadingObjectsList(false);
       }
     }
   }, [
@@ -684,6 +686,11 @@ const ListObjects = ({
     bucketInfo,
     showDeleted,
     displayListObjects,
+    bucketToRewind,
+    resetRewind,
+    setObjectDetailsView,
+    setSelectedObjectView,
+    setLoadingObjectsList,
   ]);
 
   // bucket info
@@ -714,7 +721,7 @@ const ListObjects = ({
     if (refresh) {
       setSnackBarMessage(`Objects deleted successfully.`);
       setSelectedObjects([]);
-      setLoading(true);
+      setLoadingObjectsList(true);
     }
   };
 
@@ -738,7 +745,7 @@ const ListObjects = ({
     e.target.value = "";
   };
 
-  const downloadObject = (object: BucketObject | RewindObject) => {
+  const downloadObject = (object: BucketObjectItem) => {
     const identityDownload = encodeFileName(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
@@ -769,19 +776,15 @@ const ListObjects = ({
 
   const openPath = (idElement: string) => {
     setSelectedObjects([]);
-    if (idElement.endsWith("/")) {
-      const newPath = `/buckets/${bucketName}/browse${
-        idElement ? `/${encodeFileName(idElement)}` : ``
-      }`;
-      history.push(newPath);
-      return;
-    }
 
-    setDetailsOpen(true);
+    const newPath = `/buckets/${bucketName}/browse${
+      idElement ? `/${encodeFileName(idElement)}` : ``
+    }`;
+    history.push(newPath);
+
+    setObjectDetailsView(true);
     setLoadingVersions(true);
-    setSelectedInternalPaths(
-      `${idElement ? `${encodeFileName(idElement)}` : ``}`
-    );
+    setSelectedObjectView(`${idElement ? `${encodeFileName(idElement)}` : ``}`);
   };
 
   const uploadObject = useCallback(
@@ -894,7 +897,7 @@ const ListObjects = ({
             };
             xhr.onloadend = () => {
               if (files.length === 0) {
-                setLoading(true);
+                setLoadingObjectsList(true);
               }
             };
 
@@ -925,7 +928,6 @@ const ListObjects = ({
               errorMessage: "There were some errors during file upload",
               detailedError: `Uploaded files ${successUploadedFiles}/${totalFiles}`,
             };
-            console.log("upload results", results);
             setErrorSnackMessage(err);
           }
         });
@@ -941,6 +943,7 @@ const ListObjects = ({
       setNewObject,
       setErrorSnackMessage,
       updateProgress,
+      setLoadingObjectsList,
     ]
   );
 
@@ -971,9 +974,9 @@ const ListObjects = ({
 
   const openPreview = () => {
     if (selectedObjects.length === 1) {
-      let fileObject: BucketObject | undefined;
+      let fileObject: BucketObjectItem | undefined;
 
-      const findFunction = (currValue: BucketObject | RewindObject) =>
+      const findFunction = (currValue: BucketObjectItem) =>
         selectedObjects.includes(currValue.name);
 
       fileObject = filteredRecords.find(findFunction);
@@ -987,9 +990,9 @@ const ListObjects = ({
 
   const openShare = () => {
     if (selectedObjects.length === 1) {
-      let fileObject: BucketObject | undefined;
+      let fileObject: BucketObjectItem | undefined;
 
-      const findFunction = (currValue: BucketObject | RewindObject) =>
+      const findFunction = (currValue: BucketObjectItem) =>
         selectedObjects.includes(currValue.name);
 
       fileObject = filteredRecords.find(findFunction);
@@ -1006,7 +1009,7 @@ const ListObjects = ({
     setSelectedPreview(null);
   };
 
-  const filteredRecords = records.filter((b: BucketObject) => {
+  const filteredRecords = records.filter((b: BucketObjectItem) => {
     if (searchObjects === "") {
       return true;
     } else {
@@ -1019,7 +1022,7 @@ const ListObjects = ({
     }
   });
 
-  const rewindCloseModal = (refresh: boolean) => {
+  const rewindCloseModal = () => {
     setRewindSelect(false);
   };
 
@@ -1043,7 +1046,7 @@ const ListObjects = ({
       elements = elements.filter((element) => element !== value);
     }
     setSelectedObjects(elements);
-    setSelectedInternalPaths(null);
+    setSelectedObjectView(null);
 
     return elements;
   };
@@ -1052,16 +1055,16 @@ const ListObjects = ({
     const newSortDirection = get(sortData, "sortDirection", "DESC");
     setCurrentSortField(sortData.sortBy);
     setSortDirection(newSortDirection);
-    setLoading(true);
+    setLoadingObjectsList(true);
   };
 
   const pageTitle = decodeFileName(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
 
-  const plSelect = rewindEnabled ? rewind : filteredRecords;
+  const plSelect = filteredRecords;
   const sortASC = plSelect.sort(sortListObjects(currentSortField));
 
-  let payload: BucketObject[] | RewindObject[] = [];
+  let payload: BucketObjectItem[] = [];
 
   if (sortDirection === "ASC") {
     payload = sortASC;
@@ -1070,7 +1073,7 @@ const ListObjects = ({
   }
 
   const selectAllItems = () => {
-    setSelectedInternalPaths(null);
+    setSelectedObjectView(null);
 
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
@@ -1083,16 +1086,12 @@ const ListObjects = ({
 
   const downloadSelected = () => {
     if (selectedObjects.length !== 0) {
-      let itemsToDownload: BucketObject[] | RewindObject[] = [];
+      let itemsToDownload: BucketObjectItem[] = [];
 
-      const filterFunction = (currValue: BucketObject | RewindObject) =>
+      const filterFunction = (currValue: BucketObjectItem) =>
         selectedObjects.includes(currValue.name);
 
-      if (rewindEnabled) {
-        itemsToDownload = rewind.filter(filterFunction);
-      } else {
-        itemsToDownload = filteredRecords.filter(filterFunction);
-      }
+      itemsToDownload = filteredRecords.filter(filterFunction);
 
       itemsToDownload.forEach((filteredItem) => {
         downloadObject(filteredItem);
@@ -1105,13 +1104,13 @@ const ListObjects = ({
   }
 
   const onClosePanel = (forceRefresh: boolean) => {
-    setDetailsOpen(false);
-    setSelectedInternalPaths(null);
+    setObjectDetailsView(false);
+    setSelectedObjectView(null);
     setSelectedObjects([]);
     setVersionsModeEnabled(false);
 
     if (forceRefresh) {
-      setLoading(true);
+      setLoadingObjectsList(true);
     }
   };
 
@@ -1287,7 +1286,7 @@ const ListObjects = ({
                     if (versionsMode) {
                       setLoadingVersions(true);
                     } else {
-                      setLoading(true);
+                      setLoadingObjectsList(true);
                     }
                   }}
                   disabled={
@@ -1385,7 +1384,7 @@ const ListObjects = ({
                     columns={
                       rewindEnabled ? rewindModeColumns : listModeColumns
                     }
-                    isLoading={rewindEnabled ? loadingRewind : loading}
+                    isLoading={loading}
                     loadingMessage={loadingMessage}
                     entityName="Objects"
                     idField="name"
@@ -1461,6 +1460,9 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   bucketInfo: buckets.bucketDetails.bucketInfo,
   searchObjects: objectBrowser.searchObjects,
   showDeleted: objectBrowser.showDeleted,
+  detailsOpen: objectBrowser.objectDetailsOpen,
+  selectedInternalPaths: objectBrowser.selectedInternalPaths,
+  loading: objectBrowser.loadingObjects,
 });
 
 const mapDispatchToProps = {
@@ -1477,6 +1479,10 @@ const mapDispatchToProps = {
   setVersionsModeEnabled,
   setShowDeletedObjects,
   setLoadingVersions,
+  setObjectDetailsView,
+  setSelectedObjectView,
+  setLoadingObjectInfo,
+  setLoadingObjectsList,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

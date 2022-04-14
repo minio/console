@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,137 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IFileItem } from "./reducers";
-
-export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
-export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
-
-export const OBJECT_MANAGER_NEW_OBJECT = "OBJECT_MANAGER/NEW_OBJECT";
-export const OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT =
-  "OBJECT_MANAGER/UPDATE_PROGRESS_OBJECT";
-export const OBJECT_MANAGER_COMPLETE_OBJECT = "OBJECT_MANAGER/COMPLETE_OBJECT";
-export const OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST =
-  "OBJECT_MANAGER/DELETE_FROM_OBJECT_LIST";
-export const OBJECT_MANAGER_CLEAN_LIST = "OBJECT_MANAGER/CLEAN_LIST";
-export const OBJECT_MANAGER_TOGGLE_LIST = "OBJECT_MANAGER/TOGGLE_LIST";
-export const OBJECT_MANAGER_OPEN_LIST = "OBJECT_MANAGER/OPEN_LIST";
-export const OBJECT_MANAGER_CLOSE_LIST = "OBJECT_MANAGER/CLOSE_LIST";
-export const OBJECT_MANAGER_SET_SEARCH_OBJECT =
-  "OBJECT_MANAGER/SET_SEARCH_OBJECT";
-
-export const BUCKET_BROWSER_VERSIONS_MODE_ENABLED =
-  "BUCKET_BROWSER/VERSIONS_MODE_ENABLED";
-export const BUCKET_BROWSER_VERSIONS_SET_SEARCH =
-  "BUCKET_BROWSER/VERSIONS_SET_SEARCH";
-export const BUCKET_BROWSER_SET_SELECTED_VERSION =
-  "BUCKET_BROWSER/SET_SELECTED_VERSION";
-export const BUCKET_BROWSER_SHOW_DELETED = "BUCKET_BROWSER/SHOW_DELETED";
-export const BUCKET_BROWSER_LOAD_VERSIONS = "BUCKET_BROWSER/LOAD_VERSIONS";
-export const BUCKET_BROWSER_LOAD_OBJECT_DETAILS =
-  "BUCKET_BROWSER/LOAD_OBJECT_DETAILS";
-
-interface RewindSetEnabled {
-  type: typeof REWIND_SET_ENABLE;
-  bucket: string;
-  state: boolean;
-  dateRewind: any;
-}
-
-interface RewindReset {
-  type: typeof REWIND_RESET_REWIND;
-}
-
-interface VersionsModeEnabled {
-  type: typeof BUCKET_BROWSER_VERSIONS_MODE_ENABLED;
-  status: boolean;
-  objectName: string;
-}
-
-interface OMNewObject {
-  type: typeof OBJECT_MANAGER_NEW_OBJECT;
-  newObject: IFileItem;
-}
-
-interface OMUpdateProgress {
-  type: typeof OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT;
-  instanceID: string;
-  progress: number;
-}
-
-interface OMCompleteObject {
-  type: typeof OBJECT_MANAGER_COMPLETE_OBJECT;
-  instanceID: string;
-}
-
-interface OMDeleteFromList {
-  type: typeof OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST;
-  instanceID: string;
-}
-
-interface OMCleanList {
-  type: typeof OBJECT_MANAGER_CLEAN_LIST;
-}
-
-interface OMToggleList {
-  type: typeof OBJECT_MANAGER_TOGGLE_LIST;
-}
-
-interface OMOpenList {
-  type: typeof OBJECT_MANAGER_OPEN_LIST;
-}
-
-interface OMCloseList {
-  type: typeof OBJECT_MANAGER_CLOSE_LIST;
-}
-
-interface SetSearchObjects {
-  type: typeof OBJECT_MANAGER_SET_SEARCH_OBJECT;
-  searchString: string;
-}
-
-interface SetSearchVersions {
-  type: typeof BUCKET_BROWSER_VERSIONS_SET_SEARCH;
-  searchString: string;
-}
-
-interface SetSelectedversion {
-  type: typeof BUCKET_BROWSER_SET_SELECTED_VERSION;
-  selectedVersion: string;
-}
-
-interface SetShowDeletedObjects {
-  type: typeof BUCKET_BROWSER_SHOW_DELETED;
-  status: boolean;
-}
-
-interface SetLoadingVersions {
-  type: typeof BUCKET_BROWSER_LOAD_VERSIONS;
-  status: boolean;
-}
-
-interface SetLoadingObjectInfo {
-  type: typeof BUCKET_BROWSER_LOAD_OBJECT_DETAILS;
-  status: boolean;
-}
-
-export type ObjectBrowserActionTypes =
-  | RewindSetEnabled
-  | RewindReset
-  | VersionsModeEnabled
-  | OMNewObject
-  | OMUpdateProgress
-  | OMCompleteObject
-  | OMDeleteFromList
-  | OMCleanList
-  | OMToggleList
-  | OMOpenList
-  | OMCloseList
-  | SetSearchObjects
-  | SetSearchVersions
-  | SetSelectedversion
-  | SetShowDeletedObjects
-  | SetLoadingVersions
-  | SetLoadingObjectInfo;
+import {
+  BUCKET_BROWSER_LOAD_OBJECT_DETAILS,
+  BUCKET_BROWSER_LOAD_VERSIONS,
+  BUCKET_BROWSER_OBJECT_DETAILS_STATE,
+  BUCKET_BROWSER_SET_SELECTED_VERSION,
+  BUCKET_BROWSER_SHOW_DELETED,
+  BUCKET_BROWSER_VERSIONS_MODE_ENABLED,
+  BUCKET_BROWSER_VERSIONS_SET_SEARCH,
+  OBJECT_MANAGER_CLEAN_LIST,
+  OBJECT_MANAGER_CLOSE_LIST,
+  OBJECT_MANAGER_COMPLETE_OBJECT,
+  OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST,
+  OBJECT_MANAGER_NEW_OBJECT,
+  OBJECT_MANAGER_OPEN_LIST,
+  OBJECT_MANAGER_SET_SEARCH_OBJECT,
+  OBJECT_MANAGER_TOGGLE_LIST,
+  OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT,
+  REWIND_RESET_REWIND,
+  REWIND_SET_ENABLE,
+  IFileItem,
+  BUCKET_BROWSER_SET_SELECTED_OBJECT, OBJECT_MANAGER_SET_LOADING,
+} from "./types";
 
 export const setRewindEnable = (
   state: boolean,
@@ -269,4 +160,25 @@ export const setLoadingObjectInfo = (status: boolean) => {
     type: BUCKET_BROWSER_LOAD_OBJECT_DETAILS,
     status,
   };
+};
+
+export const setObjectDetailsView = (status: boolean) => {
+  return {
+    type: BUCKET_BROWSER_OBJECT_DETAILS_STATE,
+    status,
+  };
+};
+
+export const setSelectedObjectView = (object: string | null) => {
+  return {
+    type: BUCKET_BROWSER_SET_SELECTED_OBJECT,
+    object,
+  };
+};
+
+export const setLoadingObjectsList = (status: boolean) => {
+  return {
+    type: OBJECT_MANAGER_SET_LOADING,
+    status,
+  }
 };

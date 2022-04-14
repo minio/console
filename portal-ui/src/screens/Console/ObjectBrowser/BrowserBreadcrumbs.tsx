@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,24 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import { connect } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
-import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { ObjectBrowserState } from "./reducers";
-import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
+import { Theme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import { ObjectBrowserState } from "./types";
+import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeFileName } from "../../../common/utils";
 import { BackCaretIcon, NewPathIcon } from "../../../icons";
-import { Button, IconButton, Tooltip } from "@mui/material";
-import history from "../../../history";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
-import withSuspense from "../Common/Components/withSuspense";
-import { BucketObject } from "../Buckets/ListBuckets/Objects/ListObjects/types";
+import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { setVersionsModeEnabled } from "./actions";
+import history from "../../../history";
+import withSuspense from "../Common/Components/withSuspense";
 
 const CreateFolderModal = withSuspense(
   React.lazy(
@@ -52,7 +52,7 @@ interface IObjectBrowser {
   versionsMode: boolean;
   versionedFile: string;
   hidePathButton?: boolean;
-  existingFiles: BucketObject[];
+  existingFiles: BucketObjectItem[];
   additionalOptions?: React.ReactNode;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
 }
@@ -86,7 +86,7 @@ const BrowserBreadcrumbs = ({
   const lastBreadcrumbsIndex = splitPaths.length - 1;
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
-    const subSplit = splitPaths.slice(0, index + 1).join("/");
+    const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
     const route = `/buckets/${bucketName}/browse/${
       subSplit ? `${encodeFileName(subSplit)}` : ``
     }`;
@@ -98,14 +98,18 @@ const BrowserBreadcrumbs = ({
     return (
       <Fragment key={`breadcrumbs-${index.toString()}`}>
         <span> / </span>
-        <Link
-          to={route}
-          onClick={() => {
-            setVersionsModeEnabled(false);
-          }}
-        >
-          {objectItem}
-        </Link>
+        {index === lastBreadcrumbsIndex ? (
+          <span style={{cursor: "default"}}>{objectItem}</span>
+        ) : (
+          <Link
+            to={route}
+            onClick={() => {
+              setVersionsModeEnabled(false);
+            }}
+          >
+            {objectItem}
+          </Link>
+        )}
       </Fragment>
     );
   });

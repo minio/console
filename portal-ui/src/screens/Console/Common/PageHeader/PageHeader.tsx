@@ -25,7 +25,7 @@ import IconButton from "@mui/material/IconButton";
 import { AppState } from "../../../../store";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
-import { IFileItem } from "../../ObjectBrowser/reducers";
+import { IFileItem } from "../../ObjectBrowser/types";
 import { toggleList } from "../../ObjectBrowser/actions";
 import { ObjectManagerIcon } from "../../../../icons";
 
