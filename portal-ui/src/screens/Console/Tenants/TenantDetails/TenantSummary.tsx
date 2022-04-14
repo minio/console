@@ -123,10 +123,13 @@ const healthStatusToClass = (health_status: string = "red", classes: any) => {
 };
 
 const StorageSummary = ({ tenant, classes }: Partial<ITenantsSummary>) => {
+  if (!tenant) {
+    return null;
+  }
+
   return (
     <SummaryUsageBar
-      currValue={tenant?.status?.usage?.raw_usage}
-      maxValue={tenant?.status?.usage?.raw}
+      tenant={tenant}
       label={"Storage"}
       error={""}
       loading={false}

@@ -132,6 +132,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerNodesHandler(api)
 
 	registerSiteReplicationHandler(api)
+	registerSiteReplicationStatusHandler(api)
 
 	// Operator Console
 

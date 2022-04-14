@@ -2504,6 +2504,52 @@ paths:
       tags:
         - AdminAPI
 
+  /admin/site-replication/status:
+    get:
+      summary: Display overall site replication status
+      operationId: GetSiteReplicationStatus
+      parameters:
+        - name: buckets
+          description: Include Bucket stats
+          in: query
+          type: boolean
+          default: true
+        - name: groups
+          description: Include Group stats
+          in: query
+          type: boolean
+          default: true
+        - name: policies
+          description: Include Policies stats
+          in: query
+          type: boolean
+          default: true
+        - name: users
+          description: Include Policies stats
+          in: query
+          type: boolean
+          default: true
+        - name: entityType
+          description: Entity Type to lookup
+          in: query
+          type: string
+          required: false
+        - name: entityValue
+          description: Entity Value to lookup
+          in: query
+          type: string
+          required: false
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/siteReplicationStatusResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /admin/tiers:
     get:
@@ -3922,6 +3968,32 @@ definitions:
           $ref: "#/definitions/peerInfo"
       serviceAccountAccessKey:
         type: string
+
+  siteReplicationStatusResponse:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      maxBuckets:
+        type: integer
+      maxUsers:
+        type: integer
+      maxGroups:
+        type: integer
+      maxPolicies:
+        type: integer
+      sites:
+        type: object
+      statsSummary:
+        type: object
+      bucketStats:
+        type: object
+      policyStats:
+        type: object
+      userStats:
+        type: object
+      groupStats:
+        type: object
 
   updateUser:
     type: object

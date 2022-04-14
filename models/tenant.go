@@ -45,6 +45,9 @@ type Tenant struct {
 	// deletion date
 	DeletionDate string `json:"deletion_date,omitempty"`
 
+	// domains
+	Domains *DomainsConfiguration `json:"domains,omitempty"`
+
 	// enable prometheus
 	EnablePrometheus bool `json:"enable_prometheus,omitempty"`
 
@@ -95,6 +98,10 @@ type Tenant struct {
 func (m *Tenant) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDomains(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateEndpoints(formats); err != nil {
 		res = append(res, err)
 	}
@@ -114,6 +121,25 @@ func (m *Tenant) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Tenant) validateDomains(formats strfmt.Registry) error {
+	if swag.IsZero(m.Domains) { // not required
+		return nil
+	}
+
+	if m.Domains != nil {
+		if err := m.Domains.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domains")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domains")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -204,6 +230,10 @@ func (m *Tenant) validateSubnetLicense(formats strfmt.Registry) error {
 func (m *Tenant) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateDomains(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateEndpoints(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -223,6 +253,22 @@ func (m *Tenant) ContextValidate(ctx context.Context, formats strfmt.Registry) e
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Tenant) contextValidateDomains(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Domains != nil {
+		if err := m.Domains.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domains")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domains")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

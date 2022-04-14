@@ -29,7 +29,7 @@ export const addSitesBtn = Selector("button").withText("Add Sites");
 // Command to invoke the test locally: testcafe chrome tests/permissions/site-replication.ts
 /* End Local Testing config block */
 
-fixture("Site Replication for user with Admin permissions")
+fixture("Site Replication Status for user with Admin permissions")
   .page(testDomainUrl)
   .beforeEach(async (t) => {
     await t.useRole(roles.settings);

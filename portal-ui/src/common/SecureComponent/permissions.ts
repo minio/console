@@ -162,6 +162,8 @@ export const IAM_PAGES = {
   TIERS_ADD: "/settings/tiers/add",
   TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
   SITE_REPLICATION: "/settings/site-replication",
+  SITE_REPLICATION_STATUS: "/settings/site-replication/status",
+  SITE_REPLICATION_ADD: "/settings/site-replication/add",
 
   /* Operator */
   TENANTS: "/tenants",
@@ -381,6 +383,14 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],
   [IAM_PAGES.SITE_REPLICATION]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.SITE_REPLICATION_STATUS]: [
+    IAM_SCOPES.ADMIN_SERVER_INFO,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.SITE_REPLICATION_ADD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],

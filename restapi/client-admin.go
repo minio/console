@@ -119,6 +119,9 @@ type MinioAdmin interface {
 	addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error)
 	editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error)
 	deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
+
+	//Replication status
+	getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
 }
 
 // Interface implementation
@@ -546,4 +549,13 @@ func (ac AdminClient) deleteSiteReplicationInfo(ctx context.Context, removeReq m
 		Status:    res.Status,
 		ErrDetail: res.ErrDetail,
 	}, nil
+}
+
+func (ac AdminClient) getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error) {
+
+	res, err := ac.Client.SRStatusInfo(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	return &res, nil
 }

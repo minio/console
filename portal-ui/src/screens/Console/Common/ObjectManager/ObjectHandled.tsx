@@ -19,7 +19,7 @@ import { Theme } from "@mui/material/styles";
 import { Tooltip } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IFileItem } from "../../ObjectBrowser/reducers";
+import { IFileItem } from "../../ObjectBrowser/types";
 import ProgressBarWrapper from "../ProgressBarWrapper/ProgressBarWrapper";
 import { DownloadStatIcon, UploadStatIcon } from "../../../../icons";
 import clsx from "clsx";

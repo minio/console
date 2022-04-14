@@ -121,6 +121,14 @@ const AddPool = React.lazy(
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
 );
+const SiteReplicationStatus = React.lazy(
+  () => import("./Configurations/SiteReplication/SiteReplicationStatus")
+);
+
+const AddReplicationSites = React.lazy(
+  () => import("./Configurations/SiteReplication/AddReplicationSites")
+);
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -192,7 +200,6 @@ const Console = ({
       .invoke("POST", "/api/v1/service/restart", {})
       .then((res) => {
         console.log("success restarting service");
-        console.log(res);
         serverIsLoading(false);
         serverNeedsRestart(false);
       })
@@ -202,7 +209,7 @@ const Console = ({
         }
         serverIsLoading(false);
         console.log("failure restarting service");
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -373,6 +380,14 @@ const Console = ({
     {
       component: SiteReplication,
       path: IAM_PAGES.SITE_REPLICATION,
+    },
+    {
+      component: SiteReplicationStatus,
+      path: IAM_PAGES.SITE_REPLICATION_STATUS,
+    },
+    {
+      component: AddReplicationSites,
+      path: IAM_PAGES.SITE_REPLICATION_ADD,
     },
     {
       component: Account,

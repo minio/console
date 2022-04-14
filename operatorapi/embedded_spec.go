@@ -2000,6 +2000,10 @@ func init() {
             "type": "string"
           }
         },
+        "domains": {
+          "type": "object",
+          "$ref": "#/definitions/domainsConfiguration"
+        },
         "enable_console": {
           "type": "boolean",
           "default": true
@@ -2155,6 +2159,20 @@ func init() {
         },
         "volume": {
           "type": "string"
+        }
+      }
+    },
+    "domainsConfiguration": {
+      "type": "object",
+      "properties": {
+        "console": {
+          "type": "string"
+        },
+        "minio": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -3431,6 +3449,9 @@ func init() {
         "deletion_date": {
           "type": "string"
         },
+        "domains": {
+          "$ref": "#/definitions/domainsConfiguration"
+        },
         "enable_prometheus": {
           "type": "boolean"
         },
@@ -3517,6 +3538,10 @@ func init() {
         },
         "deletion_date": {
           "type": "string"
+        },
+        "domains": {
+          "type": "object",
+          "$ref": "#/definitions/domainsConfiguration"
         },
         "health_status": {
           "type": "string"
@@ -6838,6 +6863,10 @@ func init() {
             "type": "string"
           }
         },
+        "domains": {
+          "type": "object",
+          "$ref": "#/definitions/domainsConfiguration"
+        },
         "enable_console": {
           "type": "boolean",
           "default": true
@@ -6993,6 +7022,20 @@ func init() {
         },
         "volume": {
           "type": "string"
+        }
+      }
+    },
+    "domainsConfiguration": {
+      "type": "object",
+      "properties": {
+        "console": {
+          "type": "string"
+        },
+        "minio": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -8122,6 +8165,9 @@ func init() {
         "deletion_date": {
           "type": "string"
         },
+        "domains": {
+          "$ref": "#/definitions/domainsConfiguration"
+        },
         "enable_prometheus": {
           "type": "boolean"
         },
@@ -8208,6 +8254,10 @@ func init() {
         },
         "deletion_date": {
           "type": "string"
+        },
+        "domains": {
+          "type": "object",
+          "$ref": "#/definitions/domainsConfiguration"
         },
         "health_status": {
           "type": "string"
