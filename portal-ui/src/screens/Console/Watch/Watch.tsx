@@ -113,7 +113,7 @@ const Watch = ({
         setBucketList(buckets);
       })
       .catch((err: ErrorResponseHandler) => {
-        console.log(err);
+        console.error(err);
       });
   };
   useEffect(() => {

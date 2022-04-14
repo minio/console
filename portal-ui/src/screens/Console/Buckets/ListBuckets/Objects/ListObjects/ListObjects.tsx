@@ -480,7 +480,6 @@ const ListObjects = ({
       setObjectDetailsView(false);
       setSearchObjects("");
     } else {
-      console.log("AQUI", decodedIPaths);
       setLoadingObjectInfo(true);
       setObjectDetailsView(true);
       setLoadingVersions(true);
@@ -501,9 +500,7 @@ const ListObjects = ({
   ]);
 
   useEffect(() => {
-    console.log("SET PATH");
     if (loading) {
-      console.log("STE");
       if (displayListObjects) {
         let pathPrefix = "";
         if (internalPaths) {
@@ -597,7 +594,6 @@ const ListObjects = ({
                     // It is a folder, we remove loader & set original results list
                     setLoadingObjectsList(false);
                     setRecords(recordsInElement);
-                    console.log("1");
                   } else {
                     // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
                     // Previously, if there was a file test1.txt and the folder test was created with the same prefix, the program
@@ -618,10 +614,8 @@ const ListObjects = ({
                       !found
                     ) {
                       // This is a folder, we set the original results list
-                      console.log("2");
                       setRecords(recordsInElement);
                     } else {
-                      console.log("3");
                       // This is a file. We change URL & Open file details view.
                       setObjectDetailsView(true);
                       setSelectedObjectView(internalPaths);
@@ -642,13 +636,11 @@ const ListObjects = ({
                           }`
                         )
                         .then((res: BucketObjectItemsList) => {
-                          console.log("4");
                           const records: BucketObjectItem[] = res.objects || [];
 
                           setRecords(records);
                         })
                         .catch(() => {
-                          console.log("5");
                         });
                     }
 
@@ -656,12 +648,10 @@ const ListObjects = ({
                   }
                 })
                 .catch((err: ErrorResponseHandler) => {
-                  console.log("6");
                   setLoadingObjectsList(false);
                   setErrorSnackMessage(err);
                 });
             } else {
-              console.log("7", recordsInElement);
               setRecords(recordsInElement);
               setLoadingObjectsList(false);
             }
@@ -671,7 +661,6 @@ const ListObjects = ({
             setErrorSnackMessage(err);
           });
       } else {
-        console.log("8");
         setLoadingObjectsList(false);
       }
     }
