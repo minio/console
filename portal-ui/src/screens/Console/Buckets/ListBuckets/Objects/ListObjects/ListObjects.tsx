@@ -640,8 +640,7 @@ const ListObjects = ({
 
                           setRecords(records);
                         })
-                        .catch(() => {
-                        });
+                        .catch(() => {});
                     }
 
                     setLoadingObjectsList(false);

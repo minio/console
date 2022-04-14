@@ -121,7 +121,9 @@ const AddPool = React.lazy(
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
 );
-const SiteReplicationStatus = React.lazy(() => import("./Configurations/SiteReplication/SiteReplicationStatus"));
+const SiteReplicationStatus = React.lazy(
+  () => import("./Configurations/SiteReplication/SiteReplicationStatus")
+);
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -375,8 +377,8 @@ const Console = ({
       path: IAM_PAGES.SITE_REPLICATION,
     },
     {
-      component:SiteReplicationStatus,
-      path:IAM_PAGES.SITE_REPLICATION_STATUS,
+      component: SiteReplicationStatus,
+      path: IAM_PAGES.SITE_REPLICATION_STATUS,
     },
     {
       component: Account,
