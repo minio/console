@@ -29,7 +29,7 @@ import { connect } from "react-redux";
 import history from "../../../../../../history";
 import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
-import { BucketObject } from "./types";
+import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
 
 interface ICreateFolder {
@@ -37,9 +37,9 @@ interface ICreateFolder {
   modalOpen: boolean;
   bucketName: string;
   folderName: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   onClose: () => any;
-  existingFiles: BucketObject[];
+  existingFiles: BucketObjectItem[];
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -74,8 +74,9 @@ const CreateFolderModal = ({
         ? decodedFolderName
         : `${decodedFolderName}/`;
     }
-    const sharesName = (record: BucketObject) =>
+    const sharesName = (record: BucketObjectItem) =>
       record.name === folderPath + pathUrl;
+
     if (existingFiles.findIndex(sharesName) !== -1) {
       setModalErrorSnackMessage({
         errorMessage: "Folder cannot have the same name as an existing file",
@@ -84,8 +85,8 @@ const CreateFolderModal = ({
       return;
     }
     const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
-      `${folderPath}${pathUrl}`
-    )}/`;
+      `${folderPath}${pathUrl}/`
+    )}`;
     history.push(newPath);
     onClose();
   };

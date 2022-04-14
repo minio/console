@@ -18,7 +18,7 @@ import React, { Fragment, useState } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, LinearProgress } from "@mui/material";
-import { BucketObject } from "../ListObjects/types";
+import { BucketObjectItem } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
 import { encodeFileName } from "../../../../../../common/utils";
 import clsx from "clsx";
@@ -59,7 +59,7 @@ const styles = () =>
 
 interface IPreviewFileProps {
   bucketName: string;
-  object: BucketObject | null;
+  object: BucketObjectItem | null;
   isFullscreen?: boolean;
   classes: any;
 }
