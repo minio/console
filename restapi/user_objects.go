@@ -367,7 +367,7 @@ func parseRange(s string, size int64) ([]httpRange, error) {
 }
 
 func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	var prefix string
 	mClient, err := newMinioClient(session)
@@ -396,7 +396,6 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 
 	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
 		defer resp.Close()
-		defer cancel()
 
 		isPreview := params.Preview != nil && *params.Preview
 		// indicate it's a download / inline content to the browser, and the size of the object
