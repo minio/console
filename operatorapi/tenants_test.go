@@ -106,7 +106,8 @@ func (c k8sClientMock) getService(ctx context.Context, namespace, serviceName st
 }
 
 func Test_TenantInfoTenantAdminClient(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	kClient := k8sClientMock{}
 	type args struct {
 		ctx        context.Context

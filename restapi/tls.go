@@ -32,15 +32,14 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 	DefaultTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
-			Timeout:   5 * time.Second,
+			Timeout:   10 * time.Second,
 			KeepAlive: 15 * time.Second,
 		}).DialContext,
 		MaxIdleConns:          1024,
 		MaxIdleConnsPerHost:   1024,
-		ResponseHeaderTimeout: 60 * time.Second,
-		IdleConnTimeout:       60 * time.Second,
+		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
+		ExpectContinueTimeout: 10 * time.Second,
 		DisableCompression:    true,
 		TLSClientConfig: &tls.Config{
 			// Can't use SSLv3 because of POODLE and BEAST

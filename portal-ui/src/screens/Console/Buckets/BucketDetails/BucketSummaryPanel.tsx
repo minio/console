@@ -19,9 +19,8 @@ import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
 import { AppState } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
@@ -45,17 +44,18 @@ import api from "../../../../common/api";
 import { setBucketDetailsLoad } from "../actions";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import LabelWithIcon from "./SummaryItems/LabelWithIcon";
-import { EnabledIcon, DisabledIcon } from "../../../../icons";
+import { DisabledIcon, EnabledIcon } from "../../../../icons";
 import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
 import ReportedUsage from "./SummaryItems/ReportedUsage";
 import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";
+import SectionTitle from "../../Common/SectionTitle";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -415,264 +415,247 @@ const BucketSummary = ({
         />
       )}
 
-      <Grid container>
-        <Grid item xs={12} className={classes.spacerBottom}>
-          <h3
-            style={{
-              marginTop: "0",
-              marginBottom: "0",
-            }}
+      <SectionTitle>Summary</SectionTitle>
+      <Grid container spacing={1}>
+        <SecureComponent
+          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+          resource={bucketName}
+        >
+          <Grid item xs={12}>
+            <Box sx={{ ...twoColCssGridLayoutConfig }}>
+              <Box sx={{ ...twoColCssGridLayoutConfig }}>
+                <SecureComponent
+                  scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+                  resource={bucketName}
+                >
+                  <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_POLICY]}
+                    resourceName={bucketName}
+                    property={"Access Policy:"}
+                    value={accessPolicy.toLowerCase()}
+                    onEdit={() => {
+                      setAccessPolicyScreenOpen(true);
+                    }}
+                    isLoading={bucketLoading}
+                  />
+                </SecureComponent>
+
+                <SecureComponent
+                  scopes={[IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION]}
+                  resource={bucketName}
+                >
+                  <EditablePropertyItem
+                    iamScopes={[
+                      IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
+                    ]}
+                    resourceName={bucketName}
+                    property={"Encryption:"}
+                    value={encryptionEnabled ? "Enabled" : "Disabled"}
+                    onEdit={() => {
+                      setEnableEncryptionScreenOpen(true);
+                    }}
+                    isLoading={loadingEncryption}
+                  />
+                </SecureComponent>
+
+                <SecureComponent
+                  scopes={[IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION]}
+                  resource={bucketName}
+                >
+                  <LabelValuePair
+                    label={"Replication:"}
+                    value={
+                      <LabelWithIcon
+                        icon={
+                          replicationRules ? <EnabledIcon /> : <DisabledIcon />
+                        }
+                        label={
+                          <label className={classes.textMuted}>
+                            {replicationRules ? "Enabled" : "Disabled"}
+                          </label>
+                        }
+                      />
+                    }
+                  />
+                </SecureComponent>
+
+                <SecureComponent
+                  scopes={[IAM_SCOPES.S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION]}
+                  resource={bucketName}
+                >
+                  <LabelValuePair
+                    label={"Object Locking:"}
+                    value={
+                      <LabelWithIcon
+                        icon={
+                          hasObjectLocking ? <EnabledIcon /> : <DisabledIcon />
+                        }
+                        label={
+                          <label className={classes.textMuted}>
+                            {hasObjectLocking ? "Enabled" : "Disabled"}
+                          </label>
+                        }
+                      />
+                    }
+                  />
+                </SecureComponent>
+                <Box className={classes.spacerTop}>
+                  <LabelValuePair
+                    label={"Tags:"}
+                    value={
+                      <BucketTags
+                        setErrorSnackMessage={setErrorSnackMessage}
+                        bucketName={bucketName}
+                      />
+                    }
+                  />
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr",
+                  alignItems: "flex-start",
+                }}
+              >
+                <ReportedUsage bucketSize={bucketSize} />
+              </Box>
+            </Box>
+          </Grid>
+        </SecureComponent>
+
+        {distributedSetup && (
+          <SecureComponent
+            scopes={[IAM_SCOPES.S3_GET_BUCKET_VERSIONING]}
+            resource={bucketName}
           >
-            Summary
-          </h3>
-        </Grid>
+            <Grid item xs={12}>
+              <SectionTitle>Versioning</SectionTitle>
+
+              <Box
+                sx={{
+                  ...twoColCssGridLayoutConfig,
+                }}
+              >
+                <Box
+                  sx={{
+                    ...twoColCssGridLayoutConfig,
+                  }}
+                >
+                  <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
+                    resourceName={bucketName}
+                    property={"Versioning:"}
+                    value={isVersioned ? "Enabled" : "Disabled"}
+                    onEdit={setBucketVersioning}
+                    isLoading={loadingVersioning}
+                  />
+
+                  <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
+                    resourceName={bucketName}
+                    property={"Quota:"}
+                    value={quotaEnabled ? "Enabled" : "Disabled"}
+                    onEdit={setBucketQuota}
+                    isLoading={loadingQuota}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  {quotaEnabled && quota ? (
+                    <BucketQuotaSize quota={quota} />
+                  ) : null}
+                </Box>
+              </Box>
+            </Grid>
+          </SecureComponent>
+        )}
+
+        {hasObjectLocking && (
+          <SecureComponent
+            scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
+            resource={bucketName}
+          >
+            <Grid item xs={12}>
+              <SectionTitle>Retention</SectionTitle>
+
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
+                  gridAutoFlow: { xs: "dense", sm: "row" } /* NEW */,
+                  gap: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
+                    gridAutoFlow: { xs: "dense", sm: "row" } /* NEW */,
+                    gap: 2,
+                  }}
+                >
+                  <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
+                    resourceName={bucketName}
+                    property={"Retention:"}
+                    value={retentionEnabled ? "Enabled" : "Disabled"}
+                    onEdit={() => {
+                      setRetentionConfigOpen(true);
+                    }}
+                    isLoading={loadingRetention}
+                  />
+
+                  <LabelValuePair
+                    label={"Mode:"}
+                    value={
+                      <label
+                        className={classes.textMuted}
+                        style={{ textTransform: "capitalize" }}
+                      >
+                        {retentionConfig && retentionConfig.mode
+                          ? retentionConfig.mode
+                          : "-"}
+                      </label>
+                    }
+                  />
+                  <LabelValuePair
+                    label={"Validity:"}
+                    value={
+                      <label
+                        className={classes.textMuted}
+                        style={{ textTransform: "capitalize" }}
+                      >
+                        {retentionConfig && retentionConfig.validity}{" "}
+                        {retentionConfig &&
+                          (retentionConfig.validity === 1
+                            ? retentionConfig.unit.slice(0, -1)
+                            : retentionConfig.unit)}
+                      </label>
+                    }
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  {/*Spacer*/}
+                </Box>
+              </Box>
+            </Grid>
+          </SecureComponent>
+        )}
       </Grid>
-      <SecureComponent
-        scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
-        resource={bucketName}
-      >
-        <Box sx={{ ...twoColCssGridLayoutConfig }}>
-          <Box sx={{ ...twoColCssGridLayoutConfig }}>
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
-              resource={bucketName}
-            >
-              <EditablePropertyItem
-                iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_POLICY]}
-                resourceName={bucketName}
-                property={"Access Policy:"}
-                value={accessPolicy.toLowerCase()}
-                onEdit={() => {
-                  setAccessPolicyScreenOpen(true);
-                }}
-                isLoading={bucketLoading}
-              />
-            </SecureComponent>
-
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION]}
-              resource={bucketName}
-            >
-              <EditablePropertyItem
-                iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION]}
-                resourceName={bucketName}
-                property={"Encryption:"}
-                value={encryptionEnabled ? "Enabled" : "Disabled"}
-                onEdit={() => {
-                  setEnableEncryptionScreenOpen(true);
-                }}
-                isLoading={loadingEncryption}
-              />
-            </SecureComponent>
-
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION]}
-              resource={bucketName}
-            >
-              <LabelValuePair
-                label={"Replication:"}
-                value={
-                  <LabelWithIcon
-                    icon={replicationRules ? <EnabledIcon /> : <DisabledIcon />}
-                    label={
-                      <label className={classes.textMuted}>
-                        {replicationRules ? "Enabled" : "Disabled"}
-                      </label>
-                    }
-                  />
-                }
-              />
-            </SecureComponent>
-
-            <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION]}
-              resource={bucketName}
-            >
-              <LabelValuePair
-                label={"Object Locking:"}
-                value={
-                  <LabelWithIcon
-                    icon={hasObjectLocking ? <EnabledIcon /> : <DisabledIcon />}
-                    label={
-                      <label className={classes.textMuted}>
-                        {hasObjectLocking ? "Enabled" : "Disabled"}
-                      </label>
-                    }
-                  />
-                }
-              />
-            </SecureComponent>
-            <Box className={classes.spacerTop}>
-              <LabelValuePair
-                label={"Tags:"}
-                value={
-                  <BucketTags
-                    setErrorSnackMessage={setErrorSnackMessage}
-                    bucketName={bucketName}
-                  />
-                }
-              />
-            </Box>
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr",
-              alignItems: "flex-start",
-            }}
-          >
-            <ReportedUsage bucketSize={bucketSize} />
-          </Box>
-        </Box>
-      </SecureComponent>
-
-      {distributedSetup && (
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_BUCKET_VERSIONING]}
-          resource={bucketName}
-        >
-          <Grid container>
-            <Grid item xs={12} className={classes.spacerBottom}>
-              <h3
-                style={{
-                  marginTop: "25px",
-                  marginBottom: "0",
-                }}
-              >
-                Versioning
-              </h3>
-            </Grid>
-          </Grid>
-
-          <Box
-            sx={{
-              ...twoColCssGridLayoutConfig,
-            }}
-          >
-            <Box
-              sx={{
-                ...twoColCssGridLayoutConfig,
-              }}
-            >
-              <EditablePropertyItem
-                iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
-                resourceName={bucketName}
-                property={"Versioning:"}
-                value={isVersioned ? "Enabled" : "Disabled"}
-                onEdit={setBucketVersioning}
-                isLoading={loadingVersioning}
-              />
-
-              <EditablePropertyItem
-                iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
-                resourceName={bucketName}
-                property={"Quota:"}
-                value={quotaEnabled ? "Enabled" : "Disabled"}
-                onEdit={setBucketQuota}
-                isLoading={loadingQuota}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "1fr",
-                alignItems: "flex-start",
-              }}
-            >
-              {quotaEnabled && quota ? <BucketQuotaSize quota={quota} /> : null}
-            </Box>
-          </Box>
-        </SecureComponent>
-      )}
-
-      {hasObjectLocking && (
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
-          resource={bucketName}
-        >
-          <Grid container>
-            <Grid item xs={12} className={classes.spacerBottom}>
-              <h3
-                style={{
-                  marginTop: "25px",
-                  marginBottom: "0",
-                }}
-              >
-                Retention
-              </h3>
-            </Grid>
-          </Grid>
-
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-              gridAutoFlow: { xs: "dense", sm: "row" } /* NEW */,
-              gap: 2,
-            }}
-          >
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-                gridAutoFlow: { xs: "dense", sm: "row" } /* NEW */,
-                gap: 2,
-              }}
-            >
-              <EditablePropertyItem
-                iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
-                resourceName={bucketName}
-                property={"Retention:"}
-                value={retentionEnabled ? "Enabled" : "Disabled"}
-                onEdit={() => {
-                  setRetentionConfigOpen(true);
-                }}
-                isLoading={loadingRetention}
-              />
-
-              <LabelValuePair
-                label={"Mode:"}
-                value={
-                  <label
-                    className={classes.textMuted}
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    {retentionConfig && retentionConfig.mode
-                      ? retentionConfig.mode
-                      : "-"}
-                  </label>
-                }
-              />
-              <LabelValuePair
-                label={"Validity:"}
-                value={
-                  <label
-                    className={classes.textMuted}
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    {retentionConfig && retentionConfig.validity}{" "}
-                    {retentionConfig &&
-                      (retentionConfig.validity === 1
-                        ? retentionConfig.unit.slice(0, -1)
-                        : retentionConfig.unit)}
-                  </label>
-                }
-              />
-            </Box>
-
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "1fr",
-                alignItems: "flex-start",
-              }}
-            >
-              {/*Spacer*/}
-            </Box>
-          </Box>
-        </SecureComponent>
-      )}
     </Fragment>
   );
 };

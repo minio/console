@@ -489,9 +489,7 @@ const PolicyDetails = ({
                       variant="standard"
                     />
                   </Grid>
-                  <Grid item xs={12} className={classes.actionsTray}>
-                    <br />
-                  </Grid>
+
                   <TableWrapper
                     itemActions={userTableActions}
                     columns={[{ label: "Name", elementKey: "name" }]}
@@ -532,9 +530,6 @@ const PolicyDetails = ({
                       }}
                       variant="standard"
                     />
-                  </Grid>
-                  <Grid item xs={12} className={classes.actionsTray}>
-                    <br />
                   </Grid>
                   <TableWrapper
                     itemActions={groupTableActions}

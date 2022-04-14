@@ -58,8 +58,8 @@ func (ac adminClientMock) setGroupStatus(ctx context.Context, group string, stat
 func TestListGroups(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : listGroups() Get response from minio client with two Groups and return the same number on listGroups()
 	mockGroupsList := []string{"group1", "group2"}
 
@@ -94,8 +94,8 @@ func TestListGroups(t *testing.T) {
 func TestAddGroup(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : addGroup() add a new group with two members
 	newGroup := "acmeGroup"
 	groupMembers := []string{"user1", "user2"}
@@ -121,8 +121,8 @@ func TestAddGroup(t *testing.T) {
 func TestRemoveGroup(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : removeGroup() remove group assume it has no members
 	groupToRemove := "acmeGroup"
 	// mock function response from updateGroupMembers()
@@ -146,8 +146,8 @@ func TestRemoveGroup(t *testing.T) {
 func TestGroupInfo(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : groupInfo() get group info
 	groupName := "acmeGroup"
 	mockResponse := &madmin.GroupDesc{
@@ -183,8 +183,8 @@ func TestGroupInfo(t *testing.T) {
 func TestUpdateGroup(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : addOrDeleteMembers()  update group members add user3 and delete user2
 	function := "addOrDeleteMembers()"
 	groupName := "acmeGroup"
@@ -281,8 +281,8 @@ func TestSetGroupStatus(t *testing.T) {
 	adminClient := adminClientMock{}
 	function := "setGroupStatus()"
 	groupName := "acmeGroup"
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1: setGroupStatus() update valid disabled status
 	expectedStatus := "disabled"
 	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {

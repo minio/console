@@ -108,7 +108,8 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 
 // getTenantUpdateCertificatesResponse wrapper of tenantUpdateCertificates
 func getTenantUpdateCertificatesResponse(session *models.Principal, params operator_api.TenantUpdateCertificateParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
@@ -238,7 +239,8 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 
 // getTenantDeleteEncryptionResponse is a wrapper for tenantDeleteEncryption
 func getTenantDeleteEncryptionResponse(session *models.Principal, params operator_api.TenantDeleteEncryptionParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err, errorDeletingEncryptionConfig)
@@ -254,7 +256,8 @@ func getTenantDeleteEncryptionResponse(session *models.Principal, params operato
 
 // getTenantUpdateEncryptionResponse is a wrapper for tenantUpdateEncryption
 func getTenantUpdateEncryptionResponse(session *models.Principal, params operator_api.TenantUpdateEncryptionParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
@@ -450,7 +453,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 
 // getTenantEncryptionResponse is a wrapper for tenantEncryptionInfo
 func getTenantEncryptionInfoResponse(session *models.Principal, params operator_api.TenantEncryptionInfoParams) (*models.EncryptionConfigurationResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {

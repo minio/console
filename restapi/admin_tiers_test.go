@@ -66,8 +66,8 @@ func TestGetTiers(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "getTiers()"
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : getBucketLifecycle() get list of tiers
 	// mock lifecycle response from MinIO
 	returnListMock := []*madmin.TierConfig{
@@ -191,8 +191,8 @@ func TestAddTier(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "addTier()"
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1: addTier() add new Tier
 	minioAddTiersMock = func(ctx context.Context, tier *madmin.TierConfig) error {
 		return nil
@@ -233,8 +233,8 @@ func TestUpdateTierCreds(t *testing.T) {
 	adminClient := adminClientMock{}
 
 	function := "editTierCredentials()"
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1: editTierCredentials() update Tier configuration
 	minioEditTiersMock = func(ctx context.Context, tierName string, creds madmin.TierCreds) error {
 		return nil

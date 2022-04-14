@@ -64,7 +64,8 @@ func (ac adminClientMock) setUserStatus(ctx context.Context, accessKey string, s
 func TestListUsers(t *testing.T) {
 	assert := asrt.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1 : listUsers() Get response from minio client with two users and return the same number on listUsers()
 	// mock minIO client
 	mockUserMap := map[string]madmin.UserInfo{
@@ -117,7 +118,8 @@ func TestListUsers(t *testing.T) {
 func TestAddUser(t *testing.T) {
 	assert := asrt.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Test-1: valid case of adding a user with a proper access key
 	accessKey := "ABCDEFGHI"
 	secretKey := "ABCDEFGHIABCDEFGHI"
@@ -199,7 +201,8 @@ func TestRemoveUser(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	function := "removeUser()"
 
 	// Test-1: removeUser() delete a user
@@ -227,7 +230,8 @@ func TestUserGroups(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	function := "updateUserGroups()"
 	mockUserGroups := []string{"group1", "group2", "group3"}
@@ -288,7 +292,8 @@ func TestUserGroups(t *testing.T) {
 func TestGetUserInfo(t *testing.T) {
 	assert := asrt.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test-1 : getUserInfo() get user info
 	userName := "userNameTest"
@@ -335,7 +340,8 @@ func TestSetUserStatus(t *testing.T) {
 	adminClient := adminClientMock{}
 	function := "setUserStatus()"
 	userName := "userName123"
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Test-1: setUserStatus() update valid disabled status
 	expectedStatus := "disabled"
@@ -375,7 +381,8 @@ func TestUserGroupsBulk(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	function := "updateUserGroups()"
 	mockUserGroups := []string{"group1", "group2", "group3"}
@@ -404,7 +411,8 @@ func TestUserGroupsBulk(t *testing.T) {
 
 func TestListUsersWithAccessToBucket(t *testing.T) {
 	assert := asrt.New(t)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	adminClient := adminClientMock{}
 	user1 := madmin.UserInfo{SecretKey: "testtest",
 		PolicyName: "consoleAdmin,testPolicy,redundantPolicy",
