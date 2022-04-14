@@ -150,5 +150,16 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 		}
 	}
 
+	var domains models.DomainsConfiguration
+
+	if minTenant.Spec.Features != nil && minTenant.Spec.Features.Domains != nil {
+		domains = models.DomainsConfiguration{
+			Console: minTenant.Spec.Features.Domains.Console,
+			Minio:   minTenant.Spec.Features.Domains.Minio,
+		}
+	}
+
+	info.Domains = &domains
+
 	return info, nil
 }
