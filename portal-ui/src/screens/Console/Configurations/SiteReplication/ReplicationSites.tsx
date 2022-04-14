@@ -128,7 +128,7 @@ const ReplicationSites = ({
           const key = `${siteInfo.name}`;
 
           return (
-            <React.Fragment key={key}>
+            <React.Fragment key={`${key}-${index}`}>
               <ListItemButton
                 disableRipple
                 sx={{
