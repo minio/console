@@ -437,7 +437,7 @@ const TenantEncryption = ({
           setRefreshEncryptionInfo(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          console.log(err);
+          console.error(err);
           setRefreshEncryptionInfo(false);
         });
     }
