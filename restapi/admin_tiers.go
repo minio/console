@@ -20,15 +20,13 @@ import (
 	"context"
 	"encoding/base64"
 	"strconv"
-	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/minio/madmin-go"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
+	"github.com/minio/madmin-go"
 )
 
 func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
@@ -151,8 +149,8 @@ func getTiersResponse(session *models.Principal) (*models.TierListResponse, *mod
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	tiersResp, err := getTiers(ctx, adminClient)
@@ -241,8 +239,7 @@ func getAddTierResponse(session *models.Principal, params *admin_api.AddTierPara
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	errTier := addTier(ctx, adminClient, params)
@@ -324,8 +321,8 @@ func getGetTierResponse(session *models.Principal, params *admin_api.GetTierPara
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	addTierResp, err := getTier(ctx, adminClient, params)
@@ -360,8 +357,8 @@ func getEditTierCredentialsResponse(session *models.Principal, params *admin_api
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	err = editTierCredentials(ctx, adminClient, params)

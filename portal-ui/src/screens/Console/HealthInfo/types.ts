@@ -25,6 +25,11 @@ export interface HealthInfoMessage {
   sys: sysHealthInfo;
 }
 
+export interface ReportMessage {
+  encoded: string;
+  serverHealthInfo: HealthInfoMessage;
+}
+
 export interface perfInfo {
   drives: serverDrivesInfo[];
   net: serverNetHealthInfo[];

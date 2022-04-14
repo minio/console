@@ -45,7 +45,7 @@ import Grid from "@mui/material/Grid";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { Button, DialogContentText, Stack } from "@mui/material";
+import { Button, DialogContentText } from "@mui/material";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { KeyPair } from "../ListTenants/utils";
@@ -56,7 +56,7 @@ import {
 } from "../../../../utils/validationFunctions";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
-import StackRow from "../../Common/UsageBarWrapper/StackRow";
+import SectionTitle from "../../Common/SectionTitle";
 
 interface ITenantEncryption {
   classes: any;
@@ -437,7 +437,7 @@ const TenantEncryption = ({
           setRefreshEncryptionInfo(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          console.log(err);
+          console.error(err);
           setRefreshEncryptionInfo(false);
         });
     }
@@ -683,7 +683,7 @@ const TenantEncryption = ({
 
   return (
     <React.Fragment>
-      <Fragment>
+      <Grid container spacing={1}>
         {confirmOpen && (
           <ConfirmDialog
             isOpen={confirmOpen}
@@ -705,27 +705,28 @@ const TenantEncryption = ({
             }
           />
         )}
-        <Grid container alignItems={"center"}>
-          <Grid item xs>
-            <h1 className={classes.sectionTitle}>Encryption</h1>
-          </Grid>
-          <Grid item xs={4} justifyContent={"end"} textAlign={"right"}>
-            <FormSwitchWrapper
-              label={""}
-              indicatorLabels={["Enabled", "Disabled"]}
-              checked={encryptionEnabled}
-              value={"tenant_encryption"}
-              id="tenant-encryption"
-              name="tenant-encryption"
-              onChange={(e) => {
-                setEncryptionEnabled(!encryptionEnabled);
-              }}
-              description=""
-            />
-          </Grid>
+        <Grid item xs>
+          <h1 className={classes.sectionTitle}>Encryption</h1>
+        </Grid>
+        <Grid item xs={4} justifyContent={"end"} textAlign={"right"}>
+          <FormSwitchWrapper
+            label={""}
+            indicatorLabels={["Enabled", "Disabled"]}
+            checked={encryptionEnabled}
+            value={"tenant_encryption"}
+            id="tenant-encryption"
+            name="tenant-encryption"
+            onChange={() => {
+              setEncryptionEnabled(!encryptionEnabled);
+            }}
+            description=""
+          />
+        </Grid>
+        <Grid xs={12}>
+          <hr className={classes.hrClass} />
         </Grid>
         {encryptionEnabled && (
-          <Grid container spacing={1}>
+          <Fragment>
             <Grid item xs={12} className={classes.encryptionTypeOptions}>
               <RadioGroupSelector
                 currentSelection={encryptionType}
@@ -805,140 +806,113 @@ const TenantEncryption = ({
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack>
-                    <StackRow
-                      sx={{
-                        borderBottom: "1px solid #eaeaea",
-                        margin: 0,
-                        marginBottom: 1,
-                      }}
-                    >
-                      <h3
-                        style={{
-                          marginBottom: 8,
-                        }}
-                      >
-                        App Role
-                      </h3>
-                    </StackRow>
-                    <Grid container spacing={1}>
-                      <Grid item xs={12}>
-                        <InputBoxWrapper
-                          id="vault_approle_engine"
-                          name="vault_approle_engine"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setVaultConfiguration({
-                              ...vaultConfiguration,
-                              approle: {
-                                ...vaultConfiguration?.approle,
-                                engine: e.target.value,
-                              },
-                            })
-                          }
-                          label="Engine"
-                          value={vaultConfiguration?.approle?.engine || ""}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <InputBoxWrapper
-                          type={showVaultAppRoleID ? "text" : "password"}
-                          id="vault_id"
-                          name="vault_id"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setVaultConfiguration({
-                              ...vaultConfiguration,
-                              approle: {
-                                ...vaultConfiguration?.approle,
-                                id: e.target.value,
-                              },
-                            })
-                          }
-                          label="AppRole ID"
-                          value={vaultConfiguration?.approle?.id || ""}
-                          required
-                          error={validationErrors["vault_id"] || ""}
-                          overlayIcon={
-                            showVaultAppRoleID ? (
-                              <VisibilityOffIcon />
-                            ) : (
-                              <RemoveRedEyeIcon />
-                            )
-                          }
-                          overlayAction={() =>
-                            setShowVaultAppRoleID(!showVaultAppRoleID)
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <InputBoxWrapper
-                          type={showVaultAppRoleSecret ? "text" : "password"}
-                          id="vault_secret"
-                          name="vault_secret"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setVaultConfiguration({
-                              ...vaultConfiguration,
-                              approle: {
-                                ...vaultConfiguration?.approle,
-                                secret: e.target.value,
-                              },
-                            })
-                          }
-                          label="AppRole Secret"
-                          value={vaultConfiguration?.approle?.secret || ""}
-                          required
-                          error={validationErrors["vault_secret"] || ""}
-                          overlayIcon={
-                            showVaultAppRoleSecret ? (
-                              <VisibilityOffIcon />
-                            ) : (
-                              <RemoveRedEyeIcon />
-                            )
-                          }
-                          overlayAction={() =>
-                            setShowVaultAppRoleSecret(!showVaultAppRoleSecret)
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <InputBoxWrapper
-                          type="number"
-                          min="0"
-                          id="vault_retry"
-                          name="vault_retry"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setVaultConfiguration({
-                              ...vaultConfiguration,
-                              approle: {
-                                ...vaultConfiguration?.approle,
-                                retry: e.target.value,
-                              },
-                            })
-                          }
-                          label="Retry (Seconds)"
-                          error={validationErrors["vault_retry"] || ""}
-                          value={vaultConfiguration?.approle?.retry || ""}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Stack>
+                  <SectionTitle>App Role</SectionTitle>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack>
-                    <StackRow
-                      sx={{
-                        borderBottom: "1px solid #eaeaea",
-                        margin: 0,
-                        marginBottom: 1,
-                      }}
-                    >
-                      <h3
-                        style={{
-                          marginBottom: 8,
-                        }}
-                      >
-                        Mutual TLS authentication with KMS (optional)
-                      </h3>
-                    </StackRow>
+                  <InputBoxWrapper
+                    id="vault_approle_engine"
+                    name="vault_approle_engine"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        approle: {
+                          ...vaultConfiguration?.approle,
+                          engine: e.target.value,
+                        },
+                      })
+                    }
+                    label="Engine"
+                    value={vaultConfiguration?.approle?.engine || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    type={showVaultAppRoleID ? "text" : "password"}
+                    id="vault_id"
+                    name="vault_id"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        approle: {
+                          ...vaultConfiguration?.approle,
+                          id: e.target.value,
+                        },
+                      })
+                    }
+                    label="AppRole ID"
+                    value={vaultConfiguration?.approle?.id || ""}
+                    required
+                    error={validationErrors["vault_id"] || ""}
+                    overlayIcon={
+                      showVaultAppRoleID ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <RemoveRedEyeIcon />
+                      )
+                    }
+                    overlayAction={() =>
+                      setShowVaultAppRoleID(!showVaultAppRoleID)
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    type={showVaultAppRoleSecret ? "text" : "password"}
+                    id="vault_secret"
+                    name="vault_secret"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        approle: {
+                          ...vaultConfiguration?.approle,
+                          secret: e.target.value,
+                        },
+                      })
+                    }
+                    label="AppRole Secret"
+                    value={vaultConfiguration?.approle?.secret || ""}
+                    required
+                    error={validationErrors["vault_secret"] || ""}
+                    overlayIcon={
+                      showVaultAppRoleSecret ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <RemoveRedEyeIcon />
+                      )
+                    }
+                    overlayAction={() =>
+                      setShowVaultAppRoleSecret(!showVaultAppRoleSecret)
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    type="number"
+                    min="0"
+                    id="vault_retry"
+                    name="vault_retry"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        approle: {
+                          ...vaultConfiguration?.approle,
+                          retry: e.target.value,
+                        },
+                      })
+                    }
+                    label="Retry (Seconds)"
+                    error={validationErrors["vault_retry"] || ""}
+                    value={vaultConfiguration?.approle?.retry || ""}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <SectionTitle>Vault Certificates (optional)</SectionTitle>
+                </Grid>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Mutual TLS authentication with Vault (optional)
+                    </legend>
                     {vaultClientCertificateSecret ? (
                       <TLSCertificate
                         certificateInfo={vaultClientCertificateSecret}
@@ -984,10 +958,10 @@ const TenantEncryption = ({
                         />
                       </Fragment>
                     )}
-                  </Stack>
+                  </fieldset>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      KMS CA certificate (optional)
+                      Vault CA certificate (optional)
                     </legend>
                     {vaultCACertificateSecret ? (
                       <TLSCertificate
@@ -1017,41 +991,27 @@ const TenantEncryption = ({
                   </fieldset>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack>
-                    <StackRow
-                      sx={{
-                        borderBottom: "1px solid #eaeaea",
-                        margin: 0,
-                        marginBottom: 1,
-                      }}
-                    >
-                      <h3
-                        style={{
-                          marginBottom: 8,
-                        }}
-                      >
-                        Status
-                      </h3>
-                    </StackRow>
-                    <InputBoxWrapper
-                      type="number"
-                      min="0"
-                      id="vault_ping"
-                      name="vault_ping"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setVaultConfiguration({
-                          ...vaultConfiguration,
-                          status: {
-                            ...vaultConfiguration?.status,
-                            ping: e.target.value,
-                          },
-                        })
-                      }
-                      label="Ping (Seconds)"
-                      error={validationErrors["vault_ping"] || ""}
-                      value={vaultConfiguration?.status?.ping || ""}
-                    />
-                  </Stack>
+                  <SectionTitle>Status</SectionTitle>
+                </Grid>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    type="number"
+                    min="0"
+                    id="vault_ping"
+                    name="vault_ping"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setVaultConfiguration({
+                        ...vaultConfiguration,
+                        status: {
+                          ...vaultConfiguration?.status,
+                          ping: e.target.value,
+                        },
+                      })
+                    }
+                    label="Ping (Seconds)"
+                    error={validationErrors["vault_ping"] || ""}
+                    value={vaultConfiguration?.status?.ping || ""}
+                  />
                 </Grid>
               </Fragment>
             )}
@@ -1556,14 +1516,6 @@ const TenantEncryption = ({
                     <legend className={classes.descriptionText}>
                       Custom CA Root certificate verification
                     </legend>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {}}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="gemalto_ca"
-                      name="gemalto_ca"
-                      label="CA"
-                      value={""}
-                    />
                     {gemaltoCACertificateSecret ? (
                       <TLSCertificate
                         certificateInfo={gemaltoCACertificateSecret}
@@ -1595,41 +1547,26 @@ const TenantEncryption = ({
               </Fragment>
             )}
             <Grid item xs={12}>
-              <Stack>
-                <StackRow
-                  sx={{
-                    borderBottom: "1px solid #eaeaea",
-                    margin: 0,
-                    marginBottom: 1,
-                  }}
-                >
-                  <h3
-                    style={{
-                      marginBottom: 8,
-                    }}
-                  >
-                    Additional Configurations
-                  </h3>
-                </StackRow>
-
-                <FormSwitchWrapper
-                  value="enableCustomCertsForKES"
-                  id="enableCustomCertsForKES"
-                  name="enableCustomCertsForKES"
-                  checked={enabledCustomCertificates}
-                  onChange={(e) =>
-                    setEnabledCustomCertificates(!enabledCustomCertificates)
-                  }
-                  label={"Custom Certificates"}
-                />
-              </Stack>
+              <SectionTitle>Additional Configuration for KES</SectionTitle>
+            </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                value="enableCustomCertsForKES"
+                id="enableCustomCertsForKES"
+                name="enableCustomCertsForKES"
+                checked={enabledCustomCertificates}
+                onChange={() =>
+                  setEnabledCustomCertificates(!enabledCustomCertificates)
+                }
+                label={"Custom Certificates"}
+              />
             </Grid>
             {enabledCustomCertificates && (
               <Fragment>
                 <Grid item xs={12}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      Encryption Service Certificates
+                      KES server TLS Certificates (optional)
                     </legend>
                     {serverTLSCertificateSecret ? (
                       <TLSCertificate
@@ -1679,66 +1616,57 @@ const TenantEncryption = ({
                     )}
                   </fieldset>
                 </Grid>
-                <Grid container spacing={1} style={{ marginBottom: 15 }}>
-                  <Grid item xs={12}>
-                    <Stack>
-                      <StackRow
-                        sx={{
-                          borderBottom: "1px solid #eaeaea",
-                          margin: 0,
-                          marginBottom: 1,
-                        }}
-                      >
-                        Mutual TLS authentication with MinIO
-                      </StackRow>
-                      {mTLSCertificateSecret ? (
-                        <TLSCertificate
-                          certificateInfo={mTLSCertificateSecret}
-                          onDelete={() =>
-                            removeCertificate(mTLSCertificateSecret)
-                          }
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      Mutual TLS authentication with MinIO (optional)
+                    </legend>
+                    {mTLSCertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={mTLSCertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(mTLSCertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <Fragment>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setMTLSCertificate({
+                              encoded_key: encodedValue || "",
+                              id: mTLSCertificate?.id || "",
+                              key: fileName || "",
+                              cert: mTLSCertificate?.cert || "",
+                              encoded_cert: mTLSCertificate?.encoded_cert || "",
+                            });
+                            cleanValidation("clientKey");
+                          }}
+                          accept=".key,.pem"
+                          id="clientKey"
+                          name="clientKey"
+                          label="Key"
+                          value={mTLSCertificate?.key}
                         />
-                      ) : (
-                        <Fragment>
-                          <FileSelector
-                            onChange={(encodedValue, fileName) => {
-                              setMTLSCertificate({
-                                encoded_key: encodedValue || "",
-                                id: mTLSCertificate?.id || "",
-                                key: fileName || "",
-                                cert: mTLSCertificate?.cert || "",
-                                encoded_cert:
-                                  mTLSCertificate?.encoded_cert || "",
-                              });
-                              cleanValidation("clientKey");
-                            }}
-                            accept=".key,.pem"
-                            id="clientKey"
-                            name="clientKey"
-                            label="Key"
-                            value={mTLSCertificate?.key}
-                          />
-                          <FileSelector
-                            onChange={(encodedValue, fileName) => {
-                              setMTLSCertificate({
-                                encoded_key: mTLSCertificate?.encoded_key || "",
-                                id: mTLSCertificate?.id || "",
-                                key: mTLSCertificate?.key || "",
-                                cert: fileName || "",
-                                encoded_cert: encodedValue || "",
-                              });
-                              cleanValidation("clientCert");
-                            }}
-                            accept=".cer,.crt,.cert,.pem"
-                            id="clientCert"
-                            name="clientCert"
-                            label="Cert"
-                            value={mTLSCertificate?.cert}
-                          />
-                        </Fragment>
-                      )}
-                    </Stack>
-                  </Grid>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setMTLSCertificate({
+                              encoded_key: mTLSCertificate?.encoded_key || "",
+                              id: mTLSCertificate?.id || "",
+                              key: mTLSCertificate?.key || "",
+                              cert: fileName || "",
+                              encoded_cert: encodedValue || "",
+                            });
+                            cleanValidation("clientCert");
+                          }}
+                          accept=".cer,.crt,.cert,.pem"
+                          id="clientCert"
+                          name="clientCert"
+                          label="Cert"
+                          value={mTLSCertificate?.cert}
+                        />
+                      </Fragment>
+                    )}
+                  </fieldset>
                 </Grid>
               </Fragment>
             )}
@@ -1771,119 +1699,100 @@ const TenantEncryption = ({
               />
             </Grid>
             <Grid item xs={12}>
-              <Stack>
-                <StackRow
-                  sx={{
-                    borderBottom: "1px solid #eaeaea",
-                    margin: 0,
-                    marginBottom: 1,
-                  }}
+              <SectionTitle>SecurityContext for KES</SectionTitle>
+            </Grid>
+            <Grid item xs={12}>
+              <div
+                className={`${classes.multiContainer} ${classes.responsiveContainer}`}
+              >
+                <div
+                  className={`${classes.formFieldRow} ${classes.rightSpacer}`}
                 >
-                  <h3
-                    style={{
-                      marginBottom: 10,
-                    }}
-                  >
-                    SecurityContext for KES pods
-                  </h3>
-                </StackRow>
-                <Grid item xs={12} className={classes.kesSecurityContext}>
-                  <div
-                    className={`${classes.multiContainer} ${classes.responsiveContainer}`}
-                  >
-                    <div
-                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
-                    >
-                      <InputBoxWrapper
-                        type="number"
-                        id="kes_securityContext_runAsUser"
-                        name="kes_securityContext_runAsUser"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setSecurityContext({
-                            ...securityContext,
-                            runAsUser: e.target.value,
-                          });
-                        }}
-                        label="Run As User"
-                        value={securityContext.runAsUser}
-                        required
-                        error={
-                          validationErrors["kes_securityContext_runAsUser"] ||
-                          ""
-                        }
-                        min="0"
-                      />
-                    </div>
-                    <div
-                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
-                    >
-                      <InputBoxWrapper
-                        type="number"
-                        id="kes_securityContext_runAsGroup"
-                        name="kes_securityContext_runAsGroup"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setSecurityContext({
-                            ...securityContext,
-                            runAsGroup: e.target.value,
-                          });
-                        }}
-                        label="Run As Group"
-                        value={securityContext.runAsGroup}
-                        required
-                        error={
-                          validationErrors["kes_securityContext_runAsGroup"] ||
-                          ""
-                        }
-                        min="0"
-                      />
-                    </div>
-                    <div
-                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
-                    >
-                      <InputBoxWrapper
-                        type="number"
-                        id="kes_securityContext_fsGroup"
-                        name="kes_securityContext_fsGroup"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setSecurityContext({
-                            ...securityContext,
-                            fsGroup: e.target.value,
-                          });
-                        }}
-                        label="FsGroup"
-                        value={securityContext.fsGroup}
-                        required
-                        error={
-                          validationErrors["kes_securityContext_fsGroup"] || ""
-                        }
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </Grid>
-                <br />
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
-                    value="kesSecurityContextRunAsNonRoot"
-                    id="kes_securityContext_runAsNonRoot"
-                    name="kes_securityContext_runAsNonRoot"
-                    checked={securityContext.runAsNonRoot}
-                    onChange={(e) => {
-                      const targetD = e.target;
-                      const checked = targetD.checked;
+                  <InputBoxWrapper
+                    type="number"
+                    id="kes_securityContext_runAsUser"
+                    name="kes_securityContext_runAsUser"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setSecurityContext({
                         ...securityContext,
-                        runAsNonRoot: checked,
+                        runAsUser: e.target.value,
                       });
                     }}
-                    label={"Do not run as Root"}
+                    label="Run As User"
+                    value={securityContext.runAsUser}
+                    required
+                    error={
+                      validationErrors["kes_securityContext_runAsUser"] || ""
+                    }
+                    min="0"
                   />
-                </Grid>
-              </Stack>
+                </div>
+                <div
+                  className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                >
+                  <InputBoxWrapper
+                    type="number"
+                    id="kes_securityContext_runAsGroup"
+                    name="kes_securityContext_runAsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSecurityContext({
+                        ...securityContext,
+                        runAsGroup: e.target.value,
+                      });
+                    }}
+                    label="Run As Group"
+                    value={securityContext.runAsGroup}
+                    required
+                    error={
+                      validationErrors["kes_securityContext_runAsGroup"] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div
+                  className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                >
+                  <InputBoxWrapper
+                    type="number"
+                    id="kes_securityContext_fsGroup"
+                    name="kes_securityContext_fsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSecurityContext({
+                        ...securityContext,
+                        fsGroup: e.target.value,
+                      });
+                    }}
+                    label="FsGroup"
+                    value={securityContext.fsGroup}
+                    required
+                    error={
+                      validationErrors["kes_securityContext_fsGroup"] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+              </div>
             </Grid>
-          </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                value="kesSecurityContextRunAsNonRoot"
+                id="kes_securityContext_runAsNonRoot"
+                name="kes_securityContext_runAsNonRoot"
+                checked={securityContext.runAsNonRoot}
+                onChange={(e) => {
+                  const targetD = e.target;
+                  const checked = targetD.checked;
+                  setSecurityContext({
+                    ...securityContext,
+                    runAsNonRoot: checked,
+                  });
+                }}
+                label={"Do not run as Root"}
+              />
+            </Grid>
+          </Fragment>
         )}
-        <Grid item xs={12} className={classes.buttonContainer}>
+        <Grid item xs={12} textAlign={"right"}>
           <Button
             type="submit"
             variant="contained"
@@ -1894,7 +1803,7 @@ const TenantEncryption = ({
             Save
           </Button>
         </Grid>
-      </Fragment>
+      </Grid>
     </React.Fragment>
   );
 };

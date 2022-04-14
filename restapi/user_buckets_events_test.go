@@ -59,7 +59,8 @@ func (c s3ClientMock) removeNotificationConfig(ctx context.Context, arn string, 
 func TestAddBucketNotification(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	client := s3ClientMock{}
 	function := "createBucketEvent()"
 	// Test-1: createBucketEvent() set an event with empty parameters and events, should set default values with no error
@@ -101,7 +102,8 @@ func TestAddBucketNotification(t *testing.T) {
 }
 
 func TestDeleteBucketNotification(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	assert := assert.New(t)
 	// mock minIO client
 	client := s3ClientMock{}

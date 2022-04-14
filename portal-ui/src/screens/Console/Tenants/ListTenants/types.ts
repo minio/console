@@ -54,6 +54,9 @@ export interface IPool {
   volumes: number;
   label?: string;
   resources?: IResources;
+  affinity?: IAffinityModel;
+  tolerations?: ITolerationModel[];
+  securityContext?: ISecurityContext | null;
 }
 
 export interface IPodListElement {
@@ -145,7 +148,7 @@ export interface ITenant {
   image: string;
   pool_count: number;
   currentState: string;
-  instance_count: 4;
+  instance_count: number;
   creation_date: string;
   volume_size: number;
   volume_count: number;
@@ -252,4 +255,22 @@ export interface CapacityValue {
   value: number;
   label: string;
   color: string;
+}
+
+export interface IEditPoolItem {
+  name: string;
+  servers: number;
+  volumes_per_server: number;
+  volume_configuration: IVolumeConfiguration;
+  affinity?: IAffinityModel;
+  tolerations?: ITolerationModel[];
+  securityContext?: ISecurityContext | null;
+}
+
+export interface IEditPoolRequest {
+  pools: IEditPoolItem[];
+}
+
+export interface IPlotBarValues {
+  [key: string]: CapacityValue;
 }

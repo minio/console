@@ -76,7 +76,8 @@ func checkServiceAccountTokenValid(ctx context.Context, operatorClient OperatorC
 
 // GetConsoleCredentialsForOperator will validate the provided JWT (service account token) and return it in the form of credentials.Login
 func GetConsoleCredentialsForOperator(jwt string) (*credentials.Credentials, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(jwt)
 	if err != nil {
 		return nil, err

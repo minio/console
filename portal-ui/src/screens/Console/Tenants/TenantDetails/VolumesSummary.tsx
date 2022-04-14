@@ -131,59 +131,61 @@ const TenantVolumes = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <h1 className={classes.sectionTitle}>Volumes</h1>
-      <Grid item xs={12} className={classes.actionsTray}>
-        <TextField
-          placeholder="Search Volumes (PVCs)"
-          className={classes.searchField}
-          id="search-resource"
-          label=""
-          InputProps={{
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          onChange={(e) => {
-            setFilter(e.target.value);
-          }}
-          variant="standard"
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.tableBlock}>
-        <TableWrapper
-          itemActions={[
-            { type: "view", onClick: PVCViewAction },
-            { type: "delete", onClick: confirmDeletePVC },
-          ]}
-          columns={[
-            {
-              label: "Name",
-              elementKey: "name",
-            },
-            {
-              label: "Status",
-              elementKey: "status",
-              width: 120,
-            },
-            {
-              label: "Capacity",
-              elementKey: "capacity",
-              width: 120,
-            },
-            {
-              label: "Storage Class",
-              elementKey: "storageClass",
-            },
-          ]}
-          isLoading={loading}
-          records={filteredRecords}
-          entityName="PVCs"
-          idField="name"
-          customPaperHeight={classes.tableWrapper}
-        />
+      <Grid container spacing={1}>
+        <h1 className={classes.sectionTitle}>Volumes</h1>
+        <Grid item xs={12}>
+          <TextField
+            placeholder="Search Volumes (PVCs)"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            onChange={(e) => {
+              setFilter(e.target.value);
+            }}
+            variant="standard"
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.tableBlock}>
+          <TableWrapper
+            itemActions={[
+              { type: "view", onClick: PVCViewAction },
+              { type: "delete", onClick: confirmDeletePVC },
+            ]}
+            columns={[
+              {
+                label: "Name",
+                elementKey: "name",
+              },
+              {
+                label: "Status",
+                elementKey: "status",
+                width: 120,
+              },
+              {
+                label: "Capacity",
+                elementKey: "capacity",
+                width: 120,
+              },
+              {
+                label: "Storage Class",
+                elementKey: "storageClass",
+              },
+            ]}
+            isLoading={loading}
+            records={filteredRecords}
+            entityName="PVCs"
+            idField="name"
+            customPaperHeight={classes.tableWrapper}
+          />
+        </Grid>
       </Grid>
     </Fragment>
   );

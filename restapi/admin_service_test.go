@@ -37,7 +37,8 @@ func (ac adminClientMock) serviceRestart(ctx context.Context) error {
 func TestServiceRestart(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	function := "serviceRestart()"
 	// Test-1 : serviceRestart() restart services no error
 	// mock function response from listGroups()

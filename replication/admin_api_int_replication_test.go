@@ -203,3 +203,64 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 	fmt.Println("TestDeleteReplicationInfo: ", response.StatusCode)
 
 }
+
+// Status API
+
+func makeStatusExecuteReq(method string, url string) (*http.Response, error) {
+
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	request, err := http.NewRequest(
+		method,
+		url,
+		nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	response, err := client.Do(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func TestGetSiteReplicationStatus(t *testing.T) {
+	assert := assert.New(t)
+
+	reqUrls := [5]string{
+		//default
+		"http://localhost:9090/api/v1/admin/site-replication/status?users=true&groups=true&buckets=true&policies=true",
+		//specific bucket  lookup
+		"http://localhost:9090/api/v1/admin/site-replication/status?users=false&groups=false&buckets=false&policies=false&entityValue=test-bucket&entityType=bucket",
+		//specific-user  lookup
+		"http://localhost:9090/api/v1/admin/site-replication/status?users=false&groups=false&buckets=false&policies=false&entityValue=test-user&entityType=user",
+		//specific-group  lookup
+		"http://localhost:9090/api/v1/admin/site-replication/status?users=false&groups=false&buckets=false&policies=false&entityValue=test-group&entityType=group",
+		//specific-policy  lookup
+		"http://localhost:9090/api/v1/admin/site-replication/status?users=false&groups=false&buckets=false&policies=false&entityValue=test-policies&entityType=policiy",
+	}
+
+	for i, url := range reqUrls {
+
+		response, err := makeStatusExecuteReq("GET", url)
+
+		tgt := &models.SiteReplicationStatusResponse{}
+		json.NewDecoder(response.Body).Decode(tgt)
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if response != nil {
+			assert.Equal(200, response.StatusCode, "Status Code for", i)
+		}
+	}
+}

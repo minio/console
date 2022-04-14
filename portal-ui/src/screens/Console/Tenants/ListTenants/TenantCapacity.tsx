@@ -19,30 +19,35 @@ import { Cell, Pie, PieChart } from "recharts";
 import { CapacityValue, CapacityValues } from "./types";
 import { niceBytesInt } from "../../../../common/utils";
 import { CircleIcon } from "../../../../icons";
+import UsageBar, { ISizeBarItem } from "../../Common/UsageBar/UsageBar";
 
 interface ITenantCapacity {
   totalCapacity: number;
   usedSpaceVariants: CapacityValues[];
   statusClass: string;
+  render?: "pie" | "bar";
 }
 
 const TenantCapacity = ({
   totalCapacity,
   usedSpaceVariants,
   statusClass,
+  render = "pie",
 }: ITenantCapacity) => {
   const colors = [
-    "#C4D4E9",
-    "#DCD1EE",
-    "#D1EEE7",
-    "#EEDED1",
-    "#AAF38F",
-    "#F9E6C5",
+    "#8dacd3",
+    "#bca1ea",
+    "#92e8d2",
+    "#efc9ac",
+    "#97f274",
+    "#f7d291",
     "#71ACCB",
-    "#F4CECE",
-    "#D6D6D6",
+    "#f28282",
+    "#e28cc1",
     "#2781B0",
   ];
+
+  const BGColor = "#ededed";
 
   const totalUsedSpace = usedSpaceVariants.reduce((acc, currValue) => {
     return acc + currValue.value;
@@ -88,14 +93,38 @@ const TenantCapacity = ({
   }
 
   const plotValues: CapacityValue[] = [
-    { value: emptySpace, color: "#D6D6D6", label: "Empty Space" },
     {
       value: standardTier.value,
       color: standardTierColor,
       label: "Used Space by Tenant",
     },
     ...tiersList,
+    {
+      value: emptySpace,
+      color: render === "bar" ? BGColor : "transparent",
+      label: "Empty Space",
+    },
   ];
+
+  if (render === "bar") {
+    const plotValuesForUsageBar: ISizeBarItem[] = plotValues.map((plotVal) => {
+      return {
+        value: plotVal.value,
+        color: plotVal.color,
+        itemName: plotVal.label,
+      };
+    });
+
+    return (
+      <div style={{ width: "100%", marginBottom: 15 }}>
+        <UsageBar
+          totalValue={totalCapacity}
+          sizeItems={plotValuesForUsageBar}
+          bgColor={BGColor}
+        />
+      </div>
+    );
+  }
 
   return (
     <div style={{ position: "relative", width: 110, height: 110 }}>
@@ -128,6 +157,17 @@ const TenantCapacity = ({
       <div>
         <PieChart width={110} height={110}>
           <Pie
+            data={[{ value: 100 }]}
+            cx={"50%"}
+            cy={"50%"}
+            dataKey="value"
+            outerRadius={50}
+            innerRadius={40}
+            fill={BGColor}
+            isAnimationActive={false}
+            stroke={"none"}
+          />
+          <Pie
             data={plotValues}
             cx={"50%"}
             cy={"50%"}
@@ -136,7 +176,11 @@ const TenantCapacity = ({
             innerRadius={40}
           >
             {plotValues.map((entry, index) => (
-              <Cell key={`cellCapacity-${index}`} fill={entry.color} />
+              <Cell
+                key={`cellCapacity-${index}`}
+                fill={entry.color}
+                stroke={"none"}
+              />
             ))}
           </Pie>
         </PieChart>

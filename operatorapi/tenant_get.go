@@ -19,7 +19,6 @@ package operatorapi
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
@@ -30,8 +29,7 @@ import (
 )
 
 func getTenantDetailsResponse(session *models.Principal, params operator_api.TenantDetailsParams) (*models.Tenant, *models.Error) {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
@@ -151,6 +149,17 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 			Minio:   minioEndpoint,
 		}
 	}
+
+	var domains models.DomainsConfiguration
+
+	if minTenant.Spec.Features != nil && minTenant.Spec.Features.Domains != nil {
+		domains = models.DomainsConfiguration{
+			Console: minTenant.Spec.Features.Domains.Console,
+			Minio:   minTenant.Spec.Features.Domains.Minio,
+		}
+	}
+
+	info.Domains = &domains
 
 	return info, nil
 }

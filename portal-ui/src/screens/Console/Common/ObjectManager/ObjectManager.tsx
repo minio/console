@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Tooltip, IconButton } from "@mui/material";
 import { AppState } from "../../../../store";
-import { IFileItem } from "../../ObjectBrowser/reducers";
+import { IFileItem } from "../../ObjectBrowser/types";
 import { deleteFromList, cleanList } from "../../ObjectBrowser/actions";
 import { TrashIcon } from "../../../../icons";
 import ObjectHandled from "./ObjectHandled";

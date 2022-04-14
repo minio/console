@@ -189,6 +189,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPITenantEncryptionInfoHandler: operator_api.TenantEncryptionInfoHandlerFunc(func(params operator_api.TenantEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantEncryptionInfo has not yet been implemented")
 		}),
+		OperatorAPITenantIdentityProviderHandler: operator_api.TenantIdentityProviderHandlerFunc(func(params operator_api.TenantIdentityProviderParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.TenantIdentityProvider has not yet been implemented")
+		}),
 		OperatorAPITenantSecurityHandler: operator_api.TenantSecurityHandlerFunc(func(params operator_api.TenantSecurityParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantSecurity has not yet been implemented")
 		}),
@@ -203,6 +206,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		OperatorAPIUpdateTenantHandler: operator_api.UpdateTenantHandlerFunc(func(params operator_api.UpdateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.UpdateTenant has not yet been implemented")
+		}),
+		OperatorAPIUpdateTenantIdentityProviderHandler: operator_api.UpdateTenantIdentityProviderHandlerFunc(func(params operator_api.UpdateTenantIdentityProviderParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.UpdateTenantIdentityProvider has not yet been implemented")
 		}),
 		OperatorAPIUpdateTenantSecurityHandler: operator_api.UpdateTenantSecurityHandlerFunc(func(params operator_api.UpdateTenantSecurityParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.UpdateTenantSecurity has not yet been implemented")
@@ -340,6 +346,8 @@ type OperatorAPI struct {
 	OperatorAPITenantDetailsHandler operator_api.TenantDetailsHandler
 	// OperatorAPITenantEncryptionInfoHandler sets the operation handler for the tenant encryption info operation
 	OperatorAPITenantEncryptionInfoHandler operator_api.TenantEncryptionInfoHandler
+	// OperatorAPITenantIdentityProviderHandler sets the operation handler for the tenant identity provider operation
+	OperatorAPITenantIdentityProviderHandler operator_api.TenantIdentityProviderHandler
 	// OperatorAPITenantSecurityHandler sets the operation handler for the tenant security operation
 	OperatorAPITenantSecurityHandler operator_api.TenantSecurityHandler
 	// OperatorAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
@@ -350,6 +358,8 @@ type OperatorAPI struct {
 	OperatorAPITenantUpdatePoolsHandler operator_api.TenantUpdatePoolsHandler
 	// OperatorAPIUpdateTenantHandler sets the operation handler for the update tenant operation
 	OperatorAPIUpdateTenantHandler operator_api.UpdateTenantHandler
+	// OperatorAPIUpdateTenantIdentityProviderHandler sets the operation handler for the update tenant identity provider operation
+	OperatorAPIUpdateTenantIdentityProviderHandler operator_api.UpdateTenantIdentityProviderHandler
 	// OperatorAPIUpdateTenantSecurityHandler sets the operation handler for the update tenant security operation
 	OperatorAPIUpdateTenantSecurityHandler operator_api.UpdateTenantSecurityHandler
 
@@ -559,6 +569,9 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPITenantEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantEncryptionInfoHandler")
 	}
+	if o.OperatorAPITenantIdentityProviderHandler == nil {
+		unregistered = append(unregistered, "operator_api.TenantIdentityProviderHandler")
+	}
 	if o.OperatorAPITenantSecurityHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantSecurityHandler")
 	}
@@ -573,6 +586,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIUpdateTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.UpdateTenantHandler")
+	}
+	if o.OperatorAPIUpdateTenantIdentityProviderHandler == nil {
+		unregistered = append(unregistered, "operator_api.UpdateTenantIdentityProviderHandler")
 	}
 	if o.OperatorAPIUpdateTenantSecurityHandler == nil {
 		unregistered = append(unregistered, "operator_api.UpdateTenantSecurityHandler")
@@ -846,6 +862,10 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/identity-provider"] = operator_api.NewTenantIdentityProvider(o.context, o.OperatorAPITenantIdentityProviderHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/security"] = operator_api.NewTenantSecurity(o.context, o.OperatorAPITenantSecurityHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
@@ -863,6 +883,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}"] = operator_api.NewUpdateTenant(o.context, o.OperatorAPIUpdateTenantHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/identity-provider"] = operator_api.NewUpdateTenantIdentityProvider(o.context, o.OperatorAPIUpdateTenantIdentityProviderHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

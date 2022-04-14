@@ -310,6 +310,57 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/identity-provider:
+    get:
+      summary: Tenant Identity Provider
+      operationId: TenantIdentityProvider
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/idpConfiguration"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    post:
+      summary: Update Tenant Identity Provider
+      operationId: UpdateTenantIdentityProvider
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/idpConfiguration"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/security:
     get:
       summary: Tenant Security
@@ -1275,6 +1326,7 @@ definitions:
           capacity_usage:
             type: integer
             format: int64
+
   tenantSecurityResponse:
     type: object
     properties:
@@ -1374,6 +1426,8 @@ definitions:
         $ref: "#/definitions/tenantStatus"
       minioTLS:
         type: boolean
+      domains:
+        $ref: "#/definitions/domainsConfiguration"
 
   tenantUsage:
     type: object
@@ -1424,6 +1478,9 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/tenantTierElement"
+      domains:
+        type: object
+        $ref: "#/definitions/domainsConfiguration"
 
   listTenantsResponse:
     type: object
@@ -1529,6 +1586,9 @@ definitions:
         type: boolean
       expose_console:
         type: boolean
+      domains:
+        type: object
+        $ref: "#/definitions/domainsConfiguration"
 
   metadataFields:
     type: object
@@ -1647,6 +1707,7 @@ definitions:
         type: object
         required:
           - url
+          - lookup_bind_dn
         properties:
           url:
             type: string
@@ -2872,3 +2933,12 @@ definitions:
       size:
         type: integer
         format: int64
+  domainsConfiguration:
+    type: object
+    properties:
+      minio:
+        type: array
+        items:
+          type: string
+      console:
+        type: string

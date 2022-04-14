@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,11 +13,11 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import {
   REWIND_SET_ENABLE,
   REWIND_RESET_REWIND,
   BUCKET_BROWSER_VERSIONS_MODE_ENABLED,
-  ObjectBrowserActionTypes,
   OBJECT_MANAGER_NEW_OBJECT,
   OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT,
   OBJECT_MANAGER_COMPLETE_OBJECT,
@@ -32,51 +32,12 @@ import {
   BUCKET_BROWSER_SHOW_DELETED,
   BUCKET_BROWSER_LOAD_VERSIONS,
   BUCKET_BROWSER_LOAD_OBJECT_DETAILS,
-} from "./actions";
-
-export interface Route {
-  route: string;
-  label: string;
-  type: string;
-}
-
-export interface RewindItem {
-  rewindEnabled: boolean;
-  bucketToRewind: string;
-  dateToRewind: any;
-}
-
-export interface ObjectBrowserState {
-  rewind: RewindItem;
-  objectManager: ObjectManager;
-  searchObjects: string;
-  loadingVersions: boolean;
-  loadingObjectInfo: boolean;
-  versionsMode: boolean;
-  versionedFile: string;
-  searchVersions: string;
-  selectedVersion: string;
-  showDeleted: boolean;
-}
-
-export interface ObjectBrowserReducer {
-  objectBrowser: ObjectBrowserState;
-}
-
-export interface ObjectManager {
-  objectsToManage: IFileItem[];
-  managerOpen: boolean;
-}
-
-export interface IFileItem {
-  type: "download" | "upload";
-  instanceID: string;
-  bucketName: string;
-  prefix: string;
-  percentage: number;
-  done: boolean;
-  waitingForFile: boolean;
-}
+  BUCKET_BROWSER_OBJECT_DETAILS_STATE,
+  ObjectBrowserState,
+  ObjectBrowserActionTypes,
+  BUCKET_BROWSER_SET_SELECTED_OBJECT,
+  OBJECT_MANAGER_SET_LOADING,
+} from "./types";
 
 const defaultRewind = {
   rewindEnabled: false,
@@ -86,6 +47,8 @@ const defaultRewind = {
 
 const initialState: ObjectBrowserState = {
   versionsMode: false,
+  loadingObjects: true,
+  objectDetailsOpen: false,
   loadingVersions: true,
   loadingObjectInfo: true,
   rewind: {
@@ -100,6 +63,7 @@ const initialState: ObjectBrowserState = {
   searchVersions: "",
   selectedVersion: "",
   showDeleted: false,
+  selectedInternalPaths: null,
 };
 
 export function objectBrowserReducer(
@@ -244,6 +208,11 @@ export function objectBrowserReducer(
         ...state,
         searchObjects: action.searchString,
       };
+    case OBJECT_MANAGER_SET_LOADING:
+      return {
+        ...state,
+        loadingObjects: action.status,
+      };
     case BUCKET_BROWSER_VERSIONS_SET_SEARCH:
       return {
         ...state,
@@ -268,6 +237,16 @@ export function objectBrowserReducer(
       return {
         ...state,
         loadingObjectInfo: action.status,
+      };
+    case BUCKET_BROWSER_OBJECT_DETAILS_STATE:
+      return {
+        ...state,
+        objectDetailsOpen: action.status,
+      };
+    case BUCKET_BROWSER_SET_SELECTED_OBJECT:
+      return {
+        ...state,
+        selectedInternalPaths: action.object,
       };
     default:
       return state;

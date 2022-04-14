@@ -152,7 +152,7 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
         setBucketList(buckets);
       })
       .catch((err: ErrorResponseHandler) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

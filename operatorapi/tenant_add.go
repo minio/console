@@ -41,7 +41,8 @@ import (
 func getTenantCreatedResponse(session *models.Principal, params operator_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
 		// we can live without figuring out the latest version of MinIO, Operator will use a hardcoded value
@@ -153,7 +154,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			serverAddress := *tenantReq.Idp.ActiveDirectory.URL
 			tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipTLSVerification
 			serverInsecure := tenantReq.Idp.ActiveDirectory.ServerInsecure
-			lookupBindDN := tenantReq.Idp.ActiveDirectory.LookupBindDn
+			lookupBindDN := *tenantReq.Idp.ActiveDirectory.LookupBindDn
 			lookupBindPassword := tenantReq.Idp.ActiveDirectory.LookupBindPassword
 			userDNSearchBaseDN := tenantReq.Idp.ActiveDirectory.UserDnSearchBaseDn
 			userDNSearchFilter := tenantReq.Idp.ActiveDirectory.UserDnSearchFilter
@@ -429,6 +430,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if (diskSpaceFromAPI / humanize.GiByte) < int64(auditMaxCap) {
 			auditMaxCap = int(diskSpaceFromAPI / humanize.GiByte)
 		}
+
 		// default activate lgo search and prometheus
 		minInst.Spec.Log = &miniov2.LogConfig{
 			Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(auditMaxCap)},
@@ -539,6 +541,24 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		return nil, prepareError(restapi.ErrorGeneric, nil, err)
 	}
 	minInst.Spec.Configuration = &corev1.LocalObjectReference{Name: tenantConfigurationName}
+
+	if tenantReq.Domains != nil {
+		var features miniov2.Features
+		var domains miniov2.TenantDomains
+
+		// tenant domains
+		if tenantReq.Domains.Console != "" {
+			domains.Console = tenantReq.Domains.Console
+		}
+
+		if tenantReq.Domains.Minio != nil {
+			domains.Minio = tenantReq.Domains.Minio
+		}
+
+		features.Domains = &domains
+
+		minInst.Spec.Features = &features
+	}
 
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
