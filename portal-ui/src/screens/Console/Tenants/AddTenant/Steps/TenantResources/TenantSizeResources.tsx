@@ -346,7 +346,6 @@ const TenantSizeResources = ({
               name="resourcesMemoryLimit"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 let value = parseInt(e.target.value);
-                console.log("value", value);
                 if (e.target.value === "") {
                   updateField("resourcesMemoryLimitError", "");
                 } else if (isNaN(value)) {

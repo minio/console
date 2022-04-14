@@ -192,7 +192,6 @@ const Console = ({
       .invoke("POST", "/api/v1/service/restart", {})
       .then((res) => {
         console.log("success restarting service");
-        console.log(res);
         serverIsLoading(false);
         serverNeedsRestart(false);
       })
@@ -202,7 +201,7 @@ const Console = ({
         }
         serverIsLoading(false);
         console.log("failure restarting service");
-        console.log(err);
+        console.error(err);
       });
   };
 
