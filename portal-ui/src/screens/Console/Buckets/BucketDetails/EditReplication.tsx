@@ -14,20 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {Fragment, useEffect, useState} from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import {
-    containerForHeader, createTenantCommon
+  containerForHeader,
+  createTenantCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketReplicationRule } from "../types";
 import { connect } from "react-redux";
-import {setErrorSnackMessage, setSnackBarMessage} from "../../../../actions";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
@@ -35,7 +36,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import {BucketReplicationIcon} from "../../../../icons";
+import { BucketReplicationIcon } from "../../../../icons";
 
 interface IEditReplication {
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -46,39 +47,39 @@ interface IEditReplication {
 }
 
 const styles = (theme: Theme) =>
-    createStyles({
-        buttonContainer: {
-            marginTop: 24,
-            textAlign: "right",
-            "& .MuiButton-root": {
-                marginLeft: 8,
-            },
-        },
-        error: {
-            color: "#b53b4b",
-            border: "1px solid #b53b4b",
-            padding: 8,
-            borderRadius: 3,
-        },
-        title: {
-            marginBottom: 8,
-        },
-        headTitle: {
-            fontWeight: "bold",
-            fontSize: 16,
-            paddingLeft: 8,
-        },
-        h6title: {
-            fontWeight: "bold",
-            color: "#000000",
-            fontSize: 20,
-            paddingBottom: 8,
-        },
-        fieldGroup: {
-            ...createTenantCommon.fieldGroup,
-        },
-        ...containerForHeader(theme.spacing(4)),
-    });
+  createStyles({
+    buttonContainer: {
+      marginTop: 24,
+      textAlign: "right",
+      "& .MuiButton-root": {
+        marginLeft: 8,
+      },
+    },
+    error: {
+      color: "#b53b4b",
+      border: "1px solid #b53b4b",
+      padding: 8,
+      borderRadius: 3,
+    },
+    title: {
+      marginBottom: 8,
+    },
+    headTitle: {
+      fontWeight: "bold",
+      fontSize: 16,
+      paddingLeft: 8,
+    },
+    h6title: {
+      fontWeight: "bold",
+      color: "#000000",
+      fontSize: 20,
+      paddingBottom: 8,
+    },
+    fieldGroup: {
+      ...createTenantCommon.fieldGroup,
+    },
+    ...containerForHeader(theme.spacing(4)),
+  });
 
 const EditReplication = ({
   setErrorSnackMessage,
@@ -100,8 +101,8 @@ const EditReplication = ({
   const [repExisting, setRepExisting] = useState<boolean>(false);
   const [repDelete, setRepDelete] = useState<boolean>(false);
   const [ruleState, setRuleState] = useState<boolean>(false);
-  const bucketName = match.params["bucketName"]
-  const ruleID = match.params["rule"]
+  const bucketName = match.params["bucketName"];
+  const ruleID = match.params["rule"];
 
   useEffect(() => {
     if (editLoading) {
@@ -154,7 +155,7 @@ const EditReplication = ({
         )
         .then(() => {
           setSaveEdit(false);
-          setSnackBarMessage("Successfully modified replication rule")
+          setSnackBarMessage("Successfully modified replication rule");
         })
         .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
@@ -180,18 +181,25 @@ const EditReplication = ({
   ]);
 
   return (
-      <Fragment>
-          <PageHeader label={<BackLink label={"Back to Replication Rules"} to={`/buckets/${bucketName}/admin/replication`} />} />
+    <Fragment>
+      <PageHeader
+        label={
+          <BackLink
+            label={"Back to Replication Rules"}
+            to={`/buckets/${bucketName}/admin/replication`}
+          />
+        }
+      />
       <PageLayout>
-        <Grid item xs={12} className={classes.boxy} >
+        <Grid item xs={12} className={classes.boxy}>
           <Grid container spacing={1}>
-              <Grid
-                  item
-                  xs={12}
-                  container
-                  className={classes.title}
-                  alignItems={"center"}
-              >
+            <Grid
+              item
+              xs={12}
+              container
+              className={classes.title}
+              alignItems={"center"}
+            >
               <Grid item xs={"auto"}>
                 <BucketReplicationIcon />
               </Grid>
@@ -341,7 +349,7 @@ const EditReplication = ({
               color="primary"
               disabled={editLoading || saveEdit}
               onClick={() => {
-                  history.push(`/buckets/${bucketName}/admin/replication`)
+                history.push(`/buckets/${bucketName}/admin/replication`);
               }}
             >
               Cancel
@@ -352,7 +360,7 @@ const EditReplication = ({
               color="primary"
               disabled={editLoading || saveEdit}
               onClick={() => {
-                  setSaveEdit(true);
+                setSaveEdit(true);
               }}
             >
               Save
@@ -360,7 +368,7 @@ const EditReplication = ({
           </Grid>
         </Grid>
       </PageLayout>
-      </Fragment>
+    </Fragment>
   );
 };
 const connector = connect(null, {
