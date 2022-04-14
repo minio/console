@@ -1081,6 +1081,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Describe Pod",
+        "operationId": "DescribePod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/describePodWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
       "get": {
         "tags": [
@@ -2031,6 +2074,14 @@ func init() {
       "properties": {
         "delete_pvcs": {
           "type": "boolean"
+        }
+      }
+    },
+    "describePodWrapper": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
         }
       }
     },
@@ -4997,6 +5048,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Describe Pod",
+        "operationId": "DescribePod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/describePodWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
       "get": {
         "tags": [
@@ -6789,6 +6883,14 @@ func init() {
       "properties": {
         "delete_pvcs": {
           "type": "boolean"
+        }
+      }
+    },
+    "describePodWrapper": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
         }
       }
     },

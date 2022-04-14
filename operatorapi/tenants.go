@@ -25,6 +25,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"k8s.io/apimachinery/pkg/util/duration"
 	"net"
 	"net/http"
 	"reflect"
@@ -235,6 +236,14 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewGetPodEventsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewGetPodEventsOK().WithPayload(payload)
+	})
+
+	api.OperatorAPIDescribePodHandler = operator_api.DescribePodHandlerFunc(func(params operator_api.DescribePodParams, session *models.Principal) middleware.Responder {
+		payload, err := getDescribePodResponse(session, params)
+		if err != nil {
+			return operator_api.NewDescribePodDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewDescribePodOK().WithPayload(payload)
 	})
 
 	//Get tenant monitoring info
@@ -1510,6 +1519,127 @@ func getPodEventsResponse(session *models.Principal, params operator_api.GetPodE
 		return retval[i].LastSeen < retval[j].LastSeen
 	})
 	return retval, nil
+}
+
+func stringOrNone(s string) string {
+	if len(s) > 0 {
+		return s
+	}
+	return "<none>"
+}
+
+func getDescribePodResponse(session *models.Principal, params operator_api.DescribePodParams) (*models.DescribePodWrapper, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	pod, err := clientset.CoreV1().Pods(params.Namespace).Get(ctx, params.PodName, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	buf := bytes.NewBuffer([]byte(""))
+	w := NewPrefixWriter(buf)
+	w.Write(0, "Name:\t%s\n", pod.Name)
+	w.Write(0, "Namespace:\t%s\n", pod.Namespace)
+	if pod.Spec.Priority != nil {
+		w.Write(0, "Priority:\t%d\n", *pod.Spec.Priority)
+	}
+	if len(pod.Spec.PriorityClassName) > 0 {
+		w.Write(0, "Priority Class Name:\t%s\n", stringOrNone(pod.Spec.PriorityClassName))
+	}
+	if pod.Spec.NodeName == "" {
+		w.Write(0, "Node:\t<none>\n")
+	} else {
+		w.Write(0, "Node:\t%s\n", pod.Spec.NodeName+"/"+pod.Status.HostIP)
+	}
+	if pod.Status.StartTime != nil {
+		w.Write(0, "Start Time:\t%s\n", pod.Status.StartTime.Time.Format(time.RFC1123Z))
+	}
+	keys := make([]string, 0, len(pod.Labels))
+	for key := range pod.Labels {
+		keys = append(keys, key)
+	}
+	if len(keys) == 0 {
+		w.WriteLine("<none>")
+	} else {
+		sort.Strings(keys)
+
+		for i, key := range keys {
+			if i != 0 {
+				w.Write(0, "%s", "\t")
+			}
+			w.Write(0, "%s=%s\n", key, pod.Labels[key])
+		}
+	}
+	keys = make([]string, 0, len(pod.Annotations))
+	for key := range pod.Annotations {
+		keys = append(keys, key)
+	}
+	if len(keys) == 0 {
+		w.WriteLine("<none>")
+	} else {
+		sort.Strings(keys)
+
+		for i, key := range keys {
+			if i != 0 {
+				w.Write(0, "%s", "\t")
+			}
+			w.Write(0, "%s=%s\n", key, pod.Annotations[key])
+		}
+	}
+	if pod.DeletionTimestamp != nil {
+		w.Write(0, "Status:\tTerminating (lasts %s)\n", translateTimestampSince(*pod.DeletionTimestamp))
+		w.Write(0, "Termination Grace Period:\t%ds\n", *pod.DeletionGracePeriodSeconds)
+	} else {
+		w.Write(0, "Status:\t%s\n", string(pod.Status.Phase))
+	}
+	if len(pod.Status.Reason) > 0 {
+		w.Write(0, "Reason:\t%s\n", pod.Status.Reason)
+	}
+	if len(pod.Status.Message) > 0 {
+		w.Write(0, "Message:\t%s\n", pod.Status.Message)
+	}
+	w.Write(0, "IP:\t%s\n", pod.Status.PodIP)
+	if controllerRef := metav1.GetControllerOf(pod); controllerRef != nil {
+		w.Write(0, "Controlled By:\t%s\n", controllerRef)
+	}
+	if len(pod.Spec.InitContainers) > 0 {
+		describeContainers("Init Containers", pod.Spec.InitContainers, pod.Status.InitContainerStatuses, EnvValueRetriever(pod), w, "")
+	}
+	describeContainers("Containers", pod.Spec.Containers, pod.Status.ContainerStatuses, EnvValueRetriever(pod), w, "")
+	if len(pod.Spec.EphemeralContainers) > 0 {
+		var ec []corev1.Container
+		for i := range pod.Spec.EphemeralContainers {
+			ec = append(ec, corev1.Container(pod.Spec.EphemeralContainers[i].EphemeralContainerCommon))
+		}
+		describeContainers("Ephemeral Containers", ec, pod.Status.EphemeralContainerStatuses, EnvValueRetriever(pod), w, "")
+	}
+	if len(pod.Status.Conditions) > 0 {
+		w.Write(0, "Conditions:\n  Type\tStatus\n")
+		for _, c := range pod.Status.Conditions {
+			w.Write(1, "%v \t%v \n",
+				c.Type,
+				c.Status)
+		}
+	}
+	describeVolumes(pod.Spec.Volumes, w, "")
+	if pod.Status.QOSClass != "" {
+		w.Write(0, "QoS Class:\t%s\n", pod.Status.QOSClass)
+	} else {
+		w.Write(0, "QoS Class:\t%s\n", getPodQOS(pod))
+	}
+	printLabelsMultiline(w, "Node-Selectors", pod.Spec.NodeSelector)
+	printPodTolerationsMultiline(w, "Tolerations", pod.Spec.Tolerations)
+	return &models.DescribePodWrapper{Description: buf.String()}, nil
+}
+
+func translateTimestampSince(timestamp metav1.Time) string {
+	if timestamp.IsZero() {
+		return "<unknown>"
+	}
+
+	return duration.HumanDuration(time.Since(timestamp.Time))
 }
 
 //get values for prometheus metrics

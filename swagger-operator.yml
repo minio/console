@@ -781,6 +781,36 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant} v/describe:
+    get:
+      summary: Describe Pod
+      operationId: DescribePod
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/describePodWrapper"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/monitoring:
     get:
       summary: Get Prometheus Monitoring config info For The Tenant
@@ -2733,6 +2763,13 @@ definitions:
         type: string
       message:
         type: string
+
+  describePodWrapper:
+    type: object
+    properties:
+      description:
+        type: string
+
 
   tenantMonitoringInfo:
     type: object
