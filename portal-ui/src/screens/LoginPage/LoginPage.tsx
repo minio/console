@@ -502,24 +502,7 @@ const Login = ({
       );
       break;
     }
-    case loginStrategyType.redirect: {
-      loginComponent = (
-        <React.Fragment>
-          <Button
-            component={"a"}
-            href={loginStrategy.redirect}
-            type="submit"
-            variant="contained"
-            color="primary"
-            id="sso-login"
-            className={classes.submit}
-          >
-            Login with SSO
-          </Button>
-        </React.Fragment>
-      );
-      break;
-    }
+    case loginStrategyType.redirect:
     case loginStrategyType.redirectServiceAccount: {
       loginComponent = (
         <React.Fragment>
