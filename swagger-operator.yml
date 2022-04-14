@@ -832,6 +832,36 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe:
+    get:
+      summary: Describe Pod
+      operationId: DescribePod
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/describePodWrapper"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/monitoring:
     get:
       summary: Get Prometheus Monitoring config info For The Tenant
@@ -2821,6 +2851,226 @@ definitions:
       object:
         type: string
       message:
+        type: string
+
+  describePodWrapper:
+    type: object
+    properties:
+      name:
+        type: string
+      namespace:
+        type: string
+      priority:
+        type: integer
+      priorityClassName:
+        type: string
+      nodeName:
+        type: string
+      startTime:
+        type: string
+      labels:
+        type: array
+        items:
+          $ref: "#/definitions/label"
+      annotations:
+        type: array
+        items:
+          $ref: "#/definitions/annotation"
+      deletionTimestamp:
+        type: string
+      deletionGracePeriodSeconds:
+        type: integer
+      phase:
+        type: string
+      reason:
+        type: string
+      message:
+        type: string
+      podIP:
+        type: string
+      controllerRef:
+        type: string
+      containers:
+        type: array
+        items:
+          $ref: "#/definitions/container"
+      conditions:
+        type: array
+        items:
+          $ref: "#/definitions/condition"
+      volumes:
+        type: array
+        items:
+          $ref: "#/definitions/volume"
+      qosClass:
+        type: string
+      nodeSelector:
+        type: array
+        items:
+          $ref: "#/definitions/nodeSelector"
+      tolerations:
+        type: array
+        items:
+          $ref: "#/definitions/toleration"
+
+  container:
+    type: object
+    properties:
+      name:
+        type: string
+      containerID:
+        type: string
+      image:
+        type: string
+      imageID:
+        type: string
+      ports:
+        type: array
+        items:
+          type: string
+      hostPorts:
+        type: array
+        items:
+          type: string
+      args:
+        type: array
+        items:
+          type: string
+      state:
+        $ref: "#/definitions/state"
+      lastState:
+        $ref: "#/definitions/state"
+      ready:
+        type: boolean
+      restartCount:
+        type: integer
+      environmentVariables:
+        type: array
+        items:
+          $ref: "#/definitions/environmentVariable"
+      mounts:
+        type: array
+        items:
+          $ref: "#/definitions/mount"
+
+  state:
+    type: object
+    properties:
+      state:
+        type: string
+      reason:
+        type: string
+      message:
+        type: string
+      exitCode:
+        type: integer
+      started:
+        type: string
+      finished:
+        type: string
+      signal:
+        type: integer
+
+  environmentVariable:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+  mount:
+    type: object
+    properties:
+      mountPath:
+        type: string
+      name:
+        type: string
+      readOnly:
+        type: boolean
+      subPath:
+        type: string
+
+  condition:
+    type: object
+    properties:
+      type:
+        type: string
+      status:
+        type: string
+
+  volume:
+    type: object
+    properties:
+      name:
+        type: string
+      pvc:
+        $ref: "#/definitions/pvc"
+      projected:
+        $ref: "#/definitions/projectedVolume"
+
+  pvc:
+    type: object
+    properties:
+      claimName:
+        type: string
+      readOnly:
+        type: boolean
+
+  projectedVolume:
+    type: object
+    properties:
+      sources:
+        type: array
+        items:
+          $ref: "#/definitions/projectedVolumeSource"
+
+  projectedVolumeSource:
+    type: object
+    properties:
+      secret:
+        $ref: "#/definitions/secret"
+      downwardApi:
+        type: boolean
+      configMap:
+        $ref: "#/definitions/configMap"
+      serviceAccountToken:
+        $ref: "#/definitions/serviceAccountToken"
+
+  secret:
+    type: object
+    properties:
+      name:
+        type: string
+      optional:
+        type: boolean
+
+  configMap:
+    type: object
+    properties:
+      name:
+        type: string
+      optional:
+        type: boolean
+
+  serviceAccountToken:
+    type: object
+    properties:
+      expirationSeconds:
+        type: integer
+
+  toleration:
+    type: object
+    properties:
+      tolerationSeconds:
+        type: integer
+      key:
+        type: string
+      value:
+        type: string
+      effect:
+        type: string
+      operator:
         type: string
 
   tenantMonitoringInfo:

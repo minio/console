@@ -82,6 +82,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIDeleteTenantHandler: operator_api.DeleteTenantHandlerFunc(func(params operator_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DeleteTenant has not yet been implemented")
 		}),
+		OperatorAPIDescribePodHandler: operator_api.DescribePodHandlerFunc(func(params operator_api.DescribePodParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.DescribePod has not yet been implemented")
+		}),
 		OperatorAPIDisableTenantLoggingHandler: operator_api.DisableTenantLoggingHandlerFunc(func(params operator_api.DisableTenantLoggingParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DisableTenantLogging has not yet been implemented")
 		}),
@@ -278,6 +281,8 @@ type OperatorAPI struct {
 	OperatorAPIDeletePodHandler operator_api.DeletePodHandler
 	// OperatorAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	OperatorAPIDeleteTenantHandler operator_api.DeleteTenantHandler
+	// OperatorAPIDescribePodHandler sets the operation handler for the describe pod operation
+	OperatorAPIDescribePodHandler operator_api.DescribePodHandler
 	// OperatorAPIDisableTenantLoggingHandler sets the operation handler for the disable tenant logging operation
 	OperatorAPIDisableTenantLoggingHandler operator_api.DisableTenantLoggingHandler
 	// OperatorAPIEnableTenantLoggingHandler sets the operation handler for the enable tenant logging operation
@@ -466,6 +471,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.DeleteTenantHandler")
+	}
+	if o.OperatorAPIDescribePodHandler == nil {
+		unregistered = append(unregistered, "operator_api.DescribePodHandler")
 	}
 	if o.OperatorAPIDisableTenantLoggingHandler == nil {
 		unregistered = append(unregistered, "operator_api.DisableTenantLoggingHandler")
@@ -724,6 +732,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = operator_api.NewDeleteTenant(o.context, o.OperatorAPIDeleteTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe"] = operator_api.NewDescribePod(o.context, o.OperatorAPIDescribePodHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
