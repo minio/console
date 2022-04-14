@@ -43,8 +43,8 @@ func TestHeal(t *testing.T) {
 
 	client := adminClientMock{}
 	mockWSConn := mockConn{}
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	function := "startHeal()"
 	mockResultItem1 := madmin.HealResultItem{
 		Type:         madmin.HealItemObject,

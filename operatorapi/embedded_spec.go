@@ -803,6 +803,83 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/identity-provider": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Identity Provider",
+        "operationId": "TenantIdentityProvider",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idpConfiguration"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Update Tenant Identity Provider",
+        "operationId": "UpdateTenantIdentityProvider",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idpConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/log": {
       "get": {
         "tags": [
@@ -2434,7 +2511,8 @@ func init() {
         "active_directory": {
           "type": "object",
           "required": [
-            "url"
+            "url",
+            "lookup_bind_dn"
           ],
           "properties": {
             "group_search_base_dn": {
@@ -4720,6 +4798,83 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/identity-provider": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Identity Provider",
+        "operationId": "TenantIdentityProvider",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idpConfiguration"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Update Tenant Identity Provider",
+        "operationId": "UpdateTenantIdentityProvider",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idpConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/log": {
       "get": {
         "tags": [
@@ -5972,7 +6127,8 @@ func init() {
     "IdpConfigurationActiveDirectory": {
       "type": "object",
       "required": [
-        "url"
+        "url",
+        "lookup_bind_dn"
       ],
       "properties": {
         "group_search_base_dn": {
@@ -7193,7 +7349,8 @@ func init() {
         "active_directory": {
           "type": "object",
           "required": [
-            "url"
+            "url",
+            "lookup_bind_dn"
           ],
           "properties": {
             "group_search_base_dn": {

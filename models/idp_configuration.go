@@ -237,7 +237,8 @@ type IdpConfigurationActiveDirectory struct {
 	GroupSearchFilter string `json:"group_search_filter,omitempty"`
 
 	// lookup bind dn
-	LookupBindDn string `json:"lookup_bind_dn,omitempty"`
+	// Required: true
+	LookupBindDn *string `json:"lookup_bind_dn"`
 
 	// lookup bind password
 	LookupBindPassword string `json:"lookup_bind_password,omitempty"`
@@ -269,6 +270,10 @@ type IdpConfigurationActiveDirectory struct {
 func (m *IdpConfigurationActiveDirectory) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateLookupBindDn(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateURL(formats); err != nil {
 		res = append(res, err)
 	}
@@ -276,6 +281,15 @@ func (m *IdpConfigurationActiveDirectory) Validate(formats strfmt.Registry) erro
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *IdpConfigurationActiveDirectory) validateLookupBindDn(formats strfmt.Registry) error {
+
+	if err := validate.Required("active_directory"+"."+"lookup_bind_dn", "body", m.LookupBindDn); err != nil {
+		return err
+	}
+
 	return nil
 }
 

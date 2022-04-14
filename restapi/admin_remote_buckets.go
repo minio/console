@@ -24,12 +24,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/minio/madmin-go"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-	"github.com/minio/madmin-go"
 	"github.com/minio/minio-go/v7/pkg/replication"
 )
 
@@ -142,7 +143,8 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 }
 
 func getListRemoteBucketsResponse(session *models.Principal) (*models.ListRemoteBucketsResponse, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
@@ -161,7 +163,8 @@ func getListRemoteBucketsResponse(session *models.Principal) (*models.ListRemote
 }
 
 func getRemoteBucketDetailsResponse(session *models.Principal, params user_api.RemoteBucketDetailsParams) (*models.RemoteBucket, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
@@ -177,7 +180,8 @@ func getRemoteBucketDetailsResponse(session *models.Principal, params user_api.R
 }
 
 func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.DeleteRemoteBucketParams) error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
@@ -193,7 +197,8 @@ func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.De
 }
 
 func getAddRemoteBucketResponse(session *models.Principal, params user_api.AddRemoteBucketParams) error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
@@ -511,7 +516,8 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 }
 
 func setMultiBucketReplicationResponse(session *models.Principal, params user_api.SetMultiBucketReplicationParams) (*models.MultiBucketResponseState, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -556,7 +562,7 @@ func setMultiBucketReplicationResponse(session *models.Principal, params user_ap
 }
 
 func listExternalBucketsResponse(params user_api.ListExternalBucketsParams) (*models.ListBucketsResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	remoteAdmin, err := newAdminFromCreds(*params.Body.AccessKey, *params.Body.SecretKey, *params.Body.TargetURL, *params.Body.UseTLS)
 	if err != nil {
@@ -750,7 +756,8 @@ func deleteSelectedReplicationRules(ctx context.Context, session *models.Princip
 }
 
 func deleteReplicationRuleResponse(session *models.Principal, params user_api.DeleteBucketReplicationRuleParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	err := deleteReplicationRule(ctx, session, params.BucketName, params.RuleID)
 
@@ -761,7 +768,8 @@ func deleteReplicationRuleResponse(session *models.Principal, params user_api.De
 }
 
 func deleteBucketReplicationRulesResponse(session *models.Principal, params user_api.DeleteAllReplicationRulesParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	err := deleteAllReplicationRules(ctx, session, params.BucketName)
 
@@ -772,7 +780,8 @@ func deleteBucketReplicationRulesResponse(session *models.Principal, params user
 }
 
 func deleteSelectedReplicationRulesResponse(session *models.Principal, params user_api.DeleteSelectedReplicationRulesParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	err := deleteSelectedReplicationRules(ctx, session, params.BucketName, params.Rules.Rules)
 
@@ -783,7 +792,8 @@ func deleteSelectedReplicationRulesResponse(session *models.Principal, params us
 }
 
 func updateBucketReplicationResponse(session *models.Principal, params user_api.UpdateMultiBucketReplicationParams) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	mClient, err := newMinioClient(session)
 	if err != nil {

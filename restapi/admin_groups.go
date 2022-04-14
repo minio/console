@@ -72,7 +72,8 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 
 // getListGroupsResponse performs listGroups() and serializes it to the handler's output
 func getListGroupsResponse(session *models.Principal) (*models.ListGroupsResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -106,7 +107,8 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 
 // getGroupInfoResponse performs groupInfo() and serializes it to the handler's output
 func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoParams) (*models.Group, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -145,7 +147,8 @@ func addGroup(ctx context.Context, client MinioAdmin, group string, members []st
 
 // getAddGroupResponse performs addGroup() and serializes it to the handler's output
 func getAddGroupResponse(session *models.Principal, params *models.AddGroupRequest) *models.Error {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// AddGroup request needed to proceed
 	if params == nil {
 		return prepareError(errGroupBodyNotInRequest)
@@ -181,8 +184,8 @@ func removeGroup(ctx context.Context, client MinioAdmin, group string) error {
 
 // getRemoveGroupResponse performs removeGroup() and serializes it to the handler's output
 func getRemoveGroupResponse(session *models.Principal, params admin_api.RemoveGroupParams) *models.Error {
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if params.Name == "" {
 		return prepareError(errGroupNameNotInRequest)
 	}
@@ -255,7 +258,8 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 // 	also sets the group's status if status in the request is different than the current one.
 //  Then serializes the output to be used by the handler.
 func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGroupParams) (*models.Group, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	if params.Name == "" {
 		return nil, prepareError(errGroupNameNotInRequest)
 	}

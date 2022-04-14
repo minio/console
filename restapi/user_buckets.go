@@ -25,9 +25,10 @@ import (
 	"time"
 
 	"github.com/minio/madmin-go"
+	"github.com/minio/minio-go/v7"
+
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
 	"github.com/minio/minio-go/v7/pkg/tags"
 
@@ -220,7 +221,7 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 }
 
 func getBucketReplicationResponse(session *models.Principal, bucketName string) (*models.BucketReplicationResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mClient, err := newMinioClient(session)
@@ -271,7 +272,7 @@ func getBucketReplicationResponse(session *models.Principal, bucketName string) 
 }
 
 func getBucketReplicationRuleResponse(session *models.Principal, bucketName, ruleID string) (*models.BucketReplicationRule, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mClient, err := newMinioClient(session)
@@ -340,7 +341,7 @@ func getBucketReplicationRuleResponse(session *models.Principal, bucketName, rul
 }
 
 func getBucketVersionedResponse(session *models.Principal, bucketName string) (*models.BucketVersioningResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mClient, err := newMinioClient(session)
@@ -412,7 +413,7 @@ func getAccountBuckets(ctx context.Context, client MinioAdmin) ([]*models.Bucket
 
 // getListBucketsResponse performs listBuckets() and serializes it to the handler's output
 func getListBucketsResponse(session *models.Principal) (*models.ListBucketsResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
@@ -443,7 +444,7 @@ func makeBucket(ctx context.Context, client MinioClient, bucketName string, obje
 
 // getMakeBucketResponse performs makeBucket() to create a bucket with its access policy
 func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketRequest) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// bucket request needed to proceed
 	if br == nil {
@@ -550,7 +551,7 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
 //   and returns the serialized output.
 func getBucketSetPolicyResponse(session *models.Principal, bucketName string, req *models.SetBucketPolicyRequest) (*models.Bucket, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get updated bucket details and return it
@@ -583,7 +584,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 
 // putBucketTags sets tags for a bucket
 func getPutBucketTagsResponse(session *models.Principal, bucketName string, req *models.PutBucketTagsRequest) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mClient, err := newMinioClient(session)
@@ -691,7 +692,7 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 
 // getBucketInfoResponse calls getBucketInfo() to get the bucket's info
 func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfoParams) (*models.Bucket, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -757,7 +758,7 @@ func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName 
 
 // enableBucketEncryptionResponse calls enableBucketEncryption() to create new encryption configuration for provided bucket name
 func enableBucketEncryptionResponse(session *models.Principal, params user_api.EnableBucketEncryptionParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -779,7 +780,7 @@ func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName
 
 // disableBucketEncryptionResponse calls disableBucketEncryption()
 func disableBucketEncryptionResponse(session *models.Principal, params user_api.DisableBucketEncryptionParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -806,7 +807,7 @@ func getBucketEncryptionInfo(ctx context.Context, client MinioClient, bucketName
 }
 
 func getBucketEncryptionInfoResponse(session *models.Principal, params user_api.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -853,7 +854,7 @@ func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 }
 
 func getSetBucketRetentionConfigResponse(session *models.Principal, params user_api.SetBucketRetentionConfigParams) *models.Error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -925,7 +926,7 @@ func getBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 }
 
 func getBucketRetentionConfigResponse(session *models.Principal, bucketName string) (*models.GetBucketRetentionConfig, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
@@ -944,7 +945,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 }
 
 func getBucketObjectLockingResponse(session *models.Principal, bucketName string) (*models.BucketObLockingResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mClient, err := newMinioClient(session)
@@ -974,7 +975,7 @@ func getBucketObjectLockingResponse(session *models.Principal, bucketName string
 }
 
 func getBucketRewindResponse(session *models.Principal, params user_api.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var prefix = ""
 	if params.Prefix != nil {

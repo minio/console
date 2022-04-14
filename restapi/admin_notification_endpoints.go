@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"errors"
-	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -84,8 +83,7 @@ func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifE
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	notfEndpointResp, err := getNotificationEndpoints(ctx, adminClient)
@@ -155,8 +153,7 @@ func getAddNotificationEndpointResponse(session *models.Principal, params *admin
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	notfEndpointResp, err := addNotificationEndpoint(ctx, adminClient, params)

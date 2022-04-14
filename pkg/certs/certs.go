@@ -234,7 +234,8 @@ func LoadX509KeyPair(certFile, keyFile string) (tls.Certificate, error) {
 }
 
 func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	if !(isFile(getPublicCertFile()) && isFile(getPrivateKeyFile())) {
 		return nil, nil, nil

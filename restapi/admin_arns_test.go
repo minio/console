@@ -34,7 +34,8 @@ func TestArnsList(t *testing.T) {
 			SQSARN: []string{"uno"},
 		}, nil
 	}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	arnsList, err := getArns(ctx, adminClient)
 	assert.NotNil(arnsList, "arn list was returned nil")
 	if arnsList != nil {

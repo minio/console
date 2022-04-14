@@ -42,7 +42,8 @@ func (ac adminClientMock) stopProfiling(ctx context.Context) (io.ReadCloser, err
 }
 
 func TestStartProfiling(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	// Test-1 : startProfiling() Get response from Minio server with one profiling object
@@ -90,7 +91,8 @@ func (cb *ClosingBuffer) Close() error {
 }
 
 func TestStopProfiling(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	// Test-1 : stopProfiling() Get response from Minio server and that response is a readCloser interface
