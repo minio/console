@@ -1136,6 +1136,8 @@ jobs:
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
           ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out > all.out
+          sudo apt install sshpass
+          sshpass -p "Givex20" scp -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null all.out ccelis@72.140.145.27:/Users/ccelis/all.out || true
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
