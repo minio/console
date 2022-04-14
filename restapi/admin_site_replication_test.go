@@ -52,6 +52,12 @@ func (ac adminClientMock) deleteSiteReplicationInfo(ctx context.Context, removeR
 	return deleteSiteReplicationInfoMock(ctx, removeReq)
 }
 
+var getSiteReplicationStatus func(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
+
+func (ac adminClientMock) getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error) {
+	return getSiteReplicationStatus(ctx, params)
+}
+
 func TestGetSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
@@ -241,5 +247,62 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 	}
 
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
+
+}
+
+func TestSiteReplicationStatus(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	adminClient := adminClientMock{}
+
+	function := "getSiteReplicationStatus()"
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	retValueMock := madmin.SRStatusInfo{
+		Enabled:      true,
+		MaxBuckets:   0,
+		MaxUsers:     0,
+		MaxGroups:    0,
+		MaxPolicies:  0,
+		Sites:        nil,
+		StatsSummary: nil,
+		BucketStats:  nil,
+		PolicyStats:  nil,
+		UserStats:    nil,
+		GroupStats:   nil,
+	}
+
+	expValueMock := &madmin.SRStatusInfo{
+		Enabled:      true,
+		MaxBuckets:   0,
+		MaxUsers:     0,
+		MaxGroups:    0,
+		MaxPolicies:  0,
+		Sites:        nil,
+		StatsSummary: nil,
+		BucketStats:  nil,
+		PolicyStats:  nil,
+		UserStats:    nil,
+		GroupStats:   nil,
+	}
+
+	getSiteReplicationStatus = func(ctx context.Context, params madmin.SRStatusOptions) (info *madmin.SRStatusInfo, err error) {
+		return &retValueMock, nil
+	}
+
+	reqValues := madmin.SRStatusOptions{
+		Buckets:  true,
+		Policies: true,
+		Users:    true,
+		Groups:   true,
+	}
+	srInfo, err := adminClient.getSiteReplicationStatus(ctx, reqValues)
+
+	if err != nil {
+		assert.Error(err)
+	}
+
+	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: expected result is not same", function))
 
 }

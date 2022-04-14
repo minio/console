@@ -23,11 +23,15 @@ export const StatusCountCard = ({
   offlineCount = 0,
   icon = null,
   label = "",
+  okStatusText = "Online",
+  notOkStatusText = "Offline",
 }: {
   icon: any;
   onlineCount: number;
   offlineCount: number;
   label: string;
+  okStatusText?: string;
+  notOkStatusText?: string;
 }) => {
   return (
     <Box
@@ -115,7 +119,7 @@ export const StatusCountCard = ({
                   },
                 }}
               >
-                <CircleIcon /> <div className="stat-text">Online</div>
+                <CircleIcon /> <div className="stat-text">{okStatusText}</div>
               </Box>
             </Box>
 
@@ -130,7 +134,8 @@ export const StatusCountCard = ({
                   },
                 }}
               >
-                <CircleIcon /> <div className="stat-text">Offline</div>
+                <CircleIcon />{" "}
+                <div className="stat-text">{notOkStatusText}</div>
               </Box>
             </Box>
           </Box>

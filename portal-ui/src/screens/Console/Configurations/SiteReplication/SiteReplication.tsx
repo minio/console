@@ -30,6 +30,8 @@ import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import HelpBox from "../../../../common/HelpBox";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import history from "../../../../history";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -123,6 +125,17 @@ const SiteReplication = ({
                 icon={<TrashIcon />}
                 onClick={() => {
                   setIsDeleteAll(true);
+                }}
+              />
+              <RBIconButton
+                tooltip={"Replication Status"}
+                text={"Replication Status"}
+                variant="outlined"
+                color="primary"
+                icon={<RecoverIcon />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  history.push(IAM_PAGES.SITE_REPLICATION_STATUS);
                 }}
               />
             </Box>

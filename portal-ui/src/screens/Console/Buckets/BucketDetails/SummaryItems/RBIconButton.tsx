@@ -28,6 +28,7 @@ type DeleteButtonProps = {
   tooltip?: string;
   classes?: any;
   icon?: React.ReactNode;
+  showLabelAlways?:boolean;
   [x: string]: any;
 };
 
@@ -80,6 +81,7 @@ const RBIconButton = (props: RBIconProps) => {
     tooltip,
     icon = null,
     className = "",
+    showLabelAlways=false,
     ...restProps
   } = props;
 
@@ -98,7 +100,8 @@ const RBIconButton = (props: RBIconProps) => {
         "& span": {
           fontSize: 14,
           "@media (max-width: 900px)": {
-            display: "none",
+            display: showLabelAlways?"inline":"none",
+            marginRight:showLabelAlways?"7px":""
           },
         },
       }}

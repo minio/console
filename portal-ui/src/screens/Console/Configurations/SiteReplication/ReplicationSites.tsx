@@ -15,15 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
-import Collapse from "@mui/material/Collapse";
 import { Box, Button, DialogContentText, Tooltip } from "@mui/material";
-import {
-  MenuCollapsedIcon,
-  MenuExpandedIcon,
-} from "../../../../icons/SidebarMenus";
 import { ReplicationSite } from "./SiteReplication";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import TrashIcon from "../../../../icons/TrashIcon";
@@ -67,15 +61,9 @@ const ReplicationSites = ({
   onRefresh: () => void;
   classes: any;
 }) => {
-  const [expanded, setExpanded] = React.useState<string>("");
-
   const [deleteSiteKey, setIsDeleteSiteKey] = useState<string>("");
   const [editSite, setEditSite] = useState<any>(null);
   const [editEndPointName, setEditEndPointName] = useState<string>("");
-
-  const handleClick = (key: string) => {
-    setExpanded(key);
-  };
 
   const [isEditing, invokeSiteEditApi] = useApi(
     (res: any) => {
@@ -103,7 +91,6 @@ const ReplicationSites = ({
     });
   };
 
-  const hasExpand = false; //siteInfo.isCurrent to b
   let isValidEndPointUrl = false;
 
   try {
@@ -139,20 +126,11 @@ const ReplicationSites = ({
         </Box>
         {sites.map((siteInfo, index) => {
           const key = `${siteInfo.name}`;
-          const isExpanded = expanded === siteInfo.name;
 
-          const handleToggle = () => {
-            if (!isExpanded) {
-              handleClick(key);
-            } else {
-              handleClick("");
-            }
-          };
           return (
             <React.Fragment key={key}>
               <ListItemButton
                 disableRipple
-                className={isExpanded ? "expanded" : ""}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -274,89 +252,7 @@ const ReplicationSites = ({
                     }}
                   />
                 </Box>
-                {hasExpand ? (
-                  <Box
-                    sx={{
-                      height: "25px",
-                      width: "25px",
-                      background: "#FBFAFA",
-                      borderRadius: "2px",
-                      border: "1px solid #eaeaea",
-                      "&:hover": {
-                        background: "#fafafa",
-                      },
-                      display: {
-                        md: "block",
-                        xs: "none",
-                      },
-                      "& .collapse-icon": {
-                        fill: "#494949",
-                        "& g  rect": {
-                          fill: "#ffffff",
-                        },
-                      },
-                      "& .expand-icon": {
-                        fill: "#494949",
-                        "& rect": {
-                          fill: "#ffffff",
-                        },
-                      },
-                    }}
-                    onClick={handleToggle}
-                  >
-                    {isExpanded ? (
-                      <MenuCollapsedIcon className="collapse-icon" />
-                    ) : (
-                      <MenuExpandedIcon className="expand-icon" />
-                    )}
-                  </Box>
-                ) : (
-                  <Box
-                    sx={{
-                      height: "25px",
-                      width: "25px",
-                    }}
-                  />
-                )}
               </ListItemButton>
-              {isExpanded ? (
-                <Box
-                  key={`${siteInfo.name}`}
-                  sx={{
-                    border: "1px solid #f1f1f1",
-                    borderLeft: "0",
-                    borderRight: "0",
-                    borderTop: "0",
-                  }}
-                >
-                  <ListSubheader
-                    key={`${index}-drive-details`}
-                    component="div"
-                    sx={{ paddingLeft: "30px" }}
-                  >
-                    Replication status
-                  </ListSubheader>
-
-                  <Collapse
-                    in={isExpanded}
-                    timeout="auto"
-                    unmountOnExit
-                    sx={{
-                      width: "100%",
-                      flex: 1,
-                      display: "flex",
-                      padding: { md: "15px 30px", xs: "10px 10px" },
-                      "& .MuiCollapse-wrapperInner": {
-                        display: "flex",
-                        flexFlow: "column",
-                        gap: "15px",
-                      },
-                    }}
-                  >
-                    Status info
-                  </Collapse>
-                </Box>
-              ) : null}
 
               {deleteSiteKey === key ? (
                 <ConfirmDialog
