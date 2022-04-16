@@ -55,7 +55,7 @@ func changePassword(ctx context.Context, client MinioAdmin, session *models.Prin
 // getChangePasswordResponse will validate user knows what is the current password (avoid account hijacking), update user account password
 // and authenticate the user generating a new session token/cookie
 func getChangePasswordResponse(session *models.Principal, params accountApi.AccountChangePasswordParams) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// changePassword operations requires an AdminClient initialized with parent account credentials not
 	// STS credentials
@@ -64,7 +64,7 @@ func getChangePasswordResponse(session *models.Principal, params accountApi.Acco
 		STSSecretAccessKey: *params.Body.CurrentSecretKey,
 	})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// parentAccountClient will contain access and secret key credentials for the user
 	userClient := AdminClient{Client: parentAccountClient}
@@ -73,18 +73,18 @@ func getChangePasswordResponse(session *models.Principal, params accountApi.Acco
 
 	// currentSecretKey will compare currentSecretKey against the stored secret key inside the encrypted session
 	if err := changePassword(ctx, userClient, session, newSecretKey); err != nil {
-		return nil, prepareError(errChangePassword, nil, err)
+		return nil, ErrorWithContext(ctx, ErrChangePassword, nil, err)
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials
 	credentials, err := getConsoleCredentials(accessKey, newSecretKey)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, ErrorWithContext(ctx, ErrInvalidLogin, nil, err)
 	}
 	// authenticate user and generate new session token
 	sessionID, err := login(credentials, &auth.SessionFeatures{HideMenu: session.Hm})
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, ErrorWithContext(ctx, ErrInvalidLogin, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{

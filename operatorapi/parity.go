@@ -17,9 +17,10 @@
 package operatorapi
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/minio/console/restapi"
+	errors "github.com/minio/console/restapi"
 
 	"github.com/minio/console/pkg/utils"
 
@@ -50,14 +51,14 @@ func GetParityInfo(nodes int64, disksPerNode int64) (models.ParityResponse, erro
 }
 
 func getParityResponse(params operator_api.GetParityParams) (models.ParityResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	nodes := params.Nodes
 	disksPerNode := params.DisksPerNode
-
 	parityValues, err := GetParityInfo(nodes, disksPerNode)
 	if err != nil {
-		restapi.LogError("error getting parity info: %v", err)
-		return nil, prepareError(err)
+		errors.LogError("error getting parity info: %v", err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
-
 	return parityValues, nil
 }

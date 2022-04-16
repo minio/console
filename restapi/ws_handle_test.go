@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -50,7 +51,8 @@ func TestWSHandle(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
 	}
-	ctx := wsReadClientCtx(mockWSConn)
+	parentCtx := context.Background()
+	ctx := wsReadClientCtx(parentCtx, mockWSConn)
 
 	<-ctx.Done()
 	// closed ctx correctly
@@ -59,7 +61,7 @@ func TestWSHandle(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, errors.New("error")
 	}
-	ctx2 := wsReadClientCtx(mockWSConn)
+	ctx2 := wsReadClientCtx(parentCtx, mockWSConn)
 	<-ctx2.Done()
 	// closed ctx correctly
 
@@ -67,7 +69,7 @@ func TestWSHandle(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
 	}
-	ctx3 := wsReadClientCtx(mockWSConn)
+	ctx3 := wsReadClientCtx(parentCtx, mockWSConn)
 	<-ctx3.Done()
 	// closed ctx correctly
 }

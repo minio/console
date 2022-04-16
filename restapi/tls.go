@@ -23,7 +23,8 @@ import (
 	"time"
 )
 
-func prepareSTSClientTransport(insecure bool) *http.Transport {
+// PrepareSTSClientTransport :
+func PrepareSTSClientTransport(insecure bool) *http.Transport {
 	// This takes github.com/minio/madmin-go/transport.go as an example
 	//
 	// DefaultTransport - this default transport is similar to
@@ -56,7 +57,7 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 // PrepareConsoleHTTPClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
 // custom configurations include the use of CA certificates
 func PrepareConsoleHTTPClient(insecure bool) *http.Client {
-	transport := prepareSTSClientTransport(insecure)
+	transport := PrepareSTSClientTransport(insecure)
 	// Return http client with default configuration
 	c := &http.Client{
 		Transport: transport,

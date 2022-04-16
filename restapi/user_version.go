@@ -17,8 +17,11 @@
 package restapi
 
 import (
+	"context"
 	"net/http"
 	"time"
+
+	xhttp "github.com/minio/console/pkg/http"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -29,7 +32,7 @@ import (
 
 func registerVersionHandlers(api *operations.ConsoleAPI) {
 	api.SystemCheckMinIOVersionHandler = systemApi.CheckMinIOVersionHandlerFunc(func(params systemApi.CheckMinIOVersionParams) middleware.Responder {
-		versionResponse, err := getVersionResponse()
+		versionResponse, err := getVersionResponse(params)
 		if err != nil {
 			return systemApi.NewCheckMinIOVersionDefault(int(err.Code)).WithPayload(err)
 		}
@@ -38,13 +41,15 @@ func registerVersionHandlers(api *operations.ConsoleAPI) {
 }
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
-func getVersionResponse() (*models.CheckVersionResponse, *models.Error) {
-	ver, err := utils.GetLatestMinIOImage(&utils.HTTPClient{
+func getVersionResponse(params systemApi.CheckMinIOVersionParams) (*models.CheckVersionResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	ver, err := utils.GetLatestMinIOImage(&xhttp.Client{
 		Client: &http.Client{
 			Timeout: 15 * time.Second,
 		}})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return &models.CheckVersionResponse{
 		LatestVersion: *ver,

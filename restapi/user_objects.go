@@ -79,13 +79,13 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	// download object
 	api.ObjectDownloadObjectHandler = objectApi.DownloadObjectHandlerFunc(func(params objectApi.DownloadObjectParams, session *models.Principal) middleware.Responder {
 		isFolder := false
-
+		ctx := params.HTTPRequest.Context()
 		var prefix string
 		if params.Prefix != "" {
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				return objectApi.NewDownloadObjectDefault(int(400)).WithPayload(prepareError(err))
+				return objectApi.NewDownloadObjectDefault(400).WithPayload(ErrorWithContext(ctx, err))
 			}
 			prefix = string(decodedPrefix)
 		}
@@ -173,6 +173,8 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 
 // getListObjectsResponse returns a list of objects
 func getListObjectsResponse(session *models.Principal, params objectApi.ListObjectsParams) (*models.ListObjectsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	var prefix string
 	var recursive bool
 	var withVersions bool
@@ -181,7 +183,7 @@ func getListObjectsResponse(session *models.Principal, params objectApi.ListObje
 		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
@@ -196,19 +198,19 @@ func getListObjectsResponse(session *models.Principal, params objectApi.ListObje
 	}
 	// bucket request needed to proceed
 	if params.BucketName == "" {
-		return nil, prepareError(errBucketNameNotInRequest)
+		return nil, ErrorWithContext(ctx, ErrBucketNameNotInRequest)
 	}
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	objs, err := listBucketObjects(params.HTTPRequest.Context(), minioClient, params.BucketName, prefix, recursive, withVersions, withMetadata)
+	objs, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, recursive, withVersions, withMetadata)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	resp := &models.ListObjectsResponse{
@@ -254,7 +256,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
-					LogError("error getting legal hold status for %s : %v", lsObj.VersionID, err)
+					ErrorWithContext(ctx, fmt.Errorf("error getting legal hold status for %s : %v", lsObj.VersionID, err))
 				}
 			} else {
 				if legalHoldStatus != nil {
@@ -266,7 +268,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
-					LogError("error getting retention status for %s : %v", lsObj.VersionID, err)
+					ErrorWithContext(ctx, fmt.Errorf("error getting retention status for %s : %v", lsObj.VersionID, err))
 				}
 			} else {
 				if retention != nil && retUntilDate != nil {
@@ -277,7 +279,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			}
 			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
 			if err != nil {
-				LogError("error getting object tags for %s : %v", lsObj.VersionID, err)
+				ErrorWithContext(ctx, fmt.Errorf("error getting object tags for %s : %v", lsObj.VersionID, err))
 			} else {
 				obj.Tags = tags.ToMap()
 			}
@@ -367,18 +369,17 @@ func parseRange(s string, size int64) ([]httpRange, error) {
 }
 
 func getDownloadObjectResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx := context.Background()
-
+	ctx := params.HTTPRequest.Context()
 	var prefix string
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
@@ -391,7 +392,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 
 	resp, err := mClient.GetObject(ctx, params.BucketName, prefix, opts)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
@@ -414,17 +415,15 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		stat, err := resp.Stat()
 		if err != nil {
 			minErr := minio.ToErrorResponse(err)
-			// non-200 means we requested something wrong
 			rw.WriteHeader(minErr.StatusCode)
-
-			LogError("Failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error())
+			ErrorWithContext(ctx, fmt.Errorf("Failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error()))
 			return
 		}
 
 		// if we are getting a Range Request (video) handle that specially
 		ranges, err := parseRange(params.HTTPRequest.Header.Get("Range"), stat.Size)
 		if err != nil {
-			LogError("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err)
+			ErrorWithContext(ctx, fmt.Errorf("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err))
 			rw.WriteHeader(400)
 			return
 		}
@@ -454,7 +453,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 
 			_, err = resp.Seek(start, io.SeekStart)
 			if err != nil {
-				LogError("Unable to seek at offset %d: %v", start, err)
+				ErrorWithContext(ctx, fmt.Errorf("Unable to seek at offset %d: %v", start, err))
 				rw.WriteHeader(400)
 				return
 			}
@@ -468,21 +467,21 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		rw.Header().Set("Content-Length", fmt.Sprintf("%d", length))
 		_, err = io.Copy(rw, io.LimitReader(resp, length))
 		if err != nil {
-			LogError("Unable to write all data to client: %v", err)
+			ErrorWithContext(ctx, fmt.Errorf("Unable to write all data to client: %v", err))
 			return
 		}
 	}), nil
 }
 func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx := context.Background()
-
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	var prefix string
 	mClient, err := newMinioClient(session)
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
@@ -490,12 +489,12 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 	folders := strings.Split(prefix, "/")
 
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	minioClient := minioClient{client: mClient}
 	objects, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, true, false, false)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	w := new(bytes.Buffer)
 	zipw := zip.NewWriter(w)
@@ -507,11 +506,11 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		name := folder + objects[i].Name[len(prefix)-1:]
 		object, err := mClient.GetObject(ctx, params.BucketName, objects[i].Name, minio.GetObjectOptions{})
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		f, err := zipw.Create(name)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(object)
@@ -530,7 +529,7 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				LogError("Unable to parse encoded prefix %s: %v", encodedPrefix, err)
+				ErrorWithContext(ctx, fmt.Errorf("Unable to parse encoded prefix %s: %v", encodedPrefix, err))
 				return
 			}
 
@@ -552,27 +551,27 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		// Copy the stream
 		_, err := io.Copy(rw, resp)
 		if err != nil {
-			LogError("Unable to write all the requested data: %v", err)
+			ErrorWithContext(ctx, fmt.Errorf("Unable to write all the requested data: %v", err))
 		}
 	}), nil
 }
 
-// getDeleteObjectResponse returns whether there was an error on deletion of object
+// getDeleteObjectResponse returns whether there was an errors on deletion of object
 func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteObjectParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var prefix string
 	if params.Path != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Path)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
@@ -596,19 +595,19 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 
 	if allVersions && nonCurrentVersions {
 		err := errors.New("cannot set delete all versions and delete non-current versions flags at the same time")
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 
 	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec, allVersions, nonCurrentVersions)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-// getDeleteMultiplePathsResponse returns whether there was an error on deletion of any object
+// getDeleteMultiplePathsResponse returns whether there was an errors on deletion of any object
 func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.DeleteMultipleObjectsParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var version string
 	var allVersions bool
@@ -622,14 +621,14 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.
 		prefix := params.Files[i].Path
 		s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		mcClient := mcClient{client: s3Client}
 		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions, false)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 	}
 	return nil
@@ -680,7 +679,7 @@ OUTER_LOOP:
 			switch content.Err.ToGoError().(type) {
 			// ignore same as mc
 			case mc.PathInsufficientPermission:
-				// Ignore Permission error.
+				// Ignore Permission errors.
 				continue
 			}
 			close(contentCh)
@@ -696,7 +695,7 @@ OUTER_LOOP:
 					switch result.Err.ToGoError().(type) {
 					// ignore same as mc
 					case mc.PathInsufficientPermission:
-						// Ignore Permission error.
+						// Ignore Permission errors.
 						continue
 					}
 					close(contentCh)
@@ -712,7 +711,7 @@ OUTER_LOOP:
 			switch result.Err.ToGoError().(type) {
 			// ignore same as mc
 			case mc.PathInsufficientPermission:
-				// Ignore Permission error.
+				// Ignore Permission errors.
 				continue
 			}
 			return result.Err.Cause
@@ -738,7 +737,7 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 			switch result.Err.ToGoError().(type) {
 			// ignore same as mc
 			case mc.PathInsufficientPermission:
-				// Ignore Permission error.
+				// Ignore Permission errors.
 				continue
 			}
 			return result.Err.Cause
@@ -767,17 +766,16 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path
 }
 
 func getUploadObjectResponse(session *models.Principal, params objectApi.PostBucketsBucketNameObjectsUploadParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := uploadFiles(ctx, minioClient, params); err != nil {
-		return prepareError(err, ErrorGeneric)
+		return ErrorWithContext(ctx, err, ErrDefault)
 	}
 	return nil
 }
@@ -832,20 +830,19 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 
 // getShareObjectResponse returns a share object url
 func getShareObjectResponse(session *models.Principal, params objectApi.ShareObjectParams) (*string, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	var prefix string
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
@@ -856,7 +853,7 @@ func getShareObjectResponse(session *models.Principal, params objectApi.ShareObj
 	}
 	url, err := getShareObjectURL(ctx, mcClient, params.VersionID, expireDuration)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return url, nil
 }
@@ -879,11 +876,10 @@ func getShareObjectURL(ctx context.Context, client MCClient, versionID string, d
 }
 
 func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.PutObjectLegalHoldParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -893,13 +889,13 @@ func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.P
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 	err = setObjectLegalHold(ctx, minioClient, params.BucketName, prefix, params.VersionID, *params.Body.Status)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -915,11 +911,10 @@ func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, pre
 }
 
 func getSetObjectRetentionResponse(session *models.Principal, params objectApi.PutObjectRetentionParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -929,13 +924,13 @@ func getSetObjectRetentionResponse(session *models.Principal, params objectApi.P
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 	err = setObjectRetention(ctx, minioClient, params.BucketName, params.VersionID, prefix, params.Body)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -968,11 +963,10 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, ver
 }
 
 func deleteObjectRetentionResponse(session *models.Principal, params objectApi.DeleteObjectRetentionParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -982,13 +976,13 @@ func deleteObjectRetentionResponse(session *models.Principal, params objectApi.D
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 	err = deleteObjectRetention(ctx, minioClient, params.BucketName, prefix, params.VersionID)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -1003,11 +997,10 @@ func deleteObjectRetention(ctx context.Context, client MinioClient, bucketName, 
 }
 
 func getPutObjectTagsResponse(session *models.Principal, params objectApi.PutObjectTagsParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -1017,13 +1010,13 @@ func getPutObjectTagsResponse(session *models.Principal, params objectApi.PutObj
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 	err = putObjectTags(ctx, minioClient, params.BucketName, prefix, params.VersionID, params.Body.Tags)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -1041,11 +1034,10 @@ func putObjectTags(ctx context.Context, client MinioClient, bucketName, prefix, 
 
 // Restore Object Version
 func getPutObjectRestoreResponse(session *models.Principal, params objectApi.PutObjectRestoreParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -1056,14 +1048,14 @@ func getPutObjectRestoreResponse(session *models.Principal, params objectApi.Put
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return prepareError(err)
+			return ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
 
 	err = restoreObject(ctx, minioClient, params.BucketName, prefix, params.VersionID)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -1098,11 +1090,10 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 
 // Metadata Response from minio-go API
 func getObjectMetadataResponse(session *models.Principal, params objectApi.GetObjectMetadataParams) (*models.Metadata, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -1113,7 +1104,7 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
@@ -1121,7 +1112,7 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 	objectInfo, err := getObjectInfo(ctx, minioClient, params.BucketName, prefix)
 
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	metadata := &models.Metadata{ObjectMetadata: objectInfo.Metadata}

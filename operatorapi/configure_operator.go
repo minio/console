@@ -23,7 +23,6 @@ import (
 	"strings"
 
 	"github.com/klauspost/compress/gzhttp"
-
 	"github.com/minio/console/restapi"
 	"github.com/unrolled/secure"
 
@@ -58,7 +57,7 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt
 		// was generated and signed by us in the first place
-		claims, err := auth.SessionTokenAuthenticate(token)
+		claims, err := auth.ParseClaimsFromToken(token)
 		if err != nil {
 			api.Logger("Unable to validate the session token %s: %v", token, err)
 			return nil, errors.New(401, "incorrect api key auth")
@@ -101,8 +100,8 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	tlsConfig.RootCAs = GlobalRootCAs
-	tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
+	tlsConfig.RootCAs = restapi.GlobalRootCAs
+	tlsConfig.GetCertificate = restapi.GlobalTLSCertsManager.GetCertificate
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
@@ -116,24 +115,6 @@ func configureServer(s *http.Server, scheme, addr string) {
 // The middleware executes after routing but before authentication, binding and validation.
 func setupMiddlewares(handler http.Handler) http.Handler {
 	return handler
-}
-
-func AuthenticationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token, err := auth.GetTokenFromRequest(r)
-		if err != nil && err != auth.ErrNoAuthToken {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-		// All handlers handle appropriately to return errors
-		// based on their swagger rules, we do not need to
-		// additionally return error here, let the next ServeHTTPs
-		// handle it appropriately.
-		if token != "" {
-			r.Header.Add("Authorization", "Bearer "+token)
-		}
-		next.ServeHTTP(w, r)
-	})
 }
 
 // proxyMiddleware adds the proxy capability
@@ -150,19 +131,23 @@ func proxyMiddleware(next http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	// handle cookie or authorization header for session
-	next := AuthenticationMiddleware(handler)
 	// proxy requests
-	next = proxyMiddleware(next)
+	next := proxyMiddleware(handler)
+	// if audit-log is enabled console will log all incoming request
+	next = restapi.AuditLogMiddleware(next)
 	// serve static files
 	next = restapi.FileServerMiddleware(next)
+	// add information to request context
+	next = restapi.ContextMiddleware(next)
+	// handle cookie or authorization header for session
+	next = restapi.AuthenticationMiddleware(next)
 	// Secure middleware, this middleware wrap all the previous handlers and add
 	// HTTP security headers
 	secureOptions := secure.Options{
 		AllowedHosts:                    restapi.GetSecureAllowedHosts(),
 		AllowedHostsAreRegex:            restapi.GetSecureAllowedHostsAreRegex(),
 		HostsProxyHeaders:               restapi.GetSecureHostsProxyHeaders(),
-		SSLRedirect:                     restapi.GetTLSRedirect() == "on" && len(GlobalPublicCerts) > 0,
+		SSLRedirect:                     restapi.GetTLSRedirect() == "on" && len(restapi.GlobalPublicCerts) > 0,
 		SSLHost:                         restapi.GetSecureTLSHost(),
 		STSSeconds:                      restapi.GetSecureSTSSeconds(),
 		STSIncludeSubdomains:            restapi.GetSecureSTSIncludeSubdomains(),

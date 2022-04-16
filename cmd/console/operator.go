@@ -2,7 +2,7 @@
 // +build operator
 
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -20,12 +20,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/minio/console/pkg/logger"
 
 	"github.com/minio/console/restapi"
 
@@ -106,7 +109,7 @@ func buildOperatorServer() (*operatorapi.Server, error) {
 	}
 
 	api := operations.NewOperatorAPI(swaggerSpec)
-	api.Logger = operatorapi.LogInfo
+	api.Logger = restapi.LogInfo
 	server := operatorapi.NewServer(api)
 
 	parser := flags.NewParser(server, flags.Default)
@@ -147,7 +150,7 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 	}
 
 	// load the certificates and the CAs
-	operatorapi.GlobalRootCAs, operatorapi.GlobalPublicCerts, operatorapi.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
+	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
 	if err != nil {
 		return fmt.Errorf("unable to load certificates at %s: failed with %w", certs.GlobalCertsDir.Get(), err)
 	}
@@ -159,12 +162,12 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 		swaggerServerCACertificate := ctx.String("tls-ca")
 		// load tls cert and key from swagger server tls-certificate and tls-key flags
 		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-			if err = operatorapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
+			if err = restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
 				return err
 			}
 			x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate)
 			if err == nil {
-				operatorapi.GlobalPublicCerts = append(operatorapi.GlobalPublicCerts, x509Certs...)
+				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs...)
 			}
 		}
 
@@ -172,7 +175,7 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 		if swaggerServerCACertificate != "" {
 			caCert, caCertErr := ioutil.ReadFile(swaggerServerCACertificate)
 			if caCertErr == nil {
-				operatorapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
+				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}
 		}
 	}
@@ -186,20 +189,32 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 
 // StartServer starts the console service
 func startOperatorServer(ctx *cli.Context) error {
-	if err := loadOperatorAllCerts(ctx); err != nil {
+
+	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates
-		operatorapi.LogError("Unable to load certs: %v", err)
+		restapi.LogError("Unable to load certs: %v", err)
 	}
+
+	xctx := context.Background()
+	transport := restapi.PrepareSTSClientTransport(false)
+	if err := logger.InitializeLogger(xctx, transport); err != nil {
+		fmt.Println("error InitializeLogger", err)
+		logger.CriticalIf(xctx, err)
+	}
+	// custom error configuration
+	restapi.LogInfo = logger.Info
+	restapi.LogError = logger.Error
+	restapi.LogIf = logger.LogIf
 
 	var rctx operatorapi.Context
 	if err := rctx.Load(ctx); err != nil {
-		operatorapi.LogError("argument validation failed: %v", err)
+		restapi.LogError("argument validation failed: %v", err)
 		return err
 	}
 
 	server, err := buildOperatorServer()
 	if err != nil {
-		operatorapi.LogError("Unable to initialize console server: %v", err)
+		restapi.LogError("Unable to initialize console server: %v", err)
 		return err
 	}
 
@@ -212,7 +227,7 @@ func startOperatorServer(ctx *cli.Context) error {
 	operatorapi.Port = strconv.Itoa(server.Port)
 	operatorapi.Hostname = server.Host
 
-	if len(operatorapi.GlobalPublicCerts) > 0 {
+	if len(restapi.GlobalPublicCerts) > 0 {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
 		// plain HTTP connections to HTTPS server
 		server.EnabledListeners = []string{"http", "https"}

@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+
+	"github.com/minio/console/pkg/http"
 )
 
 var (
@@ -28,7 +30,7 @@ var (
 )
 
 // getLatestMinIOImage returns the latest docker image for MinIO if found on the internet
-func GetLatestMinIOImage(client HTTPClientI) (*string, error) {
+func GetLatestMinIOImage(client http.ClientI) (*string, error) {
 	resp, err := client.Get("https://dl.min.io/server/minio/release/linux-amd64/")
 	if err != nil {
 		return nil, err

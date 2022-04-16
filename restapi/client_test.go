@@ -79,7 +79,7 @@ func Test_computeObjectURLWithoutEncode(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := computeObjectURLWithoutEncode(tt.args.bucketName, tt.args.prefix)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("computeObjectURLWithoutEncode() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("computeObjectURLWithoutEncode() errors = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {

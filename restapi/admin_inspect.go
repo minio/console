@@ -49,11 +49,11 @@ func registerInspectHandler(api *operations.ConsoleAPI) {
 }
 
 func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) (*[32]byte, io.ReadCloser, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, nil, prepareError(err)
+		return nil, nil, ErrorWithContext(ctx, err)
 	}
 
 	var cfg madmin.InspectOptions
@@ -67,7 +67,7 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 	k, r, err := adminClient.inspect(ctx, cfg)
 
 	if err != nil {
-		return nil, nil, prepareError(err)
+		return nil, nil, ErrorWithContext(ctx, err)
 	}
 	return &k, r, nil
 }

@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"errors"
+	"net/http"
 	"testing"
 
 	"github.com/minio/console/models"
@@ -36,6 +37,7 @@ func Test_getChangePasswordResponse(t *testing.T) {
 	CurrentSecretKey := "string"
 	NewSecretKey := "string"
 	changePasswordParameters := accountApi.AccountChangePasswordParams{
+		HTTPRequest: &http.Request{},
 		Body: &models.AccountChangePasswordRequest{
 			CurrentSecretKey: &CurrentSecretKey,
 			NewSecretKey:     &NewSecretKey,

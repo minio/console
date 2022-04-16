@@ -27,6 +27,8 @@ import (
 	"strconv"
 	"time"
 
+	xerrors "github.com/minio/console/restapi"
+
 	"github.com/minio/console/operatorapi/operations/operator_api"
 
 	"errors"
@@ -108,25 +110,25 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 
 // getTenantUpdateCertificatesResponse wrapper of tenantUpdateCertificates
 func getTenantUpdateCertificatesResponse(session *models.Principal, params operator_api.TenantUpdateCertificateParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err, errorUnableToUpdateTenantCertificates)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrUnableToUpdateTenantCertificates)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err, errorUnableToUpdateTenantCertificates)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrUnableToUpdateTenantCertificates)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantUpdateCertificates(ctx, &opClient, &k8sClient, params.Namespace, params); err != nil {
-		return prepareError(err, errorUnableToUpdateTenantCertificates)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrUnableToUpdateTenantCertificates)
 	}
 	return nil
 }
@@ -239,42 +241,42 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 
 // getTenantDeleteEncryptionResponse is a wrapper for tenantDeleteEncryption
 func getTenantDeleteEncryptionResponse(session *models.Principal, params operator_api.TenantDeleteEncryptionParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err, errorDeletingEncryptionConfig)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrDeletingEncryptionConfig)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantDeleteEncryption(ctx, &opClient, params.Namespace, params); err != nil {
-		return prepareError(err, errorDeletingEncryptionConfig)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrDeletingEncryptionConfig)
 	}
 	return nil
 }
 
 // getTenantUpdateEncryptionResponse is a wrapper for tenantUpdateEncryption
 func getTenantUpdateEncryptionResponse(session *models.Principal, params operator_api.TenantUpdateEncryptionParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err, errorUpdatingEncryptionConfig)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrUpdatingEncryptionConfig)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err, errorUpdatingEncryptionConfig)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrUpdatingEncryptionConfig)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantUpdateEncryption(ctx, &opClient, &k8sClient, params.Namespace, params); err != nil {
-		return prepareError(err, errorUpdatingEncryptionConfig)
+		return xerrors.ErrorWithContext(ctx, err, xerrors.ErrUpdatingEncryptionConfig)
 	}
 	return nil
 }
@@ -453,26 +455,26 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 
 // getTenantEncryptionResponse is a wrapper for tenantEncryptionInfo
 func getTenantEncryptionInfoResponse(session *models.Principal, params operator_api.TenantEncryptionInfoParams) (*models.EncryptionConfigurationResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err, errorEncryptionConfigNotFound)
+		return nil, xerrors.ErrorWithContext(ctx, err, xerrors.ErrEncryptionConfigNotFound)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err, errorEncryptionConfigNotFound)
+		return nil, xerrors.ErrorWithContext(ctx, err, xerrors.ErrEncryptionConfigNotFound)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	configuration, err := tenantEncryptionInfo(ctx, &opClient, &k8sClient, params.Namespace, params)
 	if err != nil {
-		return nil, prepareError(err, errorEncryptionConfigNotFound)
+		return nil, xerrors.ErrorWithContext(ctx, err, xerrors.ErrEncryptionConfigNotFound)
 	}
 	return configuration, nil
 }
@@ -541,8 +543,8 @@ func createOrReplaceSecrets(ctx context.Context, clientSet K8sClientI, ns string
 			// delete secret with same name if exists
 			err := clientSet.deleteSecret(ctx, ns, secret.Name, metav1.DeleteOptions{})
 			if err != nil {
-				// log the error if any and continue
-				LogError("deleting secret name %s failed: %v, continuing..", secret.Name, err)
+				// log the errors if any and continue
+				xerrors.LogError("deleting secret name %s failed: %v, continuing..", secret.Name, err)
 			}
 			k8sSecret := &corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
@@ -579,8 +581,8 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 		// delete secret with same name if exists
 		err := clientSet.deleteSecret(ctx, ns, keyPairSecretName, metav1.DeleteOptions{})
 		if err != nil {
-			// log the error if any and continue
-			LogError("deleting secret name %s failed: %v, continuing..", keyPairSecretName, err)
+			// log the errors if any and continue
+			xerrors.LogError("deleting secret name %s failed: %v, continuing..", keyPairSecretName, err)
 		}
 		imm := true
 		tlsCrt, err := base64.StdEncoding.DecodeString(*keyPair.Crt)
@@ -625,13 +627,13 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, kesConfigurationSecretName, kesClientCertSecretName, tenantName string) (*corev1.LocalObjectReference, *miniov2.LocalCertificateReference, error) {
 	// delete KES configuration secret if exists
 	if err := clientSet.deleteSecret(ctx, ns, kesConfigurationSecretName, metav1.DeleteOptions{}); err != nil {
-		// log the error if any and continue
-		LogError("deleting secret name %s failed: %v, continuing..", kesConfigurationSecretName, err)
+		// log the errors if any and continue
+		xerrors.LogError("deleting secret name %s failed: %v, continuing..", kesConfigurationSecretName, err)
 	}
 	// delete KES client cert secret if exists
 	if err := clientSet.deleteSecret(ctx, ns, kesClientCertSecretName, metav1.DeleteOptions{}); err != nil {
-		// log the error if any and continue
-		LogError("deleting secret name %s failed: %v, continuing..", kesClientCertSecretName, err)
+		// log the errors if any and continue
+		xerrors.LogError("deleting secret name %s failed: %v, continuing..", kesClientCertSecretName, err)
 	}
 	// if autoCert is enabled then Operator will generate the client certificates, calculate the client cert identity
 	// and pass it to KES via the ${MINIO_KES_IDENTITY} variable

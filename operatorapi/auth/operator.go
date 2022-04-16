@@ -18,14 +18,13 @@ package auth
 
 import (
 	"context"
-	"errors"
+
+	errors "github.com/minio/console/restapi"
 
 	"github.com/minio/console/cluster"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 )
-
-var errInvalidCredentials = errors.New("invalid Login")
 
 // operatorCredentialsProvider is an struct to hold the JWT (service account token)
 type operatorCredentialsProvider struct {
@@ -86,7 +85,7 @@ func GetConsoleCredentialsForOperator(jwt string) (*credentials.Credentials, err
 		client: opClientClientSet,
 	}
 	if err = checkServiceAccountTokenValid(ctx, opClient); err != nil {
-		return nil, errInvalidCredentials
+		return nil, errors.ErrInvalidLogin
 	}
 	return credentials.New(operatorCredentialsProvider{serviceAccountJWT: jwt}), nil
 }
