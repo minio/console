@@ -46,7 +46,7 @@ const Routes = () => {
           children={(routerProps) => (
             <div
               style={{
-                backgroundImage: `url('/images/background-wave-orig2.svg'), url('/images/background.svg')`,
+                backgroundImage: `url('images/background-wave-orig2.svg'), url('images/background.svg')`,
                 backgroundPosition: "center 250px, center center",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "2547px 980px,cover",
