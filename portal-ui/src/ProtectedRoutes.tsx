@@ -72,7 +72,7 @@ const ProtectedRoute = ({
     return null;
   }
   // redirect user to the right page based on session status
-  return loggedIn ? <Component /> : <Redirect to={{ pathname: "/login" }} />;
+  return loggedIn ? <Component /> : <Redirect to={{ pathname: "login" }} />;
 };
 
 const mapState = (state: AppState) => ({

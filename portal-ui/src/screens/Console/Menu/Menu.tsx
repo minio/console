@@ -107,7 +107,7 @@ const Menu = ({
       userLoggedIn(false);
       localStorage.setItem("userLoggedIn", "");
       resetSession();
-      history.push("/login");
+      history.push("login");
     };
     api
       .invoke("POST", `/api/v1/logout`)

@@ -29,6 +29,9 @@ import (
 	"net/http/cookiejar"
 	url2 "net/url"
 	"strings"
+	"time"
+
+	"github.com/gorilla/websocket"
 
 	v2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 
@@ -181,11 +184,15 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		}
 		defer loginResp.Body.Close()
 	}
+
 	if tenantCookie == nil {
 		log.Println(errors.New("couldn't login to tenant and get cookie"))
-		responseWriter.WriteHeader(500)
+		responseWriter.WriteHeader(403)
 		return
 	}
+	// at this point we have a valid cookie ready to either route HTTP or WS
+	// now we need to know if we are doing an  /api/ call (http) or /ws/ call (ws)
+	callType := urlParts[5]
 
 	targetURL, err := url2.Parse(tenantURL)
 	if err != nil {
@@ -206,7 +213,16 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 
 	proxyCookieJar, _ := cookiejar.New(nil)
 	proxyCookieJar.SetCookies(targetURL, []*http.Cookie{proxiedCookie})
+	switch callType {
+	case "ws":
+		handleWSRequest(responseWriter, req, proxyCookieJar, targetURL, tenantSchema)
+	default:
+		handleHTTPRequest(responseWriter, req, proxyCookieJar, tenantBase, targetURL)
+	}
 
+}
+
+func handleHTTPRequest(responseWriter http.ResponseWriter, req *http.Request, proxyCookieJar *cookiejar.Jar, tenantBase string, targetURL *url2.URL) {
 	tr := &http.Transport{
 		// FIXME: use restapi.GetConsoleHTTPClient()
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -259,5 +275,75 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 	responseWriter.WriteHeader(resp.StatusCode)
 
 	io.Copy(responseWriter, resp.Body)
+}
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  0,
+	WriteBufferSize: 1024,
+}
+
+func handleWSRequest(responseWriter http.ResponseWriter, req *http.Request, proxyCookieJar *cookiejar.Jar, targetURL *url2.URL, schema string) {
+	dialer := &websocket.Dialer{
+		Proxy:            http.ProxyFromEnvironment,
+		HandshakeTimeout: 45 * time.Second,
+		Jar:              proxyCookieJar,
+	}
+
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+
+	c, err := upgrader.Upgrade(responseWriter, req, nil)
+	if err != nil {
+		log.Print("error upgrade connection:", err)
+		return
+	}
+	defer c.Close()
+	if schema == "http" {
+		targetURL.Scheme = "ws"
+	} else {
+		targetURL.Scheme = "wss"
+	}
+
+	// establish a websocket to the tenant
+	tenantConn, _, err := dialer.Dial(targetURL.String(), nil)
+	if err != nil {
+		log.Println("dial:", err)
+		return
+	}
+	defer tenantConn.Close()
+
+	doneTenant := make(chan struct{})
+	done := make(chan struct{})
+
+	// start read pump from tenant connection
+	go func() {
+		defer close(doneTenant)
+		for {
+			msgType, message, err := tenantConn.ReadMessage()
+			if err != nil {
+				log.Println("error read from tenant:", err)
+				return
+			}
+			c.WriteMessage(msgType, message)
+		}
+	}()
+
+	// start read pump from tenant connection
+	go func() {
+		defer close(done)
+		for {
+			msgType, message, err := c.ReadMessage()
+			if err != nil {
+				log.Println("error read from client:", err)
+				return
+			}
+			tenantConn.WriteMessage(msgType, message)
+		}
+	}()
+
+	select {
+	case <-done:
+	case <-doneTenant:
+	}
 }
