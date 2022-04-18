@@ -188,9 +188,13 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
       const isDev = process.env.NODE_ENV === "development";
       const port = isDev ? "9090" : url.port;
 
+      // check if we are using base path, if not this always is `/`
+      const baseLocation = new URL(document.baseURI);
+      const baseUrl = baseLocation.pathname;
+
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}/ws/heal/${bucketName}?prefix=${prefix}&recursive=${recursive}&force-start=${forceStart}&force-stop=${forceStop}`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/heal/${bucketName}?prefix=${prefix}&recursive=${recursive}&force-start=${forceStart}&force-stop=${forceStop}`
       );
 
       if (c !== null) {

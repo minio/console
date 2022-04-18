@@ -166,12 +166,15 @@ const Trace = ({
     if (all) {
       calls = "all";
     }
+    // check if we are using base path, if not this always is `/`
+    const baseLocation = new URL(document.baseURI);
+    const baseUrl = baseLocation.pathname;
 
     const wsProt = wsProtocol(url.protocol);
     c = new W3CWebSocket(
       `${wsProt}://${
         url.hostname
-      }:${port}/ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
+      }:${port}${baseUrl}ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
         errors ? "yes" : "no"
       }&statusCode=${statusCode}&method=${method}&funcname=${func}&path=${path}`
     );
