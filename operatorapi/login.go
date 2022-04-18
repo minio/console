@@ -98,7 +98,7 @@ func getLoginDetailsResponse(r *http.Request) (*models.LoginDetails, *models.Err
 	redirectURL := ""
 
 	if oauth2.IsIDPEnabled() {
-		loginStrategy = models.LoginDetailsLoginStrategyRedirect
+		loginStrategy = models.LoginDetailsLoginStrategyRedirectDashServiceDashAccount
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, restapi.GetConsoleHTTPClient())
 		if err != nil {
