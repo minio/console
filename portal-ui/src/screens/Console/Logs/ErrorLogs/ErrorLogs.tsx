@@ -158,11 +158,14 @@ const ErrorLogs = ({
     const port = isDev ? "9090" : url.port;
 
     const wsProt = wsProtocol(url.protocol);
+    // check if we are using base path, if not this always is `/`
+    const baseLocation = new URL(document.baseURI);
+    const baseUrl = baseLocation.pathname;
 
     c = new W3CWebSocket(
       `${wsProt}://${
         url.hostname
-      }:${port}/ws/console/?logType=${logType}&node=${
+      }:${port}${baseUrl}ws/console/?logType=${logType}&node=${
         selectedNode === "Select node" ? "" : selectedNode
       }`
     );

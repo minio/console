@@ -175,7 +175,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
             </Typography>
             <Button
               component={"a"}
-              href="/login"
+              href="login"
               type="submit"
               variant="contained"
               color="primary"
