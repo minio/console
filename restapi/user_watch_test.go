@@ -289,4 +289,12 @@ func TestWatch(t *testing.T) {
 		assert.Equal(expectedOptions.Suffix, opts.Suffix)
 		assert.Equal(expectedOptions.Events, opts.Events)
 	}
+
+	// Test-9: getWatchOptionsFromReq invalid url
+	u, err = url.Parse("http://localhost/api/v1/wach/bucket2?prefix=&suffix=")
+	req = &http.Request{
+		URL: u,
+	}
+	opts, err = getWatchOptionsFromReq(req)
+	assert.Error(err)
 }
