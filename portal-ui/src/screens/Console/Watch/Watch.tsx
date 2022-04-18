@@ -128,9 +128,13 @@ const Watch = ({
       const isDev = process.env.NODE_ENV === "development";
       const port = isDev ? "9090" : url.port;
 
+      // check if we are using base path, if not this always is `/`
+      const baseLocation = new URL(document.baseURI);
+      const baseUrl = baseLocation.pathname;
+
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}/ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`
       );
 
       let interval: any | null = null;

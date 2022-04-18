@@ -173,8 +173,12 @@ const HealthInfo = ({
 
       const wsProt = wsProtocol(url.protocol);
 
+      // check if we are using base path, if not this always is `/`
+      const baseLocation = new URL(document.baseURI);
+      const baseUrl = baseLocation.pathname;
+
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}/ws/health-info?deadline=1h`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/health-info?deadline=1h`
       );
 
       let interval: any | null = null;
