@@ -282,9 +282,8 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
               text={"Create User"}
               icon={<AddIcon />}
               color="primary"
-              onClick={() => {
-                setAddScreenOpen(true);
-                setSelectedUser(null);
+              onClick={(e) => {
+               history.push(`${IAM_PAGES.USER_ADD}`);
               }}
               variant={"contained"}
             />

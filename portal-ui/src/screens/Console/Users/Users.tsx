@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Suspense } from "react";
 import history from "../../../history";
 import { Route, Router, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
@@ -25,6 +25,8 @@ import NotFoundPage from "../../NotFoundPage";
 import ListUsers from "./ListUsers";
 import UserDetails from "./UserDetails";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import AddUserScreen from "./AddUserScreen";
+import LoadingComponent from "../../../common/LoadingComponent";
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -38,6 +40,7 @@ const Users = () => {
       <Switch>
         <Route path={IAM_PAGES.USERS_VIEW} component={UserDetails} />
         <Route path={IAM_PAGES.USERS} component={ListUsers} />
+        <Route path={IAM_PAGES.USER_ADD} component={AddUserScreen} />       
         <Route component={NotFoundPage} />
       </Switch>
     </Router>
