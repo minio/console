@@ -50,6 +50,11 @@ export interface IVolumeConfiguration {
   labels?: any;
 }
 
+export interface IDomainsRequest {
+  console?: string;
+  minio?: string[];
+}
+
 export interface ITenantCreator {
   name: string;
   service_name: string;
@@ -74,6 +79,7 @@ export interface ITenantCreator {
   logSearchConfiguration?: LogSearchConfiguration;
   prometheusConfiguration?: PrometheusConfiguration;
   affinity?: AffinityConfiguration;
+  domains?: IDomainsRequest;
 }
 
 export interface ImageRegistry {

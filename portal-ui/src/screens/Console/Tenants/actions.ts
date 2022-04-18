@@ -69,7 +69,7 @@ import {
   EDIT_POOL_SET_TOLERATION_VALUE,
   EDIT_POOL_ADD_NEW_TOLERATION,
   EDIT_POOL_REMOVE_TOLERATION_ROW,
-  EDIT_POOL_SET_KEY_PAIR_VALUE,
+  EDIT_POOL_SET_KEY_PAIR_VALUE, ADD_TENANT_ADD_MINIO_DOMAIN, ADD_TENANT_DELETE_MINIO_DOMAIN,
 } from "./types";
 import { ITolerationModel } from "../../../common/types";
 
@@ -336,6 +336,19 @@ export const removeToleration = (index: number) => {
   return {
     type: ADD_TENANT_REMOVE_TOLERATION_ROW,
     index,
+  };
+};
+
+export const addNewMinIODomain = () => {
+  return {
+    type: ADD_TENANT_ADD_MINIO_DOMAIN,
+  };
+};
+
+export const removeMinIODomain = (index: number) => {
+  return {
+    type: ADD_TENANT_DELETE_MINIO_DOMAIN,
+    removeID: index,
   };
 };
 

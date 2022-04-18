@@ -31,10 +31,12 @@ import {
   ADD_TENANT_ADD_FILE_TO_CA_KEYPAIR,
   ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
   ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR,
+  ADD_TENANT_ADD_MINIO_DOMAIN,
   ADD_TENANT_ADD_MINIO_KEYPAIR,
   ADD_TENANT_ADD_NEW_TOLERATION,
   ADD_TENANT_DELETE_CA_KEYPAIR,
   ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_DELETE_MINIO_DOMAIN,
   ADD_TENANT_DELETE_MINIO_KEYPAIR,
   ADD_TENANT_ENCRYPTION_CLIENT_CERT,
   ADD_TENANT_ENCRYPTION_GEMALTO_CA,
@@ -128,6 +130,9 @@ const initialState: ITenantState = {
         prometheusImage: "",
         prometheusSidecarImage: "",
         prometheusInitImage: "",
+        setDomains: false,
+        consoleDomain: "",
+        minioDomains: [""],
         tenantSecurityContext: {
           runAsUser: "1000",
           runAsGroup: "1000",
@@ -767,6 +772,9 @@ export function tenantsReducer(
               prometheusImage: "",
               prometheusSidecarImage: "",
               prometheusInitImage: "",
+              setDomains: false,
+              consoleDomain: "",
+              minioDomains: [""],
               tenantSecurityContext: {
                 runAsUser: "1000",
                 runAsGroup: "1000",
@@ -1108,6 +1116,44 @@ export function tenantsReducer(
           tolerations: [...cleanTolerationArray],
         },
       };
+    case ADD_TENANT_ADD_MINIO_DOMAIN:
+      const newDomainsList = [
+        ...state.createTenant.fields.configure.minioDomains,
+      ];
+      newDomainsList.push("");
+      return {
+        ...state,
+        createTenant: {
+          ...state.createTenant,
+          fields: {
+            ...state.createTenant.fields,
+            configure: {
+              ...state.createTenant.fields.configure,
+              minioDomains: newDomainsList,
+            },
+          },
+        },
+      };
+    case ADD_TENANT_DELETE_MINIO_DOMAIN:
+      const filteredDomains =
+        state.createTenant.fields.configure.minioDomains.filter(
+          (_, index) => index !== action.removeID
+        );
+
+      return {
+        ...state,
+        createTenant: {
+          ...state.createTenant,
+          fields: {
+            ...state.createTenant.fields,
+            configure: {
+              ...state.createTenant.fields.configure,
+              minioDomains: filteredDomains,
+            },
+          },
+        },
+      };
+
     case ADD_POOL_SET_LOADING:
       return {
         ...state,
