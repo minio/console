@@ -216,8 +216,6 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 	switch callType {
 	case "ws":
 		handleWSRequest(responseWriter, req, proxyCookieJar, targetURL, tenantSchema)
-	case "api":
-		handleHTTPRequest(responseWriter, req, proxyCookieJar, tenantBase, targetURL)
 	default:
 		handleHTTPRequest(responseWriter, req, proxyCookieJar, tenantBase, targetURL)
 	}
