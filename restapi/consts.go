@@ -19,13 +19,12 @@ package restapi
 // list of all console environment constants
 const (
 	// Constants for common configuration
-	ConsoleMinIOServer   = "CONSOLE_MINIO_SERVER"
-	ConsoleSubnetProxy   = "CONSOLE_SUBNET_PROXY"
-	ConsoleMinIORegion   = "CONSOLE_MINIO_REGION"
-	ConsoleHostname      = "CONSOLE_HOSTNAME"
-	ConsolePort          = "CONSOLE_PORT"
-	ConsoleTLSPort       = "CONSOLE_TLS_PORT"
-	ConsoleSubnetLicense = "CONSOLE_SUBNET_LICENSE"
+	ConsoleMinIOServer = "CONSOLE_MINIO_SERVER"
+	ConsoleSubnetProxy = "CONSOLE_SUBNET_PROXY"
+	ConsoleMinIORegion = "CONSOLE_MINIO_REGION"
+	ConsoleHostname    = "CONSOLE_HOSTNAME"
+	ConsolePort        = "CONSOLE_PORT"
+	ConsoleTLSPort     = "CONSOLE_TLS_PORT"
 
 	// Constants for Secure middleware
 	ConsoleSecureAllowedHosts                    = "CONSOLE_SECURE_ALLOWED_HOSTS"
