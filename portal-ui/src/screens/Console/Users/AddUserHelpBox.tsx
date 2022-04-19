@@ -1,15 +1,12 @@
 import { Box } from "@mui/material";
 import {
-  CallHomeFeatureIcon,
-  DiagnosticsFeatureIcon,
   HelpIconFilled,
-  PerformanceFeatureIcon,
   AddMembersToGroupIcon,
   CreateUserIcon,
   ChangeAccessPolicyIcon,
 } from "../../../icons";
 import React from "react";
-import AddUserServiceAccount from "./AddUserServiceAccount";
+
 
 
 const FeatureItem = ({
