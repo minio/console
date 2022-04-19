@@ -1140,12 +1140,11 @@ jobs:
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          echo "result:"
-          echo $result
+          echo "Coverage Result: $result%"
           threshold=36.3
           if (( $(echo "$result >= $threshold" |bc -l) )); then
             echo "It is equal or greater than threshold, passed!"
           else
-            echo "It is smaller than threshold value, failed!"
+            echo "It is smaller than threshold value ($threshold%), failed!"
             exit 1
           fi
