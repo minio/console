@@ -65,7 +65,6 @@ export function systemReducer(
   state = initialState,
   action: SystemActionTypes
 ): SystemState {
-  debugger;
   switch (action.type) {
     case USER_LOGGED:
       return {
