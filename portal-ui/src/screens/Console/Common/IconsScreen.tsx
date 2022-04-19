@@ -1105,6 +1105,11 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           <br />
           FilterIcon
         </Grid>
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.SuccessIcon />
+          <br />
+          SuccessIcon
+        </Grid>
       </Grid>
       <h1>Menu Icons</h1>
       <Grid
