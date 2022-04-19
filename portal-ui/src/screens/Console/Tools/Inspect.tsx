@@ -237,6 +237,7 @@ const Inspect = ({
           >
             <Box
               sx={{
+                border: "1px solid #eaeaea",
                 flex: {
                   md: 2,
                   xs: 1,
@@ -245,7 +246,10 @@ const Inspect = ({
                   lg: "auto",
                   xs: "100%",
                 },
-                padding: "25px",
+                padding: {
+                  lg: "40px",
+                  xs: "15px",
+                },
               }}
             >
               <form
@@ -441,7 +445,7 @@ const Inspect = ({
                             width: "7px",
                             backgroundColor: "#2781B0",
                             marginRight: "10px",
-                            marginTop: "12px",
+                            marginTop: "7px",
                             flexShrink: 0,
                           },
                         },

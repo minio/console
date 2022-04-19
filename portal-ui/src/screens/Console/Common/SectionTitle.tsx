@@ -20,12 +20,14 @@ import Grid from "@mui/material/Grid";
 type Props = {
   separator?: boolean;
   actions?: React.ReactNode;
+  icon?: React.ReactNode;
 };
 
 const SectionTitle: React.FC<Props> = ({
   children,
   separator = true,
   actions,
+  icon,
 }) => {
   return (
     <Grid
@@ -43,7 +45,18 @@ const SectionTitle: React.FC<Props> = ({
             marginBottom: 10,
           }}
         >
-          {children}
+          {icon && (
+            <Grid
+              container
+              alignItems={"center"}
+              justifyContent={"flex-start"}
+              spacing={1}
+            >
+              <Grid item>{icon}</Grid>
+              <Grid item>{children}</Grid>
+            </Grid>
+          )}
+          {!icon && children}
         </h3>
       </Grid>
       {actions && <Grid item> {actions}</Grid>}

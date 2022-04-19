@@ -186,8 +186,8 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           gap: "27px",
           marginBottom: "40px",
           marginTop: "40px",
-          marginLeft: "60px",
-          marginRight: "60px",
+          marginLeft: "40px",
+          marginRight: "40px",
         }}
       >
         <Box>
@@ -264,7 +264,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                 xs: "1fr",
               },
               gap: {
-                md: "40px",
+                md: "20px",
                 xs: "20px",
               },
             }}
