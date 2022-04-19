@@ -38,8 +38,7 @@ export const StatusCountCard = ({
       sx={{
         fontFamily: "Lato,sans-serif",
         color: "#07193E",
-        maxWidth: "260px",
-        minHeight: "143px",
+        maxWidth: "321px",
         display: "flex",
         marginLeft: "auto",
         marginRight: "auto",
@@ -61,7 +60,6 @@ export const StatusCountCard = ({
             flex: 1,
             display: "flex",
             flexFlow: "column",
-            marginTop: "22px",
           }}
         >
           <Box
@@ -77,6 +75,7 @@ export const StatusCountCard = ({
             sx={{
               display: "flex",
               alignItems: "center",
+              gap: "5px",
               justifyContent: "space-between",
               paddingBottom: {
                 md: "0px",
@@ -94,7 +93,7 @@ export const StatusCountCard = ({
               "& .stat-text": {
                 color: "#696969",
                 fontSize: "12px",
-                marginTop: "25px",
+                marginTop: "8px",
               },
               "& .stat-value": {
                 textAlign: "center",
@@ -102,7 +101,7 @@ export const StatusCountCard = ({
               },
               "& .min-icon": {
                 marginRight: "8px",
-                marginTop: "25px",
+                marginTop: "8px",
                 height: "10px",
                 width: "10px",
               },
@@ -114,6 +113,7 @@ export const StatusCountCard = ({
                 sx={{
                   display: "flex",
                   alignItems: "center",
+                  marginTop: "5px",
                   "& .min-icon": {
                     fill: "#4CCB92",
                   },
@@ -129,6 +129,7 @@ export const StatusCountCard = ({
                 sx={{
                   display: "flex",
                   alignItems: "center",
+                  marginTop: "8px",
                   "& .min-icon": {
                     fill: "#C83B51",
                   },
@@ -144,7 +145,7 @@ export const StatusCountCard = ({
           sx={{
             width: "20px",
             height: "20px",
-            marginTop: "26px",
+            marginTop: "8px",
             maxWidth: "26px",
             "& .min-icon": {
               width: "16px",
