@@ -28,6 +28,8 @@ import {
   SET_SNACK_MODAL_MESSAGE,
   SET_MODAL_ERROR_MESSAGE,
   GLOBAL_SET_DISTRIBUTED_SETUP,
+  SET_SITE_REPLICATION_INFO,
+  SRInfoStateType,
 } from "./types";
 
 export function userLoggedIn(loggedIn: boolean) {
@@ -111,5 +113,14 @@ export const setDistributedMode = (distributedSetup: boolean) => {
   return {
     type: GLOBAL_SET_DISTRIBUTED_SETUP,
     distributedSetup,
+  };
+};
+
+export const setSiteReplicationInfo = (
+  siteReplicationInfo: SRInfoStateType
+) => {
+  return {
+    type: SET_SITE_REPLICATION_INFO,
+    siteReplicationInfo,
   };
 };
