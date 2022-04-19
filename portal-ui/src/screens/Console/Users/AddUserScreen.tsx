@@ -180,12 +180,9 @@ const AddUser = ({
                 </Grid>
               </Grid>
 
-          <Grid item xs={12} className={classes.pageBox}>
-             <div className={classes.floatingEnabled}>
-         
-        </div>
-        </Grid>
-      <Box>
+      <Grid container>  
+      <Grid xs={8}>
+      <Box >
         <form
           noValidate
           autoComplete="off"
@@ -234,6 +231,7 @@ const AddUser = ({
                 overlayAction={() => setShowPassword(!showPassword)}
                   />
                 </div>
+                <Grid container item spacing="20">
                <Grid item xs={12}>
                   <PolicySelectors
                     selectedPolicy={selectedPolicies}
@@ -248,7 +246,7 @@ const AddUser = ({
                     }}
                   />
                 </Grid>
-               
+               </Grid>
               {addLoading && (
                 <Grid item xs={12}>
                   <LinearProgress />
@@ -278,9 +276,13 @@ const AddUser = ({
            </Grid>
            </form>
            </Box>
+           </Grid>
+           <Grid xs={4}>
            <Box>
            <AddUserHelpBox />
         </Box>
+        </Grid>
+        </Grid> 
         </PageLayout>
       </Grid>
     </Fragment>

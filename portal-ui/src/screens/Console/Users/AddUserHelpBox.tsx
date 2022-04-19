@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
 import {
   HelpIconFilled,
-  AddMembersToGroupIcon,
-  CreateUserIcon,
+  UsersIcon,
   ChangeAccessPolicyIcon,
+  GroupsIcon,
 } from "../../../icons";
 import React from "react";
 
@@ -96,11 +96,11 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         }}
       >
         <FeatureItem
-          icon={<CreateUserIcon />}
+          icon={<UsersIcon />}
           description={`Create Users`}
         />
         <FeatureItem
-          icon={<AddMembersToGroupIcon />}
+          icon={<GroupsIcon />}
           description={`Manage Groups`}
         />
         <FeatureItem
