@@ -52,6 +52,7 @@ import {
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { TrashIcon } from "../../../../icons";
+import { SRInfoStateType } from "../../../../types";
 
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
@@ -116,6 +117,7 @@ interface IBucketDetailsProps {
   loadingBucket: boolean;
   setBucketInfo: typeof setBucketInfo;
   bucketInfo: BucketInfo | null;
+  siteReplicationInfo: SRInfoStateType;
 }
 
 const BucketDetails = ({
@@ -128,6 +130,7 @@ const BucketDetails = ({
   loadingBucket,
   setBucketInfo,
   bucketInfo,
+  siteReplicationInfo,
 }: IBucketDetailsProps) => {
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -371,6 +374,8 @@ const BucketDetails = ({
                 component: Link,
                 disabled:
                   !distributedSetup ||
+                  (siteReplicationInfo.enabled &&
+                    siteReplicationInfo.curSite) ||
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
@@ -429,6 +434,7 @@ const mapState = (state: AppState) => ({
   distributedSetup: state.system.distributedSetup,
   loadingBucket: state.buckets.bucketDetails.loadingBucket,
   bucketInfo: state.buckets.bucketDetails.bucketInfo,
+  siteReplicationInfo: state.system.siteReplicationInfo,
 });
 
 const connector = connect(mapState, {
