@@ -21,10 +21,12 @@ const CounterCard = ({
   counterValue,
   label = "",
   icon = null,
+  actions = null,
 }: {
   counterValue: string | number;
   label?: any;
   icon?: any;
+  actions?: any;
 }) => {
   return (
     <Box
@@ -32,20 +34,17 @@ const CounterCard = ({
         fontFamily: "Lato,sans-serif",
         color: "#07193E",
         maxWidth: "300px",
-        minHeight: "143px",
         display: "flex",
         marginLeft: "auto",
         marginRight: "auto",
         cursor: "default",
         position: "relative",
         width: "100%",
-        //marginLeft: "25px",
       }}
     >
       <Box
         sx={{
           flex: 1,
-          minHeight: "200px",
           display: "flex",
           width: "100%",
           padding: {
@@ -60,7 +59,7 @@ const CounterCard = ({
             flex: 1,
             display: "flex",
             flexFlow: "column",
-            marginTop: "22px",
+            marginTop: "8px",
             zIndex: 10,
             overflow: "hidden",
           }}
@@ -103,9 +102,11 @@ const CounterCard = ({
         </Box>
         <Box
           sx={{
-            width: "20px",
-            height: "20px",
-            marginTop: "26px",
+            display: "flex",
+            flexFlow: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            marginTop: "8px",
             maxWidth: "26px",
             "& .min-icon": {
               width: "16px",
@@ -114,6 +115,8 @@ const CounterCard = ({
           }}
         >
           {icon}
+
+          <Box>{actions}</Box>
         </Box>
       </Box>
     </Box>
