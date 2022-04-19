@@ -2799,7 +2799,7 @@ func TestReplication(t *testing.T) {
 	}
 
 	assert.Greater(len(structBucketRepl.Rules), 0, "Number of expected rules is 0")
-	if len(structBucketRepl.Rules) == 0 {
+	if len(structBucketRepl.Rules) == 0 || len(structBucketRepl.Rules) < 3 {
 		return
 	}
 	// 4. Verify rules are enabled
