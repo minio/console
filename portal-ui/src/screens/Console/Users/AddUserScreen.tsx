@@ -162,18 +162,18 @@ const AddUser = ({
       <Grid item xs={12}>
         <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
         <PageLayout>
-          <Grid item xs={12} container className={classes.title}>
-            <Grid item xs={"auto"}>
+          <Grid item xs={12} container className={classes.title} align-items="baseline">
+            <Grid item xs={"auto"} >
               <CreateUserIcon />
             </Grid>
-            <Grid item xs={"auto"} className={classes.headTitle}>
-              Create New User
+            <Grid item xs={"auto"} align-self="end" className={classes.headTitle}>
+              Create User
             </Grid>
           </Grid>
 
-          <Grid container>
-            <Grid xs={8}>
-              <Box>
+          <Grid container align-items="center">
+            <Grid item xs={8}>
+              <Box >
                 <form
                   noValidate
                   autoComplete="off"
@@ -273,8 +273,8 @@ const AddUser = ({
                 </form>
               </Box>
             </Grid>
-            <Grid xs={4}>
-              <Box>
+            <Grid item xs={4} >
+              <Box >
                 <AddUserHelpBox />
               </Box>
             </Grid>

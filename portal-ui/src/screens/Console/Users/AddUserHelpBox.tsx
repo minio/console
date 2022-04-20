@@ -66,7 +66,7 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         },
         marginTop: {
           xs: "0px",
-          sm: hasMargin ? "30px" : "",
+          //sm: hasMargin ? "30px" : "",
         },
       }}
     >
