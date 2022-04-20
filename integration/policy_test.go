@@ -47,7 +47,7 @@ func Test_PolicyAPI(t *testing.T) {
 		{
 			name: "Create Policy - Valid",
 			args: args{
-				api: "/policies",
+				api:  "/policies",
 				name: "test",
 				policy: swag.String(`
   {
@@ -72,7 +72,7 @@ func Test_PolicyAPI(t *testing.T) {
 		{
 			name: "Create Policy - Invalid",
 			args: args{
-				api: "/policies",
+				api:  "/policies",
 				name: "test",
 				policy: swag.String(`
   {
