@@ -22,7 +22,6 @@ import {
   GroupsIcon,
 } from "../../../icons";
 
-
 const FeatureItem = ({
   icon,
   description,

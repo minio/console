@@ -388,7 +388,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                             To get started,{" "}
                             <AButton
                               onClick={() => {
-                               history.push(`${IAM_PAGES.USER_ADD}`);
+                                history.push(`${IAM_PAGES.USER_ADD}`);
                               }}
                             >
                               Create a User
