@@ -30,12 +30,12 @@ import {
   notifyMysql,
   notifyPostgres,
   removeEmptyFields,
+  servicesList,
 } from "./utils";
 import {
   modalBasic,
   settingsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
-import { servicesList } from "./utils";
 import { ErrorResponseHandler } from "../../../common/types";
 
 import { IElementValue } from "../Configurations/types";

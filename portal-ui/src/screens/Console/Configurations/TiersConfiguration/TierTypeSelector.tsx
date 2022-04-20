@@ -23,6 +23,7 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import { Box } from "@mui/material";
 import TierTypeCard from "./TierTypeCard";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
+import ContentBox from "../../Common/ContentBox";
 
 interface ITypeTiersConfig {
   history: any;
@@ -45,12 +46,7 @@ const TierTypeSelector = ({ history }: ITypeTiersConfig) => {
       />
 
       <PageLayout>
-        <Box
-          sx={{
-            border: "1px solid #eaeaea",
-            padding: "40px",
-          }}
-        >
+        <ContentBox>
           <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
             Select Tier Type
           </div>
@@ -78,7 +74,7 @@ const TierTypeSelector = ({ history }: ITypeTiersConfig) => {
               />
             ))}
           </Box>
-        </Box>
+        </ContentBox>
       </PageLayout>
     </Fragment>
   );

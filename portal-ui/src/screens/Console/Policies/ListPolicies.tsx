@@ -28,7 +28,6 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
-  tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 
@@ -44,8 +43,8 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../common/SecureComponent";
 import SearchBox from "../Common/SearchBox";
 
@@ -62,10 +61,6 @@ const styles = (theme: Theme) =>
     searchField: {
       ...searchField.searchField,
       maxWidth: 380,
-    },
-    tableBlock: {
-      ...tableStyles.tableBlock,
-      marginTop: 15,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -198,80 +193,82 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
       )}
       <PageHeader label="IAM Policies" />
       <PageLayout className={classes.pageContainer}>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <SearchBox
-            onChange={setFilterPolicies}
-            placeholder="Search Policies"
-            overrideClass={classes.searchField}
-            value={filterPolicies}
-          />
+        <Grid container spacing={1}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <SearchBox
+              onChange={setFilterPolicies}
+              placeholder="Search Policies"
+              overrideClass={classes.searchField}
+              value={filterPolicies}
+            />
 
-          <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
-            resource={CONSOLE_UI_RESOURCE}
-            errorProps={{ disabled: true }}
-          >
-            <RBIconButton
-              tooltip={"Create Policy"}
-              text={"Create Policy"}
-              variant="contained"
-              color="primary"
-              icon={<AddIcon />}
-              onClick={() => {
-                setAddScreenOpen(true);
-                setPolicyEdit(null);
-              }}
+            <SecureComponent
+              scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
+              resource={CONSOLE_UI_RESOURCE}
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Create Policy"}
+                text={"Create Policy"}
+                variant="contained"
+                color="primary"
+                icon={<AddIcon />}
+                onClick={() => {
+                  setAddScreenOpen(true);
+                  setPolicyEdit(null);
+                }}
+              />
+            </SecureComponent>
+          </Grid>
+          <Grid item xs={12} className={classes.tableBlock}>
+            <SecureComponent
+              scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
+              resource={CONSOLE_UI_RESOURCE}
+              errorProps={{ disabled: true }}
+            >
+              <TableWrapper
+                itemActions={tableActions}
+                columns={[{ label: "Name", elementKey: "name" }]}
+                isLoading={loading}
+                records={filteredRecords}
+                entityName="Policies"
+                idField="name"
+              />
+            </SecureComponent>
+          </Grid>
+          <Grid item xs={12}>
+            <HelpBox
+              title={"Learn more about IAM POLICIES"}
+              iconComponent={<IAMPoliciesIcon />}
+              help={
+                <Fragment>
+                  MinIO uses Policy-Based Access Control (PBAC) to define the
+                  authorized actions and resources to which an authenticated
+                  user has access. Each policy describes one or more actions and
+                  conditions that outline the permissions of a user or group of
+                  users.
+                  <br />
+                  <br />
+                  MinIO PBAC is built for compatibility with AWS IAM policy
+                  syntax, structure, and behavior. The MinIO documentation makes
+                  a best-effort to cover IAM-specific behavior and
+                  functionality. Consider deferring to the IAM documentation for
+                  more complete documentation on AWS IAM-specific topics.
+                  <br />
+                  <br />
+                  You can learn more at our{" "}
+                  <a
+                    href="https://docs.min.io/minio/baremetal/security/minio-identity-management/policy-based-access-control.html?ref=con"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    documentation
+                  </a>
+                  .
+                </Fragment>
+              }
             />
-          </SecureComponent>
-        </Grid>
-        <Grid item xs={12} className={classes.tableBlock}>
-          <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
-            resource={CONSOLE_UI_RESOURCE}
-            errorProps={{ disabled: true }}
-          >
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Policies"
-              idField="name"
-            />
-          </SecureComponent>
-        </Grid>
-        <Grid item xs={12}>
-          <HelpBox
-            title={"Learn more about IAM POLICIES"}
-            iconComponent={<IAMPoliciesIcon />}
-            help={
-              <Fragment>
-                MinIO uses Policy-Based Access Control (PBAC) to define the
-                authorized actions and resources to which an authenticated user
-                has access. Each policy describes one or more actions and
-                conditions that outline the permissions of a user or group of
-                users.
-                <br />
-                <br />
-                MinIO PBAC is built for compatibility with AWS IAM policy
-                syntax, structure, and behavior. The MinIO documentation makes a
-                best-effort to cover IAM-specific behavior and functionality.
-                Consider deferring to the IAM documentation for more complete
-                documentation on AWS IAM-specific topics.
-                <br />
-                <br />
-                You can learn more at our{" "}
-                <a
-                  href="https://docs.min.io/minio/baremetal/security/minio-identity-management/policy-based-access-control.html?ref=con"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  documentation
-                </a>
-                .
-              </Fragment>
-            }
-          />
+          </Grid>
         </Grid>
       </PageLayout>
     </React.Fragment>
