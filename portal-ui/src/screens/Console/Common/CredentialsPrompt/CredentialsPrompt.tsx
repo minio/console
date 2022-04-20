@@ -156,6 +156,18 @@ const CredentialsPrompt = ({
                     />
                   </>
                 )}
+                {(consoleCreds === null || consoleCreds === undefined) && (
+                   <>
+                    <CredentialItem
+                      label="Access Key"
+                      value={newServiceAccount.accessKey || ""}
+                    />
+                    <CredentialItem
+                      label="Secret Key"
+                      value={newServiceAccount.secretKey || ""}
+                    />
+                  </>
+                )}
               </Grid>
             </React.Fragment>
           )}
@@ -206,6 +218,14 @@ const CredentialsPrompt = ({
                         };
                       });
                       consoleExtras = cCreds[0];
+                    }
+                  } else {
+                    consoleExtras = {
+                        url: newServiceAccount.url,
+                        accessKey: newServiceAccount.accessKey,
+                        secretKey: newServiceAccount.secretKey,
+                        api: "s3v4",
+                        path: "auto",
                     }
                   }
 
