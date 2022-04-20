@@ -236,6 +236,9 @@ const AddTenant = ({
       fields.configure.prometheusSecurityContext;
     const kesSecurityContext = fields.encryption.kesSecurityContext;
     const kesReplicas = fields.encryption.replicas;
+    const setDomains = fields.configure.setDomains;
+    const minioDomains = fields.configure.minioDomains;
+    const consoleDomain = fields.configure.consoleDomain;
 
     if (addSending) {
       const tolerationValues = tolerations.filter(
@@ -649,8 +652,28 @@ const AddTenant = ({
           break;
       }
 
+      let domains: any = {};
+      let sendDomain: any = {};
+
+      if (setDomains) {
+        if (consoleDomain !== "") {
+          domains.console = consoleDomain;
+        }
+
+        const filteredDomains = minioDomains.filter((dom) => dom.trim() !== "");
+
+        if (filteredDomains.length > 0) {
+          domains.minio = filteredDomains;
+        }
+
+        if (Object.keys(domains).length > 0) {
+          sendDomain.domains = domains;
+        }
+      }
+
       dataSend = {
         ...dataSend,
+        ...sendDomain,
         idp: { ...dataIDP },
       };
       api
