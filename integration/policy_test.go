@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"testing"
@@ -30,7 +31,64 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_PolicyAPI(t *testing.T) {
+func AddPolicy(name string, definition string) (*http.Response, error) {
+	/*
+		This is an atomic function to add user and can be reused across
+		different functions.
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+
+	requestDataAdd := map[string]interface{}{
+		"name":   name,
+		"policy": definition,
+	}
+
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST", "http://localhost:9090/api/v1/policies", requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	return response, err
+}
+
+func SetPolicy(policies []string, entityName string, entityType string) (*http.Response, error) {
+	/*
+		This is an atomic function to add user and can be reused across
+		different functions.
+	*/
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+
+	requestDataAdd := map[string]interface{}{
+		"name":       policies,
+		"entityType": entityType,
+		"entityName": entityName,
+	}
+
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"PUT", "http://localhost:9090/api/v1/set-policy", requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	return response, err
+}
+
+func Test_AddPolicyAPI(t *testing.T) {
 	assert := assert.New(t)
 
 	type args struct {
@@ -69,11 +127,12 @@ func Test_PolicyAPI(t *testing.T) {
 			expectedStatus: 201,
 			expectedError:  nil,
 		},
+
 		{
 			name: "Create Policy - Invalid",
 			args: args{
 				api:  "/policies",
-				name: "test",
+				name: "test2",
 				policy: swag.String(`
   {
   "Version": "2012-10-17",
@@ -103,11 +162,9 @@ func Test_PolicyAPI(t *testing.T) {
 				Timeout: 3 * time.Second,
 			}
 
-			// Add policy
-
 			requestDataPolicy := map[string]interface{}{}
+			requestDataPolicy["name"] = tt.args.name
 			if tt.args.policy != nil {
-				requestDataPolicy["name"] = tt.args.name
 				requestDataPolicy["policy"] = *tt.args.policy
 			}
 
@@ -127,9 +184,603 @@ func Test_PolicyAPI(t *testing.T) {
 				return
 			}
 			if response != nil {
-				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+
+}
+
+func Test_SetPolicyAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddUser("policyuser1", "testtest", []string{}, []string{"readwrite"})
+	AddGroup("testgroup123", []string{})
+	AddPolicy("setpolicytest", `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+  }`)
+
+	type args struct {
+		api        string
+		entityType string
+		entityName string
+		policyName []string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Set Policy - Valid",
+			args: args{
+				api:        "/set-policy",
+				policyName: []string{"setpolicytest"},
+				entityType: "user",
+				entityName: "policyuser1",
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy - Invalid",
+			args: args{
+				api:        "/set-policy",
+				policyName: []string{"test3"},
+				entityType: "user",
+				entityName: "policyuser1",
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy Group - Valid",
+			args: args{
+				api:        "/set-policy",
+				policyName: []string{"setpolicytest"},
+				entityType: "group",
+				entityName: "testgroup123",
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy Group - Invalid",
+			args: args{
+				api:        "/set-policy",
+				policyName: []string{"test3"},
+				entityType: "group",
+				entityName: "testgroup123",
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
 			}
 
+			requestDataPolicy := map[string]interface{}{}
+			requestDataPolicy["entityName"] = tt.args.entityName
+			requestDataPolicy["entityType"] = tt.args.entityType
+			if tt.args.policyName != nil {
+				requestDataPolicy["name"] = tt.args.policyName
+			}
+
+			requestDataJSON, _ := json.Marshal(requestDataPolicy)
+			requestDataBody := bytes.NewReader(requestDataJSON)
+			request, err := http.NewRequest(
+				"PUT", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), requestDataBody)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+
+}
+
+func Test_SetPolicyMultipleAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddUser("policyuser2", "testtest", []string{}, []string{"readwrite"})
+	AddUser("policyuser3", "testtest", []string{}, []string{"readwrite"})
+	AddGroup("testgroup1234", []string{})
+	AddPolicy("setpolicytest2", `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+  }`)
+
+	type args struct {
+		api    string
+		users  []string
+		groups []string
+		name   []string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Set Policy - Valid",
+			args: args{
+				api:   "/set-policy-multi",
+				name:  []string{"setpolicytest2"},
+				users: []string{"policyuser2", "policyuser3"},
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy - Invalid",
+			args: args{
+				api:   "/set-policy-multi",
+				name:  []string{"test3"},
+				users: []string{"policyuser2", "policyuser3"},
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy Group - Valid",
+			args: args{
+				api:    "/set-policy-multi",
+				name:   []string{"setpolicytest2"},
+				groups: []string{"testgroup1234"},
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy Group - Valid",
+			args: args{
+				api:    "/set-policy-multi",
+				name:   []string{"setpolicytest23"},
+				groups: []string{"testgroup1234"},
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			requestDataPolicy := map[string]interface{}{}
+			requestDataPolicy["name"] = tt.args.name
+			requestDataPolicy["users"] = tt.args.users
+			requestDataPolicy["groups"] = tt.args.groups
+
+			requestDataJSON, _ := json.Marshal(requestDataPolicy)
+			requestDataBody := bytes.NewReader(requestDataJSON)
+			request, err := http.NewRequest(
+				"PUT", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), requestDataBody)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+
+}
+
+func Test_ListPoliciesAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	type args struct {
+		api string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "List Policies",
+			args: args{
+				api: "/policies",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+
+}
+
+func Test_GetPolicyAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddPolicy("getpolicytest", `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+  }`)
+
+	type args struct {
+		api string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Get Policies - Invalid",
+			args: args{
+				api: "/policy?name=test3",
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+		{
+			name: "Get Policies - Valid",
+			args: args{
+				api: "/policy?name=getpolicytest",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+
+}
+
+func Test_PolicyListUsersAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddUser("policyuser4", "testtest", []string{}, []string{"readwrite"})
+	AddPolicy("policylistusers", `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+  }`)
+	SetPolicy([]string{"policylistusers"}, "policyuser4", "user")
+
+	type args struct {
+		api string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "List Users for Policy - Valid",
+			args: args{
+				api: "/policies/policylistusers/users",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+		{
+			name: "List Users for Policy - Invalid",
+			args: args{
+				api: "/policies/test2/users",
+			},
+			expectedStatus: 404,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				bodyBytes, _ := ioutil.ReadAll(response.Body)
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+				if response.StatusCode == 200 {
+					assert.Equal("[\"policyuser4\"]\n", string(bodyBytes))
+				}
+			}
+
+		})
+	}
+
+}
+
+func Test_PolicyListGroupsAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddGroup("testgroup12345", []string{})
+	AddPolicy("policylistgroups", `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+  }`)
+	SetPolicy([]string{"policylistgroups"}, "testgroup12345", "group")
+
+	type args struct {
+		api string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "List Users for Policy - Valid",
+			args: args{
+				api: "/policies/policylistgroups/groups",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+		{
+			name: "List Users for Policy - Invalid",
+			args: args{
+				api: "/policies/test3/groups",
+			},
+			expectedStatus: 404,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				bodyBytes, _ := ioutil.ReadAll(response.Body)
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+				if response.StatusCode == 200 {
+					assert.Equal("[\"testgroup12345\"]\n", string(bodyBytes))
+				}
+			}
+
+		})
+	}
+
+}
+
+func Test_DeletePolicyAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddPolicy("testdelete", `
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+  }`)
+	type args struct {
+		api    string
+		method string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Delete Policies - Valid",
+			args: args{
+				api:    "/policy?name=testdelete",
+				method: "DELETE",
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
+		{
+			name: "Get Policy After Delete - Invalid",
+			args: args{
+				api:    "/policy?name=testdelete",
+				method: "GET",
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
 		})
 	}
 

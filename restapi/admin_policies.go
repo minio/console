@@ -25,6 +25,7 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
@@ -284,7 +285,23 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
+	policies, err := listPolicies(ctx, adminClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	found := false
+	for i := range policies {
+		if policies[i].Name == policy {
+			found = true
+		}
+	}
+	if !found {
+		return nil, &models.Error{
+			Code:            int32(404),
+			Message:         swag.String("Policy does not exist"),
+			DetailedMessage: swag.String(fmt.Sprintf("The policy %s does not extist", policy)),
+		}
+	}
 	users, err := listUsers(ctx, adminClient)
 	if err != nil {
 		return nil, prepareError(err)
@@ -313,6 +330,23 @@ func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
+	policies, err := listPolicies(ctx, adminClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	found := false
+	for i := range policies {
+		if policies[i].Name == policy {
+			found = true
+		}
+	}
+	if !found {
+		return nil, &models.Error{
+			Code:            int32(404),
+			Message:         swag.String("Policy does not exist"),
+			DetailedMessage: swag.String(fmt.Sprintf("The policy %s does not extist", policy)),
+		}
+	}
 
 	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
