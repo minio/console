@@ -18,6 +18,7 @@ import request from "superagent";
 import get from "lodash/get";
 import { clearSession } from "../utils";
 import { ErrorResponseHandler } from "../types";
+import { baseUrl } from "../../history";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
@@ -37,7 +38,7 @@ export class API {
           clearSession();
           // Refresh the whole page to ensure cache is clear
           // and we dont end on an infinite loop
-          window.location.href = "login";
+          window.location.href = `${baseUrl}login`;
           return;
         }
         return this.onError(err);
@@ -71,7 +72,7 @@ export class API {
       return Promise.reject(throwMessage);
     } else {
       clearSession();
-      window.location.href = "login";
+      window.location.href = `${baseUrl}login`;
     }
   }
 }
