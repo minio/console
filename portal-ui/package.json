@@ -88,7 +88,7 @@
     "@types/react-window": "^1.8.5",
     "@types/react-window-infinite-loader": "^1.0.5",
     "@types/recharts": "^1.8.22",
-    "prettier": "2.5.1",
+    "prettier": "2.6.2",
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "5.0.1",

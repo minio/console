@@ -17,6 +17,7 @@
 import { SubnetInfo } from "../../License/types";
 import {
   IAffinityModel,
+  IDomainsRequest,
   IResourceModel,
   ITolerationModel,
 } from "../../../../common/types";
@@ -115,24 +116,24 @@ export interface ITenantEncryptionResponse {
   server: ICertificateInfo[];
   client: ICertificateInfo[];
   /*
-            gemalto:
-              type: object
-              $ref: "#/definitions/gemaltoConfiguration"
-            aws:
-              type: object
-              $ref: "#/definitions/awsConfiguration"
-            vault:
-              type: object
-              $ref: "#/definitions/vaultConfiguration"
-            gcp:
-              type: object
-              $ref: "#/definitions/gcpConfiguration"
-            azure:
-              type: object
-              $ref: "#/definitions/azureConfiguration"
-            securityContext:
-              type: object
-              $ref: "#/definitions/securityContext"*/
+              gemalto:
+                type: object
+                $ref: "#/definitions/gemaltoConfiguration"
+              aws:
+                type: object
+                $ref: "#/definitions/awsConfiguration"
+              vault:
+                type: object
+                $ref: "#/definitions/vaultConfiguration"
+              gcp:
+                type: object
+                $ref: "#/definitions/gcpConfiguration"
+              azure:
+                type: object
+                $ref: "#/definitions/azureConfiguration"
+              securityContext:
+                type: object
+                $ref: "#/definitions/securityContext"*/
 }
 
 export interface ITenantTier {
@@ -170,6 +171,7 @@ export interface ITenant {
   capacity?: number;
   capacity_usage?: number;
   tiers?: ITenantTier[];
+  domains?: IDomainsRequest;
   // computed
   total_capacity: string;
   subnet_license: SubnetInfo;
