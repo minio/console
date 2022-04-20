@@ -74,7 +74,7 @@ const PoolsSummary = ({
             executeOnClick={() => {
               setOpenPoolDetails(false);
             }}
-            label={"Back to Pools list"}
+            label={"Pools list"}
             to={match.url}
           />
         </Grid>

@@ -24,37 +24,6 @@ import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
-    link: {
-      display: "block",
-      textDecoration: "none",
-      "&:active": {
-        color: theme.palette.primary.light,
-      },
-    },
-    iconBox: {
-      display: "flex",
-      flexDirection: "row",
-      "&:hover": {
-        background: "rgba(234,237,238)",
-      },
-      height: "30px",
-      paddingBottom: 4,
-      paddingTop: 8,
-      paddingRight: 16,
-      paddingLeft: 0,
-      borderRadius: 4,
-    },
-    icon: {
-      lineHeight: 1,
-      marginRight: "14px",
-      alignItems: "center",
-      width: "22px",
-      "& .min-icon": {
-        color: theme.palette.primary.light,
-        width: "16px",
-        height: "16px",
-      },
-    },
     label: {
       lineHeight: 1,
       alignItems: "center",
@@ -62,6 +31,7 @@ const styles = (theme: Theme) =>
       fontSize: "14px",
       fontWeight: 600,
       color: theme.palette.primary.light,
+      marginRight: "10px",
     },
   });
 
@@ -85,6 +55,42 @@ const BackLink = ({
       sx={{
         display: "flex",
         alignItems: "center",
+        textDecoration: "none",
+        "& .icon-box": {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          height: "30px",
+          paddingLeft: 0,
+
+          "&:hover .icon": {
+            background: "rgba(234,237,238)",
+            borderRadius: "2px",
+          },
+
+          "& .icon": {
+            lineHeight: 1,
+            marginRight: "3px",
+            display: "flex",
+            alignItems: "center",
+            width: "28px",
+            height: "30px",
+
+            "& .min-icon": {
+              width: "17px",
+              height: "11px",
+              margin: "auto",
+            },
+          },
+        },
+        "& a": {
+          textDecoration: "none",
+          textDecorationColor: "#081C42",
+          "&:active": {
+            color: "#081C42",
+          },
+        },
       }}
     >
       <Link
@@ -96,10 +102,10 @@ const BackLink = ({
           }
         }}
       >
-        <div className={classes.iconBox}>
-          <div className={classes.icon}>
+        <div className="icon-box">
+          <Box className="icon">
             <BackSettingsIcon />
-          </div>
+          </Box>
           <div className={classes.label}>{label}</div>
         </div>
       </Link>
