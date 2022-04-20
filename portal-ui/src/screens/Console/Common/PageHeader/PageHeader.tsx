@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { AppState } from "../../../../store";
 import OperatorLogo from "../../../../icons/OperatorLogo";
@@ -28,6 +27,7 @@ import ConsoleLogo from "../../../../icons/ConsoleLogo";
 import { IFileItem } from "../../ObjectBrowser/types";
 import { toggleList } from "../../ObjectBrowser/actions";
 import { ObjectManagerIcon } from "../../../../icons";
+import { Box } from "@mui/material";
 
 interface IPageHeader {
   classes: any;
@@ -55,13 +55,6 @@ const styles = (theme: Theme) =>
       display: "flex",
       justifyContent: "flex-start",
       alignItems: "center",
-    },
-    labelStyle: {
-      color: "#000",
-      fontSize: 18,
-      fontWeight: 700,
-      marginLeft: 21,
-      marginTop: 8,
     },
     rightMenu: {
       textAlign: "right",
@@ -116,9 +109,17 @@ const PageHeader = ({
             {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
           </div>
         )}
-        <Typography variant="h4" className={classes.labelStyle}>
+        <Box
+          sx={{
+            color: "#000",
+            fontSize: 18,
+            fontWeight: 700,
+            marginLeft: "21px",
+            display: "flex",
+          }}
+        >
           {label}
-        </Typography>
+        </Box>
       </Grid>
       {middleComponent && (
         <Grid
