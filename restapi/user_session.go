@@ -37,7 +37,7 @@ import (
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/pkg/auth/ldap"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	authApi "github.com/minio/console/restapi/operations/auth"
 )
 
 func isErasureMode() bool {
@@ -67,12 +67,12 @@ func isErasureMode() bool {
 
 func registerSessionHandlers(api *operations.ConsoleAPI) {
 	// session check
-	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, session *models.Principal) middleware.Responder {
+	api.AuthSessionCheckHandler = authApi.SessionCheckHandlerFunc(func(params authApi.SessionCheckParams, session *models.Principal) middleware.Responder {
 		sessionResp, err := getSessionResponse(session)
 		if err != nil {
-			return user_api.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
+		return authApi.NewSessionCheckOK().WithPayload(sessionResp)
 	})
 }
 

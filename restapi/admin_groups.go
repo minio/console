@@ -24,49 +24,49 @@ import (
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/madmin-go"
 
-	"github.com/minio/console/restapi/operations/admin_api"
+	groupApi "github.com/minio/console/restapi/operations/group"
 
 	"github.com/minio/console/models"
 )
 
 func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	// List Groups
-	api.AdminAPIListGroupsHandler = admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, session *models.Principal) middleware.Responder {
+	api.GroupListGroupsHandler = groupApi.ListGroupsHandlerFunc(func(params groupApi.ListGroupsParams, session *models.Principal) middleware.Responder {
 		listGroupsResponse, err := getListGroupsResponse(session)
 		if err != nil {
-			return admin_api.NewListGroupsDefault(int(err.Code)).WithPayload(err)
+			return groupApi.NewListGroupsDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListGroupsOK().WithPayload(listGroupsResponse)
+		return groupApi.NewListGroupsOK().WithPayload(listGroupsResponse)
 	})
 	// Group Info
-	api.AdminAPIGroupInfoHandler = admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, session *models.Principal) middleware.Responder {
+	api.GroupGroupInfoHandler = groupApi.GroupInfoHandlerFunc(func(params groupApi.GroupInfoParams, session *models.Principal) middleware.Responder {
 		groupInfo, err := getGroupInfoResponse(session, params)
 		if err != nil {
-			return admin_api.NewGroupInfoDefault(int(err.Code)).WithPayload(err)
+			return groupApi.NewGroupInfoDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewGroupInfoOK().WithPayload(groupInfo)
+		return groupApi.NewGroupInfoOK().WithPayload(groupInfo)
 	})
 	// Add Group
-	api.AdminAPIAddGroupHandler = admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, session *models.Principal) middleware.Responder {
+	api.GroupAddGroupHandler = groupApi.AddGroupHandlerFunc(func(params groupApi.AddGroupParams, session *models.Principal) middleware.Responder {
 		if err := getAddGroupResponse(session, params.Body); err != nil {
-			return admin_api.NewAddGroupDefault(int(err.Code)).WithPayload(err)
+			return groupApi.NewAddGroupDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewAddGroupCreated()
+		return groupApi.NewAddGroupCreated()
 	})
 	// Remove Group
-	api.AdminAPIRemoveGroupHandler = admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, session *models.Principal) middleware.Responder {
+	api.GroupRemoveGroupHandler = groupApi.RemoveGroupHandlerFunc(func(params groupApi.RemoveGroupParams, session *models.Principal) middleware.Responder {
 		if err := getRemoveGroupResponse(session, params); err != nil {
-			return admin_api.NewRemoveGroupDefault(int(err.Code)).WithPayload(err)
+			return groupApi.NewRemoveGroupDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewRemoveGroupNoContent()
+		return groupApi.NewRemoveGroupNoContent()
 	})
 	// Update Group
-	api.AdminAPIUpdateGroupHandler = admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, session *models.Principal) middleware.Responder {
+	api.GroupUpdateGroupHandler = groupApi.UpdateGroupHandlerFunc(func(params groupApi.UpdateGroupParams, session *models.Principal) middleware.Responder {
 		groupUpdateResp, err := getUpdateGroupResponse(session, params)
 		if err != nil {
-			return admin_api.NewUpdateGroupDefault(int(err.Code)).WithPayload(err)
+			return groupApi.NewUpdateGroupDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewUpdateGroupOK().WithPayload(groupUpdateResp)
+		return groupApi.NewUpdateGroupOK().WithPayload(groupUpdateResp)
 	})
 }
 
@@ -106,7 +106,7 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 }
 
 // getGroupInfoResponse performs groupInfo() and serializes it to the handler's output
-func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoParams) (*models.Group, *models.Error) {
+func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoParams) (*models.Group, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
@@ -183,7 +183,7 @@ func removeGroup(ctx context.Context, client MinioAdmin, group string) error {
 }
 
 // getRemoveGroupResponse performs removeGroup() and serializes it to the handler's output
-func getRemoveGroupResponse(session *models.Principal, params admin_api.RemoveGroupParams) *models.Error {
+func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGroupParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	if params.Name == "" {
@@ -257,7 +257,7 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 // getUpdateGroupResponse updates a group by adding or removing it's members depending on the request,
 // 	also sets the group's status if status in the request is different than the current one.
 //  Then serializes the output to be used by the handler.
-func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGroupParams) (*models.Group, *models.Error) {
+func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGroupParams) (*models.Group, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	if params.Name == "" {

@@ -208,7 +208,7 @@ func init() {
       "get": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Returns login strategy, form or sso.",
         "operationId": "LoginDetail",
@@ -232,7 +232,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Identity Provider oauth2 callback endpoint.",
         "operationId": "LoginOauth2Auth",
@@ -263,7 +263,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Login to Operator Console.",
         "operationId": "LoginOperator",
@@ -293,7 +293,7 @@ func init() {
     "/logout": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Logout from Operator.",
         "operationId": "Logout",
@@ -1623,7 +1623,7 @@ func init() {
     "/session": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Endpoint to check if your session is still valid",
         "operationId": "SessionCheck",
@@ -4228,7 +4228,7 @@ func init() {
       "get": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Returns login strategy, form or sso.",
         "operationId": "LoginDetail",
@@ -4252,7 +4252,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Identity Provider oauth2 callback endpoint.",
         "operationId": "LoginOauth2Auth",
@@ -4283,7 +4283,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Login to Operator Console.",
         "operationId": "LoginOperator",
@@ -4313,7 +4313,7 @@ func init() {
     "/logout": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Logout from Operator.",
         "operationId": "Logout",
@@ -5643,7 +5643,7 @@ func init() {
     "/session": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Endpoint to check if your session is still valid",
         "operationId": "SessionCheck",

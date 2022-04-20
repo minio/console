@@ -25,7 +25,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/minio/console/models"
-	"github.com/minio/console/restapi/operations/admin_api"
+	cfgApi "github.com/minio/console/restapi/operations/configuration"
 )
 
 func Test_addNotificationEndpoint(t *testing.T) {
@@ -34,7 +34,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 	type args struct {
 		ctx    context.Context
 		client MinioAdmin
-		params *admin_api.AddNotificationEndpointParams
+		params *cfgApi.AddNotificationEndpointParams
 	}
 	tests := []struct {
 		name          string
@@ -48,7 +48,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -81,7 +81,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -105,7 +105,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -138,7 +138,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -167,7 +167,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -196,7 +196,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -227,7 +227,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -260,7 +260,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -293,7 +293,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -324,7 +324,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -353,7 +353,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -384,7 +384,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),
@@ -408,7 +408,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				client: client,
-				params: &admin_api.AddNotificationEndpointParams{
+				params: &cfgApi.AddNotificationEndpointParams{
 					HTTPRequest: nil,
 					Body: &models.NotificationEndpoint{
 						AccountID: swag.String("1"),

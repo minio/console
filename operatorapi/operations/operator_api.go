@@ -37,6 +37,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/minio/console/models"
+	"github.com/minio/console/operatorapi/operations/auth"
 	"github.com/minio/console/operatorapi/operations/operator_api"
 	"github.com/minio/console/operatorapi/operations/user_api"
 )
@@ -141,23 +142,23 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIListTenantsHandler: operator_api.ListTenantsHandlerFunc(func(params operator_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListTenants has not yet been implemented")
 		}),
-		UserAPILoginDetailHandler: user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.LoginDetail has not yet been implemented")
+		AuthLoginDetailHandler: auth.LoginDetailHandlerFunc(func(params auth.LoginDetailParams) middleware.Responder {
+			return middleware.NotImplemented("operation auth.LoginDetail has not yet been implemented")
 		}),
-		UserAPILoginOauth2AuthHandler: user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.LoginOauth2Auth has not yet been implemented")
+		AuthLoginOauth2AuthHandler: auth.LoginOauth2AuthHandlerFunc(func(params auth.LoginOauth2AuthParams) middleware.Responder {
+			return middleware.NotImplemented("operation auth.LoginOauth2Auth has not yet been implemented")
 		}),
-		UserAPILoginOperatorHandler: user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.LoginOperator has not yet been implemented")
+		AuthLoginOperatorHandler: auth.LoginOperatorHandlerFunc(func(params auth.LoginOperatorParams) middleware.Responder {
+			return middleware.NotImplemented("operation auth.LoginOperator has not yet been implemented")
 		}),
-		UserAPILogoutHandler: user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.Logout has not yet been implemented")
+		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
 		}),
 		OperatorAPIPutTenantYAMLHandler: operator_api.PutTenantYAMLHandlerFunc(func(params operator_api.PutTenantYAMLParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.PutTenantYAML has not yet been implemented")
 		}),
-		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		AuthSessionCheckHandler: auth.SessionCheckHandlerFunc(func(params auth.SessionCheckParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation auth.SessionCheck has not yet been implemented")
 		}),
 		OperatorAPISetTenantLogsHandler: operator_api.SetTenantLogsHandlerFunc(func(params operator_api.SetTenantLogsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.SetTenantLogs has not yet been implemented")
@@ -314,18 +315,18 @@ type OperatorAPI struct {
 	OperatorAPIListPVCsForTenantHandler operator_api.ListPVCsForTenantHandler
 	// OperatorAPIListTenantsHandler sets the operation handler for the list tenants operation
 	OperatorAPIListTenantsHandler operator_api.ListTenantsHandler
-	// UserAPILoginDetailHandler sets the operation handler for the login detail operation
-	UserAPILoginDetailHandler user_api.LoginDetailHandler
-	// UserAPILoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
-	UserAPILoginOauth2AuthHandler user_api.LoginOauth2AuthHandler
-	// UserAPILoginOperatorHandler sets the operation handler for the login operator operation
-	UserAPILoginOperatorHandler user_api.LoginOperatorHandler
-	// UserAPILogoutHandler sets the operation handler for the logout operation
-	UserAPILogoutHandler user_api.LogoutHandler
+	// AuthLoginDetailHandler sets the operation handler for the login detail operation
+	AuthLoginDetailHandler auth.LoginDetailHandler
+	// AuthLoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
+	AuthLoginOauth2AuthHandler auth.LoginOauth2AuthHandler
+	// AuthLoginOperatorHandler sets the operation handler for the login operator operation
+	AuthLoginOperatorHandler auth.LoginOperatorHandler
+	// AuthLogoutHandler sets the operation handler for the logout operation
+	AuthLogoutHandler auth.LogoutHandler
 	// OperatorAPIPutTenantYAMLHandler sets the operation handler for the put tenant y a m l operation
 	OperatorAPIPutTenantYAMLHandler operator_api.PutTenantYAMLHandler
-	// UserAPISessionCheckHandler sets the operation handler for the session check operation
-	UserAPISessionCheckHandler user_api.SessionCheckHandler
+	// AuthSessionCheckHandler sets the operation handler for the session check operation
+	AuthSessionCheckHandler auth.SessionCheckHandler
 	// OperatorAPISetTenantLogsHandler sets the operation handler for the set tenant logs operation
 	OperatorAPISetTenantLogsHandler operator_api.SetTenantLogsHandler
 	// OperatorAPISetTenantMonitoringHandler sets the operation handler for the set tenant monitoring operation
@@ -521,23 +522,23 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPIListTenantsHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListTenantsHandler")
 	}
-	if o.UserAPILoginDetailHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginDetailHandler")
+	if o.AuthLoginDetailHandler == nil {
+		unregistered = append(unregistered, "auth.LoginDetailHandler")
 	}
-	if o.UserAPILoginOauth2AuthHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginOauth2AuthHandler")
+	if o.AuthLoginOauth2AuthHandler == nil {
+		unregistered = append(unregistered, "auth.LoginOauth2AuthHandler")
 	}
-	if o.UserAPILoginOperatorHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginOperatorHandler")
+	if o.AuthLoginOperatorHandler == nil {
+		unregistered = append(unregistered, "auth.LoginOperatorHandler")
 	}
-	if o.UserAPILogoutHandler == nil {
-		unregistered = append(unregistered, "user_api.LogoutHandler")
+	if o.AuthLogoutHandler == nil {
+		unregistered = append(unregistered, "auth.LogoutHandler")
 	}
 	if o.OperatorAPIPutTenantYAMLHandler == nil {
 		unregistered = append(unregistered, "operator_api.PutTenantYAMLHandler")
 	}
-	if o.UserAPISessionCheckHandler == nil {
-		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	if o.AuthSessionCheckHandler == nil {
+		unregistered = append(unregistered, "auth.SessionCheckHandler")
 	}
 	if o.OperatorAPISetTenantLogsHandler == nil {
 		unregistered = append(unregistered, "operator_api.SetTenantLogsHandler")
@@ -798,19 +799,19 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/login"] = user_api.NewLoginDetail(o.context, o.UserAPILoginDetailHandler)
+	o.handlers["GET"]["/login"] = auth.NewLoginDetail(o.context, o.AuthLoginDetailHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/login/oauth2/auth"] = user_api.NewLoginOauth2Auth(o.context, o.UserAPILoginOauth2AuthHandler)
+	o.handlers["POST"]["/login/oauth2/auth"] = auth.NewLoginOauth2Auth(o.context, o.AuthLoginOauth2AuthHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/login/operator"] = user_api.NewLoginOperator(o.context, o.UserAPILoginOperatorHandler)
+	o.handlers["POST"]["/login/operator"] = auth.NewLoginOperator(o.context, o.AuthLoginOperatorHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/logout"] = user_api.NewLogout(o.context, o.UserAPILogoutHandler)
+	o.handlers["POST"]["/logout"] = auth.NewLogout(o.context, o.AuthLogoutHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -818,7 +819,7 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	o.handlers["GET"]["/session"] = auth.NewSessionCheck(o.context, o.AuthSessionCheckHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

@@ -37,7 +37,7 @@ paths:
       # Exclude this API from the authentication requirement
       security: [ ]
       tags:
-        - UserAPI
+        - Auth
   /login/operator:
     post:
       summary: Login to Operator Console.
@@ -57,7 +57,7 @@ paths:
             $ref: "#/definitions/error"
       security: [ ]
       tags:
-        - UserAPI
+        - Auth
 
   /login/oauth2/auth:
     post:
@@ -78,7 +78,7 @@ paths:
             $ref: "#/definitions/error"
       security: [ ]
       tags:
-        - UserAPI
+        - Auth
 
   /logout:
     post:
@@ -92,7 +92,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-        - UserAPI
+        - Auth
 
   /session:
     get:
@@ -108,7 +108,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-        - UserAPI
+        - Auth
 
   /check-version:
     get:
@@ -1240,7 +1240,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account, redirect-service-account]
+        enum: [ form, redirect, service-account, redirect-service-account ]
       redirect:
         type: string
   loginRequest:

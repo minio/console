@@ -25,24 +25,24 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	profileApi "github.com/minio/console/restapi/operations/profile"
 	"github.com/minio/madmin-go"
 )
 
 func registerProfilingHandler(api *operations.ConsoleAPI) {
 	// Start Profiling
-	api.AdminAPIProfilingStartHandler = admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, session *models.Principal) middleware.Responder {
+	api.ProfileProfilingStartHandler = profileApi.ProfilingStartHandlerFunc(func(params profileApi.ProfilingStartParams, session *models.Principal) middleware.Responder {
 		profilingStartResponse, err := getProfilingStartResponse(session, params.Body)
 		if err != nil {
-			return admin_api.NewProfilingStartDefault(int(err.Code)).WithPayload(err)
+			return profileApi.NewProfilingStartDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewProfilingStartCreated().WithPayload(profilingStartResponse)
+		return profileApi.NewProfilingStartCreated().WithPayload(profilingStartResponse)
 	})
 	// Stop and download profiling data
-	api.AdminAPIProfilingStopHandler = admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, session *models.Principal) middleware.Responder {
+	api.ProfileProfilingStopHandler = profileApi.ProfilingStopHandlerFunc(func(params profileApi.ProfilingStopParams, session *models.Principal) middleware.Responder {
 		profilingStopResponse, err := getProfilingStopResponse(session)
 		if err != nil {
-			return admin_api.NewProfilingStopDefault(int(err.Code)).WithPayload(err)
+			return profileApi.NewProfilingStopDefault(int(err.Code)).WithPayload(err)
 		}
 		// Custom response writer to set the content-disposition header to tell the
 		// HTTP client the name and extension of the file we are returning
