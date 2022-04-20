@@ -79,6 +79,7 @@ export interface ITenantCreator {
   logSearchConfiguration?: LogSearchConfiguration;
   prometheusConfiguration?: PrometheusConfiguration;
   affinity?: AffinityConfiguration;
+  domains?: IDomainsRequest;
 }
 
 export interface ImageRegistry {

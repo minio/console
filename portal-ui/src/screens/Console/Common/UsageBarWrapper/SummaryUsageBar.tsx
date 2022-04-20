@@ -66,7 +66,6 @@ const SummaryUsageBar = ({
   loading,
   error,
 }: ISummaryUsageBar) => {
-  console.log("TENANT", tenant);
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
