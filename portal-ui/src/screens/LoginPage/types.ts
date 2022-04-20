@@ -24,5 +24,5 @@ export enum loginStrategyType {
   form = "form",
   redirect = "redirect",
   serviceAccount = "service-account",
-  redirectServiceAccount = "redirect-service-account"
+  redirectServiceAccount = "redirect-service-account",
 }
