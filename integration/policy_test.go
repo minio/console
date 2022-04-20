@@ -33,10 +33,16 @@ import (
 func Test_PolicyAPI(t *testing.T) {
 	assert := assert.New(t)
 
+	AddUser("testuser1", "testtest", []string{},[]string{"readwrite"})
+
 	type args struct {
-		api    string
-		name   string
-		policy *string
+		api         string
+		method      string
+		name        string
+		policy      *string
+		entityType  string
+		entityName  string
+		policyName  []string
 	}
 	tests := []struct {
 		name           string
@@ -48,6 +54,7 @@ func Test_PolicyAPI(t *testing.T) {
 			name: "Create Policy - Valid",
 			args: args{
 				api:  "/policies",
+				method: "POST",
 				name: "test",
 				policy: swag.String(`
   {
@@ -69,11 +76,13 @@ func Test_PolicyAPI(t *testing.T) {
 			expectedStatus: 201,
 			expectedError:  nil,
 		},
+
 		{
 			name: "Create Policy - Invalid",
 			args: args{
 				api:  "/policies",
-				name: "test",
+				method: "POST",
+				name: "test2",
 				policy: swag.String(`
   {
   "Version": "2012-10-17",
@@ -94,6 +103,48 @@ func Test_PolicyAPI(t *testing.T) {
 			expectedStatus: 500,
 			expectedError:  nil,
 		},
+		{
+			name: "Set Policy - Valid",
+			args: args{
+				api:    "/set-policy",
+				method: "PUT",
+				policyName: []string{"consoleAdmin"},
+				entityType: "user",
+				entityName: "testuser1",
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
+		{
+			name: "Set Policy - Invalid",
+			args: args{
+				api:    "/set-policy",
+				method: "PUT",
+				policyName: []string{"test3"},
+				entityType: "user",
+				entityName: "testuser1",
+			},
+			expectedStatus: 500,
+			expectedError:  nil,
+		},
+		{
+			name: "List Policies",
+			args: args{
+				api:    "/policies",
+				method: "GET",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+		{
+			name: "Delete Policies - Valid",
+			args: args{
+				api:    "/policy?name=test",
+				method: "DELETE",
+			},
+			expectedStatus: 204,
+			expectedError:  nil,
+		},
 	}
 
 	for _, tt := range tests {
@@ -106,15 +157,21 @@ func Test_PolicyAPI(t *testing.T) {
 			// Add policy
 
 			requestDataPolicy := map[string]interface{}{}
+			requestDataPolicy["name"] = tt.args.name
 			if tt.args.policy != nil {
-				requestDataPolicy["name"] = tt.args.name
 				requestDataPolicy["policy"] = *tt.args.policy
+			}
+			requestDataPolicy["entityName"] = tt.args.entityName
+			requestDataPolicy["entityType"] = tt.args.entityType
+			if tt.args.policyName != nil {
+				requestDataPolicy["name"] = tt.args.policyName
 			}
 
 			requestDataJSON, _ := json.Marshal(requestDataPolicy)
 			requestDataBody := bytes.NewReader(requestDataJSON)
 			request, err := http.NewRequest(
-				"POST", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), requestDataBody)
+				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), requestDataBody)
+			fmt.Println(requestDataPolicy)
 			if err != nil {
 				log.Println(err)
 				return
@@ -127,9 +184,8 @@ func Test_PolicyAPI(t *testing.T) {
 				return
 			}
 			if response != nil {
-				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
 			}
-
 		})
 	}
 
