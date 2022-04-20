@@ -32,6 +32,7 @@ import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
 import { SRInfoStateType } from "./types";
+import { baseUrl } from "./history";
 
 interface ProtectedRouteProps {
   loggedIn: boolean;
@@ -113,7 +114,11 @@ const ProtectedRoute = ({
     return null;
   }
   // redirect user to the right page based on session status
-  return loggedIn ? <Component /> : <Redirect to={{ pathname: "login" }} />;
+  return loggedIn ? (
+    <Component />
+  ) : (
+    <Redirect to={{ pathname: `${baseUrl}login` }} />
+  );
 };
 
 const mapState = (state: AppState) => ({

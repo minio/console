@@ -27,7 +27,7 @@ import { setMenuOpen, userLoggedIn } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
 
-import history from "../../../history";
+import history, { baseUrl } from "../../../history";
 import api from "../../../common/api";
 
 import { resetSession } from "../actions";
@@ -106,8 +106,9 @@ const Menu = ({
       clearSession();
       userLoggedIn(false);
       localStorage.setItem("userLoggedIn", "");
+      localStorage.setItem("redirect-path", "");
       resetSession();
-      history.push("login");
+      history.push(`${baseUrl}login`);
     };
     api
       .invoke("POST", `/api/v1/logout`)
