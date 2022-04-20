@@ -283,7 +283,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
               icon={<AddIcon />}
               color="primary"
               onClick={(e) => {
-               history.push(`${IAM_PAGES.USER_ADD}`);
+                history.push(`${IAM_PAGES.USER_ADD}`);
               }}
               variant={"contained"}
             />
@@ -388,8 +388,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                             To get started,{" "}
                             <AButton
                               onClick={() => {
-                                setAddScreenOpen(true);
-                                setSelectedUser(null);
+                               history.push(`${IAM_PAGES.USER_ADD}`);
                               }}
                             >
                               Create a User

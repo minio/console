@@ -31,31 +31,25 @@ import PageLayout from "../Common/Layout/PageLayout";
 import history from "../../../../src/history";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
-import AddUserHelpBox from "./AddUserHelpBox"
+import AddUserHelpBox from "./AddUserHelpBox";
 import PolicySelectors from "../Policies/PolicySelectors";
 import BackLink from "../../../common/BackLink";
 import GroupsSelectors from "./GroupsSelectors";
 import { connect } from "react-redux";
-import {User} from "./types";
+import { User } from "./types";
 
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import {
-  
-  IAM_PAGES,
- 
-} from "../../../common/SecureComponent/permissions";
-import {
-  ErrorResponseHandler,
-} from "../../../../src/common/types";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 
 import { setErrorSnackMessage } from "../../../../src/actions";
 
 interface IAddUserProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage; 
-   selectedUser: User | null;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
+  selectedUser: User | null;
 }
 
 const styles = (theme: Theme) =>
@@ -99,7 +93,7 @@ const styles = (theme: Theme) =>
       border: "1px solid #EAEAEA",
       borderBottom: 0,
     },
-     headTitle: {
+    headTitle: {
       fontWeight: "bold",
       fontSize: 16,
       paddingLeft: 8,
@@ -108,21 +102,19 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-
-const AddUser = ({  
-  classes,  
+const AddUser = ({
+  classes,
   setErrorSnackMessage,
   selectedUser,
 }: IAddUserProps) => {
-   const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [selectedPolicies, setSelectedPolicies] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
- const sendEnabled =
-    accessKey.trim() !== "";
+  const sendEnabled = accessKey.trim() !== "";
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -140,26 +132,25 @@ const AddUser = ({
       return;
     }
     setAddLoading(true);
-   api
-        .invoke("POST", "/api/v1/users", {
-          accessKey,
-          secretKey,
-          groups: selectedGroups,
-          policies: selectedPolicies,
-        })
-        .then((res) => {
-          setAddLoading(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setAddLoading(false);
-          setErrorSnackMessage(err);
-        });
-      };
-   
-     
+    api
+      .invoke("POST", "/api/v1/users", {
+        accessKey,
+        secretKey,
+        groups: selectedGroups,
+        policies: selectedPolicies,
+      })
+      .then((res) => {
+        setAddLoading(false);
+        history.push(`${IAM_PAGES.USERS}`);
+      })
+      .catch((err: ErrorResponseHandler) => {
+        setAddLoading(false);
+        setErrorSnackMessage(err);
+      });
+  };
 
-   const resetForm = () => {   
-      setSelectedGroups([]);      
+  const resetForm = () => {
+    setSelectedGroups([]);
     setAccessKey("");
     setSecretKey("");
     setSelectedPolicies([]);
@@ -169,120 +160,125 @@ const AddUser = ({
   return (
     <Fragment>
       <Grid item xs={12}>
-         <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
+        <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
         <PageLayout>
           <Grid item xs={12} container className={classes.title}>
-                <Grid item xs={"auto"}>
-                  <CreateUserIcon />
-                </Grid>
-                <Grid item xs={"auto"} className={classes.headTitle}>
-                  Create New User
-                </Grid>
-              </Grid>
-
-      <Grid container>  
-      <Grid xs={8}>
-      <Box >
-        <form
-          noValidate
-          autoComplete="off"
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            saveRecord(e);
-            history.push(`${IAM_PAGES.USERS}`);
-          }}
-        >
-          <Grid container>
-            <Grid item xs={12}>
-              <div className={classes.formFieldRow}>
-                <InputBoxWrapper
-                 className={classes.spacerBottom}
-                 classes={{
-                  inputLabel: classes.sizedLabel,
-                }}
-                  id="accesskey-input"
-                  name="accesskey-input"
-                  label="User Name"
-                  value={accessKey}
-                  autoFocus={true}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setAccessKey(e.target.value);
-                  }}
-                 
-                />
-              </div>
-              <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                   className={classes.spacerBottom}
-                   classes={{
-                  inputLabel: classes.sizedLabel,
-                }}
-                    id="standard-multiline-static"
-                    name="standard-multiline-static"
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    value={secretKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSecretKey(e.target.value);
-                    }}
-                    autoComplete="current-password"
-                    overlayIcon={
-                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-                }
-                overlayAction={() => setShowPassword(!showPassword)}
-                  />
-                </div>
-                <Grid container item spacing="20">
-               <Grid item xs={12}>
-                  <PolicySelectors
-                    selectedPolicy={selectedPolicies}
-                    setSelectedPolicy={setSelectedPolicies}
-                  />
-                </Grid>
-                 <Grid item xs={12}>
-                  <GroupsSelectors
-                    selectedGroups={selectedGroups}
-                    setSelectedGroups={(elements: string[]) => {
-                      setSelectedGroups(elements);
-                    }}
-                  />
-                </Grid>
-               </Grid>
-              {addLoading && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
+            <Grid item xs={"auto"}>
+              <CreateUserIcon />
             </Grid>
-            <Grid item xs={12} className={classes.modalButtonBar}>
-              <Button
-                type="button"
-                variant="outlined"
-                color="primary"
-                onClick={resetForm}
-              >
-                Clear
-              </Button>
+            <Grid item xs={"auto"} className={classes.headTitle}>
+              Create New User
+            </Grid>
+          </Grid>
 
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                
-                disabled={addLoading || !sendEnabled}
-              >
-                Save
-              </Button>
-           </Grid>
-           </Grid>
-           </form>
-           </Box>
-           </Grid>
-           <Grid xs={4}>
-           <Box>
-           <AddUserHelpBox />
-        </Box>
-        </Grid>
-        </Grid> 
+          <Grid container>
+            <Grid xs={8}>
+              <Box>
+                <form
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    saveRecord(e);
+                  }}
+                >
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <div className={classes.formFieldRow}>
+                        <InputBoxWrapper
+                          className={classes.spacerBottom}
+                          classes={{
+                            inputLabel: classes.sizedLabel,
+                          }}
+                          id="accesskey-input"
+                          name="accesskey-input"
+                          label="User Name"
+                          value={accessKey}
+                          autoFocus={true}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setAccessKey(e.target.value);
+                          }}
+                        />
+                      </div>
+                      <div className={classes.formFieldRow}>
+                        <InputBoxWrapper
+                          className={classes.spacerBottom}
+                          classes={{
+                            inputLabel: classes.sizedLabel,
+                          }}
+                          id="standard-multiline-static"
+                          name="standard-multiline-static"
+                          label="Password"
+                          type={showPassword ? "text" : "password"}
+                          value={secretKey}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setSecretKey(e.target.value);
+                          }}
+                          autoComplete="current-password"
+                          overlayIcon={
+                            showPassword ? (
+                              <VisibilityOffIcon />
+                            ) : (
+                              <RemoveRedEyeIcon />
+                            )
+                          }
+                          overlayAction={() => setShowPassword(!showPassword)}
+                        />
+                      </div>
+                      <Grid container item spacing="20">
+                        <Grid item xs={12}>
+                          <PolicySelectors
+                            selectedPolicy={selectedPolicies}
+                            setSelectedPolicy={setSelectedPolicies}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <GroupsSelectors
+                            selectedGroups={selectedGroups}
+                            setSelectedGroups={(elements: string[]) => {
+                              setSelectedGroups(elements);
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                      {addLoading && (
+                        <Grid item xs={12}>
+                          <LinearProgress />
+                        </Grid>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} className={classes.modalButtonBar}>
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        color="primary"
+                        onClick={resetForm}
+                      >
+                        Clear
+                      </Button>
+
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={addLoading || !sendEnabled}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              </Box>
+            </Grid>
+            <Grid xs={4}>
+              <Box>
+                <AddUserHelpBox />
+              </Box>
+            </Grid>
+          </Grid>
         </PageLayout>
       </Grid>
     </Fragment>

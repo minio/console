@@ -1,3 +1,19 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import React from "react";
 import { Box } from "@mui/material";
 import {
   HelpIconFilled,
@@ -5,8 +21,6 @@ import {
   ChangeAccessPolicyIcon,
   GroupsIcon,
 } from "../../../icons";
-import React from "react";
-
 
 
 const FeatureItem = ({
@@ -75,18 +89,16 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         <div>Learn more about the Users feature</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-         A MinIO user consists of a unique access key (username)
-                        and corresponding secret key (password). Clients must
-                        authenticate their identity by specifying both a valid
-                        access key (username) and the corresponding secret key
-                        (password) of an existing MinIO user.
-                        <br />
-                        <br />
-                        Each user can have one or more assigned policies that
-                        explicitly list the actions and resources to which that
-                        user has access. Users can also inherit policies from
-                        the groups in which they have membership.
-                        <br />
+        A MinIO user consists of a unique access key (username) and
+        corresponding secret key (password). Clients must authenticate their
+        identity by specifying both a valid access key (username) and the
+        corresponding secret key (password) of an existing MinIO user.
+        <br />
+        <br />
+        Each user can have one or more assigned policies that explicitly list
+        the actions and resources to which that user has access. Users can also
+        inherit policies from the groups in which they have membership.
+        <br />
       </Box>
 
       <Box
@@ -95,14 +107,8 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
           flexFlow: "column",
         }}
       >
-        <FeatureItem
-          icon={<UsersIcon />}
-          description={`Create Users`}
-        />
-        <FeatureItem
-          icon={<GroupsIcon />}
-          description={`Manage Groups`}
-        />
+        <FeatureItem icon={<UsersIcon />} description={`Create Users`} />
+        <FeatureItem icon={<GroupsIcon />} description={`Manage Groups`} />
         <FeatureItem
           icon={<ChangeAccessPolicyIcon />}
           description={`Assign Policies`}
