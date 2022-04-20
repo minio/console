@@ -50,6 +50,11 @@ export interface IVolumeConfiguration {
   labels?: any;
 }
 
+export interface IDomainsRequest {
+  console?: string;
+  minio?: string[];
+}
+
 export interface ITenantCreator {
   name: string;
   service_name: string;
