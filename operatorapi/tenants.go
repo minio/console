@@ -342,6 +342,14 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewGetTenantEventsOK().WithPayload(payload)
 	})
+	// Update Tenant Domains
+	api.OperatorAPIUpdateTenantDomainsHandler = operator_api.UpdateTenantDomainsHandlerFunc(func(params operator_api.UpdateTenantDomainsParams, principal *models.Principal) middleware.Responder {
+		err := getUpdateDomainsResponse(principal, params)
+		if err != nil {
+			operator_api.NewUpdateTenantDomainsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewUpdateTenantDomainsNoContent()
+	})
 }
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
@@ -2587,4 +2595,63 @@ func getTenantEventsResponse(session *models.Principal, params operator_api.GetT
 		return retval[i].LastSeen < retval[j].LastSeen
 	})
 	return retval, nil
+}
+
+func getUpdateDomainsResponse(session *models.Principal, params operator_api.UpdateTenantDomainsParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	operatorCli, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+
+	opClient := &operatorClient{
+		client: operatorCli,
+	}
+
+	err = updateTenantDomains(ctx, opClient, params.Namespace, params.Tenant, params.Body.Domains)
+
+	if err != nil {
+		return prepareError(err)
+	}
+
+	return nil
+}
+
+func updateTenantDomains(ctx context.Context, operatorClient OperatorClientI, namespace string, tenantName string, domainConfig *models.DomainsConfiguration) error {
+
+	minTenant, err := getTenant(ctx, operatorClient, namespace, tenantName)
+	if err != nil {
+		return err
+	}
+
+	var features miniov2.Features
+	var domains miniov2.TenantDomains
+
+	// We include current value for BucketDNS. Domains will be overwritten as we are passing all the values that must be saved.
+	if minTenant.Spec.Features != nil {
+		features = miniov2.Features{
+			BucketDNS: minTenant.Spec.Features.BucketDNS,
+		}
+	}
+
+	if domainConfig != nil {
+		// tenant domains
+		if domainConfig.Console != "" {
+			domains.Console = domainConfig.Console
+		}
+
+		if domainConfig.Minio != nil {
+			domains.Minio = domainConfig.Minio
+		}
+
+		features.Domains = &domains
+	}
+
+	minTenant.Spec.Features = &features
+
+	_, err = operatorClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+
+	return err
 }
