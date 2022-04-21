@@ -1080,3 +1080,133 @@ func Test_UpdateTenantAction(t *testing.T) {
 		})
 	}
 }
+
+func Test_UpdateDomainsResponse(t *testing.T) {
+	opClient := opClientMock{}
+
+	type args struct {
+		ctx              context.Context
+		operatorClient   OperatorClientI
+		nameSpace        string
+		tenantName       string
+		mockTenantUpdate func(ctx context.Context, tenant *miniov2.Tenant, options metav1.UpdateOptions) (*miniov2.Tenant, error)
+		mockTenantGet    func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
+		domains          *models.DomainsConfiguration
+	}
+	tests := []struct {
+		name    string
+		args    args
+		objs    []runtime.Object
+		wantErr bool
+	}{
+		{
+			name: "Update console & minio domains OK",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				tenantName:     "minio-tenant",
+				mockTenantUpdate: func(ctx context.Context, tenant *miniov2.Tenant, options metav1.UpdateOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
+				},
+				domains: &models.DomainsConfiguration{
+					Console: "http://console.min.io",
+					Minio:   []string{"http://domain1.min.io", "http://domain2.min.io", "http://domain3.min.io"},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Error occurs getting minioTenant",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				tenantName:     "minio-tenant",
+				mockTenantUpdate: func(ctx context.Context, tenant *miniov2.Tenant, options metav1.UpdateOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return nil, errors.New("error-getting-tenant-info")
+				},
+				domains: &models.DomainsConfiguration{
+					Console: "http://console.min.io",
+					Minio:   []string{"http://domain1.min.io", "http://domain2.min.io", "http://domain3.min.io"},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Tenant already has domains",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				tenantName:     "minio-tenant",
+				mockTenantUpdate: func(ctx context.Context, tenant *miniov2.Tenant, options metav1.UpdateOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					domains := miniov2.TenantDomains{
+						Console: "http://onerandomdomain.min.io",
+						Minio: []string{
+							"http://oneDomain.min.io",
+							"http://twoDomains.min.io",
+						},
+					}
+
+					features := miniov2.Features{
+						Domains: &domains,
+					}
+
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{Features: &features},
+					}, nil
+				},
+				domains: &models.DomainsConfiguration{
+					Console: "http://console.min.io",
+					Minio:   []string{"http://domain1.min.io", "http://domain2.min.io", "http://domain3.min.io"},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Tenant features only have BucketDNS",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				tenantName:     "minio-tenant",
+				mockTenantUpdate: func(ctx context.Context, tenant *miniov2.Tenant, options metav1.UpdateOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					features := miniov2.Features{
+						BucketDNS: true,
+					}
+
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{Features: &features},
+					}, nil
+				},
+				domains: &models.DomainsConfiguration{
+					Console: "http://console.min.io",
+					Minio:   []string{"http://domain1.min.io", "http://domain2.min.io", "http://domain3.min.io"},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		opClientTenantGetMock = tt.args.mockTenantGet
+		opClientTenantUpdateMock = tt.args.mockTenantUpdate
+		t.Run(tt.name, func(t *testing.T) {
+			if err := updateTenantDomains(tt.args.ctx, tt.args.operatorClient, tt.args.nameSpace, tt.args.tenantName, tt.args.domains); (err != nil) != tt.wantErr {
+				t.Errorf("updateTenantDomains() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

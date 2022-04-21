@@ -207,6 +207,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIUpdateTenantHandler: operator_api.UpdateTenantHandlerFunc(func(params operator_api.UpdateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.UpdateTenant has not yet been implemented")
 		}),
+		OperatorAPIUpdateTenantDomainsHandler: operator_api.UpdateTenantDomainsHandlerFunc(func(params operator_api.UpdateTenantDomainsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.UpdateTenantDomains has not yet been implemented")
+		}),
 		OperatorAPIUpdateTenantIdentityProviderHandler: operator_api.UpdateTenantIdentityProviderHandlerFunc(func(params operator_api.UpdateTenantIdentityProviderParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.UpdateTenantIdentityProvider has not yet been implemented")
 		}),
@@ -358,6 +361,8 @@ type OperatorAPI struct {
 	OperatorAPITenantUpdatePoolsHandler operator_api.TenantUpdatePoolsHandler
 	// OperatorAPIUpdateTenantHandler sets the operation handler for the update tenant operation
 	OperatorAPIUpdateTenantHandler operator_api.UpdateTenantHandler
+	// OperatorAPIUpdateTenantDomainsHandler sets the operation handler for the update tenant domains operation
+	OperatorAPIUpdateTenantDomainsHandler operator_api.UpdateTenantDomainsHandler
 	// OperatorAPIUpdateTenantIdentityProviderHandler sets the operation handler for the update tenant identity provider operation
 	OperatorAPIUpdateTenantIdentityProviderHandler operator_api.UpdateTenantIdentityProviderHandler
 	// OperatorAPIUpdateTenantSecurityHandler sets the operation handler for the update tenant security operation
@@ -586,6 +591,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIUpdateTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.UpdateTenantHandler")
+	}
+	if o.OperatorAPIUpdateTenantDomainsHandler == nil {
+		unregistered = append(unregistered, "operator_api.UpdateTenantDomainsHandler")
 	}
 	if o.OperatorAPIUpdateTenantIdentityProviderHandler == nil {
 		unregistered = append(unregistered, "operator_api.UpdateTenantIdentityProviderHandler")
@@ -883,6 +891,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}"] = operator_api.NewUpdateTenant(o.context, o.OperatorAPIUpdateTenantHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/domains"] = operator_api.NewUpdateTenantDomains(o.context, o.OperatorAPIUpdateTenantDomainsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
