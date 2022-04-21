@@ -411,8 +411,12 @@ export const objectBrowserCommon = {
     textAlign: "left" as const,
     marginLeft: 15,
     marginRight: 10,
+    width: 0, // WA to avoid overflow if child elements in flexbox list.**
   },
 };
+
+// ** According to W3 spec, default minimum values for flex width flex-grow is "auto" (https://drafts.csswg.org/css-flexbox/#min-size-auto). So in this case we need to enforce the use of an absolute width.
+// "The preferred width of a box element child containing text content is currently the text without line breaks, leading to very unintuitive width and flex calculations → declare a width on a box element child with more than a few words (ever wonder why flexbox demos are all “1,2,3”?)"
 
 export const selectorsCommon = {
   multiSelectTable: {
@@ -1365,6 +1369,9 @@ export const detailsPanel: any = {
       },
       "&:last-of-type": {
         borderBottom: 0,
+      },
+      "&::before": {
+        content: "' '",
       },
     },
   },

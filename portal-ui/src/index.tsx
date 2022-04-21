@@ -102,7 +102,7 @@ const GlobalCss = withStyles({
     ul: {
       paddingLeft:20,
       listStyle: "none", /* Remove default bullets */
-      "& li::before": {
+      "& li::before:not(.Mui*)": {
         content: '"￭"',
         color: "#2781B0",
         fontSize: 20,
@@ -113,7 +113,7 @@ const GlobalCss = withStyles({
       },
       "& ul": {
         listStyle: "none", /* Remove default bullets */
-        "& li::before": {
+        "& li::before:not(.Mui*)": {
           content: '"￮"',
           color: "#2781B0",
           fontSize: 20,
