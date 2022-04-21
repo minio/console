@@ -918,6 +918,8 @@ const ListObjects = ({
             };
             setErrorSnackMessage(err);
           }
+          // We force objects list reload after all promises were handled
+          setLoadingObjectsList(true);
         });
       };
 
