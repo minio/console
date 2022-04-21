@@ -31,14 +31,17 @@ import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
+import { AppState } from "../../../../../../store";
 
-interface ICreateFolder {
+interface ICreatePath {
   classes: any;
   modalOpen: boolean;
   bucketName: string;
   folderName: string;
   onClose: () => any;
   existingFiles: BucketObjectItem[];
+  detailsOpen: boolean;
+  selectedInternalPaths: string | null;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
@@ -48,7 +51,7 @@ const styles = (theme: Theme) =>
     ...formFieldStyles,
   });
 
-const CreateFolderModal = ({
+const CreatePathModal = ({
   modalOpen,
   folderName,
   bucketName,
@@ -56,11 +59,24 @@ const CreateFolderModal = ({
   setModalErrorSnackMessage,
   classes,
   existingFiles,
-}: ICreateFolder) => {
+  detailsOpen,
+  selectedInternalPaths,
+}: ICreatePath) => {
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const currentPath = `${bucketName}/${decodeFileName(folderName)}`;
+  let currentPath = `${bucketName}/${decodeFileName(folderName)}`;
+
+  if(selectedInternalPaths && detailsOpen) {
+    const decodedPathFileName = decodeFileName(selectedInternalPaths).split("/");
+
+    if(decodedPathFileName) {
+      decodedPathFileName.pop();
+      const joinFileName = decodedPathFileName.join("/")
+      const joinPaths = `${joinFileName}${joinFileName.endsWith("/") ? "" : "/"}`;
+      currentPath = `${bucketName}/${joinPaths}`;
+    }
+  }
 
   const resetForm = () => {
     setPathUrl("");
@@ -68,12 +84,25 @@ const CreateFolderModal = ({
 
   const createProcess = () => {
     let folderPath = "";
-    if (folderName !== "") {
-      const decodedFolderName = decodeFileName(folderName);
-      folderPath = decodedFolderName.endsWith("/")
-        ? decodedFolderName
-        : `${decodedFolderName}/`;
+
+    if(selectedInternalPaths && detailsOpen) {
+      const decodedPathFileName = decodeFileName(selectedInternalPaths).split("/");
+
+      if(decodedPathFileName) {
+        decodedPathFileName.pop();
+        const joinFileName = decodedPathFileName.join("/")
+        folderPath = `${joinFileName}${joinFileName.endsWith("/") ? "" : "/"}`;
+      }
+    } else {
+      if (folderName !== "") {
+        const decodedFolderName = decodeFileName(folderName);
+        folderPath = decodedFolderName.endsWith("/")
+            ? decodedFolderName
+            : `${decodedFolderName}/`;
+      }
     }
+
+
     const sharesName = (record: BucketObjectItem) =>
       record.name === folderPath + pathUrl;
 
@@ -119,7 +148,19 @@ const CreateFolderModal = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formFieldRow}>
-            Current Path: {currentPath}
+            <strong>Current Path:</strong> <br />
+            <div
+              style={{
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                fontSize: 14,
+                textAlign: "left"
+              }}
+              dir={"rtl"}
+            >
+              {currentPath}
+            </div>
           </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
@@ -158,10 +199,15 @@ const CreateFolderModal = ({
   );
 };
 
+const mapStateToProps = ({ objectBrowser }: AppState) => ({
+  detailsOpen: objectBrowser.objectDetailsOpen,
+  selectedInternalPaths: objectBrowser.selectedInternalPaths,
+});
+
 const mapDispatchToProps = {
   setModalErrorSnackMessage,
 };
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(withStyles(styles)(CreateFolderModal));
+export default connector(withStyles(styles)(CreatePathModal));

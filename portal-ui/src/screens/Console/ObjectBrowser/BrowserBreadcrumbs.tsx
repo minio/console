@@ -34,9 +34,9 @@ import { setVersionsModeEnabled } from "./actions";
 import history from "../../../history";
 import withSuspense from "../Common/Components/withSuspense";
 
-const CreateFolderModal = withSuspense(
+const CreatePathModal = withSuspense(
   React.lazy(
-    () => import("../Buckets/ListBuckets/Objects/ListObjects/CreateFolderModal")
+    () => import("../Buckets/ListBuckets/Objects/ListObjects/CreatePathModal")
   )
 );
 
@@ -154,7 +154,7 @@ const BrowserBreadcrumbs = ({
   return (
     <div className={classes.breadcrumbsMain}>
       {createFolderOpen && (
-        <CreateFolderModal
+        <CreatePathModal
           modalOpen={createFolderOpen}
           bucketName={bucketName}
           folderName={internalPaths}
