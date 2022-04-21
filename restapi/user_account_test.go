@@ -22,9 +22,31 @@ import (
 	"testing"
 
 	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations/user_api"
+	"github.com/stretchr/testify/assert"
 )
 
 var minioChangePasswordMock func(ctx context.Context, accessKey, secretKey string) error
+
+func Test_getChangePasswordResponse(t *testing.T) {
+	assert := assert.New(t)
+	session := &models.Principal{
+		AccountAccessKey: "TESTTEST",
+	}
+	CurrentSecretKey := "string"
+	NewSecretKey := "string"
+	changePasswordParameters := user_api.AccountChangePasswordParams{
+		Body: &models.AccountChangePasswordRequest{
+			CurrentSecretKey: &CurrentSecretKey,
+			NewSecretKey:     &NewSecretKey,
+		},
+	}
+	loginResponse, actualError := getChangePasswordResponse(session, changePasswordParameters)
+	expected := (*models.LoginResponse)(nil)
+	assert.Equal(expected, loginResponse)
+	expectedError := "error please check your current password" // errChangePassword
+	assert.Equal(expectedError, *actualError.DetailedMessage)
+}
 
 func Test_changePassword(t *testing.T) {
 	client := adminClientMock{}

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,15 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ILoginDetails {
-  loginStrategy: loginStrategyType;
-  redirect: string;
-}
+import React from "react";
+import { Box } from "@mui/material";
 
-export enum loginStrategyType {
-  unknown = "unknown",
-  form = "form",
-  redirect = "redirect",
-  serviceAccount = "service-account",
-  redirectServiceAccount = "redirect-service-account",
-}
+type Props = {};
+
+const ContentBox: React.FC<Props> = ({ children }) => {
+  return (
+    <Box
+      sx={{
+        border: "1px solid #eaeaea",
+        padding: {
+          lg: "40px",
+          xs: "15px",
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+export default ContentBox;

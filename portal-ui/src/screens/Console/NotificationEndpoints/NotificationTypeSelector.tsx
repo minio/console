@@ -28,6 +28,7 @@ import history from "../../../history";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import ContentBox from "../Common/ContentBox";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -56,33 +57,38 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
         actions={<React.Fragment />}
       />
       <PageLayout>
-        <div className={classes.iconContainer}>
-          {withLogos.map((item) => {
-            return (
-              <button
-                key={`icon-${item.targetTitle}`}
-                className={classes.lambdaNotif}
-                onClick={() => {
-                  history.push(
-                    `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
-                  );
-                }}
-              >
-                <div className={classes.lambdaNotifIcon}>
-                  <img
-                    src={item.logo}
-                    className={classes.logoButton}
-                    alt={item.targetTitle}
-                  />
-                </div>
+        <ContentBox>
+          <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
+            Select Target Type
+          </div>
+          <div className={classes.iconContainer}>
+            {withLogos.map((item) => {
+              return (
+                <button
+                  key={`icon-${item.targetTitle}`}
+                  className={classes.lambdaNotif}
+                  onClick={() => {
+                    history.push(
+                      `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
+                    );
+                  }}
+                >
+                  <div className={classes.lambdaNotifIcon}>
+                    <img
+                      src={item.logo}
+                      className={classes.logoButton}
+                      alt={item.targetTitle}
+                    />
+                  </div>
 
-                <div className={classes.lambdaNotifTitle}>
-                  <b>{item.targetTitle}</b>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                  <div className={classes.lambdaNotifTitle}>
+                    <b>{item.targetTitle}</b>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </ContentBox>
       </PageLayout>
     </Fragment>
   );

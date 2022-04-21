@@ -918,6 +918,8 @@ const ListObjects = ({
             };
             setErrorSnackMessage(err);
           }
+          // We force objects list reload after all promises were handled
+          setLoadingObjectsList(true);
         });
       };
 
@@ -1342,8 +1344,11 @@ const ListObjects = ({
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
-                <Grid item xs={12}>
-                  <Grid item xs={12} className={classes.breadcrumbsContainer}>
+                <Grid
+                  item
+                  xs={12}
+                >
+                  <Grid item xs={12} className={classes.breadcrumbsContainer} >
                     <BrowserBreadcrumbs
                       bucketName={bucketName}
                       internalPaths={pageTitle}

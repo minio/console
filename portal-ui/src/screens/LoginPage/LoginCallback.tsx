@@ -19,7 +19,7 @@ import api from "../../common/api";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import history from "../../history";
+import history, { baseUrl } from "../../history";
 import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -175,7 +175,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
             </Typography>
             <Button
               component={"a"}
-              href="login"
+              href={`${baseUrl}login`}
               type="submit"
               variant="contained"
               color="primary"

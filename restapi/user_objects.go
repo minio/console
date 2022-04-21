@@ -413,7 +413,11 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		// indicate object size & content type
 		stat, err := resp.Stat()
 		if err != nil {
-			LogError("Failed to get Stat() response from server for %s: %v", prefix, err)
+			minErr := minio.ToErrorResponse(err)
+			// non-200 means we requested something wrong
+			rw.WriteHeader(minErr.StatusCode)
+
+			LogError("Failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error())
 			return
 		}
 
@@ -421,6 +425,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 		ranges, err := parseRange(params.HTTPRequest.Header.Get("Range"), stat.Size)
 		if err != nil {
 			LogError("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err)
+			rw.WriteHeader(400)
 			return
 		}
 		contentType := stat.ContentType
@@ -450,6 +455,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 			_, err = resp.Seek(start, io.SeekStart)
 			if err != nil {
 				LogError("Unable to seek at offset %d: %v", start, err)
+				rw.WriteHeader(400)
 				return
 			}
 

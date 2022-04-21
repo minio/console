@@ -38,6 +38,10 @@ export const ADD_TENANT_SET_LIMIT_SIZE = "ADD_TENANT/SET_LIMIT_SIZE";
 export const ADD_TENANT_SET_STORAGE_TYPE =
   "ADD_TENANT/ADD_TENANT_SET_STORAGE_TYPE";
 
+// Configuration
+export const ADD_TENANT_ADD_MINIO_DOMAIN = "ADD_TENANT/ADD_MINIO_DOMAIN";
+export const ADD_TENANT_DELETE_MINIO_DOMAIN = "ADD_TENANT/DELETE_MINIO_DOMAIN";
+
 // Security
 export const ADD_TENANT_ADD_MINIO_KEYPAIR = "ADD_TENANT/ADD_MINIO_KEYPAIR";
 export const ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR =
@@ -265,6 +269,9 @@ export interface IConfigureFields {
   prometheusImage: string;
   prometheusSidecarImage: string;
   prometheusInitImage: string;
+  setDomains: boolean;
+  consoleDomain: string;
+  minioDomains: string[];
   tenantSecurityContext: ISecurityContext;
   logSearchSecurityContext: ISecurityContext;
   logSearchPostgresSecurityContext: ISecurityContext;
@@ -576,6 +583,15 @@ interface AddFileConsoleCert {
   value: string;
 }
 
+interface AddMinIODomain {
+  type: typeof ADD_TENANT_ADD_MINIO_DOMAIN;
+}
+
+interface DeleteMinIODomain {
+  type: typeof ADD_TENANT_DELETE_MINIO_DOMAIN;
+  removeID: number;
+}
+
 // Encryption Certs
 interface AddFileServerCert {
   type: typeof ADD_TENANT_ENCRYPTION_SERVER_CERT;
@@ -817,4 +833,6 @@ export type TenantsManagementTypes =
   | EditPoolToleration
   | EditRemovePoolTolerationRow
   | EditPoolSelectorKeyPairValueArray
-  | EditPoolSetInitialInformation;
+  | EditPoolSetInitialInformation
+  | AddMinIODomain
+  | DeleteMinIODomain;

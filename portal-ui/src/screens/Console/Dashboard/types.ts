@@ -23,6 +23,10 @@ export interface Usage {
   prometheusNotReady?: boolean;
   widgets?: any;
   servers: ServerInfo[];
+  //TODO
+  lastScan: any;
+  lastHeal: any;
+  upTime: any;
 }
 
 export interface ServerInfo {

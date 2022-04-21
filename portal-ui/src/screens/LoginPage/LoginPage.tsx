@@ -502,7 +502,8 @@ const Login = ({
       );
       break;
     }
-    case loginStrategyType.redirect: {
+    case loginStrategyType.redirect:
+    case loginStrategyType.redirectServiceAccount: {
       loginComponent = (
         <React.Fragment>
           <Button
@@ -605,7 +606,8 @@ const Login = ({
   }
 
   const consoleText =
-    loginStrategy.loginStrategy === loginStrategyType.serviceAccount
+    loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
+    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount
       ? "Operator"
       : "Console";
 

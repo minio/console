@@ -3579,7 +3579,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account]
+        enum: [form, redirect, service-account, redirect-service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:

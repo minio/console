@@ -15,20 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import {
+  GLOBAL_SET_DISTRIBUTED_SETUP,
   MENU_OPEN,
   OPERATOR_MODE,
   SERVER_IS_LOADING,
   SERVER_NEEDS_RESTART,
+  SET_ERROR_SNACK_MESSAGE,
+  SET_LOADING_PROGRESS,
+  SET_MODAL_ERROR_MESSAGE,
+  SET_SERVER_DIAG_STAT,
+  SET_SITE_REPLICATION_INFO,
+  SET_SNACK_BAR_MESSAGE,
+  SET_SNACK_MODAL_MESSAGE,
   SystemActionTypes,
   SystemState,
   USER_LOGGED,
-  SET_LOADING_PROGRESS,
-  SET_SNACK_BAR_MESSAGE,
-  SET_ERROR_SNACK_MESSAGE,
-  SET_SERVER_DIAG_STAT,
-  SET_SNACK_MODAL_MESSAGE,
-  SET_MODAL_ERROR_MESSAGE,
-  GLOBAL_SET_DISTRIBUTED_SETUP,
 } from "./types";
 
 // determine whether we have the sidebar state stored on localstorage
@@ -42,6 +43,7 @@ const initialState: SystemState = {
   session: "",
   userName: "",
   sidebarOpen: initSideBarOpen,
+  siteReplicationInfo: { siteName: "", curSite: false, enabled: false },
   serverNeedsRestart: false,
   serverIsLoading: false,
   loadingProgress: 100,
@@ -145,6 +147,11 @@ export function systemReducer(
       return {
         ...state,
         distributedSetup: action.distributedSetup,
+      };
+    case SET_SITE_REPLICATION_INFO:
+      return {
+        ...state,
+        siteReplicationInfo: action.siteReplicationInfo,
       };
     default:
       return state;
