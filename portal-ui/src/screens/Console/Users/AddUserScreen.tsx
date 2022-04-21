@@ -105,7 +105,6 @@ const styles = (theme: Theme) =>
 const AddUser = ({
   classes,
   setErrorSnackMessage,
-  selectedUser,
 }: IAddUserProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
