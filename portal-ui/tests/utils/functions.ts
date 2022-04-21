@@ -18,9 +18,9 @@ import * as roles from "./roles";
 import * as elements from "./elements";
 import * as constants from "./constants";
 import { Selector } from "testcafe";
-import { logoutItem } from "./elements-menu";
 
 import * as Minio from "minio";
+import { Readable } from "stream";
 
 export const setUpBucket = (t, modifier) => {
   return setUpNamedBucket(t, `${constants.TEST_BUCKET_NAME}-${modifier}`);
@@ -40,7 +40,7 @@ export const setUpNamedBucket = (t, name) => {
   });
 };
 
-export const uploadObjectToBucket = (t, modifier, objectName, objectPath) => {
+export const uploadObjectToBucket = (t, modifier, objectName, fileContents) => {
   const bucketName = `${constants.TEST_BUCKET_NAME}-${modifier}`;
   const minioClient = new Minio.Client({
     endPoint: "localhost",
@@ -50,8 +50,9 @@ export const uploadObjectToBucket = (t, modifier, objectName, objectPath) => {
     secretKey: "minioadmin",
   });
   return new Promise((resolve, reject) => {
-    minioClient
-      .fPutObject(bucketName, objectName, objectPath, {})
+    const readable = Readable.from([fileContents]);
+    return minioClient
+      .putObject(bucketName, objectName, readable, {})
       .then(resolve)
       .catch(resolve);
   });
