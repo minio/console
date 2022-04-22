@@ -52,6 +52,15 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewListPVCsForTenantOK().WithPayload(payload)
 	})
 
+	api.OperatorAPIListTenantCertificateSigningRequestHandler = operator_api.ListTenantCertificateSigningRequestHandlerFunc(func(params operator_api.ListTenantCertificateSigningRequestParams, session *models.Principal) middleware.Responder {
+		payload, err := getTenantCSResponse(session, params)
+		if err != nil {
+			return operator_api.NewListTenantCertificateSigningRequestDefault(int(err.Code)).WithPayload(err)
+		}
+
+		return operator_api.NewListTenantCertificateSigningRequestOK().WithPayload(payload)
+	})
+
 	api.OperatorAPIDeletePVCHandler = operator_api.DeletePVCHandlerFunc(func(params operator_api.DeletePVCParams, session *models.Principal) middleware.Responder {
 		err := getDeletePVCResponse(session, params)
 		if err != nil {
@@ -210,5 +219,44 @@ func getPVCEventsResponse(session *models.Principal, params operator_api.GetPVCE
 	sort.SliceStable(retval, func(i int, j int) bool {
 		return retval[i].LastSeen < retval[j].LastSeen
 	})
+	return retval, nil
+}
+
+func getTenantCSResponse(session *models.Principal, params operator_api.ListTenantCertificateSigningRequestParams) (*models.CsrElement, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, errors.ErrorWithContext(ctx, err)
+	}
+	csrName := params.Tenant + "-" + params.Namespace + "-csr"
+	csrResult, csrError := clientset.CertificatesV1().CertificateSigningRequests().Get(ctx, csrName, metav1.GetOptions{})
+	if csrError != nil {
+		return nil, errors.ErrorWithContext(ctx, err)
+	}
+	annotations := []*models.Annotation{}
+	for k, v := range csrResult.ObjectMeta.Annotations {
+		annotations = append(annotations, &models.Annotation{Key: k, Value: v})
+	}
+	var DeletionGracePeriodSeconds int64
+	DeletionGracePeriodSeconds = 0
+	if csrResult.ObjectMeta.DeletionGracePeriodSeconds != nil {
+		DeletionGracePeriodSeconds = *csrResult.ObjectMeta.DeletionGracePeriodSeconds
+	}
+	messages := ""
+	// A CSR.Status can contain multiple Conditions
+	for i := 0; i < len(csrResult.Status.Conditions); i++ {
+		messages = messages + " " + csrResult.Status.Conditions[i].Message
+	}
+	retval := &models.CsrElement{
+		Name:                       csrResult.ObjectMeta.Name,
+		Annotations:                annotations,
+		DeletionGracePeriodSeconds: DeletionGracePeriodSeconds,
+		GenerateName:               csrResult.ObjectMeta.GenerateName,
+		Generation:                 csrResult.ObjectMeta.Generation,
+		Namespace:                  csrResult.ObjectMeta.Namespace,
+		ResourceVersion:            csrResult.ObjectMeta.ResourceVersion,
+		Status:                     messages,
+	}
 	return retval, nil
 }

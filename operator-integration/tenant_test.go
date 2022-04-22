@@ -606,3 +606,41 @@ func TestGetPodDescribe(t *testing.T) {
 			200, resp.StatusCode, "Status Code is incorrect")
 	}*/
 }
+
+func GetCSR(nameSpace string, tenant string) (*http.Response, error) {
+	/*
+		Helper function to get events for pod
+		URL: /namespaces/{namespace}/tenants/{tenant}/csr
+		HTTP Verb: GET
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/namespaces/"+nameSpace+"/tenants/"+tenant+"/csr/", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestGetCSR(t *testing.T) {
+	assert := assert.New(t)
+	namespace := "tenant-lite"
+	tenant := "storage-lite"
+	resp, err := GetCSR(namespace, tenant)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, finalResponse)
+	}
+	assert.Equal(strings.Contains(finalResponse, "Automatically approved by MinIO Operator"), true)
+}
