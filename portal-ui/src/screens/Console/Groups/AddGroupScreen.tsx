@@ -24,7 +24,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Button, Box, LinearProgress } from "@mui/material";
-import { GroupsIcon } from "../../../icons";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import history from "../../../../src/history";
@@ -33,7 +32,7 @@ import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
 import BackLink from "../../../common/BackLink";
 import { connect } from "react-redux";
-import { CreateGroupIcon, PreviewIcon} from "../../../icons";
+import { CreateGroupIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
@@ -141,6 +140,7 @@ const AddGroupScreen = ({
     saving,
     groupName,
     selectedUsers,
+    setErrorSnackMessage,
   ]);
 
   //Fetch Actions
