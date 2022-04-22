@@ -35,7 +35,7 @@ import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import BackLink from "../../../common/BackLink";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { connect } from "react-redux";
-
+import { IAMPoliciesIcon, PreviewIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -208,10 +208,10 @@ const AddServiceAccount = ({
             className={classes.title}
             align-items="stretch"
           >
-            <Grid item className={classes.headIcon}>
+            <Grid item className={classes.headIcon} xs={1}>
               <ServiceAccountCredentialsIcon />              
             </Grid>
-            <Grid item className={classes.headTitle}>
+            <Grid item className={classes.headTitle} xs = {11}>
               Create Service Account
             </Grid>
           </Grid>
@@ -230,20 +230,26 @@ const AddServiceAccount = ({
                     <Grid item xs={12}  >
                       <Grid container item spacing ="20">
                       <Grid item xs={12}>
-                      <FormSwitchWrapper
-                        value="customCredentials"
-                        id="customCredentials"
-                        name="customCredentials"
-                        checked={addCredentials}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setAddCredentials(event.target.checked);
-                        }}
-                        label={"Customize Credentials"}
-                        
-                      />
-                     </Grid>
+                        <Grid container >
+                        <Grid item xs={1}>
+                          <PreviewIcon />
+                        </Grid>
+                        <Grid item xs={11}>
+                          <FormSwitchWrapper
+                            value="customCredentials"
+                            id="customCredentials"
+                            name="customCredentials"
+                            checked={addCredentials}
+                            onChange={(
+                              event: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                              setAddCredentials(event.target.checked);
+                            }}
+                            label={"Customize Credentials"}                        
+                          />
+                        </Grid>
+                        </Grid>
+                       </Grid> 
                        <Grid item xs={12}>
                       {addCredentials && (
                           
@@ -294,18 +300,25 @@ const AddServiceAccount = ({
                     </Grid>
                     <Grid container item spacing ="20">
                     <Grid item xs={12}>
-                      <FormSwitchWrapper
-                        value="serviceAccountPolicy"
-                        id="serviceAccountPolicy"
-                        name="serviceAccountPolicy"
-                        checked={isRestrictedByPolicy}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setIsRestrictedByPolicy(event.target.checked);
-                        }}
-                        label={"Restrict with policy"}
-                      />
+                      <Grid container >
+                        <Grid item xs={1}>
+                          <IAMPoliciesIcon />
+                        </Grid>
+                      <Grid item xs={11}>
+                        <FormSwitchWrapper
+                          value="serviceAccountPolicy"
+                          id="serviceAccountPolicy"
+                          name="serviceAccountPolicy"
+                          checked={isRestrictedByPolicy}
+                          onChange={(
+                            event: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setIsRestrictedByPolicy(event.target.checked);
+                          }}
+                          label={"Restrict with policy"}
+                        />
+                      </Grid>
+                      </Grid>
                     </Grid>
                       {isRestrictedByPolicy && (
                     <Grid
