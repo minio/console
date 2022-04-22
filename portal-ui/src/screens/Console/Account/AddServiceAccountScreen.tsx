@@ -35,7 +35,7 @@ import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import BackLink from "../../../common/BackLink";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { connect } from "react-redux";
-import { IAMPoliciesIcon, PreviewIcon } from "../../../icons";
+import { IAMPoliciesIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -44,6 +44,7 @@ import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
+import { getRandomString } from   "../../../screens/Console/Tenants/utils";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -113,8 +114,8 @@ const AddServiceAccount = ({
 }: IAddServiceAccountProps) => {
   const [addSending, setAddSending] = useState<boolean>(false);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
+  const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
+  const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
   const [addCredentials, setAddCredentials] = useState<boolean>(false);
@@ -239,28 +240,7 @@ const AddServiceAccount = ({
                           <Grid item xs={1}>
                             <PasswordKeyIcon />
                           </Grid>
-                          <Grid item xs={11}>
-                            <FormSwitchWrapper
-                              value="customCredentials"
-                              id="customCredentials"
-                              name="customCredentials"
-                              checked={addCredentials}
-                              onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                setAddCredentials(event.target.checked);
-                              }}
-                              label={"Customize Credentials"}
-                              tooltip={
-                                "If you do not assign specific credentials, a random Access Key and Secret Key will be generated for the Service Account"
-                              }
-                            />
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={12}>
-                        {addCredentials && (
-                          <Grid item xs={12}>
+                          <Grid item>
                             <Grid container item spacing="20">
                               <Grid item xs={12}>
                                 {" "}
@@ -303,8 +283,8 @@ const AddServiceAccount = ({
                                 </div>
                               </Grid>
                             </Grid>
-                          </Grid>
-                        )}
+                            </Grid>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
