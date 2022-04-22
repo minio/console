@@ -24,7 +24,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Button, Box } from "@mui/material";
-import { ServiceAccountCredentialsIcon } from "../../../icons";
+import { ClustersIcon, ServiceAccountCredentialsIcon } from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -35,7 +35,7 @@ import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import BackLink from "../../../common/BackLink";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { connect } from "react-redux";
-import { IAMPoliciesIcon, PreviewIcon} from "../../../icons";
+import { IAMPoliciesIcon, PreviewIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -43,6 +43,7 @@ import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
+import SectionTitle from "../Common/SectionTitle";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -117,11 +118,11 @@ const AddServiceAccount = ({
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
   const [addCredentials, setAddCredentials] = useState<boolean>(false);
- const [newServiceAccount, setNewServiceAccount] = useState<NewServiceAccount | null>(null);
+  const [newServiceAccount, setNewServiceAccount] =
+    useState<NewServiceAccount | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
- useEffect(() => {
-
+  useEffect(() => {
     if (addSending) {
       if (addCredentials) {
         api
@@ -132,8 +133,11 @@ const AddServiceAccount = ({
           })
           .then((res) => {
             setAddSending(false);
-            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""});
-          
+            setNewServiceAccount({
+              accessKey: res.accessKey || "",
+              secretKey: res.secretKey || "",
+              url: res.url || "",
+            });
           })
           .catch((err: ErrorResponseHandler) => {
             setAddSending(false);
@@ -146,8 +150,11 @@ const AddServiceAccount = ({
           })
           .then((res) => {
             setAddSending(false);
-            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "" });
-         
+            setNewServiceAccount({
+              accessKey: res.accessKey || "",
+              secretKey: res.secretKey || "",
+              url: res.url || "",
+            });
           })
           .catch((err: ErrorResponseHandler) => {
             setAddSending(false);
@@ -165,7 +172,6 @@ const AddServiceAccount = ({
     secretKey,
   ]);
 
-
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
     setAddSending(true);
@@ -178,7 +184,7 @@ const AddServiceAccount = ({
     setSecretKey("");
     setShowPassword(false);
   };
-  
+
   const closeCredentialsModal = () => {
     setNewServiceAccount(null);
     history.push(`${IAM_PAGES.ACCOUNT}`);
@@ -186,7 +192,7 @@ const AddServiceAccount = ({
 
   return (
     <Fragment>
-       {newServiceAccount !== null &&  (        
+      {newServiceAccount !== null && (
         <CredentialsPrompt
           newServiceAccount={newServiceAccount}
           open={newServiceAccount !== null}
@@ -201,171 +207,167 @@ const AddServiceAccount = ({
           label={<BackLink to={IAM_PAGES.ACCOUNT} label={"Service Accounts"} />}
         />
         <PageLayout>
-          <Grid
-            item
-            xs={12}
-            container
-            className={classes.title}
-            align-items="stretch"
+          <Box
+            sx={{
+              display: "grid",
+              padding: "25px",
+              gap: "25px",
+              gridTemplateColumns: {
+                md: "2fr 1.2fr",
+                xs: "1fr",
+              },
+              border: "1px solid #eaeaea",
+            }}
           >
-            <Grid item className={classes.headIcon}>
-              <ServiceAccountCredentialsIcon />              
-            </Grid>
-            <Grid item className={classes.headTitle}>
-              Create Service Account
-            </Grid>
-          </Grid>
+            <Box>
+              <SectionTitle icon={<ServiceAccountCredentialsIcon />}>
+                Create Service Account
+              </SectionTitle>
 
-          <Grid container align-items="center">
-            <Grid item xs={8}>
-              <Box>
-                <form
-                  noValidate
-                  autoComplete="off"
-                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                    addServiceAccount(e);
-                  }}
-                >
-                  <Grid container item spacing="20">
-                    <Grid item xs={12}  >
-                      <Grid container item spacing ="20">
+              <form
+                noValidate
+                autoComplete="off"
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                  addServiceAccount(e);
+                }}
+              >
+                <Grid container item spacing="20" sx={{ marginTop: 1 }}>
+                  <Grid item xs={12}>
+                    <Grid container item spacing="20">
                       <Grid item xs={12}>
-                        <Grid container >
-                        <Grid item xs={1}>
-                          <PreviewIcon />
-                        </Grid>
-                        <Grid item xs={11}>
-                          <FormSwitchWrapper
-                            value="customCredentials"
-                            id="customCredentials"
-                            name="customCredentials"
-                            checked={addCredentials}
-                            onChange={(
-                              event: React.ChangeEvent<HTMLInputElement>
-                            ) => {
-                              setAddCredentials(event.target.checked);
-                            }}
-                            label={"Customize Credentials"} 
-                            tooltip={"If you do not assign specific credentials, a random Access Key and Secret Key will be generated for the Service Account"}                       
-                          />
-                        </Grid>
-                        </Grid>
-                       </Grid> 
-                       <Grid item xs={12}>
-                      {addCredentials && (
-                          
-                        <Grid item xs={12}> 
-                       
-                          <Grid container item spacing = "20">
-                         
-                            <Grid item xs={12}> <div className={classes.stackedInputs} >
-                            <InputBoxWrapper
-                              value={accessKey}
-                              label={"Access Key"}
-                              id={"accessKey"}
-                              name={"accessKey"}
-                              placeholder={"Enter Access Key"}
-                              onChange={(e) => {
-                                setAccessKey(e.target.value);
+                        <Grid container>
+                          <Grid item xs={1}>
+                            <PreviewIcon />
+                          </Grid>
+                          <Grid item xs={11}>
+                            <FormSwitchWrapper
+                              value="customCredentials"
+                              id="customCredentials"
+                              name="customCredentials"
+                              checked={addCredentials}
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                setAddCredentials(event.target.checked);
                               }}
-                            />
-
-                        </div>
-                            </Grid>
-                             <Grid item xs={12}>
-                               <div className={classes.stackedInputs} >
-                            <InputBoxWrapper
-                              value={secretKey}
-                              label={"Secret Key"}
-                              id={"secretKey"}
-                              name={"secretKey"}
-                              type={showPassword ? "text" : "password"}
-                              placeholder={"Enter Secret Key"}
-                              onChange={(e) => {
-                                setSecretKey(e.target.value);
-                              }}
-                              overlayIcon={
-                                showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+                              label={"Customize Credentials"}
+                              tooltip={
+                                "If you do not assign specific credentials, a random Access Key and Secret Key will be generated for the Service Account"
                               }
-                              overlayAction={() => setShowPassword(!showPassword)}
                             />
-                            </div>
-                            </Grid>
-                          
+                          </Grid>
                         </Grid>
-                        </Grid> 
-                        
-                      )}
                       </Grid>
+                      <Grid item xs={12}>
+                        {addCredentials && (
+                          <Grid item xs={12}>
+                            <Grid container item spacing="20">
+                              <Grid item xs={12}>
+                                {" "}
+                                <div className={classes.stackedInputs}>
+                                  <InputBoxWrapper
+                                    value={accessKey}
+                                    label={"Access Key"}
+                                    id={"accessKey"}
+                                    name={"accessKey"}
+                                    placeholder={"Enter Access Key"}
+                                    onChange={(e) => {
+                                      setAccessKey(e.target.value);
+                                    }}
+                                  />
+                                </div>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <div className={classes.stackedInputs}>
+                                  <InputBoxWrapper
+                                    value={secretKey}
+                                    label={"Secret Key"}
+                                    id={"secretKey"}
+                                    name={"secretKey"}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder={"Enter Secret Key"}
+                                    onChange={(e) => {
+                                      setSecretKey(e.target.value);
+                                    }}
+                                    overlayIcon={
+                                      showPassword ? (
+                                        <VisibilityOffIcon />
+                                      ) : (
+                                        <RemoveRedEyeIcon />
+                                      )
+                                    }
+                                    overlayAction={() =>
+                                      setShowPassword(!showPassword)
+                                    }
+                                  />
+                                </div>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        )}
                       </Grid>
                     </Grid>
-                    <Grid container item spacing ="20">
+                  </Grid>
+                  <Grid container item spacing="20">
                     <Grid item xs={12}>
-                      <Grid container >
+                      <Grid container>
                         <Grid item xs={1}>
                           <IAMPoliciesIcon />
                         </Grid>
-                      <Grid item xs={11}>
-                        <FormSwitchWrapper
-                          value="serviceAccountPolicy"
-                          id="serviceAccountPolicy"
-                          name="serviceAccountPolicy"
-                          checked={isRestrictedByPolicy}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setIsRestrictedByPolicy(event.target.checked);
+                        <Grid item xs={11}>
+                          <FormSwitchWrapper
+                            value="serviceAccountPolicy"
+                            id="serviceAccountPolicy"
+                            name="serviceAccountPolicy"
+                            checked={isRestrictedByPolicy}
+                            onChange={(
+                              event: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                              setIsRestrictedByPolicy(event.target.checked);
+                            }}
+                            label={"Restrict with policy"}
+                            tooltip={
+                              "You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
+                            }
+                          />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    {isRestrictedByPolicy && (
+                      <Grid
+                        item
+                        xs={12}
+                        className={classes.codeMirrorContainer}
+                      >
+                        <CodeMirrorWrapper
+                          label={"Policy "}
+                          value={policyDefinition}
+                          onBeforeChange={(editor, data, value) => {
+                            setPolicyDefinition(value);
                           }}
-                          label={"Restrict with policy"}
-                          tooltip={"You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."}  
                         />
                       </Grid>
-                      </Grid>
-                    </Grid>
-                      {isRestrictedByPolicy && (
-                    <Grid
-                          item
-                          xs={12}
-                          className={classes.codeMirrorContainer}
-                        >
-                          <CodeMirrorWrapper
-                            label={"Policy "}
-                            value={policyDefinition}
-                            onBeforeChange={(editor, data, value) => {
-                              setPolicyDefinition(value);
-                            }}
-                          />
-                    </Grid>
-                      )}
-                    </Grid>
-                    <Grid item xs={12} className={classes.modalButtonBar}>
-                      <Button
-                        type="button"
-                        variant="outlined"
-                        color="primary"
-                        onClick={resetForm}
-                      >
-                        Clear
-                      </Button>
-
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                      >
-                        Create
-                      </Button>
-                    </Grid>
+                    )}
                   </Grid>
-                </form>
-              </Box>
-            </Grid>
-            <Grid item xs={4}>
-              <Box>
-                <AddServiceAccountHelpBox />
-              </Box>
-            </Grid>
-          </Grid>
+                  <Grid item xs={12} className={classes.modalButtonBar}>
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      color="primary"
+                      onClick={resetForm}
+                    >
+                      Clear
+                    </Button>
+
+                    <Button type="submit" variant="contained" color="primary">
+                      Create
+                    </Button>
+                  </Grid>
+                </Grid>
+              </form>
+            </Box>
+            <AddServiceAccountHelpBox />
+          </Box>
         </PageLayout>
       </Grid>
     </Fragment>
