@@ -292,11 +292,12 @@ const AddServiceAccount = ({
                       </Grid>
                       </Grid>
                     </Grid>
+                    <Grid container item spacing ="20">
                     <Grid item xs={12}>
                       <FormSwitchWrapper
-                        value="locking"
-                        id="locking"
-                        name="locking"
+                        value="serviceAccountPolicy"
+                        id="serviceAccountPolicy"
+                        name="serviceAccountPolicy"
                         checked={isRestrictedByPolicy}
                         onChange={(
                           event: React.ChangeEvent<HTMLInputElement>
@@ -305,8 +306,9 @@ const AddServiceAccount = ({
                         }}
                         label={"Restrict with policy"}
                       />
+                    </Grid>
                       {isRestrictedByPolicy && (
-                        <Grid
+                    <Grid
                           item
                           xs={12}
                           className={classes.codeMirrorContainer}
@@ -318,7 +320,7 @@ const AddServiceAccount = ({
                               setPolicyDefinition(value);
                             }}
                           />
-                        </Grid>
+                    </Grid>
                       )}
                     </Grid>
                     <Grid item xs={12} className={classes.modalButtonBar}>
