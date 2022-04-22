@@ -121,11 +121,6 @@ const AddServiceAccount = ({
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
  useEffect(() => {
- console.log("Displaying prompt - NewServiceAccount:", newServiceAccount)
-
- },[newServiceAccount]);
-
- useEffect(() => {
 
     if (addSending) {
       if (addCredentials) {
@@ -136,7 +131,6 @@ const AddServiceAccount = ({
             secretKey: secretKey,
           })
           .then((res) => {
-            console.log("From API1 newSA:", res);
             setAddSending(false);
             setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "", console: {accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""} });
           
@@ -151,7 +145,6 @@ const AddServiceAccount = ({
             policy: policyDefinition,
           })
           .then((res) => {
-            console.log("From API2newSA:", res);
             setAddSending(false);
             setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "", console: {accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""} });
          
@@ -235,12 +228,12 @@ const AddServiceAccount = ({
                 >
                   <Grid container item spacing="20">
                     <Grid item xs={12}  >
-                        <Grid container item spacing ="20">
-                            <Grid item xs={12}>
+                      <Grid container item spacing ="20">
+                      <Grid item xs={12}>
                       <FormSwitchWrapper
-                        value="locking"
-                        id="locking"
-                        name="locking"
+                        value="customCredentials"
+                        id="customCredentials"
+                        name="customCredentials"
                         checked={addCredentials}
                         onChange={(
                           event: React.ChangeEvent<HTMLInputElement>
@@ -250,12 +243,15 @@ const AddServiceAccount = ({
                         label={"Customize Credentials"}
                         
                       />
-                      </Grid>
+                     </Grid>
                        <Grid item xs={12}>
                       {addCredentials && (
-                          <Grid container item spacing ="20">
-                        <Grid item xs={12}>
-                          <div className={classes.stackedInputs} >
+                          
+                        <Grid item xs={12}> 
+                       
+                          <Grid container item spacing = "20">
+                         
+                            <Grid item xs={12}> <div className={classes.stackedInputs} >
                             <InputBoxWrapper
                               value={accessKey}
                               label={"Access Key"}
@@ -266,6 +262,11 @@ const AddServiceAccount = ({
                                 setAccessKey(e.target.value);
                               }}
                             />
+
+                        </div>
+                            </Grid>
+                             <Grid item xs={12}>
+                               <div className={classes.stackedInputs} >
                             <InputBoxWrapper
                               value={secretKey}
                               label={"Secret Key"}
@@ -281,9 +282,11 @@ const AddServiceAccount = ({
                               }
                               overlayAction={() => setShowPassword(!showPassword)}
                             />
-                          </div>
+                            </div>
+                            </Grid>
+                          
                         </Grid>
-                        </Grid>
+                        </Grid> 
                         
                       )}
                       </Grid>
