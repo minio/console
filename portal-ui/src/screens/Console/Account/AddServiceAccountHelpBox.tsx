@@ -90,12 +90,15 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
        Service Accounts inherit the policies explicitly attached to the
               parent user, and the policies attached to each group in which the
               parent user has membership. 
-              
-               
               <Box sx={{ paddingTop: "20px", paddingBottom: "10px" }}>
+              A MinIO user can generate any number of service accounts.
+              </Box>
+               
+              <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
                 You cannot modify the optional Service Account IAM policy after
                 saving.
               </Box>
+              
               <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
               Service Accounts support programmatic access by applications. 
               You cannot use a Service Account to log into the MinIO Console.
