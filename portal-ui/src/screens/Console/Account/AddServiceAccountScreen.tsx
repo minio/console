@@ -143,25 +143,6 @@ const AddServiceAccount = ({
             setErrorSnackMessage(err);
           });
       } 
-      
-      {/*else {
-        api
-          .invoke("POST", `/api/v1/service-accounts`, {
-            policy: policyDefinition,
-          })
-          .then((res) => {
-            setAddSending(false);
-            setNewServiceAccount({
-              accessKey: res.accessKey || "",
-              secretKey: res.secretKey || "",
-              url: res.url || "",
-            });
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setAddSending(false);
-            setErrorSnackMessage(err);
-          });
-      } */}
     }, [
     addSending,
     setAddSending,
@@ -303,7 +284,7 @@ const AddServiceAccount = ({
                             ) => {
                               setIsRestrictedByPolicy(event.target.checked);
                             }}
-                            label={"Restrict with policy"}
+                            label={"Restrict beyond user policy"}
                             tooltip={
                               "You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
                             }
