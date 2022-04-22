@@ -118,14 +118,12 @@ const AddServiceAccount = ({
   const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
-  const [addCredentials, setAddCredentials] = useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   useEffect(() => {
     if (addSending) {
-      if (addCredentials) {
         api
           .invoke("POST", `/api/v1/service-account-credentials`, {
             policy: policyDefinition,
@@ -144,7 +142,9 @@ const AddServiceAccount = ({
             setAddSending(false);
             setErrorSnackMessage(err);
           });
-      } else {
+      } 
+      
+      {/*else {
         api
           .invoke("POST", `/api/v1/service-accounts`, {
             policy: policyDefinition,
@@ -161,14 +161,12 @@ const AddServiceAccount = ({
             setAddSending(false);
             setErrorSnackMessage(err);
           });
-      }
-    }
-  }, [
+      } */}
+    }, [
     addSending,
     setAddSending,
     setErrorSnackMessage,
     policyDefinition,
-    addCredentials,
     accessKey,
     secretKey,
   ]);

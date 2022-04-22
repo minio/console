@@ -75,6 +75,7 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
           display: "flex",
           alignItems: "center",
           marginBottom: "16px",
+          paddingBottom: "20px",
 
           "& .min-icon": {
             height: "21px",
@@ -87,37 +88,44 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         <div>Learn more about Service Accounts</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-       Service Accounts inherit the policies explicitly attached to the
-              parent user, and the policies attached to each group in which the
-              parent user has membership. 
-              <Box sx={{ paddingTop: "20px", paddingBottom: "10px" }}>
-              A MinIO user can generate any number of service accounts.
+      <Box sx={{paddingBottom: "20px"}}>
+              <FeatureItem icon={<ServiceAccountIcon />} description={`Create Service Accounts`} />
+              <Box sx={{ paddingTop: "20px"}}>
+                Service Accounts inherit the policies explicitly attached to the
+                parent user, and the policies attached to each group in which the
+                parent user has membership. 
               </Box>
-               
-              <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+      </Box>
+      <Box sx={{paddingBottom: "20px"}}>
+              <FeatureItem icon={<PasswordKeyIcon />} description={`Assign Custom Credentials`} />
+              <Box sx={{paddingTop: "10px" }}>
+                Randomized access credentials are recommended, and provided by default. You may use your own custom Access Key and Secret Key by replacing the default values. After creation of any Service Account, you will be given the opportunity to view and download the account credentials. 
+              </Box>               
+              <Box sx={{ paddingTop: "10px" }}>
+                Service Accounts support programmatic access by applications. 
+                You cannot use a Service Account to log into the MinIO Console.
+              </Box>
+      </Box>
+       <Box sx={{paddingBottom: "20px"}}>
+              <FeatureItem icon={<IAMPoliciesIcon />} description={`Assign Access Policies`}/>
+              <Box sx={{ paddingTop: "10px" }}>
+                You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies.
+              </Box>   
+              <Box sx={{ paddingTop: "10px"}}>
                 You cannot modify the optional Service Account IAM policy after
                 saving.
-              </Box>
-              
-              <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-              Service Accounts support programmatic access by applications. 
-              You cannot use a Service Account to log into the MinIO Console.
-              </Box>
-
+              </Box>     
       </Box>
-
+</Box>
       <Box
         sx={{
           display: "flex",
           flexFlow: "column",
         }}
       >
-        <FeatureItem icon={<ServiceAccountIcon />} description={`Create Service Accounts`} />
-        <FeatureItem icon={<PasswordKeyIcon />} description={`Assign Custom Credentials`} />
-        <FeatureItem
-          icon={<IAMPoliciesIcon />}
-          description={`Assign Access Policies`}
-        />
+        
+        
+        
       </Box>
     </Box>
   );
