@@ -18,7 +18,7 @@ import { Box } from "@mui/material";
 import {
   HelpIconFilled,
   ServiceAccountIcon,
-  PreviewIcon,
+  PasswordKeyIcon,
   IAMPoliciesIcon,
 } from "../../../icons";
 
@@ -113,7 +113,7 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         }}
       >
         <FeatureItem icon={<ServiceAccountIcon />} description={`Create Service Accounts`} />
-        <FeatureItem icon={<PreviewIcon />} description={`Assign Custom Credentials`} />
+        <FeatureItem icon={<PasswordKeyIcon />} description={`Assign Custom Credentials`} />
         <FeatureItem
           icon={<IAMPoliciesIcon />}
           description={`Assign Access Policies`}

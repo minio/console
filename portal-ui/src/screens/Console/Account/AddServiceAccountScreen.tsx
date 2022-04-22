@@ -24,7 +24,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Button, Box } from "@mui/material";
-import { ClustersIcon, ServiceAccountCredentialsIcon } from "../../../icons";
+import { PasswordKeyIcon, ServiceAccountCredentialsIcon } from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -237,7 +237,7 @@ const AddServiceAccount = ({
                       <Grid item xs={12}>
                         <Grid container>
                           <Grid item xs={1}>
-                            <PreviewIcon />
+                            <PasswordKeyIcon />
                           </Grid>
                           <Grid item xs={11}>
                             <FormSwitchWrapper
