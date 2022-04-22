@@ -132,7 +132,7 @@ const AddServiceAccount = ({
           })
           .then((res) => {
             setAddSending(false);
-            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "", console: {accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""} });
+            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""});
           
           })
           .catch((err: ErrorResponseHandler) => {
@@ -146,7 +146,7 @@ const AddServiceAccount = ({
           })
           .then((res) => {
             setAddSending(false);
-            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "", console: {accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""} });
+            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "" });
          
           })
           .catch((err: ErrorResponseHandler) => {

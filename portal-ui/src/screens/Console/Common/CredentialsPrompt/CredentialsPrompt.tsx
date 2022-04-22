@@ -156,7 +156,11 @@ const CredentialsPrompt = ({
                     />
                   </>
                 )}
-                {(consoleCreds === null || consoleCreds === undefined) && (
+      
+              </Grid>
+            </React.Fragment>
+          )}
+                    {(consoleCreds === null || consoleCreds === undefined) && (
                    <>
                     <CredentialItem
                       label="Access Key"
@@ -168,9 +172,6 @@ const CredentialsPrompt = ({
                     />
                   </>
                 )}
-              </Grid>
-            </React.Fragment>
-          )}
           {idp ? (
             <div className={classes.warningBlock}>
               Please Login via the configured external identity provider.
@@ -184,6 +185,7 @@ const CredentialsPrompt = ({
               </span>
             </div>
           )}
+          
         </Grid>
         <Grid item xs={12} className={classes.buttonContainer}>
           {!idp && (
