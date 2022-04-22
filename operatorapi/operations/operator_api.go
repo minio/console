@@ -138,6 +138,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIListPVCsForTenantHandler: operator_api.ListPVCsForTenantHandlerFunc(func(params operator_api.ListPVCsForTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListPVCsForTenant has not yet been implemented")
 		}),
+		ListTenantCertificateSigningRequestHandler: ListTenantCertificateSigningRequestHandlerFunc(func(params ListTenantCertificateSigningRequestParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation ListTenantCertificateSigningRequest has not yet been implemented")
+		}),
 		OperatorAPIListTenantsHandler: operator_api.ListTenantsHandlerFunc(func(params operator_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListTenants has not yet been implemented")
 		}),
@@ -312,6 +315,8 @@ type OperatorAPI struct {
 	OperatorAPIListPVCsHandler operator_api.ListPVCsHandler
 	// OperatorAPIListPVCsForTenantHandler sets the operation handler for the list p v cs for tenant operation
 	OperatorAPIListPVCsForTenantHandler operator_api.ListPVCsForTenantHandler
+	// ListTenantCertificateSigningRequestHandler sets the operation handler for the list tenant certificate signing request operation
+	ListTenantCertificateSigningRequestHandler ListTenantCertificateSigningRequestHandler
 	// OperatorAPIListTenantsHandler sets the operation handler for the list tenants operation
 	OperatorAPIListTenantsHandler operator_api.ListTenantsHandler
 	// UserAPILoginDetailHandler sets the operation handler for the login detail operation
@@ -517,6 +522,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIListPVCsForTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListPVCsForTenantHandler")
+	}
+	if o.ListTenantCertificateSigningRequestHandler == nil {
+		unregistered = append(unregistered, "ListTenantCertificateSigningRequestHandler")
 	}
 	if o.OperatorAPIListTenantsHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListTenantsHandler")
@@ -791,6 +799,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pvcs"] = operator_api.NewListPVCsForTenant(o.context, o.OperatorAPIListPVCsForTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/csr"] = NewListTenantCertificateSigningRequest(o.context, o.ListTenantCertificateSigningRequestHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
