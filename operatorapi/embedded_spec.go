@@ -583,6 +583,40 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/csr": {
+      "get": {
+        "summary": "List Tenant Certificate Signing Request",
+        "operationId": "ListTenantCertificateSigningRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listCertificateSigningRequest"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/disable-logging": {
       "post": {
         "tags": [
@@ -2688,6 +2722,14 @@ func init() {
         }
       }
     },
+    "listCertificateSigningRequest": {
+      "type": "object",
+      "properties": {
+        "csr": {
+          "type": "string"
+        }
+      }
+    },
     "listPVCsResponse": {
       "type": "object",
       "properties": {
@@ -4593,6 +4635,40 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/csr": {
+      "get": {
+        "summary": "List Tenant Certificate Signing Request",
+        "operationId": "ListTenantCertificateSigningRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listCertificateSigningRequest"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7536,6 +7612,14 @@ func init() {
         },
         "storage_capacity": {
           "type": "integer"
+        }
+      }
+    },
+    "listCertificateSigningRequest": {
+      "type": "object",
+      "properties": {
+        "csr": {
+          "type": "string"
         }
       }
     },
