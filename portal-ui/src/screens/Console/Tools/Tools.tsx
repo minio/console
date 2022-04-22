@@ -50,20 +50,6 @@ const Tools = () => {
             );
           }}
         />
-        <Route
-          path={IAM_PAGES.TOOLS_WATCH}
-          exact
-          render={() => {
-            return (
-              <FeatureNotAvailablePage
-                icon={<SupportMenuIcon />}
-                pageHeaderText={"Support"}
-                title={"Inspect"}
-                message={<div>This feature is currently not available.</div>}
-              />
-            );
-          }}
-        />
         <Route path={IAM_PAGES.SUPPORT_INSPECT} exact component={Inspect} />
         <Route component={NotFoundPage} />
       </Switch>
