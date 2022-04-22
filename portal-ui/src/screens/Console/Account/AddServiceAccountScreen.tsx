@@ -35,7 +35,7 @@ import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import BackLink from "../../../common/BackLink";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { connect } from "react-redux";
-import { IAMPoliciesIcon, PreviewIcon } from "../../../icons";
+import { IAMPoliciesIcon, PreviewIcon} from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -92,15 +92,15 @@ const styles = (theme: Theme) =>
     },
     headTitle: {
       fontWeight: "bold",
-      fontSize: 16,
-      paddingLeft: 8,
+      fontSize: 20,
+      paddingLeft: 20,
       paddingTop: 10,
+      paddingBottom: 40,
       textAlign: "end",
     },
     headIcon: {
       fontWeight: "bold",
-      fontSize: 1,
-      size: "flex",
+      size: "50",
     },
     ...formFieldStyles,
     ...modalStyleUtils,
@@ -208,10 +208,10 @@ const AddServiceAccount = ({
             className={classes.title}
             align-items="stretch"
           >
-            <Grid item className={classes.headIcon} xs={1}>
+            <Grid item className={classes.headIcon}>
               <ServiceAccountCredentialsIcon />              
             </Grid>
-            <Grid item className={classes.headTitle} xs = {11}>
+            <Grid item className={classes.headTitle}>
               Create Service Account
             </Grid>
           </Grid>
@@ -245,7 +245,8 @@ const AddServiceAccount = ({
                             ) => {
                               setAddCredentials(event.target.checked);
                             }}
-                            label={"Customize Credentials"}                        
+                            label={"Customize Credentials"} 
+                            tooltip={"If you do not assign specific credentials, a random Access Key and Secret Key will be generated for the Service Account"}                       
                           />
                         </Grid>
                         </Grid>
@@ -316,6 +317,7 @@ const AddServiceAccount = ({
                             setIsRestrictedByPolicy(event.target.checked);
                           }}
                           label={"Restrict with policy"}
+                          tooltip={"You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."}  
                         />
                       </Grid>
                       </Grid>

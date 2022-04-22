@@ -87,16 +87,20 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         <div>Learn more about Service Accounts</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-       Service Accounts inherit the policy explicitly attached to the
-              parent user and the policy attached to each group in which the
-              parent user has membership. You can specify an optional
-              JSON-formatted policy below to restrict the Service Account access
-              to a subset of actions and resources explicitly allowed for the
-              parent user.
-              <Box sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
-                You cannot modify the Service Account optional policy after
+       Service Accounts inherit the policies explicitly attached to the
+              parent user, and the policies attached to each group in which the
+              parent user has membership. 
+              
+               
+              <Box sx={{ paddingTop: "20px", paddingBottom: "10px" }}>
+                You cannot modify the optional Service Account IAM policy after
                 saving.
               </Box>
+              <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+              Service Accounts support programmatic access by applications. 
+              You cannot use a Service Account to log into the MinIO Console.
+              </Box>
+
       </Box>
 
       <Box
