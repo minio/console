@@ -23,25 +23,20 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, Box } from "@mui/material";
-import { ServiceAccountCredentialsIcon } from "../../../icons";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import { Button, Box, LinearProgress } from "@mui/material";
+import { GroupsIcon } from "../../../icons";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import history from "../../../../src/history";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import AddGroupHelpBox from "./AddGroupHelpBox";
+import UsersSelectors from "./UsersSelectors";
 import BackLink from "../../../common/BackLink";
-import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { connect } from "react-redux";
-import { IAMPoliciesIcon, PreviewIcon} from "../../../icons";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { CreateGroupIcon, PreviewIcon} from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
-import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 
 interface IAddGroupProps {
@@ -94,8 +89,8 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       fontSize: 20,
       paddingLeft: 20,
-      paddingTop: 10,
       paddingBottom: 40,
+      paddingTop: 10,
       textAlign: "end",
     },
     headIcon: {
@@ -106,99 +101,67 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const GroupAdd = ({
+const AddGroupScreen = ({
   classes,
   setErrorSnackMessage,
 }: IAddGroupProps) => {
-  const [addSending, setAddSending] = useState<boolean>(false);
-  const [policyDefinition, setPolicyDefinition] = useState<string>("");
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-  const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
-    useState<boolean>(false);
-  const [addCredentials, setAddCredentials] = useState<boolean>(false);
- const [newServiceAccount, setNewServiceAccount] = useState<NewServiceAccount | null>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [groupName, setGroupName] = useState<string>("");
+  const [saving, isSaving] = useState<boolean>(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [validGroup, setValidGroup] = useState<boolean>(false);
 
- useEffect(() => {
 
-    if (addSending) {
-      if (addCredentials) {
-        api
-          .invoke("POST", `/api/v1/service-account-credentials`, {
-            policy: policyDefinition,
-            accessKey: accessKey,
-            secretKey: secretKey,
-          })
-          .then((res) => {
-            setAddSending(false);
-            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || ""});
-          
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setAddSending(false);
-            setErrorSnackMessage(err);
-          });
-      } else {
-        api
-          .invoke("POST", `/api/v1/service-accounts`, {
-            policy: policyDefinition,
-          })
-          .then((res) => {
-            setAddSending(false);
-            setNewServiceAccount({accessKey: res.accessKey || "", secretKey: res.secretKey || "", url: res.url || "" });
-         
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setAddSending(false);
-            setErrorSnackMessage(err);
-          });
-      }
+  useEffect(() => {
+    setValidGroup(groupName.trim() !== "");
+  }, [groupName, selectedUsers]);
+
+  useEffect(() => {
+    if (saving) {
+      const saveRecord = () => {
+      
+          api
+            .invoke("POST", "/api/v1/groups", {
+              group: groupName,
+              members: selectedUsers,
+            })
+            .then((res) => {
+              isSaving(false);
+               history.push(`${IAM_PAGES.GROUPS}`);
+            })
+            .catch((err: ErrorResponseHandler) => {
+              isSaving(false);
+              setErrorSnackMessage(err);
+            });
+        }
+     
+      saveRecord();
     }
+
   }, [
-    addSending,
-    setAddSending,
-    setErrorSnackMessage,
-    policyDefinition,
-    addCredentials,
-    accessKey,
-    secretKey,
+    saving,
+    groupName,
+    selectedUsers,
   ]);
 
+  //Fetch Actions
+  const setSaving = (event: React.FormEvent) => {
+    event.preventDefault();
 
-  const addGroup = (e: React.FormEvent) => {
-    e.preventDefault();
-    setAddSending(true);
+    isSaving(true);
   };
 
-  const resetForm = () => {
-    setPolicyDefinition("");
-    setNewServiceAccount(null);
-    setAccessKey("");
-    setSecretKey("");
-    setShowPassword(false);
+  const resetForm = () => {    
+      setGroupName("");
+      setSelectedUsers([]);
   };
-  
-  const closeCredentialsModal = () => {
-    setNewServiceAccount(null);
-    history.push(`${IAM_PAGES.ACCOUNT}`);
-  };
+
+
 
   return (
     <Fragment>
-       {newServiceAccount !== null &&  (        
-        <CredentialsPrompt
-          newServiceAccount={newServiceAccount}
-          open={newServiceAccount !== null}
-          closeModal={() => {
-            closeCredentialsModal();
-          }}
-          entity="Service Account"
-        />
-      )}
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.ACCOUNT} label={"Service Accounts"} />}
+          label={<BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />}
         />
         <PageLayout>
           <Grid
@@ -209,155 +172,69 @@ const GroupAdd = ({
             align-items="stretch"
           >
             <Grid item className={classes.headIcon}>
-              <ServiceAccountCredentialsIcon />              
+              <CreateGroupIcon />              
             </Grid>
             <Grid item className={classes.headTitle}>
-              Create Service Account
+              Create Group
             </Grid>
           </Grid>
 
           <Grid container align-items="center">
             <Grid item xs={8}>
               <Box>
-                <form
-                  noValidate
-                  autoComplete="off"
-                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                  //  addServiceAccount(e);
+                 <form noValidate autoComplete="off" onSubmit={setSaving}>
+        <Grid container item spacing = "20">
+
+          <Grid item xs={12} >
+           <Grid container>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <InputBoxWrapper
+                  id="group-name"
+                  name="group-name"
+                  label="Group Name"
+                  autoFocus={true}
+                  value={groupName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setGroupName(e.target.value);
                   }}
-                >
-                  <Grid container item spacing="20">
-                    <Grid item xs={12}  >
-                      <Grid container item spacing ="20">
-                      <Grid item xs={12}>
-                        <Grid container >
-                        <Grid item xs={1}>
-                          <PreviewIcon />
-                        </Grid>
-                        <Grid item xs={11}>
-                          <FormSwitchWrapper
-                            value="customCredentials"
-                            id="customCredentials"
-                            name="customCredentials"
-                            checked={addCredentials}
-                            onChange={(
-                              event: React.ChangeEvent<HTMLInputElement>
-                            ) => {
-                              setAddCredentials(event.target.checked);
-                            }}
-                            label={"Customize Credentials"} 
-                            tooltip={"If you do not assign specific credentials, a random Access Key and Secret Key will be generated for the Service Account"}                       
-                          />
-                        </Grid>
-                        </Grid>
-                       </Grid> 
-                       <Grid item xs={12}>
-                      {addCredentials && (
-                          
-                        <Grid item xs={12}> 
-                       
-                          <Grid container item spacing = "20">
-                         
-                            <Grid item xs={12}> <div className={classes.stackedInputs} >
-                            <InputBoxWrapper
-                              value={accessKey}
-                              label={"Access Key"}
-                              id={"accessKey"}
-                              name={"accessKey"}
-                              placeholder={"Enter Access Key"}
-                              onChange={(e) => {
-                                setAccessKey(e.target.value);
-                              }}
-                            />
+                />
+              </Grid>
+            <Grid item xs={12} className={classes.userSelector}>
+              <UsersSelectors
+                selectedUsers={selectedUsers}
+                setSelectedUsers={setSelectedUsers}
+                editMode={true}
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12} className={classes.modalButtonBar}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="primary"
+              className={classes.spacerRight}
+              onClick={resetForm}
+            >
+              Clear
+            </Button>
 
-                        </div>
-                            </Grid>
-                             <Grid item xs={12}>
-                               <div className={classes.stackedInputs} >
-                            <InputBoxWrapper
-                              value={secretKey}
-                              label={"Secret Key"}
-                              id={"secretKey"}
-                              name={"secretKey"}
-                              type={showPassword ? "text" : "password"}
-                              placeholder={"Enter Secret Key"}
-                              onChange={(e) => {
-                                setSecretKey(e.target.value);
-                              }}
-                              overlayIcon={
-                                showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-                              }
-                              overlayAction={() => setShowPassword(!showPassword)}
-                            />
-                            </div>
-                            </Grid>
-                          
-                        </Grid>
-                        </Grid> 
-                        
-                      )}
-                      </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid container item spacing ="20">
-                    <Grid item xs={12}>
-                      <Grid container >
-                        <Grid item xs={1}>
-                          <IAMPoliciesIcon />
-                        </Grid>
-                      <Grid item xs={11}>
-                        <FormSwitchWrapper
-                          value="serviceAccountPolicy"
-                          id="serviceAccountPolicy"
-                          name="serviceAccountPolicy"
-                          checked={isRestrictedByPolicy}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setIsRestrictedByPolicy(event.target.checked);
-                          }}
-                          label={"Restrict with policy"}
-                          tooltip={"You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."}  
-                        />
-                      </Grid>
-                      </Grid>
-                    </Grid>
-                      {isRestrictedByPolicy && (
-                    <Grid
-                          item
-                          xs={12}
-                          className={classes.codeMirrorContainer}
-                        >
-                          <CodeMirrorWrapper
-                            label={"Policy "}
-                            value={policyDefinition}
-                            onBeforeChange={(editor, data, value) => {
-                              setPolicyDefinition(value);
-                            }}
-                          />
-                    </Grid>
-                      )}
-                    </Grid>
-                    <Grid item xs={12} className={classes.modalButtonBar}>
-                      <Button
-                        type="button"
-                        variant="outlined"
-                        color="primary"
-                        onClick={resetForm}
-                      >
-                        Clear
-                      </Button>
-
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                      >
-                        Create
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </form>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={saving || !validGroup}
+            >
+              Save
+            </Button>
+          </Grid>
+          </Grid>
+          {saving && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
+        </Grid>
+      </form>
               </Box>
             </Grid>
             <Grid item xs={4}>
@@ -378,4 +255,4 @@ const mapDispatchToProps = {
 
 const connector = connect(null, mapDispatchToProps);
 
-export default withStyles(styles)(connector(GroupAdd));
+export default withStyles(styles)(connector(AddGroupScreen));

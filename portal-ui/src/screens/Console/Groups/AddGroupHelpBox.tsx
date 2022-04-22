@@ -17,8 +17,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import {
   HelpIconFilled,
-  ServiceAccountIcon,
-  PreviewIcon,
+  GroupsIcon,
   IAMPoliciesIcon,
 } from "../../../icons";
 
@@ -84,7 +83,7 @@ const AddGroupHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         }}
       >
         <HelpIconFilled />
-        <div>Learn more about Service Accounts</div>
+        <div>Learn more about Groups</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
        Adding groups lets you assign IAM policies to multiple users at once. 
@@ -108,10 +107,10 @@ const AddGroupHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
           flexFlow: "column",
         }}
       >
-        <FeatureItem icon={<ServiceAccountIcon />} description={`Add Users to Group`} />
-        <FeatureItem icon={<PreviewIcon />} description={`Assign Custom IAM Policies for Group`} />
-        <FeatureItem icon={<IAMPoliciesIcon />} description={`Assign Access Policies`}
-        />
+        <FeatureItem icon={<GroupsIcon />} description={`Add Users to Group`} />
+        <FeatureItem icon={<IAMPoliciesIcon />} description={`Assign Custom IAM Policies for Group`} />
+       
+        
       </Box>
     </Box>
   );

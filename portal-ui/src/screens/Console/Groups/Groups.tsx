@@ -63,6 +63,7 @@ interface IGroupsProps {
   classes: any;
   openGroupModal: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -79,7 +80,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
+const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   const [addGroupOpen, setGroupOpen] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -232,8 +233,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
               color="primary"
               icon={<AddIcon />}
               onClick={() => {
-                setSelectedGroup(null);
-                setGroupOpen(true);
+                history.push(`${IAM_PAGES.GROUPS_ADD}`);
               }}
             />
           </SecureComponent>
