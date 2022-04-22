@@ -578,6 +578,210 @@ jobs:
           make cleanup-permissions
 
 
+  all-permissions-4:
+    name: Permissions Tests Part 4
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        name: Yarn Cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ./portal-ui/node_modules/
+            ./portal-ui/build/
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+      - name: Build Console on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+      - name: Start Console, front-end app and initialize users/policies
+        run: |
+          (./console server) & (make initialize-permissions)
+      - name: Run TestCafe Tests
+        timeout-minutes: 5
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: '"chrome:headless" portal-ui/tests/permissions-4/ --skip-js-errors'
+
+  all-permissions-5:
+    name: Permissions Tests Part 5
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        name: Yarn Cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ./portal-ui/node_modules/
+            ./portal-ui/build/
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+      - name: Build Console on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+      - name: Start Console, front-end app and initialize users/policies
+        run: |
+          (./console server) & (make initialize-permissions)
+      - name: Run TestCafe Tests
+        timeout-minutes: 5
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: '"chrome:headless" portal-ui/tests/permissions-5/ --skip-js-errors'
+
+  all-permissions-6:
+    name: Permissions Tests Part 6
+    needs:
+      - lint-job
+      - no-warnings-and-make-assets
+      - reuse-golang-dependencies
+      - vulnerable-dependencies-checks
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.17.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        name: Yarn Cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ./portal-ui/node_modules/
+            ./portal-ui/build/
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/cache@v2
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-assets-
+      - uses: actions/cache@v2
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+      - name: Build Console on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+      - name: Start Console, front-end app and initialize users/policies
+        run: |
+          (./console server) & (make initialize-permissions)
+      - name: Run TestCafe Tests
+        timeout-minutes: 5
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: '"chrome:headless" portal-ui/tests/permissions-6/ --skip-js-errors'
 
   all-operator-tests:
     name: Operator UI Tests
