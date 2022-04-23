@@ -1035,6 +1035,34 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/domains:
+    put:
+      summary: Update Domains for a Tenant
+      operationId: UpdateTenantDomains
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateDomainsRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
     get:
       summary: Get Resource Quota
@@ -2942,3 +2970,9 @@ definitions:
           type: string
       console:
         type: string
+
+  updateDomainsRequest:
+    type: object
+    properties:
+      domains:
+        $ref: "#/definitions/domainsConfiguration"

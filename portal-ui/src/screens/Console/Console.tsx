@@ -102,11 +102,15 @@ const ObjectManager = React.lazy(
 
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
+
+const AddPolicy = React.lazy(() => import("./Policies/AddPolicyScreen"));
 const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 
 const Account = React.lazy(() => import("./Account/Account"));
 
-const AccountCreate = React.lazy(() => import("./Account/AddServiceAccountScreen"));
+const AccountCreate = React.lazy(
+  () => import("./Account/AddServiceAccountScreen")
+);
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
 
@@ -120,6 +124,7 @@ const ConfigurationOptions = React.lazy(
 const AddPool = React.lazy(
   () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
+const AddGroupScreen = React.lazy(() => import("./Groups/AddGroupScreen"));
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
 );
@@ -278,6 +283,10 @@ const Console = ({
     },
     {
       component: Users,
+      path: IAM_PAGES.USER_ADD,
+    },
+    {
+      component: Users,
       path: IAM_PAGES.USERS,
       fsHidden: ldapIsEnabled,
       customPermissionFnc: () =>
@@ -290,12 +299,20 @@ const Console = ({
       fsHidden: ldapIsEnabled,
     },
     {
+      component: AddGroupScreen,
+      path: IAM_PAGES.GROUPS_ADD,
+    },
+    {
       component: GroupsDetails,
       path: IAM_PAGES.GROUPS_VIEW,
     },
     {
       component: Policies,
       path: IAM_PAGES.POLICIES_VIEW,
+    },
+    {
+      component: AddPolicy,
+      path: IAM_PAGES.POLICY_ADD,
     },
     {
       component: Policies,
@@ -394,7 +411,8 @@ const Console = ({
     {
       component: Account,
       path: IAM_PAGES.ACCOUNT,
-      forceDisplay: true, // user has implicit access to service-accounts
+      forceDisplay: true,
+      // user has implicit access to service-accounts
     },
     {
       component: AccountCreate,

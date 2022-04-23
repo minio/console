@@ -145,7 +145,7 @@ const GroupsSelectors = ({
 
               <div className={classes.searchBox}>
                 <SearchBox
-                  placeholder="Filter Groups"
+                  placeholder="Start typing to search for Groups"
                   adornmentPosition="end"
                   onChange={setFilter}
                   value={filter}

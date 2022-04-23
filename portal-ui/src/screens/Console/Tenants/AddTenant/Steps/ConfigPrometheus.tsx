@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -37,6 +37,7 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { ISecurityContext } from "../../types";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import SectionH1 from "../../../Common/SectionH1";
 
 interface IConfigureProps {
   updateAddField: typeof updateAddField;
@@ -219,176 +220,189 @@ const ConfigPrometheus = ({
 
   return (
     <Paper className={classes.paperWrapper}>
-      <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Monitoring</h3>
+      <Grid container alignItems={"center"}>
+        <Grid item xs>
+          <SectionH1>Monitoring</SectionH1>
+        </Grid>
+        <Grid item xs={4}>
+          <FormSwitchWrapper
+            indicatorLabels={["Enabled", "Disabled"]}
+            checked={prometheusEnabled}
+            value={"monitoring_status"}
+            id="monitoring-status"
+            name="monitoring-status"
+            onChange={(e) => {
+              const targetD = e.target;
+              const checked = targetD.checked;
+
+              updateField("prometheusEnabled", checked);
+            }}
+            description=""
+          />
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
         <span className={classes.descriptionText}>
           A small Prometheus will be deployed to keep metrics about the tenant.
         </span>
-      </div>
-      <Grid item xs={12} className={classes.configSectionItem}>
-        <FormSwitchWrapper
-          value="prometheusConfig"
-          id="prometheus_configuration"
-          name="prometheus_configuration"
-          checked={prometheusEnabled}
-          onChange={(e) => {
-            const targetD = e.target;
-            const checked = targetD.checked;
-
-            updateField("prometheusEnabled", checked);
-          }}
-          label={"Enabled"}
-        />
       </Grid>
-      {prometheusEnabled && (
-        <Grid xs={12} className={classes.prometheusEnabledFields}>
-          <Grid item xs={12}>
-            <SelectWrapper
-              id="prometheus_storage_class"
-              name="prometheus_storage_class"
-              onChange={(e: SelectChangeEvent<string>) => {
-                updateField(
-                  "prometheusSelectedStorageClass",
-                  e.target.value as string
-                );
-              }}
-              label="Prometheus Storage Class"
-              value={prometheusSelectedStorageClass}
-              options={configureSTClasses}
-              disabled={configureSTClasses.length < 1}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.multiContainer}>
-              <InputBoxWrapper
-                type="number"
-                id="prometheus_volume_size"
-                name="prometheus_volume_size"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  updateField("prometheusVolumeSize", e.target.value);
-                  cleanValidation("prometheus_volume_size");
+      <Grid xs={12}>
+        <hr className={classes.hrClass} />
+      </Grid>
+      <Grid container spacing={1}>
+        {prometheusEnabled && (
+          <Fragment>
+            <Grid item xs={12}>
+              <SelectWrapper
+                id="prometheus_storage_class"
+                name="prometheus_storage_class"
+                onChange={(e: SelectChangeEvent<string>) => {
+                  updateField(
+                    "prometheusSelectedStorageClass",
+                    e.target.value as string
+                  );
                 }}
-                label="Storage Size"
-                overlayObject={
-                  <InputUnitMenu
-                    id={"size-unit"}
-                    onUnitChange={() => {}}
-                    unitSelected={"Gi"}
-                    unitsList={[{ label: "Gi", value: "Gi" }]}
-                    disabled={true}
-                  />
-                }
-                value={prometheusVolumeSize}
-                required
-                error={validationErrors["prometheus_volume_size"] || ""}
-                min="0"
+                label="Storage Class"
+                value={prometheusSelectedStorageClass}
+                options={configureSTClasses}
+                disabled={configureSTClasses.length < 1}
               />
-            </div>
-          </Grid>
-          <fieldset
-            className={`${classes.fieldGroup} ${classes.fieldSpaceTop}`}
-          >
-            <legend className={classes.descriptionText}>
-              SecurityContext for Prometheus
-            </legend>
-            <Grid item xs={12} className={classes.configSectionItem}>
-              <div
-                className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
-              >
-                <div className={classes.configSectionItem}>
-                  <InputBoxWrapper
-                    type="number"
-                    id="prometheus_securityContext_runAsUser"
-                    name="prometheus_securityContext_runAsUser"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      updateField("prometheusSecurityContext", {
-                        ...prometheusSecurityContext,
-                        runAsUser: e.target.value,
-                      });
-                      cleanValidation("prometheus_securityContext_runAsUser");
-                    }}
-                    label="Run As User"
-                    value={prometheusSecurityContext.runAsUser}
-                    required
-                    error={
-                      validationErrors[
-                        "prometheus_securityContext_runAsUser"
-                      ] || ""
-                    }
-                    min="0"
-                  />
-                </div>
-                <div className={classes.configSectionItem}>
-                  <InputBoxWrapper
-                    type="number"
-                    id="prometheus_securityContext_runAsGroup"
-                    name="prometheus_securityContext_runAsGroup"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      updateField("prometheusSecurityContext", {
-                        ...prometheusSecurityContext,
-                        runAsGroup: e.target.value,
-                      });
-                      cleanValidation("prometheus_securityContext_runAsGroup");
-                    }}
-                    label="Run As Group"
-                    value={prometheusSecurityContext.runAsGroup}
-                    required
-                    error={
-                      validationErrors[
-                        "prometheus_securityContext_runAsGroup"
-                      ] || ""
-                    }
-                    min="0"
-                  />
-                </div>
-                <div className={classes.configSectionItem}>
-                  <InputBoxWrapper
-                    type="number"
-                    id="prometheus_securityContext_fsGroup"
-                    name="prometheus_securityContext_fsGroup"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      updateField("prometheusSecurityContext", {
-                        ...prometheusSecurityContext,
-                        fsGroup: e.target.value,
-                      });
-                      cleanValidation("prometheus_securityContext_fsGroup");
-                    }}
-                    label="FsGroup"
-                    value={prometheusSecurityContext.fsGroup}
-                    required
-                    error={
-                      validationErrors["prometheus_securityContext_fsGroup"] ||
-                      ""
-                    }
-                    min="0"
-                  />
-                </div>
-              </div>
             </Grid>
-            <Grid item xs={12} className={classes.configSectionItem}>
-              <div
-                className={`${classes.multiContainer} ${classes.fieldSpaceTop}`}
-              >
-                <FormSwitchWrapper
-                  value="prometheusSecurityContextRunAsNonRoot"
-                  id="prometheus_securityContext_runAsNonRoot"
-                  name="prometheus_securityContext_runAsNonRoot"
-                  checked={prometheusSecurityContext.runAsNonRoot}
-                  onChange={(e) => {
-                    const targetD = e.target;
-                    const checked = targetD.checked;
-                    updateField("prometheusSecurityContext", {
-                      ...prometheusSecurityContext,
-                      runAsNonRoot: checked,
-                    });
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <InputBoxWrapper
+                  type="number"
+                  id="prometheus_volume_size"
+                  name="prometheus_volume_size"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("prometheusVolumeSize", e.target.value);
+                    cleanValidation("prometheus_volume_size");
                   }}
-                  label={"Do not run as Root"}
+                  label="Storage Size"
+                  overlayObject={
+                    <InputUnitMenu
+                      id={"size-unit"}
+                      onUnitChange={() => {}}
+                      unitSelected={"Gi"}
+                      unitsList={[{ label: "Gi", value: "Gi" }]}
+                      disabled={true}
+                    />
+                  }
+                  value={prometheusVolumeSize}
+                  required
+                  error={validationErrors["prometheus_volume_size"] || ""}
+                  min="0"
                 />
               </div>
             </Grid>
-          </fieldset>
-        </Grid>
-      )}
+            <fieldset
+              className={`${classes.fieldGroup} ${classes.fieldSpaceTop}`}
+            >
+              <legend className={classes.descriptionText}>
+                SecurityContext
+              </legend>
+              <Grid item xs={12} className={classes.configSectionItem}>
+                <div
+                  className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+                >
+                  <div className={classes.configSectionItem}>
+                    <InputBoxWrapper
+                      type="number"
+                      id="prometheus_securityContext_runAsUser"
+                      name="prometheus_securityContext_runAsUser"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("prometheusSecurityContext", {
+                          ...prometheusSecurityContext,
+                          runAsUser: e.target.value,
+                        });
+                        cleanValidation("prometheus_securityContext_runAsUser");
+                      }}
+                      label="Run As User"
+                      value={prometheusSecurityContext.runAsUser}
+                      required
+                      error={
+                        validationErrors[
+                          "prometheus_securityContext_runAsUser"
+                        ] || ""
+                      }
+                      min="0"
+                    />
+                  </div>
+                  <div className={classes.configSectionItem}>
+                    <InputBoxWrapper
+                      type="number"
+                      id="prometheus_securityContext_runAsGroup"
+                      name="prometheus_securityContext_runAsGroup"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("prometheusSecurityContext", {
+                          ...prometheusSecurityContext,
+                          runAsGroup: e.target.value,
+                        });
+                        cleanValidation(
+                          "prometheus_securityContext_runAsGroup"
+                        );
+                      }}
+                      label="Run As Group"
+                      value={prometheusSecurityContext.runAsGroup}
+                      required
+                      error={
+                        validationErrors[
+                          "prometheus_securityContext_runAsGroup"
+                        ] || ""
+                      }
+                      min="0"
+                    />
+                  </div>
+                  <div className={classes.configSectionItem}>
+                    <InputBoxWrapper
+                      type="number"
+                      id="prometheus_securityContext_fsGroup"
+                      name="prometheus_securityContext_fsGroup"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        updateField("prometheusSecurityContext", {
+                          ...prometheusSecurityContext,
+                          fsGroup: e.target.value,
+                        });
+                        cleanValidation("prometheus_securityContext_fsGroup");
+                      }}
+                      label="FsGroup"
+                      value={prometheusSecurityContext.fsGroup}
+                      required
+                      error={
+                        validationErrors[
+                          "prometheus_securityContext_fsGroup"
+                        ] || ""
+                      }
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} className={classes.configSectionItem}>
+                <div
+                  className={`${classes.multiContainer} ${classes.fieldSpaceTop}`}
+                >
+                  <FormSwitchWrapper
+                    value="prometheusSecurityContextRunAsNonRoot"
+                    id="prometheus_securityContext_runAsNonRoot"
+                    name="prometheus_securityContext_runAsNonRoot"
+                    checked={prometheusSecurityContext.runAsNonRoot}
+                    onChange={(e) => {
+                      const targetD = e.target;
+                      const checked = targetD.checked;
+                      updateField("prometheusSecurityContext", {
+                        ...prometheusSecurityContext,
+                        runAsNonRoot: checked,
+                      });
+                    }}
+                    label={"Do not run as Root"}
+                  />
+                </div>
+              </Grid>
+            </fieldset>
+          </Fragment>
+        )}
+      </Grid>
     </Paper>
   );
 };

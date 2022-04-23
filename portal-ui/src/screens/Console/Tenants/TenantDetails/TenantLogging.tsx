@@ -29,14 +29,13 @@ import Grid from "@mui/material/Grid";
 import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import api from "../../../../common/api";
-import { ITenant } from "../ListTenants/types";
+import { ITenant, ITenantLogsStruct } from "../ListTenants/types";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { EditIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import EditTenantLogsModal from "./EditTenantLogsModal";
 import KeyPairView from "./KeyPairView";
-import { ITenantLogsStruct } from "../ListTenants/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
@@ -209,7 +208,7 @@ const TenantLogging = ({
       )}
       <Grid container alignItems={"center"}>
         <Grid item xs>
-          <h1 className={classes.sectionTitle}>Logging</h1>
+          <h1 className={classes.sectionTitle}>Audit Log</h1>
         </Grid>
         <Grid item xs={4}>
           <FormSwitchWrapper
