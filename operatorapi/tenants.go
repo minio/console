@@ -2598,7 +2598,7 @@ func getTenantEventsResponse(session *models.Principal, params operator_api.GetT
 }
 
 func getUpdateDomainsResponse(session *models.Principal, params operator_api.UpdateTenantDomainsParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	operatorCli, err := cluster.OperatorClient(session.STSSessionToken)
