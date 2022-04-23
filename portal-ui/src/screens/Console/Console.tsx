@@ -106,7 +106,9 @@ const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 
 const Account = React.lazy(() => import("./Account/Account"));
 
-const AccountCreate = React.lazy(() => import("./Account/AddServiceAccountScreen"));
+const AccountCreate = React.lazy(
+  () => import("./Account/AddServiceAccountScreen")
+);
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
 

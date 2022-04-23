@@ -44,7 +44,7 @@ import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
-import { getRandomString } from   "../../../screens/Console/Tenants/utils";
+import { getRandomString } from "../../../screens/Console/Tenants/utils";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -124,26 +124,26 @@ const AddServiceAccount = ({
 
   useEffect(() => {
     if (addSending) {
-        api
-          .invoke("POST", `/api/v1/service-account-credentials`, {
-            policy: policyDefinition,
-            accessKey: accessKey,
-            secretKey: secretKey,
-          })
-          .then((res) => {
-            setAddSending(false);
-            setNewServiceAccount({
-              accessKey: res.accessKey || "",
-              secretKey: res.secretKey || "",
-              url: res.url || "",
-            });
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setAddSending(false);
-            setErrorSnackMessage(err);
+      api
+        .invoke("POST", `/api/v1/service-account-credentials`, {
+          policy: policyDefinition,
+          accessKey: accessKey,
+          secretKey: secretKey,
+        })
+        .then((res) => {
+          setAddSending(false);
+          setNewServiceAccount({
+            accessKey: res.accessKey || "",
+            secretKey: res.secretKey || "",
+            url: res.url || "",
           });
-      } 
-    }, [
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setAddSending(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [
     addSending,
     setAddSending,
     setErrorSnackMessage,
@@ -262,7 +262,7 @@ const AddServiceAccount = ({
                                 </div>
                               </Grid>
                             </Grid>
-                            </Grid>
+                          </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
