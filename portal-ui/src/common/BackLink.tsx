@@ -81,6 +81,7 @@ const BackLink = ({
               width: "17px",
               height: "11px",
               margin: "auto",
+              color: "#081C42",
             },
           },
         },
