@@ -54,7 +54,6 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 
-const AddUser = withSuspense(React.lazy(() => import("./AddUser")));
 const SetPolicy = withSuspense(
   React.lazy(() => import("../Policies/SetPolicy"))
 );
@@ -83,8 +82,6 @@ interface IUsersProps {
 const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   const [records, setRecords] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
@@ -108,12 +105,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
     IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
   ]);
 
-  const closeAddModalAndRefresh = () => {
-    setAddScreenOpen(false);
-    setLoading(true);
-  };
-
-  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+ const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
       setLoading(true);
@@ -201,15 +193,6 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
 
   return (
     <Fragment>
-      {addScreenOpen && (
-        <AddUser
-          open={addScreenOpen}
-          selectedUser={selectedUser}
-          closeModalAndRefresh={() => {
-            closeAddModalAndRefresh();
-          }}
-        />
-      )}
       {policyOpen && (
         <SetPolicy
           open={policyOpen}
@@ -283,8 +266,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
               icon={<AddIcon />}
               color="primary"
               onClick={() => {
-                setAddScreenOpen(true);
-                setSelectedUser(null);
+                history.push(`${IAM_PAGES.USER_ADD}`);
               }}
               variant={"contained"}
             />
@@ -389,8 +371,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                             To get started,{" "}
                             <AButton
                               onClick={() => {
-                                setAddScreenOpen(true);
-                                setSelectedUser(null);
+                                history.push(`${IAM_PAGES.USER_ADD}`);
                               }}
                             >
                               Create a User
