@@ -36,7 +36,6 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import HelpBox from "../../../common/HelpBox";
-import history from "../../../history";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
@@ -63,6 +62,7 @@ interface IGroupsProps {
   classes: any;
   openGroupModal: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -79,7 +79,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
+const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   const [addGroupOpen, setGroupOpen] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -232,8 +232,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
               color="primary"
               icon={<AddIcon />}
               onClick={() => {
-                setSelectedGroup(null);
-                setGroupOpen(true);
+                history.push(`${IAM_PAGES.GROUPS_ADD}`);
               }}
             />
           </SecureComponent>
