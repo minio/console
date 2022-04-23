@@ -102,6 +102,8 @@ const ObjectManager = React.lazy(
 
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
+
+const AddPolicy = React.lazy(() => import("./Policies/AddPolicyScreen"));
 const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 
 const Account = React.lazy(() => import("./Account/Account"));
@@ -281,6 +283,10 @@ const Console = ({
     },
     {
       component: Users,
+      path: IAM_PAGES.USER_ADD,
+    },
+    {
+      component: Users,
       path: IAM_PAGES.USERS,
       fsHidden: ldapIsEnabled,
       customPermissionFnc: () =>
@@ -303,6 +309,10 @@ const Console = ({
     {
       component: Policies,
       path: IAM_PAGES.POLICIES_VIEW,
+    },
+    {
+      component: AddPolicy,
+      path: IAM_PAGES.POLICY_ADD,
     },
     {
       component: Policies,

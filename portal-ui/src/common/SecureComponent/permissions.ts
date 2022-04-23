@@ -120,6 +120,7 @@ export const IAM_PAGES = {
   IDENTITY: "/identity",
   USERS: "/identity/users",
   USERS_VIEW: "/identity/users/:userName+",
+  USER_ADD: "/identity/add-user",
   GROUPS: "/identity/groups",
   GROUPS_ADD: "/identity/create-group",
   GROUPS_VIEW: "/identity/groups/:groupName+",
@@ -127,6 +128,7 @@ export const IAM_PAGES = {
   ACCOUNT_ADD: "/identity/new-account",
   /* Access */
   POLICIES: "/access/policies",
+  POLICY_ADD: "/access/add-policy",
   POLICIES_VIEW: "/access/policies/*",
   /* Monitoring */
   TOOLS_LOGS: "/tools/logs",
@@ -312,6 +314,8 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_DISABLE_USER,
     IAM_SCOPES.ADMIN_DELETE_USER,
   ],
+  [IAM_PAGES.USER_ADD]: [
+    IAM_SCOPES.ADMIN_CREATE_USER,], // displays create user button
   [IAM_PAGES.ACCOUNT_ADD]: [
     IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,  
   ],
@@ -327,6 +331,9 @@ export const IAM_PAGES_PERMISSIONS = {
   ],
   [IAM_PAGES.POLICIES]: [
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES, // displays policies
+    IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
+  ],
+  [IAM_PAGES.POLICY_ADD]: [
     IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
   ],
   [IAM_PAGES.SETTINGS]: [
