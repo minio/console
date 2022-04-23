@@ -582,7 +582,7 @@ const TenantDetails = ({
           }}
           {{
             tabConfig: {
-              label: "Logging",
+              label: "Audit Log",
               value: "logging",
               component: Link,
               to: getRoutePath("logging"),
