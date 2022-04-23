@@ -25,6 +25,7 @@ import NotFoundPage from "../../NotFoundPage";
 import ListUsers from "./ListUsers";
 import UserDetails from "./UserDetails";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import AddUserScreen from "./AddUserScreen";
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -38,6 +39,7 @@ const Users = () => {
       <Switch>
         <Route path={IAM_PAGES.USERS_VIEW} component={UserDetails} />
         <Route path={IAM_PAGES.USERS} component={ListUsers} />
+        <Route path={IAM_PAGES.USER_ADD} component={AddUserScreen} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>

@@ -283,6 +283,10 @@ const Console = ({
     },
     {
       component: Users,
+      path: IAM_PAGES.USER_ADD,
+    },
+    {
+      component: Users,
       path: IAM_PAGES.USERS,
       fsHidden: ldapIsEnabled,
       customPermissionFnc: () =>

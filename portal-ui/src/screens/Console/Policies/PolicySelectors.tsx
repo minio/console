@@ -145,7 +145,7 @@ const PolicySelectors = ({
               <span className={classes.fieldLabel}>Assign Policies</span>
               <div className={classes.searchBox}>
                 <SearchBox
-                  placeholder="Filter Policy"
+                  placeholder="Start typing to search for a Policy"
                   onChange={(value) => {
                     setFilter(value);
                   }}
