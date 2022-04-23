@@ -128,6 +128,7 @@ export const IAM_PAGES = {
   ACCOUNT_ADD: "/identity/new-account",
   /* Access */
   POLICIES: "/access/policies",
+  POLICY_ADD: "/access/add-policy",
   POLICIES_VIEW: "/access/policies/*",
   /* Monitoring */
   TOOLS_LOGS: "/tools/logs",
@@ -330,6 +331,9 @@ export const IAM_PAGES_PERMISSIONS = {
   ],
   [IAM_PAGES.POLICIES]: [
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES, // displays policies
+    IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
+  ],
+  [IAM_PAGES.POLICY_ADD]: [
     IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
   ],
   [IAM_PAGES.SETTINGS]: [
