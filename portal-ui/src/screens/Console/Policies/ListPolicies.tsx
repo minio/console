@@ -51,7 +51,6 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
-const AddPolicy = withSuspense(React.lazy(() => import("./AddPolicy")));
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
 const styles = (theme: Theme) =>
@@ -73,12 +72,9 @@ interface IPoliciesProps {
 const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   const [records, setRecords] = useState<Policy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPolicy, setSelectedPolicy] = useState<string>("");
   const [filterPolicies, setFilterPolicies] = useState<string>("");
-  const [policyEdit, setPolicyEdit] = useState<any>(null);
-
   const viewPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_GET_POLICY,
   ]);
@@ -132,14 +128,6 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
     setLoading(true);
   };
 
-  const closeAddModalAndRefresh = (refresh: boolean) => {
-    setAddScreenOpen(false);
-
-    if (refresh) {
-      fetchRecords();
-    }
-  };
-
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
 
@@ -177,13 +165,6 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
 
   return (
     <React.Fragment>
-      {addScreenOpen && (
-        <AddPolicy
-          open={addScreenOpen}
-          closeModalAndRefresh={closeAddModalAndRefresh}
-          policyEdit={policyEdit}
-        />
-      )}
       {deleteOpen && (
         <DeletePolicy
           deleteOpen={deleteOpen}
@@ -214,8 +195,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
                 color="primary"
                 icon={<AddIcon />}
                 onClick={() => {
-                  setAddScreenOpen(true);
-                  setPolicyEdit(null);
+                  history.push(`${IAM_PAGES.POLICY_ADD}`);
                 }}
               />
             </SecureComponent>

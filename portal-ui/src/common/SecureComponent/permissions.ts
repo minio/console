@@ -121,11 +121,13 @@ export const IAM_PAGES = {
   USERS: "/identity/users",
   USERS_VIEW: "/identity/users/:userName+",
   GROUPS: "/identity/groups",
+  GROUPS_ADD: "/identity/create-group",
   GROUPS_VIEW: "/identity/groups/:groupName+",
   ACCOUNT: "/identity/account",
   ACCOUNT_ADD: "/identity/new-account",
   /* Access */
   POLICIES: "/access/policies",
+  POLICY_ADD: "/access/add-policy",
   POLICIES_VIEW: "/access/policies/*",
   /* Monitoring */
   TOOLS_LOGS: "/tools/logs",
@@ -296,6 +298,10 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP, // display "edit members" button in groups detail page
     IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY, // display "set policy" button in groups details page
   ],
+  [IAM_PAGES.GROUPS_ADD]: [
+     IAM_SCOPES.ADMIN_LIST_USERS, // displays users
+    IAM_SCOPES.ADMIN_CREATE_USER, // displays create user button
+  ],
   [IAM_PAGES.USERS]: [
     IAM_SCOPES.ADMIN_LIST_USERS, // displays users
     IAM_SCOPES.ADMIN_CREATE_USER, // displays create user button
@@ -322,6 +328,9 @@ export const IAM_PAGES_PERMISSIONS = {
   ],
   [IAM_PAGES.POLICIES]: [
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES, // displays policies
+    IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
+  ],
+  [IAM_PAGES.POLICY_ADD]: [
     IAM_SCOPES.ADMIN_CREATE_POLICY, // displays create policy button
   ],
   [IAM_PAGES.SETTINGS]: [
