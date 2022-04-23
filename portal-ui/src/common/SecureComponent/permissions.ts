@@ -309,7 +309,7 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_DELETE_USER,
   ],
   [IAM_PAGES.USER_ADD]: [
-    IAM_SCOPES.ADMIN_CREATE_USER, // displays create user button
+    IAM_SCOPES.ADMIN_CREATE_USER,], // displays create user button
   [IAM_PAGES.ACCOUNT_ADD]: [
     IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,  
   ],
