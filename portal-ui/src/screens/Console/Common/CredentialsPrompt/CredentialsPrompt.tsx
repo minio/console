@@ -156,9 +156,22 @@ const CredentialsPrompt = ({
                     />
                   </>
                 )}
+      
               </Grid>
             </React.Fragment>
           )}
+                    {(consoleCreds === null || consoleCreds === undefined) && (
+                   <>
+                    <CredentialItem
+                      label="Access Key"
+                      value={newServiceAccount.accessKey || ""}
+                    />
+                    <CredentialItem
+                      label="Secret Key"
+                      value={newServiceAccount.secretKey || ""}
+                    />
+                  </>
+                )}
           {idp ? (
             <div className={classes.warningBlock}>
               Please Login via the configured external identity provider.
@@ -172,6 +185,7 @@ const CredentialsPrompt = ({
               </span>
             </div>
           )}
+          
         </Grid>
         <Grid item xs={12} className={classes.buttonContainer}>
           {!idp && (
@@ -206,6 +220,14 @@ const CredentialsPrompt = ({
                         };
                       });
                       consoleExtras = cCreds[0];
+                    }
+                  } else {
+                    consoleExtras = {
+                        url: newServiceAccount.url,
+                        accessKey: newServiceAccount.accessKey,
+                        secretKey: newServiceAccount.secretKey,
+                        api: "s3v4",
+                        path: "auto",
                     }
                   }
 
