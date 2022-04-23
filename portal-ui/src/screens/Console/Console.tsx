@@ -122,6 +122,9 @@ const ConfigurationOptions = React.lazy(
 const AddPool = React.lazy(
   () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
+const AddGroupScreen = React.lazy(
+  () => import("./Groups/AddGroupScreen")
+);
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
 );
@@ -292,6 +295,10 @@ const Console = ({
       fsHidden: ldapIsEnabled,
     },
     {
+      component: AddGroupScreen,
+      path: IAM_PAGES.GROUPS_ADD,
+    },
+    {
       component: GroupsDetails,
       path: IAM_PAGES.GROUPS_VIEW,
     },
@@ -400,7 +407,7 @@ const Console = ({
     {
       component: Account,
       path: IAM_PAGES.ACCOUNT,
-      forceDisplay: true, // user has implicit access to service-accounts
+       // user has implicit access to service-accounts
     },
     {
       component: AccountCreate,
