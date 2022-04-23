@@ -105,6 +105,8 @@ const Policies = React.lazy(() => import("./Policies/Policies"));
 const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 
 const Account = React.lazy(() => import("./Account/Account"));
+
+const AccountCreate = React.lazy(() => import("./Account/AddServiceAccountScreen"));
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
 
@@ -392,6 +394,11 @@ const Console = ({
     {
       component: Account,
       path: IAM_PAGES.ACCOUNT,
+      forceDisplay: true, // user has implicit access to service-accounts
+    },
+    {
+      component: AccountCreate,
+      path: IAM_PAGES.ACCOUNT_ADD,
       forceDisplay: true, // user has implicit access to service-accounts
     },
     {
