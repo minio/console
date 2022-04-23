@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -23,7 +23,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, Box, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import history from "../../../../src/history";
@@ -37,6 +37,7 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import { setErrorSnackMessage } from "../../../../src/actions";
+import SectionTitle from "../Common/SectionTitle";
 
 interface IAddGroupProps {
   classes: any;
@@ -100,15 +101,11 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const AddGroupScreen = ({
-  classes,
-  setErrorSnackMessage,
-}: IAddGroupProps) => {
+const AddGroupScreen = ({ classes, setErrorSnackMessage }: IAddGroupProps) => {
   const [groupName, setGroupName] = useState<string>("");
   const [saving, isSaving] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [validGroup, setValidGroup] = useState<boolean>(false);
-
 
   useEffect(() => {
     setValidGroup(groupName.trim() !== "");
@@ -117,31 +114,24 @@ const AddGroupScreen = ({
   useEffect(() => {
     if (saving) {
       const saveRecord = () => {
-      
-          api
-            .invoke("POST", "/api/v1/groups", {
-              group: groupName,
-              members: selectedUsers,
-            })
-            .then((res) => {
-              isSaving(false);
-               history.push(`${IAM_PAGES.GROUPS}`);
-            })
-            .catch((err: ErrorResponseHandler) => {
-              isSaving(false);
-              setErrorSnackMessage(err);
-            });
-        }
-     
+        api
+          .invoke("POST", "/api/v1/groups", {
+            group: groupName,
+            members: selectedUsers,
+          })
+          .then((res) => {
+            isSaving(false);
+            history.push(`${IAM_PAGES.GROUPS}`);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            isSaving(false);
+            setErrorSnackMessage(err);
+          });
+      };
+
       saveRecord();
     }
-
-  }, [
-    saving,
-    groupName,
-    selectedUsers,
-    setErrorSnackMessage,
-  ]);
+  }, [saving, groupName, selectedUsers, setErrorSnackMessage]);
 
   //Fetch Actions
   const setSaving = (event: React.FormEvent) => {
@@ -150,12 +140,10 @@ const AddGroupScreen = ({
     isSaving(true);
   };
 
-  const resetForm = () => {    
-      setGroupName("");
-      setSelectedUsers([]);
+  const resetForm = () => {
+    setGroupName("");
+    setSelectedUsers([]);
   };
-
-
 
   return (
     <Fragment>
@@ -164,85 +152,81 @@ const AddGroupScreen = ({
           label={<BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />}
         />
         <PageLayout>
-          <Grid
-            item
-            xs={12}
-            container
-            className={classes.title}
-            align-items="stretch"
+          <Box
+            sx={{
+              display: "grid",
+              padding: "25px",
+              gap: "25px",
+              gridTemplateColumns: {
+                md: "2fr 1.2fr",
+                xs: "1fr",
+              },
+              border: "1px solid #eaeaea",
+            }}
           >
-            <Grid item className={classes.headIcon}>
-              <CreateGroupIcon />              
-            </Grid>
-            <Grid item className={classes.headTitle}>
-              Create Group
-            </Grid>
-          </Grid>
+            <Box>
+              <form noValidate autoComplete="off" onSubmit={setSaving}>
+                <Grid container item spacing="20">
+                  <Grid item xs={12}>
+                    <SectionTitle icon={<CreateGroupIcon />}>
+                      Create Group
+                    </SectionTitle>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Grid container>
+                      <Grid item xs={12} className={classes.formFieldRow}>
+                        <InputBoxWrapper
+                          id="group-name"
+                          name="group-name"
+                          label="Group Name"
+                          autoFocus={true}
+                          value={groupName}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setGroupName(e.target.value);
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} className={classes.userSelector}>
+                        <UsersSelectors
+                          selectedUsers={selectedUsers}
+                          setSelectedUsers={setSelectedUsers}
+                          editMode={true}
+                        />
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} className={classes.modalButtonBar}>
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        color="primary"
+                        className={classes.spacerRight}
+                        onClick={resetForm}
+                      >
+                        Clear
+                      </Button>
 
-          <Grid container align-items="center">
-            <Grid item xs={8}>
-              <Box>
-                 <form noValidate autoComplete="off" onSubmit={setSaving}>
-        <Grid container item spacing = "20">
-
-          <Grid item xs={12} >
-           <Grid container>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
-                  id="group-name"
-                  name="group-name"
-                  label="Group Name"
-                  autoFocus={true}
-                  value={groupName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setGroupName(e.target.value);
-                  }}
-                />
-              </Grid>
-            <Grid item xs={12} className={classes.userSelector}>
-              <UsersSelectors
-                selectedUsers={selectedUsers}
-                setSelectedUsers={setSelectedUsers}
-                editMode={true}
-              />
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button
-              type="button"
-              variant="outlined"
-              color="primary"
-              className={classes.spacerRight}
-              onClick={resetForm}
-            >
-              Clear
-            </Button>
-
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={saving || !validGroup}
-            >
-              Save
-            </Button>
-          </Grid>
-          </Grid>
-          {saving && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
-        </Grid>
-      </form>
-              </Box>
-            </Grid>
-            <Grid item xs={4}>
-              <Box>
-                <AddGroupHelpBox />
-              </Box>
-            </Grid>
-          </Grid>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={saving || !validGroup}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  {saving && (
+                    <Grid item xs={12}>
+                      <LinearProgress />
+                    </Grid>
+                  )}
+                </Grid>
+              </form>
+            </Box>
+            <AddGroupHelpBox />
+          </Box>
         </PageLayout>
       </Grid>
     </Fragment>
