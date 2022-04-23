@@ -123,6 +123,7 @@ export const IAM_PAGES = {
   GROUPS: "/identity/groups",
   GROUPS_VIEW: "/identity/groups/:groupName+",
   ACCOUNT: "/identity/account",
+  ACCOUNT_ADD: "/identity/new-account",
   /* Access */
   POLICIES: "/access/policies",
   POLICIES_VIEW: "/access/policies/*",
@@ -305,6 +306,9 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_ENABLE_USER,
     IAM_SCOPES.ADMIN_DISABLE_USER,
     IAM_SCOPES.ADMIN_DELETE_USER,
+  ],
+  [IAM_PAGES.ACCOUNT_ADD]: [
+    IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,  
   ],
   [IAM_PAGES.DASHBOARD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
