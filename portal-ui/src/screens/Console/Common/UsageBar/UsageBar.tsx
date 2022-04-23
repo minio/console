@@ -45,10 +45,11 @@ const UsageBar = ({
         overflow: "hidden",
       }}
     >
-      {sizeItems.map((sizeElement) => {
+      {sizeItems.map((sizeElement, index) => {
         const itemPercentage = (sizeElement.value * 100) / totalValue;
         return (
           <div
+            key={`itemSize-${index.toString()}`}
             style={{
               width: `${itemPercentage}%`,
               height: "100%",
