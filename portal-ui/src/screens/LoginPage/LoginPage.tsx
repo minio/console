@@ -16,8 +16,13 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { InputAdornment, LinearProgress, TextFieldProps } from "@mui/material";
-import { Theme } from "@mui/material/styles";
+import {
+  Box,
+  InputAdornment,
+  LinearProgress,
+  TextFieldProps,
+} from "@mui/material";
+import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -34,12 +39,12 @@ import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import { encodeFileName } from "../../common/utils";
 import {
-  ArrowRightIcon,
+  ConsoleLogo,
   DocumentationIcon,
   DownloadIcon,
   LockIcon,
-  LoginMinIOLogo,
   MinIOTierIconXs,
+  OperatorLogo,
 } from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -88,10 +93,10 @@ const styles = (theme: Theme) =>
     },
     linkHolder: {
       marginTop: 20,
+      font: "normal normal normal 14px/16px Lato",
     },
     miniLinks: {
       margin: "auto",
-      fontSize: 10,
       textAlign: "center",
       color: "#B2DEF5",
       "& a": {
@@ -99,7 +104,7 @@ const styles = (theme: Theme) =>
         textDecoration: "none",
       },
       "& .min-icon": {
-        height: 10,
+        width: 10,
         color: "#B2DEF5",
       },
     },
@@ -108,6 +113,7 @@ const styles = (theme: Theme) =>
       "& .min-icon": {
         height: 12,
         paddingTop: 2,
+        marginRight: 2,
       },
     },
     loginPage: {
@@ -116,19 +122,18 @@ const styles = (theme: Theme) =>
     },
     loginContainer: {
       flexDirection: "column",
+      maxWidth: 400,
+      margin: "auto",
       "& .right-items": {
         backgroundColor: "white",
-        borderRadius: 3,
-        boxShadow: "6px 6px 50",
-        padding: 20,
+        padding: 40,
       },
       "& .consoleTextBanner": {
         fontWeight: 300,
         fontSize: "calc(3vw + 3vh + 1.5vmin)",
         lineHeight: 1.15,
-        color: "#ffffff",
+        color: theme.palette.primary.main,
         flex: 1,
-        textAlign: "center",
         height: "100%",
         display: "flex",
         justifyContent: "flex-start",
@@ -138,16 +143,16 @@ const styles = (theme: Theme) =>
           display: "flex",
           alignItems: "center",
           fontSize: 18,
-          marginTop: 40,
         },
         "& .left-items": {
-          margin: "auto",
-          paddingTop: 100,
-          paddingBottom: 60,
+          marginTop: 100,
+          background:
+            "transparent linear-gradient(180deg, #FBFAFA 0%, #E4E4E4 100%) 0% 0% no-repeat padding-box",
+          padding: 40,
         },
         "& .left-logo": {
           "& .min-icon": {
-            color: "white",
+            color: theme.palette.primary.main,
             width: 108,
           },
           marginBottom: 10,
@@ -227,9 +232,13 @@ const styles = (theme: Theme) =>
       alignSelf: "flex-end",
     },
     loginComponentContainer: {
-      maxWidth: 360,
       width: "100%",
       alignSelf: "center",
+    },
+    iconLogo: {
+      "& .min-icon": {
+        width: "100%",
+      },
     },
     ...spacingUtils,
   });
@@ -605,42 +614,95 @@ const Login = ({
       );
   }
 
-  const consoleText =
+  const isOperator =
     loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
-    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount
-      ? "Operator"
-      : "Console";
+    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
 
+  const consoleText = isOperator ? <OperatorLogo /> : <ConsoleLogo />;
+
+  const hyperLink = isOperator
+    ? "https://docs.min.io/minio/k8s/operator-console/operator-console.html?ref=con"
+    : "https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con";
+
+  const theme = useTheme();
   return (
     <div className={classes.root}>
       <CssBaseline />
       <MainError />
       <div className={classes.loginPage}>
-        <Grid container className={classes.loginContainer}>
-          <Grid item className="consoleTextBanner" xs={12}>
-            <div className="left-items">
-              <div className="left-logo">
-                <LoginMinIOLogo />
-              </div>
-              <div className="text-line2">{consoleText}</div>
-              <div className="text-line3">Multi-Cloud Object Storage</div>
-            </div>
+        <Grid
+          container
+          style={{
+            maxWidth: 400,
+            margin: "auto",
+          }}
+        >
+          <Grid
+            xs={12}
+            style={{
+              background:
+                "transparent linear-gradient(180deg, #FBFAFA 0%, #E4E4E4 100%) 0% 0% no-repeat padding-box",
+              padding: 40,
+              color: theme.palette.primary.main,
+            }}
+            sx={{
+              marginTop: {
+                md: 16,
+                sm: 8,
+                xs: 3,
+              },
+            }}
+          >
+            <Box className={classes.iconLogo}>{consoleText}</Box>
+            <Box
+              style={{
+                font: "normal normal normal 20px/24px Lato",
+              }}
+            >
+              Multicloud Object Storage
+            </Box>
           </Grid>
           <Grid
-            item
-            className={`right-items ${classes.loginComponentContainer}`}
             xs={12}
+            style={{
+              backgroundColor: "white",
+              padding: 40,
+              color: theme.palette.primary.main,
+            }}
           >
             {loginComponent}
-            <div className={classes.learnMore}>
+            <Box
+              style={{
+                textAlign: "center",
+                marginTop: 20,
+              }}
+            >
               <a
-                href="https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con"
+                href={hyperLink}
                 target="_blank"
                 rel="noreferrer"
+                style={{
+                  color: theme.colors.link,
+                  font: "normal normal normal 12px/15px Lato",
+                }}
               >
-                Learn more about Console <ArrowRightIcon />
+                Learn more about {isOperator ? "OPERATOR CONSOLE" : "CONSOLE"}
               </a>
-            </div>
+              <a
+                href={hyperLink}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  color: theme.colors.link,
+                  font: "normal normal normal 12px/15px Lato",
+                  textDecoration: "none",
+                  fontWeight: "bold",
+                  paddingLeft: 4,
+                }}
+              >
+                ➔
+              </a>
+            </Box>
           </Grid>
           <Grid item xs={12} className={classes.linkHolder}>
             <div className={classes.miniLinks}>
@@ -678,7 +740,7 @@ const Login = ({
             </div>
             <div className={clsx(classes.miniLinks, classes.miniLogo)}>
               <a
-                href="https://github.com/minio/minio/releases"
+                href={"https://github.com/minio/minio/releases"}
                 target="_blank"
                 rel="noreferrer"
                 style={{
@@ -688,7 +750,7 @@ const Login = ({
                   marginBottom: 20,
                 }}
               >
-                <MinIOTierIconXs /> Latest Version{" "}
+                <MinIOTierIconXs /> <b>Latest Version:</b>&nbsp;
                 {!loadingVersion && latestMinIOVersion !== "" && (
                   <React.Fragment>{latestMinIOVersion}</React.Fragment>
                 )}
