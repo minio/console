@@ -108,7 +108,9 @@ const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 
 const Account = React.lazy(() => import("./Account/Account"));
 
-const AccountCreate = React.lazy(() => import("./Account/AddServiceAccountScreen"));
+const AccountCreate = React.lazy(
+  () => import("./Account/AddServiceAccountScreen")
+);
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
 
@@ -122,9 +124,7 @@ const ConfigurationOptions = React.lazy(
 const AddPool = React.lazy(
   () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
-const AddGroupScreen = React.lazy(
-  () => import("./Groups/AddGroupScreen")
-);
+const AddGroupScreen = React.lazy(() => import("./Groups/AddGroupScreen"));
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
 );
@@ -411,7 +411,8 @@ const Console = ({
     {
       component: Account,
       path: IAM_PAGES.ACCOUNT,
-       // user has implicit access to service-accounts
+      forceDisplay: true,
+      // user has implicit access to service-accounts
     },
     {
       component: AccountCreate,
