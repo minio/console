@@ -52,7 +52,7 @@ test("Create Tenant Without Audit Log", async (t) => {
     .click("#confirm-ok")
     .wait(1000)
     .click("#wizard-step-audit-log")
-    .click("#log-search-enabled")
+    .click("#enableLogging")
     .click("#wizard-button-Create")
     .wait(1000)
     .click("#close")
