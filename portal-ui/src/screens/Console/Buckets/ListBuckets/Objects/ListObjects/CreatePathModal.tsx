@@ -67,13 +67,17 @@ const CreatePathModal = ({
 
   let currentPath = `${bucketName}/${decodeFileName(folderName)}`;
 
-  if(selectedInternalPaths && detailsOpen) {
-    const decodedPathFileName = decodeFileName(selectedInternalPaths).split("/");
+  if (selectedInternalPaths && detailsOpen) {
+    const decodedPathFileName = decodeFileName(selectedInternalPaths).split(
+      "/"
+    );
 
-    if(decodedPathFileName) {
+    if (decodedPathFileName) {
       decodedPathFileName.pop();
-      const joinFileName = decodedPathFileName.join("/")
-      const joinPaths = `${joinFileName}${joinFileName.endsWith("/") ? "" : "/"}`;
+      const joinFileName = decodedPathFileName.join("/");
+      const joinPaths = `${joinFileName}${
+        joinFileName.endsWith("/") ? "" : "/"
+      }`;
       currentPath = `${bucketName}/${joinPaths}`;
     }
   }
@@ -85,23 +89,24 @@ const CreatePathModal = ({
   const createProcess = () => {
     let folderPath = "";
 
-    if(selectedInternalPaths && detailsOpen) {
-      const decodedPathFileName = decodeFileName(selectedInternalPaths).split("/");
+    if (selectedInternalPaths && detailsOpen) {
+      const decodedPathFileName = decodeFileName(selectedInternalPaths).split(
+        "/"
+      );
 
-      if(decodedPathFileName) {
+      if (decodedPathFileName) {
         decodedPathFileName.pop();
-        const joinFileName = decodedPathFileName.join("/")
+        const joinFileName = decodedPathFileName.join("/");
         folderPath = `${joinFileName}${joinFileName.endsWith("/") ? "" : "/"}`;
       }
     } else {
       if (folderName !== "") {
         const decodedFolderName = decodeFileName(folderName);
         folderPath = decodedFolderName.endsWith("/")
-            ? decodedFolderName
-            : `${decodedFolderName}/`;
+          ? decodedFolderName
+          : `${decodedFolderName}/`;
       }
     }
-
 
     const sharesName = (record: BucketObjectItem) =>
       record.name === folderPath + pathUrl;
@@ -155,7 +160,7 @@ const CreatePathModal = ({
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 fontSize: 14,
-                textAlign: "left"
+                textAlign: "left",
               }}
               dir={"rtl"}
             >

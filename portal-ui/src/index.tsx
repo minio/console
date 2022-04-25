@@ -23,7 +23,7 @@ import * as serviceWorker from "./serviceWorker";
 import {
   StyledEngineProvider,
   Theme,
-  ThemeProvider
+  ThemeProvider,
 } from "@mui/material/styles";
 import withStyles from "@mui/styles/withStyles";
 import "react-virtualized/styles.css";
@@ -35,8 +35,7 @@ import theme from "./theme/main";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {
-  }
+  interface DefaultTheme extends Theme {}
 }
 
 const GlobalCss = withStyles({
@@ -44,87 +43,87 @@ const GlobalCss = withStyles({
   "@global": {
     body: {
       height: "100vh",
-      width: "100vw"
+      width: "100vw",
     },
     "#root": {
       height: "100%",
       width: "100%",
       display: "flex",
       flexFlow: "column",
-      alignItems: "stretch"
+      alignItems: "stretch",
     },
     ".min-icon": {
       // height: 26,
-      width: 26
+      width: 26,
     },
     ".MuiButton-endIcon": {
       "& .min-icon": {
         // height: 26,
-        width: 16
-      }
+        width: 16,
+      },
     },
     // You should target [class*="MuiButton-root"] instead if you nest themes.
     ".MuiButton-root": {
-      height: 38
+      height: 38,
     },
     ".MuiButton-contained": {
       fontSize: "14px",
       textTransform: "capitalize",
       padding: "15px 25px 15px 25px",
-      borderRadius: 3
+      borderRadius: 3,
     },
     ".MuiButton-sizeSmall": {
       padding: "4px 10px",
-      fontSize: "0.8125rem"
+      fontSize: "0.8125rem",
     },
     ".MuiTableCell-head": {
       borderRadius: "3px 3px 0px 0px",
-      fontSize: 13
+      fontSize: 13,
     },
     ".MuiPaper-root": {
-      borderRadius: 3
+      borderRadius: 3,
     },
     ".MuiDrawer-paperAnchorDockedLeft": {
-      borderRight: 0
+      borderRight: 0,
     },
     ".MuiDrawer-root": {
       "& .MuiPaper-root": {
-        borderRadius: 0
-      }
+        borderRadius: 0,
+      },
     },
     hr: {
       borderTop: 0,
       borderLeft: 0,
       borderRight: 0,
       borderColor: "#999999",
-      backgroundColor: "transparent" as const
+      backgroundColor: "transparent" as const,
     },
     ul: {
-      paddingLeft:20,
-      listStyle: "none", /* Remove default bullets */
+      paddingLeft: 20,
+      listStyle: "none" /* Remove default bullets */,
       "& li::before:not(.Mui*)": {
         content: '"￭"',
         color: "#2781B0",
         fontSize: 20,
-        display: "inline-block", /* Needed to add space between the bullet and the text */
-        width: "1em", /* Also needed for space (tweak if needed) */
-        marginLeft: "-1em", /* Also needed for space (tweak if needed) */
-
+        display:
+          "inline-block" /* Needed to add space between the bullet and the text */,
+        width: "1em" /* Also needed for space (tweak if needed) */,
+        marginLeft: "-1em" /* Also needed for space (tweak if needed) */,
       },
       "& ul": {
-        listStyle: "none", /* Remove default bullets */
+        listStyle: "none" /* Remove default bullets */,
         "& li::before:not(.Mui*)": {
           content: '"￮"',
           color: "#2781B0",
           fontSize: 20,
-          display: "inline-block", /* Needed to add space between the bullet and the text */
-          width: "1em", /* Also needed for space (tweak if needed) */
-          marginLeft: "-1em" /* Also needed for space (tweak if needed) */
-        }
+          display:
+            "inline-block" /* Needed to add space between the bullet and the text */,
+          width: "1em" /* Also needed for space (tweak if needed) */,
+          marginLeft: "-1em" /* Also needed for space (tweak if needed) */,
+        },
       },
     },
-
-  }
+  },
 })(() => null);
 
 ReactDOM.render(

@@ -105,7 +105,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
     IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
   ]);
 
- const closeDeleteModalAndRefresh = (refresh: boolean) => {
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
       setLoading(true);

@@ -15,11 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import { Box } from "@mui/material";
-import {
-  HelpIconFilled,
-  GroupsIcon,
-  IAMPoliciesIcon,
-} from "../../../icons";
+import { HelpIconFilled, GroupsIcon, IAMPoliciesIcon } from "../../../icons";
 
 const FeatureItem = ({
   icon,
@@ -86,19 +82,19 @@ const AddGroupHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         <div>Learn more about Groups</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-       Adding groups lets you assign IAM policies to multiple users at once. 
-              <Box sx={{ paddingTop: "20px", paddingBottom: "10px" }}>
-              Users inherit access permissions to data and resources through the groups they belong to.
-              </Box>
-
-              <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-               A user can be a member of multiple groups.
-              </Box>
-
-              <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-              Groups provide a simplified method for managing shared permissions among users with common access patterns and workloads. Client’s cannot authenticate to a MinIO deployment using a group as an identity.
-              </Box>
-
+        Adding groups lets you assign IAM policies to multiple users at once.
+        <Box sx={{ paddingTop: "20px", paddingBottom: "10px" }}>
+          Users inherit access permissions to data and resources through the
+          groups they belong to.
+        </Box>
+        <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+          A user can be a member of multiple groups.
+        </Box>
+        <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+          Groups provide a simplified method for managing shared permissions
+          among users with common access patterns and workloads. Client’s cannot
+          authenticate to a MinIO deployment using a group as an identity.
+        </Box>
       </Box>
 
       <Box
@@ -108,9 +104,10 @@ const AddGroupHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         }}
       >
         <FeatureItem icon={<GroupsIcon />} description={`Add Users to Group`} />
-        <FeatureItem icon={<IAMPoliciesIcon />} description={`Assign Custom IAM Policies for Group`} />
-       
-        
+        <FeatureItem
+          icon={<IAMPoliciesIcon />}
+          description={`Assign Custom IAM Policies for Group`}
+        />
       </Box>
     </Box>
   );

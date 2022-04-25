@@ -62,7 +62,7 @@ const styles = (theme: Theme) =>
     ...objectBrowserCommon,
     slashSpacingStyle: {
       margin: "0 5px",
-    }
+    },
   });
 
 const BrowserBreadcrumbs = ({
@@ -122,7 +122,10 @@ const BrowserBreadcrumbs = ({
   if (versionsMode) {
     versionsItem = [
       <Fragment key={`breadcrumbs-versionedItem`}>
-        <span><span className={classes.slashSpacingStyle}>/</span>{versionedFile} - Versions</span>
+        <span>
+          <span className={classes.slashSpacingStyle}>/</span>
+          {versionedFile} - Versions
+        </span>
       </Fragment>,
     ];
   }
