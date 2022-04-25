@@ -17,10 +17,11 @@
 package restapi
 
 import (
-	"github.com/stretchr/testify/assert"
 	"os"
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_parseSubPath(t *testing.T) {
