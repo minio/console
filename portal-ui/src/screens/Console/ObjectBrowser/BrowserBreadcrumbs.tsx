@@ -60,6 +60,9 @@ interface IObjectBrowser {
 const styles = (theme: Theme) =>
   createStyles({
     ...objectBrowserCommon,
+    slashSpacingStyle: {
+      margin: "0 5px",
+    }
   });
 
 const BrowserBreadcrumbs = ({
@@ -97,7 +100,7 @@ const BrowserBreadcrumbs = ({
 
     return (
       <Fragment key={`breadcrumbs-${index.toString()}`}>
-        <span> / </span>
+        <span className={classes.slashSpacingStyle}>/</span>
         {index === lastBreadcrumbsIndex ? (
           <span style={{ cursor: "default" }}>{objectItem}</span>
         ) : (
@@ -119,7 +122,7 @@ const BrowserBreadcrumbs = ({
   if (versionsMode) {
     versionsItem = [
       <Fragment key={`breadcrumbs-versionedItem`}>
-        <span> / {versionedFile} - Versions</span>
+        <span><span className={classes.slashSpacingStyle}>/</span>{versionedFile} - Versions</span>
       </Fragment>,
     ];
   }
