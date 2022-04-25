@@ -208,7 +208,7 @@ const ShareFile = ({
   return (
     <React.Fragment>
       <ModalWrapper
-        title="Share File"
+        title="Share Object"
         modalOpen={open}
         onClose={() => {
           closeModalAndRefresh();

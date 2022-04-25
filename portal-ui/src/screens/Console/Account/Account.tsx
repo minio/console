@@ -22,7 +22,6 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
-import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import {
   AccountIcon,
@@ -39,6 +38,7 @@ import {
   searchField,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
 import HelpBox from "../../../common/HelpBox";
@@ -48,6 +48,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
+  IAM_PAGES,
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
@@ -55,15 +56,11 @@ import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
 
-const AddServiceAccount = withSuspense(
-  React.lazy(() => import("./AddServiceAccount"))
-);
+
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
 );
-const CredentialsPrompt = withSuspense(
-  React.lazy(() => import("../Common/CredentialsPrompt/CredentialsPrompt"))
-);
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -80,23 +77,21 @@ const styles = (theme: Theme) =>
 
 interface IServiceAccountsProps {
   classes: any;
+  history: any;
   displayErrorMessage: typeof setErrorSnackMessage;
 }
 
-const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
+const Account = ({
+  classes,
+  displayErrorMessage,
+  history,
+}: IServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
-  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedServiceAccount, setSelectedServiceAccount] = useState<
-    string | null
-  >(null);
-  const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
-  const [newServiceAccount, setNewServiceAccount] =
-    useState<NewServiceAccount | null>(null);
-  const [changePasswordModalOpen, setChangePasswordModalOpen] =
-    useState<boolean>(false);
+  const [selectedServiceAccount, setSelectedServiceAccount] = useState<string | null >(null);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState<boolean>(false);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
@@ -126,22 +121,6 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     setLoading(true);
   };
 
-  const closeAddModalAndRefresh = (res: NewServiceAccount | null) => {
-    setAddScreenOpen(false);
-    fetchRecords();
-
-    if (res !== null) {
-      const nsa: NewServiceAccount = {
-        console: {
-          accessKey: `${res.accessKey}`,
-          secretKey: `${res.secretKey}`,
-          url: `${res.url}`,
-        },
-      };
-      setNewServiceAccount(nsa);
-      setShowNewCredentials(true);
-    }
-  };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -173,11 +152,6 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
     setSelectedSAs(records);
   };
 
-  const closeCredentialsModal = () => {
-    setShowNewCredentials(false);
-    setNewServiceAccount(null);
-  };
-
   const closePolicyModal = () => {
     setPolicyOpen(false);
     setLoading(true);
@@ -199,14 +173,6 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
 
   return (
     <React.Fragment>
-      {addScreenOpen && (
-        <AddServiceAccount
-          open={addScreenOpen}
-          closeModalAndRefresh={(res: NewServiceAccount | null) => {
-            closeAddModalAndRefresh(res);
-          }}
-        />
-      )}
       {deleteOpen && (
         <DeleteServiceAccount
           deleteOpen={deleteOpen}
@@ -223,16 +189,7 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
         />
       )}
-      {showNewCredentials && (
-        <CredentialsPrompt
-          newServiceAccount={newServiceAccount}
-          open={showNewCredentials}
-          closeModal={() => {
-            closeCredentialsModal();
-          }}
-          entity="Service Account"
-        />
-      )}
+     
       {policyOpen && (
         <ServiceAccountPolicy
           open={policyOpen}
@@ -283,12 +240,12 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
                 icon={<PasswordKeyIcon />}
                 color={"primary"}
                 variant={"outlined"}
+                disabled={selectedSAs.length === 0 }
               />
             </SecureComponent>
             <RBIconButton
-              onClick={() => {
-                setAddScreenOpen(true);
-                setSelectedServiceAccount(null);
+              onClick={(e) => {
+                history.push(`${IAM_PAGES.ACCOUNT_ADD}`);
               }}
               text={`Create service account`}
               icon={<AddIcon />}

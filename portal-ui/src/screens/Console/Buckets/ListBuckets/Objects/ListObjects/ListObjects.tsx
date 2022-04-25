@@ -1094,10 +1094,30 @@ const ListObjects = ({
   }
 
   const onClosePanel = (forceRefresh: boolean) => {
-    setObjectDetailsView(false);
     setSelectedObjectView(null);
-    setSelectedObjects([]);
     setVersionsModeEnabled(false);
+    if (detailsOpen && selectedInternalPaths !== null) {
+      setSelectedObjectView(null);
+      setVersionsModeEnabled(false);
+      // We change URL to be the contained folder
+
+      const decodedPath = decodeFileName(internalPaths);
+      const splitURLS = decodedPath.split("/");
+
+      // We remove the last section of the URL as it should be a file
+      splitURLS.pop();
+
+      let URLItem = '';
+
+      if(splitURLS && splitURLS.length > 0) {
+        URLItem = `${splitURLS.join("/")}/`;
+      }
+
+      history.push(`/buckets/${bucketName}/browse/${encodeFileName(URLItem)}`)
+    }
+
+    setObjectDetailsView(false);
+    setSelectedObjects([]);
 
     if (forceRefresh) {
       setLoadingObjectsList(true);

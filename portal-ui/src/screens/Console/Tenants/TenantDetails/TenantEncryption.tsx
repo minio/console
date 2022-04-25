@@ -683,28 +683,28 @@ const TenantEncryption = ({
 
   return (
     <React.Fragment>
+      {confirmOpen && (
+        <ConfirmDialog
+          isOpen={confirmOpen}
+          title={
+            encryptionEnabled
+              ? "Enable encryption at rest for tenant?"
+              : "Disable encryption at rest for tenant?"
+          }
+          confirmText={encryptionEnabled ? "Enable" : "Disable"}
+          cancelText="Cancel"
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={updateEncryptionConfiguration}
+          confirmationContent={
+            <DialogContentText>
+              {encryptionEnabled
+                ? "Data will be encrypted using and external KMS"
+                : "Current encrypted information will not be accessible"}
+            </DialogContentText>
+          }
+        />
+      )}
       <Grid container spacing={1}>
-        {confirmOpen && (
-          <ConfirmDialog
-            isOpen={confirmOpen}
-            title={
-              encryptionEnabled
-                ? "Enable encryption at rest for tenant?"
-                : "Disable encryption at rest for tenant?"
-            }
-            confirmText={encryptionEnabled ? "Enable" : "Disable"}
-            cancelText="Cancel"
-            onClose={() => setConfirmOpen(false)}
-            onConfirm={updateEncryptionConfiguration}
-            confirmationContent={
-              <DialogContentText>
-                {encryptionEnabled
-                  ? "Data will be encrypted using and external KMS"
-                  : "Current encrypted information will not be accessible"}
-              </DialogContentText>
-            }
-          />
-        )}
         <Grid item xs>
           <h1 className={classes.sectionTitle}>Encryption</h1>
         </Grid>

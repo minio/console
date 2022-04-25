@@ -620,6 +620,48 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/domains": {
+      "put": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Update Domains for a Tenant",
+        "operationId": "UpdateTenantDomains",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateDomainsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/enable-logging": {
       "post": {
         "tags": [
@@ -3859,6 +3901,14 @@ func init() {
         }
       }
     },
+    "updateDomainsRequest": {
+      "type": "object",
+      "properties": {
+        "domains": {
+          "$ref": "#/definitions/domainsConfiguration"
+        }
+      }
+    },
     "updateTenantRequest": {
       "type": "object",
       "properties": {
@@ -4630,6 +4680,48 @@ func init() {
             "schema": {
               "type": "boolean"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/domains": {
+      "put": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Update Domains for a Tenant",
+        "operationId": "UpdateTenantDomains",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateDomainsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -8572,6 +8664,14 @@ func init() {
           "items": {
             "$ref": "#/definitions/keyPairConfiguration"
           }
+        }
+      }
+    },
+    "updateDomainsRequest": {
+      "type": "object",
+      "properties": {
+        "domains": {
+          "$ref": "#/definitions/domainsConfiguration"
         }
       }
     },
