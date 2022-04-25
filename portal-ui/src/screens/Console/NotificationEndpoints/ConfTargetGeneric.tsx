@@ -52,7 +52,7 @@ export const valueDef = (
   type: string,
   defaults: IElementValue[]
 ) => {
-  let defValue = type === "on|off" ? "false" : "";
+  let defValue = type === "on|off" ? "off" : "";
 
   if (defaults.length > 0) {
     const storedConfig = defaults.find((element) => element.key === key);
@@ -105,12 +105,12 @@ const ConfTargetGeneric = ({
   const fieldDefinition = (field: KVField, item: number) => {
     switch (field.type) {
       case "on|off":
-        const value = valueHolder[item] ? valueHolder[item].value : "false";
+        const value = valueHolder[item] ? valueHolder[item].value : "off";
 
         return (
           <FormSwitchWrapper
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = e.target.checked ? "true" : "false";
+              const value = e.target.checked ? "on" : "off";
               setValueElement(field.name, value, item);
             }}
             id={field.name}
@@ -118,7 +118,7 @@ const ConfTargetGeneric = ({
             label={field.label}
             value={"switch_on"}
             tooltip={field.tooltip}
-            checked={value === "true"}
+            checked={value === "on"}
           />
         );
       case "csv":
