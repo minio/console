@@ -153,7 +153,6 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 	if params == nil {
 		return prepareError(errGroupBodyNotInRequest)
 	}
-
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -161,6 +160,14 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
+
+	groupList, _ := adminClient.listGroups(ctx)
+
+	for _, b := range groupList {
+		if b == *params.Group {
+			return prepareError(errGroupAlreadyExists)
+		}
+	}
 
 	if err := addGroup(ctx, adminClient, *params.Group, params.Members); err != nil {
 		return prepareError(err)

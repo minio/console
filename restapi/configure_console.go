@@ -27,6 +27,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -52,6 +53,10 @@ import (
 var additionalServerFlags = struct {
 	CertsDir string `long:"certs-dir" description:"path to certs directory" env:"CONSOLE_CERTS_DIR"`
 }{}
+
+const (
+	SubPath = "CONSOLE_SUBPATH"
+)
 
 var subPath = "/"
 var subPathOnce sync.Once
@@ -363,15 +368,26 @@ func configureServer(s *http.Server, _, _ string) {
 
 func getSubPath() string {
 	subPathOnce.Do(func() {
-		if v := env.Get("CONSOLE_SUBPATH", ""); v != "" {
-			// Replace all unnecessary `\` to `/`
-			// also add pro-actively at the end.
-			subPath = filepath.Clean(filepath.ToSlash(v)) + SlashSeparator
-			if !strings.HasPrefix(subPath, SlashSeparator) {
-				subPath = SlashSeparator + subPath
-			}
-		}
+
+		subPath = parseSubPath(env.Get(SubPath, ""))
 	})
+	return subPath
+}
+
+func parseSubPath(v string) string {
+	v = strings.TrimSpace(v)
+	if v == "" {
+		return SlashSeparator
+	}
+	// Replace all unnecessary `\` to `/`
+	// also add pro-actively at the end.
+	subPath = path.Clean(filepath.ToSlash(v))
+	if !strings.HasPrefix(subPath, SlashSeparator) {
+		subPath = SlashSeparator + subPath
+	}
+	if !strings.HasSuffix(subPath, SlashSeparator) {
+		subPath = subPath + SlashSeparator
+	}
 	return subPath
 }
 
