@@ -27,6 +27,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -380,7 +381,7 @@ func parseSubPath(v string) string {
 	}
 	// Replace all unnecessary `\` to `/`
 	// also add pro-actively at the end.
-	subPath = filepath.Clean(filepath.ToSlash(v))
+	subPath = path.Clean(filepath.ToSlash(v))
 	if !strings.HasPrefix(subPath, SlashSeparator) {
 		subPath = SlashSeparator + subPath
 	}
