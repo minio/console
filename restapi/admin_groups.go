@@ -133,6 +133,7 @@ func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoP
 
 // addGroupAdd a MinIO group with the defined members
 func addGroup(ctx context.Context, client MinioAdmin, group string, members []string) error {
+
 	gAddRemove := madmin.GroupAddRemove{
 		Group:    group,
 		Members:  members,
@@ -153,7 +154,6 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 	if params == nil {
 		return prepareError(errGroupBodyNotInRequest)
 	}
-
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -161,6 +161,14 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
+
+	groupList, _ := adminClient.listGroups(ctx)
+
+	for _, b := range groupList {
+		if b == *params.Group {
+			return prepareError(errGroupAlreadyExists)
+		}
+	}
 
 	if err := addGroup(ctx, adminClient, *params.Group, params.Members); err != nil {
 		return prepareError(err)
