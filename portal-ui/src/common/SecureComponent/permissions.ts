@@ -300,7 +300,7 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY, // display "set policy" button in groups details page
   ],
   [IAM_PAGES.GROUPS_ADD]: [
-     IAM_SCOPES.ADMIN_LIST_USERS, // displays users
+    IAM_SCOPES.ADMIN_LIST_USERS, // displays users
     IAM_SCOPES.ADMIN_CREATE_USER, // displays create user button
   ],
   [IAM_PAGES.USERS]: [
@@ -314,11 +314,8 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_DISABLE_USER,
     IAM_SCOPES.ADMIN_DELETE_USER,
   ],
-  [IAM_PAGES.USER_ADD]: [
-    IAM_SCOPES.ADMIN_CREATE_USER,], // displays create user button
-  [IAM_PAGES.ACCOUNT_ADD]: [
-    IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,  
-  ],
+  [IAM_PAGES.USER_ADD]: [IAM_SCOPES.ADMIN_CREATE_USER], // displays create user button
+  [IAM_PAGES.ACCOUNT_ADD]: [IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT],
   [IAM_PAGES.DASHBOARD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO, // displays dashboard information
   ],
