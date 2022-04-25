@@ -39,7 +39,6 @@
     "kbar": "^0.1.0-beta.27",
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
-    "minio": "^7.0.26",
     "moment": "^2.29.2",
     "react": "^17.0.2",
     "react-chartjs-2": "^2.9.0",
@@ -92,8 +91,9 @@
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "5.0.1",
+    "testcafe": "^1.18.6",
     "typescript": "^4.4.3",
-    "testcafe": "^1.18.6"
+    "minio": "https://github.com/bexsoft/minio-js.git#update-deps"
   },
   "resolutions": {
     "nth-check": "^2.0.1",
