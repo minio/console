@@ -315,8 +315,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
                           To get started,{" "}
                           <AButton
                             onClick={() => {
-                              setSelectedGroup(null);
-                              setGroupOpen(true);
+                              history.push(`${IAM_PAGES.GROUPS_ADD}`);
                             }}
                           >
                             Create a Group

@@ -1107,13 +1107,13 @@ const ListObjects = ({
       // We remove the last section of the URL as it should be a file
       splitURLS.pop();
 
-      let URLItem = '';
+      let URLItem = "";
 
-      if(splitURLS && splitURLS.length > 0) {
+      if (splitURLS && splitURLS.length > 0) {
         URLItem = `${splitURLS.join("/")}/`;
       }
 
-      history.push(`/buckets/${bucketName}/browse/${encodeFileName(URLItem)}`)
+      history.push(`/buckets/${bucketName}/browse/${encodeFileName(URLItem)}`);
     }
 
     setObjectDetailsView(false);
@@ -1364,11 +1364,8 @@ const ListObjects = ({
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
-                <Grid
-                  item
-                  xs={12}
-                >
-                  <Grid item xs={12} className={classes.breadcrumbsContainer} >
+                <Grid item xs={12}>
+                  <Grid item xs={12} className={classes.breadcrumbsContainer}>
                     <BrowserBreadcrumbs
                       bucketName={bucketName}
                       internalPaths={pageTitle}

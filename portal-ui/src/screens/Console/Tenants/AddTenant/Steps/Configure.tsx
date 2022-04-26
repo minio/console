@@ -305,7 +305,9 @@ const Configure = ({
                   }}
                   label="Console Domain"
                   value={consoleDomain}
-                  placeholder={"Eg. http://subdomain.domain:port/subpath1/subpath2"}
+                  placeholder={
+                    "Eg. http://subdomain.domain:port/subpath1/subpath2"
+                  }
                   error={validationErrors["console_domain"] || ""}
                 />
               </div>
