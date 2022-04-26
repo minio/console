@@ -14,16 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid, Button } from "@mui/material";
+import { Grid, Button, Box } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { actionsTray, widgetContainerCommon } from "../common/styleLibrary";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
 import SyncIcon from "../../../../../icons/SyncIcon";
+import { OpenListIcon } from "../../../../../icons";
 
 interface IDateRangeSelector {
   classes: any;
@@ -32,6 +33,9 @@ interface IDateRangeSelector {
   timeEnd: any;
   setTimeEnd: (date: any) => void;
   triggerSync?: () => void;
+  label?: string;
+  startLabel?: string;
+  endLabel?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -60,6 +64,23 @@ const styles = (theme: Theme) =>
     },
   });
 
+const DateFilterAdornIcon = () => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        "& .min-icon": {
+          width: "10px",
+          height: "10px",
+        },
+      }}
+    >
+      <OpenListIcon />
+    </Box>
+  );
+};
+
 const DateRangeSelector = ({
   classes,
   timeStart,
@@ -67,50 +88,203 @@ const DateRangeSelector = ({
   timeEnd,
   setTimeEnd,
   triggerSync,
+  label = "Filter:",
+  startLabel = "Start Time:",
+  endLabel = "End Time:",
 }: IDateRangeSelector) => {
   return (
-    <Fragment>
-      <Grid item xs={12} className={classes.timeContainers}>
-        <span className={classes.filterTitle}>Filter:</span>
-        <div className={classes.filterContainer}>
-          <span className={`${classes.filterTitle} ${classes.schedulerIcon}`}>
-            <ScheduleIcon />
-          </span>
-          <span className={classes.selectorLabel}>Start Time:</span>
-          <DateTimePickerWrapper
-            value={timeStart}
-            onChange={setTimeStart}
-            forFilterContained
-            id="stTime"
-            noInputIcon
-          />
-          <span className={classes.divisorLine}>&nbsp;</span>
-          <span className={`${classes.filterTitle} ${classes.schedulerIcon}`}>
-            <WatchLaterIcon />
-          </span>
-          <span className={classes.selectorLabel}>End Time:</span>
-          <DateTimePickerWrapper
-            value={timeEnd}
-            onChange={setTimeEnd}
-            forFilterContained
-            id="endTime"
-            noInputIcon
-          />
-        </div>
-        {triggerSync && (
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={triggerSync}
-            endIcon={<SyncIcon />}
-            className={classes.syncButton}
+    <Grid
+      item
+      xs={12}
+      sx={{
+        "& .filter-date-input-label, .end-time-input-label": {
+          display: "none",
+        },
+        "& .MuiInputBase-adornedEnd.filter-date-date-time-input": {
+          width: "100%",
+          border: "1px solid #eaeaea",
+          paddingLeft: "8px",
+          paddingRight: "8px",
+          borderRadius: "1px",
+        },
+
+        "& .MuiInputAdornment-root button": {
+          height: "20px",
+          width: "20px",
+          marginRight: "5px",
+        },
+        "& .filter-date-input-wrapper": {
+          height: "30px",
+          width: "100%",
+
+          "& .MuiTextField-root": {
+            height: "30px",
+            width: "90%",
+
+            "& input.Mui-disabled": {
+              color: "#000000",
+              WebkitTextFillColor: "#101010",
+            },
+          },
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: "grid",
+          height: {
+            md: "40px",
+            xs: "auto",
+          },
+          alignItems: "center",
+          gridTemplateColumns: {
+            md: "auto 2fr auto",
+            sm: "1fr",
+          },
+          padding: {
+            md: "0",
+            xs: " 5px",
+          },
+          gap: "5px",
+        }}
+      >
+        <Box sx={{ fontSize: "14px", fontWeight: 500, marginRight: "5px" }}>
+          {label}
+        </Box>
+        <Box
+          sx={{
+            display: "grid",
+            height: {
+              md: "40px",
+              xs: "auto",
+            },
+            border: {
+              md: "1px solid #eaeaea",
+            },
+            alignItems: "center",
+            gridTemplateColumns: {
+              md: "1fr 1fr",
+              sm: "1fr",
+            },
+            gap: "8px",
+            paddingLeft: "8px",
+            paddingRight: "8px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              height: "30px",
+              alignItems: "center",
+              gridTemplateColumns: {
+                xs: "12px auto 1fr",
+              },
+              gap: "5px",
+            }}
           >
-            Sync
-          </Button>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                "& .min-icon": {
+                  width: "10px",
+                  height: "10px",
+                  fill: "#B4B5B4",
+                },
+              }}
+            >
+              <ScheduleIcon className="min-icon" />
+            </Box>
+            <Box
+              sx={{
+                fontSize: "12px",
+                marginLeft: "8px",
+              }}
+            >
+              {startLabel}
+            </Box>
+            <Box>
+              <DateTimePickerWrapper
+                value={timeStart}
+                onChange={setTimeStart}
+                id="stTime"
+                classNamePrefix={"filter-date-"}
+                forFilterContained
+                noInputIcon={true}
+                openPickerIcon={DateFilterAdornIcon}
+              />
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+              height: "30px",
+              alignItems: "center",
+              gridTemplateColumns: {
+                xs: "12px auto 1fr",
+              },
+              gap: "5px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                "& .min-icon": {
+                  width: "10px",
+                  height: "10px",
+                  fill: "#B4B5B4",
+                },
+              }}
+            >
+              <WatchLaterIcon className="min-icon" />
+            </Box>
+            <Box
+              sx={{
+                fontSize: "12px",
+                marginLeft: "8px",
+              }}
+            >
+              {endLabel}
+            </Box>
+            <Box>
+              <DateTimePickerWrapper
+                value={timeEnd}
+                onChange={setTimeEnd}
+                id="endTime"
+                classNamePrefix={"filter-date-"}
+                forFilterContained
+                noInputIcon={true}
+                openPickerIcon={DateFilterAdornIcon}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        {triggerSync && (
+          <Box
+            sx={{
+              alignItems: "flex-end",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginRight: "35px",
+            }}
+          >
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={triggerSync}
+              endIcon={<SyncIcon />}
+              className={classes.syncButton}
+            >
+              Sync
+            </Button>
+          </Box>
         )}
-      </Grid>
-    </Fragment>
+      </Box>
+    </Grid>
   );
 };
 

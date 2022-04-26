@@ -40,6 +40,8 @@ interface IDateTimePicker {
   id: string;
   disabled?: boolean;
   noInputIcon?: boolean;
+  classNamePrefix?: string;
+  openPickerIcon?: any;
 }
 
 const styles = (theme: Theme) =>
@@ -235,6 +237,8 @@ const DateTimePickerWrapper = ({
   id,
   disabled = false,
   noInputIcon = false,
+  classNamePrefix = "",
+  openPickerIcon,
 }: IDateTimePicker) => {
   let adornment = {};
 
@@ -258,13 +262,17 @@ const DateTimePickerWrapper = ({
     };
   }
 
-  let classOverriden = "";
+  let classOverriden = `${classNamePrefix}date-time-input `;
 
   if (forSearchBlock) {
-    classOverriden = classes.dateSelectorOverride;
+    classOverriden += classes.dateSelectorOverride;
   } else if (forFilterContained) {
-    classOverriden = classes.dateSelectorFilterOverride;
+    classOverriden += classes.dateSelectorFilterOverride;
   }
+
+  const clsName = forSearchBlock
+    ? classes.parentDateOverride
+    : classes.dateSelectorFormOverride;
 
   const inputItem = (
     <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -275,16 +283,15 @@ const DateTimePickerWrapper = ({
           ...adornment,
           className: classOverriden,
         }}
+        components={{
+          OpenPickerIcon: openPickerIcon,
+        }}
         label=""
-        className={
-          forSearchBlock
-            ? classes.parentDateOverride
-            : classes.dateSelectorFormOverride
-        }
+        className={clsName}
         disabled={disabled}
-        renderInput={(props) => (
-          <TextField id={id} variant="standard" {...props} disabled />
-        )}
+        renderInput={(props) => {
+          return <TextField id={id} variant="standard" {...props} disabled />;
+        }}
         ampm={false}
         PopperProps={{
           className: classes.paperOverride,
@@ -297,15 +304,19 @@ const DateTimePickerWrapper = ({
     return inputItem;
   }
 
+  const containerCls = !forFilterContained ? classes.fieldContainer : "";
   return (
     <Fragment>
       <Grid
         item
         xs={12}
-        className={!forFilterContained ? classes.fieldContainer : ""}
+        className={`${containerCls} ${classNamePrefix}input-field-container `}
       >
         {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.inputLabel}>
+          <InputLabel
+            htmlFor={id}
+            className={`${classes.inputLabel} ${classNamePrefix}input-label`}
+          >
             <span>
               {label}
               {required ? "*" : ""}
@@ -322,7 +333,11 @@ const DateTimePickerWrapper = ({
           </InputLabel>
         )}
 
-        <div className={classes.textBoxContainer}>{inputItem}</div>
+        <div
+          className={`${classes.textBoxContainer} ${classNamePrefix}input-wrapper  `}
+        >
+          {inputItem}
+        </div>
       </Grid>
     </Fragment>
   );

@@ -14,73 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import api from "../../../../../common/api";
-import Loader from "../../../Common/Loader/Loader";
-import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
-import { IDashboardPanel } from "../types";
-import { setErrorSnackMessage } from "../../../../../actions";
+import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
+import { IDashboardPanel } from "../types";
+import Loader from "../../../Common/Loader/Loader";
 
-interface ISingleValueWidget {
-  title: string;
-  panelItem: IDashboardPanel;
-  timeStart: any;
-  timeEnd: any;
-  propLoading: boolean;
-  displayErrorMessage: any;
-  classes: any;
-  apiPrefix: string;
-  renderFn?: (arg: Record<string, any>) => any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...widgetCommon,
-    loadingAlign: {
-      width: "100%",
-      textAlign: "center",
-      margin: "auto",
-    },
-    metric: {
-      fontSize: 60,
-      lineHeight: 1,
-      color: "#07193E",
-      fontWeight: 700,
-    },
-    titleElement: {
-      fontSize: 10,
-      color: "#767676",
-      fontWeight: 700,
-    },
-    containerAlignment: {
-      display: "flex",
-      height: 140,
-      flexDirection: "column",
-      justifyContent: "center",
-      "& .unitText": {
-        color: "#767676",
-        fontSize: 12,
-      },
-    },
-  });
-
-const SingleValueWidget = ({
-  title,
+const EntityStateStatItem = ({
   panelItem,
   timeStart,
   timeEnd,
   propLoading,
   displayErrorMessage,
-  classes,
   apiPrefix,
-  renderFn,
-}: ISingleValueWidget) => {
+  statLabel,
+}: {
+  panelItem: IDashboardPanel;
+  timeStart: any;
+  timeEnd: any;
+  propLoading: boolean;
+  displayErrorMessage: any;
+  apiPrefix: string;
+  statLabel: any;
+}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
 
@@ -123,30 +81,25 @@ const SingleValueWidget = ({
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
-  const valueToRender = splitSizeMetric(data);
-
-  if (renderFn) {
-    return renderFn({ valueToRender, loading, title, id: panelItem.id });
-  }
-  return (
-    <div className={classes.containerAlignment}>
-      {loading && (
-        <div className={classes.loadingAlign}>
-          <Loader />
-        </div>
-      )}
-      {!loading && (
-        <Fragment>
-          <div className={classes.metric}>{splitSizeMetric(data)}</div>
-          <div className={classes.titleElement}>{title}</div>
-        </Fragment>
-      )}
-    </div>
+  let toRender = loading ? (
+    <Box
+      sx={{
+        width: "100%",
+        paddingTop: "5px",
+        textAlign: "center",
+        margin: "auto",
+      }}
+    >
+      <Loader style={{ width: 12, height: 12 }} />
+    </Box>
+  ) : (
+    <Box>
+      <Box className="stat-value">{data}</Box>
+      {statLabel}
+    </Box>
   );
+
+  return toRender;
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(SingleValueWidget));
+export default EntityStateStatItem;

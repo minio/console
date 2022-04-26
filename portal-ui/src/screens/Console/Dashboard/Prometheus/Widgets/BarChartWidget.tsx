@@ -29,7 +29,6 @@ import { useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
@@ -41,6 +40,7 @@ import api from "../../../../../common/api";
 import { openZoomPage } from "../../actions";
 import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
+import ExpandGraphLink from "./ExpandGraphLink";
 
 interface IBarChartWidget {
   classes: any;
@@ -70,11 +70,11 @@ const CustomizedAxisTick = ({ y, payload }: any) => {
   return (
     <text
       width={50}
-      fontSize={"63%"}
+      fontSize={"69.7%"}
       textAnchor="start"
       fill="#333"
       transform={`translate(5,${y})`}
-      fontWeight={700}
+      fontWeight={400}
       dy={3}
     >
       {payload.value}
@@ -92,7 +92,6 @@ const BarChartWidget = ({
   displayErrorMessage,
   apiPrefix,
   zoomActivated = false,
-  openZoomPage,
 }: IBarChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
@@ -162,15 +161,7 @@ const BarChartWidget = ({
     <div className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
         <div className={classes.titleContainer}>
-          {title}{" "}
-          <button
-            onClick={() => {
-              openZoomPage(panelItem);
-            }}
-            className={classes.zoomChartIcon}
-          >
-            <ZoomOutMapIcon />
-          </button>
+          {title} <ExpandGraphLink panelItem={panelItem} />
         </div>
       )}
       {loading && (
@@ -200,6 +191,10 @@ const BarChartWidget = ({
                 axisLine={false}
                 width={150}
                 hide={!biggerThanMd}
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 100,
+                }}
               />
               {barChartConfiguration.map((bar) => (
                 <Bar
