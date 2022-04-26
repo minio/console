@@ -117,6 +117,13 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
+type GroupInfo = {
+  members?: any[];
+  name?: string;
+  policy?: string;
+  status?: string;
+};
+
 const AddServiceAccount = ({
   classes,
   setErrorSnackMessage,
@@ -135,6 +142,7 @@ const AddServiceAccount = ({
  const [currentGroups, setCurrentGroups] = useState<string[]>([]);
 const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
 const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
+const [groupDetails, setGroupDetails] = useState<GroupInfo>({});
 
   useEffect(() => {
     if (addSending) {
@@ -203,6 +211,12 @@ const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
       });
   }, []);
 
+
+useEffect(() => {
+  console.log("In fetchGroupInfo checkedGroups:", checkedGroups)
+fetchGroupInfo();
+}, [checkedGroups])
+
 useEffect(() => {
   console.log("Something changed - currentPolicies:", currentPolicies, "currentGroups:", currentGroups)
 },
@@ -249,6 +263,39 @@ useEffect(() => {
 
     return elements;
   };
+
+  const fetchGroupInfo = () => {
+    console.log("In fetchgroupinfo function checkedGroups:", checkedGroups)
+    if (checkedGroups.length > 0) {
+      checkedGroups.forEach((element) => {
+         console.log("In the loop  groupName:", element)
+      api
+        .invoke("GET", `/api/v1/group?name=${encodeURI(element)}`)
+        .then((res: any) => {
+          console.log("In the subloop  res.policy:", res.policy);
+          var groupPolicies = res.policy.split(',');
+          console.log("In the subloop  groupPolicies:", groupPolicies);
+          groupPolicies.forEach((element : string)=> {
+             console.log("In the loop  policyName:", element)
+            if (!currentPolicies.includes(element)){
+              console.log("In the push policyName:", element)
+              currentPolicies.push(element);
+              console.log("In the push currentPolicies:", currentPolicies)
+              
+            }
+          });
+            setCurrentPolicies(currentPolicies);
+        })
+        .catch((err) => {
+          setErrorSnackMessage(err);
+          setGroupDetails({});
+        });
+      })
+
+          console.log("Will I print? currentPolicies:", currentPolicies);
+    } 
+  
+}
 
   const policySelectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
