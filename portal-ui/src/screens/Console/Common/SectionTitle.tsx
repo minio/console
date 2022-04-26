@@ -24,7 +24,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const SectionTitle: React.FC<Props> = ({
+const SectionTitle: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   separator = true,
   actions,

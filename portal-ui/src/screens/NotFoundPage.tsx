@@ -19,7 +19,7 @@ import Box from "@mui/material/Box";
 import Copyright from "../common/Copyright";
 import PageLayout from "./Console/Common/Layout/PageLayout";
 
-const NotFound: React.FC = () => {
+const NotFound: React.FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <PageLayout>
       <Box

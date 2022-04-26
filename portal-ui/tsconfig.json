@@ -15,7 +15,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "downlevelIteration": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["react/next", "react-dom/next"]
   },
   "include": ["src"]
 }
