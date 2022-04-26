@@ -6,7 +6,7 @@
   "dependencies": {
     "@codemirror/lang-json": "^0.19.1",
     "@codemirror/legacy-modes": "^0.19.0",
-    "@codemirror/stream-parser": "^0.19.9",
+    "@codemirror/stream-parser": "^0.19.3",
     "@date-io/moment": "^2.13.1",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.3.0",
@@ -29,7 +29,7 @@
     "@types/superagent": "^4.1.15",
     "@types/webpack-env": "^1.16.4",
     "@types/websocket": "^1.0.5",
-    "@uiw/react-codemirror": "^4.7.0",
+    "@uiw/react-codemirror": "^4.3.2",
     "chart.js": "^2.9.3",
     "codemirror": "^4.7.0",
     "history": "^4.10.1",

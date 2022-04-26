@@ -16,24 +16,25 @@
 
 import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
-import "codemirror/theme/dracula.css";
-/** Code mirror */
-import CodeMirror, { Extension } from "@uiw/react-codemirror";
-import { StreamLanguage } from "@codemirror/stream-parser";
-import { json } from "@codemirror/lang-json";
-import { yaml } from "@codemirror/legacy-modes/mode/yaml";
-
-/** Code mirror */
 import { Box, InputLabel, Tooltip } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import HelpIcon from "../../../../../icons/HelpIcon";
+
+/** Code mirror */
+import CodeMirror, { Extension } from "@uiw/react-codemirror";
+import { EditorView } from "@codemirror/view";
+import { StreamLanguage } from "@codemirror/stream-parser";
+import { json } from "@codemirror/lang-json";
+import { yaml } from "@codemirror/legacy-modes/mode/yaml";
+
 import { fieldBasic } from "../common/styleLibrary";
 import { CopyIcon, EditorThemeSwitchIcon } from "../../../../../icons";
+import HelpIcon from "../../../../../icons/HelpIcon";
 import RBIconButton from "../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { EditorView } from "@codemirror/view";
+
+import "./dracula.css";
 
 interface ICodeWrapper {
   value: string;
