@@ -44,7 +44,16 @@ import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
-import { getRandomString } from "../../../screens/Console/Tenants/utils";
+import { getRandomString } from   "../../../screens/Console/Tenants/utils";
+import { IPolicyItem } from "../Users/types"
+import { contextType } from "react-copy-to-clipboard";
+
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
+
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+
+import { decodeFileName } from "../../../common/utils";
+import { Session } from "inspector";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -121,6 +130,10 @@ const AddServiceAccount = ({
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+ const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+ const [currentGroups, setCurrentGroups] = useState<string[]>([]);
+const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
 
   useEffect(() => {
     if (addSending) {
@@ -152,6 +165,46 @@ const AddServiceAccount = ({
     secretKey,
   ]);
 
+  //fetches policies and groups for active user
+   useEffect(() => {  
+
+    const userName = userLoggedIn;
+    
+    setLoading(true);
+    api
+      .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
+      .then((res) => {
+        const memberOf = res.memberOf;
+        setSelectedGroups(memberOf);
+        const userPolicies = res.policy;
+        setCurrentPolicies(userPolicies);
+        setLoading(false);
+      //  let currentGroups: string[] = [];
+      //  for (let group of memberOf) {
+       //   currentGroups.push({
+       //     group: group,
+       //   });
+        //}
+       // setCurrentGroups(currentGroups);
+        //let currentPolicies: string[] = [];
+      // for (let policy of res.policy) {
+        //  currentPolicies.push({
+         //   policy: policy,
+         // });
+         console.log("In the GET api - loggedInAs:", userName, "User policies in res:", res.policy, "User Groups in res:", res.memberOf)
+      })
+        
+      .catch((err: ErrorResponseHandler) => {
+        setLoading(false);
+        setErrorSnackMessage(err);
+      });
+  }, []);
+
+useEffect(() => {
+  console.log("Something changed - currentPolicies:", currentPolicies, "selectedGroups:", selectedGroups)
+},
+[selectedGroups,currentPolicies])
+
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
     setAddSending(true);
@@ -169,6 +222,10 @@ const AddServiceAccount = ({
     setNewServiceAccount(null);
     history.push(`${IAM_PAGES.ACCOUNT}`);
   };
+  
+    const userLoggedIn = decodeFileName(
+    localStorage.getItem("userLoggedIn") || ""
+  );
 
   return (
     <Fragment>
@@ -298,6 +355,28 @@ const AddServiceAccount = ({
                         xs={12}
                         className={classes.codeMirrorContainer}
                       >
+                  <div >
+                     <PanelTitle>Current User Groups</PanelTitle>
+                    <TableWrapper
+                      // itemActions={userTableActions}
+                      columns={[{ label: "Name", elementKey: "group" }]}
+                      isLoading={loading}
+                      records={currentGroups}
+                      entityName="Groups"
+                      idField="group"
+                    />
+                  </div>
+                  <div >
+                     <PanelTitle>Current User Policies</PanelTitle>
+                    <TableWrapper
+                      // itemActions={userTableActions}
+                      columns={[{ label: "Name", elementKey: "policy" }]}
+                      isLoading={loading}
+                      records={currentPolicies}
+                      entityName="Policies"
+                      idField="policy"
+                    />
+                  </div>
                         <CodeMirrorWrapper
                           label={"Policy "}
                           value={policyDefinition}
