@@ -384,4 +384,4 @@ const connector = connect(null, {
   setErrorSnackMessage,
 });
 
-export default connector(withStyles(styles)(ListBuckets));
+export default withStyles(styles)(connector(ListBuckets));

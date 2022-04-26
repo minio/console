@@ -357,4 +357,4 @@ const connector = connect(null, {
   setErrorSnackMessage,
   setSnackBarMessage,
 });
-export default connector(withStyles(styles)(ReplicationSites));
+export default withStyles(styles)(connector(ReplicationSites));

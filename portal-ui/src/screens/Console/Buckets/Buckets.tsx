@@ -104,4 +104,4 @@ const Buckets = () => {
   );
 };
 
-export default withRouter(connector(Buckets));
+export default connector(withRouter(Buckets));

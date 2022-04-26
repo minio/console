@@ -342,4 +342,4 @@ const connector = connect(mapState, {
   setServerDiagStat,
 });
 
-export default connector(withStyles(styles)(HealthInfo));
+export default withStyles(styles)(connector(HealthInfo));

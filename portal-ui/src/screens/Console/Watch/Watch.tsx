@@ -295,4 +295,4 @@ const connector = connect(mapState, {
   watchResetMessages: watchResetMessages,
 });
 
-export default connector(withStyles(styles)(Watch));
+export default withStyles(styles)(connector(Watch));

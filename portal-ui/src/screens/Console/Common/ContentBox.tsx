@@ -17,9 +17,11 @@
 import React from "react";
 import { Box } from "@mui/material";
 
-type Props = {};
+interface IContentBox {
+    children?: React.ReactNode;
+}
 
-const ContentBox: React.FC<Props> = ({ children }) => {
+const ContentBox = ({ children }: IContentBox) => {
   return (
     <Box
       sx={{

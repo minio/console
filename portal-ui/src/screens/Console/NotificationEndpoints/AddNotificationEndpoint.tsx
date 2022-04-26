@@ -156,7 +156,7 @@ const AddNotificationEndpoint = ({
   };
 
   const onValueChange = useCallback(
-    (newValue) => {
+    (newValue: any) => {
       setValueArr(newValue);
     },
     [setValueArr]
@@ -256,4 +256,4 @@ const mapDispatchToProps = {
 
 const connector = connect(null, mapDispatchToProps);
 
-export default connector(withStyles(styles)(AddNotificationEndpoint));
+export default withStyles(styles)(connector(AddNotificationEndpoint));

@@ -36,4 +36,4 @@ const Policies = () => {
   );
 };
 
-export default withRouter(connector(Policies));
+export default connector(withRouter(Policies));

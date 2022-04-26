@@ -735,4 +735,4 @@ const mapDispatchToProps = {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(withStyles(styles)(ObjectDetailPanel));
+export default withStyles(styles)(connector(ObjectDetailPanel));

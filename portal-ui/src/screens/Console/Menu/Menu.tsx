@@ -164,4 +164,4 @@ const connector = connect(mapState, {
   setMenuOpen,
 });
 
-export default connector(withStyles(styles)(Menu));
+export default withStyles(styles)(connector(Menu));

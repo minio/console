@@ -537,4 +537,4 @@ const connector = connect(mapState, {
   setErrorSnackMessage: setErrorSnackMessage,
 });
 
-export default connector(withStyles(styles)(AddBucket));
+export default withStyles(styles)(connector(AddBucket));

@@ -521,4 +521,4 @@ const mapDispatchToProps = {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(withStyles(styles)(VersionsNavigator));
+export default withStyles(styles)(connector(VersionsNavigator));

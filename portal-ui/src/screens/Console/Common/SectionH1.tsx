@@ -16,9 +16,11 @@
 
 import React from "react";
 
-type Props = {};
+interface ISectionH1 {
+  children?: React.ReactNode;
+}
 
-const SectionH1: React.FC<Props> = ({ children }) => {
+const SectionH1 = ({ children }: ISectionH1) => {
   return (
     <h1 style={{ margin: 0, marginBottom: ".8rem", fontSize: "1.3rem" }}>
       {children}

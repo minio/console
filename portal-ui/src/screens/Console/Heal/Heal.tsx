@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
-import { HorizontalBar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Button,
   FormControl,
@@ -358,11 +358,12 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
               </Grid>
             </Grid>
             <Grid item xs={12} className={classes.graphContainer}>
-              <HorizontalBar
+              <Bar
                 data={data}
                 width={80}
                 height={30}
                 options={{
+                  indexAxis: 'y',
                   title: {
                     display: true,
                     text: "Item's Health Status [%]",
@@ -400,4 +401,4 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, null);
 
-export default connector(withStyles(styles)(Heal));
+export default withStyles(styles)(connector(Heal));

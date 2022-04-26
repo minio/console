@@ -165,4 +165,4 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, null);
 
-export default connector(withStyles(styles)(ToolsList));
+export default withStyles(styles)(connector(ToolsList));

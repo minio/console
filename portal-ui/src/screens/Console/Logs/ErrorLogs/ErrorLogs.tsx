@@ -430,4 +430,4 @@ const connector = connect(mapState, {
 });
 
 //export default withStyles(styles)(connector(ErrorLogs));
-export default connector(withStyles(styles)(ErrorLogs));
+export default withStyles(styles)(connector(ErrorLogs));

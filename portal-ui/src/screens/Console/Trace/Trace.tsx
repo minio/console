@@ -646,4 +646,4 @@ const connector = connect(mapState, {
   setTraceStarted,
 });
 
-export default connector(withStyles(styles)(Trace));
+export default withStyles(styles)(connector(Trace));

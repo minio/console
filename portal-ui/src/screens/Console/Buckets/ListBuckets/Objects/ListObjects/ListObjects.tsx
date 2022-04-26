@@ -938,7 +938,7 @@ const ListObjects = ({
   );
 
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles: any) => {
       if (acceptedFiles && acceptedFiles.length > 0) {
         let newFolderPath: string = acceptedFiles[0].path;
         uploadObject(acceptedFiles, newFolderPath);
@@ -1497,4 +1497,4 @@ const mapDispatchToProps = {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default withRouter(connector(withStyles(styles)(ListObjects)));
+export default withRouter(withStyles(styles)(connector(ListObjects)));

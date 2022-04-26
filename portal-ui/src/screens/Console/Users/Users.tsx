@@ -46,4 +46,4 @@ const Users = () => {
   );
 };
 
-export default withRouter(connector(Users));
+export default connector(withRouter(Users));

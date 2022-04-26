@@ -215,4 +215,4 @@ const mapDispatchToProps = {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(withStyles(styles)(CreatePathModal));
+export default withStyles(styles)(connector(CreatePathModal));

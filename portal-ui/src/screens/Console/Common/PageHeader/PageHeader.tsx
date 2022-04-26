@@ -173,4 +173,4 @@ const mapDispatchToProps = {
 
 const connector = connect(mapState, mapDispatchToProps);
 
-export default connector(withStyles(styles)(PageHeader));
+export default withStyles(styles)(connector(PageHeader));

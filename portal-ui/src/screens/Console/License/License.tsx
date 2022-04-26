@@ -488,4 +488,4 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
   );
 };
 
-export default connector(withStyles(styles)(License));
+export default withStyles(styles)(connector(License));

@@ -323,4 +323,4 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, null);
 
-export default connector(withStyles(styles)(Speedtest));
+export default withStyles(styles)(connector(Speedtest));

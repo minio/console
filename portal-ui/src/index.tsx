@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, {Fragment} from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import Routes from "./Routes";
@@ -27,8 +27,6 @@ import {
 } from "@mui/material/styles";
 import withStyles from "@mui/styles/withStyles";
 import "react-virtualized/styles.css";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 
 import "./index.css";
 import theme from "./theme/main";
@@ -127,14 +125,16 @@ const GlobalCss = withStyles({
 })(() => null);
 
 ReactDOM.render(
-  <Provider store={configureStore()}>
-    <GlobalCss />
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <Routes />
-      </ThemeProvider>
-    </StyledEngineProvider>
-  </Provider>,
+  <Fragment>
+    <Provider store={configureStore()}>
+      <GlobalCss />
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Routes />
+        </ThemeProvider>
+      </StyledEngineProvider>
+    </Provider>
+  </Fragment>,
   document.getElementById("root")
 );
 

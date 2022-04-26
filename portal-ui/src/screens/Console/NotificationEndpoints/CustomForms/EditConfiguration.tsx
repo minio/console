@@ -137,7 +137,7 @@ const EditConfiguration = ({
   };
 
   const onValueChange = useCallback(
-    (newValue) => {
+    (newValue: any) => {
       setValueObj(newValue);
     },
     [setValueObj]
@@ -242,4 +242,4 @@ const mapDispatchToProps = {
 
 const connector = connect(null, mapDispatchToProps);
 
-export default connector(withStyles(styles)(EditConfiguration));
+export default withStyles(styles)(connector(EditConfiguration));

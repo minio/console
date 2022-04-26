@@ -763,4 +763,4 @@ const Login = ({
   );
 };
 
-export default connector(withStyles(styles)(Login));
+export default withStyles(styles)(connector(Login));
