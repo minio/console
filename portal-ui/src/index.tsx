@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {Fragment} from "react";
-import ReactDOM from "react-dom";
+import React, { Fragment } from "react";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import Routes from "./Routes";
 import configureStore from "./store";
@@ -124,7 +124,9 @@ const GlobalCss = withStyles({
   },
 })(() => null);
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root") as Element);
+
+root.render(
   <Fragment>
     <Provider store={configureStore()}>
       <GlobalCss />
@@ -134,8 +136,7 @@ ReactDOM.render(
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
-  </Fragment>,
-  document.getElementById("root")
+  </Fragment>
 );
 
 // If you want your app to work offline and load faster, you can change

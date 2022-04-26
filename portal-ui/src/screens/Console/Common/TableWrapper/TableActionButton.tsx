@@ -98,7 +98,8 @@ const TableActionButton = ({
 }: IActionButton) => {
   const valueClick = sendOnlyId ? valueToSend[idField] : valueToSend;
 
-  const icon = typeof type === "string" ? defineIcon(type, selected) : type;
+  const icon = typeof type === "string" ? defineIcon(type, selected) : <Fragment>{<span>{type as React.ReactNode}</span>}</Fragment>;
+
   let buttonElement = (
     <IconButton
       aria-label={typeof type === "string" ? type : ""}
