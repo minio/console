@@ -47,8 +47,9 @@ import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from   "../../../screens/Console/Tenants/utils";
 import { IPolicyItem } from "../Users/types"
 import { contextType } from "react-copy-to-clipboard";
-
+import { ISessionResponse } from  "../../../screens/Console/types"
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import { saveSessionResponse } from "../../../screens/Console/actions";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -142,6 +143,9 @@ const AddServiceAccount = ({
  const [currentGroups, setCurrentGroups] = useState<string[]>([]);
 const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
 const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
+const [s3Permissions, setS3Permissions] = useState<string[]>([]);
+const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+const [policyJSON, setPolicyJSON] = useState<string[]>([]);
 
   useEffect(() => {
     if (addSending) {
@@ -174,21 +178,21 @@ const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
   ]);
 
   //fetches policies and groups for active user
-   useEffect(() => {  
+//   useEffect(() => {  
 
-    const userName = userLoggedIn;
+ //   const userName = userLoggedIn;
     
-    setLoading(true);
-    api
-      .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
-      .then((res) => {
-        const memberOf = res.memberOf;
-        setCurrentGroups(memberOf);
-        setCheckedGroups(memberOf);
-        const userPolicies = res.policy;
-        setCurrentPolicies(userPolicies);
-        setCheckedPolicies(userPolicies);
-        setLoading(false);
+ //   setLoading(true);
+ //   api
+  //    .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
+  //    .then((res) => {
+  //      const memberOf = res.memberOf;
+   //     setCurrentGroups(memberOf);
+   //     setCheckedGroups(memberOf);
+  //      const userPolicies = res.policy;
+  //     setCurrentPolicies(userPolicies);
+  //      setCheckedPolicies(userPolicies);
+ //       setLoading(false);
       //  let currentGroups: string[] = [];
       //  for (let group of memberOf) {
        //   currentGroups.push({
@@ -201,25 +205,80 @@ const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
         //  currentPolicies.push({
          //   policy: policy,
          // });
-         console.log("In the GET api - loggedInAs:", userName, "User policies in res:", res.policy, "User Groups in res:", res.memberOf)
-      })
+      //   console.log("In the GET api - loggedInAs:", userName, "User policies in res:", res.policy, "User Groups in res:", res.memberOf)
+//      })
         
-      .catch((err: ErrorResponseHandler) => {
-        setLoading(false);
-        setErrorSnackMessage(err);
-      });
-  }, []);
+ //     .catch((err: ErrorResponseHandler) => {
+ //       setLoading(false);
+  //      setErrorSnackMessage(err);
+  //    });
+  //}, []);
 
+  useEffect(() => {
+    api
+      .invoke("GET", `/api/v1/session`)
+      .then((res: ISessionResponse) => {
+        saveSessionResponse(res);
+        console.log("session get res.permissions:", res.permissions);
+      
+       // setSessionLoading(false);
+       // setDistributedMode(res.distributedMode || false);
+        // check for tenants presence, that indicates we are in operator mode
+        //if (res.operator) {
+        //  consoleOperatorMode(true);
+        //  document.title = "MinIO Operator";
+        //}
+      })
+      //.catch(() => setSessionLoading(false));
+  }, [
+   // saveSessionResponse,
+   // consoleOperatorMode,
+   // userLoggedIn,
+    //setDistributedMode,
+  ]);
+
+   const getPolicyDetails = () => {
+     checkedPolicies.forEach ((element) => {
+       api
+            .invoke(
+              "GET",
+              `/api/v1/policy?name=${encodeURIComponent(element)}`
+            )
+            .then((result: any) => {
+              if (result) {
+               var aPolicy = result.policy
+               //console.log(element, " - Policy definition:", aPolicy)
+
+             //   setPolicyDefinition(
+               //   result
+                 //   ? JSON.stringify(JSON.parse(result.policy), null, 4)
+                //    : ""
+                //);
+               // const pol: IAMPolicy = JSON.parse(result.policy);
+               // setPolicyStatements(pol.Statement);
+              }
+            })
+            .catch((err: ErrorResponseHandler) => {
+              setErrorSnackMessage(err);
+            });
+     })          
+              
+    };
+
+useEffect(() => {
+    getPolicyDetails();
+   // console.log("in getPolicyDetails useEffect rawpolicy:", );
+}, [checkedPolicies]);
 
 useEffect(() => {
 fetchGroupInfo();
-console.log("checkedPolicies:", checkedPolicies);
+//console.log("in fetchGroupInfo useEffect checkedPolicies:", checkedPolicies);
 }, [checkedGroups]);
 
 useEffect(() => {
   console.log("Something changed - currentPolicies:", currentPolicies, "currentGroups:", currentGroups, "checkedPolicies:", checkedPolicies)
 },
-[currentGroups,currentPolicies, checkedPolicies]);
+[currentGroups, currentPolicies, checkedPolicies]);
 
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,7 +323,7 @@ useEffect(() => {
   };
 
   const fetchGroupInfo = () => {
-    if (checkedGroups.length > 0) {
+    if (checkedGroups && checkedGroups.length > 0) {
       checkedGroups.forEach((element) => {
       api
         .invoke("GET", `/api/v1/group?name=${encodeURI(element)}`)
@@ -448,7 +507,8 @@ useEffect(() => {
                     />
                     </div> */}
                   <div >
-                     <PanelTitle>Current User: {userLoggedIn} Access Policies (including those inherited from group membership)</PanelTitle>
+                     <PanelTitle>Current User: {userLoggedIn}</PanelTitle>
+                    <PanelTitle>Access Policies (including those inherited from group membership)</PanelTitle>
                     <TableWrapper
                       // itemActions={userTableActions}
                       columns={[{ label: "Name", elementKey: "policy" }]}
