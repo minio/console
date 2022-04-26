@@ -131,9 +131,10 @@ const AddServiceAccount = ({
     useState<NewServiceAccount | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
- const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+ const [checkedGroups, setCheckedGroups] = useState<string[]>([]);
  const [currentGroups, setCurrentGroups] = useState<string[]>([]);
 const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
+const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
 
   useEffect(() => {
     if (addSending) {
@@ -175,9 +176,11 @@ const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
       .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
       .then((res) => {
         const memberOf = res.memberOf;
-        setSelectedGroups(memberOf);
+        setCurrentGroups(memberOf);
+        setCheckedGroups(memberOf);
         const userPolicies = res.policy;
         setCurrentPolicies(userPolicies);
+        setCheckedPolicies(userPolicies);
         setLoading(false);
       //  let currentGroups: string[] = [];
       //  for (let group of memberOf) {
@@ -201,9 +204,9 @@ const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
   }, []);
 
 useEffect(() => {
-  console.log("Something changed - currentPolicies:", currentPolicies, "selectedGroups:", selectedGroups)
+  console.log("Something changed - currentPolicies:", currentPolicies, "currentGroups:", currentGroups)
 },
-[selectedGroups,currentPolicies])
+[currentGroups,currentPolicies])
 
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
@@ -226,6 +229,46 @@ useEffect(() => {
     const userLoggedIn = decodeFileName(
     localStorage.getItem("userLoggedIn") || ""
   );
+
+  const groupSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...checkedGroups]; // We clone the checkedUsers array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to checkedUsersList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+
+    setCheckedGroups(elements);
+
+    return elements;
+  };
+
+  const policySelectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...checkedPolicies]; // We clone the checkedUsers array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to checkedUsersList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+
+    setCheckedPolicies(elements);
+
+    return elements;
+  };
 
   return (
     <Fragment>
@@ -356,7 +399,7 @@ useEffect(() => {
                         className={classes.codeMirrorContainer}
                       >
                   <div >
-                     <PanelTitle>Current User Groups</PanelTitle>
+                     <PanelTitle>Current User: {userLoggedIn} Groups</PanelTitle>
                     <TableWrapper
                       // itemActions={userTableActions}
                       columns={[{ label: "Name", elementKey: "group" }]}
@@ -364,6 +407,8 @@ useEffect(() => {
                       records={currentGroups}
                       entityName="Groups"
                       idField="group"
+                      onSelect={groupSelectionChanged }
+                      selectedItems={checkedGroups}
                     />
                   </div>
                   <div >
@@ -375,6 +420,8 @@ useEffect(() => {
                       records={currentPolicies}
                       entityName="Policies"
                       idField="policy"
+                       onSelect={policySelectionChanged }
+                      selectedItems={checkedPolicies}
                     />
                   </div>
                         <CodeMirrorWrapper
