@@ -34,25 +34,25 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	systemApi "github.com/minio/console/restapi/operations/system"
 )
 
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	// return usage stats
-	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, session *models.Principal) middleware.Responder {
+	api.SystemAdminInfoHandler = systemApi.AdminInfoHandlerFunc(func(params systemApi.AdminInfoParams, session *models.Principal) middleware.Responder {
 		infoResp, err := getAdminInfoResponse(session, params)
 		if err != nil {
-			return admin_api.NewAdminInfoDefault(int(err.Code)).WithPayload(err)
+			return systemApi.NewAdminInfoDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewAdminInfoOK().WithPayload(infoResp)
+		return systemApi.NewAdminInfoOK().WithPayload(infoResp)
 	})
 	// return single widget results
-	api.AdminAPIDashboardWidgetDetailsHandler = admin_api.DashboardWidgetDetailsHandlerFunc(func(params admin_api.DashboardWidgetDetailsParams, session *models.Principal) middleware.Responder {
+	api.SystemDashboardWidgetDetailsHandler = systemApi.DashboardWidgetDetailsHandlerFunc(func(params systemApi.DashboardWidgetDetailsParams, session *models.Principal) middleware.Responder {
 		infoResp, err := getAdminInfoWidgetResponse(params)
 		if err != nil {
-			return admin_api.NewDashboardWidgetDetailsDefault(int(err.Code)).WithPayload(err)
+			return systemApi.NewDashboardWidgetDetailsDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewDashboardWidgetDetailsOK().WithPayload(infoResp)
+		return systemApi.NewDashboardWidgetDetailsOK().WithPayload(infoResp)
 	})
 
 }
@@ -825,7 +825,7 @@ type LabelResults struct {
 }
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
+func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
 	prometheusURL := ""
 
 	if !*params.DefaultOnly {
@@ -961,7 +961,7 @@ func testPrometheusURL(url string) bool {
 	return response.StatusCode == http.StatusOK
 }
 
-func getAdminInfoWidgetResponse(params admin_api.DashboardWidgetDetailsParams) (*models.WidgetDetails, *models.Error) {
+func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (*models.WidgetDetails, *models.Error) {
 	prometheusURL := getPrometheusURL()
 	prometheusJobID := getPrometheusJobID()
 

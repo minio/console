@@ -23,7 +23,7 @@ import (
 	"testing"
 
 	"github.com/minio/console/models"
-	"github.com/minio/console/restapi/operations/admin_api"
+	tieringApi "github.com/minio/console/restapi/operations/tiering"
 	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"
 )
@@ -198,7 +198,7 @@ func TestAddTier(t *testing.T) {
 		return nil
 	}
 
-	paramsToAdd := admin_api.AddTierParams{
+	paramsToAdd := tieringApi.AddTierParams{
 		Body: &models.Tier{
 			Type: "S3",
 			S3: &models.TierS3{
@@ -240,7 +240,7 @@ func TestUpdateTierCreds(t *testing.T) {
 		return nil
 	}
 
-	params := &admin_api.EditTierCredentialsParams{
+	params := &tieringApi.EditTierCredentialsParams{
 		Name: "TESTTIER",
 		Body: &models.TierCredentialsRequest{
 			AccessKey: "New Key",

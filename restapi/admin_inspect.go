@@ -30,25 +30,25 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	inspectApi "github.com/minio/console/restapi/operations/inspect"
 	"github.com/minio/madmin-go"
 	"github.com/secure-io/sio-go"
 )
 
 func registerInspectHandler(api *operations.ConsoleAPI) {
-	api.AdminAPIInspectHandler = admin_api.InspectHandlerFunc(func(params admin_api.InspectParams, principal *models.Principal) middleware.Responder {
+	api.InspectInspectHandler = inspectApi.InspectHandlerFunc(func(params inspectApi.InspectParams, principal *models.Principal) middleware.Responder {
 		k, r, err := getInspectResult(principal, &params)
 		isEncryptOn := params.Encrypt != nil && *params.Encrypt
 
 		if err != nil {
-			return admin_api.NewInspectDefault(int(err.Code)).WithPayload(err)
+			return inspectApi.NewInspectDefault(int(err.Code)).WithPayload(err)
 		}
 
 		return middleware.ResponderFunc(processInspectResponse(isEncryptOn, k, r))
 	})
 }
 
-func getInspectResult(session *models.Principal, params *admin_api.InspectParams) (*[32]byte, io.ReadCloser, *models.Error) {
+func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) (*[32]byte, io.ReadCloser, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)

@@ -24,16 +24,16 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 
-	"github.com/minio/console/restapi/operations/admin_api"
+	svcApi "github.com/minio/console/restapi/operations/service"
 )
 
 func registerServiceHandlers(api *operations.ConsoleAPI) {
 	// Restart Service
-	api.AdminAPIRestartServiceHandler = admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, session *models.Principal) middleware.Responder {
+	api.ServiceRestartServiceHandler = svcApi.RestartServiceHandlerFunc(func(params svcApi.RestartServiceParams, session *models.Principal) middleware.Responder {
 		if err := getRestartServiceResponse(session); err != nil {
-			return admin_api.NewRestartServiceDefault(int(err.Code)).WithPayload(err)
+			return svcApi.NewRestartServiceDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewRestartServiceNoContent()
+		return svcApi.NewRestartServiceNoContent()
 	})
 }
 
