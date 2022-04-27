@@ -22,9 +22,9 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import {
+  calculateBytes,
   getBytes,
   k8sScalarUnitsExcluding,
-  units,
 } from "../../../../common/utils";
 import { BucketQuota } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
@@ -68,28 +68,16 @@ const EnableQuota = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quotaSize, setQuotaSize] = useState<string>("1");
-  const [quotaUnit, setQuotaUnit] = useState<string>("TiB");
+  const [quotaUnit, setQuotaUnit] = useState<string>("Ti");
 
   useEffect(() => {
     if (enabled) {
       setQuotaEnabled(true);
       if (cfg) {
-        setQuotaSize(`${cfg.quota}`);
-        setQuotaUnit(`Gi`);
+        const unitCalc = calculateBytes(cfg.quota, false, false, true);
 
-        let maxUnit = "B";
-        let maxQuota = cfg.quota;
-
-        for (let i = 0; i < units.length; i++) {
-          if (cfg.quota % Math.pow(1024, i) === 0) {
-            maxQuota = cfg.quota / Math.pow(1024, i);
-            maxUnit = units[i];
-          } else {
-            break;
-          }
-        }
-        setQuotaSize(`${maxQuota}`);
-        setQuotaUnit(maxUnit);
+        setQuotaSize(unitCalc.total.toString());
+        setQuotaUnit(unitCalc.unit);
       }
     }
   }, [enabled, cfg]);
