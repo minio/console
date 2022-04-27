@@ -52,7 +52,7 @@ const BucketQuotaSize = ({ quota }: { quota: any }) => {
         >
           {quota?.type} Quota
         </label>
-        <label> {niceBytes(`${quota?.quota}`)}</label>
+        <label> {niceBytes(`${quota?.quota}`, true)}</label>
       </Box>
     </Box>
   );
