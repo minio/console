@@ -510,6 +510,14 @@ const BucketSummary = ({
                     }
                   />
                 </Box>
+                <EditablePropertyItem
+                    iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
+                    resourceName={bucketName}
+                    property={"Quota:"}
+                    value={quotaEnabled ? "Enabled" : "Disabled"}
+                    onEdit={setBucketQuota}
+                    isLoading={loadingQuota}
+                />
               </Box>
 
               <Box
@@ -520,6 +528,9 @@ const BucketSummary = ({
                 }}
               >
                 <ReportedUsage bucketSize={bucketSize} />
+                {quotaEnabled && quota ? (
+                    <BucketQuotaSize quota={quota} />
+                ) : null}
               </Box>
             </Box>
           </Grid>
@@ -546,31 +557,11 @@ const BucketSummary = ({
                   <EditablePropertyItem
                     iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
                     resourceName={bucketName}
-                    property={"Versioning:"}
-                    value={isVersioned ? "Enabled" : "Disabled"}
+                    property={"Current Status:"}
+                    value={isVersioned ? "Enabled" : "Unversioned (Default)"}
                     onEdit={setBucketVersioning}
                     isLoading={loadingVersioning}
                   />
-
-                  <EditablePropertyItem
-                    iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
-                    resourceName={bucketName}
-                    property={"Quota:"}
-                    value={quotaEnabled ? "Enabled" : "Disabled"}
-                    onEdit={setBucketQuota}
-                    isLoading={loadingQuota}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  {quotaEnabled && quota ? (
-                    <BucketQuotaSize quota={quota} />
-                  ) : null}
                 </Box>
               </Box>
             </Grid>
