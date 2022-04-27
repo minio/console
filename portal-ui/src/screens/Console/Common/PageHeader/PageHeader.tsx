@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
@@ -26,7 +26,7 @@ import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
 import { IFileItem } from "../../ObjectBrowser/types";
 import { toggleList } from "../../ObjectBrowser/actions";
-import { ObjectManagerIcon } from "../../../../icons";
+import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
 import { Box } from "@mui/material";
 
 interface IPageHeader {
@@ -35,10 +35,12 @@ interface IPageHeader {
   operatorMode?: boolean;
   label: any;
   actions?: any;
-  managerObjects?: IFileItem[];
+  managerObjects: IFileItem[];
   toggleList: typeof toggleList;
   middleComponent?: React.ReactNode;
   features: string[];
+  managerOpen: boolean;
+  newItems: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -71,6 +73,31 @@ const styles = (theme: Theme) =>
       justifyContent: "center",
       alignItems: "center",
     },
+    indicator: {
+      position: "absolute",
+      display: "block",
+      width: 15,
+      height: 15,
+      top: 0,
+      right: 2,
+      marginTop: -16,
+      transitionDuration: "0.2s",
+      color: "#32C787",
+      "& svg": {
+        width: 10,
+        height: 10,
+        top: "50%",
+        left: "50%",
+        transitionDuration: "0.2s",
+      },
+      "&.newItem": {
+        color: "#2781B0",
+        "& svg": {
+          width: 15,
+          height: 15,
+        },
+      },
+    },
   });
 
 const PageHeader = ({
@@ -83,7 +110,20 @@ const PageHeader = ({
   toggleList,
   middleComponent,
   features,
+  managerOpen,
+  newItems,
 }: IPageHeader) => {
+  const [newObject, setNewObject] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (managerObjects.length > 0 && !managerOpen) {
+      setNewObject(true);
+      setTimeout(() => {
+        setNewObject(false);
+      }, 300);
+    }
+  }, [managerObjects.length, managerOpen]);
+
   if (features.includes("hide-menu")) {
     return <Fragment />;
   }
@@ -151,7 +191,29 @@ const PageHeader = ({
             }}
             id="object-manager-toggle"
             size="large"
+            sx={{
+              marginRight: "20px",
+              color: "#5E5E5E",
+              position: "relative",
+              border: "#E2E2E2 1px solid",
+              borderRadius: "3px",
+              width: "40px",
+              height: "40px",
+              backgroundColor: "#F8F8F8",
+              padding: 0,
+              "&>svg": {
+                width: "25px",
+              },
+            }}
           >
+            <div
+              className={`${classes.indicator} ${newObject ? "newItem" : ""}`}
+              style={{
+                opacity: managerObjects.length > 0 && newItems ? 1 : 0,
+              }}
+            >
+              <CircleIcon />
+            </div>
             <ObjectManagerIcon />
           </IconButton>
         )}
@@ -165,6 +227,8 @@ const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
   managerObjects: state.objectBrowser.objectManager.objectsToManage,
   features: state.console.session.features,
+  managerOpen: state.objectBrowser.objectManager.managerOpen,
+  newItems: state.objectBrowser.objectManager.newItems,
 });
 
 const mapDispatchToProps = {

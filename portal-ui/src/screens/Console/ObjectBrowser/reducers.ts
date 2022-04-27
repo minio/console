@@ -37,6 +37,8 @@ import {
   ObjectBrowserActionTypes,
   BUCKET_BROWSER_SET_SELECTED_OBJECT,
   OBJECT_MANAGER_SET_LOADING,
+  OBJECT_MANAGER_ERROR_IN_OBJECT,
+  OBJECT_MANAGER_CANCEL_OBJECT,
 } from "./types";
 
 const defaultRewind = {
@@ -57,6 +59,7 @@ const initialState: ObjectBrowserState = {
   objectManager: {
     objectsToManage: [],
     managerOpen: false,
+    newItems: false,
   },
   searchObjects: "",
   versionedFile: "",
@@ -106,6 +109,7 @@ export function objectBrowserReducer(
         objectManager: {
           objectsToManage: cloneObjects,
           managerOpen: state.objectManager.managerOpen,
+          newItems: true,
         },
       };
     case OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT:
@@ -127,6 +131,7 @@ export function objectBrowserReducer(
         objectManager: {
           objectsToManage: copyManager,
           managerOpen: state.objectManager.managerOpen,
+          newItems: state.objectManager.newItems,
         },
       };
     case OBJECT_MANAGER_COMPLETE_OBJECT:
@@ -149,6 +154,51 @@ export function objectBrowserReducer(
         objectManager: {
           objectsToManage: copyObject,
           managerOpen: state.objectManager.managerOpen,
+          newItems: state.objectManager.newItems,
+        },
+      };
+    case OBJECT_MANAGER_ERROR_IN_OBJECT:
+      const objectItems = [...state.objectManager.objectsToManage];
+
+      const objectToFail = state.objectManager.objectsToManage.findIndex(
+        (item) => item.instanceID === action.instanceID
+      );
+
+      if (objectToFail === -1) {
+        return { ...state };
+      }
+
+      objectItems[objectToFail].failed = true;
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: objectItems,
+          managerOpen: state.objectManager.managerOpen,
+          newItems: state.objectManager.newItems,
+        },
+      };
+    case OBJECT_MANAGER_CANCEL_OBJECT:
+      const objectsListFind = [...state.objectManager.objectsToManage];
+
+      const objectToCancel = state.objectManager.objectsToManage.findIndex(
+        (item) => item.instanceID === action.instanceID
+      );
+
+      if (objectToCancel === -1) {
+        return { ...state };
+      }
+
+      objectsListFind[objectToCancel].cancelled = true;
+      objectsListFind[objectToCancel].done = true;
+      objectsListFind[objectToCancel].percentage = 0;
+
+      return {
+        ...state,
+        objectManager: {
+          objectsToManage: objectsListFind,
+          managerOpen: state.objectManager.managerOpen,
+          newItems: state.objectManager.newItems,
         },
       };
     case OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST:
@@ -162,6 +212,7 @@ export function objectBrowserReducer(
           objectsToManage: notObject,
           managerOpen:
             notObject.length === 0 ? false : state.objectManager.managerOpen,
+          newItems: state.objectManager.newItems,
         },
       };
     case OBJECT_MANAGER_CLEAN_LIST:
@@ -177,6 +228,7 @@ export function objectBrowserReducer(
             nonCompletedList.length === 0
               ? false
               : state.objectManager.managerOpen,
+          newItems: false,
         },
       };
     case OBJECT_MANAGER_TOGGLE_LIST:
@@ -185,6 +237,7 @@ export function objectBrowserReducer(
         objectManager: {
           ...state.objectManager,
           managerOpen: !state.objectManager.managerOpen,
+          newItems: false,
         },
       };
     case OBJECT_MANAGER_OPEN_LIST:
