@@ -23,95 +23,96 @@ import (
 	"errors"
 	"strings"
 
+	userApi "github.com/minio/console/restapi/operations/user"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
-	"github.com/minio/console/restapi/operations/user_api"
+	saApi "github.com/minio/console/restapi/operations/service_account"
 	"github.com/minio/madmin-go"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	// Create Service Account
-	api.UserAPICreateServiceAccountHandler = user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountCreateServiceAccountHandler = saApi.CreateServiceAccountHandlerFunc(func(params saApi.CreateServiceAccountParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateServiceAccountResponse(session, params.Body)
 		if err != nil {
-			return user_api.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewCreateServiceAccountCreated().WithPayload(creds)
+		return saApi.NewCreateServiceAccountCreated().WithPayload(creds)
 	})
 	// Create User Service Account
-	api.AdminAPICreateAUserServiceAccountHandler = admin_api.CreateAUserServiceAccountHandlerFunc(func(params admin_api.CreateAUserServiceAccountParams, session *models.Principal) middleware.Responder {
+	api.UserCreateAUserServiceAccountHandler = userApi.CreateAUserServiceAccountHandlerFunc(func(params userApi.CreateAUserServiceAccountParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateAUserServiceAccountResponse(session, params.Body, params.Name)
 		if err != nil {
-			return user_api.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewCreateAUserServiceAccountCreated().WithPayload(creds)
+		return userApi.NewCreateAUserServiceAccountCreated().WithPayload(creds)
 	})
 	// Create User Service Account
-	api.AdminAPICreateServiceAccountCredentialsHandler = admin_api.CreateServiceAccountCredentialsHandlerFunc(func(params admin_api.CreateServiceAccountCredentialsParams, session *models.Principal) middleware.Responder {
+	api.UserCreateServiceAccountCredentialsHandler = userApi.CreateServiceAccountCredentialsHandlerFunc(func(params userApi.CreateServiceAccountCredentialsParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateAUserServiceAccountCredsResponse(session, params.Body, params.Name)
 		if err != nil {
-			return user_api.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewCreateServiceAccountCredentialsCreated().WithPayload(creds)
+		return userApi.NewCreateServiceAccountCredentialsCreated().WithPayload(creds)
 	})
-	api.AdminAPICreateServiceAccountCredsHandler = admin_api.CreateServiceAccountCredsHandlerFunc(func(params admin_api.CreateServiceAccountCredsParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountCreateServiceAccountCredsHandler = saApi.CreateServiceAccountCredsHandlerFunc(func(params saApi.CreateServiceAccountCredsParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateServiceAccountCredsResponse(session, params.Body)
 		if err != nil {
-			return user_api.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewCreateServiceAccountCredentialsCreated().WithPayload(creds)
+		return userApi.NewCreateServiceAccountCredentialsCreated().WithPayload(creds)
 	})
 	// List Service Accounts for User
-	api.UserAPIListUserServiceAccountsHandler = user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountListUserServiceAccountsHandler = saApi.ListUserServiceAccountsHandlerFunc(func(params saApi.ListUserServiceAccountsParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getUserServiceAccountsResponse(session, "")
 		if err != nil {
-			return user_api.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
+		return saApi.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
 	})
 
 	// Delete a User's service account
-	api.UserAPIDeleteServiceAccountHandler = user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountDeleteServiceAccountHandler = saApi.DeleteServiceAccountHandlerFunc(func(params saApi.DeleteServiceAccountParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteServiceAccountResponse(session, params.AccessKey); err != nil {
-			return user_api.NewDeleteServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewDeleteServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewDeleteServiceAccountNoContent()
+		return saApi.NewDeleteServiceAccountNoContent()
 	})
 
 	// List Service Accounts for User
-	api.AdminAPIListAUserServiceAccountsHandler = admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, session *models.Principal) middleware.Responder {
+	api.UserListAUserServiceAccountsHandler = userApi.ListAUserServiceAccountsHandlerFunc(func(params userApi.ListAUserServiceAccountsParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getUserServiceAccountsResponse(session, params.Name)
 		if err != nil {
-			return user_api.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
+		return saApi.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
 	})
 
-	api.UserAPIGetServiceAccountPolicyHandler = user_api.GetServiceAccountPolicyHandlerFunc(func(params user_api.GetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountGetServiceAccountPolicyHandler = saApi.GetServiceAccountPolicyHandlerFunc(func(params saApi.GetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getServiceAccountPolicyResponse(session, params.AccessKey)
 		if err != nil {
-			return user_api.NewGetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewGetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewGetServiceAccountPolicyOK().WithPayload(serviceAccounts)
+		return saApi.NewGetServiceAccountPolicyOK().WithPayload(serviceAccounts)
 	})
 
-	api.UserAPISetServiceAccountPolicyHandler = user_api.SetServiceAccountPolicyHandlerFunc(func(params user_api.SetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountSetServiceAccountPolicyHandler = saApi.SetServiceAccountPolicyHandlerFunc(func(params saApi.SetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
 		err := getSetServiceAccountPolicyResponse(session, params.AccessKey, *params.Policy.Policy)
 		if err != nil {
-			return user_api.NewSetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewSetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewSetServiceAccountPolicyOK()
+		return saApi.NewSetServiceAccountPolicyOK()
 	})
 
 	// Delete multiple service accounts
-	api.UserAPIDeleteMultipleServiceAccountsHandler = user_api.DeleteMultipleServiceAccountsHandlerFunc(func(params user_api.DeleteMultipleServiceAccountsParams, session *models.Principal) middleware.Responder {
+	api.ServiceAccountDeleteMultipleServiceAccountsHandler = saApi.DeleteMultipleServiceAccountsHandlerFunc(func(params saApi.DeleteMultipleServiceAccountsParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteMultipleServiceAccountsResponse(session, params.SelectedSA); err != nil {
-			return user_api.NewDeleteMultipleServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewDeleteMultipleServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewDeleteMultipleServiceAccountsNoContent()
+		return saApi.NewDeleteMultipleServiceAccountsNoContent()
 	})
 }
 

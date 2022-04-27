@@ -24,100 +24,102 @@ import (
 	"sort"
 	"strings"
 
+	bucketApi "github.com/minio/console/restapi/operations/bucket"
+	policyApi "github.com/minio/console/restapi/operations/policy"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 func registersPoliciesHandler(api *operations.ConsoleAPI) {
 	// List Policies
-	api.AdminAPIListPoliciesHandler = admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, session *models.Principal) middleware.Responder {
+	api.PolicyListPoliciesHandler = policyApi.ListPoliciesHandlerFunc(func(params policyApi.ListPoliciesParams, session *models.Principal) middleware.Responder {
 		listPoliciesResponse, err := getListPoliciesResponse(session)
 		if err != nil {
-			return admin_api.NewListPoliciesDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewListPoliciesDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListPoliciesOK().WithPayload(listPoliciesResponse)
+		return policyApi.NewListPoliciesOK().WithPayload(listPoliciesResponse)
 	})
 	// Policy Info
-	api.AdminAPIPolicyInfoHandler = admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, session *models.Principal) middleware.Responder {
+	api.PolicyPolicyInfoHandler = policyApi.PolicyInfoHandlerFunc(func(params policyApi.PolicyInfoParams, session *models.Principal) middleware.Responder {
 		policyInfo, err := getPolicyInfoResponse(session, params)
 		if err != nil {
-			return admin_api.NewPolicyInfoDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewPolicyInfoDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewPolicyInfoOK().WithPayload(policyInfo)
+		return policyApi.NewPolicyInfoOK().WithPayload(policyInfo)
 	})
 	// Add Policy
-	api.AdminAPIAddPolicyHandler = admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, session *models.Principal) middleware.Responder {
+	api.PolicyAddPolicyHandler = policyApi.AddPolicyHandlerFunc(func(params policyApi.AddPolicyParams, session *models.Principal) middleware.Responder {
 		policyResponse, err := getAddPolicyResponse(session, params.Body)
 		if err != nil {
-			return admin_api.NewAddPolicyDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewAddPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewAddPolicyCreated().WithPayload(policyResponse)
+		return policyApi.NewAddPolicyCreated().WithPayload(policyResponse)
 	})
 	// Remove Policy
-	api.AdminAPIRemovePolicyHandler = admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, session *models.Principal) middleware.Responder {
+	api.PolicyRemovePolicyHandler = policyApi.RemovePolicyHandlerFunc(func(params policyApi.RemovePolicyParams, session *models.Principal) middleware.Responder {
 		if err := getRemovePolicyResponse(session, params); err != nil {
-			return admin_api.NewRemovePolicyDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewRemovePolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewRemovePolicyNoContent()
+		return policyApi.NewRemovePolicyNoContent()
 	})
 	// Set Policy
-	api.AdminAPISetPolicyHandler = admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, session *models.Principal) middleware.Responder {
+	api.PolicySetPolicyHandler = policyApi.SetPolicyHandlerFunc(func(params policyApi.SetPolicyParams, session *models.Principal) middleware.Responder {
 		if err := getSetPolicyResponse(session, params.Body); err != nil {
-			return admin_api.NewSetPolicyDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewSetPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewSetPolicyNoContent()
+		return policyApi.NewSetPolicyNoContent()
 	})
 	// Set Policy Multiple User/Groups
-	api.AdminAPISetPolicyMultipleHandler = admin_api.SetPolicyMultipleHandlerFunc(func(params admin_api.SetPolicyMultipleParams, session *models.Principal) middleware.Responder {
+	api.PolicySetPolicyMultipleHandler = policyApi.SetPolicyMultipleHandlerFunc(func(params policyApi.SetPolicyMultipleParams, session *models.Principal) middleware.Responder {
 		if err := getSetPolicyMultipleResponse(session, params.Body); err != nil {
-			return admin_api.NewSetPolicyMultipleDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewSetPolicyMultipleDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewSetPolicyMultipleNoContent()
+		return policyApi.NewSetPolicyMultipleNoContent()
 	})
-	api.AdminAPIListPoliciesWithBucketHandler = admin_api.ListPoliciesWithBucketHandlerFunc(func(params admin_api.ListPoliciesWithBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketListPoliciesWithBucketHandler = bucketApi.ListPoliciesWithBucketHandlerFunc(func(params bucketApi.ListPoliciesWithBucketParams, session *models.Principal) middleware.Responder {
 		policyResponse, err := getListPoliciesWithBucketResponse(session, params.Bucket)
 		if err != nil {
-			return admin_api.NewListPoliciesWithBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListPoliciesWithBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListPoliciesWithBucketOK().WithPayload(policyResponse)
+		return bucketApi.NewListPoliciesWithBucketOK().WithPayload(policyResponse)
 	})
-	api.AdminAPIListAccessRulesWithBucketHandler = admin_api.ListAccessRulesWithBucketHandlerFunc(func(params admin_api.ListAccessRulesWithBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketListAccessRulesWithBucketHandler = bucketApi.ListAccessRulesWithBucketHandlerFunc(func(params bucketApi.ListAccessRulesWithBucketParams, session *models.Principal) middleware.Responder {
 		policyResponse, err := getListAccessRulesWithBucketResponse(session, params.Bucket)
 		if err != nil {
-			return admin_api.NewListAccessRulesWithBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListAccessRulesWithBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListAccessRulesWithBucketOK().WithPayload(policyResponse)
+		return bucketApi.NewListAccessRulesWithBucketOK().WithPayload(policyResponse)
 	})
-	api.AdminAPISetAccessRuleWithBucketHandler = admin_api.SetAccessRuleWithBucketHandlerFunc(func(params admin_api.SetAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketSetAccessRuleWithBucketHandler = bucketApi.SetAccessRuleWithBucketHandlerFunc(func(params bucketApi.SetAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
 		policyResponse, err := getSetAccessRuleWithBucketResponse(session, params.Bucket, params.Prefixaccess)
 		if err != nil {
-			return admin_api.NewSetAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewSetAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewSetAccessRuleWithBucketOK().WithPayload(policyResponse)
+		return bucketApi.NewSetAccessRuleWithBucketOK().WithPayload(policyResponse)
 	})
-	api.AdminAPIDeleteAccessRuleWithBucketHandler = admin_api.DeleteAccessRuleWithBucketHandlerFunc(func(params admin_api.DeleteAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketDeleteAccessRuleWithBucketHandler = bucketApi.DeleteAccessRuleWithBucketHandlerFunc(func(params bucketApi.DeleteAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
 		policyResponse, err := getDeleteAccessRuleWithBucketResponse(session, params.Bucket, params.Prefix)
 		if err != nil {
-			return admin_api.NewDeleteAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewDeleteAccessRuleWithBucketOK().WithPayload(policyResponse)
+		return bucketApi.NewDeleteAccessRuleWithBucketOK().WithPayload(policyResponse)
 	})
-	api.AdminAPIListUsersForPolicyHandler = admin_api.ListUsersForPolicyHandlerFunc(func(params admin_api.ListUsersForPolicyParams, session *models.Principal) middleware.Responder {
+	api.PolicyListUsersForPolicyHandler = policyApi.ListUsersForPolicyHandlerFunc(func(params policyApi.ListUsersForPolicyParams, session *models.Principal) middleware.Responder {
 		policyUsersResponse, err := getListUsersForPolicyResponse(session, params.Policy)
 		if err != nil {
-			return admin_api.NewListUsersForPolicyDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewListUsersForPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListUsersForPolicyOK().WithPayload(policyUsersResponse)
+		return policyApi.NewListUsersForPolicyOK().WithPayload(policyUsersResponse)
 	})
-	api.AdminAPIListGroupsForPolicyHandler = admin_api.ListGroupsForPolicyHandlerFunc(func(params admin_api.ListGroupsForPolicyParams, session *models.Principal) middleware.Responder {
+	api.PolicyListGroupsForPolicyHandler = policyApi.ListGroupsForPolicyHandlerFunc(func(params policyApi.ListGroupsForPolicyParams, session *models.Principal) middleware.Responder {
 		policyGroupsResponse, err := getListGroupsForPolicyResponse(session, params.Policy)
 		if err != nil {
-			return admin_api.NewListGroupsForPolicyDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewListGroupsForPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
+		return policyApi.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
 	})
 }
 
@@ -343,7 +345,7 @@ func removePolicy(ctx context.Context, client MinioAdmin, name string) error {
 }
 
 // getRemovePolicyResponse() performs removePolicy() and serializes it to the handler's output
-func getRemovePolicyResponse(session *models.Principal, params admin_api.RemovePolicyParams) *models.Error {
+func getRemovePolicyResponse(session *models.Principal, params policyApi.RemovePolicyParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	if params.Name == "" {
@@ -421,7 +423,7 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 }
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
-func getPolicyInfoResponse(session *models.Principal, params admin_api.PolicyInfoParams) (*models.Policy, *models.Error) {
+func getPolicyInfoResponse(session *models.Principal, params policyApi.PolicyInfoParams) (*models.Policy, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)

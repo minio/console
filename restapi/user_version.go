@@ -24,16 +24,16 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/utils"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	systemApi "github.com/minio/console/restapi/operations/system"
 )
 
 func registerVersionHandlers(api *operations.ConsoleAPI) {
-	api.UserAPICheckMinIOVersionHandler = user_api.CheckMinIOVersionHandlerFunc(func(params user_api.CheckMinIOVersionParams) middleware.Responder {
+	api.SystemCheckMinIOVersionHandler = systemApi.CheckMinIOVersionHandlerFunc(func(params systemApi.CheckMinIOVersionParams) middleware.Responder {
 		versionResponse, err := getVersionResponse()
 		if err != nil {
-			return user_api.NewCheckMinIOVersionDefault(int(err.Code)).WithPayload(err)
+			return systemApi.NewCheckMinIOVersionDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewCheckMinIOVersionOK().WithPayload(versionResponse)
+		return systemApi.NewCheckMinIOVersionOK().WithPayload(versionResponse)
 	})
 }
 

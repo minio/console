@@ -23,12 +23,12 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	authApi "github.com/minio/console/restapi/operations/auth"
 )
 
 func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	// logout from console
-	api.UserAPILogoutHandler = user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, session *models.Principal) middleware.Responder {
+	api.AuthLogoutHandler = authApi.LogoutHandlerFunc(func(params authApi.LogoutParams, session *models.Principal) middleware.Responder {
 		getLogoutResponse(session)
 		// Custom response writer to expire the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
@@ -36,7 +36,7 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 			// this will tell the browser to clear the cookie and invalidate user session
 			// additionally we are deleting the cookie from the client side
 			http.SetCookie(w, &expiredCookie)
-			user_api.NewLogoutOK().WriteResponse(w, p)
+			authApi.NewLogoutOK().WriteResponse(w, p)
 		})
 	})
 }

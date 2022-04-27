@@ -25,7 +25,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	bucektApi "github.com/minio/console/restapi/operations/bucket"
 
 	"github.com/minio/madmin-go"
 
@@ -34,25 +34,25 @@ import (
 
 func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 	// set bucket quota
-	api.UserAPISetBucketQuotaHandler = user_api.SetBucketQuotaHandlerFunc(func(params user_api.SetBucketQuotaParams, session *models.Principal) middleware.Responder {
+	api.BucketSetBucketQuotaHandler = bucektApi.SetBucketQuotaHandlerFunc(func(params bucektApi.SetBucketQuotaParams, session *models.Principal) middleware.Responder {
 		err := setBucketQuotaResponse(session, params)
 		if err != nil {
-			return user_api.NewSetBucketQuotaDefault(int(err.Code)).WithPayload(err)
+			return bucektApi.NewSetBucketQuotaDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewSetBucketQuotaOK()
+		return bucektApi.NewSetBucketQuotaOK()
 	})
 
 	// get bucket quota
-	api.UserAPIGetBucketQuotaHandler = user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketQuotaHandler = bucektApi.GetBucketQuotaHandlerFunc(func(params bucektApi.GetBucketQuotaParams, session *models.Principal) middleware.Responder {
 		resp, err := getBucketQuotaResponse(session, params)
 		if err != nil {
-			return user_api.NewGetBucketQuotaDefault(int(err.Code)).WithPayload(err)
+			return bucektApi.NewGetBucketQuotaDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewGetBucketQuotaOK().WithPayload(resp)
+		return bucektApi.NewGetBucketQuotaOK().WithPayload(resp)
 	})
 }
 
-func setBucketQuotaResponse(session *models.Principal, params user_api.SetBucketQuotaParams) *models.Error {
+func setBucketQuotaResponse(session *models.Principal, params bucektApi.SetBucketQuotaParams) *models.Error {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -96,7 +96,7 @@ func setBucketQuota(ctx context.Context, ac *AdminClient, bucket *string, bucket
 	return nil
 }
 
-func getBucketQuotaResponse(session *models.Principal, params user_api.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
+func getBucketQuotaResponse(session *models.Principal, params bucektApi.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {

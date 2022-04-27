@@ -38,8 +38,23 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/minio/console/models"
-	"github.com/minio/console/restapi/operations/admin_api"
-	"github.com/minio/console/restapi/operations/user_api"
+	"github.com/minio/console/restapi/operations/account"
+	"github.com/minio/console/restapi/operations/auth"
+	"github.com/minio/console/restapi/operations/bucket"
+	"github.com/minio/console/restapi/operations/configuration"
+	"github.com/minio/console/restapi/operations/group"
+	"github.com/minio/console/restapi/operations/inspect"
+	"github.com/minio/console/restapi/operations/logging"
+	"github.com/minio/console/restapi/operations/object"
+	"github.com/minio/console/restapi/operations/policy"
+	"github.com/minio/console/restapi/operations/profile"
+	"github.com/minio/console/restapi/operations/service"
+	"github.com/minio/console/restapi/operations/service_account"
+	"github.com/minio/console/restapi/operations/site_replication"
+	"github.com/minio/console/restapi/operations/subnet"
+	"github.com/minio/console/restapi/operations/system"
+	"github.com/minio/console/restapi/operations/tiering"
+	"github.com/minio/console/restapi/operations/user"
 )
 
 // NewConsoleAPI creates a new Console instance
@@ -69,368 +84,368 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
-		UserAPIAccountChangePasswordHandler: user_api.AccountChangePasswordHandlerFunc(func(params user_api.AccountChangePasswordParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.AccountChangePassword has not yet been implemented")
+		AccountAccountChangePasswordHandler: account.AccountChangePasswordHandlerFunc(func(params account.AccountChangePasswordParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation account.AccountChangePassword has not yet been implemented")
 		}),
-		UserAPIAddBucketLifecycleHandler: user_api.AddBucketLifecycleHandlerFunc(func(params user_api.AddBucketLifecycleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.AddBucketLifecycle has not yet been implemented")
+		BucketAddBucketLifecycleHandler: bucket.AddBucketLifecycleHandlerFunc(func(params bucket.AddBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.AddBucketLifecycle has not yet been implemented")
 		}),
-		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
+		GroupAddGroupHandler: group.AddGroupHandlerFunc(func(params group.AddGroupParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation group.AddGroup has not yet been implemented")
 		}),
-		UserAPIAddMultiBucketLifecycleHandler: user_api.AddMultiBucketLifecycleHandlerFunc(func(params user_api.AddMultiBucketLifecycleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.AddMultiBucketLifecycle has not yet been implemented")
+		BucketAddMultiBucketLifecycleHandler: bucket.AddMultiBucketLifecycleHandlerFunc(func(params bucket.AddMultiBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.AddMultiBucketLifecycle has not yet been implemented")
 		}),
-		AdminAPIAddNotificationEndpointHandler: admin_api.AddNotificationEndpointHandlerFunc(func(params admin_api.AddNotificationEndpointParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.AddNotificationEndpoint has not yet been implemented")
+		ConfigurationAddNotificationEndpointHandler: configuration.AddNotificationEndpointHandlerFunc(func(params configuration.AddNotificationEndpointParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.AddNotificationEndpoint has not yet been implemented")
 		}),
-		AdminAPIAddPolicyHandler: admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.AddPolicy has not yet been implemented")
+		PolicyAddPolicyHandler: policy.AddPolicyHandlerFunc(func(params policy.AddPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.AddPolicy has not yet been implemented")
 		}),
-		UserAPIAddRemoteBucketHandler: user_api.AddRemoteBucketHandlerFunc(func(params user_api.AddRemoteBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.AddRemoteBucket has not yet been implemented")
+		BucketAddRemoteBucketHandler: bucket.AddRemoteBucketHandlerFunc(func(params bucket.AddRemoteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.AddRemoteBucket has not yet been implemented")
 		}),
-		AdminAPIAddTierHandler: admin_api.AddTierHandlerFunc(func(params admin_api.AddTierParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.AddTier has not yet been implemented")
+		TieringAddTierHandler: tiering.AddTierHandlerFunc(func(params tiering.AddTierParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation tiering.AddTier has not yet been implemented")
 		}),
-		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
+		UserAddUserHandler: user.AddUserHandlerFunc(func(params user.AddUserParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.AddUser has not yet been implemented")
 		}),
-		AdminAPIAdminInfoHandler: admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.AdminInfo has not yet been implemented")
+		SystemAdminInfoHandler: system.AdminInfoHandlerFunc(func(params system.AdminInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation system.AdminInfo has not yet been implemented")
 		}),
-		AdminAPIArnListHandler: admin_api.ArnListHandlerFunc(func(params admin_api.ArnListParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ArnList has not yet been implemented")
+		SystemArnListHandler: system.ArnListHandlerFunc(func(params system.ArnListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation system.ArnList has not yet been implemented")
 		}),
-		UserAPIBucketInfoHandler: user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.BucketInfo has not yet been implemented")
+		BucketBucketInfoHandler: bucket.BucketInfoHandlerFunc(func(params bucket.BucketInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.BucketInfo has not yet been implemented")
 		}),
-		UserAPIBucketSetPolicyHandler: user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.BucketSetPolicy has not yet been implemented")
+		BucketBucketSetPolicyHandler: bucket.BucketSetPolicyHandlerFunc(func(params bucket.BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.BucketSetPolicy has not yet been implemented")
 		}),
-		AdminAPIBulkUpdateUsersGroupsHandler: admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.BulkUpdateUsersGroups has not yet been implemented")
+		UserBulkUpdateUsersGroupsHandler: user.BulkUpdateUsersGroupsHandlerFunc(func(params user.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.BulkUpdateUsersGroups has not yet been implemented")
 		}),
-		AdminAPIChangeUserPasswordHandler: admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ChangeUserPassword has not yet been implemented")
+		AccountChangeUserPasswordHandler: account.ChangeUserPasswordHandlerFunc(func(params account.ChangeUserPasswordParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation account.ChangeUserPassword has not yet been implemented")
 		}),
-		UserAPICheckMinIOVersionHandler: user_api.CheckMinIOVersionHandlerFunc(func(params user_api.CheckMinIOVersionParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.CheckMinIOVersion has not yet been implemented")
+		SystemCheckMinIOVersionHandler: system.CheckMinIOVersionHandlerFunc(func(params system.CheckMinIOVersionParams) middleware.Responder {
+			return middleware.NotImplemented("operation system.CheckMinIOVersion has not yet been implemented")
 		}),
-		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
+		ConfigurationConfigInfoHandler: configuration.ConfigInfoHandlerFunc(func(params configuration.ConfigInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.ConfigInfo has not yet been implemented")
 		}),
-		AdminAPICreateAUserServiceAccountHandler: admin_api.CreateAUserServiceAccountHandlerFunc(func(params admin_api.CreateAUserServiceAccountParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.CreateAUserServiceAccount has not yet been implemented")
+		UserCreateAUserServiceAccountHandler: user.CreateAUserServiceAccountHandlerFunc(func(params user.CreateAUserServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.CreateAUserServiceAccount has not yet been implemented")
 		}),
-		UserAPICreateBucketEventHandler: user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.CreateBucketEvent has not yet been implemented")
+		BucketCreateBucketEventHandler: bucket.CreateBucketEventHandlerFunc(func(params bucket.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.CreateBucketEvent has not yet been implemented")
 		}),
-		UserAPICreateServiceAccountHandler: user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.CreateServiceAccount has not yet been implemented")
+		ServiceAccountCreateServiceAccountHandler: service_account.CreateServiceAccountHandlerFunc(func(params service_account.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.CreateServiceAccount has not yet been implemented")
 		}),
-		AdminAPICreateServiceAccountCredentialsHandler: admin_api.CreateServiceAccountCredentialsHandlerFunc(func(params admin_api.CreateServiceAccountCredentialsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.CreateServiceAccountCredentials has not yet been implemented")
+		UserCreateServiceAccountCredentialsHandler: user.CreateServiceAccountCredentialsHandlerFunc(func(params user.CreateServiceAccountCredentialsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.CreateServiceAccountCredentials has not yet been implemented")
 		}),
-		AdminAPICreateServiceAccountCredsHandler: admin_api.CreateServiceAccountCredsHandlerFunc(func(params admin_api.CreateServiceAccountCredsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.CreateServiceAccountCreds has not yet been implemented")
+		ServiceAccountCreateServiceAccountCredsHandler: service_account.CreateServiceAccountCredsHandlerFunc(func(params service_account.CreateServiceAccountCredsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.CreateServiceAccountCreds has not yet been implemented")
 		}),
-		AdminAPIDashboardWidgetDetailsHandler: admin_api.DashboardWidgetDetailsHandlerFunc(func(params admin_api.DashboardWidgetDetailsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.DashboardWidgetDetails has not yet been implemented")
+		SystemDashboardWidgetDetailsHandler: system.DashboardWidgetDetailsHandlerFunc(func(params system.DashboardWidgetDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation system.DashboardWidgetDetails has not yet been implemented")
 		}),
-		AdminAPIDeleteAccessRuleWithBucketHandler: admin_api.DeleteAccessRuleWithBucketHandlerFunc(func(params admin_api.DeleteAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.DeleteAccessRuleWithBucket has not yet been implemented")
+		BucketDeleteAccessRuleWithBucketHandler: bucket.DeleteAccessRuleWithBucketHandlerFunc(func(params bucket.DeleteAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteAccessRuleWithBucket has not yet been implemented")
 		}),
-		UserAPIDeleteAllReplicationRulesHandler: user_api.DeleteAllReplicationRulesHandlerFunc(func(params user_api.DeleteAllReplicationRulesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteAllReplicationRules has not yet been implemented")
+		BucketDeleteAllReplicationRulesHandler: bucket.DeleteAllReplicationRulesHandlerFunc(func(params bucket.DeleteAllReplicationRulesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteAllReplicationRules has not yet been implemented")
 		}),
-		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
+		BucketDeleteBucketHandler: bucket.DeleteBucketHandlerFunc(func(params bucket.DeleteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteBucket has not yet been implemented")
 		}),
-		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
+		BucketDeleteBucketEventHandler: bucket.DeleteBucketEventHandlerFunc(func(params bucket.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteBucketEvent has not yet been implemented")
 		}),
-		UserAPIDeleteBucketLifecycleRuleHandler: user_api.DeleteBucketLifecycleRuleHandlerFunc(func(params user_api.DeleteBucketLifecycleRuleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteBucketLifecycleRule has not yet been implemented")
+		BucketDeleteBucketLifecycleRuleHandler: bucket.DeleteBucketLifecycleRuleHandlerFunc(func(params bucket.DeleteBucketLifecycleRuleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteBucketLifecycleRule has not yet been implemented")
 		}),
-		UserAPIDeleteBucketReplicationRuleHandler: user_api.DeleteBucketReplicationRuleHandlerFunc(func(params user_api.DeleteBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteBucketReplicationRule has not yet been implemented")
+		BucketDeleteBucketReplicationRuleHandler: bucket.DeleteBucketReplicationRuleHandlerFunc(func(params bucket.DeleteBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteBucketReplicationRule has not yet been implemented")
 		}),
-		UserAPIDeleteMultipleObjectsHandler: user_api.DeleteMultipleObjectsHandlerFunc(func(params user_api.DeleteMultipleObjectsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteMultipleObjects has not yet been implemented")
+		ObjectDeleteMultipleObjectsHandler: object.DeleteMultipleObjectsHandlerFunc(func(params object.DeleteMultipleObjectsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.DeleteMultipleObjects has not yet been implemented")
 		}),
-		UserAPIDeleteMultipleServiceAccountsHandler: user_api.DeleteMultipleServiceAccountsHandlerFunc(func(params user_api.DeleteMultipleServiceAccountsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteMultipleServiceAccounts has not yet been implemented")
+		ServiceAccountDeleteMultipleServiceAccountsHandler: service_account.DeleteMultipleServiceAccountsHandlerFunc(func(params service_account.DeleteMultipleServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.DeleteMultipleServiceAccounts has not yet been implemented")
 		}),
-		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
+		ObjectDeleteObjectHandler: object.DeleteObjectHandlerFunc(func(params object.DeleteObjectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.DeleteObject has not yet been implemented")
 		}),
-		UserAPIDeleteObjectRetentionHandler: user_api.DeleteObjectRetentionHandlerFunc(func(params user_api.DeleteObjectRetentionParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteObjectRetention has not yet been implemented")
+		ObjectDeleteObjectRetentionHandler: object.DeleteObjectRetentionHandlerFunc(func(params object.DeleteObjectRetentionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.DeleteObjectRetention has not yet been implemented")
 		}),
-		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
+		BucketDeleteRemoteBucketHandler: bucket.DeleteRemoteBucketHandlerFunc(func(params bucket.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteRemoteBucket has not yet been implemented")
 		}),
-		UserAPIDeleteSelectedReplicationRulesHandler: user_api.DeleteSelectedReplicationRulesHandlerFunc(func(params user_api.DeleteSelectedReplicationRulesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteSelectedReplicationRules has not yet been implemented")
+		BucketDeleteSelectedReplicationRulesHandler: bucket.DeleteSelectedReplicationRulesHandlerFunc(func(params bucket.DeleteSelectedReplicationRulesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DeleteSelectedReplicationRules has not yet been implemented")
 		}),
-		UserAPIDeleteServiceAccountHandler: user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DeleteServiceAccount has not yet been implemented")
+		ServiceAccountDeleteServiceAccountHandler: service_account.DeleteServiceAccountHandlerFunc(func(params service_account.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.DeleteServiceAccount has not yet been implemented")
 		}),
-		UserAPIDisableBucketEncryptionHandler: user_api.DisableBucketEncryptionHandlerFunc(func(params user_api.DisableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DisableBucketEncryption has not yet been implemented")
+		BucketDisableBucketEncryptionHandler: bucket.DisableBucketEncryptionHandlerFunc(func(params bucket.DisableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.DisableBucketEncryption has not yet been implemented")
 		}),
-		UserAPIDownloadObjectHandler: user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.DownloadObject has not yet been implemented")
+		ObjectDownloadObjectHandler: object.DownloadObjectHandlerFunc(func(params object.DownloadObjectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.DownloadObject has not yet been implemented")
 		}),
-		AdminAPIEditTierCredentialsHandler: admin_api.EditTierCredentialsHandlerFunc(func(params admin_api.EditTierCredentialsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.EditTierCredentials has not yet been implemented")
+		TieringEditTierCredentialsHandler: tiering.EditTierCredentialsHandlerFunc(func(params tiering.EditTierCredentialsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation tiering.EditTierCredentials has not yet been implemented")
 		}),
-		UserAPIEnableBucketEncryptionHandler: user_api.EnableBucketEncryptionHandlerFunc(func(params user_api.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.EnableBucketEncryption has not yet been implemented")
+		BucketEnableBucketEncryptionHandler: bucket.EnableBucketEncryptionHandlerFunc(func(params bucket.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.EnableBucketEncryption has not yet been implemented")
 		}),
-		UserAPIGetBucketEncryptionInfoHandler: user_api.GetBucketEncryptionInfoHandlerFunc(func(params user_api.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketEncryptionInfo has not yet been implemented")
+		BucketGetBucketEncryptionInfoHandler: bucket.GetBucketEncryptionInfoHandlerFunc(func(params bucket.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketEncryptionInfo has not yet been implemented")
 		}),
-		UserAPIGetBucketLifecycleHandler: user_api.GetBucketLifecycleHandlerFunc(func(params user_api.GetBucketLifecycleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketLifecycle has not yet been implemented")
+		BucketGetBucketLifecycleHandler: bucket.GetBucketLifecycleHandlerFunc(func(params bucket.GetBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketLifecycle has not yet been implemented")
 		}),
-		UserAPIGetBucketObjectLockingStatusHandler: user_api.GetBucketObjectLockingStatusHandlerFunc(func(params user_api.GetBucketObjectLockingStatusParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketObjectLockingStatus has not yet been implemented")
+		BucketGetBucketObjectLockingStatusHandler: bucket.GetBucketObjectLockingStatusHandlerFunc(func(params bucket.GetBucketObjectLockingStatusParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketObjectLockingStatus has not yet been implemented")
 		}),
-		UserAPIGetBucketQuotaHandler: user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketQuota has not yet been implemented")
+		BucketGetBucketQuotaHandler: bucket.GetBucketQuotaHandlerFunc(func(params bucket.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketQuota has not yet been implemented")
 		}),
-		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
+		BucketGetBucketReplicationHandler: bucket.GetBucketReplicationHandlerFunc(func(params bucket.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketReplication has not yet been implemented")
 		}),
-		UserAPIGetBucketReplicationRuleHandler: user_api.GetBucketReplicationRuleHandlerFunc(func(params user_api.GetBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketReplicationRule has not yet been implemented")
+		BucketGetBucketReplicationRuleHandler: bucket.GetBucketReplicationRuleHandlerFunc(func(params bucket.GetBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketReplicationRule has not yet been implemented")
 		}),
-		UserAPIGetBucketRetentionConfigHandler: user_api.GetBucketRetentionConfigHandlerFunc(func(params user_api.GetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketRetentionConfig has not yet been implemented")
+		BucketGetBucketRetentionConfigHandler: bucket.GetBucketRetentionConfigHandlerFunc(func(params bucket.GetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketRetentionConfig has not yet been implemented")
 		}),
-		UserAPIGetBucketRewindHandler: user_api.GetBucketRewindHandlerFunc(func(params user_api.GetBucketRewindParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketRewind has not yet been implemented")
+		BucketGetBucketRewindHandler: bucket.GetBucketRewindHandlerFunc(func(params bucket.GetBucketRewindParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketRewind has not yet been implemented")
 		}),
-		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
+		BucketGetBucketVersioningHandler: bucket.GetBucketVersioningHandlerFunc(func(params bucket.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetBucketVersioning has not yet been implemented")
 		}),
-		UserAPIGetObjectMetadataHandler: user_api.GetObjectMetadataHandlerFunc(func(params user_api.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetObjectMetadata has not yet been implemented")
+		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
 		}),
-		UserAPIGetServiceAccountPolicyHandler: user_api.GetServiceAccountPolicyHandlerFunc(func(params user_api.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.GetServiceAccountPolicy has not yet been implemented")
+		ServiceAccountGetServiceAccountPolicyHandler: service_account.GetServiceAccountPolicyHandlerFunc(func(params service_account.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.GetServiceAccountPolicy has not yet been implemented")
 		}),
-		AdminAPIGetSiteReplicationInfoHandler: admin_api.GetSiteReplicationInfoHandlerFunc(func(params admin_api.GetSiteReplicationInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetSiteReplicationInfo has not yet been implemented")
+		SiteReplicationGetSiteReplicationInfoHandler: site_replication.GetSiteReplicationInfoHandlerFunc(func(params site_replication.GetSiteReplicationInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation site_replication.GetSiteReplicationInfo has not yet been implemented")
 		}),
-		AdminAPIGetSiteReplicationStatusHandler: admin_api.GetSiteReplicationStatusHandlerFunc(func(params admin_api.GetSiteReplicationStatusParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetSiteReplicationStatus has not yet been implemented")
+		SiteReplicationGetSiteReplicationStatusHandler: site_replication.GetSiteReplicationStatusHandlerFunc(func(params site_replication.GetSiteReplicationStatusParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation site_replication.GetSiteReplicationStatus has not yet been implemented")
 		}),
-		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
+		TieringGetTierHandler: tiering.GetTierHandlerFunc(func(params tiering.GetTierParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation tiering.GetTier has not yet been implemented")
 		}),
-		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
+		UserGetUserInfoHandler: user.GetUserInfoHandlerFunc(func(params user.GetUserInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.GetUserInfo has not yet been implemented")
 		}),
-		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
+		GroupGroupInfoHandler: group.GroupInfoHandlerFunc(func(params group.GroupInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation group.GroupInfo has not yet been implemented")
 		}),
-		AdminAPIInspectHandler: admin_api.InspectHandlerFunc(func(params admin_api.InspectParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.Inspect has not yet been implemented")
+		InspectInspectHandler: inspect.InspectHandlerFunc(func(params inspect.InspectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation inspect.Inspect has not yet been implemented")
 		}),
-		AdminAPIListAUserServiceAccountsHandler: admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListAUserServiceAccounts has not yet been implemented")
+		UserListAUserServiceAccountsHandler: user.ListAUserServiceAccountsHandlerFunc(func(params user.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.ListAUserServiceAccounts has not yet been implemented")
 		}),
-		AdminAPIListAccessRulesWithBucketHandler: admin_api.ListAccessRulesWithBucketHandlerFunc(func(params admin_api.ListAccessRulesWithBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListAccessRulesWithBucket has not yet been implemented")
+		BucketListAccessRulesWithBucketHandler: bucket.ListAccessRulesWithBucketHandlerFunc(func(params bucket.ListAccessRulesWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListAccessRulesWithBucket has not yet been implemented")
 		}),
-		UserAPIListBucketEventsHandler: user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ListBucketEvents has not yet been implemented")
+		BucketListBucketEventsHandler: bucket.ListBucketEventsHandlerFunc(func(params bucket.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListBucketEvents has not yet been implemented")
 		}),
-		UserAPIListBucketsHandler: user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ListBuckets has not yet been implemented")
+		BucketListBucketsHandler: bucket.ListBucketsHandlerFunc(func(params bucket.ListBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListBuckets has not yet been implemented")
 		}),
-		AdminAPIListConfigHandler: admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListConfig has not yet been implemented")
+		ConfigurationListConfigHandler: configuration.ListConfigHandlerFunc(func(params configuration.ListConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.ListConfig has not yet been implemented")
 		}),
-		UserAPIListExternalBucketsHandler: user_api.ListExternalBucketsHandlerFunc(func(params user_api.ListExternalBucketsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ListExternalBuckets has not yet been implemented")
+		BucketListExternalBucketsHandler: bucket.ListExternalBucketsHandlerFunc(func(params bucket.ListExternalBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListExternalBuckets has not yet been implemented")
 		}),
-		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListGroups has not yet been implemented")
+		GroupListGroupsHandler: group.ListGroupsHandlerFunc(func(params group.ListGroupsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation group.ListGroups has not yet been implemented")
 		}),
-		AdminAPIListGroupsForPolicyHandler: admin_api.ListGroupsForPolicyHandlerFunc(func(params admin_api.ListGroupsForPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListGroupsForPolicy has not yet been implemented")
+		PolicyListGroupsForPolicyHandler: policy.ListGroupsForPolicyHandlerFunc(func(params policy.ListGroupsForPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.ListGroupsForPolicy has not yet been implemented")
 		}),
-		AdminAPIListNodesHandler: admin_api.ListNodesHandlerFunc(func(params admin_api.ListNodesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListNodes has not yet been implemented")
+		SystemListNodesHandler: system.ListNodesHandlerFunc(func(params system.ListNodesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation system.ListNodes has not yet been implemented")
 		}),
-		UserAPIListObjectsHandler: user_api.ListObjectsHandlerFunc(func(params user_api.ListObjectsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ListObjects has not yet been implemented")
+		ObjectListObjectsHandler: object.ListObjectsHandlerFunc(func(params object.ListObjectsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.ListObjects has not yet been implemented")
 		}),
-		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
+		PolicyListPoliciesHandler: policy.ListPoliciesHandlerFunc(func(params policy.ListPoliciesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.ListPolicies has not yet been implemented")
 		}),
-		AdminAPIListPoliciesWithBucketHandler: admin_api.ListPoliciesWithBucketHandlerFunc(func(params admin_api.ListPoliciesWithBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListPoliciesWithBucket has not yet been implemented")
+		BucketListPoliciesWithBucketHandler: bucket.ListPoliciesWithBucketHandlerFunc(func(params bucket.ListPoliciesWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListPoliciesWithBucket has not yet been implemented")
 		}),
-		UserAPIListRemoteBucketsHandler: user_api.ListRemoteBucketsHandlerFunc(func(params user_api.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ListRemoteBuckets has not yet been implemented")
+		BucketListRemoteBucketsHandler: bucket.ListRemoteBucketsHandlerFunc(func(params bucket.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListRemoteBuckets has not yet been implemented")
 		}),
-		UserAPIListUserServiceAccountsHandler: user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ListUserServiceAccounts has not yet been implemented")
+		ServiceAccountListUserServiceAccountsHandler: service_account.ListUserServiceAccountsHandlerFunc(func(params service_account.ListUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.ListUserServiceAccounts has not yet been implemented")
 		}),
-		AdminAPIListUsersHandler: admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListUsers has not yet been implemented")
+		UserListUsersHandler: user.ListUsersHandlerFunc(func(params user.ListUsersParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.ListUsers has not yet been implemented")
 		}),
-		AdminAPIListUsersForPolicyHandler: admin_api.ListUsersForPolicyHandlerFunc(func(params admin_api.ListUsersForPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListUsersForPolicy has not yet been implemented")
+		PolicyListUsersForPolicyHandler: policy.ListUsersForPolicyHandlerFunc(func(params policy.ListUsersForPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.ListUsersForPolicy has not yet been implemented")
 		}),
-		AdminAPIListUsersWithAccessToBucketHandler: admin_api.ListUsersWithAccessToBucketHandlerFunc(func(params admin_api.ListUsersWithAccessToBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ListUsersWithAccessToBucket has not yet been implemented")
+		BucketListUsersWithAccessToBucketHandler: bucket.ListUsersWithAccessToBucketHandlerFunc(func(params bucket.ListUsersWithAccessToBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.ListUsersWithAccessToBucket has not yet been implemented")
 		}),
-		UserAPILogSearchHandler: user_api.LogSearchHandlerFunc(func(params user_api.LogSearchParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.LogSearch has not yet been implemented")
+		LoggingLogSearchHandler: logging.LogSearchHandlerFunc(func(params logging.LogSearchParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation logging.LogSearch has not yet been implemented")
 		}),
-		UserAPILoginHandler: user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.Login has not yet been implemented")
+		AuthLoginHandler: auth.LoginHandlerFunc(func(params auth.LoginParams) middleware.Responder {
+			return middleware.NotImplemented("operation auth.Login has not yet been implemented")
 		}),
-		UserAPILoginDetailHandler: user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.LoginDetail has not yet been implemented")
+		AuthLoginDetailHandler: auth.LoginDetailHandlerFunc(func(params auth.LoginDetailParams) middleware.Responder {
+			return middleware.NotImplemented("operation auth.LoginDetail has not yet been implemented")
 		}),
-		UserAPILoginOauth2AuthHandler: user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.LoginOauth2Auth has not yet been implemented")
+		AuthLoginOauth2AuthHandler: auth.LoginOauth2AuthHandlerFunc(func(params auth.LoginOauth2AuthParams) middleware.Responder {
+			return middleware.NotImplemented("operation auth.LoginOauth2Auth has not yet been implemented")
 		}),
-		UserAPILogoutHandler: user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.Logout has not yet been implemented")
+		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
 		}),
-		UserAPIMakeBucketHandler: user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.MakeBucket has not yet been implemented")
+		BucketMakeBucketHandler: bucket.MakeBucketHandlerFunc(func(params bucket.MakeBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.MakeBucket has not yet been implemented")
 		}),
-		AdminAPINotificationEndpointListHandler: admin_api.NotificationEndpointListHandlerFunc(func(params admin_api.NotificationEndpointListParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.NotificationEndpointList has not yet been implemented")
+		ConfigurationNotificationEndpointListHandler: configuration.NotificationEndpointListHandlerFunc(func(params configuration.NotificationEndpointListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.NotificationEndpointList has not yet been implemented")
 		}),
-		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.PolicyInfo has not yet been implemented")
+		PolicyPolicyInfoHandler: policy.PolicyInfoHandlerFunc(func(params policy.PolicyInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.PolicyInfo has not yet been implemented")
 		}),
-		UserAPIPostBucketsBucketNameObjectsUploadHandler: user_api.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params user_api.PostBucketsBucketNameObjectsUploadParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.PostBucketsBucketNameObjectsUpload has not yet been implemented")
+		ObjectPostBucketsBucketNameObjectsUploadHandler: object.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params object.PostBucketsBucketNameObjectsUploadParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.PostBucketsBucketNameObjectsUpload has not yet been implemented")
 		}),
-		AdminAPIProfilingStartHandler: admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ProfilingStart has not yet been implemented")
+		ProfileProfilingStartHandler: profile.ProfilingStartHandlerFunc(func(params profile.ProfilingStartParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation profile.ProfilingStart has not yet been implemented")
 		}),
-		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
+		ProfileProfilingStopHandler: profile.ProfilingStopHandlerFunc(func(params profile.ProfilingStopParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation profile.ProfilingStop has not yet been implemented")
 		}),
-		UserAPIPutBucketTagsHandler: user_api.PutBucketTagsHandlerFunc(func(params user_api.PutBucketTagsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.PutBucketTags has not yet been implemented")
+		BucketPutBucketTagsHandler: bucket.PutBucketTagsHandlerFunc(func(params bucket.PutBucketTagsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.PutBucketTags has not yet been implemented")
 		}),
-		UserAPIPutObjectLegalHoldHandler: user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.PutObjectLegalHold has not yet been implemented")
+		ObjectPutObjectLegalHoldHandler: object.PutObjectLegalHoldHandlerFunc(func(params object.PutObjectLegalHoldParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.PutObjectLegalHold has not yet been implemented")
 		}),
-		UserAPIPutObjectRestoreHandler: user_api.PutObjectRestoreHandlerFunc(func(params user_api.PutObjectRestoreParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.PutObjectRestore has not yet been implemented")
+		ObjectPutObjectRestoreHandler: object.PutObjectRestoreHandlerFunc(func(params object.PutObjectRestoreParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.PutObjectRestore has not yet been implemented")
 		}),
-		UserAPIPutObjectRetentionHandler: user_api.PutObjectRetentionHandlerFunc(func(params user_api.PutObjectRetentionParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.PutObjectRetention has not yet been implemented")
+		ObjectPutObjectRetentionHandler: object.PutObjectRetentionHandlerFunc(func(params object.PutObjectRetentionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.PutObjectRetention has not yet been implemented")
 		}),
-		UserAPIPutObjectTagsHandler: user_api.PutObjectTagsHandlerFunc(func(params user_api.PutObjectTagsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.PutObjectTags has not yet been implemented")
+		ObjectPutObjectTagsHandler: object.PutObjectTagsHandlerFunc(func(params object.PutObjectTagsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.PutObjectTags has not yet been implemented")
 		}),
-		UserAPIRemoteBucketDetailsHandler: user_api.RemoteBucketDetailsHandlerFunc(func(params user_api.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.RemoteBucketDetails has not yet been implemented")
+		BucketRemoteBucketDetailsHandler: bucket.RemoteBucketDetailsHandlerFunc(func(params bucket.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.RemoteBucketDetails has not yet been implemented")
 		}),
-		AdminAPIRemoveGroupHandler: admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.RemoveGroup has not yet been implemented")
+		GroupRemoveGroupHandler: group.RemoveGroupHandlerFunc(func(params group.RemoveGroupParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation group.RemoveGroup has not yet been implemented")
 		}),
-		AdminAPIRemovePolicyHandler: admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.RemovePolicy has not yet been implemented")
+		PolicyRemovePolicyHandler: policy.RemovePolicyHandlerFunc(func(params policy.RemovePolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.RemovePolicy has not yet been implemented")
 		}),
-		AdminAPIRemoveUserHandler: admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.RemoveUser has not yet been implemented")
+		UserRemoveUserHandler: user.RemoveUserHandlerFunc(func(params user.RemoveUserParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.RemoveUser has not yet been implemented")
 		}),
-		AdminAPIResetConfigHandler: admin_api.ResetConfigHandlerFunc(func(params admin_api.ResetConfigParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.ResetConfig has not yet been implemented")
+		ConfigurationResetConfigHandler: configuration.ResetConfigHandlerFunc(func(params configuration.ResetConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.ResetConfig has not yet been implemented")
 		}),
-		AdminAPIRestartServiceHandler: admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.RestartService has not yet been implemented")
+		ServiceRestartServiceHandler: service.RestartServiceHandlerFunc(func(params service.RestartServiceParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service.RestartService has not yet been implemented")
 		}),
-		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		AuthSessionCheckHandler: auth.SessionCheckHandlerFunc(func(params auth.SessionCheckParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation auth.SessionCheck has not yet been implemented")
 		}),
-		AdminAPISetAccessRuleWithBucketHandler: admin_api.SetAccessRuleWithBucketHandlerFunc(func(params admin_api.SetAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SetAccessRuleWithBucket has not yet been implemented")
+		BucketSetAccessRuleWithBucketHandler: bucket.SetAccessRuleWithBucketHandlerFunc(func(params bucket.SetAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.SetAccessRuleWithBucket has not yet been implemented")
 		}),
-		UserAPISetBucketQuotaHandler: user_api.SetBucketQuotaHandlerFunc(func(params user_api.SetBucketQuotaParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SetBucketQuota has not yet been implemented")
+		BucketSetBucketQuotaHandler: bucket.SetBucketQuotaHandlerFunc(func(params bucket.SetBucketQuotaParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.SetBucketQuota has not yet been implemented")
 		}),
-		UserAPISetBucketRetentionConfigHandler: user_api.SetBucketRetentionConfigHandlerFunc(func(params user_api.SetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SetBucketRetentionConfig has not yet been implemented")
+		BucketSetBucketRetentionConfigHandler: bucket.SetBucketRetentionConfigHandlerFunc(func(params bucket.SetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.SetBucketRetentionConfig has not yet been implemented")
 		}),
-		UserAPISetBucketVersioningHandler: user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SetBucketVersioning has not yet been implemented")
+		BucketSetBucketVersioningHandler: bucket.SetBucketVersioningHandlerFunc(func(params bucket.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.SetBucketVersioning has not yet been implemented")
 		}),
-		AdminAPISetConfigHandler: admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SetConfig has not yet been implemented")
+		ConfigurationSetConfigHandler: configuration.SetConfigHandlerFunc(func(params configuration.SetConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.SetConfig has not yet been implemented")
 		}),
-		UserAPISetMultiBucketReplicationHandler: user_api.SetMultiBucketReplicationHandlerFunc(func(params user_api.SetMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SetMultiBucketReplication has not yet been implemented")
+		BucketSetMultiBucketReplicationHandler: bucket.SetMultiBucketReplicationHandlerFunc(func(params bucket.SetMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.SetMultiBucketReplication has not yet been implemented")
 		}),
-		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
+		PolicySetPolicyHandler: policy.SetPolicyHandlerFunc(func(params policy.SetPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.SetPolicy has not yet been implemented")
 		}),
-		AdminAPISetPolicyMultipleHandler: admin_api.SetPolicyMultipleHandlerFunc(func(params admin_api.SetPolicyMultipleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SetPolicyMultiple has not yet been implemented")
+		PolicySetPolicyMultipleHandler: policy.SetPolicyMultipleHandlerFunc(func(params policy.SetPolicyMultipleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.SetPolicyMultiple has not yet been implemented")
 		}),
-		UserAPISetServiceAccountPolicyHandler: user_api.SetServiceAccountPolicyHandlerFunc(func(params user_api.SetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SetServiceAccountPolicy has not yet been implemented")
+		ServiceAccountSetServiceAccountPolicyHandler: service_account.SetServiceAccountPolicyHandlerFunc(func(params service_account.SetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.SetServiceAccountPolicy has not yet been implemented")
 		}),
-		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
+		ObjectShareObjectHandler: object.ShareObjectHandlerFunc(func(params object.ShareObjectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.ShareObject has not yet been implemented")
 		}),
-		AdminAPISiteReplicationEditHandler: admin_api.SiteReplicationEditHandlerFunc(func(params admin_api.SiteReplicationEditParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SiteReplicationEdit has not yet been implemented")
+		SiteReplicationSiteReplicationEditHandler: site_replication.SiteReplicationEditHandlerFunc(func(params site_replication.SiteReplicationEditParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation site_replication.SiteReplicationEdit has not yet been implemented")
 		}),
-		AdminAPISiteReplicationInfoAddHandler: admin_api.SiteReplicationInfoAddHandlerFunc(func(params admin_api.SiteReplicationInfoAddParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SiteReplicationInfoAdd has not yet been implemented")
+		SiteReplicationSiteReplicationInfoAddHandler: site_replication.SiteReplicationInfoAddHandlerFunc(func(params site_replication.SiteReplicationInfoAddParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation site_replication.SiteReplicationInfoAdd has not yet been implemented")
 		}),
-		AdminAPISiteReplicationRemoveHandler: admin_api.SiteReplicationRemoveHandlerFunc(func(params admin_api.SiteReplicationRemoveParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SiteReplicationRemove has not yet been implemented")
+		SiteReplicationSiteReplicationRemoveHandler: site_replication.SiteReplicationRemoveHandlerFunc(func(params site_replication.SiteReplicationRemoveParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation site_replication.SiteReplicationRemove has not yet been implemented")
 		}),
-		AdminAPISubnetInfoHandler: admin_api.SubnetInfoHandlerFunc(func(params admin_api.SubnetInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubnetInfo has not yet been implemented")
+		SubnetSubnetInfoHandler: subnet.SubnetInfoHandlerFunc(func(params subnet.SubnetInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation subnet.SubnetInfo has not yet been implemented")
 		}),
-		AdminAPISubnetLoginHandler: admin_api.SubnetLoginHandlerFunc(func(params admin_api.SubnetLoginParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubnetLogin has not yet been implemented")
+		SubnetSubnetLoginHandler: subnet.SubnetLoginHandlerFunc(func(params subnet.SubnetLoginParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation subnet.SubnetLogin has not yet been implemented")
 		}),
-		AdminAPISubnetLoginMFAHandler: admin_api.SubnetLoginMFAHandlerFunc(func(params admin_api.SubnetLoginMFAParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubnetLoginMFA has not yet been implemented")
+		SubnetSubnetLoginMFAHandler: subnet.SubnetLoginMFAHandlerFunc(func(params subnet.SubnetLoginMFAParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation subnet.SubnetLoginMFA has not yet been implemented")
 		}),
-		AdminAPISubnetRegTokenHandler: admin_api.SubnetRegTokenHandlerFunc(func(params admin_api.SubnetRegTokenParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubnetRegToken has not yet been implemented")
+		SubnetSubnetRegTokenHandler: subnet.SubnetRegTokenHandlerFunc(func(params subnet.SubnetRegTokenParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation subnet.SubnetRegToken has not yet been implemented")
 		}),
-		AdminAPISubnetRegisterHandler: admin_api.SubnetRegisterHandlerFunc(func(params admin_api.SubnetRegisterParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubnetRegister has not yet been implemented")
+		SubnetSubnetRegisterHandler: subnet.SubnetRegisterHandlerFunc(func(params subnet.SubnetRegisterParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation subnet.SubnetRegister has not yet been implemented")
 		}),
-		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
+		TieringTiersListHandler: tiering.TiersListHandlerFunc(func(params tiering.TiersListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation tiering.TiersList has not yet been implemented")
 		}),
-		UserAPIUpdateBucketLifecycleHandler: user_api.UpdateBucketLifecycleHandlerFunc(func(params user_api.UpdateBucketLifecycleParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.UpdateBucketLifecycle has not yet been implemented")
+		BucketUpdateBucketLifecycleHandler: bucket.UpdateBucketLifecycleHandlerFunc(func(params bucket.UpdateBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.UpdateBucketLifecycle has not yet been implemented")
 		}),
-		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
+		GroupUpdateGroupHandler: group.UpdateGroupHandlerFunc(func(params group.UpdateGroupParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation group.UpdateGroup has not yet been implemented")
 		}),
-		UserAPIUpdateMultiBucketReplicationHandler: user_api.UpdateMultiBucketReplicationHandlerFunc(func(params user_api.UpdateMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.UpdateMultiBucketReplication has not yet been implemented")
+		BucketUpdateMultiBucketReplicationHandler: bucket.UpdateMultiBucketReplicationHandlerFunc(func(params bucket.UpdateMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.UpdateMultiBucketReplication has not yet been implemented")
 		}),
-		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
+		UserUpdateUserGroupsHandler: user.UpdateUserGroupsHandlerFunc(func(params user.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.UpdateUserGroups has not yet been implemented")
 		}),
-		AdminAPIUpdateUserInfoHandler: admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.UpdateUserInfo has not yet been implemented")
+		UserUpdateUserInfoHandler: user.UpdateUserInfoHandlerFunc(func(params user.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.UpdateUserInfo has not yet been implemented")
 		}),
 
 		KeyAuth: func(token string, scopes []string) (*models.Principal, error) {
@@ -490,248 +505,248 @@ type ConsoleAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
-	// UserAPIAccountChangePasswordHandler sets the operation handler for the account change password operation
-	UserAPIAccountChangePasswordHandler user_api.AccountChangePasswordHandler
-	// UserAPIAddBucketLifecycleHandler sets the operation handler for the add bucket lifecycle operation
-	UserAPIAddBucketLifecycleHandler user_api.AddBucketLifecycleHandler
-	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
-	AdminAPIAddGroupHandler admin_api.AddGroupHandler
-	// UserAPIAddMultiBucketLifecycleHandler sets the operation handler for the add multi bucket lifecycle operation
-	UserAPIAddMultiBucketLifecycleHandler user_api.AddMultiBucketLifecycleHandler
-	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
-	AdminAPIAddNotificationEndpointHandler admin_api.AddNotificationEndpointHandler
-	// AdminAPIAddPolicyHandler sets the operation handler for the add policy operation
-	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
-	// UserAPIAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
-	UserAPIAddRemoteBucketHandler user_api.AddRemoteBucketHandler
-	// AdminAPIAddTierHandler sets the operation handler for the add tier operation
-	AdminAPIAddTierHandler admin_api.AddTierHandler
-	// AdminAPIAddUserHandler sets the operation handler for the add user operation
-	AdminAPIAddUserHandler admin_api.AddUserHandler
-	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
-	AdminAPIAdminInfoHandler admin_api.AdminInfoHandler
-	// AdminAPIArnListHandler sets the operation handler for the arn list operation
-	AdminAPIArnListHandler admin_api.ArnListHandler
-	// UserAPIBucketInfoHandler sets the operation handler for the bucket info operation
-	UserAPIBucketInfoHandler user_api.BucketInfoHandler
-	// UserAPIBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
-	UserAPIBucketSetPolicyHandler user_api.BucketSetPolicyHandler
-	// AdminAPIBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
-	AdminAPIBulkUpdateUsersGroupsHandler admin_api.BulkUpdateUsersGroupsHandler
-	// AdminAPIChangeUserPasswordHandler sets the operation handler for the change user password operation
-	AdminAPIChangeUserPasswordHandler admin_api.ChangeUserPasswordHandler
-	// UserAPICheckMinIOVersionHandler sets the operation handler for the check min i o version operation
-	UserAPICheckMinIOVersionHandler user_api.CheckMinIOVersionHandler
-	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
-	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
-	// AdminAPICreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
-	AdminAPICreateAUserServiceAccountHandler admin_api.CreateAUserServiceAccountHandler
-	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
-	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
-	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
-	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
-	// AdminAPICreateServiceAccountCredentialsHandler sets the operation handler for the create service account credentials operation
-	AdminAPICreateServiceAccountCredentialsHandler admin_api.CreateServiceAccountCredentialsHandler
-	// AdminAPICreateServiceAccountCredsHandler sets the operation handler for the create service account creds operation
-	AdminAPICreateServiceAccountCredsHandler admin_api.CreateServiceAccountCredsHandler
-	// AdminAPIDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
-	AdminAPIDashboardWidgetDetailsHandler admin_api.DashboardWidgetDetailsHandler
-	// AdminAPIDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
-	AdminAPIDeleteAccessRuleWithBucketHandler admin_api.DeleteAccessRuleWithBucketHandler
-	// UserAPIDeleteAllReplicationRulesHandler sets the operation handler for the delete all replication rules operation
-	UserAPIDeleteAllReplicationRulesHandler user_api.DeleteAllReplicationRulesHandler
-	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
-	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
-	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
-	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
-	// UserAPIDeleteBucketLifecycleRuleHandler sets the operation handler for the delete bucket lifecycle rule operation
-	UserAPIDeleteBucketLifecycleRuleHandler user_api.DeleteBucketLifecycleRuleHandler
-	// UserAPIDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
-	UserAPIDeleteBucketReplicationRuleHandler user_api.DeleteBucketReplicationRuleHandler
-	// UserAPIDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
-	UserAPIDeleteMultipleObjectsHandler user_api.DeleteMultipleObjectsHandler
-	// UserAPIDeleteMultipleServiceAccountsHandler sets the operation handler for the delete multiple service accounts operation
-	UserAPIDeleteMultipleServiceAccountsHandler user_api.DeleteMultipleServiceAccountsHandler
-	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
-	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
-	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
-	UserAPIDeleteObjectRetentionHandler user_api.DeleteObjectRetentionHandler
-	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
-	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
-	// UserAPIDeleteSelectedReplicationRulesHandler sets the operation handler for the delete selected replication rules operation
-	UserAPIDeleteSelectedReplicationRulesHandler user_api.DeleteSelectedReplicationRulesHandler
-	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
-	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
-	// UserAPIDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
-	UserAPIDisableBucketEncryptionHandler user_api.DisableBucketEncryptionHandler
-	// UserAPIDownloadObjectHandler sets the operation handler for the download object operation
-	UserAPIDownloadObjectHandler user_api.DownloadObjectHandler
-	// AdminAPIEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
-	AdminAPIEditTierCredentialsHandler admin_api.EditTierCredentialsHandler
-	// UserAPIEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
-	UserAPIEnableBucketEncryptionHandler user_api.EnableBucketEncryptionHandler
-	// UserAPIGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
-	UserAPIGetBucketEncryptionInfoHandler user_api.GetBucketEncryptionInfoHandler
-	// UserAPIGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
-	UserAPIGetBucketLifecycleHandler user_api.GetBucketLifecycleHandler
-	// UserAPIGetBucketObjectLockingStatusHandler sets the operation handler for the get bucket object locking status operation
-	UserAPIGetBucketObjectLockingStatusHandler user_api.GetBucketObjectLockingStatusHandler
-	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
-	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
-	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
-	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
-	// UserAPIGetBucketReplicationRuleHandler sets the operation handler for the get bucket replication rule operation
-	UserAPIGetBucketReplicationRuleHandler user_api.GetBucketReplicationRuleHandler
-	// UserAPIGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
-	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
-	// UserAPIGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
-	UserAPIGetBucketRewindHandler user_api.GetBucketRewindHandler
-	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
-	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
-	// UserAPIGetObjectMetadataHandler sets the operation handler for the get object metadata operation
-	UserAPIGetObjectMetadataHandler user_api.GetObjectMetadataHandler
-	// UserAPIGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
-	UserAPIGetServiceAccountPolicyHandler user_api.GetServiceAccountPolicyHandler
-	// AdminAPIGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
-	AdminAPIGetSiteReplicationInfoHandler admin_api.GetSiteReplicationInfoHandler
-	// AdminAPIGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
-	AdminAPIGetSiteReplicationStatusHandler admin_api.GetSiteReplicationStatusHandler
-	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
-	AdminAPIGetTierHandler admin_api.GetTierHandler
-	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
-	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
-	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
-	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
-	// AdminAPIInspectHandler sets the operation handler for the inspect operation
-	AdminAPIInspectHandler admin_api.InspectHandler
-	// AdminAPIListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
-	AdminAPIListAUserServiceAccountsHandler admin_api.ListAUserServiceAccountsHandler
-	// AdminAPIListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
-	AdminAPIListAccessRulesWithBucketHandler admin_api.ListAccessRulesWithBucketHandler
-	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
-	UserAPIListBucketEventsHandler user_api.ListBucketEventsHandler
-	// UserAPIListBucketsHandler sets the operation handler for the list buckets operation
-	UserAPIListBucketsHandler user_api.ListBucketsHandler
-	// AdminAPIListConfigHandler sets the operation handler for the list config operation
-	AdminAPIListConfigHandler admin_api.ListConfigHandler
-	// UserAPIListExternalBucketsHandler sets the operation handler for the list external buckets operation
-	UserAPIListExternalBucketsHandler user_api.ListExternalBucketsHandler
-	// AdminAPIListGroupsHandler sets the operation handler for the list groups operation
-	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
-	// AdminAPIListGroupsForPolicyHandler sets the operation handler for the list groups for policy operation
-	AdminAPIListGroupsForPolicyHandler admin_api.ListGroupsForPolicyHandler
-	// AdminAPIListNodesHandler sets the operation handler for the list nodes operation
-	AdminAPIListNodesHandler admin_api.ListNodesHandler
-	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
-	UserAPIListObjectsHandler user_api.ListObjectsHandler
-	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
-	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
-	// AdminAPIListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
-	AdminAPIListPoliciesWithBucketHandler admin_api.ListPoliciesWithBucketHandler
-	// UserAPIListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
-	UserAPIListRemoteBucketsHandler user_api.ListRemoteBucketsHandler
-	// UserAPIListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
-	UserAPIListUserServiceAccountsHandler user_api.ListUserServiceAccountsHandler
-	// AdminAPIListUsersHandler sets the operation handler for the list users operation
-	AdminAPIListUsersHandler admin_api.ListUsersHandler
-	// AdminAPIListUsersForPolicyHandler sets the operation handler for the list users for policy operation
-	AdminAPIListUsersForPolicyHandler admin_api.ListUsersForPolicyHandler
-	// AdminAPIListUsersWithAccessToBucketHandler sets the operation handler for the list users with access to bucket operation
-	AdminAPIListUsersWithAccessToBucketHandler admin_api.ListUsersWithAccessToBucketHandler
-	// UserAPILogSearchHandler sets the operation handler for the log search operation
-	UserAPILogSearchHandler user_api.LogSearchHandler
-	// UserAPILoginHandler sets the operation handler for the login operation
-	UserAPILoginHandler user_api.LoginHandler
-	// UserAPILoginDetailHandler sets the operation handler for the login detail operation
-	UserAPILoginDetailHandler user_api.LoginDetailHandler
-	// UserAPILoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
-	UserAPILoginOauth2AuthHandler user_api.LoginOauth2AuthHandler
-	// UserAPILogoutHandler sets the operation handler for the logout operation
-	UserAPILogoutHandler user_api.LogoutHandler
-	// UserAPIMakeBucketHandler sets the operation handler for the make bucket operation
-	UserAPIMakeBucketHandler user_api.MakeBucketHandler
-	// AdminAPINotificationEndpointListHandler sets the operation handler for the notification endpoint list operation
-	AdminAPINotificationEndpointListHandler admin_api.NotificationEndpointListHandler
-	// AdminAPIPolicyInfoHandler sets the operation handler for the policy info operation
-	AdminAPIPolicyInfoHandler admin_api.PolicyInfoHandler
-	// UserAPIPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
-	UserAPIPostBucketsBucketNameObjectsUploadHandler user_api.PostBucketsBucketNameObjectsUploadHandler
-	// AdminAPIProfilingStartHandler sets the operation handler for the profiling start operation
-	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
-	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
-	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
-	// UserAPIPutBucketTagsHandler sets the operation handler for the put bucket tags operation
-	UserAPIPutBucketTagsHandler user_api.PutBucketTagsHandler
-	// UserAPIPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
-	UserAPIPutObjectLegalHoldHandler user_api.PutObjectLegalHoldHandler
-	// UserAPIPutObjectRestoreHandler sets the operation handler for the put object restore operation
-	UserAPIPutObjectRestoreHandler user_api.PutObjectRestoreHandler
-	// UserAPIPutObjectRetentionHandler sets the operation handler for the put object retention operation
-	UserAPIPutObjectRetentionHandler user_api.PutObjectRetentionHandler
-	// UserAPIPutObjectTagsHandler sets the operation handler for the put object tags operation
-	UserAPIPutObjectTagsHandler user_api.PutObjectTagsHandler
-	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
-	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
-	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
-	AdminAPIRemoveGroupHandler admin_api.RemoveGroupHandler
-	// AdminAPIRemovePolicyHandler sets the operation handler for the remove policy operation
-	AdminAPIRemovePolicyHandler admin_api.RemovePolicyHandler
-	// AdminAPIRemoveUserHandler sets the operation handler for the remove user operation
-	AdminAPIRemoveUserHandler admin_api.RemoveUserHandler
-	// AdminAPIResetConfigHandler sets the operation handler for the reset config operation
-	AdminAPIResetConfigHandler admin_api.ResetConfigHandler
-	// AdminAPIRestartServiceHandler sets the operation handler for the restart service operation
-	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
-	// UserAPISessionCheckHandler sets the operation handler for the session check operation
-	UserAPISessionCheckHandler user_api.SessionCheckHandler
-	// AdminAPISetAccessRuleWithBucketHandler sets the operation handler for the set access rule with bucket operation
-	AdminAPISetAccessRuleWithBucketHandler admin_api.SetAccessRuleWithBucketHandler
-	// UserAPISetBucketQuotaHandler sets the operation handler for the set bucket quota operation
-	UserAPISetBucketQuotaHandler user_api.SetBucketQuotaHandler
-	// UserAPISetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
-	UserAPISetBucketRetentionConfigHandler user_api.SetBucketRetentionConfigHandler
-	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
-	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
-	// AdminAPISetConfigHandler sets the operation handler for the set config operation
-	AdminAPISetConfigHandler admin_api.SetConfigHandler
-	// UserAPISetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
-	UserAPISetMultiBucketReplicationHandler user_api.SetMultiBucketReplicationHandler
-	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
-	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
-	// AdminAPISetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
-	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
-	// UserAPISetServiceAccountPolicyHandler sets the operation handler for the set service account policy operation
-	UserAPISetServiceAccountPolicyHandler user_api.SetServiceAccountPolicyHandler
-	// UserAPIShareObjectHandler sets the operation handler for the share object operation
-	UserAPIShareObjectHandler user_api.ShareObjectHandler
-	// AdminAPISiteReplicationEditHandler sets the operation handler for the site replication edit operation
-	AdminAPISiteReplicationEditHandler admin_api.SiteReplicationEditHandler
-	// AdminAPISiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
-	AdminAPISiteReplicationInfoAddHandler admin_api.SiteReplicationInfoAddHandler
-	// AdminAPISiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
-	AdminAPISiteReplicationRemoveHandler admin_api.SiteReplicationRemoveHandler
-	// AdminAPISubnetInfoHandler sets the operation handler for the subnet info operation
-	AdminAPISubnetInfoHandler admin_api.SubnetInfoHandler
-	// AdminAPISubnetLoginHandler sets the operation handler for the subnet login operation
-	AdminAPISubnetLoginHandler admin_api.SubnetLoginHandler
-	// AdminAPISubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
-	AdminAPISubnetLoginMFAHandler admin_api.SubnetLoginMFAHandler
-	// AdminAPISubnetRegTokenHandler sets the operation handler for the subnet reg token operation
-	AdminAPISubnetRegTokenHandler admin_api.SubnetRegTokenHandler
-	// AdminAPISubnetRegisterHandler sets the operation handler for the subnet register operation
-	AdminAPISubnetRegisterHandler admin_api.SubnetRegisterHandler
-	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
-	AdminAPITiersListHandler admin_api.TiersListHandler
-	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
-	UserAPIUpdateBucketLifecycleHandler user_api.UpdateBucketLifecycleHandler
-	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
-	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
-	// UserAPIUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
-	UserAPIUpdateMultiBucketReplicationHandler user_api.UpdateMultiBucketReplicationHandler
-	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
-	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
-	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
-	AdminAPIUpdateUserInfoHandler admin_api.UpdateUserInfoHandler
+	// AccountAccountChangePasswordHandler sets the operation handler for the account change password operation
+	AccountAccountChangePasswordHandler account.AccountChangePasswordHandler
+	// BucketAddBucketLifecycleHandler sets the operation handler for the add bucket lifecycle operation
+	BucketAddBucketLifecycleHandler bucket.AddBucketLifecycleHandler
+	// GroupAddGroupHandler sets the operation handler for the add group operation
+	GroupAddGroupHandler group.AddGroupHandler
+	// BucketAddMultiBucketLifecycleHandler sets the operation handler for the add multi bucket lifecycle operation
+	BucketAddMultiBucketLifecycleHandler bucket.AddMultiBucketLifecycleHandler
+	// ConfigurationAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
+	ConfigurationAddNotificationEndpointHandler configuration.AddNotificationEndpointHandler
+	// PolicyAddPolicyHandler sets the operation handler for the add policy operation
+	PolicyAddPolicyHandler policy.AddPolicyHandler
+	// BucketAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
+	BucketAddRemoteBucketHandler bucket.AddRemoteBucketHandler
+	// TieringAddTierHandler sets the operation handler for the add tier operation
+	TieringAddTierHandler tiering.AddTierHandler
+	// UserAddUserHandler sets the operation handler for the add user operation
+	UserAddUserHandler user.AddUserHandler
+	// SystemAdminInfoHandler sets the operation handler for the admin info operation
+	SystemAdminInfoHandler system.AdminInfoHandler
+	// SystemArnListHandler sets the operation handler for the arn list operation
+	SystemArnListHandler system.ArnListHandler
+	// BucketBucketInfoHandler sets the operation handler for the bucket info operation
+	BucketBucketInfoHandler bucket.BucketInfoHandler
+	// BucketBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
+	BucketBucketSetPolicyHandler bucket.BucketSetPolicyHandler
+	// UserBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
+	UserBulkUpdateUsersGroupsHandler user.BulkUpdateUsersGroupsHandler
+	// AccountChangeUserPasswordHandler sets the operation handler for the change user password operation
+	AccountChangeUserPasswordHandler account.ChangeUserPasswordHandler
+	// SystemCheckMinIOVersionHandler sets the operation handler for the check min i o version operation
+	SystemCheckMinIOVersionHandler system.CheckMinIOVersionHandler
+	// ConfigurationConfigInfoHandler sets the operation handler for the config info operation
+	ConfigurationConfigInfoHandler configuration.ConfigInfoHandler
+	// UserCreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
+	UserCreateAUserServiceAccountHandler user.CreateAUserServiceAccountHandler
+	// BucketCreateBucketEventHandler sets the operation handler for the create bucket event operation
+	BucketCreateBucketEventHandler bucket.CreateBucketEventHandler
+	// ServiceAccountCreateServiceAccountHandler sets the operation handler for the create service account operation
+	ServiceAccountCreateServiceAccountHandler service_account.CreateServiceAccountHandler
+	// UserCreateServiceAccountCredentialsHandler sets the operation handler for the create service account credentials operation
+	UserCreateServiceAccountCredentialsHandler user.CreateServiceAccountCredentialsHandler
+	// ServiceAccountCreateServiceAccountCredsHandler sets the operation handler for the create service account creds operation
+	ServiceAccountCreateServiceAccountCredsHandler service_account.CreateServiceAccountCredsHandler
+	// SystemDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
+	SystemDashboardWidgetDetailsHandler system.DashboardWidgetDetailsHandler
+	// BucketDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
+	BucketDeleteAccessRuleWithBucketHandler bucket.DeleteAccessRuleWithBucketHandler
+	// BucketDeleteAllReplicationRulesHandler sets the operation handler for the delete all replication rules operation
+	BucketDeleteAllReplicationRulesHandler bucket.DeleteAllReplicationRulesHandler
+	// BucketDeleteBucketHandler sets the operation handler for the delete bucket operation
+	BucketDeleteBucketHandler bucket.DeleteBucketHandler
+	// BucketDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
+	BucketDeleteBucketEventHandler bucket.DeleteBucketEventHandler
+	// BucketDeleteBucketLifecycleRuleHandler sets the operation handler for the delete bucket lifecycle rule operation
+	BucketDeleteBucketLifecycleRuleHandler bucket.DeleteBucketLifecycleRuleHandler
+	// BucketDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
+	BucketDeleteBucketReplicationRuleHandler bucket.DeleteBucketReplicationRuleHandler
+	// ObjectDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
+	ObjectDeleteMultipleObjectsHandler object.DeleteMultipleObjectsHandler
+	// ServiceAccountDeleteMultipleServiceAccountsHandler sets the operation handler for the delete multiple service accounts operation
+	ServiceAccountDeleteMultipleServiceAccountsHandler service_account.DeleteMultipleServiceAccountsHandler
+	// ObjectDeleteObjectHandler sets the operation handler for the delete object operation
+	ObjectDeleteObjectHandler object.DeleteObjectHandler
+	// ObjectDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
+	ObjectDeleteObjectRetentionHandler object.DeleteObjectRetentionHandler
+	// BucketDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
+	BucketDeleteRemoteBucketHandler bucket.DeleteRemoteBucketHandler
+	// BucketDeleteSelectedReplicationRulesHandler sets the operation handler for the delete selected replication rules operation
+	BucketDeleteSelectedReplicationRulesHandler bucket.DeleteSelectedReplicationRulesHandler
+	// ServiceAccountDeleteServiceAccountHandler sets the operation handler for the delete service account operation
+	ServiceAccountDeleteServiceAccountHandler service_account.DeleteServiceAccountHandler
+	// BucketDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
+	BucketDisableBucketEncryptionHandler bucket.DisableBucketEncryptionHandler
+	// ObjectDownloadObjectHandler sets the operation handler for the download object operation
+	ObjectDownloadObjectHandler object.DownloadObjectHandler
+	// TieringEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
+	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
+	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
+	BucketEnableBucketEncryptionHandler bucket.EnableBucketEncryptionHandler
+	// BucketGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
+	BucketGetBucketEncryptionInfoHandler bucket.GetBucketEncryptionInfoHandler
+	// BucketGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
+	BucketGetBucketLifecycleHandler bucket.GetBucketLifecycleHandler
+	// BucketGetBucketObjectLockingStatusHandler sets the operation handler for the get bucket object locking status operation
+	BucketGetBucketObjectLockingStatusHandler bucket.GetBucketObjectLockingStatusHandler
+	// BucketGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
+	BucketGetBucketQuotaHandler bucket.GetBucketQuotaHandler
+	// BucketGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
+	BucketGetBucketReplicationHandler bucket.GetBucketReplicationHandler
+	// BucketGetBucketReplicationRuleHandler sets the operation handler for the get bucket replication rule operation
+	BucketGetBucketReplicationRuleHandler bucket.GetBucketReplicationRuleHandler
+	// BucketGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
+	BucketGetBucketRetentionConfigHandler bucket.GetBucketRetentionConfigHandler
+	// BucketGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
+	BucketGetBucketRewindHandler bucket.GetBucketRewindHandler
+	// BucketGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
+	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
+	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
+	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
+	// ServiceAccountGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
+	ServiceAccountGetServiceAccountPolicyHandler service_account.GetServiceAccountPolicyHandler
+	// SiteReplicationGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
+	SiteReplicationGetSiteReplicationInfoHandler site_replication.GetSiteReplicationInfoHandler
+	// SiteReplicationGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
+	SiteReplicationGetSiteReplicationStatusHandler site_replication.GetSiteReplicationStatusHandler
+	// TieringGetTierHandler sets the operation handler for the get tier operation
+	TieringGetTierHandler tiering.GetTierHandler
+	// UserGetUserInfoHandler sets the operation handler for the get user info operation
+	UserGetUserInfoHandler user.GetUserInfoHandler
+	// GroupGroupInfoHandler sets the operation handler for the group info operation
+	GroupGroupInfoHandler group.GroupInfoHandler
+	// InspectInspectHandler sets the operation handler for the inspect operation
+	InspectInspectHandler inspect.InspectHandler
+	// UserListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
+	UserListAUserServiceAccountsHandler user.ListAUserServiceAccountsHandler
+	// BucketListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
+	BucketListAccessRulesWithBucketHandler bucket.ListAccessRulesWithBucketHandler
+	// BucketListBucketEventsHandler sets the operation handler for the list bucket events operation
+	BucketListBucketEventsHandler bucket.ListBucketEventsHandler
+	// BucketListBucketsHandler sets the operation handler for the list buckets operation
+	BucketListBucketsHandler bucket.ListBucketsHandler
+	// ConfigurationListConfigHandler sets the operation handler for the list config operation
+	ConfigurationListConfigHandler configuration.ListConfigHandler
+	// BucketListExternalBucketsHandler sets the operation handler for the list external buckets operation
+	BucketListExternalBucketsHandler bucket.ListExternalBucketsHandler
+	// GroupListGroupsHandler sets the operation handler for the list groups operation
+	GroupListGroupsHandler group.ListGroupsHandler
+	// PolicyListGroupsForPolicyHandler sets the operation handler for the list groups for policy operation
+	PolicyListGroupsForPolicyHandler policy.ListGroupsForPolicyHandler
+	// SystemListNodesHandler sets the operation handler for the list nodes operation
+	SystemListNodesHandler system.ListNodesHandler
+	// ObjectListObjectsHandler sets the operation handler for the list objects operation
+	ObjectListObjectsHandler object.ListObjectsHandler
+	// PolicyListPoliciesHandler sets the operation handler for the list policies operation
+	PolicyListPoliciesHandler policy.ListPoliciesHandler
+	// BucketListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
+	BucketListPoliciesWithBucketHandler bucket.ListPoliciesWithBucketHandler
+	// BucketListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
+	BucketListRemoteBucketsHandler bucket.ListRemoteBucketsHandler
+	// ServiceAccountListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
+	ServiceAccountListUserServiceAccountsHandler service_account.ListUserServiceAccountsHandler
+	// UserListUsersHandler sets the operation handler for the list users operation
+	UserListUsersHandler user.ListUsersHandler
+	// PolicyListUsersForPolicyHandler sets the operation handler for the list users for policy operation
+	PolicyListUsersForPolicyHandler policy.ListUsersForPolicyHandler
+	// BucketListUsersWithAccessToBucketHandler sets the operation handler for the list users with access to bucket operation
+	BucketListUsersWithAccessToBucketHandler bucket.ListUsersWithAccessToBucketHandler
+	// LoggingLogSearchHandler sets the operation handler for the log search operation
+	LoggingLogSearchHandler logging.LogSearchHandler
+	// AuthLoginHandler sets the operation handler for the login operation
+	AuthLoginHandler auth.LoginHandler
+	// AuthLoginDetailHandler sets the operation handler for the login detail operation
+	AuthLoginDetailHandler auth.LoginDetailHandler
+	// AuthLoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
+	AuthLoginOauth2AuthHandler auth.LoginOauth2AuthHandler
+	// AuthLogoutHandler sets the operation handler for the logout operation
+	AuthLogoutHandler auth.LogoutHandler
+	// BucketMakeBucketHandler sets the operation handler for the make bucket operation
+	BucketMakeBucketHandler bucket.MakeBucketHandler
+	// ConfigurationNotificationEndpointListHandler sets the operation handler for the notification endpoint list operation
+	ConfigurationNotificationEndpointListHandler configuration.NotificationEndpointListHandler
+	// PolicyPolicyInfoHandler sets the operation handler for the policy info operation
+	PolicyPolicyInfoHandler policy.PolicyInfoHandler
+	// ObjectPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
+	ObjectPostBucketsBucketNameObjectsUploadHandler object.PostBucketsBucketNameObjectsUploadHandler
+	// ProfileProfilingStartHandler sets the operation handler for the profiling start operation
+	ProfileProfilingStartHandler profile.ProfilingStartHandler
+	// ProfileProfilingStopHandler sets the operation handler for the profiling stop operation
+	ProfileProfilingStopHandler profile.ProfilingStopHandler
+	// BucketPutBucketTagsHandler sets the operation handler for the put bucket tags operation
+	BucketPutBucketTagsHandler bucket.PutBucketTagsHandler
+	// ObjectPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
+	ObjectPutObjectLegalHoldHandler object.PutObjectLegalHoldHandler
+	// ObjectPutObjectRestoreHandler sets the operation handler for the put object restore operation
+	ObjectPutObjectRestoreHandler object.PutObjectRestoreHandler
+	// ObjectPutObjectRetentionHandler sets the operation handler for the put object retention operation
+	ObjectPutObjectRetentionHandler object.PutObjectRetentionHandler
+	// ObjectPutObjectTagsHandler sets the operation handler for the put object tags operation
+	ObjectPutObjectTagsHandler object.PutObjectTagsHandler
+	// BucketRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
+	BucketRemoteBucketDetailsHandler bucket.RemoteBucketDetailsHandler
+	// GroupRemoveGroupHandler sets the operation handler for the remove group operation
+	GroupRemoveGroupHandler group.RemoveGroupHandler
+	// PolicyRemovePolicyHandler sets the operation handler for the remove policy operation
+	PolicyRemovePolicyHandler policy.RemovePolicyHandler
+	// UserRemoveUserHandler sets the operation handler for the remove user operation
+	UserRemoveUserHandler user.RemoveUserHandler
+	// ConfigurationResetConfigHandler sets the operation handler for the reset config operation
+	ConfigurationResetConfigHandler configuration.ResetConfigHandler
+	// ServiceRestartServiceHandler sets the operation handler for the restart service operation
+	ServiceRestartServiceHandler service.RestartServiceHandler
+	// AuthSessionCheckHandler sets the operation handler for the session check operation
+	AuthSessionCheckHandler auth.SessionCheckHandler
+	// BucketSetAccessRuleWithBucketHandler sets the operation handler for the set access rule with bucket operation
+	BucketSetAccessRuleWithBucketHandler bucket.SetAccessRuleWithBucketHandler
+	// BucketSetBucketQuotaHandler sets the operation handler for the set bucket quota operation
+	BucketSetBucketQuotaHandler bucket.SetBucketQuotaHandler
+	// BucketSetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
+	BucketSetBucketRetentionConfigHandler bucket.SetBucketRetentionConfigHandler
+	// BucketSetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
+	BucketSetBucketVersioningHandler bucket.SetBucketVersioningHandler
+	// ConfigurationSetConfigHandler sets the operation handler for the set config operation
+	ConfigurationSetConfigHandler configuration.SetConfigHandler
+	// BucketSetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
+	BucketSetMultiBucketReplicationHandler bucket.SetMultiBucketReplicationHandler
+	// PolicySetPolicyHandler sets the operation handler for the set policy operation
+	PolicySetPolicyHandler policy.SetPolicyHandler
+	// PolicySetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
+	PolicySetPolicyMultipleHandler policy.SetPolicyMultipleHandler
+	// ServiceAccountSetServiceAccountPolicyHandler sets the operation handler for the set service account policy operation
+	ServiceAccountSetServiceAccountPolicyHandler service_account.SetServiceAccountPolicyHandler
+	// ObjectShareObjectHandler sets the operation handler for the share object operation
+	ObjectShareObjectHandler object.ShareObjectHandler
+	// SiteReplicationSiteReplicationEditHandler sets the operation handler for the site replication edit operation
+	SiteReplicationSiteReplicationEditHandler site_replication.SiteReplicationEditHandler
+	// SiteReplicationSiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
+	SiteReplicationSiteReplicationInfoAddHandler site_replication.SiteReplicationInfoAddHandler
+	// SiteReplicationSiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
+	SiteReplicationSiteReplicationRemoveHandler site_replication.SiteReplicationRemoveHandler
+	// SubnetSubnetInfoHandler sets the operation handler for the subnet info operation
+	SubnetSubnetInfoHandler subnet.SubnetInfoHandler
+	// SubnetSubnetLoginHandler sets the operation handler for the subnet login operation
+	SubnetSubnetLoginHandler subnet.SubnetLoginHandler
+	// SubnetSubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
+	SubnetSubnetLoginMFAHandler subnet.SubnetLoginMFAHandler
+	// SubnetSubnetRegTokenHandler sets the operation handler for the subnet reg token operation
+	SubnetSubnetRegTokenHandler subnet.SubnetRegTokenHandler
+	// SubnetSubnetRegisterHandler sets the operation handler for the subnet register operation
+	SubnetSubnetRegisterHandler subnet.SubnetRegisterHandler
+	// TieringTiersListHandler sets the operation handler for the tiers list operation
+	TieringTiersListHandler tiering.TiersListHandler
+	// BucketUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
+	BucketUpdateBucketLifecycleHandler bucket.UpdateBucketLifecycleHandler
+	// GroupUpdateGroupHandler sets the operation handler for the update group operation
+	GroupUpdateGroupHandler group.UpdateGroupHandler
+	// BucketUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
+	BucketUpdateMultiBucketReplicationHandler bucket.UpdateMultiBucketReplicationHandler
+	// UserUpdateUserGroupsHandler sets the operation handler for the update user groups operation
+	UserUpdateUserGroupsHandler user.UpdateUserGroupsHandler
+	// UserUpdateUserInfoHandler sets the operation handler for the update user info operation
+	UserUpdateUserInfoHandler user.UpdateUserInfoHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -822,368 +837,368 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "KeyAuth")
 	}
 
-	if o.UserAPIAccountChangePasswordHandler == nil {
-		unregistered = append(unregistered, "user_api.AccountChangePasswordHandler")
+	if o.AccountAccountChangePasswordHandler == nil {
+		unregistered = append(unregistered, "account.AccountChangePasswordHandler")
 	}
-	if o.UserAPIAddBucketLifecycleHandler == nil {
-		unregistered = append(unregistered, "user_api.AddBucketLifecycleHandler")
+	if o.BucketAddBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "bucket.AddBucketLifecycleHandler")
 	}
-	if o.AdminAPIAddGroupHandler == nil {
-		unregistered = append(unregistered, "admin_api.AddGroupHandler")
+	if o.GroupAddGroupHandler == nil {
+		unregistered = append(unregistered, "group.AddGroupHandler")
 	}
-	if o.UserAPIAddMultiBucketLifecycleHandler == nil {
-		unregistered = append(unregistered, "user_api.AddMultiBucketLifecycleHandler")
+	if o.BucketAddMultiBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "bucket.AddMultiBucketLifecycleHandler")
 	}
-	if o.AdminAPIAddNotificationEndpointHandler == nil {
-		unregistered = append(unregistered, "admin_api.AddNotificationEndpointHandler")
+	if o.ConfigurationAddNotificationEndpointHandler == nil {
+		unregistered = append(unregistered, "configuration.AddNotificationEndpointHandler")
 	}
-	if o.AdminAPIAddPolicyHandler == nil {
-		unregistered = append(unregistered, "admin_api.AddPolicyHandler")
+	if o.PolicyAddPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.AddPolicyHandler")
 	}
-	if o.UserAPIAddRemoteBucketHandler == nil {
-		unregistered = append(unregistered, "user_api.AddRemoteBucketHandler")
+	if o.BucketAddRemoteBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.AddRemoteBucketHandler")
 	}
-	if o.AdminAPIAddTierHandler == nil {
-		unregistered = append(unregistered, "admin_api.AddTierHandler")
+	if o.TieringAddTierHandler == nil {
+		unregistered = append(unregistered, "tiering.AddTierHandler")
 	}
-	if o.AdminAPIAddUserHandler == nil {
-		unregistered = append(unregistered, "admin_api.AddUserHandler")
+	if o.UserAddUserHandler == nil {
+		unregistered = append(unregistered, "user.AddUserHandler")
 	}
-	if o.AdminAPIAdminInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.AdminInfoHandler")
+	if o.SystemAdminInfoHandler == nil {
+		unregistered = append(unregistered, "system.AdminInfoHandler")
 	}
-	if o.AdminAPIArnListHandler == nil {
-		unregistered = append(unregistered, "admin_api.ArnListHandler")
+	if o.SystemArnListHandler == nil {
+		unregistered = append(unregistered, "system.ArnListHandler")
 	}
-	if o.UserAPIBucketInfoHandler == nil {
-		unregistered = append(unregistered, "user_api.BucketInfoHandler")
+	if o.BucketBucketInfoHandler == nil {
+		unregistered = append(unregistered, "bucket.BucketInfoHandler")
 	}
-	if o.UserAPIBucketSetPolicyHandler == nil {
-		unregistered = append(unregistered, "user_api.BucketSetPolicyHandler")
+	if o.BucketBucketSetPolicyHandler == nil {
+		unregistered = append(unregistered, "bucket.BucketSetPolicyHandler")
 	}
-	if o.AdminAPIBulkUpdateUsersGroupsHandler == nil {
-		unregistered = append(unregistered, "admin_api.BulkUpdateUsersGroupsHandler")
+	if o.UserBulkUpdateUsersGroupsHandler == nil {
+		unregistered = append(unregistered, "user.BulkUpdateUsersGroupsHandler")
 	}
-	if o.AdminAPIChangeUserPasswordHandler == nil {
-		unregistered = append(unregistered, "admin_api.ChangeUserPasswordHandler")
+	if o.AccountChangeUserPasswordHandler == nil {
+		unregistered = append(unregistered, "account.ChangeUserPasswordHandler")
 	}
-	if o.UserAPICheckMinIOVersionHandler == nil {
-		unregistered = append(unregistered, "user_api.CheckMinIOVersionHandler")
+	if o.SystemCheckMinIOVersionHandler == nil {
+		unregistered = append(unregistered, "system.CheckMinIOVersionHandler")
 	}
-	if o.AdminAPIConfigInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
+	if o.ConfigurationConfigInfoHandler == nil {
+		unregistered = append(unregistered, "configuration.ConfigInfoHandler")
 	}
-	if o.AdminAPICreateAUserServiceAccountHandler == nil {
-		unregistered = append(unregistered, "admin_api.CreateAUserServiceAccountHandler")
+	if o.UserCreateAUserServiceAccountHandler == nil {
+		unregistered = append(unregistered, "user.CreateAUserServiceAccountHandler")
 	}
-	if o.UserAPICreateBucketEventHandler == nil {
-		unregistered = append(unregistered, "user_api.CreateBucketEventHandler")
+	if o.BucketCreateBucketEventHandler == nil {
+		unregistered = append(unregistered, "bucket.CreateBucketEventHandler")
 	}
-	if o.UserAPICreateServiceAccountHandler == nil {
-		unregistered = append(unregistered, "user_api.CreateServiceAccountHandler")
+	if o.ServiceAccountCreateServiceAccountHandler == nil {
+		unregistered = append(unregistered, "service_account.CreateServiceAccountHandler")
 	}
-	if o.AdminAPICreateServiceAccountCredentialsHandler == nil {
-		unregistered = append(unregistered, "admin_api.CreateServiceAccountCredentialsHandler")
+	if o.UserCreateServiceAccountCredentialsHandler == nil {
+		unregistered = append(unregistered, "user.CreateServiceAccountCredentialsHandler")
 	}
-	if o.AdminAPICreateServiceAccountCredsHandler == nil {
-		unregistered = append(unregistered, "admin_api.CreateServiceAccountCredsHandler")
+	if o.ServiceAccountCreateServiceAccountCredsHandler == nil {
+		unregistered = append(unregistered, "service_account.CreateServiceAccountCredsHandler")
 	}
-	if o.AdminAPIDashboardWidgetDetailsHandler == nil {
-		unregistered = append(unregistered, "admin_api.DashboardWidgetDetailsHandler")
+	if o.SystemDashboardWidgetDetailsHandler == nil {
+		unregistered = append(unregistered, "system.DashboardWidgetDetailsHandler")
 	}
-	if o.AdminAPIDeleteAccessRuleWithBucketHandler == nil {
-		unregistered = append(unregistered, "admin_api.DeleteAccessRuleWithBucketHandler")
+	if o.BucketDeleteAccessRuleWithBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteAccessRuleWithBucketHandler")
 	}
-	if o.UserAPIDeleteAllReplicationRulesHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteAllReplicationRulesHandler")
+	if o.BucketDeleteAllReplicationRulesHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteAllReplicationRulesHandler")
 	}
-	if o.UserAPIDeleteBucketHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteBucketHandler")
+	if o.BucketDeleteBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteBucketHandler")
 	}
-	if o.UserAPIDeleteBucketEventHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
+	if o.BucketDeleteBucketEventHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteBucketEventHandler")
 	}
-	if o.UserAPIDeleteBucketLifecycleRuleHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteBucketLifecycleRuleHandler")
+	if o.BucketDeleteBucketLifecycleRuleHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteBucketLifecycleRuleHandler")
 	}
-	if o.UserAPIDeleteBucketReplicationRuleHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteBucketReplicationRuleHandler")
+	if o.BucketDeleteBucketReplicationRuleHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteBucketReplicationRuleHandler")
 	}
-	if o.UserAPIDeleteMultipleObjectsHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteMultipleObjectsHandler")
+	if o.ObjectDeleteMultipleObjectsHandler == nil {
+		unregistered = append(unregistered, "object.DeleteMultipleObjectsHandler")
 	}
-	if o.UserAPIDeleteMultipleServiceAccountsHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteMultipleServiceAccountsHandler")
+	if o.ServiceAccountDeleteMultipleServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "service_account.DeleteMultipleServiceAccountsHandler")
 	}
-	if o.UserAPIDeleteObjectHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
+	if o.ObjectDeleteObjectHandler == nil {
+		unregistered = append(unregistered, "object.DeleteObjectHandler")
 	}
-	if o.UserAPIDeleteObjectRetentionHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteObjectRetentionHandler")
+	if o.ObjectDeleteObjectRetentionHandler == nil {
+		unregistered = append(unregistered, "object.DeleteObjectRetentionHandler")
 	}
-	if o.UserAPIDeleteRemoteBucketHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
+	if o.BucketDeleteRemoteBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteRemoteBucketHandler")
 	}
-	if o.UserAPIDeleteSelectedReplicationRulesHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteSelectedReplicationRulesHandler")
+	if o.BucketDeleteSelectedReplicationRulesHandler == nil {
+		unregistered = append(unregistered, "bucket.DeleteSelectedReplicationRulesHandler")
 	}
-	if o.UserAPIDeleteServiceAccountHandler == nil {
-		unregistered = append(unregistered, "user_api.DeleteServiceAccountHandler")
+	if o.ServiceAccountDeleteServiceAccountHandler == nil {
+		unregistered = append(unregistered, "service_account.DeleteServiceAccountHandler")
 	}
-	if o.UserAPIDisableBucketEncryptionHandler == nil {
-		unregistered = append(unregistered, "user_api.DisableBucketEncryptionHandler")
+	if o.BucketDisableBucketEncryptionHandler == nil {
+		unregistered = append(unregistered, "bucket.DisableBucketEncryptionHandler")
 	}
-	if o.UserAPIDownloadObjectHandler == nil {
-		unregistered = append(unregistered, "user_api.DownloadObjectHandler")
+	if o.ObjectDownloadObjectHandler == nil {
+		unregistered = append(unregistered, "object.DownloadObjectHandler")
 	}
-	if o.AdminAPIEditTierCredentialsHandler == nil {
-		unregistered = append(unregistered, "admin_api.EditTierCredentialsHandler")
+	if o.TieringEditTierCredentialsHandler == nil {
+		unregistered = append(unregistered, "tiering.EditTierCredentialsHandler")
 	}
-	if o.UserAPIEnableBucketEncryptionHandler == nil {
-		unregistered = append(unregistered, "user_api.EnableBucketEncryptionHandler")
+	if o.BucketEnableBucketEncryptionHandler == nil {
+		unregistered = append(unregistered, "bucket.EnableBucketEncryptionHandler")
 	}
-	if o.UserAPIGetBucketEncryptionInfoHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketEncryptionInfoHandler")
+	if o.BucketGetBucketEncryptionInfoHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketEncryptionInfoHandler")
 	}
-	if o.UserAPIGetBucketLifecycleHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketLifecycleHandler")
+	if o.BucketGetBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketLifecycleHandler")
 	}
-	if o.UserAPIGetBucketObjectLockingStatusHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketObjectLockingStatusHandler")
+	if o.BucketGetBucketObjectLockingStatusHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketObjectLockingStatusHandler")
 	}
-	if o.UserAPIGetBucketQuotaHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketQuotaHandler")
+	if o.BucketGetBucketQuotaHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketQuotaHandler")
 	}
-	if o.UserAPIGetBucketReplicationHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
+	if o.BucketGetBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketReplicationHandler")
 	}
-	if o.UserAPIGetBucketReplicationRuleHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketReplicationRuleHandler")
+	if o.BucketGetBucketReplicationRuleHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketReplicationRuleHandler")
 	}
-	if o.UserAPIGetBucketRetentionConfigHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketRetentionConfigHandler")
+	if o.BucketGetBucketRetentionConfigHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketRetentionConfigHandler")
 	}
-	if o.UserAPIGetBucketRewindHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketRewindHandler")
+	if o.BucketGetBucketRewindHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketRewindHandler")
 	}
-	if o.UserAPIGetBucketVersioningHandler == nil {
-		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
+	if o.BucketGetBucketVersioningHandler == nil {
+		unregistered = append(unregistered, "bucket.GetBucketVersioningHandler")
 	}
-	if o.UserAPIGetObjectMetadataHandler == nil {
-		unregistered = append(unregistered, "user_api.GetObjectMetadataHandler")
+	if o.ObjectGetObjectMetadataHandler == nil {
+		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
 	}
-	if o.UserAPIGetServiceAccountPolicyHandler == nil {
-		unregistered = append(unregistered, "user_api.GetServiceAccountPolicyHandler")
+	if o.ServiceAccountGetServiceAccountPolicyHandler == nil {
+		unregistered = append(unregistered, "service_account.GetServiceAccountPolicyHandler")
 	}
-	if o.AdminAPIGetSiteReplicationInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetSiteReplicationInfoHandler")
+	if o.SiteReplicationGetSiteReplicationInfoHandler == nil {
+		unregistered = append(unregistered, "site_replication.GetSiteReplicationInfoHandler")
 	}
-	if o.AdminAPIGetSiteReplicationStatusHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetSiteReplicationStatusHandler")
+	if o.SiteReplicationGetSiteReplicationStatusHandler == nil {
+		unregistered = append(unregistered, "site_replication.GetSiteReplicationStatusHandler")
 	}
-	if o.AdminAPIGetTierHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetTierHandler")
+	if o.TieringGetTierHandler == nil {
+		unregistered = append(unregistered, "tiering.GetTierHandler")
 	}
-	if o.AdminAPIGetUserInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
+	if o.UserGetUserInfoHandler == nil {
+		unregistered = append(unregistered, "user.GetUserInfoHandler")
 	}
-	if o.AdminAPIGroupInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
+	if o.GroupGroupInfoHandler == nil {
+		unregistered = append(unregistered, "group.GroupInfoHandler")
 	}
-	if o.AdminAPIInspectHandler == nil {
-		unregistered = append(unregistered, "admin_api.InspectHandler")
+	if o.InspectInspectHandler == nil {
+		unregistered = append(unregistered, "inspect.InspectHandler")
 	}
-	if o.AdminAPIListAUserServiceAccountsHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListAUserServiceAccountsHandler")
+	if o.UserListAUserServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "user.ListAUserServiceAccountsHandler")
 	}
-	if o.AdminAPIListAccessRulesWithBucketHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListAccessRulesWithBucketHandler")
+	if o.BucketListAccessRulesWithBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.ListAccessRulesWithBucketHandler")
 	}
-	if o.UserAPIListBucketEventsHandler == nil {
-		unregistered = append(unregistered, "user_api.ListBucketEventsHandler")
+	if o.BucketListBucketEventsHandler == nil {
+		unregistered = append(unregistered, "bucket.ListBucketEventsHandler")
 	}
-	if o.UserAPIListBucketsHandler == nil {
-		unregistered = append(unregistered, "user_api.ListBucketsHandler")
+	if o.BucketListBucketsHandler == nil {
+		unregistered = append(unregistered, "bucket.ListBucketsHandler")
 	}
-	if o.AdminAPIListConfigHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListConfigHandler")
+	if o.ConfigurationListConfigHandler == nil {
+		unregistered = append(unregistered, "configuration.ListConfigHandler")
 	}
-	if o.UserAPIListExternalBucketsHandler == nil {
-		unregistered = append(unregistered, "user_api.ListExternalBucketsHandler")
+	if o.BucketListExternalBucketsHandler == nil {
+		unregistered = append(unregistered, "bucket.ListExternalBucketsHandler")
 	}
-	if o.AdminAPIListGroupsHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListGroupsHandler")
+	if o.GroupListGroupsHandler == nil {
+		unregistered = append(unregistered, "group.ListGroupsHandler")
 	}
-	if o.AdminAPIListGroupsForPolicyHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListGroupsForPolicyHandler")
+	if o.PolicyListGroupsForPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.ListGroupsForPolicyHandler")
 	}
-	if o.AdminAPIListNodesHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListNodesHandler")
+	if o.SystemListNodesHandler == nil {
+		unregistered = append(unregistered, "system.ListNodesHandler")
 	}
-	if o.UserAPIListObjectsHandler == nil {
-		unregistered = append(unregistered, "user_api.ListObjectsHandler")
+	if o.ObjectListObjectsHandler == nil {
+		unregistered = append(unregistered, "object.ListObjectsHandler")
 	}
-	if o.AdminAPIListPoliciesHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
+	if o.PolicyListPoliciesHandler == nil {
+		unregistered = append(unregistered, "policy.ListPoliciesHandler")
 	}
-	if o.AdminAPIListPoliciesWithBucketHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListPoliciesWithBucketHandler")
+	if o.BucketListPoliciesWithBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.ListPoliciesWithBucketHandler")
 	}
-	if o.UserAPIListRemoteBucketsHandler == nil {
-		unregistered = append(unregistered, "user_api.ListRemoteBucketsHandler")
+	if o.BucketListRemoteBucketsHandler == nil {
+		unregistered = append(unregistered, "bucket.ListRemoteBucketsHandler")
 	}
-	if o.UserAPIListUserServiceAccountsHandler == nil {
-		unregistered = append(unregistered, "user_api.ListUserServiceAccountsHandler")
+	if o.ServiceAccountListUserServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "service_account.ListUserServiceAccountsHandler")
 	}
-	if o.AdminAPIListUsersHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListUsersHandler")
+	if o.UserListUsersHandler == nil {
+		unregistered = append(unregistered, "user.ListUsersHandler")
 	}
-	if o.AdminAPIListUsersForPolicyHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListUsersForPolicyHandler")
+	if o.PolicyListUsersForPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.ListUsersForPolicyHandler")
 	}
-	if o.AdminAPIListUsersWithAccessToBucketHandler == nil {
-		unregistered = append(unregistered, "admin_api.ListUsersWithAccessToBucketHandler")
+	if o.BucketListUsersWithAccessToBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.ListUsersWithAccessToBucketHandler")
 	}
-	if o.UserAPILogSearchHandler == nil {
-		unregistered = append(unregistered, "user_api.LogSearchHandler")
+	if o.LoggingLogSearchHandler == nil {
+		unregistered = append(unregistered, "logging.LogSearchHandler")
 	}
-	if o.UserAPILoginHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginHandler")
+	if o.AuthLoginHandler == nil {
+		unregistered = append(unregistered, "auth.LoginHandler")
 	}
-	if o.UserAPILoginDetailHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginDetailHandler")
+	if o.AuthLoginDetailHandler == nil {
+		unregistered = append(unregistered, "auth.LoginDetailHandler")
 	}
-	if o.UserAPILoginOauth2AuthHandler == nil {
-		unregistered = append(unregistered, "user_api.LoginOauth2AuthHandler")
+	if o.AuthLoginOauth2AuthHandler == nil {
+		unregistered = append(unregistered, "auth.LoginOauth2AuthHandler")
 	}
-	if o.UserAPILogoutHandler == nil {
-		unregistered = append(unregistered, "user_api.LogoutHandler")
+	if o.AuthLogoutHandler == nil {
+		unregistered = append(unregistered, "auth.LogoutHandler")
 	}
-	if o.UserAPIMakeBucketHandler == nil {
-		unregistered = append(unregistered, "user_api.MakeBucketHandler")
+	if o.BucketMakeBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.MakeBucketHandler")
 	}
-	if o.AdminAPINotificationEndpointListHandler == nil {
-		unregistered = append(unregistered, "admin_api.NotificationEndpointListHandler")
+	if o.ConfigurationNotificationEndpointListHandler == nil {
+		unregistered = append(unregistered, "configuration.NotificationEndpointListHandler")
 	}
-	if o.AdminAPIPolicyInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.PolicyInfoHandler")
+	if o.PolicyPolicyInfoHandler == nil {
+		unregistered = append(unregistered, "policy.PolicyInfoHandler")
 	}
-	if o.UserAPIPostBucketsBucketNameObjectsUploadHandler == nil {
-		unregistered = append(unregistered, "user_api.PostBucketsBucketNameObjectsUploadHandler")
+	if o.ObjectPostBucketsBucketNameObjectsUploadHandler == nil {
+		unregistered = append(unregistered, "object.PostBucketsBucketNameObjectsUploadHandler")
 	}
-	if o.AdminAPIProfilingStartHandler == nil {
-		unregistered = append(unregistered, "admin_api.ProfilingStartHandler")
+	if o.ProfileProfilingStartHandler == nil {
+		unregistered = append(unregistered, "profile.ProfilingStartHandler")
 	}
-	if o.AdminAPIProfilingStopHandler == nil {
-		unregistered = append(unregistered, "admin_api.ProfilingStopHandler")
+	if o.ProfileProfilingStopHandler == nil {
+		unregistered = append(unregistered, "profile.ProfilingStopHandler")
 	}
-	if o.UserAPIPutBucketTagsHandler == nil {
-		unregistered = append(unregistered, "user_api.PutBucketTagsHandler")
+	if o.BucketPutBucketTagsHandler == nil {
+		unregistered = append(unregistered, "bucket.PutBucketTagsHandler")
 	}
-	if o.UserAPIPutObjectLegalHoldHandler == nil {
-		unregistered = append(unregistered, "user_api.PutObjectLegalHoldHandler")
+	if o.ObjectPutObjectLegalHoldHandler == nil {
+		unregistered = append(unregistered, "object.PutObjectLegalHoldHandler")
 	}
-	if o.UserAPIPutObjectRestoreHandler == nil {
-		unregistered = append(unregistered, "user_api.PutObjectRestoreHandler")
+	if o.ObjectPutObjectRestoreHandler == nil {
+		unregistered = append(unregistered, "object.PutObjectRestoreHandler")
 	}
-	if o.UserAPIPutObjectRetentionHandler == nil {
-		unregistered = append(unregistered, "user_api.PutObjectRetentionHandler")
+	if o.ObjectPutObjectRetentionHandler == nil {
+		unregistered = append(unregistered, "object.PutObjectRetentionHandler")
 	}
-	if o.UserAPIPutObjectTagsHandler == nil {
-		unregistered = append(unregistered, "user_api.PutObjectTagsHandler")
+	if o.ObjectPutObjectTagsHandler == nil {
+		unregistered = append(unregistered, "object.PutObjectTagsHandler")
 	}
-	if o.UserAPIRemoteBucketDetailsHandler == nil {
-		unregistered = append(unregistered, "user_api.RemoteBucketDetailsHandler")
+	if o.BucketRemoteBucketDetailsHandler == nil {
+		unregistered = append(unregistered, "bucket.RemoteBucketDetailsHandler")
 	}
-	if o.AdminAPIRemoveGroupHandler == nil {
-		unregistered = append(unregistered, "admin_api.RemoveGroupHandler")
+	if o.GroupRemoveGroupHandler == nil {
+		unregistered = append(unregistered, "group.RemoveGroupHandler")
 	}
-	if o.AdminAPIRemovePolicyHandler == nil {
-		unregistered = append(unregistered, "admin_api.RemovePolicyHandler")
+	if o.PolicyRemovePolicyHandler == nil {
+		unregistered = append(unregistered, "policy.RemovePolicyHandler")
 	}
-	if o.AdminAPIRemoveUserHandler == nil {
-		unregistered = append(unregistered, "admin_api.RemoveUserHandler")
+	if o.UserRemoveUserHandler == nil {
+		unregistered = append(unregistered, "user.RemoveUserHandler")
 	}
-	if o.AdminAPIResetConfigHandler == nil {
-		unregistered = append(unregistered, "admin_api.ResetConfigHandler")
+	if o.ConfigurationResetConfigHandler == nil {
+		unregistered = append(unregistered, "configuration.ResetConfigHandler")
 	}
-	if o.AdminAPIRestartServiceHandler == nil {
-		unregistered = append(unregistered, "admin_api.RestartServiceHandler")
+	if o.ServiceRestartServiceHandler == nil {
+		unregistered = append(unregistered, "service.RestartServiceHandler")
 	}
-	if o.UserAPISessionCheckHandler == nil {
-		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	if o.AuthSessionCheckHandler == nil {
+		unregistered = append(unregistered, "auth.SessionCheckHandler")
 	}
-	if o.AdminAPISetAccessRuleWithBucketHandler == nil {
-		unregistered = append(unregistered, "admin_api.SetAccessRuleWithBucketHandler")
+	if o.BucketSetAccessRuleWithBucketHandler == nil {
+		unregistered = append(unregistered, "bucket.SetAccessRuleWithBucketHandler")
 	}
-	if o.UserAPISetBucketQuotaHandler == nil {
-		unregistered = append(unregistered, "user_api.SetBucketQuotaHandler")
+	if o.BucketSetBucketQuotaHandler == nil {
+		unregistered = append(unregistered, "bucket.SetBucketQuotaHandler")
 	}
-	if o.UserAPISetBucketRetentionConfigHandler == nil {
-		unregistered = append(unregistered, "user_api.SetBucketRetentionConfigHandler")
+	if o.BucketSetBucketRetentionConfigHandler == nil {
+		unregistered = append(unregistered, "bucket.SetBucketRetentionConfigHandler")
 	}
-	if o.UserAPISetBucketVersioningHandler == nil {
-		unregistered = append(unregistered, "user_api.SetBucketVersioningHandler")
+	if o.BucketSetBucketVersioningHandler == nil {
+		unregistered = append(unregistered, "bucket.SetBucketVersioningHandler")
 	}
-	if o.AdminAPISetConfigHandler == nil {
-		unregistered = append(unregistered, "admin_api.SetConfigHandler")
+	if o.ConfigurationSetConfigHandler == nil {
+		unregistered = append(unregistered, "configuration.SetConfigHandler")
 	}
-	if o.UserAPISetMultiBucketReplicationHandler == nil {
-		unregistered = append(unregistered, "user_api.SetMultiBucketReplicationHandler")
+	if o.BucketSetMultiBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "bucket.SetMultiBucketReplicationHandler")
 	}
-	if o.AdminAPISetPolicyHandler == nil {
-		unregistered = append(unregistered, "admin_api.SetPolicyHandler")
+	if o.PolicySetPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.SetPolicyHandler")
 	}
-	if o.AdminAPISetPolicyMultipleHandler == nil {
-		unregistered = append(unregistered, "admin_api.SetPolicyMultipleHandler")
+	if o.PolicySetPolicyMultipleHandler == nil {
+		unregistered = append(unregistered, "policy.SetPolicyMultipleHandler")
 	}
-	if o.UserAPISetServiceAccountPolicyHandler == nil {
-		unregistered = append(unregistered, "user_api.SetServiceAccountPolicyHandler")
+	if o.ServiceAccountSetServiceAccountPolicyHandler == nil {
+		unregistered = append(unregistered, "service_account.SetServiceAccountPolicyHandler")
 	}
-	if o.UserAPIShareObjectHandler == nil {
-		unregistered = append(unregistered, "user_api.ShareObjectHandler")
+	if o.ObjectShareObjectHandler == nil {
+		unregistered = append(unregistered, "object.ShareObjectHandler")
 	}
-	if o.AdminAPISiteReplicationEditHandler == nil {
-		unregistered = append(unregistered, "admin_api.SiteReplicationEditHandler")
+	if o.SiteReplicationSiteReplicationEditHandler == nil {
+		unregistered = append(unregistered, "site_replication.SiteReplicationEditHandler")
 	}
-	if o.AdminAPISiteReplicationInfoAddHandler == nil {
-		unregistered = append(unregistered, "admin_api.SiteReplicationInfoAddHandler")
+	if o.SiteReplicationSiteReplicationInfoAddHandler == nil {
+		unregistered = append(unregistered, "site_replication.SiteReplicationInfoAddHandler")
 	}
-	if o.AdminAPISiteReplicationRemoveHandler == nil {
-		unregistered = append(unregistered, "admin_api.SiteReplicationRemoveHandler")
+	if o.SiteReplicationSiteReplicationRemoveHandler == nil {
+		unregistered = append(unregistered, "site_replication.SiteReplicationRemoveHandler")
 	}
-	if o.AdminAPISubnetInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubnetInfoHandler")
+	if o.SubnetSubnetInfoHandler == nil {
+		unregistered = append(unregistered, "subnet.SubnetInfoHandler")
 	}
-	if o.AdminAPISubnetLoginHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubnetLoginHandler")
+	if o.SubnetSubnetLoginHandler == nil {
+		unregistered = append(unregistered, "subnet.SubnetLoginHandler")
 	}
-	if o.AdminAPISubnetLoginMFAHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubnetLoginMFAHandler")
+	if o.SubnetSubnetLoginMFAHandler == nil {
+		unregistered = append(unregistered, "subnet.SubnetLoginMFAHandler")
 	}
-	if o.AdminAPISubnetRegTokenHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubnetRegTokenHandler")
+	if o.SubnetSubnetRegTokenHandler == nil {
+		unregistered = append(unregistered, "subnet.SubnetRegTokenHandler")
 	}
-	if o.AdminAPISubnetRegisterHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubnetRegisterHandler")
+	if o.SubnetSubnetRegisterHandler == nil {
+		unregistered = append(unregistered, "subnet.SubnetRegisterHandler")
 	}
-	if o.AdminAPITiersListHandler == nil {
-		unregistered = append(unregistered, "admin_api.TiersListHandler")
+	if o.TieringTiersListHandler == nil {
+		unregistered = append(unregistered, "tiering.TiersListHandler")
 	}
-	if o.UserAPIUpdateBucketLifecycleHandler == nil {
-		unregistered = append(unregistered, "user_api.UpdateBucketLifecycleHandler")
+	if o.BucketUpdateBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "bucket.UpdateBucketLifecycleHandler")
 	}
-	if o.AdminAPIUpdateGroupHandler == nil {
-		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
+	if o.GroupUpdateGroupHandler == nil {
+		unregistered = append(unregistered, "group.UpdateGroupHandler")
 	}
-	if o.UserAPIUpdateMultiBucketReplicationHandler == nil {
-		unregistered = append(unregistered, "user_api.UpdateMultiBucketReplicationHandler")
+	if o.BucketUpdateMultiBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "bucket.UpdateMultiBucketReplicationHandler")
 	}
-	if o.AdminAPIUpdateUserGroupsHandler == nil {
-		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
+	if o.UserUpdateUserGroupsHandler == nil {
+		unregistered = append(unregistered, "user.UpdateUserGroupsHandler")
 	}
-	if o.AdminAPIUpdateUserInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.UpdateUserInfoHandler")
+	if o.UserUpdateUserInfoHandler == nil {
+		unregistered = append(unregistered, "user.UpdateUserInfoHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -1292,487 +1307,487 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/account/change-password"] = user_api.NewAccountChangePassword(o.context, o.UserAPIAccountChangePasswordHandler)
+	o.handlers["POST"]["/account/change-password"] = account.NewAccountChangePassword(o.context, o.AccountAccountChangePasswordHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/lifecycle"] = user_api.NewAddBucketLifecycle(o.context, o.UserAPIAddBucketLifecycleHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/lifecycle"] = bucket.NewAddBucketLifecycle(o.context, o.BucketAddBucketLifecycleHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/groups"] = admin_api.NewAddGroup(o.context, o.AdminAPIAddGroupHandler)
+	o.handlers["POST"]["/groups"] = group.NewAddGroup(o.context, o.GroupAddGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/multi-lifecycle"] = user_api.NewAddMultiBucketLifecycle(o.context, o.UserAPIAddMultiBucketLifecycleHandler)
+	o.handlers["POST"]["/buckets/multi-lifecycle"] = bucket.NewAddMultiBucketLifecycle(o.context, o.BucketAddMultiBucketLifecycleHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/admin/notification_endpoints"] = admin_api.NewAddNotificationEndpoint(o.context, o.AdminAPIAddNotificationEndpointHandler)
+	o.handlers["POST"]["/admin/notification_endpoints"] = configuration.NewAddNotificationEndpoint(o.context, o.ConfigurationAddNotificationEndpointHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/policies"] = admin_api.NewAddPolicy(o.context, o.AdminAPIAddPolicyHandler)
+	o.handlers["POST"]["/policies"] = policy.NewAddPolicy(o.context, o.PolicyAddPolicyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/remote-buckets"] = user_api.NewAddRemoteBucket(o.context, o.UserAPIAddRemoteBucketHandler)
+	o.handlers["POST"]["/remote-buckets"] = bucket.NewAddRemoteBucket(o.context, o.BucketAddRemoteBucketHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/admin/tiers"] = admin_api.NewAddTier(o.context, o.AdminAPIAddTierHandler)
+	o.handlers["POST"]["/admin/tiers"] = tiering.NewAddTier(o.context, o.TieringAddTierHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/users"] = admin_api.NewAddUser(o.context, o.AdminAPIAddUserHandler)
+	o.handlers["POST"]["/users"] = user.NewAddUser(o.context, o.UserAddUserHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/info"] = admin_api.NewAdminInfo(o.context, o.AdminAPIAdminInfoHandler)
+	o.handlers["GET"]["/admin/info"] = system.NewAdminInfo(o.context, o.SystemAdminInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/arns"] = admin_api.NewArnList(o.context, o.AdminAPIArnListHandler)
+	o.handlers["GET"]["/admin/arns"] = system.NewArnList(o.context, o.SystemArnListHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{name}"] = user_api.NewBucketInfo(o.context, o.UserAPIBucketInfoHandler)
+	o.handlers["GET"]["/buckets/{name}"] = bucket.NewBucketInfo(o.context, o.BucketBucketInfoHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{name}/set-policy"] = user_api.NewBucketSetPolicy(o.context, o.UserAPIBucketSetPolicyHandler)
+	o.handlers["PUT"]["/buckets/{name}/set-policy"] = bucket.NewBucketSetPolicy(o.context, o.BucketBucketSetPolicyHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/users-groups-bulk"] = admin_api.NewBulkUpdateUsersGroups(o.context, o.AdminAPIBulkUpdateUsersGroupsHandler)
+	o.handlers["PUT"]["/users-groups-bulk"] = user.NewBulkUpdateUsersGroups(o.context, o.UserBulkUpdateUsersGroupsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/account/change-user-password"] = admin_api.NewChangeUserPassword(o.context, o.AdminAPIChangeUserPasswordHandler)
+	o.handlers["POST"]["/account/change-user-password"] = account.NewChangeUserPassword(o.context, o.AccountChangeUserPasswordHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/check-version"] = user_api.NewCheckMinIOVersion(o.context, o.UserAPICheckMinIOVersionHandler)
+	o.handlers["GET"]["/check-version"] = system.NewCheckMinIOVersion(o.context, o.SystemCheckMinIOVersionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/configs/{name}"] = admin_api.NewConfigInfo(o.context, o.AdminAPIConfigInfoHandler)
+	o.handlers["GET"]["/configs/{name}"] = configuration.NewConfigInfo(o.context, o.ConfigurationConfigInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/user/{name}/service-accounts"] = admin_api.NewCreateAUserServiceAccount(o.context, o.AdminAPICreateAUserServiceAccountHandler)
+	o.handlers["POST"]["/user/{name}/service-accounts"] = user.NewCreateAUserServiceAccount(o.context, o.UserCreateAUserServiceAccountHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/events"] = bucket.NewCreateBucketEvent(o.context, o.BucketCreateBucketEventHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/service-accounts"] = user_api.NewCreateServiceAccount(o.context, o.UserAPICreateServiceAccountHandler)
+	o.handlers["POST"]["/service-accounts"] = service_account.NewCreateServiceAccount(o.context, o.ServiceAccountCreateServiceAccountHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/user/{name}/service-account-credentials"] = admin_api.NewCreateServiceAccountCredentials(o.context, o.AdminAPICreateServiceAccountCredentialsHandler)
+	o.handlers["POST"]["/user/{name}/service-account-credentials"] = user.NewCreateServiceAccountCredentials(o.context, o.UserCreateServiceAccountCredentialsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/service-account-credentials"] = admin_api.NewCreateServiceAccountCreds(o.context, o.AdminAPICreateServiceAccountCredsHandler)
+	o.handlers["POST"]["/service-account-credentials"] = service_account.NewCreateServiceAccountCreds(o.context, o.ServiceAccountCreateServiceAccountCredsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/info/widgets/{widgetId}"] = admin_api.NewDashboardWidgetDetails(o.context, o.AdminAPIDashboardWidgetDetailsHandler)
+	o.handlers["GET"]["/admin/info/widgets/{widgetId}"] = system.NewDashboardWidgetDetails(o.context, o.SystemDashboardWidgetDetailsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/bucket/{bucket}/access-rules"] = admin_api.NewDeleteAccessRuleWithBucket(o.context, o.AdminAPIDeleteAccessRuleWithBucketHandler)
+	o.handlers["DELETE"]["/bucket/{bucket}/access-rules"] = bucket.NewDeleteAccessRuleWithBucket(o.context, o.BucketDeleteAccessRuleWithBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/delete-all-replication-rules"] = user_api.NewDeleteAllReplicationRules(o.context, o.UserAPIDeleteAllReplicationRulesHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/delete-all-replication-rules"] = bucket.NewDeleteAllReplicationRules(o.context, o.BucketDeleteAllReplicationRulesHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{name}"] = user_api.NewDeleteBucket(o.context, o.UserAPIDeleteBucketHandler)
+	o.handlers["DELETE"]["/buckets/{name}"] = bucket.NewDeleteBucket(o.context, o.BucketDeleteBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{arn}"] = user_api.NewDeleteBucketEvent(o.context, o.UserAPIDeleteBucketEventHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{arn}"] = bucket.NewDeleteBucketEvent(o.context, o.BucketDeleteBucketEventHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/lifecycle/{lifecycle_id}"] = user_api.NewDeleteBucketLifecycleRule(o.context, o.UserAPIDeleteBucketLifecycleRuleHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/lifecycle/{lifecycle_id}"] = bucket.NewDeleteBucketLifecycleRule(o.context, o.BucketDeleteBucketLifecycleRuleHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewDeleteBucketReplicationRule(o.context, o.UserAPIDeleteBucketReplicationRuleHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/replication/{rule_id}"] = bucket.NewDeleteBucketReplicationRule(o.context, o.BucketDeleteBucketReplicationRuleHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/delete-objects"] = user_api.NewDeleteMultipleObjects(o.context, o.UserAPIDeleteMultipleObjectsHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/delete-objects"] = object.NewDeleteMultipleObjects(o.context, o.ObjectDeleteMultipleObjectsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/service-accounts/delete-multi"] = user_api.NewDeleteMultipleServiceAccounts(o.context, o.UserAPIDeleteMultipleServiceAccountsHandler)
+	o.handlers["DELETE"]["/service-accounts/delete-multi"] = service_account.NewDeleteMultipleServiceAccounts(o.context, o.ServiceAccountDeleteMultipleServiceAccountsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/objects"] = user_api.NewDeleteObject(o.context, o.UserAPIDeleteObjectHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/objects"] = object.NewDeleteObject(o.context, o.ObjectDeleteObjectHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/objects/retention"] = user_api.NewDeleteObjectRetention(o.context, o.UserAPIDeleteObjectRetentionHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/objects/retention"] = object.NewDeleteObjectRetention(o.context, o.ObjectDeleteObjectRetentionHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/remote-buckets/{source-bucket-name}/{arn}"] = user_api.NewDeleteRemoteBucket(o.context, o.UserAPIDeleteRemoteBucketHandler)
+	o.handlers["DELETE"]["/remote-buckets/{source-bucket-name}/{arn}"] = bucket.NewDeleteRemoteBucket(o.context, o.BucketDeleteRemoteBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/buckets/{bucket_name}/delete-selected-replication-rules"] = user_api.NewDeleteSelectedReplicationRules(o.context, o.UserAPIDeleteSelectedReplicationRulesHandler)
+	o.handlers["DELETE"]["/buckets/{bucket_name}/delete-selected-replication-rules"] = bucket.NewDeleteSelectedReplicationRules(o.context, o.BucketDeleteSelectedReplicationRulesHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/service-accounts/{access_key}"] = user_api.NewDeleteServiceAccount(o.context, o.UserAPIDeleteServiceAccountHandler)
+	o.handlers["DELETE"]["/service-accounts/{access_key}"] = service_account.NewDeleteServiceAccount(o.context, o.ServiceAccountDeleteServiceAccountHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/encryption/disable"] = user_api.NewDisableBucketEncryption(o.context, o.UserAPIDisableBucketEncryptionHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/encryption/disable"] = bucket.NewDisableBucketEncryption(o.context, o.BucketDisableBucketEncryptionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/objects/download"] = user_api.NewDownloadObject(o.context, o.UserAPIDownloadObjectHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/objects/download"] = object.NewDownloadObject(o.context, o.ObjectDownloadObjectHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/admin/tiers/{type}/{name}/credentials"] = admin_api.NewEditTierCredentials(o.context, o.AdminAPIEditTierCredentialsHandler)
+	o.handlers["PUT"]["/admin/tiers/{type}/{name}/credentials"] = tiering.NewEditTierCredentials(o.context, o.TieringEditTierCredentialsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/encryption/enable"] = user_api.NewEnableBucketEncryption(o.context, o.UserAPIEnableBucketEncryptionHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/encryption/enable"] = bucket.NewEnableBucketEncryption(o.context, o.BucketEnableBucketEncryptionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = user_api.NewGetBucketEncryptionInfo(o.context, o.UserAPIGetBucketEncryptionInfoHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = bucket.NewGetBucketEncryptionInfo(o.context, o.BucketGetBucketEncryptionInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/lifecycle"] = user_api.NewGetBucketLifecycle(o.context, o.UserAPIGetBucketLifecycleHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/lifecycle"] = bucket.NewGetBucketLifecycle(o.context, o.BucketGetBucketLifecycleHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/object-locking"] = user_api.NewGetBucketObjectLockingStatus(o.context, o.UserAPIGetBucketObjectLockingStatusHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/object-locking"] = bucket.NewGetBucketObjectLockingStatus(o.context, o.BucketGetBucketObjectLockingStatusHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{name}/quota"] = user_api.NewGetBucketQuota(o.context, o.UserAPIGetBucketQuotaHandler)
+	o.handlers["GET"]["/buckets/{name}/quota"] = bucket.NewGetBucketQuota(o.context, o.BucketGetBucketQuotaHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/replication"] = user_api.NewGetBucketReplication(o.context, o.UserAPIGetBucketReplicationHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/replication"] = bucket.NewGetBucketReplication(o.context, o.BucketGetBucketReplicationHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewGetBucketReplicationRule(o.context, o.UserAPIGetBucketReplicationRuleHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/replication/{rule_id}"] = bucket.NewGetBucketReplicationRule(o.context, o.BucketGetBucketReplicationRuleHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/retention"] = user_api.NewGetBucketRetentionConfig(o.context, o.UserAPIGetBucketRetentionConfigHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/retention"] = bucket.NewGetBucketRetentionConfig(o.context, o.BucketGetBucketRetentionConfigHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/rewind/{date}"] = user_api.NewGetBucketRewind(o.context, o.UserAPIGetBucketRewindHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/rewind/{date}"] = bucket.NewGetBucketRewind(o.context, o.BucketGetBucketRewindHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = user_api.NewGetBucketVersioning(o.context, o.UserAPIGetBucketVersioningHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = bucket.NewGetBucketVersioning(o.context, o.BucketGetBucketVersioningHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/objects/metadata"] = user_api.NewGetObjectMetadata(o.context, o.UserAPIGetObjectMetadataHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/objects/metadata"] = object.NewGetObjectMetadata(o.context, o.ObjectGetObjectMetadataHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/service-accounts/{access_key}/policy"] = user_api.NewGetServiceAccountPolicy(o.context, o.UserAPIGetServiceAccountPolicyHandler)
+	o.handlers["GET"]["/service-accounts/{access_key}/policy"] = service_account.NewGetServiceAccountPolicy(o.context, o.ServiceAccountGetServiceAccountPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/site-replication"] = admin_api.NewGetSiteReplicationInfo(o.context, o.AdminAPIGetSiteReplicationInfoHandler)
+	o.handlers["GET"]["/admin/site-replication"] = site_replication.NewGetSiteReplicationInfo(o.context, o.SiteReplicationGetSiteReplicationInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/site-replication/status"] = admin_api.NewGetSiteReplicationStatus(o.context, o.AdminAPIGetSiteReplicationStatusHandler)
+	o.handlers["GET"]["/admin/site-replication/status"] = site_replication.NewGetSiteReplicationStatus(o.context, o.SiteReplicationGetSiteReplicationStatusHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/tiers/{type}/{name}"] = admin_api.NewGetTier(o.context, o.AdminAPIGetTierHandler)
+	o.handlers["GET"]["/admin/tiers/{type}/{name}"] = tiering.NewGetTier(o.context, o.TieringGetTierHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user"] = admin_api.NewGetUserInfo(o.context, o.AdminAPIGetUserInfoHandler)
+	o.handlers["GET"]["/user"] = user.NewGetUserInfo(o.context, o.UserGetUserInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/group"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
+	o.handlers["GET"]["/group"] = group.NewGroupInfo(o.context, o.GroupGroupInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/inspect"] = admin_api.NewInspect(o.context, o.AdminAPIInspectHandler)
+	o.handlers["GET"]["/admin/inspect"] = inspect.NewInspect(o.context, o.InspectInspectHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user/{name}/service-accounts"] = admin_api.NewListAUserServiceAccounts(o.context, o.AdminAPIListAUserServiceAccountsHandler)
+	o.handlers["GET"]["/user/{name}/service-accounts"] = user.NewListAUserServiceAccounts(o.context, o.UserListAUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/bucket/{bucket}/access-rules"] = admin_api.NewListAccessRulesWithBucket(o.context, o.AdminAPIListAccessRulesWithBucketHandler)
+	o.handlers["GET"]["/bucket/{bucket}/access-rules"] = bucket.NewListAccessRulesWithBucket(o.context, o.BucketListAccessRulesWithBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/events"] = user_api.NewListBucketEvents(o.context, o.UserAPIListBucketEventsHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/events"] = bucket.NewListBucketEvents(o.context, o.BucketListBucketEventsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets"] = user_api.NewListBuckets(o.context, o.UserAPIListBucketsHandler)
+	o.handlers["GET"]["/buckets"] = bucket.NewListBuckets(o.context, o.BucketListBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/configs"] = admin_api.NewListConfig(o.context, o.AdminAPIListConfigHandler)
+	o.handlers["GET"]["/configs"] = configuration.NewListConfig(o.context, o.ConfigurationListConfigHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/list-external-buckets"] = user_api.NewListExternalBuckets(o.context, o.UserAPIListExternalBucketsHandler)
+	o.handlers["POST"]["/list-external-buckets"] = bucket.NewListExternalBuckets(o.context, o.BucketListExternalBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/groups"] = admin_api.NewListGroups(o.context, o.AdminAPIListGroupsHandler)
+	o.handlers["GET"]["/groups"] = group.NewListGroups(o.context, o.GroupListGroupsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policies/{policy}/groups"] = admin_api.NewListGroupsForPolicy(o.context, o.AdminAPIListGroupsForPolicyHandler)
+	o.handlers["GET"]["/policies/{policy}/groups"] = policy.NewListGroupsForPolicy(o.context, o.PolicyListGroupsForPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/nodes"] = admin_api.NewListNodes(o.context, o.AdminAPIListNodesHandler)
+	o.handlers["GET"]["/nodes"] = system.NewListNodes(o.context, o.SystemListNodesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/objects"] = user_api.NewListObjects(o.context, o.UserAPIListObjectsHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/objects"] = object.NewListObjects(o.context, o.ObjectListObjectsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	o.handlers["GET"]["/policies"] = policy.NewListPolicies(o.context, o.PolicyListPoliciesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/bucket-policy/{bucket}"] = admin_api.NewListPoliciesWithBucket(o.context, o.AdminAPIListPoliciesWithBucketHandler)
+	o.handlers["GET"]["/bucket-policy/{bucket}"] = bucket.NewListPoliciesWithBucket(o.context, o.BucketListPoliciesWithBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/remote-buckets"] = user_api.NewListRemoteBuckets(o.context, o.UserAPIListRemoteBucketsHandler)
+	o.handlers["GET"]["/remote-buckets"] = bucket.NewListRemoteBuckets(o.context, o.BucketListRemoteBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/service-accounts"] = user_api.NewListUserServiceAccounts(o.context, o.UserAPIListUserServiceAccountsHandler)
+	o.handlers["GET"]["/service-accounts"] = service_account.NewListUserServiceAccounts(o.context, o.ServiceAccountListUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/users"] = admin_api.NewListUsers(o.context, o.AdminAPIListUsersHandler)
+	o.handlers["GET"]["/users"] = user.NewListUsers(o.context, o.UserListUsersHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policies/{policy}/users"] = admin_api.NewListUsersForPolicy(o.context, o.AdminAPIListUsersForPolicyHandler)
+	o.handlers["GET"]["/policies/{policy}/users"] = policy.NewListUsersForPolicy(o.context, o.PolicyListUsersForPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/bucket-users/{bucket}"] = admin_api.NewListUsersWithAccessToBucket(o.context, o.AdminAPIListUsersWithAccessToBucketHandler)
+	o.handlers["GET"]["/bucket-users/{bucket}"] = bucket.NewListUsersWithAccessToBucket(o.context, o.BucketListUsersWithAccessToBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/logs/search"] = user_api.NewLogSearch(o.context, o.UserAPILogSearchHandler)
+	o.handlers["GET"]["/logs/search"] = logging.NewLogSearch(o.context, o.LoggingLogSearchHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/login"] = user_api.NewLogin(o.context, o.UserAPILoginHandler)
+	o.handlers["POST"]["/login"] = auth.NewLogin(o.context, o.AuthLoginHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/login"] = user_api.NewLoginDetail(o.context, o.UserAPILoginDetailHandler)
+	o.handlers["GET"]["/login"] = auth.NewLoginDetail(o.context, o.AuthLoginDetailHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/login/oauth2/auth"] = user_api.NewLoginOauth2Auth(o.context, o.UserAPILoginOauth2AuthHandler)
+	o.handlers["POST"]["/login/oauth2/auth"] = auth.NewLoginOauth2Auth(o.context, o.AuthLoginOauth2AuthHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/logout"] = user_api.NewLogout(o.context, o.UserAPILogoutHandler)
+	o.handlers["POST"]["/logout"] = auth.NewLogout(o.context, o.AuthLogoutHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets"] = user_api.NewMakeBucket(o.context, o.UserAPIMakeBucketHandler)
+	o.handlers["POST"]["/buckets"] = bucket.NewMakeBucket(o.context, o.BucketMakeBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/notification_endpoints"] = admin_api.NewNotificationEndpointList(o.context, o.AdminAPINotificationEndpointListHandler)
+	o.handlers["GET"]["/admin/notification_endpoints"] = configuration.NewNotificationEndpointList(o.context, o.ConfigurationNotificationEndpointListHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policy"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
+	o.handlers["GET"]["/policy"] = policy.NewPolicyInfo(o.context, o.PolicyPolicyInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/objects/upload"] = user_api.NewPostBucketsBucketNameObjectsUpload(o.context, o.UserAPIPostBucketsBucketNameObjectsUploadHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/objects/upload"] = object.NewPostBucketsBucketNameObjectsUpload(o.context, o.ObjectPostBucketsBucketNameObjectsUploadHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/profiling/start"] = admin_api.NewProfilingStart(o.context, o.AdminAPIProfilingStartHandler)
+	o.handlers["POST"]["/profiling/start"] = profile.NewProfilingStart(o.context, o.ProfileProfilingStartHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
+	o.handlers["POST"]["/profiling/stop"] = profile.NewProfilingStop(o.context, o.ProfileProfilingStopHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/tags"] = user_api.NewPutBucketTags(o.context, o.UserAPIPutBucketTagsHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/tags"] = bucket.NewPutBucketTags(o.context, o.BucketPutBucketTagsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/objects/legalhold"] = user_api.NewPutObjectLegalHold(o.context, o.UserAPIPutObjectLegalHoldHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/legalhold"] = object.NewPutObjectLegalHold(o.context, o.ObjectPutObjectLegalHoldHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/objects/restore"] = user_api.NewPutObjectRestore(o.context, o.UserAPIPutObjectRestoreHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/restore"] = object.NewPutObjectRestore(o.context, o.ObjectPutObjectRestoreHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/objects/retention"] = user_api.NewPutObjectRetention(o.context, o.UserAPIPutObjectRetentionHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/retention"] = object.NewPutObjectRetention(o.context, o.ObjectPutObjectRetentionHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/objects/tags"] = user_api.NewPutObjectTags(o.context, o.UserAPIPutObjectTagsHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/tags"] = object.NewPutObjectTags(o.context, o.ObjectPutObjectTagsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/remote-buckets/{name}"] = user_api.NewRemoteBucketDetails(o.context, o.UserAPIRemoteBucketDetailsHandler)
+	o.handlers["GET"]["/remote-buckets/{name}"] = bucket.NewRemoteBucketDetails(o.context, o.BucketRemoteBucketDetailsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/group"] = admin_api.NewRemoveGroup(o.context, o.AdminAPIRemoveGroupHandler)
+	o.handlers["DELETE"]["/group"] = group.NewRemoveGroup(o.context, o.GroupRemoveGroupHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/policy"] = admin_api.NewRemovePolicy(o.context, o.AdminAPIRemovePolicyHandler)
+	o.handlers["DELETE"]["/policy"] = policy.NewRemovePolicy(o.context, o.PolicyRemovePolicyHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/user"] = admin_api.NewRemoveUser(o.context, o.AdminAPIRemoveUserHandler)
+	o.handlers["DELETE"]["/user"] = user.NewRemoveUser(o.context, o.UserRemoveUserHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/configs/{name}/reset"] = admin_api.NewResetConfig(o.context, o.AdminAPIResetConfigHandler)
+	o.handlers["GET"]["/configs/{name}/reset"] = configuration.NewResetConfig(o.context, o.ConfigurationResetConfigHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/service/restart"] = admin_api.NewRestartService(o.context, o.AdminAPIRestartServiceHandler)
+	o.handlers["POST"]["/service/restart"] = service.NewRestartService(o.context, o.ServiceRestartServiceHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	o.handlers["GET"]["/session"] = auth.NewSessionCheck(o.context, o.AuthSessionCheckHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/bucket/{bucket}/access-rules"] = admin_api.NewSetAccessRuleWithBucket(o.context, o.AdminAPISetAccessRuleWithBucketHandler)
+	o.handlers["PUT"]["/bucket/{bucket}/access-rules"] = bucket.NewSetAccessRuleWithBucket(o.context, o.BucketSetAccessRuleWithBucketHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{name}/quota"] = user_api.NewSetBucketQuota(o.context, o.UserAPISetBucketQuotaHandler)
+	o.handlers["PUT"]["/buckets/{name}/quota"] = bucket.NewSetBucketQuota(o.context, o.BucketSetBucketQuotaHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/retention"] = user_api.NewSetBucketRetentionConfig(o.context, o.UserAPISetBucketRetentionConfigHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/retention"] = bucket.NewSetBucketRetentionConfig(o.context, o.BucketSetBucketRetentionConfigHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/versioning"] = user_api.NewSetBucketVersioning(o.context, o.UserAPISetBucketVersioningHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/versioning"] = bucket.NewSetBucketVersioning(o.context, o.BucketSetBucketVersioningHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/configs/{name}"] = admin_api.NewSetConfig(o.context, o.AdminAPISetConfigHandler)
+	o.handlers["PUT"]["/configs/{name}"] = configuration.NewSetConfig(o.context, o.ConfigurationSetConfigHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets-replication"] = user_api.NewSetMultiBucketReplication(o.context, o.UserAPISetMultiBucketReplicationHandler)
+	o.handlers["POST"]["/buckets-replication"] = bucket.NewSetMultiBucketReplication(o.context, o.BucketSetMultiBucketReplicationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/set-policy"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	o.handlers["PUT"]["/set-policy"] = policy.NewSetPolicy(o.context, o.PolicySetPolicyHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/set-policy-multi"] = admin_api.NewSetPolicyMultiple(o.context, o.AdminAPISetPolicyMultipleHandler)
+	o.handlers["PUT"]["/set-policy-multi"] = policy.NewSetPolicyMultiple(o.context, o.PolicySetPolicyMultipleHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/service-accounts/{access_key}/policy"] = user_api.NewSetServiceAccountPolicy(o.context, o.UserAPISetServiceAccountPolicyHandler)
+	o.handlers["PUT"]["/service-accounts/{access_key}/policy"] = service_account.NewSetServiceAccountPolicy(o.context, o.ServiceAccountSetServiceAccountPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = user_api.NewShareObject(o.context, o.UserAPIShareObjectHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = object.NewShareObject(o.context, o.ObjectShareObjectHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/admin/site-replication"] = admin_api.NewSiteReplicationEdit(o.context, o.AdminAPISiteReplicationEditHandler)
+	o.handlers["PUT"]["/admin/site-replication"] = site_replication.NewSiteReplicationEdit(o.context, o.SiteReplicationSiteReplicationEditHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/admin/site-replication"] = admin_api.NewSiteReplicationInfoAdd(o.context, o.AdminAPISiteReplicationInfoAddHandler)
+	o.handlers["POST"]["/admin/site-replication"] = site_replication.NewSiteReplicationInfoAdd(o.context, o.SiteReplicationSiteReplicationInfoAddHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/admin/site-replication"] = admin_api.NewSiteReplicationRemove(o.context, o.AdminAPISiteReplicationRemoveHandler)
+	o.handlers["DELETE"]["/admin/site-replication"] = site_replication.NewSiteReplicationRemove(o.context, o.SiteReplicationSiteReplicationRemoveHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/subnet/info"] = admin_api.NewSubnetInfo(o.context, o.AdminAPISubnetInfoHandler)
+	o.handlers["GET"]["/subnet/info"] = subnet.NewSubnetInfo(o.context, o.SubnetSubnetInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/subnet/login"] = admin_api.NewSubnetLogin(o.context, o.AdminAPISubnetLoginHandler)
+	o.handlers["POST"]["/subnet/login"] = subnet.NewSubnetLogin(o.context, o.SubnetSubnetLoginHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/subnet/login/mfa"] = admin_api.NewSubnetLoginMFA(o.context, o.AdminAPISubnetLoginMFAHandler)
+	o.handlers["POST"]["/subnet/login/mfa"] = subnet.NewSubnetLoginMFA(o.context, o.SubnetSubnetLoginMFAHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/subnet/registration-token"] = admin_api.NewSubnetRegToken(o.context, o.AdminAPISubnetRegTokenHandler)
+	o.handlers["GET"]["/subnet/registration-token"] = subnet.NewSubnetRegToken(o.context, o.SubnetSubnetRegTokenHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/subnet/register"] = admin_api.NewSubnetRegister(o.context, o.AdminAPISubnetRegisterHandler)
+	o.handlers["POST"]["/subnet/register"] = subnet.NewSubnetRegister(o.context, o.SubnetSubnetRegisterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/tiers"] = admin_api.NewTiersList(o.context, o.AdminAPITiersListHandler)
+	o.handlers["GET"]["/admin/tiers"] = tiering.NewTiersList(o.context, o.TieringTiersListHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/lifecycle/{lifecycle_id}"] = user_api.NewUpdateBucketLifecycle(o.context, o.UserAPIUpdateBucketLifecycleHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/lifecycle/{lifecycle_id}"] = bucket.NewUpdateBucketLifecycle(o.context, o.BucketUpdateBucketLifecycleHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/group"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
+	o.handlers["PUT"]["/group"] = group.NewUpdateGroup(o.context, o.GroupUpdateGroupHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewUpdateMultiBucketReplication(o.context, o.UserAPIUpdateMultiBucketReplicationHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/replication/{rule_id}"] = bucket.NewUpdateMultiBucketReplication(o.context, o.BucketUpdateMultiBucketReplicationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/user/groups"] = admin_api.NewUpdateUserGroups(o.context, o.AdminAPIUpdateUserGroupsHandler)
+	o.handlers["PUT"]["/user/groups"] = user.NewUpdateUserGroups(o.context, o.UserUpdateUserGroupsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/user"] = admin_api.NewUpdateUserInfo(o.context, o.AdminAPIUpdateUserInfoHandler)
+	o.handlers["PUT"]["/user"] = user.NewUpdateUserInfo(o.context, o.UserUpdateUserInfoHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
