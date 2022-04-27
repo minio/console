@@ -65,7 +65,7 @@ function main() {
 
     check_tenant_status tenant-lite storage-lite
 
-    kubectl -n minio-operator port-forward svc/console 9090 &
+    kubectl proxy &
 }
 
 main "$@"
