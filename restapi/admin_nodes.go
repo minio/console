@@ -22,17 +22,17 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	systemApi "github.com/minio/console/restapi/operations/system"
 )
 
 func registerNodesHandler(api *operations.ConsoleAPI) {
 
-	api.AdminAPIListNodesHandler = admin_api.ListNodesHandlerFunc(func(params admin_api.ListNodesParams, session *models.Principal) middleware.Responder {
+	api.SystemListNodesHandler = systemApi.ListNodesHandlerFunc(func(params systemApi.ListNodesParams, session *models.Principal) middleware.Responder {
 		listNodesResponse, err := getListNodesResponse(session)
 		if err != nil {
-			return admin_api.NewListNodesDefault(int(err.Code)).WithPayload(err)
+			return systemApi.NewListNodesDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListNodesOK().WithPayload(listNodesResponse)
+		return systemApi.NewListNodesOK().WithPayload(listNodesResponse)
 	})
 }
 

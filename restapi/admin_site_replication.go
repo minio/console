@@ -22,45 +22,45 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	siteRepApi "github.com/minio/console/restapi/operations/site_replication"
 	"github.com/minio/madmin-go"
 )
 
 func registerSiteReplicationHandler(api *operations.ConsoleAPI) {
 
-	api.AdminAPIGetSiteReplicationInfoHandler = admin_api.GetSiteReplicationInfoHandlerFunc(func(params admin_api.GetSiteReplicationInfoParams, session *models.Principal) middleware.Responder {
+	api.SiteReplicationGetSiteReplicationInfoHandler = siteRepApi.GetSiteReplicationInfoHandlerFunc(func(params siteRepApi.GetSiteReplicationInfoParams, session *models.Principal) middleware.Responder {
 		rInfo, err := getSRInfoResponse(session)
 		if err != nil {
-			return admin_api.NewGetSiteReplicationInfoDefault(500).WithPayload(prepareError(err))
+			return siteRepApi.NewGetSiteReplicationInfoDefault(500).WithPayload(prepareError(err))
 		}
-		return admin_api.NewGetSiteReplicationInfoOK().WithPayload(rInfo)
+		return siteRepApi.NewGetSiteReplicationInfoOK().WithPayload(rInfo)
 
 	})
 
-	api.AdminAPISiteReplicationInfoAddHandler = admin_api.SiteReplicationInfoAddHandlerFunc(func(params admin_api.SiteReplicationInfoAddParams, session *models.Principal) middleware.Responder {
+	api.SiteReplicationSiteReplicationInfoAddHandler = siteRepApi.SiteReplicationInfoAddHandlerFunc(func(params siteRepApi.SiteReplicationInfoAddParams, session *models.Principal) middleware.Responder {
 		eInfo, err := getSRAddResponse(session, &params)
 		if err != nil {
-			return admin_api.NewSiteReplicationInfoAddDefault(500).WithPayload(err)
+			return siteRepApi.NewSiteReplicationInfoAddDefault(500).WithPayload(err)
 		}
-		return admin_api.NewSiteReplicationInfoAddOK().WithPayload(eInfo)
+		return siteRepApi.NewSiteReplicationInfoAddOK().WithPayload(eInfo)
 	})
 
-	api.AdminAPISiteReplicationRemoveHandler = admin_api.SiteReplicationRemoveHandlerFunc(func(params admin_api.SiteReplicationRemoveParams, session *models.Principal) middleware.Responder {
+	api.SiteReplicationSiteReplicationRemoveHandler = siteRepApi.SiteReplicationRemoveHandlerFunc(func(params siteRepApi.SiteReplicationRemoveParams, session *models.Principal) middleware.Responder {
 		remRes, err := getSRRemoveResponse(session, &params)
 		if err != nil {
-			return admin_api.NewSiteReplicationRemoveDefault(500).WithPayload(err)
+			return siteRepApi.NewSiteReplicationRemoveDefault(500).WithPayload(err)
 		}
-		return admin_api.NewSiteReplicationRemoveNoContent().WithPayload(remRes)
+		return siteRepApi.NewSiteReplicationRemoveNoContent().WithPayload(remRes)
 	})
 
-	api.AdminAPISiteReplicationEditHandler = admin_api.SiteReplicationEditHandlerFunc(func(params admin_api.SiteReplicationEditParams, session *models.Principal) middleware.Responder {
+	api.SiteReplicationSiteReplicationEditHandler = siteRepApi.SiteReplicationEditHandlerFunc(func(params siteRepApi.SiteReplicationEditParams, session *models.Principal) middleware.Responder {
 
 		eInfo, err := getSREditResponse(session, &params)
 		if err != nil {
-			return admin_api.NewSiteReplicationRemoveDefault(500).WithPayload(err)
+			return siteRepApi.NewSiteReplicationRemoveDefault(500).WithPayload(err)
 		}
 
-		return admin_api.NewSiteReplicationEditOK().WithPayload(eInfo)
+		return siteRepApi.NewSiteReplicationEditOK().WithPayload(eInfo)
 	})
 
 }
@@ -82,7 +82,7 @@ func getSRInfoResponse(session *models.Principal) (info *models.SiteReplicationI
 	return res, nil
 
 }
-func getSRAddResponse(session *models.Principal, params *admin_api.SiteReplicationInfoAddParams) (*models.SiteReplicationAddResponse, *models.Error) {
+func getSRAddResponse(session *models.Principal, params *siteRepApi.SiteReplicationInfoAddParams) (*models.SiteReplicationAddResponse, *models.Error) {
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -99,7 +99,7 @@ func getSRAddResponse(session *models.Principal, params *admin_api.SiteReplicati
 	return res, nil
 
 }
-func getSREditResponse(session *models.Principal, params *admin_api.SiteReplicationEditParams) (*models.PeerSiteEditResponse, *models.Error) {
+func getSREditResponse(session *models.Principal, params *siteRepApi.SiteReplicationEditParams) (*models.PeerSiteEditResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -116,7 +116,7 @@ func getSREditResponse(session *models.Principal, params *admin_api.SiteReplicat
 	return eRes, nil
 
 }
-func getSRRemoveResponse(session *models.Principal, params *admin_api.SiteReplicationRemoveParams) (*models.PeerSiteRemoveResponse, *models.Error) {
+func getSRRemoveResponse(session *models.Principal, params *siteRepApi.SiteReplicationRemoveParams) (*models.PeerSiteRemoveResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -159,7 +159,7 @@ func getSRConfig(ctx context.Context, client MinioAdmin) (info *models.SiteRepli
 	return res, nil
 
 }
-func addSiteReplication(ctx context.Context, client MinioAdmin, params *admin_api.SiteReplicationInfoAddParams) (info *models.SiteReplicationAddResponse, err error) {
+func addSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationInfoAddParams) (info *models.SiteReplicationAddResponse, err error) {
 	var rSites []madmin.PeerSite
 
 	if len(params.Body) > 0 {
@@ -188,7 +188,7 @@ func addSiteReplication(ctx context.Context, client MinioAdmin, params *admin_ap
 
 	return res, nil
 }
-func editSiteReplication(ctx context.Context, client MinioAdmin, params *admin_api.SiteReplicationEditParams) (info *models.PeerSiteEditResponse, err error) {
+func editSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationEditParams) (info *models.PeerSiteEditResponse, err error) {
 
 	peerSiteInfo := &madmin.PeerInfo{
 		Endpoint:     params.Body.Endpoint,     //only endpoint can be edited.
@@ -207,7 +207,7 @@ func editSiteReplication(ctx context.Context, client MinioAdmin, params *admin_a
 	}
 	return editRes, nil
 }
-func removeSiteReplication(ctx context.Context, client MinioAdmin, params *admin_api.SiteReplicationRemoveParams) (info *models.PeerSiteRemoveResponse, err error) {
+func removeSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationRemoveParams) (info *models.PeerSiteRemoveResponse, err error) {
 	delAll := params.Body.All
 	siteNames := params.Body.Sites
 

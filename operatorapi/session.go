@@ -22,17 +22,17 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
-	"github.com/minio/console/operatorapi/operations/user_api"
+	authApi "github.com/minio/console/operatorapi/operations/auth"
 )
 
 func registerSessionHandlers(api *operations.OperatorAPI) {
 	// session check
-	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, session *models.Principal) middleware.Responder {
+	api.AuthSessionCheckHandler = authApi.SessionCheckHandlerFunc(func(params authApi.SessionCheckParams, session *models.Principal) middleware.Responder {
 		sessionResp, err := getSessionResponse(session)
 		if err != nil {
-			return user_api.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
+		return authApi.NewSessionCheckOK().WithPayload(sessionResp)
 	})
 }
 

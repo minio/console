@@ -24,32 +24,32 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	"github.com/minio/minio-go/v7/pkg/notification"
 )
 
 func registerBucketEventsHandlers(api *operations.ConsoleAPI) {
 	// list bucket events
-	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, session *models.Principal) middleware.Responder {
+	api.BucketListBucketEventsHandler = bucketApi.ListBucketEventsHandlerFunc(func(params bucketApi.ListBucketEventsParams, session *models.Principal) middleware.Responder {
 		listBucketEventsResponse, err := getListBucketEventsResponse(session, params)
 		if err != nil {
-			return user_api.NewListBucketEventsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListBucketEventsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewListBucketEventsOK().WithPayload(listBucketEventsResponse)
+		return bucketApi.NewListBucketEventsOK().WithPayload(listBucketEventsResponse)
 	})
 	// create bucket event
-	api.UserAPICreateBucketEventHandler = user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, session *models.Principal) middleware.Responder {
+	api.BucketCreateBucketEventHandler = bucketApi.CreateBucketEventHandlerFunc(func(params bucketApi.CreateBucketEventParams, session *models.Principal) middleware.Responder {
 		if err := getCreateBucketEventsResponse(session, params.BucketName, params.Body); err != nil {
-			return user_api.NewCreateBucketEventDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewCreateBucketEventDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewCreateBucketEventCreated()
+		return bucketApi.NewCreateBucketEventCreated()
 	})
 	// delete bucket event
-	api.UserAPIDeleteBucketEventHandler = user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, session *models.Principal) middleware.Responder {
+	api.BucketDeleteBucketEventHandler = bucketApi.DeleteBucketEventHandlerFunc(func(params bucketApi.DeleteBucketEventParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteBucketEventsResponse(session, params.BucketName, params.Arn, params.Body.Events, params.Body.Prefix, params.Body.Suffix); err != nil {
-			return user_api.NewDeleteBucketEventDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteBucketEventDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewDeleteBucketEventNoContent()
+		return bucketApi.NewDeleteBucketEventNoContent()
 	})
 
 }
@@ -124,7 +124,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 }
 
 // getListBucketsResponse performs listBucketEvents() and serializes it to the handler's output
-func getListBucketEventsResponse(session *models.Principal, params user_api.ListBucketEventsParams) (*models.ListBucketEventsResponse, *models.Error) {
+func getListBucketEventsResponse(session *models.Principal, params bucketApi.ListBucketEventsParams) (*models.ListBucketEventsResponse, *models.Error) {
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		return nil, prepareError(err)

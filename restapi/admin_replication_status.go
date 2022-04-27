@@ -22,23 +22,23 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	siteRepApi "github.com/minio/console/restapi/operations/site_replication"
 	"github.com/minio/madmin-go"
 )
 
 func registerSiteReplicationStatusHandler(api *operations.ConsoleAPI) {
 
-	api.AdminAPIGetSiteReplicationStatusHandler = admin_api.GetSiteReplicationStatusHandlerFunc(func(params admin_api.GetSiteReplicationStatusParams, session *models.Principal) middleware.Responder {
+	api.SiteReplicationGetSiteReplicationStatusHandler = siteRepApi.GetSiteReplicationStatusHandlerFunc(func(params siteRepApi.GetSiteReplicationStatusParams, session *models.Principal) middleware.Responder {
 		rInfo, err := getSRStatusResponse(session, params)
 		if err != nil {
-			return admin_api.NewGetSiteReplicationStatusDefault(500).WithPayload(prepareError(err))
+			return siteRepApi.NewGetSiteReplicationStatusDefault(500).WithPayload(prepareError(err))
 		}
-		return admin_api.NewGetSiteReplicationStatusOK().WithPayload(rInfo)
+		return siteRepApi.NewGetSiteReplicationStatusOK().WithPayload(rInfo)
 
 	})
 }
 
-func getSRStatusResponse(session *models.Principal, params admin_api.GetSiteReplicationStatusParams) (info *models.SiteReplicationStatusResponse, err error) {
+func getSRStatusResponse(session *models.Principal, params siteRepApi.GetSiteReplicationStatusParams) (info *models.SiteReplicationStatusResponse, err error) {
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -55,7 +55,7 @@ func getSRStatusResponse(session *models.Principal, params admin_api.GetSiteRepl
 	return res, nil
 }
 
-func getSRStats(ctx context.Context, client MinioAdmin, params admin_api.GetSiteReplicationStatusParams) (info *models.SiteReplicationStatusResponse, err error) {
+func getSRStats(ctx context.Context, client MinioAdmin, params siteRepApi.GetSiteReplicationStatusParams) (info *models.SiteReplicationStatusResponse, err error) {
 
 	srParams := madmin.SRStatusOptions{
 		Buckets:  *params.Buckets,
