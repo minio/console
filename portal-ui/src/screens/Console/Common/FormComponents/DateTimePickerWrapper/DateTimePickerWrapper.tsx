@@ -262,13 +262,13 @@ const DateTimePickerWrapper = ({
     };
   }
 
-  let classOverriden = `${classNamePrefix}date-time-input `;
-
-  if (forSearchBlock) {
-    classOverriden += classes.dateSelectorOverride;
-  } else if (forFilterContained) {
-    classOverriden += classes.dateSelectorFilterOverride;
-  }
+  const classOverridden = `${classNamePrefix}date-time-input  ${
+    forSearchBlock ? classes.dateSelectorOverride : ""
+  } ${
+    forFilterContained && !forSearchBlock
+      ? classes.dateSelectorFilterOverride
+      : ""
+  }`;
 
   const clsName = forSearchBlock
     ? classes.parentDateOverride
@@ -281,7 +281,7 @@ const DateTimePickerWrapper = ({
         onChange={onChange}
         InputProps={{
           ...adornment,
-          className: classOverriden,
+          className: classOverridden,
         }}
         components={{
           OpenPickerIcon: openPickerIcon,
@@ -289,9 +289,9 @@ const DateTimePickerWrapper = ({
         label=""
         className={clsName}
         disabled={disabled}
-        renderInput={(props) => {
-          return <TextField id={id} variant="standard" {...props} disabled />;
-        }}
+        renderInput={(props) => (
+          <TextField id={id} variant="standard" {...props} disabled />
+        )}
         ampm={false}
         PopperProps={{
           className: classes.paperOverride,

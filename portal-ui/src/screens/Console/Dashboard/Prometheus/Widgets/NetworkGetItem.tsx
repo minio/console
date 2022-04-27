@@ -39,6 +39,7 @@ const NetworkGetItem = ({
           "& .min-icon": {
             height: "15px",
             width: "15px",
+            fill: "#4ccb92",
           },
         }}
       >

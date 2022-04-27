@@ -27,7 +27,10 @@ const DashboardItemBox = ({ children }: { children: any }) => {
           md: "15px",
           xs: "5px",
         },
-        height: "136px",
+        height: {
+          md: "136px",
+          xs: "auto",
+        },
         maxWidth: {
           sm: "100%",
         },

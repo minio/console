@@ -40,7 +40,6 @@ const TimeStatItem = ({
         paddingLeft: "15px",
         gridTemplateColumns: {
           xs: "20px 1.5fr .5fr 20px",
-          //xs: "20px 1fr 1fr",
         },
         background: "#EBF9EE",
 

@@ -15,10 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { IDashboardPanel } from "../types";
@@ -31,7 +27,6 @@ import BucketsCountItem from "./BucketsCountItem";
 import ObjectsCountItem from "./ObjectsCountItem";
 
 interface ISingleRepWidget {
-  classes?: any;
   title: string;
   panelItem: IDashboardPanel;
   timeStart: any;
@@ -42,17 +37,6 @@ interface ISingleRepWidget {
   fillColor?: string;
   apiPrefix: string;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...widgetCommon,
-    loadingAlign: {
-      width: "100%",
-      paddingTop: "5px",
-      textAlign: "center",
-      margin: "auto",
-    },
-  });
 
 const SingleRepWidget = ({
   title,
@@ -151,4 +135,4 @@ const connector = connect(null, {
   displayErrorMessage: setErrorSnackMessage,
 });
 
-export default withStyles(styles)(connector(SingleRepWidget));
+export default connector(SingleRepWidget);

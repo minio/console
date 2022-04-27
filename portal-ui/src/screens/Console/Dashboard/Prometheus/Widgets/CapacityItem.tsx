@@ -103,21 +103,37 @@ const CapacityItem = ({
     },
   ];
   return (
-    <Box sx={{ flex: 1, display: "flex" }}>
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        flexFlow: {
+          sm: "row",
+          xs: "column",
+        },
+      }}
+    >
       <Box
         sx={{
           fontSize: "16px",
           fontWeight: 600,
+          alignSelf: {
+            xs: "flex-start",
+          },
         }}
       >
         Capacity
       </Box>
       <Box
-        style={{
+        sx={{
           position: "relative",
           width: 110,
           height: 110,
-          marginLeft: "auto",
+          marginLeft: {
+            sm: "auto",
+            xs: "",
+          },
         }}
       >
         <Box
@@ -171,7 +187,10 @@ const CapacityItem = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          marginLeft: "auto",
+          marginLeft: {
+            sm: "auto",
+            xs: "",
+          },
         }}
       >
         <Box

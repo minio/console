@@ -42,7 +42,9 @@ const tabSubStyles = makeStyles({
     height: "40px",
   },
   selected: {
-    backgroundColor: "#F6F7F7 !important",
+    "&.MuiTab-selected": {
+      backgroundColor: "#F6F7F7 !important",
+    },
     "&.MuiTab-wrapper": {
       color: "#07193E",
       fontWeight: 600,

@@ -84,6 +84,11 @@ const NetworkItem = ({
       sx={{
         flex: 1,
         display: "flex",
+        alignItems: "center",
+        flexFlow: {
+          sm: "row",
+          xs: "column",
+        },
         gap: "15px",
         "& .unitText": {
           fontSize: "14px",
@@ -101,11 +106,14 @@ const NetworkItem = ({
         Network
       </Box>
       <Box
-        style={{
+        sx={{
           position: "relative",
           width: 110,
           height: 110,
-          marginLeft: "auto",
+          marginLeft: {
+            sm: "auto",
+            xs: "",
+          },
         }}
       >
         <Box
@@ -129,7 +137,10 @@ const NetworkItem = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          marginLeft: "auto",
+          marginLeft: {
+            sm: "auto",
+            xs: "",
+          },
         }}
       >
         <Box

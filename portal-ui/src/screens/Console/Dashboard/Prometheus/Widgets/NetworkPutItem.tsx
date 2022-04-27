@@ -40,6 +40,7 @@ const NetworkPutItem = ({
           "& .min-icon": {
             height: "15px",
             width: "15px",
+            fill: "#2781b0",
           },
         }}
       >

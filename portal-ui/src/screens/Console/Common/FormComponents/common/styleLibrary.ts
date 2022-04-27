@@ -567,7 +567,6 @@ export const logsCommon = {
 export const widgetCommon = {
   singleValueContainer: {
     height: 200,
-    overflow: "auto",
     border: "#eaeaea 1px solid",
     backgroundColor: "#fff",
     borderRadius: "3px",
@@ -651,7 +650,6 @@ export const widgetContainerCommon = {
     flexDirection: "row" as const,
     justifyContent: "flex-start" as const,
     flexWrap: "wrap" as const,
-    //maxWidth: 1180,
   },
 };
 
