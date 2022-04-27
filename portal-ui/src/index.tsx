@@ -13,8 +13,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { Fragment } from "react";
-import ReactDOM from "react-dom";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import {
   StyledEngineProvider,
@@ -123,7 +123,11 @@ const GlobalCss = withStyles({
   },
 })(() => null);
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+
+root.render(
   <React.StrictMode>
     <Provider store={configureStore()}>
       <GlobalCss />
@@ -134,7 +138,7 @@ ReactDOM.render(
       </StyledEngineProvider>
     </Provider>
   </React.StrictMode>
-, document.getElementById("root"));
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
