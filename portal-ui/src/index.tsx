@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import {
   StyledEngineProvider,
@@ -123,11 +123,7 @@ const GlobalCss = withStyles({
   },
 })(() => null);
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-
-root.render(
+ReactDOM.render(
   <React.StrictMode>
     <Provider store={configureStore()}>
       <GlobalCss />
@@ -137,7 +133,7 @@ root.render(
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>, document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
