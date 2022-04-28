@@ -45,16 +45,7 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from   "../../../screens/Console/Tenants/utils";
-import { IPolicyItem } from "../Users/types"
-import { contextType } from "react-copy-to-clipboard";
-import { IAMPolicy } from  "../../../screens/Console/Policies/types"
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import { saveSessionResponse } from "../../../screens/Console/actions";
-
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-
-import { decodeFileName } from "../../../common/utils";
-import { Session } from "inspector";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -123,34 +114,18 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-type GroupInfo = {
-  members?: any[];
-  name?: string;
-  policy?: string;
-  status?: string;
-};
-
 const AddServiceAccount = ({
   classes,
   setErrorSnackMessage,
 }: IAddServiceAccountProps) => {
-  const [addSending, setAddSending] = useState<boolean>(false);
-  const [policyDefinition, setPolicyDefinition] = useState<string>("");
+  const [addSending, setAddSending] = useState<boolean>(false);  
   const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
   const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
- const [checkedGroups, setCheckedGroups] = useState<string[]>([]);
- const [currentGroups, setCurrentGroups] = useState<string[]>([]);
-const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
-const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
-const [s3Permissions, setS3Permissions] = useState<string[]>([]);
-const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
-const [consolePermissions, setConsolePermissions] = useState<string[]>([]);
+  const [showPassword, setShowPassword] = useState<boolean>(false);  
 const [policyJSON, setPolicyJSON] = useState<string>("");
 
   useEffect(() => {
@@ -179,7 +154,7 @@ const [policyJSON, setPolicyJSON] = useState<string>("");
     addSending,
     setAddSending,
     setErrorSnackMessage,
-    policyDefinition,
+    policyJSON,
     accessKey,
     secretKey,
   ]);
