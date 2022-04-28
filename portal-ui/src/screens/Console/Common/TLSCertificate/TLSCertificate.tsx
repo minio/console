@@ -38,17 +38,6 @@ import CertificateIcon from "../../../../icons/CertificateIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
-    root: {
-      padding: 0,
-      margin: 0,
-      border: 0,
-      backgroundColor: "transparent",
-      textDecoration: "underline",
-      cursor: "pointer",
-      fontSize: "inherit",
-      color: theme.palette.info.main,
-      fontFamily: "Lato, sans-serif",
-    },
     certificateIcon: {
       float: "left",
       paddingTop: "5px !important",

@@ -115,11 +115,6 @@ const SelectStyled = withStyles((theme: Theme) =>
         backgroundColor: "transparent",
       },
     },
-    input: {
-      height: 50,
-      fontSize: 13,
-      lineHeight: "50px",
-    },
   })
 )(InputBase);
 

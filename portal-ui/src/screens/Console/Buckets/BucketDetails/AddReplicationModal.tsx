@@ -52,9 +52,6 @@ interface IReplicationModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     multiContainer: {
       display: "flex",
       alignItems: "center",

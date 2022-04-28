@@ -66,9 +66,6 @@ const styles = (theme: Theme) =>
         backgroundColor: theme.palette.primary.main,
       },
     },
-    addBucket: {
-      marginLeft: 8,
-    },
     bucketList: {
       marginTop: 25,
       height: "calc(100vh - 210px)",

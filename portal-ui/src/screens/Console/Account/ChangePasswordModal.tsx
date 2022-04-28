@@ -37,9 +37,6 @@ import { ChangePasswordIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     ...modalStyleUtils,
     ...formFieldStyles,
     ...spacingUtils,

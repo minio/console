@@ -70,21 +70,8 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...spacingUtils,
-    loaderAlign: {
-      textAlign: "center",
-    },
-    title: {
-      marginTop: 35,
-    },
     bold: { fontWeight: "bold" },
     italic: { fontStyle: "italic" },
-    paperContainer: {
-      padding: "15px 15px 15px 50px",
-    },
-    certificateInfo: {
-      height: "auto",
-      margin: 5,
-    },
     fileItem: {
       marginRight: 10,
       display: "flex",
@@ -95,18 +82,6 @@ const styles = (theme: Theme) =>
       "@media (max-width: 900px)": {
         flexFlow: "column",
       },
-    },
-    certInputRow: {
-      display: "flex",
-      alignItems: "center",
-      borderBottom: "1px solid #eaeaea",
-      marginBottom: 8,
-    },
-    caCertsRow: {
-      borderBottom: "1px solid #eaeaea",
-      display: "flex",
-      alignItems: "center",
-      marginBottom: 8,
     },
     ...containerForHeader(theme.spacing(4)),
     ...createTenantCommon,

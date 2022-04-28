@@ -37,9 +37,6 @@ const styles = (theme: Theme) =>
         height: 16,
       },
     },
-    titleCol: {
-      width: "25%",
-    },
     titleItem: {
       width: "35%",
     },

@@ -71,10 +71,6 @@ interface ITenantSizeProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    compositeFieldContainer: {
-      display: "flex",
-      alignItems: "center",
-    },
     compositeAddOn: {
       marginLeft: 10,
       "& div": {

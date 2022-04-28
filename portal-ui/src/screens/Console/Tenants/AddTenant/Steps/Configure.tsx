@@ -92,9 +92,6 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    fieldSpaceTop: {
-      marginTop: 15,
-    },
     wrapperContainer: {
       display: "flex",
       marginBottom: 15,

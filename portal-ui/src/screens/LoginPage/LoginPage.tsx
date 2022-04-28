@@ -209,10 +209,6 @@ const styles = (theme: Theme) =>
       width: 40,
       height: 40,
     },
-    headerTitle: {
-      marginRight: "auto",
-      marginBottom: 15,
-    },
     submitContainer: {
       textAlign: "right",
     },
@@ -230,10 +226,6 @@ const styles = (theme: Theme) =>
     },
     retryButton: {
       alignSelf: "flex-end",
-    },
-    loginComponentContainer: {
-      width: "100%",
-      alignSelf: "center",
     },
     iconLogo: {
       "& .min-icon": {

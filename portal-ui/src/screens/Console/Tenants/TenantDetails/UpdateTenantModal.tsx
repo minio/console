@@ -42,9 +42,6 @@ interface IUpdateTenantModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     infoText: {
       fontSize: 14,
     },

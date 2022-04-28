@@ -60,9 +60,6 @@ interface IPoolResourcesProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     bottomContainer: {
       display: "flex",
       flexGrow: 1,

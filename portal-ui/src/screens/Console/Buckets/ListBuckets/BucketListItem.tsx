@@ -90,15 +90,6 @@ const styles = (theme: Theme) =>
         position: "absolute",
       },
     },
-    viewButton: {
-      width: 111,
-      color: "white",
-      marginLeft: 8,
-      fontSize: 12,
-      fontWeight: "normal",
-      boxShadow: "unset",
-      borderRadius: 4,
-    },
     manageButton: {
       borderRadius: 4,
       width: 111,
