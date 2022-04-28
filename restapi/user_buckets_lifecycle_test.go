@@ -25,7 +25,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/minio/console/restapi/operations/user_api"
+	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	"github.com/minio/minio-go/v7/pkg/lifecycle"
 )
 
@@ -167,7 +167,7 @@ func TestSetLifecycleRule(t *testing.T) {
 
 	expiryRule := "expiry"
 
-	insertMock := user_api.AddBucketLifecycleParams{
+	insertMock := bucketApi.AddBucketLifecycleParams{
 		BucketName: "testBucket",
 		Body: &models.AddBucketLifecycle{
 			Type:                                    expiryRule,
@@ -233,7 +233,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 
 	expiryRule := "expiry"
 
-	editMock := user_api.UpdateBucketLifecycleParams{
+	editMock := bucketApi.UpdateBucketLifecycleParams{
 		BucketName: "testBucket",
 		Body: &models.UpdateBucketLifecycle{
 			Type:                                    &expiryRule,
@@ -262,7 +262,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 
 	transitionRule := "transition"
 
-	editMock = user_api.UpdateBucketLifecycleParams{
+	editMock = bucketApi.UpdateBucketLifecycleParams{
 		BucketName: "testBucket",
 		Body: &models.UpdateBucketLifecycle{
 			Type:                                    &transitionRule,
@@ -334,7 +334,7 @@ func TestDeleteLifecycleRule(t *testing.T) {
 
 	// Test-2 : deleteBucketLifecycle() try to delete an available rule
 
-	availableParams := user_api.DeleteBucketLifecycleRuleParams{
+	availableParams := bucketApi.DeleteBucketLifecycleRuleParams{
 		LifecycleID: "TESTRULE2",
 		BucketName:  "testBucket",
 	}
@@ -345,7 +345,7 @@ func TestDeleteLifecycleRule(t *testing.T) {
 
 	// Test-3 : deleteBucketLifecycle() returns error trying to delete a non available rule
 
-	nonAvailableParams := user_api.DeleteBucketLifecycleRuleParams{
+	nonAvailableParams := bucketApi.DeleteBucketLifecycleRuleParams{
 		LifecycleID: "INVALIDTESTRULE",
 		BucketName:  "testBucket",
 	}

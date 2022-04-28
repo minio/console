@@ -36,7 +36,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	bucketApi "github.com/minio/console/restapi/operations/bucket"
 )
 
 type MultiLifecycleResult struct {
@@ -45,43 +45,43 @@ type MultiLifecycleResult struct {
 }
 
 func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
-	api.UserAPIGetBucketLifecycleHandler = user_api.GetBucketLifecycleHandlerFunc(func(params user_api.GetBucketLifecycleParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketLifecycleHandler = bucketApi.GetBucketLifecycleHandlerFunc(func(params bucketApi.GetBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		listBucketLifecycleResponse, err := getBucketLifecycleResponse(session, params)
 		if err != nil {
-			return user_api.NewGetBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketLifecycleDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewGetBucketLifecycleOK().WithPayload(listBucketLifecycleResponse)
+		return bucketApi.NewGetBucketLifecycleOK().WithPayload(listBucketLifecycleResponse)
 	})
-	api.UserAPIAddBucketLifecycleHandler = user_api.AddBucketLifecycleHandlerFunc(func(params user_api.AddBucketLifecycleParams, session *models.Principal) middleware.Responder {
+	api.BucketAddBucketLifecycleHandler = bucketApi.AddBucketLifecycleHandlerFunc(func(params bucketApi.AddBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		err := getAddBucketLifecycleResponse(session, params)
 		if err != nil {
-			return user_api.NewAddBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewAddBucketLifecycleDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewAddBucketLifecycleCreated()
+		return bucketApi.NewAddBucketLifecycleCreated()
 	})
-	api.UserAPIUpdateBucketLifecycleHandler = user_api.UpdateBucketLifecycleHandlerFunc(func(params user_api.UpdateBucketLifecycleParams, session *models.Principal) middleware.Responder {
+	api.BucketUpdateBucketLifecycleHandler = bucketApi.UpdateBucketLifecycleHandlerFunc(func(params bucketApi.UpdateBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		err := getEditBucketLifecycleRule(session, params)
 		if err != nil {
-			return user_api.NewUpdateBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewUpdateBucketLifecycleDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return user_api.NewUpdateBucketLifecycleOK()
+		return bucketApi.NewUpdateBucketLifecycleOK()
 	})
-	api.UserAPIDeleteBucketLifecycleRuleHandler = user_api.DeleteBucketLifecycleRuleHandlerFunc(func(params user_api.DeleteBucketLifecycleRuleParams, session *models.Principal) middleware.Responder {
+	api.BucketDeleteBucketLifecycleRuleHandler = bucketApi.DeleteBucketLifecycleRuleHandlerFunc(func(params bucketApi.DeleteBucketLifecycleRuleParams, session *models.Principal) middleware.Responder {
 		err := getDeleteBucketLifecycleRule(session, params)
 		if err != nil {
-			return user_api.NewDeleteBucketLifecycleRuleDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteBucketLifecycleRuleDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return user_api.NewDeleteBucketLifecycleRuleNoContent()
+		return bucketApi.NewDeleteBucketLifecycleRuleNoContent()
 	})
-	api.UserAPIAddMultiBucketLifecycleHandler = user_api.AddMultiBucketLifecycleHandlerFunc(func(params user_api.AddMultiBucketLifecycleParams, session *models.Principal) middleware.Responder {
+	api.BucketAddMultiBucketLifecycleHandler = bucketApi.AddMultiBucketLifecycleHandlerFunc(func(params bucketApi.AddMultiBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		multiBucketResponse, err := getAddMultiBucketLifecycleResponse(session, params)
 		if err != nil {
-			user_api.NewAddMultiBucketLifecycleDefault(int(err.Code)).WithPayload(err)
+			bucketApi.NewAddMultiBucketLifecycleDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return user_api.NewAddMultiBucketLifecycleOK().WithPayload(multiBucketResponse)
+		return bucketApi.NewAddMultiBucketLifecycleOK().WithPayload(multiBucketResponse)
 	})
 }
 
@@ -141,7 +141,7 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 }
 
 // getBucketLifecycleResponse performs getBucketLifecycle() and serializes it to the handler's output
-func getBucketLifecycleResponse(session *models.Principal, params user_api.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *models.Error) {
+func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -160,7 +160,7 @@ func getBucketLifecycleResponse(session *models.Principal, params user_api.GetBu
 }
 
 // addBucketLifecycle gets lifecycle lists for a bucket from MinIO API and returns their implementations
-func addBucketLifecycle(ctx context.Context, client MinioClient, params user_api.AddBucketLifecycleParams) error {
+func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketApi.AddBucketLifecycleParams) error {
 	// Configuration that is already set.
 	lfcCfg, err := client.getLifecycleRules(ctx, params.BucketName)
 	if err != nil {
@@ -240,7 +240,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params user_api
 }
 
 // getAddBucketLifecycleResponse returns the response of adding a bucket lifecycle response
-func getAddBucketLifecycleResponse(session *models.Principal, params user_api.AddBucketLifecycleParams) *models.Error {
+func getAddBucketLifecycleResponse(session *models.Principal, params bucketApi.AddBucketLifecycleParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -260,7 +260,7 @@ func getAddBucketLifecycleResponse(session *models.Principal, params user_api.Ad
 }
 
 // editBucketLifecycle gets lifecycle lists for a bucket from MinIO API and updates the selected lifecycle rule
-func editBucketLifecycle(ctx context.Context, client MinioClient, params user_api.UpdateBucketLifecycleParams) error {
+func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketApi.UpdateBucketLifecycleParams) error {
 	// Configuration that is already set.
 	lfcCfg, err := client.getLifecycleRules(ctx, params.BucketName)
 	if err != nil {
@@ -339,7 +339,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params user_ap
 }
 
 // getEditBucketLifecycleRule returns the response of bucket lifecycle tier edit
-func getEditBucketLifecycleRule(session *models.Principal, params user_api.UpdateBucketLifecycleParams) *models.Error {
+func getEditBucketLifecycleRule(session *models.Principal, params bucketApi.UpdateBucketLifecycleParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -359,7 +359,7 @@ func getEditBucketLifecycleRule(session *models.Principal, params user_api.Updat
 }
 
 // deleteBucketLifecycle deletes lifecycle rule by passing an empty rule to a selected ID
-func deleteBucketLifecycle(ctx context.Context, client MinioClient, params user_api.DeleteBucketLifecycleRuleParams) error {
+func deleteBucketLifecycle(ctx context.Context, client MinioClient, params bucketApi.DeleteBucketLifecycleRuleParams) error {
 	// Configuration that is already set.
 	lfcCfg, err := client.getLifecycleRules(ctx, params.BucketName)
 	if err != nil {
@@ -393,7 +393,7 @@ func deleteBucketLifecycle(ctx context.Context, client MinioClient, params user_
 }
 
 // getDeleteBucketLifecycleRule returns the response of bucket lifecycle tier delete
-func getDeleteBucketLifecycleRule(session *models.Principal, params user_api.DeleteBucketLifecycleRuleParams) *models.Error {
+func getDeleteBucketLifecycleRule(session *models.Principal, params bucketApi.DeleteBucketLifecycleRuleParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -413,7 +413,7 @@ func getDeleteBucketLifecycleRule(session *models.Principal, params user_api.Del
 }
 
 // addMultiBucketLifecycle creates multibuckets lifecycle assignments
-func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params user_api.AddMultiBucketLifecycleParams) []MultiLifecycleResult {
+func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params bucketApi.AddMultiBucketLifecycleParams) []MultiLifecycleResult {
 	bucketsRelation := params.Body.Buckets
 
 	// Parallel Lifecycle rules set
@@ -438,7 +438,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params use
 		go func() {
 			defer close(remoteProc)
 
-			lifecycleParams := user_api.AddBucketLifecycleParams{
+			lifecycleParams := bucketApi.AddBucketLifecycleParams{
 				BucketName: bucketName,
 				Body:       &lifecycleParams,
 			}
@@ -479,7 +479,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params use
 }
 
 // getAddMultiBucketLifecycleResponse returns the response of multibucket lifecycle assignment
-func getAddMultiBucketLifecycleResponse(session *models.Principal, params user_api.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *models.Error) {
+func getAddMultiBucketLifecycleResponse(session *models.Principal, params bucketApi.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)

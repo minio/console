@@ -27,41 +27,41 @@ import (
 	"github.com/minio/console/restapi/operations"
 	madmin "github.com/minio/madmin-go"
 
-	"github.com/minio/console/restapi/operations/admin_api"
+	cfgApi "github.com/minio/console/restapi/operations/configuration"
 )
 
 func registerConfigHandlers(api *operations.ConsoleAPI) {
 	// List Configurations
-	api.AdminAPIListConfigHandler = admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, session *models.Principal) middleware.Responder {
+	api.ConfigurationListConfigHandler = cfgApi.ListConfigHandlerFunc(func(params cfgApi.ListConfigParams, session *models.Principal) middleware.Responder {
 		configListResp, err := getListConfigResponse(session)
 		if err != nil {
-			return admin_api.NewListConfigDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewListConfigDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListConfigOK().WithPayload(configListResp)
+		return cfgApi.NewListConfigOK().WithPayload(configListResp)
 	})
 	// Configuration Info
-	api.AdminAPIConfigInfoHandler = admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, session *models.Principal) middleware.Responder {
+	api.ConfigurationConfigInfoHandler = cfgApi.ConfigInfoHandlerFunc(func(params cfgApi.ConfigInfoParams, session *models.Principal) middleware.Responder {
 		config, err := getConfigResponse(session, params)
 		if err != nil {
-			return admin_api.NewConfigInfoDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewConfigInfoDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewConfigInfoOK().WithPayload(config)
+		return cfgApi.NewConfigInfoOK().WithPayload(config)
 	})
 	// Set Configuration
-	api.AdminAPISetConfigHandler = admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, session *models.Principal) middleware.Responder {
+	api.ConfigurationSetConfigHandler = cfgApi.SetConfigHandlerFunc(func(params cfgApi.SetConfigParams, session *models.Principal) middleware.Responder {
 		resp, err := setConfigResponse(session, params.Name, params.Body)
 		if err != nil {
-			return admin_api.NewSetConfigDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewSetConfigDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewSetConfigOK().WithPayload(resp)
+		return cfgApi.NewSetConfigOK().WithPayload(resp)
 	})
 	// Reset Configuration
-	api.AdminAPIResetConfigHandler = admin_api.ResetConfigHandlerFunc(func(params admin_api.ResetConfigParams, session *models.Principal) middleware.Responder {
+	api.ConfigurationResetConfigHandler = cfgApi.ResetConfigHandlerFunc(func(params cfgApi.ResetConfigParams, session *models.Principal) middleware.Responder {
 		resp, err := resetConfigResponse(session, params.Name)
 		if err != nil {
-			return admin_api.NewResetConfigDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewResetConfigDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewResetConfigOK().WithPayload(resp)
+		return cfgApi.NewResetConfigOK().WithPayload(resp)
 	})
 
 }
@@ -133,7 +133,7 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
-func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoParams) (*models.Configuration, *models.Error) {
+func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) (*models.Configuration, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)

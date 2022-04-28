@@ -25,23 +25,23 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	logApi "github.com/minio/console/restapi/operations/logging"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 	// log search
-	api.UserAPILogSearchHandler = user_api.LogSearchHandlerFunc(func(params user_api.LogSearchParams, session *models.Principal) middleware.Responder {
+	api.LoggingLogSearchHandler = logApi.LogSearchHandlerFunc(func(params logApi.LogSearchParams, session *models.Principal) middleware.Responder {
 		searchResp, err := getLogSearchResponse(session, params)
 		if err != nil {
-			return user_api.NewLogSearchDefault(int(err.Code)).WithPayload(err)
+			return logApi.NewLogSearchDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewLogSearchOK().WithPayload(searchResp)
+		return logApi.NewLogSearchOK().WithPayload(searchResp)
 	})
 }
 
 // getLogSearchResponse performs a query to Log Search if Enabled
-func getLogSearchResponse(session *models.Principal, params user_api.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
+func getLogSearchResponse(session *models.Principal, params logApi.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
 	sessionResp, err := getSessionResponse(session)
 	if err != nil {
 		return nil, err

@@ -25,42 +25,42 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	tieringApi "github.com/minio/console/restapi/operations/tiering"
 	"github.com/minio/madmin-go"
 )
 
 func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	// return a list of notification endpoints
-	api.AdminAPITiersListHandler = admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, session *models.Principal) middleware.Responder {
+	api.TieringTiersListHandler = tieringApi.TiersListHandlerFunc(func(params tieringApi.TiersListParams, session *models.Principal) middleware.Responder {
 		tierList, err := getTiersResponse(session)
 		if err != nil {
-			return admin_api.NewTiersListDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewTiersListDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewTiersListOK().WithPayload(tierList)
+		return tieringApi.NewTiersListOK().WithPayload(tierList)
 	})
 	// add a new tiers
-	api.AdminAPIAddTierHandler = admin_api.AddTierHandlerFunc(func(params admin_api.AddTierParams, session *models.Principal) middleware.Responder {
+	api.TieringAddTierHandler = tieringApi.AddTierHandlerFunc(func(params tieringApi.AddTierParams, session *models.Principal) middleware.Responder {
 		err := getAddTierResponse(session, &params)
 		if err != nil {
-			return admin_api.NewAddTierDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewAddTierDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewAddTierCreated()
+		return tieringApi.NewAddTierCreated()
 	})
 	// get a tier
-	api.AdminAPIGetTierHandler = admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, session *models.Principal) middleware.Responder {
+	api.TieringGetTierHandler = tieringApi.GetTierHandlerFunc(func(params tieringApi.GetTierParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getGetTierResponse(session, &params)
 		if err != nil {
-			return admin_api.NewGetTierDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewGetTierDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewGetTierOK().WithPayload(notifEndpoints)
+		return tieringApi.NewGetTierOK().WithPayload(notifEndpoints)
 	})
 	// edit credentials for a tier
-	api.AdminAPIEditTierCredentialsHandler = admin_api.EditTierCredentialsHandlerFunc(func(params admin_api.EditTierCredentialsParams, session *models.Principal) middleware.Responder {
+	api.TieringEditTierCredentialsHandler = tieringApi.EditTierCredentialsHandlerFunc(func(params tieringApi.EditTierCredentialsParams, session *models.Principal) middleware.Responder {
 		err := getEditTierCredentialsResponse(session, &params)
 		if err != nil {
-			return admin_api.NewEditTierCredentialsDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewEditTierCredentialsDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewEditTierCredentialsOK()
+		return tieringApi.NewEditTierCredentialsOK()
 	})
 
 }
@@ -160,7 +160,7 @@ func getTiersResponse(session *models.Principal) (*models.TierListResponse, *mod
 	return tiersResp, nil
 }
 
-func addTier(ctx context.Context, client MinioAdmin, params *admin_api.AddTierParams) error {
+func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierParams) error {
 
 	var cfg *madmin.TierConfig
 	var err error
@@ -231,7 +231,7 @@ func addTier(ctx context.Context, client MinioAdmin, params *admin_api.AddTierPa
 }
 
 // getAddTierResponse returns the response of admin tier
-func getAddTierResponse(session *models.Principal, params *admin_api.AddTierParams) *models.Error {
+func getAddTierResponse(session *models.Principal, params *tieringApi.AddTierParams) *models.Error {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -249,7 +249,7 @@ func getAddTierResponse(session *models.Principal, params *admin_api.AddTierPara
 	return nil
 }
 
-func getTier(ctx context.Context, client MinioAdmin, params *admin_api.GetTierParams) (*models.Tier, error) {
+func getTier(ctx context.Context, client MinioAdmin, params *tieringApi.GetTierParams) (*models.Tier, error) {
 
 	tiers, err := client.listTiers(ctx)
 	if err != nil {
@@ -313,7 +313,7 @@ func getTier(ctx context.Context, client MinioAdmin, params *admin_api.GetTierPa
 }
 
 // getGetTierResponse returns a tier
-func getGetTierResponse(session *models.Principal, params *admin_api.GetTierParams) (*models.Tier, *models.Error) {
+func getGetTierResponse(session *models.Principal, params *tieringApi.GetTierParams) (*models.Tier, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -332,7 +332,7 @@ func getGetTierResponse(session *models.Principal, params *admin_api.GetTierPara
 	return addTierResp, nil
 }
 
-func editTierCredentials(ctx context.Context, client MinioAdmin, params *admin_api.EditTierCredentialsParams) error {
+func editTierCredentials(ctx context.Context, client MinioAdmin, params *tieringApi.EditTierCredentialsParams) error {
 	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(params.Body.Creds)))
 	l, err := base64.StdEncoding.Decode(base64Text, []byte(params.Body.Creds))
 
@@ -349,7 +349,7 @@ func editTierCredentials(ctx context.Context, client MinioAdmin, params *admin_a
 }
 
 // getEditTierCredentialsResponse returns the result of editing credentials for a tier
-func getEditTierCredentialsResponse(session *models.Principal, params *admin_api.EditTierCredentialsParams) *models.Error {
+func getEditTierCredentialsResponse(session *models.Principal, params *tieringApi.EditTierCredentialsParams) *models.Error {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)

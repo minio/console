@@ -23,25 +23,25 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	configurationApi "github.com/minio/console/restapi/operations/configuration"
 )
 
 func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 	// return a list of notification endpoints
-	api.AdminAPINotificationEndpointListHandler = admin_api.NotificationEndpointListHandlerFunc(func(params admin_api.NotificationEndpointListParams, session *models.Principal) middleware.Responder {
+	api.ConfigurationNotificationEndpointListHandler = configurationApi.NotificationEndpointListHandlerFunc(func(params configurationApi.NotificationEndpointListParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getNotificationEndpointsResponse(session)
 		if err != nil {
-			return admin_api.NewNotificationEndpointListDefault(int(err.Code)).WithPayload(err)
+			return configurationApi.NewNotificationEndpointListDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewNotificationEndpointListOK().WithPayload(notifEndpoints)
+		return configurationApi.NewNotificationEndpointListOK().WithPayload(notifEndpoints)
 	})
 	// add a new notification endpoints
-	api.AdminAPIAddNotificationEndpointHandler = admin_api.AddNotificationEndpointHandlerFunc(func(params admin_api.AddNotificationEndpointParams, session *models.Principal) middleware.Responder {
+	api.ConfigurationAddNotificationEndpointHandler = configurationApi.AddNotificationEndpointHandlerFunc(func(params configurationApi.AddNotificationEndpointParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getAddNotificationEndpointResponse(session, &params)
 		if err != nil {
-			return admin_api.NewAddNotificationEndpointDefault(int(err.Code)).WithPayload(err)
+			return configurationApi.NewAddNotificationEndpointDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewAddNotificationEndpointCreated().WithPayload(notifEndpoints)
+		return configurationApi.NewAddNotificationEndpointCreated().WithPayload(notifEndpoints)
 	})
 
 }
@@ -93,7 +93,7 @@ func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifE
 	return notfEndpointResp, nil
 }
 
-func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *admin_api.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, error) {
+func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *configurationApi.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, error) {
 	configs := []*models.ConfigurationKV{}
 	var configName string
 
@@ -145,7 +145,7 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *adm
 }
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
-func getAddNotificationEndpointResponse(session *models.Principal, params *admin_api.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
+func getAddNotificationEndpointResponse(session *models.Principal, params *configurationApi.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
