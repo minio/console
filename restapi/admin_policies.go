@@ -359,13 +359,8 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
-	fmt.Println("getUserPolicyResponse - rawpolicy:", rawPolicy)
-	policy, err := iampolicy.ParseConfig(bytes.NewReader(rawPolicy))
-	fmt.Println("getUserPolicyResponse - policy:", policy)
-	tempJSONPolicy, err := json.Marshal(policy)
-	fmt.Println("getUserPolicyResponse - string(json.Marshal(policy))", string(tempJSONPolicy))
 
-	return string(tempJSONPolicy), nil
+	return string(rawPolicy), nil
 }
 
 func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
