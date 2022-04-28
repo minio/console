@@ -13,14 +13,21 @@ const styles = (theme: Theme) =>
 type PageLayoutProps = {
   className?: string;
   classes?: any;
+  variant?: "constrained" | "full";
   children: any;
 };
 
-const PageLayout = ({ classes, className = "", children }: PageLayoutProps) => {
+const PageLayout = ({
+  classes,
+  className = "",
+  children,
+  variant = "constrained",
+}: PageLayoutProps) => {
+  let style = variant === "constrained" ? { maxWidth: 1220 } : {};
   return (
     <div className={classes.contentSpacer}>
       <Grid container>
-        <Grid item xs={12} className={className}>
+        <Grid item xs={12} className={className} style={style}>
           {children}
         </Grid>
       </Grid>
