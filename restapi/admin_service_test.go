@@ -37,10 +37,9 @@ func (ac adminClientMock) serviceRestart(ctx context.Context) error {
 func TestServiceRestart(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	function := "serviceRestart()"
-	// Test-1 : serviceRestart() restart services no error
+	// Test-1 : serviceRestart() restart services no errors
 	// mock function response from listGroups()
 	minioServiceRestartMock = func(ctx context.Context) error {
 		return nil
@@ -49,11 +48,11 @@ func TestServiceRestart(t *testing.T) {
 		return madmin.InfoMessage{}, nil
 	}
 	if err := serviceRestart(ctx, adminClient); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 
-	// Test-2 : serviceRestart() returns error on client.serviceRestart call
-	// and see that the error is handled correctly and returned
+	// Test-2 : serviceRestart() returns errors on client.serviceRestart call
+	// and see that the errors is handled correctly and returned
 	minioServiceRestartMock = func(ctx context.Context) error {
 		return errors.New("error")
 	}
@@ -64,8 +63,8 @@ func TestServiceRestart(t *testing.T) {
 		assert.Equal("error", err.Error())
 	}
 
-	// Test-3 : serviceRestart() returns error on client.serverInfo() call
-	// and see that the error is handled correctly and returned
+	// Test-3 : serviceRestart() returns errors on client.serverInfo() call
+	// and see that the errors is handled correctly and returned
 	minioServiceRestartMock = func(ctx context.Context) error {
 		return nil
 	}

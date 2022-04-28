@@ -20,12 +20,13 @@ import (
 	"context"
 	"errors"
 
-	"github.com/minio/console/operatorapi/operations/operator_api"
+	xerrors "github.com/minio/console/restapi"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
+	"github.com/minio/console/operatorapi/operations/operator_api"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -44,12 +45,12 @@ func registerNamespaceHandlers(api *operations.OperatorAPI) {
 }
 
 func getNamespaceCreatedResponse(session *models.Principal, params operator_api.CreateNamespaceParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
-		return prepareError(err)
+		return xerrors.ErrorWithContext(ctx, err)
 	}
 
 	namespace := *params.Body.Name
@@ -57,7 +58,7 @@ func getNamespaceCreatedResponse(session *models.Principal, params operator_api.
 	errCreation := getNamespaceCreated(ctx, clientset.CoreV1(), namespace)
 
 	if errCreation != nil {
-		return prepareError(errCreation)
+		return xerrors.ErrorWithContext(ctx, errCreation)
 	}
 
 	return nil

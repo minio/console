@@ -33,7 +33,7 @@ import (
 func registerConfigHandlers(api *operations.ConsoleAPI) {
 	// List Configurations
 	api.ConfigurationListConfigHandler = cfgApi.ListConfigHandlerFunc(func(params cfgApi.ListConfigParams, session *models.Principal) middleware.Responder {
-		configListResp, err := getListConfigResponse(session)
+		configListResp, err := getListConfigResponse(session, params)
 		if err != nil {
 			return cfgApi.NewListConfigDefault(int(err.Code)).WithPayload(err)
 		}
@@ -49,7 +49,7 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	})
 	// Set Configuration
 	api.ConfigurationSetConfigHandler = cfgApi.SetConfigHandlerFunc(func(params cfgApi.SetConfigParams, session *models.Principal) middleware.Responder {
-		resp, err := setConfigResponse(session, params.Name, params.Body)
+		resp, err := setConfigResponse(session, params)
 		if err != nil {
 			return cfgApi.NewSetConfigDefault(int(err.Code)).WithPayload(err)
 		}
@@ -57,7 +57,7 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	})
 	// Reset Configuration
 	api.ConfigurationResetConfigHandler = cfgApi.ResetConfigHandlerFunc(func(params cfgApi.ResetConfigParams, session *models.Principal) middleware.Responder {
-		resp, err := resetConfigResponse(session, params.Name)
+		resp, err := resetConfigResponse(session, params)
 		if err != nil {
 			return cfgApi.NewResetConfigDefault(int(err.Code)).WithPayload(err)
 		}
@@ -86,10 +86,12 @@ func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
 }
 
 // getListConfigResponse performs listConfig() and serializes it to the handler's output
-func getListConfigResponse(session *models.Principal) (*models.ListConfigResponse, *models.Error) {
+func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigParams) (*models.ListConfigResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -97,7 +99,7 @@ func getListConfigResponse(session *models.Principal) (*models.ListConfigRespons
 
 	configDescs, err := listConfig(adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	listGroupsResponse := &models.ListConfigResponse{
 		Configurations: configDescs,
@@ -134,11 +136,11 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
 func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) (*models.Configuration, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -146,7 +148,7 @@ func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams
 
 	configkv, err := getConfig(ctx, adminClient, params.Name)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	configurationObj := &models.Configuration{
 		Name:      params.Name,
@@ -191,22 +193,22 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 }
 
 // setConfigResponse implements setConfig() to be used by handler
-func setConfigResponse(session *models.Principal, name string, configRequest *models.SetConfigRequest) (*models.SetConfigResponse, *models.Error) {
+func setConfigResponse(session *models.Principal, params cfgApi.SetConfigParams) (*models.SetConfigResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	configName := name
+	configName := params.Name
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	needsRestart, err := setConfigWithARNAccountID(ctx, adminClient, &configName, configRequest.KeyValues, configRequest.ArnResourceID)
+	needsRestart, err := setConfigWithARNAccountID(ctx, adminClient, &configName, params.Body.KeyValues, params.Body.ArnResourceID)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return &models.SetConfigResponse{Restart: needsRestart}, nil
 }
@@ -217,22 +219,22 @@ func resetConfig(ctx context.Context, client MinioAdmin, configName *string) (er
 }
 
 // resetConfigResponse implements resetConfig() to be used by handler
-func resetConfigResponse(session *models.Principal, configName string) (*models.SetConfigResponse, *models.Error) {
+func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigParams) (*models.SetConfigResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	err = resetConfig(ctx, adminClient, &configName)
+	err = resetConfig(ctx, adminClient, &params.Name)
 
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	return &models.SetConfigResponse{Restart: true}, nil

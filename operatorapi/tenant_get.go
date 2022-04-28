@@ -20,20 +20,21 @@ import (
 	"context"
 	"fmt"
 
+	errors "github.com/minio/console/restapi"
+
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations/operator_api"
-	"github.com/minio/console/restapi"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func getTenantDetailsResponse(session *models.Principal, params operator_api.TenantDetailsParams) (*models.Tenant, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 
 	opClient := &operatorClient{
@@ -42,7 +43,7 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 
 	info := getTenantInfo(minTenant)
@@ -50,7 +51,7 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 
 	k8sClient := k8sClient{
@@ -59,7 +60,7 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 
 	tenantConfiguration, err := GetTenantConfiguration(ctx, &k8sClient, minTenant)
 	if err != nil {
-		restapi.LogError("unable to fetch configuration for tenant %s: %v", minTenant.Name, err)
+		errors.LogError("unable to fetch configuration for tenant %s: %v", minTenant.Name, err)
 	}
 
 	// detect if AD/LDAP is enabled
@@ -105,14 +106,14 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 	//minio service
 	minSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
 	if err != nil {
-		// we can tolerate this error
-		restapi.LogError("Unable to get MinIO service name: %v, continuing", err)
+		// we can tolerate this errors
+		errors.LogError("Unable to get MinIO service name: %v, continuing", err)
 	}
 	//console service
 	conSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
 	if err != nil {
-		// we can tolerate this error
-		restapi.LogError("Unable to get MinIO console service name: %v, continuing", err)
+		// we can tolerate this errors
+		errors.LogError("Unable to get MinIO console service name: %v, continuing", err)
 	}
 
 	schema := "http"

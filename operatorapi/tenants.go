@@ -33,10 +33,10 @@ import (
 	"strings"
 	"time"
 
+	utils2 "github.com/minio/console/pkg/http"
+
 	"github.com/dustin/go-humanize"
 	"github.com/minio/madmin-go"
-
-	utils2 "github.com/minio/console/pkg/utils"
 
 	"github.com/minio/console/restapi"
 
@@ -354,14 +354,16 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
 func getDeleteTenantResponse(session *models.Principal, params operator_api.DeleteTenantParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
@@ -373,12 +375,12 @@ func getDeleteTenantResponse(session *models.Principal, params operator_api.Dele
 
 	tenant, err := opClient.TenantGet(params.HTTPRequest.Context(), params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	tenant.EnsureDefaults()
 
 	if err = deleteTenantAction(params.HTTPRequest.Context(), opClient, clientset.CoreV1(), tenant, deleteTenantPVCs); err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -396,7 +398,7 @@ func deleteTenantAction(
 	err := operatorClient.TenantDelete(ctx, tenant.Namespace, tenant.Name, metav1.DeleteOptions{})
 	if err != nil {
 		// try to delete pvc even if the tenant doesn't exist anymore but only if deletePvcs is set to true,
-		// else, we return the error
+		// else, we return the errors
 		if (deletePvcs && !k8sErrors.IsNotFound(err)) || !deletePvcs {
 			return err
 		}
@@ -440,19 +442,19 @@ func deleteTenantAction(
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
 func getDeletePodResponse(session *models.Principal, params operator_api.DeletePodParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	listOpts := metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", params.Tenant),
 		FieldSelector: fmt.Sprintf("metadata.name=%s%s", params.Tenant, params.PodName[len(params.Tenant):]),
 	}
 	if err = clientset.CoreV1().Pods(params.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, listOpts); err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -494,12 +496,12 @@ func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tena
 	tenantAccessKey, ok := tenantConfiguration["accesskey"]
 	if !ok {
 		restapi.LogError("tenant's secret doesn't contain accesskey")
-		return nil, restapi.ErrorGeneric
+		return nil, restapi.ErrDefault
 	}
 	tenantSecretKey, ok := tenantConfiguration["secretkey"]
 	if !ok {
 		restapi.LogError("tenant's secret doesn't contain secretkey")
-		return nil, restapi.ErrorGeneric
+		return nil, restapi.ErrDefault
 	}
 	return &tenantKeys{accessKey: tenantAccessKey, secretKey: tenantSecretKey}, nil
 }
@@ -842,19 +844,19 @@ func updateTenantIdentityProvider(ctx context.Context, operatorClient OperatorCl
 
 func getTenantIdentityProviderResponse(session *models.Principal, params operator_api.TenantIdentityProviderParams) (*models.IdpConfiguration, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
@@ -862,27 +864,27 @@ func getTenantIdentityProviderResponse(session *models.Principal, params operato
 		client: clientSet,
 	}
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	info, err := getTenantIdentityProvider(ctx, &k8sClient, minTenant)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	return info, nil
 }
 
 func getUpdateTenantIdentityProviderResponse(session *models.Principal, params operator_api.UpdateTenantIdentityProviderParams) *models.Error {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
@@ -891,25 +893,25 @@ func getUpdateTenantIdentityProviderResponse(session *models.Principal, params o
 		client: opClientClientSet,
 	}
 	if err := updateTenantIdentityProvider(ctx, opClient, &k8sClient, params.Namespace, params); err != nil {
-		return prepareError(err, errors.New("unable to update tenant"))
+		return restapi.ErrorWithContext(ctx, err, errors.New("unable to update tenant"))
 	}
 	return nil
 }
 
 func getTenantSecurityResponse(session *models.Principal, params operator_api.TenantSecurityParams) (*models.TenantSecurityResponse, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
@@ -917,27 +919,27 @@ func getTenantSecurityResponse(session *models.Principal, params operator_api.Te
 		client: clientSet,
 	}
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	info, err := getTenantSecurity(ctx, &k8sClient, minTenant)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	return info, nil
 }
 
 func getUpdateTenantSecurityResponse(session *models.Principal, params operator_api.UpdateTenantSecurityParams) *models.Error {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
@@ -946,7 +948,7 @@ func getUpdateTenantSecurityResponse(session *models.Principal, params operator_
 		client: opClientClientSet,
 	}
 	if err := updateTenantSecurity(ctx, opClient, &k8sClient, params.Namespace, params); err != nil {
-		return prepareError(err, errors.New("unable to update tenant"))
+		return restapi.ErrorWithContext(ctx, err, errors.New("unable to update tenant"))
 	}
 	return nil
 }
@@ -1117,36 +1119,36 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 }
 
 func getListAllTenantsResponse(session *models.Principal, params operator_api.ListAllTenantsParams) (*models.ListTenantsResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	listT, err := listTenants(ctx, opClient, "", params.Limit)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	return listT, nil
 }
 
 // getListTenantsResponse list tenants by namespace
 func getListTenantsResponse(session *models.Principal, params operator_api.ListTenantsParams) (*models.ListTenantsResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	listT, err := listTenants(ctx, opClient, params.Namespace, params.Limit)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	return listT, nil
 }
@@ -1233,27 +1235,27 @@ func removeAnnotations(annotationsOne, annotationsTwo map[string]string) map[str
 }
 
 func getUpdateTenantResponse(session *models.Principal, params operator_api.UpdateTenantParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	httpC := &utils2.HTTPClient{
+	httpC := &utils2.Client{
 		Client: &http.Client{
 			Timeout: 4 * time.Second,
 		},
 	}
 	if err := updateTenantAction(ctx, opClient, clientSet.CoreV1(), httpC, params.Namespace, params); err != nil {
-		return prepareError(err, errors.New("unable to update tenant"))
+		return restapi.ErrorWithContext(ctx, err, errors.New("unable to update tenant"))
 	}
 	return nil
 }
@@ -1284,17 +1286,17 @@ func addTenantPool(ctx context.Context, operatorClient OperatorClientI, params o
 }
 
 func getTenantAddPoolResponse(session *models.Principal, params operator_api.TenantAddPoolParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	if err := addTenantPool(ctx, opClient, params); err != nil {
-		return prepareError(err, errors.New("unable to add pool"))
+		return restapi.ErrorWithContext(ctx, err, errors.New("unable to add pool"))
 	}
 	return nil
 }
@@ -1302,16 +1304,16 @@ func getTenantAddPoolResponse(session *models.Principal, params operator_api.Ten
 // getTenantUsageResponse returns the usage of a tenant
 func getTenantUsageResponse(session *models.Principal, params operator_api.GetTenantUsageParams) (*models.TenantUsage, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantUsage)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantUsage)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	opClient := &operatorClient{
@@ -1323,7 +1325,7 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantUsage)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	minTenant.EnsureDefaults()
 
@@ -1336,7 +1338,7 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 		svcURL,
 	)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantUsage)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -1344,7 +1346,7 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 	// serialize output
 	adminInfo, err := restapi.GetAdminInfo(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantUsage)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
 	return info, nil
@@ -1353,12 +1355,12 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 // getTenantLogsResponse returns the logs of a tenant
 func getTenantLogsResponse(session *models.Principal, params operator_api.GetTenantLogsParams) (*models.TenantLogs, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantLogs)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantLogs)
 	}
 
 	opClient := &operatorClient{
@@ -1367,7 +1369,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return nil, prepareError(err, errorUnableToGetTenantLogs)
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantLogs)
 	}
 	if minTenant.Spec.Log == nil {
 		retval := &models.TenantLogs{
@@ -1450,12 +1452,12 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 // setTenantLogsResponse returns the logs of a tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	opClient := &operatorClient{
@@ -1464,7 +1466,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	var labels = make(map[string]string)
@@ -1493,7 +1495,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if reflect.TypeOf(params.Data.LogCPURequest).Kind() == reflect.String && params.Data.LogCPURequest != "0Gi" && params.Data.LogCPURequest != "" {
 		cpuQuantity, err := resource.ParseQuantity(params.Data.LogCPURequest)
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 		logResourceRequest["cpu"] = cpuQuantity
 		minTenant.Spec.Log.Resources.Requests = logResourceRequest
@@ -1501,7 +1503,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if reflect.TypeOf(params.Data.LogMemRequest).Kind() == reflect.String {
 		memQuantity, err := resource.ParseQuantity(params.Data.LogMemRequest)
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 
 		logResourceRequest["memory"] = memQuantity
@@ -1538,7 +1540,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if reflect.TypeOf(params.Data.LogDBCPURequest).Kind() == reflect.String && params.Data.LogDBCPURequest != "0Gi" && params.Data.LogDBCPURequest != "" {
 		dbCPUQuantity, err := resource.ParseQuantity(params.Data.LogDBCPURequest)
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 		logDBResourceRequest["cpu"] = dbCPUQuantity
 		minTenant.Spec.Log.Db.Resources.Requests = logDBResourceRequest
@@ -1546,7 +1548,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if reflect.TypeOf(params.Data.LogDBMemRequest).Kind() == reflect.String {
 		dbMemQuantity, err := resource.ParseQuantity(params.Data.LogDBMemRequest)
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 		logDBResourceRequest["memory"] = dbMemQuantity
 		minTenant.Spec.Log.Db.Resources.Requests = logDBResourceRequest
@@ -1609,7 +1611,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
-		return false, prepareError(err)
+		return false, restapi.ErrorWithContext(ctx, err)
 	}
 	return true, nil
 }
@@ -1617,12 +1619,12 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 // enableTenantLoggingResponse enables Tenant Logging
 func enableTenantLoggingResponse(session *models.Principal, params operator_api.EnableTenantLoggingParams) (bool, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	opClient := &operatorClient{
@@ -1631,7 +1633,7 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	minTenant.EnsureDefaults()
 
@@ -1670,7 +1672,7 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
-		return false, prepareError(err)
+		return false, restapi.ErrorWithContext(ctx, err)
 	}
 	return true, nil
 }
@@ -1678,15 +1680,15 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 // disableTenantLoggingResponse disables Tenant Logging
 func disableTenantLoggingResponse(session *models.Principal, params operator_api.DisableTenantLoggingParams) (bool, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	opClient := &operatorClient{
@@ -1695,31 +1697,31 @@ func disableTenantLoggingResponse(session *models.Principal, params operator_api
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	minTenant.EnsureDefaults()
 	minTenant.Spec.Log = nil
 
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
-		return false, prepareError(err)
+		return false, restapi.ErrorWithContext(ctx, err)
 	}
 	return true, nil
 }
 
 func getTenantPodsResponse(session *models.Principal, params operator_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	listOpts := metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, params.Tenant),
 	}
 	pods, err := clientset.CoreV1().Pods(params.Namespace).List(ctx, listOpts)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	retval := []*models.TenantPod{}
 	for _, pod := range pods.Items {
@@ -1743,35 +1745,35 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 }
 
 func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLogsParams) (string, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return "", prepareError(err)
+		return "", restapi.ErrorWithContext(ctx, err)
 	}
 	listOpts := &corev1.PodLogOptions{}
 	logs := clientset.CoreV1().Pods(params.Namespace).GetLogs(params.PodName, listOpts)
 	buff, err := logs.DoRaw(ctx)
 	if err != nil {
-		return "", prepareError(err)
+		return "", restapi.ErrorWithContext(ctx, err)
 	}
 	return string(buff), nil
 }
 
 func getPodEventsResponse(session *models.Principal, params operator_api.GetPodEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	pod, err := clientset.CoreV1().Pods(params.Namespace).Get(ctx, params.PodName, metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", pod.UID)})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	retval := models.EventListWrapper{}
 	for i := 0; i < len(events.Items); i++ {
@@ -1791,12 +1793,12 @@ func getPodEventsResponse(session *models.Principal, params operator_api.GetPodE
 
 //get values for prometheus metrics
 func getTenantMonitoringResponse(session *models.Principal, params operator_api.GetTenantMonitoringParams) (*models.TenantMonitoringInfo, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	opClient := &operatorClient{
@@ -1805,7 +1807,7 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	monitoringInfo := &models.TenantMonitoringInfo{}
@@ -1886,12 +1888,12 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 //sets tenant Prometheus monitoring cofiguration fields to values provided
 func setTenantMonitoringResponse(session *models.Principal, params operator_api.SetTenantMonitoringParams) (bool, *models.Error) {
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	opClient := &operatorClient{
@@ -1900,7 +1902,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return false, prepareError(err, errorUnableToGetTenantUsage)
+		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
 	if params.Data.Toggle {
@@ -1916,7 +1918,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		}
 		_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 		return true, nil
 	}
@@ -1944,7 +1946,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if params.Data.MonitoringCPURequest != "" {
 		cpuQuantity, err := resource.ParseQuantity(params.Data.MonitoringCPURequest)
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 		monitoringResourceRequest["cpu"] = cpuQuantity
 	}
@@ -1952,7 +1954,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if params.Data.MonitoringMemRequest != "" {
 		memQuantity, err := resource.ParseQuantity(params.Data.MonitoringMemRequest)
 		if err != nil {
-			return false, prepareError(err)
+			return false, restapi.ErrorWithContext(ctx, err)
 		}
 		monitoringResourceRequest["memory"] = memQuantity
 	}
@@ -1977,7 +1979,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
-		return false, prepareError(err)
+		return false, restapi.ErrorWithContext(ctx, err)
 	}
 
 	return true, nil
@@ -2422,11 +2424,11 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 }
 
 func getTenantUpdatePoolResponse(session *models.Principal, params operator_api.TenantUpdatePoolsParams) (*models.Tenant, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	opClient := &operatorClient{
@@ -2436,7 +2438,7 @@ func getTenantUpdatePoolResponse(session *models.Principal, params operator_api.
 	t, err := updateTenantPools(ctx, opClient, params.Namespace, params.Tenant, params.Body.Pools)
 	if err != nil {
 		restapi.LogError("error updating Tenant's pools: %v", err)
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	// parse it to models.Tenant
@@ -2487,20 +2489,19 @@ func updateTenantPools(
 }
 
 func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLParams) (*models.TenantYAML, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	// get Kubernetes Client
-
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-
 	tenant, err := opClient.MinioV2().Tenants(params.Namespace).Get(params.HTTPRequest.Context(), params.Tenant, metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	// remove managed fields
 	tenant.ManagedFields = []metav1.ManagedFieldsEntry{}
-
 	//yb, err := yaml.Marshal(tenant)
 	j8sJSONSerializer := k8sJson.NewSerializerWithOptions(
 		k8sJson.DefaultMetaFactory, nil, nil,
@@ -2514,7 +2515,7 @@ func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLP
 
 	err = j8sJSONSerializer.Encode(tenant, buf)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	yb := buf.String()
@@ -2523,6 +2524,8 @@ func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLP
 }
 
 func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenantYAMLParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	// https://godoc.org/k8s.io/apimachinery/pkg/runtime#Scheme
 	scheme := runtime.NewScheme()
 
@@ -2540,12 +2543,12 @@ func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenan
 	// get Kubernetes Client
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 
 	tenant, err := opClient.MinioV2().Tenants(params.Namespace).Get(params.HTTPRequest.Context(), params.Tenant, metav1.GetOptions{})
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 	upTenant := tenant.DeepCopy()
 	// only update safe fields: spec, metadata.finalizers, metadata.labels and metadata.annotations
@@ -2563,23 +2566,23 @@ func getUpdateTenantYAML(session *models.Principal, params operator_api.PutTenan
 }
 
 func getTenantEventsResponse(session *models.Principal, params operator_api.GetTenantEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	client, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	tenant, err := client.MinioV2().Tenants(params.Namespace).Get(ctx, params.Tenant, metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", tenant.UID)})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	retval := models.EventListWrapper{}
 	for _, event := range events.Items {
@@ -2603,7 +2606,7 @@ func getUpdateDomainsResponse(session *models.Principal, params operator_api.Upd
 
 	operatorCli, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 
 	opClient := &operatorClient{
@@ -2613,7 +2616,7 @@ func getUpdateDomainsResponse(session *models.Principal, params operator_api.Upd
 	err = updateTenantDomains(ctx, opClient, params.Namespace, params.Tenant, params.Body.Domains)
 
 	if err != nil {
-		return prepareError(err)
+		return restapi.ErrorWithContext(ctx, err)
 	}
 
 	return nil

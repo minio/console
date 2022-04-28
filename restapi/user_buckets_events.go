@@ -39,14 +39,14 @@ func registerBucketEventsHandlers(api *operations.ConsoleAPI) {
 	})
 	// create bucket event
 	api.BucketCreateBucketEventHandler = bucketApi.CreateBucketEventHandlerFunc(func(params bucketApi.CreateBucketEventParams, session *models.Principal) middleware.Responder {
-		if err := getCreateBucketEventsResponse(session, params.BucketName, params.Body); err != nil {
+		if err := getCreateBucketEventsResponse(session, params); err != nil {
 			return bucketApi.NewCreateBucketEventDefault(int(err.Code)).WithPayload(err)
 		}
 		return bucketApi.NewCreateBucketEventCreated()
 	})
 	// delete bucket event
 	api.BucketDeleteBucketEventHandler = bucketApi.DeleteBucketEventHandlerFunc(func(params bucketApi.DeleteBucketEventParams, session *models.Principal) middleware.Responder {
-		if err := getDeleteBucketEventsResponse(session, params.BucketName, params.Arn, params.Body.Events, params.Body.Prefix, params.Body.Suffix); err != nil {
+		if err := getDeleteBucketEventsResponse(session, params); err != nil {
 			return bucketApi.NewDeleteBucketEventDefault(int(err.Code)).WithPayload(err)
 		}
 		return bucketApi.NewDeleteBucketEventNoContent()
@@ -125,9 +125,11 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 
 // getListBucketsResponse performs listBucketEvents() and serializes it to the handler's output
 func getListBucketEventsResponse(session *models.Principal, params bucketApi.ListBucketEventsParams) (*models.ListBucketEventsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -135,7 +137,7 @@ func getListBucketEventsResponse(session *models.Principal, params bucketApi.Lis
 
 	bucketEvents, err := listBucketEvents(minioClient, params.BucketName)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// serialize output
 	listBucketsResponse := &models.ListBucketEventsResponse{
@@ -175,19 +177,21 @@ func createBucketEvent(ctx context.Context, client MCClient, arn string, notific
 }
 
 // getCreateBucketEventsResponse calls createBucketEvent to add a bucket event notification
-func getCreateBucketEventsResponse(session *models.Principal, bucketName string, eventReq *models.BucketEventRequest) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+func getCreateBucketEventsResponse(session *models.Principal, params bucketApi.CreateBucketEventParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+	bucketName := params.BucketName
+	eventReq := params.Body
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 	err = createBucketEvent(ctx, mcClient, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -211,19 +215,24 @@ func joinNotificationEvents(events []models.NotificationEventType) string {
 }
 
 // getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
-func getDeleteBucketEventsResponse(session *models.Principal, bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+func getDeleteBucketEventsResponse(session *models.Principal, params bucketApi.DeleteBucketEventParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+	bucketName := params.BucketName
+	arn := params.Arn
+	events := params.Body.Events
+	prefix := params.Body.Prefix
+	suffix := params.Body.Suffix
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 	err = deleteBucketEventNotification(ctx, mcClient, arn, events, prefix, suffix)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }

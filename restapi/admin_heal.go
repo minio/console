@@ -56,7 +56,7 @@ var (
 
 type healItemStatus struct {
 	Status string `json:"status"`
-	Error  string `json:"error,omitempty"`
+	Error  string `json:"errors,omitempty"`
 	Type   string `json:"type"`
 	Name   string `json:"name"`
 	Before struct {
@@ -143,7 +143,7 @@ func startHeal(ctx context.Context, conn WSConn, client MinioAdmin, hOpts *healO
 			}
 
 			if res.Summary == "stopped" {
-				return fmt.Errorf("heal had an error - %s", res.FailureDetail)
+				return fmt.Errorf("heal had an errors - %s", res.FailureDetail)
 			}
 
 			time.Sleep(time.Second)

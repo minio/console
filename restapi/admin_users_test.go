@@ -525,7 +525,7 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 			}
 			return mockResponse, nil
 		}
-		return nil, ErrorGeneric
+		return nil, ErrDefault
 	}
 	type args struct {
 		bucket string

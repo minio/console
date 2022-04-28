@@ -454,7 +454,7 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure b
 	s3Config.SecretKey = secretKey
 	s3Config.SessionToken = sessionToken
 	s3Config.Signature = "S3v4"
-	s3Config.Transport = prepareSTSClientTransport(insecure)
+	s3Config.Transport = PrepareSTSClientTransport(insecure)
 
 	return s3Config
 }

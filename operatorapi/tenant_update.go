@@ -22,9 +22,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/minio/console/restapi"
+
+	"github.com/minio/console/pkg/http"
+
 	"github.com/minio/console/operatorapi/operations/operator_api"
 	utils2 "github.com/minio/console/pkg/utils"
-	"github.com/minio/console/restapi"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -32,7 +35,7 @@ import (
 )
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
-func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl utils2.HTTPClientI, namespace string, params operator_api.UpdateTenantParams) error {
+func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl http.ClientI, namespace string, params operator_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
 	imageRegistryReq := params.Body.ImageRegistry
 

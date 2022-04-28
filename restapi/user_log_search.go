@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -42,7 +43,9 @@ func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 
 // getLogSearchResponse performs a query to Log Search if Enabled
 func getLogSearchResponse(session *models.Principal, params logApi.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
-	sessionResp, err := getSessionResponse(session)
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	sessionResp, err := getSessionResponse(ctx, session)
 	if err != nil {
 		return nil, err
 	}
@@ -80,31 +83,28 @@ func getLogSearchResponse(session *models.Principal, params logApi.LogSearchPara
 	endpoint = fmt.Sprintf("%s&pageSize=%d", endpoint, *params.PageSize)
 	endpoint = fmt.Sprintf("%s&pageNo=%d", endpoint, *params.PageNo)
 
-	return logSearch(endpoint)
+	response, errLogSearch := logSearch(endpoint)
+	if errLogSearch != nil {
+		return nil, ErrorWithContext(ctx, errLogSearch)
+	}
+	return response, nil
 }
 
-func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
+func logSearch(endpoint string) (*models.LogSearchResponse, error) {
 	httpClnt := GetConsoleHTTPClient()
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
-		return nil, &models.Error{
-			Code:            int32(500),
-			Message:         swag.String("Log Search API not available."),
-			DetailedMessage: swag.String("The Log Search API cannot be reached. Please review the URL and try again."),
-		}
+		return nil, fmt.Errorf("the Log Search API cannot be reached. Please review the URL and try again %v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, &models.Error{
-			Code:    int32(resp.StatusCode),
-			Message: swag.String(fmt.Sprintf("error retrieving logs: %s", http.StatusText(resp.StatusCode))),
-		}
+		return nil, fmt.Errorf("error retrieving logs: %s", http.StatusText(resp.StatusCode))
 	}
 
 	var results []map[string]interface{}
 	if err = json.NewDecoder(resp.Body).Decode(&results); err != nil {
-		return nil, prepareError(err)
+		return nil, err
 	}
 
 	return &models.LogSearchResponse{

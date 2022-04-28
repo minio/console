@@ -21,8 +21,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/go-openapi/swag"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/restapi/operations"
 	bucektApi "github.com/minio/console/restapi/operations/bucket"
@@ -53,19 +51,17 @@ func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 }
 
 func setBucketQuotaResponse(session *models.Principal, params bucektApi.SetBucketQuotaParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
-	if err := setBucketQuota(params.HTTPRequest.Context(), &adminClient, &params.Name, params.Body); err != nil {
-		return &models.Error{
-			Code:    500,
-			Message: swag.String(err.Error()),
-		}
+	if err := setBucketQuota(ctx, &adminClient, &params.Name, params.Body); err != nil {
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -97,32 +93,28 @@ func setBucketQuota(ctx context.Context, ac *AdminClient, bucket *string, bucket
 }
 
 func getBucketQuotaResponse(session *models.Principal, params bucektApi.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
-
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	quota, err := getBucketQuota(params.HTTPRequest.Context(), &adminClient, &params.Name)
+	quota, err := getBucketQuota(ctx, &adminClient, &params.Name)
 	if err != nil {
-		return nil, &models.Error{
-			Code:    500,
-			Message: swag.String(err.Error()),
-		}
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return quota, nil
 }
 
 func getBucketQuota(ctx context.Context, ac *AdminClient, bucket *string) (*models.BucketQuota, error) {
-
 	quota, err := ac.getBucketQuota(ctx, *bucket)
 	if err != nil {
 		return nil, err
 	}
-
 	return &models.BucketQuota{
 		Quota: int64(quota.Quota),
 		Type:  string(quota.Type),
