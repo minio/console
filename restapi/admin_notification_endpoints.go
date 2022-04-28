@@ -29,7 +29,7 @@ import (
 func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 	// return a list of notification endpoints
 	api.ConfigurationNotificationEndpointListHandler = configurationApi.NotificationEndpointListHandlerFunc(func(params configurationApi.NotificationEndpointListParams, session *models.Principal) middleware.Responder {
-		notifEndpoints, err := getNotificationEndpointsResponse(session)
+		notifEndpoints, err := getNotificationEndpointsResponse(session, params)
 		if err != nil {
 			return configurationApi.NewNotificationEndpointListDefault(int(err.Code)).WithPayload(err)
 		}
@@ -37,7 +37,7 @@ func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 	})
 	// add a new notification endpoints
 	api.ConfigurationAddNotificationEndpointHandler = configurationApi.AddNotificationEndpointHandlerFunc(func(params configurationApi.AddNotificationEndpointParams, session *models.Principal) middleware.Responder {
-		notifEndpoints, err := getAddNotificationEndpointResponse(session, &params)
+		notifEndpoints, err := getAddNotificationEndpointResponse(session, params)
 		if err != nil {
 			return configurationApi.NewAddNotificationEndpointDefault(int(err.Code)).WithPayload(err)
 		}
@@ -75,20 +75,20 @@ func getNotificationEndpoints(ctx context.Context, client MinioAdmin) (*models.N
 }
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
-func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifEndpointResponse, *models.Error) {
+func getNotificationEndpointsResponse(session *models.Principal, params configurationApi.NotificationEndpointListParams) (*models.NotifEndpointResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// serialize output
 	notfEndpointResp, err := getNotificationEndpoints(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return notfEndpointResp, nil
 }
@@ -145,20 +145,20 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *con
 }
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
-func getAddNotificationEndpointResponse(session *models.Principal, params *configurationApi.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
+func getAddNotificationEndpointResponse(session *models.Principal, params configurationApi.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// serialize output
-	notfEndpointResp, err := addNotificationEndpoint(ctx, adminClient, params)
+	notfEndpointResp, err := addNotificationEndpoint(ctx, adminClient, &params)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return notfEndpointResp, nil
 }

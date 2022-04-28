@@ -20,9 +20,13 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/minio/console/pkg/logger"
 
 	"github.com/minio/cli"
 	"github.com/minio/console/restapi"
@@ -36,13 +40,26 @@ var appCmds = []cli.Command{
 
 // StartServer starts the console service
 func StartServer(ctx *cli.Context) error {
-	if os.Getenv("CONSOLE_OPERATOR_MODE") != "" && os.Getenv("CONSOLE_OPERATOR_MODE") == "on" {
-		return startOperatorServer(ctx)
-	}
 
+	// Load all certificates
 	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates
 		restapi.LogError("Unable to load certs: %v", err)
+	}
+
+	xctx := context.Background()
+	transport := restapi.PrepareSTSClientTransport(false)
+	if err := logger.InitializeLogger(xctx, transport); err != nil {
+		fmt.Println("error InitializeLogger", err)
+		logger.CriticalIf(xctx, err)
+	}
+	// custom error configuration
+	restapi.LogInfo = logger.Info
+	restapi.LogError = logger.Error
+	restapi.LogIf = logger.LogIf
+
+	if os.Getenv("CONSOLE_OPERATOR_MODE") != "" && os.Getenv("CONSOLE_OPERATOR_MODE") == "on" {
+		return startOperatorServer(ctx)
 	}
 
 	var rctx restapi.Context

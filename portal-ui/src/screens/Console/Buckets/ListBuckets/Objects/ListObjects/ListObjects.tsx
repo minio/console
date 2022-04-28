@@ -1212,7 +1212,7 @@ const ListObjects = ({
           onClosePreview={closePreviewWindow}
         />
       )}
-      <PageLayout>
+      <PageLayout variant={"full"}>
         <Grid item xs={12} className={classes.screenTitleContainer}>
           <ScreenTitle
             className={classes.screenTitle}

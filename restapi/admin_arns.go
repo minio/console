@@ -29,7 +29,7 @@ import (
 func registerAdminArnsHandlers(api *operations.ConsoleAPI) {
 	// return a list of arns
 	api.SystemArnListHandler = systemApi.ArnListHandlerFunc(func(params systemApi.ArnListParams, session *models.Principal) middleware.Responder {
-		arnsResp, err := getArnsResponse(session)
+		arnsResp, err := getArnsResponse(session, params)
 		if err != nil {
 			return systemApi.NewArnListDefault(int(err.Code)).WithPayload(err)
 		}
@@ -51,21 +51,21 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 }
 
 // getArnsResponse returns a list of active arns in the instance
-func getArnsResponse(session *models.Principal) (*models.ArnsResponse, *models.Error) {
+func getArnsResponse(session *models.Principal, params systemApi.ArnListParams) (*models.ArnsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// serialize output
 	arnsList, err := getArns(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return arnsList, nil
 }

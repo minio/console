@@ -51,9 +51,13 @@ func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options *watchOp
 			}
 			for _, event := range events {
 				// Serialize message to be sent
-				bytes, _ := json.Marshal(event)
+				bytes, err := json.Marshal(event)
+				if err != nil {
+					LogError("error on json.Marshal: %v", err)
+					return err
+				}
 				// Send Message through websocket connection
-				err := conn.writeMessage(websocket.TextMessage, bytes)
+				err = conn.writeMessage(websocket.TextMessage, bytes)
 				if err != nil {
 					LogError("error writeMessage: %v", err)
 					return err

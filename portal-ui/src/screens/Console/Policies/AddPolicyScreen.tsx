@@ -37,6 +37,7 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import { setErrorSnackMessage } from "../../../../src/actions";
+import FormLayout from "../Common/FormLayout";
 
 interface IAddPolicyProps {
   classes: any;
@@ -143,90 +144,73 @@ const AddPolicyScreen = ({
           label={<BackLink to={IAM_PAGES.POLICIES} label={"Policies"} />}
         />
         <PageLayout>
-          <Grid
-            item
-            xs={12}
-            container
-            className={classes.title}
-            align-items="stretch"
+          <FormLayout
+            title={"Create Policy"}
+            icon={<AddAccessRuleIcon />}
+            helpbox={<AddPolicyHelpBox />}
           >
-            <Grid item className={classes.headIcon}>
-              <AddAccessRuleIcon />
-            </Grid>
-            <Grid item className={classes.headTitle}>
-              Create Policy
-            </Grid>
-          </Grid>
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                addRecord(e);
+              }}
+            >
+              <Grid container item spacing={1} marginTop={"8px"}>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="policy-name"
+                    name="policy-name"
+                    label="Policy Name"
+                    autoFocus={true}
+                    value={policyName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setPolicyName(e.target.value);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <CodeMirrorWrapper
+                    label={"Write Policy"}
+                    value={policyDefinition}
+                    onBeforeChange={(editor, data, value) => {
+                      setPolicyDefinition(value);
+                    }}
+                    editorHeight={"350px"}
+                  />
+                </Grid>
+                <Grid item xs={12} textAlign={"right"}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      marginTop: "20px",
+                      gap: "15px",
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      color="primary"
+                      onClick={resetForm}
+                    >
+                      Clear
+                    </Button>
 
-          <Grid container align-items="center">
-            <Grid item xs={8}>
-              <Box>
-                <form
-                  noValidate
-                  autoComplete="off"
-                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                    addRecord(e);
-                  }}
-                >
-                  <Grid container item spacing="20">
-                    <Grid item xs={12}>
-                      <Grid container>
-                        <Grid item xs={12} className={classes.formFieldRow}>
-                          <InputBoxWrapper
-                            id="policy-name"
-                            name="policy-name"
-                            label="Policy Name"
-                            autoFocus={true}
-                            value={policyName}
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) => {
-                              setPolicyName(e.target.value);
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={12} className={classes.userSelector}>
-                          <CodeMirrorWrapper
-                            label={"Write Policy"}
-                            value={policyDefinition}
-                            onBeforeChange={(editor, data, value) => {
-                              setPolicyDefinition(value);
-                            }}
-                            editorHeight={"350px"}
-                          />
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={12} className={classes.modalButtonBar}>
-                        <Button
-                          type="button"
-                          variant="outlined"
-                          color="primary"
-                          className={classes.spacerRight}
-                          onClick={resetForm}
-                        >
-                          Clear
-                        </Button>
-
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          disabled={addLoading || !validSave}
-                        >
-                          Save
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </form>
-              </Box>
-            </Grid>
-            <Grid item xs={4}>
-              <Box>
-                <AddPolicyHelpBox />
-              </Box>
-            </Grid>
-          </Grid>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      disabled={addLoading || !validSave}
+                    >
+                      Save
+                    </Button>
+                  </Box>
+                </Grid>
+              </Grid>
+            </form>
+          </FormLayout>
         </PageLayout>
       </Grid>
     </Fragment>

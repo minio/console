@@ -142,11 +142,11 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 
 // getBucketLifecycleResponse performs getBucketLifecycle() and serializes it to the handler's output
 func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -154,7 +154,7 @@ func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetB
 
 	bucketEvents, err := getBucketLifecycle(ctx, minioClient, params.BucketName)
 	if err != nil {
-		return nil, prepareError(errBucketLifeCycleNotConfigured, err)
+		return nil, ErrorWithContext(ctx, ErrBucketLifeCycleNotConfigured, err)
 	}
 	return bucketEvents, nil
 }
@@ -226,7 +226,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 		}
 
 	} else {
-		// Non set, we return error
+		// Non set, we return errors
 		return errors.New("no valid configuration requested")
 	}
 
@@ -241,11 +241,11 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 
 // getAddBucketLifecycleResponse returns the response of adding a bucket lifecycle response
 func getAddBucketLifecycleResponse(session *models.Principal, params bucketApi.AddBucketLifecycleParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -253,7 +253,7 @@ func getAddBucketLifecycleResponse(session *models.Principal, params bucketApi.A
 
 	err = addBucketLifecycle(ctx, minioClient, params)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 
 	return nil
@@ -325,7 +325,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 		}
 
 	} else {
-		// Non set, we return error
+		// Non set, we return errors
 		return errors.New("no valid configuration requested")
 	}
 
@@ -340,11 +340,11 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 
 // getEditBucketLifecycleRule returns the response of bucket lifecycle tier edit
 func getEditBucketLifecycleRule(session *models.Principal, params bucketApi.UpdateBucketLifecycleParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -352,7 +352,7 @@ func getEditBucketLifecycleRule(session *models.Principal, params bucketApi.Upda
 
 	err = editBucketLifecycle(ctx, minioClient, params)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 
 	return nil
@@ -394,11 +394,11 @@ func deleteBucketLifecycle(ctx context.Context, client MinioClient, params bucke
 
 // getDeleteBucketLifecycleRule returns the response of bucket lifecycle tier delete
 func getDeleteBucketLifecycleRule(session *models.Principal, params bucketApi.DeleteBucketLifecycleRuleParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -406,7 +406,7 @@ func getDeleteBucketLifecycleRule(session *models.Principal, params bucketApi.De
 
 	err = deleteBucketLifecycle(ctx, minioClient, params)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 
 	return nil
@@ -480,11 +480,11 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params buc
 
 // getAddMultiBucketLifecycleResponse returns the response of multibucket lifecycle assignment
 func getAddMultiBucketLifecycleResponse(session *models.Principal, params bucketApi.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used

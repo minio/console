@@ -68,7 +68,7 @@ func isErasureMode() bool {
 func registerSessionHandlers(api *operations.ConsoleAPI) {
 	// session check
 	api.AuthSessionCheckHandler = authApi.SessionCheckHandlerFunc(func(params authApi.SessionCheckParams, session *models.Principal) middleware.Responder {
-		sessionResp, err := getSessionResponse(session)
+		sessionResp, err := getSessionResponse(params.HTTPRequest.Context(), session)
 		if err != nil {
 			return authApi.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
 		}
@@ -91,12 +91,12 @@ func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
 }
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
-func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getSessionResponse(ctx context.Context, session *models.Principal) (*models.SessionResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	// serialize output
 	if session == nil {
-		return nil, prepareError(errorGenericInvalidSession)
+		return nil, ErrorWithContext(ctx, ErrInvalidSession)
 	}
 	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
 
@@ -107,20 +107,20 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		STSSessionToken:    session.STSSessionToken,
 	})
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 	}
 	userAdminClient := AdminClient{Client: mAdminClient}
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	accountInfo, err := getAccountInfo(ctx, userAdminClient)
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
 	policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(rawPolicy))
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 	}
 	currTime := time.Now().UTC()
 
@@ -143,7 +143,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 
 	claims, err := getClaimsFromToken(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 	}
 
 	// Support all LDAP, JWT variables
@@ -222,12 +222,12 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	}
 	serializedPolicy, err := json.Marshal(policy)
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 	}
 	var sessionPolicy *models.IamPolicy
 	err = json.Unmarshal(serializedPolicy, &sessionPolicy)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	sessionResp := &models.SessionResponse{
 		Features:        getListOfEnabledFeatures(session),

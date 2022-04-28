@@ -36,7 +36,7 @@ import (
 func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// GET login strategy
 	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
-		loginDetails, err := getLoginDetailsResponse(params.HTTPRequest)
+		loginDetails, err := getLoginDetailsResponse(params)
 		if err != nil {
 			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
@@ -44,7 +44,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 	// POST login using user credentials
 	api.AuthLoginHandler = authApi.LoginHandlerFunc(func(params authApi.LoginParams) middleware.Responder {
-		loginResponse, err := getLoginResponse(params.Body)
+		loginResponse, err := getLoginResponse(params)
 		if err != nil {
 			return authApi.NewLoginDefault(int(err.Code)).WithPayload(err)
 		}
@@ -57,7 +57,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 	// POST login using external IDP
 	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params.HTTPRequest, params.Body)
+		loginResponse, err := getLoginOauth2AuthResponse(params)
 		if err != nil {
 			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
@@ -82,7 +82,7 @@ func login(credentials ConsoleCredentialsI, sessionFeatures *auth.SessionFeature
 	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), sessionFeatures)
 	if err != nil {
 		LogError("error authenticating user: %v", err)
-		return nil, errInvalidCredentials
+		return nil, ErrInvalidLogin
 	}
 	return &token, nil
 }
@@ -109,11 +109,14 @@ func getConsoleCredentials(accessKey, secretKey string) (*ConsoleCredentials, er
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
-func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
+func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	lr := params.Body
 	// prepare console credentials
 	consoleCreds, err := getConsoleCredentials(*lr.AccessKey, *lr.SecretKey)
 	if err != nil {
-		return nil, prepareError(err, errInvalidCredentials, err)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidLogin, err)
 	}
 	sf := &auth.SessionFeatures{}
 	if lr.Features != nil {
@@ -121,7 +124,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	}
 	sessionID, err := login(consoleCreds, sf)
 	if err != nil {
-		return nil, prepareError(err, errInvalidCredentials, err)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidLogin, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -131,16 +134,18 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse(r *http.Request) (*models.LoginDetails, *models.Error) {
+func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDetails, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
-
+	r := params.HTTPRequest
 	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, GetConsoleHTTPClient())
 		if err != nil {
-			return nil, prepareError(err, errOauth2Provider)
+			return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
@@ -159,26 +164,28 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 	userCredentials, err := provider.VerifyIdentity(ctx, code, state)
 	if err != nil {
 		LogError("error validating user identity against idp: %v", err)
-		return nil, errInvalidCredentials
+		return nil, ErrInvalidLogin
 	}
 	return userCredentials, nil
 }
 
-func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.LoginResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+	r := params.HTTPRequest
+	lr := params.Body
 	if oauth2.IsIDPEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, GetConsoleHTTPClient())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		// initialize new identity provider
 		identityProvider := auth.IdentityProvider{Client: oauth2Client}
 		// Validate user against IDP
 		userCredentials, err := verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		// initialize admin client
 		// login user against console and generate session token
@@ -187,7 +194,7 @@ func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthReque
 			AccountAccessKey:   "",
 		}, nil)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, ErrorWithContext(ctx, err)
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
@@ -195,5 +202,5 @@ func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthReque
 		}
 		return loginResponse, nil
 	}
-	return nil, prepareError(ErrorGeneric)
+	return nil, ErrorWithContext(ctx, ErrDefault)
 }

@@ -89,11 +89,14 @@ func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 	if token == "" {
 		return nil, ErrNoAuthToken
 	}
-	// decrypt encrypted token
-	claimTokens, err := decryptClaims(token)
+	decryptedToken, err := DecryptToken(token)
 	if err != nil {
-		// we print decryption token error information for debugging purposes
-		// we return a generic error that doesn't give any information to attackers
+		// fail decrypting token
+		return nil, errReadingToken
+	}
+	claimTokens, err := ParseClaimsFromToken(string(decryptedToken))
+	if err != nil {
+		// fail unmarshalling token into data structure
 		return nil, errReadingToken
 	}
 	// claimsTokens contains the decrypted JWT for Console
@@ -136,21 +139,26 @@ func encryptClaims(credentials *TokenClaims) (string, error) {
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
 
-// decryptClaims() receives base64 encoded ciphertext, decode it, decrypt it (AES-GCM) and produces a *TokenClaims object
-func decryptClaims(ciphertext string) (*TokenClaims, error) {
+// ParseClaimsFromToken receive token claims in string format, then unmarshal them to produce a *TokenClaims object
+func ParseClaimsFromToken(claims string) (*TokenClaims, error) {
+	tokenClaims := &TokenClaims{}
+	if err := json.Unmarshal([]byte(claims), tokenClaims); err != nil {
+		return nil, err
+	}
+	return tokenClaims, nil
+}
+
+// DecryptToken receives base64 encoded ciphertext, decode it, decrypt it (AES-GCM) and produces []byte
+func DecryptToken(ciphertext string) (plaintext []byte, err error) {
 	decoded, err := base64.StdEncoding.DecodeString(ciphertext)
 	if err != nil {
 		return nil, err
 	}
-	plaintext, err := decrypt(decoded, []byte{})
+	plaintext, err = decrypt(decoded, []byte{})
 	if err != nil {
 		return nil, err
 	}
-	tokenClaims := &TokenClaims{}
-	if err = json.Unmarshal(plaintext, tokenClaims); err != nil {
-		return nil, err
-	}
-	return tokenClaims, nil
+	return plaintext, nil
 }
 
 const (

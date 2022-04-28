@@ -826,6 +826,8 @@ type LabelResults struct {
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	prometheusURL := ""
 
 	if !*params.DefaultOnly {
@@ -834,35 +836,30 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
-	sessionResp, err2 := getUsageWidgetsForDeployment(prometheusURL, mAdmin)
+	sessionResp, err2 := getUsageWidgetsForDeployment(ctx, prometheusURL, mAdmin)
 	if err2 != nil {
-		return nil, err2
+		return nil, ErrorWithContext(ctx, err2)
 	}
 
 	return sessionResp, nil
 }
 
-func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, *models.Error) {
+func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, error) {
 	prometheusNotReady := false
-
-	if prometheusURL != "" && !testPrometheusURL(prometheusURL) {
+	if prometheusURL != "" && !testPrometheusURL(ctx, prometheusURL) {
 		prometheusNotReady = true
 	}
 	if prometheusURL == "" || prometheusNotReady {
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
-
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		defer cancel()
 		// serialize output
 		usage, err := GetAdminInfo(ctx, adminClient)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, err
 		}
 		sessionResp := &models.AdminInfoResponse{
 			Buckets:            usage.Buckets,
@@ -901,80 +898,69 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 	return sessionResp, nil
 }
 
-func unmarshalPrometheus(endpoint string, data interface{}) bool {
+func unmarshalPrometheus(ctx context.Context, endpoint string, data interface{}) bool {
 	httpClnt := GetConsoleHTTPClient()
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
-		LogError("Unable to fetch labels from prometheus (%s)", resp.Status)
+		ErrorWithContext(ctx, fmt.Errorf("Unable to fetch labels from prometheus (%s)", resp.Status))
 		return true
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		LogError("Unexpected error from prometheus (%s)", resp.Status)
+		ErrorWithContext(ctx, fmt.Errorf("Unexpected errors from prometheus (%s)", resp.Status))
 		return true
 	}
 
 	if err = json.NewDecoder(resp.Body).Decode(data); err != nil {
-		LogError("Unexpected error reading response from prometheus, %v", err)
+		ErrorWithContext(ctx, fmt.Errorf("Unexpected errors from prometheus (%s)", resp.Status))
 		return true
 	}
 
 	return false
 }
 
-func testPrometheusURL(url string) bool {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func testPrometheusURL(ctx context.Context, url string) bool {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/-/healthy", nil)
-
 	if err != nil {
-		LogError("Error Building Request: (%v)", err)
+		ErrorWithContext(ctx, fmt.Errorf("error Building Request: (%v)", err))
 		return false
 	}
-
 	response, err := GetConsoleHTTPClient().Do(req)
-
 	if err != nil {
-		LogError("Default Prometheus URL not reachable, trying root testing: (%v)", err)
-
+		ErrorWithContext(ctx, fmt.Errorf("default Prometheus URL not reachable, trying root testing: (%v)", err))
 		newTestURL := req.URL.Scheme + "://" + req.URL.Host + "/-/healthy"
-
 		req2, err := http.NewRequestWithContext(ctx, http.MethodGet, newTestURL, nil)
-
 		if err != nil {
-			LogError("Error Building Root Request: (%v)", err)
+			ErrorWithContext(ctx, fmt.Errorf("error Building Root Request: (%v)", err))
 			return false
 		}
-
 		rootResponse, err := GetConsoleHTTPClient().Do(req2)
-
 		if err != nil {
 			// URL & Root tests didn't work. Prometheus not reachable
-			LogError("Root Prometheus URL not reachable: (%v)", err)
+			ErrorWithContext(ctx, fmt.Errorf("root Prometheus URL not reachable: (%v)", err))
 			return false
 		}
-
 		return rootResponse.StatusCode == http.StatusOK
 	}
-
 	return response.StatusCode == http.StatusOK
 }
 
 func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (*models.WidgetDetails, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	prometheusURL := getPrometheusURL()
 	prometheusJobID := getPrometheusJobID()
 
 	// We test if prometheus URL is reachable. this is meant to avoid unuseful calls and application hang.
-	if !testPrometheusURL(prometheusURL) {
-		error := errors.New("Prometheus URL is unreachable")
-		return nil, prepareError(error)
+	if !testPrometheusURL(ctx, prometheusURL) {
+		return nil, ErrorWithContext(ctx, errors.New("Prometheus URL is unreachable"))
 	}
 
-	return getWidgetDetails(prometheusURL, prometheusJobID, params.WidgetID, params.Step, params.Start, params.End)
+	return getWidgetDetails(ctx, prometheusURL, prometheusJobID, params.WidgetID, params.Step, params.Start, params.End)
 }
 
-func getWidgetDetails(prometheusURL string, prometheusJobID string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *models.Error) {
+func getWidgetDetails(ctx context.Context, prometheusURL string, prometheusJobID string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *models.Error) {
 	labelResultsCh := make(chan LabelResults)
 
 	for _, lbl := range labels {
@@ -982,7 +968,7 @@ func getWidgetDetails(prometheusURL string, prometheusJobID string, widgetID int
 			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", prometheusURL, lbl.Name)
 
 			var response LabelResponse
-			if unmarshalPrometheus(endpoint, &response) {
+			if unmarshalPrometheus(ctx, endpoint, &response) {
 				return
 			}
 
@@ -1054,7 +1040,7 @@ LabelsWaitLoop:
 				endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", prometheusURL, apiType, url.QueryEscape(queryExpr), extraParamters)
 
 				var response PromResp
-				if unmarshalPrometheus(endpoint, &response) {
+				if unmarshalPrometheus(ctx, endpoint, &response) {
 					return
 				}
 

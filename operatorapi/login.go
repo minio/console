@@ -42,7 +42,7 @@ import (
 func registerLoginHandlers(api *operations.OperatorAPI) {
 	// GET login strategy
 	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
-		loginDetails, err := getLoginDetailsResponse(params.HTTPRequest)
+		loginDetails, err := getLoginDetailsResponse(params)
 		if err != nil {
 			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
@@ -50,7 +50,7 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 	})
 	// POST login using k8s service account token
 	api.AuthLoginOperatorHandler = authApi.LoginOperatorHandlerFunc(func(params authApi.LoginOperatorParams) middleware.Responder {
-		loginResponse, err := getLoginOperatorResponse(params.Body)
+		loginResponse, err := getLoginOperatorResponse(params)
 		if err != nil {
 			return authApi.NewLoginOperatorDefault(int(err.Code)).WithPayload(err)
 		}
@@ -63,7 +63,7 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 	})
 	// POST login using external IDP
 	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params.HTTPRequest, params.Body)
+		loginResponse, err := getLoginOauth2AuthResponse(params)
 		if err != nil {
 			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
@@ -87,14 +87,19 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), nil)
 	if err != nil {
-		LogError("error authenticating user: %v", err)
-		return nil, errInvalidCredentials
+		restapi.LogError("error authenticating user: %v", err)
+		return nil, restapi.ErrInvalidLogin
 	}
 	return &token, nil
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse(r *http.Request) (*models.LoginDetails, *models.Error) {
+func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDetails, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	r := params.HTTPRequest
+
 	loginStrategy := models.LoginDetailsLoginStrategyServiceDashAccount
 	redirectURL := ""
 
@@ -103,7 +108,7 @@ func getLoginDetailsResponse(r *http.Request) (*models.LoginDetails, *models.Err
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, restapi.GetConsoleHTTPClient())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
@@ -126,31 +131,35 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 	return oauth2Token, nil
 }
 
-func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.LoginResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+
+	r := params.HTTPRequest
+	lr := params.Body
+
 	if oauth2.IsIDPEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, restapi.GetConsoleHTTPClient())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		// initialize new identity provider
 		identityProvider := auth.IdentityProvider{Client: oauth2Client}
 		// Validate user against IDP
 		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		// If we pass here that means the IDP correctly authenticate the user with the operator resource
 		// we proceed to use the service account token configured in the operator-console pod
 		creds, err := newConsoleCredentials(getK8sSAToken())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		token, err := login(restapi.ConsoleCredentials{ConsoleCredentials: creds})
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, restapi.ErrorWithContext(ctx, restapi.ErrInvalidLogin, nil, err)
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
@@ -158,7 +167,7 @@ func getLoginOauth2AuthResponse(r *http.Request, lr *models.LoginOauth2AuthReque
 		}
 		return loginResponse, nil
 	}
-	return nil, prepareError(errorGeneric)
+	return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault)
 }
 
 func newConsoleCredentials(secretKey string) (*credentials.Credentials, error) {
@@ -170,17 +179,22 @@ func newConsoleCredentials(secretKey string) (*credentials.Credentials, error) {
 }
 
 // getLoginOperatorResponse validate the provided service account token against k8s api
-func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, *models.Error) {
+func getLoginOperatorResponse(params authApi.LoginOperatorParams) (*models.LoginResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	lmr := params.Body
+
 	creds, err := newConsoleCredentials(*lmr.Jwt)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	consoleCreds := restapi.ConsoleCredentials{ConsoleCredentials: creds}
 	// Set a random as access key as session identifier
 	consoleCreds.AccountAccessKey = fmt.Sprintf("%d", rand.Intn(100000-10000)+10000)
 	token, err := login(consoleCreds)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, restapi.ErrorWithContext(ctx, restapi.ErrInvalidLogin, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{

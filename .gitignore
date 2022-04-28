@@ -19,6 +19,7 @@ vendor/
 
 # Ignore executables
 target/
+!pkg/logger/target/
 console
 !console/
 
