@@ -23,7 +23,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, Box} from "@mui/material";
+import { Button, Box } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../../src/history";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -108,7 +108,7 @@ const AddPolicyScreen = ({
   const [policyName, setPolicyName] = useState<string>("");
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
 
-const addRecord = (event: React.FormEvent) => {
+  const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
     if (addLoading) {
       return;
@@ -121,7 +121,7 @@ const addRecord = (event: React.FormEvent) => {
       })
       .then((res) => {
         setAddLoading(false);
-         history.push(`${IAM_PAGES.POLICIES}`);
+        history.push(`${IAM_PAGES.POLICIES}`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
@@ -129,15 +129,12 @@ const addRecord = (event: React.FormEvent) => {
       });
   };
 
-  
   const resetForm = () => {
     setPolicyName("");
     setPolicyDefinition("");
   };
 
   const validSave = policyName.trim() !== "";
-
-
 
   return (
     <Fragment>
@@ -154,7 +151,7 @@ const addRecord = (event: React.FormEvent) => {
             align-items="stretch"
           >
             <Grid item className={classes.headIcon}>
-              <AddAccessRuleIcon />              
+              <AddAccessRuleIcon />
             </Grid>
             <Grid item className={classes.headTitle}>
               Create Policy
@@ -164,61 +161,64 @@ const addRecord = (event: React.FormEvent) => {
           <Grid container align-items="center">
             <Grid item xs={8}>
               <Box>
-                 <form noValidate 
-                       autoComplete="off" 
-                       onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                         addRecord(e);
-                       }}>
-        <Grid container item spacing = "20">
-
-          <Grid item xs={12} >
-           <Grid container>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
-                  id="policy-name"
-                  name="policy-name"
-                  label="Policy Name"
-                  autoFocus={true}
-                  value={policyName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPolicyName(e.target.value);
+                <form
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    addRecord(e);
                   }}
-                />
-              </Grid>
-            <Grid item xs={12} className={classes.userSelector}>
-              <CodeMirrorWrapper
-                label={"Write Policy"}
-                value={policyDefinition}
-                onBeforeChange={(editor, data, value) => {
-                  setPolicyDefinition(value);
-                }}
-                editorHeight={"350px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button
-              type="button"
-              variant="outlined"
-              color="primary"
-              className={classes.spacerRight}
-              onClick={resetForm}
-            >
-              Clear
-            </Button>
+                >
+                  <Grid container item spacing="20">
+                    <Grid item xs={12}>
+                      <Grid container>
+                        <Grid item xs={12} className={classes.formFieldRow}>
+                          <InputBoxWrapper
+                            id="policy-name"
+                            name="policy-name"
+                            label="Policy Name"
+                            autoFocus={true}
+                            value={policyName}
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                              setPolicyName(e.target.value);
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} className={classes.userSelector}>
+                          <CodeMirrorWrapper
+                            label={"Write Policy"}
+                            value={policyDefinition}
+                            onBeforeChange={(editor, data, value) => {
+                              setPolicyDefinition(value);
+                            }}
+                            editorHeight={"350px"}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12} className={classes.modalButtonBar}>
+                        <Button
+                          type="button"
+                          variant="outlined"
+                          color="primary"
+                          className={classes.spacerRight}
+                          onClick={resetForm}
+                        >
+                          Clear
+                        </Button>
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={addLoading || !validSave}
-            >
-              Save
-            </Button>
-          </Grid>
-          </Grid>
-        </Grid>
-      </form>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          disabled={addLoading || !validSave}
+                        >
+                          Save
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </form>
               </Box>
             </Grid>
             <Grid item xs={4}>

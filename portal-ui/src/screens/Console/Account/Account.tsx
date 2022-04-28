@@ -56,11 +56,9 @@ import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
 
-
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
 );
-
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -90,8 +88,11 @@ const Account = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedServiceAccount, setSelectedServiceAccount] = useState<string | null >(null);
-  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState<boolean>(false);
+  const [selectedServiceAccount, setSelectedServiceAccount] = useState<
+    string | null
+  >(null);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] =
+    useState<boolean>(false);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
@@ -120,7 +121,6 @@ const Account = ({
   const fetchRecords = () => {
     setLoading(true);
   };
-
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -189,7 +189,7 @@ const Account = ({
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
         />
       )}
-     
+
       {policyOpen && (
         <ServiceAccountPolicy
           open={policyOpen}
@@ -240,7 +240,7 @@ const Account = ({
                 icon={<PasswordKeyIcon />}
                 color={"primary"}
                 variant={"outlined"}
-                disabled={selectedSAs.length === 0 }
+                disabled={selectedSAs.length === 0}
               />
             </SecureComponent>
             <RBIconButton

@@ -43,6 +43,7 @@ var (
 	errBucketNameNotInRequest       = errors.New("error bucket name not in request")
 	errGroupBodyNotInRequest        = errors.New("error group body not in request")
 	errGroupNameNotInRequest        = errors.New("error group name not in request")
+	errGroupAlreadyExists           = errors.New("error group name already in use")
 	errPolicyNameNotInRequest       = errors.New("error policy name not in request")
 	errPolicyBodyNotInRequest       = errors.New("error policy body not in request")
 	errInvalidEncryptionAlgorithm   = errors.New("error invalid encryption algorithm")
@@ -105,6 +106,10 @@ func prepareError(err ...error) *models.Error {
 		if errors.Is(err[0], errGroupNameNotInRequest) {
 			errorCode = 400
 			errorMessage = errGroupNameNotInRequest.Error()
+		}
+		if errors.Is(err[0], errGroupAlreadyExists) {
+			errorCode = 400
+			errorMessage = errGroupAlreadyExists.Error()
 		}
 		if errors.Is(err[0], errPolicyNameNotInRequest) {
 			errorCode = 400

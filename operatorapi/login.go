@@ -33,44 +33,45 @@ import (
 	"github.com/minio/console/models"
 	opauth "github.com/minio/console/operatorapi/auth"
 	"github.com/minio/console/operatorapi/operations"
-	"github.com/minio/console/operatorapi/operations/user_api"
+	authApi "github.com/minio/console/operatorapi/operations/auth"
+
 	"github.com/minio/console/pkg/auth"
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 )
 
 func registerLoginHandlers(api *operations.OperatorAPI) {
 	// GET login strategy
-	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
+	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
 		loginDetails, err := getLoginDetailsResponse(params.HTTPRequest)
 		if err != nil {
-			return user_api.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewLoginDetailOK().WithPayload(loginDetails)
+		return authApi.NewLoginDetailOK().WithPayload(loginDetails)
 	})
 	// POST login using k8s service account token
-	api.UserAPILoginOperatorHandler = user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
+	api.AuthLoginOperatorHandler = authApi.LoginOperatorHandlerFunc(func(params authApi.LoginOperatorParams) middleware.Responder {
 		loginResponse, err := getLoginOperatorResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginOperatorDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewLoginOperatorDefault(int(err.Code)).WithPayload(err)
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginOperatorNoContent().WriteResponse(w, p)
+			authApi.NewLoginOperatorNoContent().WriteResponse(w, p)
 		})
 	})
 	// POST login using external IDP
-	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
+	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
 		loginResponse, err := getLoginOauth2AuthResponse(params.HTTPRequest, params.Body)
 		if err != nil {
-			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := restapi.NewSessionCookieForConsole(loginResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginOauth2AuthNoContent().WriteResponse(w, p)
+			authApi.NewLoginOauth2AuthNoContent().WriteResponse(w, p)
 		})
 	})
 }

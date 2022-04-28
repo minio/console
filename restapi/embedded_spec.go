@@ -55,7 +55,7 @@ func init() {
     "/account/change-password": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Account"
         ],
         "summary": "Change password of currently logged in user.",
         "operationId": "AccountChangePassword",
@@ -85,7 +85,7 @@ func init() {
     "/account/change-user-password": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Account"
         ],
         "summary": "Change password of currently logged in user.",
         "operationId": "ChangeUserPassword",
@@ -115,7 +115,7 @@ func init() {
     "/admin/arns": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Returns a list of active ARNs in the instance",
         "operationId": "ArnList",
@@ -138,7 +138,7 @@ func init() {
     "/admin/info": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
@@ -169,7 +169,7 @@ func init() {
     "/admin/info/widgets/{widgetId}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Returns information about the deployment",
         "operationId": "DashboardWidgetDetails",
@@ -220,7 +220,7 @@ func init() {
           "application/octet-stream"
         ],
         "tags": [
-          "AdminAPI"
+          "Inspect"
         ],
         "summary": "Inspect Files on Drive",
         "operationId": "Inspect",
@@ -262,7 +262,7 @@ func init() {
     "/admin/notification_endpoints": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Returns a list of active notification endpoints",
         "operationId": "NotificationEndpointList",
@@ -283,7 +283,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Allows to configure a new notification endpoint",
         "operationId": "AddNotificationEndpoint",
@@ -316,7 +316,7 @@ func init() {
     "/admin/site-replication": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Get list of Replication Sites",
         "operationId": "GetSiteReplicationInfo",
@@ -337,7 +337,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Edit a Replication Site",
         "operationId": "SiteReplicationEdit",
@@ -368,7 +368,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Add a Replication Site",
         "operationId": "SiteReplicationInfoAdd",
@@ -399,7 +399,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Remove a Replication Site",
         "operationId": "SiteReplicationRemove",
@@ -432,7 +432,7 @@ func init() {
     "/admin/site-replication/status": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Display overall site replication status",
         "operationId": "GetSiteReplicationStatus",
@@ -497,7 +497,7 @@ func init() {
     "/admin/tiers": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Returns a list of tiers for ilm",
         "operationId": "TiersList",
@@ -518,7 +518,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Allows to configure a new tier",
         "operationId": "AddTier",
@@ -548,7 +548,7 @@ func init() {
     "/admin/tiers/{type}/{name}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Get Tier",
         "operationId": "GetTier",
@@ -590,7 +590,7 @@ func init() {
     "/admin/tiers/{type}/{name}/credentials": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Edit Tier Credentials",
         "operationId": "EditTierCredentials",
@@ -637,7 +637,7 @@ func init() {
     "/bucket-policy/{bucket}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "List Policies With Given Bucket",
         "operationId": "ListPoliciesWithBucket",
@@ -680,7 +680,7 @@ func init() {
     "/bucket-users/{bucket}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "List Users With Access to a Given Bucket",
         "operationId": "ListUsersWithAccessToBucket",
@@ -726,7 +726,7 @@ func init() {
     "/bucket/{bucket}/access-rules": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "List Access Rules With Given Bucket",
         "operationId": "ListAccessRulesWithBucket",
@@ -767,7 +767,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "Add Access Rule To Given Bucket",
         "operationId": "SetAccessRuleWithBucket",
@@ -804,7 +804,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "Delete Access Rule From Given Bucket",
         "operationId": "DeleteAccessRuleWithBucket",
@@ -843,7 +843,7 @@ func init() {
     "/buckets": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "List Buckets",
         "operationId": "ListBuckets",
@@ -864,7 +864,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Make bucket",
         "operationId": "MakeBucket",
@@ -894,7 +894,7 @@ func init() {
     "/buckets-replication": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Sets Multi Bucket Replication in multiple Buckets",
         "operationId": "SetMultiBucketReplication",
@@ -927,7 +927,7 @@ func init() {
     "/buckets/multi-lifecycle": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Add Multi Bucket Lifecycle",
         "operationId": "AddMultiBucketLifecycle",
@@ -960,7 +960,7 @@ func init() {
     "/buckets/{bucket_name}/delete-all-replication-rules": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Deletes all replication rules from a bucket",
         "operationId": "DeleteAllReplicationRules",
@@ -988,7 +988,7 @@ func init() {
     "/buckets/{bucket_name}/delete-objects": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Delete Multiple Objects",
         "operationId": "DeleteMultipleObjects",
@@ -1032,7 +1032,7 @@ func init() {
     "/buckets/{bucket_name}/delete-selected-replication-rules": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Deletes selected replication rules from a bucket",
         "operationId": "DeleteSelectedReplicationRules",
@@ -1068,7 +1068,7 @@ func init() {
     "/buckets/{bucket_name}/encryption/disable": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Disable bucket encryption.",
         "operationId": "DisableBucketEncryption",
@@ -1096,7 +1096,7 @@ func init() {
     "/buckets/{bucket_name}/encryption/enable": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Enable bucket encryption.",
         "operationId": "EnableBucketEncryption",
@@ -1132,7 +1132,7 @@ func init() {
     "/buckets/{bucket_name}/encryption/info": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get bucket encryption information.",
         "operationId": "GetBucketEncryptionInfo",
@@ -1163,7 +1163,7 @@ func init() {
     "/buckets/{bucket_name}/events": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "List Bucket Events",
         "operationId": "ListBucketEvents",
@@ -1204,7 +1204,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Create Bucket Event",
         "operationId": "CreateBucketEvent",
@@ -1240,7 +1240,7 @@ func init() {
     "/buckets/{bucket_name}/events/{arn}": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Bucket Event",
         "operationId": "DeleteBucketEvent",
@@ -1282,7 +1282,7 @@ func init() {
     "/buckets/{bucket_name}/lifecycle": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Lifecycle",
         "operationId": "GetBucketLifecycle",
@@ -1311,7 +1311,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Add Bucket Lifecycle",
         "operationId": "AddBucketLifecycle",
@@ -1347,7 +1347,7 @@ func init() {
     "/buckets/{bucket_name}/lifecycle/{lifecycle_id}": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Update Lifecycle rule",
         "operationId": "UpdateBucketLifecycle",
@@ -1387,7 +1387,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Lifecycle rule",
         "operationId": "DeleteBucketLifecycleRule",
@@ -1421,7 +1421,7 @@ func init() {
     "/buckets/{bucket_name}/object-locking": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Returns the status of object locking support on the bucket",
         "operationId": "GetBucketObjectLockingStatus",
@@ -1452,7 +1452,7 @@ func init() {
     "/buckets/{bucket_name}/objects": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "List Objects",
         "operationId": "ListObjects",
@@ -1501,7 +1501,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Delete Object",
         "operationId": "DeleteObject",
@@ -1558,7 +1558,7 @@ func init() {
           "application/octet-stream"
         ],
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Download Object",
         "operationId": "Download Object",
@@ -1606,7 +1606,7 @@ func init() {
     "/buckets/{bucket_name}/objects/legalhold": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Put Object's legalhold status",
         "operationId": "PutObjectLegalHold",
@@ -1654,7 +1654,7 @@ func init() {
     "/buckets/{bucket_name}/objects/metadata": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Gets the metadata of an object",
         "operationId": "GetObjectMetadata",
@@ -1691,7 +1691,7 @@ func init() {
     "/buckets/{bucket_name}/objects/restore": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Restore Object to a selected version",
         "operationId": "PutObjectRestore",
@@ -1731,7 +1731,7 @@ func init() {
     "/buckets/{bucket_name}/objects/retention": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Put Object's retention status",
         "operationId": "PutObjectRetention",
@@ -1777,7 +1777,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Delete Object retention from an object",
         "operationId": "DeleteObjectRetention",
@@ -1817,7 +1817,7 @@ func init() {
     "/buckets/{bucket_name}/objects/share": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Shares an Object on a url",
         "operationId": "ShareObject",
@@ -1865,7 +1865,7 @@ func init() {
     "/buckets/{bucket_name}/objects/tags": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Put Object's tags",
         "operationId": "PutObjectTags",
@@ -1916,7 +1916,7 @@ func init() {
           "multipart/form-data"
         ],
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Uploads an Object.",
         "parameters": [
@@ -1948,7 +1948,7 @@ func init() {
     "/buckets/{bucket_name}/replication": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Replication",
         "operationId": "GetBucketReplication",
@@ -1979,7 +1979,7 @@ func init() {
     "/buckets/{bucket_name}/replication/{rule_id}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Replication",
         "operationId": "GetBucketReplicationRule",
@@ -2014,7 +2014,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Update Replication rule",
         "operationId": "UpdateMultiBucketReplication",
@@ -2054,7 +2054,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Replication Rule Delete",
         "operationId": "DeleteBucketReplicationRule",
@@ -2088,7 +2088,7 @@ func init() {
     "/buckets/{bucket_name}/retention": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get Bucket's retention config",
         "operationId": "GetBucketRetentionConfig",
@@ -2117,7 +2117,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Set Bucket's retention config",
         "operationId": "SetBucketRetentionConfig",
@@ -2153,7 +2153,7 @@ func init() {
     "/buckets/{bucket_name}/rewind/{date}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get objects in a bucket for a rewind date",
         "operationId": "GetBucketRewind",
@@ -2195,7 +2195,7 @@ func init() {
     "/buckets/{bucket_name}/tags": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Put Bucket's tags",
         "operationId": "PutBucketTags",
@@ -2231,7 +2231,7 @@ func init() {
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Versioning",
         "operationId": "GetBucketVersioning",
@@ -2260,7 +2260,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Set Bucket Versioning",
         "operationId": "SetBucketVersioning",
@@ -2296,7 +2296,7 @@ func init() {
     "/buckets/{name}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Info",
         "operationId": "BucketInfo",
@@ -2325,7 +2325,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Bucket",
         "operationId": "DeleteBucket",
@@ -2353,7 +2353,7 @@ func init() {
     "/buckets/{name}/quota": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get Bucket Quota",
         "operationId": "GetBucketQuota",
@@ -2382,7 +2382,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Quota",
         "operationId": "SetBucketQuota",
@@ -2421,7 +2421,7 @@ func init() {
     "/buckets/{name}/set-policy": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Set Policy",
         "operationId": "BucketSetPolicy",
@@ -2461,7 +2461,7 @@ func init() {
       "get": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "System"
         ],
         "summary": "Checks the current MinIO version against the latest",
         "operationId": "CheckMinIOVersion",
@@ -2484,7 +2484,7 @@ func init() {
     "/configs": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "List Configurations",
         "operationId": "ListConfig",
@@ -2521,7 +2521,7 @@ func init() {
     "/configs/{name}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Configuration info",
         "operationId": "ConfigInfo",
@@ -2550,7 +2550,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Set Configuration",
         "operationId": "SetConfig",
@@ -2589,7 +2589,7 @@ func init() {
     "/configs/{name}/reset": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Configuration reset",
         "operationId": "ResetConfig",
@@ -2620,7 +2620,7 @@ func init() {
     "/group": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Group info",
         "operationId": "GroupInfo",
@@ -2649,7 +2649,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Update Group Members or Status",
         "operationId": "UpdateGroup",
@@ -2686,7 +2686,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Remove group",
         "operationId": "RemoveGroup",
@@ -2714,7 +2714,7 @@ func init() {
     "/groups": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "List Groups",
         "operationId": "ListGroups",
@@ -2749,7 +2749,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Add Group",
         "operationId": "AddGroup",
@@ -2779,7 +2779,7 @@ func init() {
     "/list-external-buckets": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Lists an External list of buckets using custom credentials",
         "operationId": "ListExternalBuckets",
@@ -2813,7 +2813,7 @@ func init() {
       "get": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Returns login strategy, form or sso.",
         "operationId": "LoginDetail",
@@ -2835,7 +2835,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Login to Console",
         "operationId": "Login",
@@ -2866,7 +2866,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Identity Provider oauth2 callback endpoint.",
         "operationId": "LoginOauth2Auth",
@@ -2896,7 +2896,7 @@ func init() {
     "/logout": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Logout from Console.",
         "operationId": "Logout",
@@ -2916,7 +2916,7 @@ func init() {
     "/logs/search": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Logging"
         ],
         "summary": "Search the logs",
         "operationId": "LogSearch",
@@ -2980,7 +2980,7 @@ func init() {
     "/nodes": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Lists Nodes",
         "operationId": "ListNodes",
@@ -3006,7 +3006,7 @@ func init() {
     "/policies": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "List Policies",
         "operationId": "ListPolicies",
@@ -3041,7 +3041,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Add Policy",
         "operationId": "AddPolicy",
@@ -3074,7 +3074,7 @@ func init() {
     "/policies/{policy}/groups": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "List Groups for a Policy",
         "operationId": "ListGroupsForPolicy",
@@ -3108,7 +3108,7 @@ func init() {
     "/policies/{policy}/users": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "List Users for a Policy",
         "operationId": "ListUsersForPolicy",
@@ -3142,7 +3142,7 @@ func init() {
     "/policy": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Policy info",
         "operationId": "PolicyInfo",
@@ -3171,7 +3171,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Remove policy",
         "operationId": "RemovePolicy",
@@ -3199,7 +3199,7 @@ func init() {
     "/profiling/start": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Profile"
         ],
         "summary": "Start recording profile data",
         "operationId": "ProfilingStart",
@@ -3235,7 +3235,7 @@ func init() {
           "application/zip"
         ],
         "tags": [
-          "AdminAPI"
+          "Profile"
         ],
         "summary": "Stop and download profile data",
         "operationId": "ProfilingStop",
@@ -3258,7 +3258,7 @@ func init() {
     "/remote-buckets": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "List Remote Buckets",
         "operationId": "ListRemoteBuckets",
@@ -3279,7 +3279,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Add Remote Bucket",
         "operationId": "AddRemoteBucket",
@@ -3309,7 +3309,7 @@ func init() {
     "/remote-buckets/{name}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Remote Bucket Details",
         "operationId": "RemoteBucketDetails",
@@ -3340,7 +3340,7 @@ func init() {
     "/remote-buckets/{source-bucket-name}/{arn}": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Remote Bucket",
         "operationId": "DeleteRemoteBucket",
@@ -3374,7 +3374,7 @@ func init() {
     "/service-account-credentials": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "ServiceAccount"
         ],
         "summary": "Create Service Account With Credentials",
         "operationId": "CreateServiceAccountCreds",
@@ -3407,7 +3407,7 @@ func init() {
     "/service-accounts": {
       "get": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "List User's Service Accounts",
         "operationId": "ListUserServiceAccounts",
@@ -3442,7 +3442,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Create Service Account",
         "operationId": "CreateServiceAccount",
@@ -3475,7 +3475,7 @@ func init() {
     "/service-accounts/delete-multi": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Delete Multiple Service Accounts",
         "operationId": "DeleteMultipleServiceAccounts",
@@ -3508,7 +3508,7 @@ func init() {
     "/service-accounts/{access_key}": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Delete Service Account",
         "operationId": "DeleteServiceAccount",
@@ -3536,7 +3536,7 @@ func init() {
     "/service-accounts/{access_key}/policy": {
       "get": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Get Service Account Policy",
         "operationId": "GetServiceAccountPolicy",
@@ -3565,7 +3565,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Set Service Account Policy",
         "operationId": "SetServiceAccountPolicy",
@@ -3601,7 +3601,7 @@ func init() {
     "/service/restart": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Service"
         ],
         "summary": "Restart Service",
         "operationId": "RestartService",
@@ -3621,7 +3621,7 @@ func init() {
     "/session": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Endpoint to check if your session is still valid",
         "operationId": "SessionCheck",
@@ -3644,7 +3644,7 @@ func init() {
     "/set-policy": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Set policy",
         "operationId": "SetPolicy",
@@ -3674,7 +3674,7 @@ func init() {
     "/set-policy-multi": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Set policy to multiple users/groups",
         "operationId": "SetPolicyMultiple",
@@ -3704,7 +3704,7 @@ func init() {
     "/subnet/info": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Subnet info",
         "operationId": "SubnetInfo",
@@ -3727,7 +3727,7 @@ func init() {
     "/subnet/login": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Login to subnet",
         "operationId": "SubnetLogin",
@@ -3760,7 +3760,7 @@ func init() {
     "/subnet/login/mfa": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Login to subnet using mfa",
         "operationId": "SubnetLoginMFA",
@@ -3793,7 +3793,7 @@ func init() {
     "/subnet/register": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Register cluster with Subnet",
         "operationId": "SubnetRegister",
@@ -3823,7 +3823,7 @@ func init() {
     "/subnet/registration-token": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Subnet registraton token",
         "operationId": "SubnetRegToken",
@@ -3846,7 +3846,7 @@ func init() {
     "/user": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Get User Info",
         "operationId": "GetUserInfo",
@@ -3875,7 +3875,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Update User Info",
         "operationId": "UpdateUserInfo",
@@ -3912,7 +3912,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Remove user",
         "operationId": "RemoveUser",
@@ -3940,7 +3940,7 @@ func init() {
     "/user/groups": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Update Groups for a user",
         "operationId": "UpdateUserGroups",
@@ -3979,7 +3979,7 @@ func init() {
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Create Service Account for User With Credentials",
         "operationId": "CreateServiceAccountCredentials",
@@ -4018,7 +4018,7 @@ func init() {
     "/user/{name}/service-accounts": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "returns a list of service accounts for a user",
         "operationId": "ListAUserServiceAccounts",
@@ -4047,7 +4047,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Create Service Account for User",
         "operationId": "CreateAUserServiceAccount",
@@ -4086,7 +4086,7 @@ func init() {
     "/users": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "List Users",
         "operationId": "ListUsers",
@@ -4121,7 +4121,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Add User",
         "operationId": "AddUser",
@@ -4154,7 +4154,7 @@ func init() {
     "/users-groups-bulk": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Bulk functionality to Add Users to Groups",
         "operationId": "BulkUpdateUsersGroups",
@@ -5282,7 +5282,8 @@ func init() {
           "enum": [
             "form",
             "redirect",
-            "service-account"
+            "service-account",
+            "redirect-service-account"
           ]
         },
         "redirect": {
@@ -6979,7 +6980,7 @@ func init() {
     "/account/change-password": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Account"
         ],
         "summary": "Change password of currently logged in user.",
         "operationId": "AccountChangePassword",
@@ -7009,7 +7010,7 @@ func init() {
     "/account/change-user-password": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Account"
         ],
         "summary": "Change password of currently logged in user.",
         "operationId": "ChangeUserPassword",
@@ -7039,7 +7040,7 @@ func init() {
     "/admin/arns": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Returns a list of active ARNs in the instance",
         "operationId": "ArnList",
@@ -7062,7 +7063,7 @@ func init() {
     "/admin/info": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
@@ -7093,7 +7094,7 @@ func init() {
     "/admin/info/widgets/{widgetId}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Returns information about the deployment",
         "operationId": "DashboardWidgetDetails",
@@ -7144,7 +7145,7 @@ func init() {
           "application/octet-stream"
         ],
         "tags": [
-          "AdminAPI"
+          "Inspect"
         ],
         "summary": "Inspect Files on Drive",
         "operationId": "Inspect",
@@ -7186,7 +7187,7 @@ func init() {
     "/admin/notification_endpoints": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Returns a list of active notification endpoints",
         "operationId": "NotificationEndpointList",
@@ -7207,7 +7208,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Allows to configure a new notification endpoint",
         "operationId": "AddNotificationEndpoint",
@@ -7240,7 +7241,7 @@ func init() {
     "/admin/site-replication": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Get list of Replication Sites",
         "operationId": "GetSiteReplicationInfo",
@@ -7261,7 +7262,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Edit a Replication Site",
         "operationId": "SiteReplicationEdit",
@@ -7292,7 +7293,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Add a Replication Site",
         "operationId": "SiteReplicationInfoAdd",
@@ -7323,7 +7324,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Remove a Replication Site",
         "operationId": "SiteReplicationRemove",
@@ -7356,7 +7357,7 @@ func init() {
     "/admin/site-replication/status": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "SiteReplication"
         ],
         "summary": "Display overall site replication status",
         "operationId": "GetSiteReplicationStatus",
@@ -7421,7 +7422,7 @@ func init() {
     "/admin/tiers": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Returns a list of tiers for ilm",
         "operationId": "TiersList",
@@ -7442,7 +7443,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Allows to configure a new tier",
         "operationId": "AddTier",
@@ -7472,7 +7473,7 @@ func init() {
     "/admin/tiers/{type}/{name}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Get Tier",
         "operationId": "GetTier",
@@ -7514,7 +7515,7 @@ func init() {
     "/admin/tiers/{type}/{name}/credentials": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "Tiering"
         ],
         "summary": "Edit Tier Credentials",
         "operationId": "EditTierCredentials",
@@ -7561,7 +7562,7 @@ func init() {
     "/bucket-policy/{bucket}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "List Policies With Given Bucket",
         "operationId": "ListPoliciesWithBucket",
@@ -7604,7 +7605,7 @@ func init() {
     "/bucket-users/{bucket}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "List Users With Access to a Given Bucket",
         "operationId": "ListUsersWithAccessToBucket",
@@ -7650,7 +7651,7 @@ func init() {
     "/bucket/{bucket}/access-rules": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "List Access Rules With Given Bucket",
         "operationId": "ListAccessRulesWithBucket",
@@ -7691,7 +7692,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "Add Access Rule To Given Bucket",
         "operationId": "SetAccessRuleWithBucket",
@@ -7728,7 +7729,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "Bucket"
         ],
         "summary": "Delete Access Rule From Given Bucket",
         "operationId": "DeleteAccessRuleWithBucket",
@@ -7767,7 +7768,7 @@ func init() {
     "/buckets": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "List Buckets",
         "operationId": "ListBuckets",
@@ -7788,7 +7789,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Make bucket",
         "operationId": "MakeBucket",
@@ -7818,7 +7819,7 @@ func init() {
     "/buckets-replication": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Sets Multi Bucket Replication in multiple Buckets",
         "operationId": "SetMultiBucketReplication",
@@ -7851,7 +7852,7 @@ func init() {
     "/buckets/multi-lifecycle": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Add Multi Bucket Lifecycle",
         "operationId": "AddMultiBucketLifecycle",
@@ -7884,7 +7885,7 @@ func init() {
     "/buckets/{bucket_name}/delete-all-replication-rules": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Deletes all replication rules from a bucket",
         "operationId": "DeleteAllReplicationRules",
@@ -7912,7 +7913,7 @@ func init() {
     "/buckets/{bucket_name}/delete-objects": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Delete Multiple Objects",
         "operationId": "DeleteMultipleObjects",
@@ -7956,7 +7957,7 @@ func init() {
     "/buckets/{bucket_name}/delete-selected-replication-rules": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Deletes selected replication rules from a bucket",
         "operationId": "DeleteSelectedReplicationRules",
@@ -7992,7 +7993,7 @@ func init() {
     "/buckets/{bucket_name}/encryption/disable": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Disable bucket encryption.",
         "operationId": "DisableBucketEncryption",
@@ -8020,7 +8021,7 @@ func init() {
     "/buckets/{bucket_name}/encryption/enable": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Enable bucket encryption.",
         "operationId": "EnableBucketEncryption",
@@ -8056,7 +8057,7 @@ func init() {
     "/buckets/{bucket_name}/encryption/info": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get bucket encryption information.",
         "operationId": "GetBucketEncryptionInfo",
@@ -8087,7 +8088,7 @@ func init() {
     "/buckets/{bucket_name}/events": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "List Bucket Events",
         "operationId": "ListBucketEvents",
@@ -8128,7 +8129,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Create Bucket Event",
         "operationId": "CreateBucketEvent",
@@ -8164,7 +8165,7 @@ func init() {
     "/buckets/{bucket_name}/events/{arn}": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Bucket Event",
         "operationId": "DeleteBucketEvent",
@@ -8206,7 +8207,7 @@ func init() {
     "/buckets/{bucket_name}/lifecycle": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Lifecycle",
         "operationId": "GetBucketLifecycle",
@@ -8235,7 +8236,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Add Bucket Lifecycle",
         "operationId": "AddBucketLifecycle",
@@ -8271,7 +8272,7 @@ func init() {
     "/buckets/{bucket_name}/lifecycle/{lifecycle_id}": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Update Lifecycle rule",
         "operationId": "UpdateBucketLifecycle",
@@ -8311,7 +8312,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Lifecycle rule",
         "operationId": "DeleteBucketLifecycleRule",
@@ -8345,7 +8346,7 @@ func init() {
     "/buckets/{bucket_name}/object-locking": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Returns the status of object locking support on the bucket",
         "operationId": "GetBucketObjectLockingStatus",
@@ -8376,7 +8377,7 @@ func init() {
     "/buckets/{bucket_name}/objects": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "List Objects",
         "operationId": "ListObjects",
@@ -8425,7 +8426,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Delete Object",
         "operationId": "DeleteObject",
@@ -8482,7 +8483,7 @@ func init() {
           "application/octet-stream"
         ],
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Download Object",
         "operationId": "Download Object",
@@ -8530,7 +8531,7 @@ func init() {
     "/buckets/{bucket_name}/objects/legalhold": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Put Object's legalhold status",
         "operationId": "PutObjectLegalHold",
@@ -8578,7 +8579,7 @@ func init() {
     "/buckets/{bucket_name}/objects/metadata": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Gets the metadata of an object",
         "operationId": "GetObjectMetadata",
@@ -8615,7 +8616,7 @@ func init() {
     "/buckets/{bucket_name}/objects/restore": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Restore Object to a selected version",
         "operationId": "PutObjectRestore",
@@ -8655,7 +8656,7 @@ func init() {
     "/buckets/{bucket_name}/objects/retention": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Put Object's retention status",
         "operationId": "PutObjectRetention",
@@ -8701,7 +8702,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Delete Object retention from an object",
         "operationId": "DeleteObjectRetention",
@@ -8741,7 +8742,7 @@ func init() {
     "/buckets/{bucket_name}/objects/share": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Shares an Object on a url",
         "operationId": "ShareObject",
@@ -8789,7 +8790,7 @@ func init() {
     "/buckets/{bucket_name}/objects/tags": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Put Object's tags",
         "operationId": "PutObjectTags",
@@ -8840,7 +8841,7 @@ func init() {
           "multipart/form-data"
         ],
         "tags": [
-          "UserAPI"
+          "Object"
         ],
         "summary": "Uploads an Object.",
         "parameters": [
@@ -8872,7 +8873,7 @@ func init() {
     "/buckets/{bucket_name}/replication": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Replication",
         "operationId": "GetBucketReplication",
@@ -8903,7 +8904,7 @@ func init() {
     "/buckets/{bucket_name}/replication/{rule_id}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Replication",
         "operationId": "GetBucketReplicationRule",
@@ -8938,7 +8939,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Update Replication rule",
         "operationId": "UpdateMultiBucketReplication",
@@ -8978,7 +8979,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Replication Rule Delete",
         "operationId": "DeleteBucketReplicationRule",
@@ -9012,7 +9013,7 @@ func init() {
     "/buckets/{bucket_name}/retention": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get Bucket's retention config",
         "operationId": "GetBucketRetentionConfig",
@@ -9041,7 +9042,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Set Bucket's retention config",
         "operationId": "SetBucketRetentionConfig",
@@ -9077,7 +9078,7 @@ func init() {
     "/buckets/{bucket_name}/rewind/{date}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get objects in a bucket for a rewind date",
         "operationId": "GetBucketRewind",
@@ -9119,7 +9120,7 @@ func init() {
     "/buckets/{bucket_name}/tags": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Put Bucket's tags",
         "operationId": "PutBucketTags",
@@ -9155,7 +9156,7 @@ func init() {
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Versioning",
         "operationId": "GetBucketVersioning",
@@ -9184,7 +9185,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Set Bucket Versioning",
         "operationId": "SetBucketVersioning",
@@ -9220,7 +9221,7 @@ func init() {
     "/buckets/{name}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Info",
         "operationId": "BucketInfo",
@@ -9249,7 +9250,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Bucket",
         "operationId": "DeleteBucket",
@@ -9277,7 +9278,7 @@ func init() {
     "/buckets/{name}/quota": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Get Bucket Quota",
         "operationId": "GetBucketQuota",
@@ -9306,7 +9307,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Quota",
         "operationId": "SetBucketQuota",
@@ -9345,7 +9346,7 @@ func init() {
     "/buckets/{name}/set-policy": {
       "put": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Bucket Set Policy",
         "operationId": "BucketSetPolicy",
@@ -9385,7 +9386,7 @@ func init() {
       "get": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "System"
         ],
         "summary": "Checks the current MinIO version against the latest",
         "operationId": "CheckMinIOVersion",
@@ -9408,7 +9409,7 @@ func init() {
     "/configs": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "List Configurations",
         "operationId": "ListConfig",
@@ -9445,7 +9446,7 @@ func init() {
     "/configs/{name}": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Configuration info",
         "operationId": "ConfigInfo",
@@ -9474,7 +9475,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Set Configuration",
         "operationId": "SetConfig",
@@ -9513,7 +9514,7 @@ func init() {
     "/configs/{name}/reset": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Configuration"
         ],
         "summary": "Configuration reset",
         "operationId": "ResetConfig",
@@ -9544,7 +9545,7 @@ func init() {
     "/group": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Group info",
         "operationId": "GroupInfo",
@@ -9573,7 +9574,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Update Group Members or Status",
         "operationId": "UpdateGroup",
@@ -9610,7 +9611,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Remove group",
         "operationId": "RemoveGroup",
@@ -9638,7 +9639,7 @@ func init() {
     "/groups": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "List Groups",
         "operationId": "ListGroups",
@@ -9673,7 +9674,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Group"
         ],
         "summary": "Add Group",
         "operationId": "AddGroup",
@@ -9703,7 +9704,7 @@ func init() {
     "/list-external-buckets": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Lists an External list of buckets using custom credentials",
         "operationId": "ListExternalBuckets",
@@ -9737,7 +9738,7 @@ func init() {
       "get": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Returns login strategy, form or sso.",
         "operationId": "LoginDetail",
@@ -9759,7 +9760,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Login to Console",
         "operationId": "Login",
@@ -9790,7 +9791,7 @@ func init() {
       "post": {
         "security": [],
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Identity Provider oauth2 callback endpoint.",
         "operationId": "LoginOauth2Auth",
@@ -9820,7 +9821,7 @@ func init() {
     "/logout": {
       "post": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Logout from Console.",
         "operationId": "Logout",
@@ -9840,7 +9841,7 @@ func init() {
     "/logs/search": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Logging"
         ],
         "summary": "Search the logs",
         "operationId": "LogSearch",
@@ -9904,7 +9905,7 @@ func init() {
     "/nodes": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "System"
         ],
         "summary": "Lists Nodes",
         "operationId": "ListNodes",
@@ -9930,7 +9931,7 @@ func init() {
     "/policies": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "List Policies",
         "operationId": "ListPolicies",
@@ -9965,7 +9966,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Add Policy",
         "operationId": "AddPolicy",
@@ -9998,7 +9999,7 @@ func init() {
     "/policies/{policy}/groups": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "List Groups for a Policy",
         "operationId": "ListGroupsForPolicy",
@@ -10032,7 +10033,7 @@ func init() {
     "/policies/{policy}/users": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "List Users for a Policy",
         "operationId": "ListUsersForPolicy",
@@ -10066,7 +10067,7 @@ func init() {
     "/policy": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Policy info",
         "operationId": "PolicyInfo",
@@ -10095,7 +10096,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Remove policy",
         "operationId": "RemovePolicy",
@@ -10123,7 +10124,7 @@ func init() {
     "/profiling/start": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Profile"
         ],
         "summary": "Start recording profile data",
         "operationId": "ProfilingStart",
@@ -10159,7 +10160,7 @@ func init() {
           "application/zip"
         ],
         "tags": [
-          "AdminAPI"
+          "Profile"
         ],
         "summary": "Stop and download profile data",
         "operationId": "ProfilingStop",
@@ -10182,7 +10183,7 @@ func init() {
     "/remote-buckets": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "List Remote Buckets",
         "operationId": "ListRemoteBuckets",
@@ -10203,7 +10204,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Add Remote Bucket",
         "operationId": "AddRemoteBucket",
@@ -10233,7 +10234,7 @@ func init() {
     "/remote-buckets/{name}": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Remote Bucket Details",
         "operationId": "RemoteBucketDetails",
@@ -10264,7 +10265,7 @@ func init() {
     "/remote-buckets/{source-bucket-name}/{arn}": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "Bucket"
         ],
         "summary": "Delete Remote Bucket",
         "operationId": "DeleteRemoteBucket",
@@ -10298,7 +10299,7 @@ func init() {
     "/service-account-credentials": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "ServiceAccount"
         ],
         "summary": "Create Service Account With Credentials",
         "operationId": "CreateServiceAccountCreds",
@@ -10331,7 +10332,7 @@ func init() {
     "/service-accounts": {
       "get": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "List User's Service Accounts",
         "operationId": "ListUserServiceAccounts",
@@ -10366,7 +10367,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Create Service Account",
         "operationId": "CreateServiceAccount",
@@ -10399,7 +10400,7 @@ func init() {
     "/service-accounts/delete-multi": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Delete Multiple Service Accounts",
         "operationId": "DeleteMultipleServiceAccounts",
@@ -10432,7 +10433,7 @@ func init() {
     "/service-accounts/{access_key}": {
       "delete": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Delete Service Account",
         "operationId": "DeleteServiceAccount",
@@ -10460,7 +10461,7 @@ func init() {
     "/service-accounts/{access_key}/policy": {
       "get": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Get Service Account Policy",
         "operationId": "GetServiceAccountPolicy",
@@ -10489,7 +10490,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "UserAPI"
+          "ServiceAccount"
         ],
         "summary": "Set Service Account Policy",
         "operationId": "SetServiceAccountPolicy",
@@ -10525,7 +10526,7 @@ func init() {
     "/service/restart": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Service"
         ],
         "summary": "Restart Service",
         "operationId": "RestartService",
@@ -10545,7 +10546,7 @@ func init() {
     "/session": {
       "get": {
         "tags": [
-          "UserAPI"
+          "Auth"
         ],
         "summary": "Endpoint to check if your session is still valid",
         "operationId": "SessionCheck",
@@ -10568,7 +10569,7 @@ func init() {
     "/set-policy": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Set policy",
         "operationId": "SetPolicy",
@@ -10598,7 +10599,7 @@ func init() {
     "/set-policy-multi": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "Set policy to multiple users/groups",
         "operationId": "SetPolicyMultiple",
@@ -10628,7 +10629,7 @@ func init() {
     "/subnet/info": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Subnet info",
         "operationId": "SubnetInfo",
@@ -10651,7 +10652,7 @@ func init() {
     "/subnet/login": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Login to subnet",
         "operationId": "SubnetLogin",
@@ -10684,7 +10685,7 @@ func init() {
     "/subnet/login/mfa": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Login to subnet using mfa",
         "operationId": "SubnetLoginMFA",
@@ -10717,7 +10718,7 @@ func init() {
     "/subnet/register": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Register cluster with Subnet",
         "operationId": "SubnetRegister",
@@ -10747,7 +10748,7 @@ func init() {
     "/subnet/registration-token": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Subnet"
         ],
         "summary": "Subnet registraton token",
         "operationId": "SubnetRegToken",
@@ -10770,7 +10771,7 @@ func init() {
     "/user": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Get User Info",
         "operationId": "GetUserInfo",
@@ -10799,7 +10800,7 @@ func init() {
       },
       "put": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Update User Info",
         "operationId": "UpdateUserInfo",
@@ -10836,7 +10837,7 @@ func init() {
       },
       "delete": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Remove user",
         "operationId": "RemoveUser",
@@ -10864,7 +10865,7 @@ func init() {
     "/user/groups": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Update Groups for a user",
         "operationId": "UpdateUserGroups",
@@ -10903,7 +10904,7 @@ func init() {
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Create Service Account for User With Credentials",
         "operationId": "CreateServiceAccountCredentials",
@@ -10942,7 +10943,7 @@ func init() {
     "/user/{name}/service-accounts": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "returns a list of service accounts for a user",
         "operationId": "ListAUserServiceAccounts",
@@ -10971,7 +10972,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Create Service Account for User",
         "operationId": "CreateAUserServiceAccount",
@@ -11010,7 +11011,7 @@ func init() {
     "/users": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "List Users",
         "operationId": "ListUsers",
@@ -11045,7 +11046,7 @@ func init() {
       },
       "post": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Add User",
         "operationId": "AddUser",
@@ -11078,7 +11079,7 @@ func init() {
     "/users-groups-bulk": {
       "put": {
         "tags": [
-          "AdminAPI"
+          "User"
         ],
         "summary": "Bulk functionality to Add Users to Groups",
         "operationId": "BulkUpdateUsersGroups",
@@ -12332,7 +12333,8 @@ func init() {
           "enum": [
             "form",
             "redirect",
-            "service-account"
+            "service-account",
+            "redirect-service-account"
           ]
         },
         "redirect": {

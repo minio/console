@@ -20,27 +20,29 @@ import (
 	"context"
 	"net/http"
 
+	authApi "github.com/minio/console/restapi/operations/auth"
+
 	"github.com/minio/console/pkg/auth"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	accountApi "github.com/minio/console/restapi/operations/account"
 )
 
 func registerAccountHandlers(api *operations.ConsoleAPI) {
 	// change user password
-	api.UserAPIAccountChangePasswordHandler = user_api.AccountChangePasswordHandlerFunc(func(params user_api.AccountChangePasswordParams, session *models.Principal) middleware.Responder {
+	api.AccountAccountChangePasswordHandler = accountApi.AccountChangePasswordHandlerFunc(func(params accountApi.AccountChangePasswordParams, session *models.Principal) middleware.Responder {
 		changePasswordResponse, err := getChangePasswordResponse(session, params)
 		if err != nil {
-			return user_api.NewAccountChangePasswordDefault(int(err.Code)).WithPayload(err)
+			return accountApi.NewAccountChangePasswordDefault(int(err.Code)).WithPayload(err)
 		}
 		// Custom response writer to update the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := NewSessionCookieForConsole(changePasswordResponse.SessionID)
 			http.SetCookie(w, &cookie)
-			user_api.NewLoginNoContent().WriteResponse(w, p)
+			authApi.NewLoginNoContent().WriteResponse(w, p)
 		})
 	})
 }
@@ -52,7 +54,7 @@ func changePassword(ctx context.Context, client MinioAdmin, session *models.Prin
 
 // getChangePasswordResponse will validate user knows what is the current password (avoid account hijacking), update user account password
 // and authenticate the user generating a new session token/cookie
-func getChangePasswordResponse(session *models.Principal, params user_api.AccountChangePasswordParams) (*models.LoginResponse, *models.Error) {
+func getChangePasswordResponse(session *models.Principal, params accountApi.AccountChangePasswordParams) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// changePassword operations requires an AdminClient initialized with parent account credentials not

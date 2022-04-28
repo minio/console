@@ -38,7 +38,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/user_api"
+	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	"github.com/minio/minio-go/v7/pkg/policy"
 	"github.com/minio/minio-go/v7/pkg/replication"
 	minioIAMPolicy "github.com/minio/pkg/iam/policy"
@@ -46,138 +46,138 @@ import (
 
 func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	// list buckets
-	api.UserAPIListBucketsHandler = user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, session *models.Principal) middleware.Responder {
+	api.BucketListBucketsHandler = bucketApi.ListBucketsHandlerFunc(func(params bucketApi.ListBucketsParams, session *models.Principal) middleware.Responder {
 		listBucketsResponse, err := getListBucketsResponse(session)
 		if err != nil {
-			return user_api.NewListBucketsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListBucketsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewListBucketsOK().WithPayload(listBucketsResponse)
+		return bucketApi.NewListBucketsOK().WithPayload(listBucketsResponse)
 	})
 	// make bucket
-	api.UserAPIMakeBucketHandler = user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketMakeBucketHandler = bucketApi.MakeBucketHandlerFunc(func(params bucketApi.MakeBucketParams, session *models.Principal) middleware.Responder {
 		if err := getMakeBucketResponse(session, params.Body); err != nil {
-			return user_api.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewMakeBucketCreated()
+		return bucketApi.NewMakeBucketCreated()
 	})
 	// delete bucket
-	api.UserAPIDeleteBucketHandler = user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketDeleteBucketHandler = bucketApi.DeleteBucketHandlerFunc(func(params bucketApi.DeleteBucketParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteBucketResponse(session, params); err != nil {
-			return user_api.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
 
 		}
-		return user_api.NewDeleteBucketNoContent()
+		return bucketApi.NewDeleteBucketNoContent()
 	})
 	// get bucket info
-	api.UserAPIBucketInfoHandler = user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, session *models.Principal) middleware.Responder {
+	api.BucketBucketInfoHandler = bucketApi.BucketInfoHandlerFunc(func(params bucketApi.BucketInfoParams, session *models.Principal) middleware.Responder {
 		bucketInfoResp, err := getBucketInfoResponse(session, params)
 		if err != nil {
-			return user_api.NewBucketInfoDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewBucketInfoDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return user_api.NewBucketInfoOK().WithPayload(bucketInfoResp)
+		return bucketApi.NewBucketInfoOK().WithPayload(bucketInfoResp)
 	})
 	// set bucket policy
-	api.UserAPIBucketSetPolicyHandler = user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, session *models.Principal) middleware.Responder {
+	api.BucketBucketSetPolicyHandler = bucketApi.BucketSetPolicyHandlerFunc(func(params bucketApi.BucketSetPolicyParams, session *models.Principal) middleware.Responder {
 		bucketSetPolicyResp, err := getBucketSetPolicyResponse(session, params.Name, params.Body)
 		if err != nil {
-			return user_api.NewBucketSetPolicyDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewBucketSetPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewBucketSetPolicyOK().WithPayload(bucketSetPolicyResp)
+		return bucketApi.NewBucketSetPolicyOK().WithPayload(bucketSetPolicyResp)
 	})
 	// set bucket tags
-	api.UserAPIPutBucketTagsHandler = user_api.PutBucketTagsHandlerFunc(func(params user_api.PutBucketTagsParams, session *models.Principal) middleware.Responder {
+	api.BucketPutBucketTagsHandler = bucketApi.PutBucketTagsHandlerFunc(func(params bucketApi.PutBucketTagsParams, session *models.Principal) middleware.Responder {
 		err := getPutBucketTagsResponse(session, params.BucketName, params.Body)
 		if err != nil {
-			return user_api.NewPutBucketTagsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewPutBucketTagsDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewPutBucketTagsOK()
+		return bucketApi.NewPutBucketTagsOK()
 	})
 	// get bucket versioning
-	api.UserAPIGetBucketVersioningHandler = user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketVersioningHandler = bucketApi.GetBucketVersioningHandlerFunc(func(params bucketApi.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
 		getBucketVersioning, err := getBucketVersionedResponse(session, params.BucketName)
 		if err != nil {
-			return user_api.NewGetBucketVersioningDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return bucketApi.NewGetBucketVersioningDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
-		return user_api.NewGetBucketVersioningOK().WithPayload(getBucketVersioning)
+		return bucketApi.NewGetBucketVersioningOK().WithPayload(getBucketVersioning)
 	})
 	// update bucket versioning
-	api.UserAPISetBucketVersioningHandler = user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, session *models.Principal) middleware.Responder {
+	api.BucketSetBucketVersioningHandler = bucketApi.SetBucketVersioningHandlerFunc(func(params bucketApi.SetBucketVersioningParams, session *models.Principal) middleware.Responder {
 		err := setBucketVersioningResponse(session, params.BucketName, &params)
 		if err != nil {
-			return user_api.NewSetBucketVersioningDefault(500).WithPayload(err)
+			return bucketApi.NewSetBucketVersioningDefault(500).WithPayload(err)
 		}
-		return user_api.NewSetBucketVersioningCreated()
+		return bucketApi.NewSetBucketVersioningCreated()
 	})
 	// get bucket replication
-	api.UserAPIGetBucketReplicationHandler = user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketReplicationHandler = bucketApi.GetBucketReplicationHandlerFunc(func(params bucketApi.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
 		getBucketReplication, err := getBucketReplicationResponse(session, params.BucketName)
 		if err != nil {
-			return user_api.NewGetBucketReplicationDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return bucketApi.NewGetBucketReplicationDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
-		return user_api.NewGetBucketReplicationOK().WithPayload(getBucketReplication)
+		return bucketApi.NewGetBucketReplicationOK().WithPayload(getBucketReplication)
 	})
 	// get single bucket replication rule
-	api.UserAPIGetBucketReplicationRuleHandler = user_api.GetBucketReplicationRuleHandlerFunc(func(params user_api.GetBucketReplicationRuleParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketReplicationRuleHandler = bucketApi.GetBucketReplicationRuleHandlerFunc(func(params bucketApi.GetBucketReplicationRuleParams, session *models.Principal) middleware.Responder {
 		getBucketReplicationRule, err := getBucketReplicationRuleResponse(session, params.BucketName, params.RuleID)
 		if err != nil {
-			return user_api.NewGetBucketReplicationRuleDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return bucketApi.NewGetBucketReplicationRuleDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
-		return user_api.NewGetBucketReplicationRuleOK().WithPayload(getBucketReplicationRule)
+		return bucketApi.NewGetBucketReplicationRuleOK().WithPayload(getBucketReplicationRule)
 	})
 
 	// enable bucket encryption
-	api.UserAPIEnableBucketEncryptionHandler = user_api.EnableBucketEncryptionHandlerFunc(func(params user_api.EnableBucketEncryptionParams, session *models.Principal) middleware.Responder {
+	api.BucketEnableBucketEncryptionHandler = bucketApi.EnableBucketEncryptionHandlerFunc(func(params bucketApi.EnableBucketEncryptionParams, session *models.Principal) middleware.Responder {
 		if err := enableBucketEncryptionResponse(session, params); err != nil {
-			return user_api.NewEnableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewEnableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewEnableBucketEncryptionOK()
+		return bucketApi.NewEnableBucketEncryptionOK()
 	})
 	// disable bucket encryption
-	api.UserAPIDisableBucketEncryptionHandler = user_api.DisableBucketEncryptionHandlerFunc(func(params user_api.DisableBucketEncryptionParams, session *models.Principal) middleware.Responder {
+	api.BucketDisableBucketEncryptionHandler = bucketApi.DisableBucketEncryptionHandlerFunc(func(params bucketApi.DisableBucketEncryptionParams, session *models.Principal) middleware.Responder {
 		if err := disableBucketEncryptionResponse(session, params); err != nil {
-			return user_api.NewDisableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDisableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewDisableBucketEncryptionOK()
+		return bucketApi.NewDisableBucketEncryptionOK()
 	})
 	// get bucket encryption info
-	api.UserAPIGetBucketEncryptionInfoHandler = user_api.GetBucketEncryptionInfoHandlerFunc(func(params user_api.GetBucketEncryptionInfoParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketEncryptionInfoHandler = bucketApi.GetBucketEncryptionInfoHandlerFunc(func(params bucketApi.GetBucketEncryptionInfoParams, session *models.Principal) middleware.Responder {
 		response, err := getBucketEncryptionInfoResponse(session, params)
 		if err != nil {
-			return user_api.NewGetBucketEncryptionInfoDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketEncryptionInfoDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewGetBucketEncryptionInfoOK().WithPayload(response)
+		return bucketApi.NewGetBucketEncryptionInfoOK().WithPayload(response)
 	})
 	// set bucket retention config
-	api.UserAPISetBucketRetentionConfigHandler = user_api.SetBucketRetentionConfigHandlerFunc(func(params user_api.SetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
+	api.BucketSetBucketRetentionConfigHandler = bucketApi.SetBucketRetentionConfigHandlerFunc(func(params bucketApi.SetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
 		if err := getSetBucketRetentionConfigResponse(session, params); err != nil {
-			return user_api.NewSetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewSetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewSetBucketRetentionConfigOK()
+		return bucketApi.NewSetBucketRetentionConfigOK()
 	})
 	// get bucket retention config
-	api.UserAPIGetBucketRetentionConfigHandler = user_api.GetBucketRetentionConfigHandlerFunc(func(params user_api.GetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketRetentionConfigHandler = bucketApi.GetBucketRetentionConfigHandlerFunc(func(params bucketApi.GetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
 		response, err := getBucketRetentionConfigResponse(session, params.BucketName)
 		if err != nil {
-			return user_api.NewGetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewGetBucketRetentionConfigOK().WithPayload(response)
+		return bucketApi.NewGetBucketRetentionConfigOK().WithPayload(response)
 	})
 	// get bucket object locking status
-	api.UserAPIGetBucketObjectLockingStatusHandler = user_api.GetBucketObjectLockingStatusHandlerFunc(func(params user_api.GetBucketObjectLockingStatusParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketObjectLockingStatusHandler = bucketApi.GetBucketObjectLockingStatusHandlerFunc(func(params bucketApi.GetBucketObjectLockingStatusParams, session *models.Principal) middleware.Responder {
 		getBucketObjectLockingStatus, err := getBucketObjectLockingResponse(session, params.BucketName)
 		if err != nil {
-			return user_api.NewGetBucketObjectLockingStatusDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return bucketApi.NewGetBucketObjectLockingStatusDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
-		return user_api.NewGetBucketObjectLockingStatusOK().WithPayload(getBucketObjectLockingStatus)
+		return bucketApi.NewGetBucketObjectLockingStatusOK().WithPayload(getBucketObjectLockingStatus)
 	})
 	// get objects rewind for a bucket
-	api.UserAPIGetBucketRewindHandler = user_api.GetBucketRewindHandlerFunc(func(params user_api.GetBucketRewindParams, session *models.Principal) middleware.Responder {
+	api.BucketGetBucketRewindHandler = bucketApi.GetBucketRewindHandlerFunc(func(params bucketApi.GetBucketRewindParams, session *models.Principal) middleware.Responder {
 		getBucketRewind, err := getBucketRewindResponse(session, params)
 		if err != nil {
-			return user_api.NewGetBucketRewindDefault(500).WithPayload(err)
+			return bucketApi.NewGetBucketRewindDefault(500).WithPayload(err)
 		}
-		return user_api.NewGetBucketRewindOK().WithPayload(getBucketRewind)
+		return bucketApi.NewGetBucketRewindOK().WithPayload(getBucketRewind)
 	})
 }
 
@@ -199,7 +199,7 @@ func doSetVersioning(client MCClient, state VersionState) error {
 	return nil
 }
 
-func setBucketVersioningResponse(session *models.Principal, bucketName string, params *user_api.SetBucketVersioningParams) *models.Error {
+func setBucketVersioningResponse(session *models.Principal, bucketName string, params *bucketApi.SetBucketVersioningParams) *models.Error {
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
 		return prepareError(err)
@@ -614,7 +614,7 @@ func removeBucket(client MinioClient, bucketName string) error {
 }
 
 // getDeleteBucketResponse performs removeBucket() to delete a bucket
-func getDeleteBucketResponse(session *models.Principal, params user_api.DeleteBucketParams) *models.Error {
+func getDeleteBucketResponse(session *models.Principal, params bucketApi.DeleteBucketParams) *models.Error {
 	if params.Name == "" {
 		return prepareError(errBucketNameNotInRequest)
 	}
@@ -691,7 +691,7 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 }
 
 // getBucketInfoResponse calls getBucketInfo() to get the bucket's info
-func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfoParams) (*models.Bucket, *models.Error) {
+func getBucketInfoResponse(session *models.Principal, params bucketApi.BucketInfoParams) (*models.Bucket, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -757,7 +757,7 @@ func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName 
 }
 
 // enableBucketEncryptionResponse calls enableBucketEncryption() to create new encryption configuration for provided bucket name
-func enableBucketEncryptionResponse(session *models.Principal, params user_api.EnableBucketEncryptionParams) *models.Error {
+func enableBucketEncryptionResponse(session *models.Principal, params bucketApi.EnableBucketEncryptionParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -779,7 +779,7 @@ func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName
 }
 
 // disableBucketEncryptionResponse calls disableBucketEncryption()
-func disableBucketEncryptionResponse(session *models.Principal, params user_api.DisableBucketEncryptionParams) *models.Error {
+func disableBucketEncryptionResponse(session *models.Principal, params bucketApi.DisableBucketEncryptionParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -806,7 +806,7 @@ func getBucketEncryptionInfo(ctx context.Context, client MinioClient, bucketName
 	return &models.BucketEncryptionInfo{Algorithm: bucketInfo.Rules[0].Apply.SSEAlgorithm, KmsMasterKeyID: bucketInfo.Rules[0].Apply.KmsMasterKeyID}, nil
 }
 
-func getBucketEncryptionInfoResponse(session *models.Principal, params user_api.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *models.Error) {
+func getBucketEncryptionInfoResponse(session *models.Principal, params bucketApi.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -853,7 +853,7 @@ func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 	return client.setObjectLockConfig(ctx, bucketName, &retentionMode, &retentionValidity, &retentionUnit)
 }
 
-func getSetBucketRetentionConfigResponse(session *models.Principal, params user_api.SetBucketRetentionConfigParams) *models.Error {
+func getSetBucketRetentionConfigResponse(session *models.Principal, params bucketApi.SetBucketRetentionConfigParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mClient, err := newMinioClient(session)
@@ -974,7 +974,7 @@ func getBucketObjectLockingResponse(session *models.Principal, bucketName string
 	}, nil
 }
 
-func getBucketRewindResponse(session *models.Principal, params user_api.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
+func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var prefix = ""

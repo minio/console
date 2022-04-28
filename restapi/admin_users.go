@@ -28,7 +28,9 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/console/restapi/operations/admin_api"
+	accountApi "github.com/minio/console/restapi/operations/account"
+	bucketApi "github.com/minio/console/restapi/operations/bucket"
+	userApi "github.com/minio/console/restapi/operations/user"
 	"github.com/minio/madmin-go"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
@@ -42,79 +44,79 @@ const (
 
 func registerUsersHandlers(api *operations.ConsoleAPI) {
 	// List Users
-	api.AdminAPIListUsersHandler = admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, session *models.Principal) middleware.Responder {
+	api.UserListUsersHandler = userApi.ListUsersHandlerFunc(func(params userApi.ListUsersParams, session *models.Principal) middleware.Responder {
 		listUsersResponse, err := getListUsersResponse(session)
 		if err != nil {
-			return admin_api.NewListUsersDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewListUsersDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListUsersOK().WithPayload(listUsersResponse)
+		return userApi.NewListUsersOK().WithPayload(listUsersResponse)
 	})
 	// Add User
-	api.AdminAPIAddUserHandler = admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, session *models.Principal) middleware.Responder {
+	api.UserAddUserHandler = userApi.AddUserHandlerFunc(func(params userApi.AddUserParams, session *models.Principal) middleware.Responder {
 		userResponse, err := getUserAddResponse(session, params)
 		if err != nil {
-			return admin_api.NewAddUserDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewAddUserDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewAddUserCreated().WithPayload(userResponse)
+		return userApi.NewAddUserCreated().WithPayload(userResponse)
 	})
 	// Remove User
-	api.AdminAPIRemoveUserHandler = admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, session *models.Principal) middleware.Responder {
+	api.UserRemoveUserHandler = userApi.RemoveUserHandlerFunc(func(params userApi.RemoveUserParams, session *models.Principal) middleware.Responder {
 		err := getRemoveUserResponse(session, params)
 		if err != nil {
-			return admin_api.NewRemoveUserDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewRemoveUserDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewRemoveUserNoContent()
+		return userApi.NewRemoveUserNoContent()
 	})
 	// Update User-Groups
-	api.AdminAPIUpdateUserGroupsHandler = admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, session *models.Principal) middleware.Responder {
+	api.UserUpdateUserGroupsHandler = userApi.UpdateUserGroupsHandlerFunc(func(params userApi.UpdateUserGroupsParams, session *models.Principal) middleware.Responder {
 		userUpdateResponse, err := getUpdateUserGroupsResponse(session, params)
 		if err != nil {
-			return admin_api.NewUpdateUserGroupsDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewUpdateUserGroupsDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return admin_api.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
+		return userApi.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
 	})
 	// Get User
-	api.AdminAPIGetUserInfoHandler = admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, session *models.Principal) middleware.Responder {
+	api.UserGetUserInfoHandler = userApi.GetUserInfoHandlerFunc(func(params userApi.GetUserInfoParams, session *models.Principal) middleware.Responder {
 		userInfoResponse, err := getUserInfoResponse(session, params)
 		if err != nil {
-			return admin_api.NewGetUserInfoDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewGetUserInfoDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return admin_api.NewGetUserInfoOK().WithPayload(userInfoResponse)
+		return userApi.NewGetUserInfoOK().WithPayload(userInfoResponse)
 	})
 	// Update User
-	api.AdminAPIUpdateUserInfoHandler = admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, session *models.Principal) middleware.Responder {
+	api.UserUpdateUserInfoHandler = userApi.UpdateUserInfoHandlerFunc(func(params userApi.UpdateUserInfoParams, session *models.Principal) middleware.Responder {
 		userUpdateResponse, err := getUpdateUserResponse(session, params)
 		if err != nil {
-			return admin_api.NewUpdateUserInfoDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewUpdateUserInfoDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return admin_api.NewUpdateUserInfoOK().WithPayload(userUpdateResponse)
+		return userApi.NewUpdateUserInfoOK().WithPayload(userUpdateResponse)
 	})
 	// Update User-Groups Bulk
-	api.AdminAPIBulkUpdateUsersGroupsHandler = admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, session *models.Principal) middleware.Responder {
+	api.UserBulkUpdateUsersGroupsHandler = userApi.BulkUpdateUsersGroupsHandlerFunc(func(params userApi.BulkUpdateUsersGroupsParams, session *models.Principal) middleware.Responder {
 		err := getAddUsersListToGroupsResponse(session, params)
 		if err != nil {
-			return admin_api.NewBulkUpdateUsersGroupsDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewBulkUpdateUsersGroupsDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return admin_api.NewBulkUpdateUsersGroupsOK()
+		return userApi.NewBulkUpdateUsersGroupsOK()
 	})
-	api.AdminAPIListUsersWithAccessToBucketHandler = admin_api.ListUsersWithAccessToBucketHandlerFunc(func(params admin_api.ListUsersWithAccessToBucketParams, session *models.Principal) middleware.Responder {
+	api.BucketListUsersWithAccessToBucketHandler = bucketApi.ListUsersWithAccessToBucketHandlerFunc(func(params bucketApi.ListUsersWithAccessToBucketParams, session *models.Principal) middleware.Responder {
 		response, err := getListUsersWithAccessToBucketResponse(session, params.Bucket)
 		if err != nil {
-			return admin_api.NewListUsersWithAccessToBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListUsersWithAccessToBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListUsersWithAccessToBucketOK().WithPayload(response)
+		return bucketApi.NewListUsersWithAccessToBucketOK().WithPayload(response)
 	})
 	// Change User Password
-	api.AdminAPIChangeUserPasswordHandler = admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, session *models.Principal) middleware.Responder {
+	api.AccountChangeUserPasswordHandler = accountApi.ChangeUserPasswordHandlerFunc(func(params accountApi.ChangeUserPasswordParams, session *models.Principal) middleware.Responder {
 		err := getChangeUserPasswordResponse(session, params)
 		if err != nil {
-			return admin_api.NewChangeUserPasswordDefault(int(err.Code)).WithPayload(err)
+			return accountApi.NewChangeUserPasswordDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewChangeUserPasswordCreated()
+		return accountApi.NewChangeUserPasswordCreated()
 	})
 }
 
@@ -205,7 +207,7 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 	return userRet, nil
 }
 
-func getUserAddResponse(session *models.Principal, params admin_api.AddUserParams) (*models.User, *models.Error) {
+func getUserAddResponse(session *models.Principal, params userApi.AddUserParams) (*models.User, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
@@ -242,7 +244,7 @@ func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error 
 	return client.removeUser(ctx, accessKey)
 }
 
-func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUserParams) *models.Error {
+func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -276,7 +278,7 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 	return &userInfo, nil
 }
 
-func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfoParams) (*models.User, *models.Error) {
+func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoParams) (*models.User, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -422,7 +424,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	return userReturn, nil
 }
 
-func getUpdateUserGroupsResponse(session *models.Principal, params admin_api.UpdateUserGroupsParams) (*models.User, *models.Error) {
+func getUpdateUserGroupsResponse(session *models.Principal, params userApi.UpdateUserGroupsParams) (*models.User, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -459,7 +461,7 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 	return client.setUserStatus(ctx, user, setStatus)
 }
 
-func getUpdateUserResponse(session *models.Principal, params admin_api.UpdateUserInfoParams) (*models.User, *models.Error) {
+func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserInfoParams) (*models.User, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -531,7 +533,7 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 	return nil
 }
 
-func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api.BulkUpdateUsersGroupsParams) *models.Error {
+func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.BulkUpdateUsersGroupsParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -662,7 +664,7 @@ func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser str
 }
 
 // getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey
-func getChangeUserPasswordResponse(session *models.Principal, params admin_api.ChangeUserPasswordParams) *models.Error {
+func getChangeUserPasswordResponse(session *models.Principal, params accountApi.ChangeUserPasswordParams) *models.Error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
