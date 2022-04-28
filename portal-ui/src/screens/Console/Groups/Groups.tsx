@@ -45,15 +45,14 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../common/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
-const AddGroup = withSuspense(React.lazy(() => import("../Groups/AddGroup")));
 const SetPolicy = withSuspense(
   React.lazy(() => import("../Policies/SetPolicy"))
 );
@@ -80,7 +79,6 @@ const styles = (theme: Theme) =>
   });
 
 const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
-  const [addGroupOpen, setGroupOpen] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
@@ -134,11 +132,6 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
     }
   }, [loading, setErrorSnackMessage, displayGroups]);
 
-  const closeAddModalAndRefresh = () => {
-    setGroupOpen(false);
-    isLoading(true);
-  };
-
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
 
@@ -175,13 +168,6 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
 
   return (
     <React.Fragment>
-      {addGroupOpen && (
-        <AddGroup
-          open={addGroupOpen}
-          selectedGroup={selectedGroup}
-          closeModalAndRefresh={closeAddModalAndRefresh}
-        />
-      )}
       {deleteOpen && (
         <DeleteGroup
           deleteOpen={deleteOpen}

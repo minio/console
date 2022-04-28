@@ -48,7 +48,7 @@ const FeatureItem = ({
     </Box>
   );
 };
-const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
+const AddUserHelpBox = () => {
   return (
     <Box
       sx={{
@@ -58,11 +58,6 @@ const AddUserHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         display: "flex",
         flexFlow: "column",
         padding: "20px",
-        marginLeft: {
-          xs: "0px",
-          sm: "0px",
-          md: hasMargin ? "30px" : "",
-        },
         marginTop: {
           xs: "0px",
         },
