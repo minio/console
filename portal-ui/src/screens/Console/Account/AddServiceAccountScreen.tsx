@@ -155,20 +155,21 @@ const [policyJSON, setPolicyJSON] = useState<string>("");
 
   useEffect(() => {
     if (addSending) {
-      api
-        .invoke("POST", `/api/v1/service-account-credentials`, {
-          policy: policyDefinition,
-          accessKey: accessKey,
-          secretKey: secretKey,
-        })
-        .then((res) => {
-          setAddSending(false);
-          setNewServiceAccount({
-            accessKey: res.accessKey || "",
-            secretKey: res.secretKey || "",
-            url: res.url || "",
-          });
-        })
+        api
+          .invoke("POST", `/api/v1/service-account-credentials`, {
+            policy: policyJSON,
+            accessKey: accessKey,
+            secretKey: secretKey,
+          })
+          .then((res) => {
+            setAddSending(false);
+            setNewServiceAccount({
+              accessKey: res.accessKey || "",
+              secretKey: res.secretKey || "",
+              url: res.url || "",
+            });
+          })
+          
         .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
           setErrorSnackMessage(err);
@@ -183,122 +184,25 @@ const [policyJSON, setPolicyJSON] = useState<string>("");
     secretKey,
   ]);
 
-  //fetches policies and groups for active user
-//   useEffect(() => {  
-
- //   const userName = userLoggedIn;
-    
- //   setLoading(true);
- //   api
-  //    .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
-  //    .then((res) => {
-  //      const memberOf = res.memberOf;
-   //     setCurrentGroups(memberOf);
-   //     setCheckedGroups(memberOf);
-  //      const userPolicies = res.policy;
-  //     setCurrentPolicies(userPolicies);
-  //      setCheckedPolicies(userPolicies);
- //       setLoading(false);
-      //  let currentGroups: string[] = [];
-      //  for (let group of memberOf) {
-       //   currentGroups.push({
-       //     group: group,
-       //   });
-        //}
-       // setCurrentGroups(currentGroups);
-        //let currentPolicies: string[] = [];
-      // for (let policy of res.policy) {
-        //  currentPolicies.push({
-         //   policy: policy,
-         // });
-      //   console.log("In the GET api - loggedInAs:", userName, "User policies in res:", res.policy, "User Groups in res:", res.memberOf)
-//      })
-        
- //     .catch((err: ErrorResponseHandler) => {
- //       setLoading(false);
-  //      setErrorSnackMessage(err);
-  //    });
-  //}, []);
-
   useEffect(() => {
+    if(isRestrictedByPolicy){
     api
       .invoke("GET", `/api/v1/user/policy`)
       .then((res: string) => {
-       // saveSessionResponse(res);
-       console.log("getUserPolicy res", res);
        setPolicyJSON(JSON.stringify(JSON.parse(res), null, 4));
-       console.log("Does this format nicely? - ", JSON.stringify(JSON.parse(res), null, 4));
-      //setS3Permissions(res.permissions["arn:aws:s3:::*"]);
-     // setCheckedPermissions(res.permissions["arn:aws:s3:::*"]);
-    //   console.log("session get res.permissions[console-ui]:", res.permissions["console-ui"]);
-     // setConsolePermissions(res.permissions["console-ui"]);
-       //console.log("getPolicyDetails JSON.stringify(JSON.parse(result.policy), null, 4):", JSON.stringify(JSON.parse(res.permissions), null, 4));
-       // setSessionLoading(false);
-       // setDistributedMode(res.distributedMode || false);
-        // check for tenants presence, that indicates we are in operator mode
-        //if (res.operator) {
-        //  consoleOperatorMode(true);
-        //  document.title = "MinIO Operator";
-        //}
+    
       })
-      //.catch(() => setSessionLoading(false));
-  }, [
-   // saveSessionResponse,
-   // consoleOperatorMode,
-   // userLoggedIn,
-    //setDistributedMode,
-  ]);
+    }
+  }, [isRestrictedByPolicy]);
 
-   const getPolicyDetails = () => {
-     checkedPolicies.forEach ((element) => {
-       api
-            .invoke(
-              "GET",
-              `/api/v1/policy?name=${encodeURIComponent(element)}`
-            )
-            .then((result: any) => {
-              if (result) {
-               var aPolicy = result.policy
-               //console.log(element, " - Policy definition:", aPolicy)
-
-             //   setPolicyDefinition(
-               //   result
-                 //   ? JSON.stringify(JSON.parse(result.policy), null, 4)
-                //    : ""
-                //);
-               // const pol: IAMPolicy = JSON.parse(result.policy);
-               // setPolicyStatements(pol.Statement);
-              }
-            })
-            .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
-            });
-     })          
-              
-    };
-
-//useEffect(() => {
- //   getPolicyDetails();
-   // console.log("in getPolicyDetails useEffect rawpolicy:", );
-//}, [checkedPolicies]);
-
-//useEffect(() => {
-//fetchGroupInfo();
-//console.log("in fetchGroupInfo useEffect checkedPolicies:", checkedPolicies);
-//}, [checkedGroups]);
-
-//useEffect(() => {
- // console.log("Something changed - currentPolicies:", currentPolicies, "currentGroups:", currentGroups, "checkedPolicies:", checkedPolicies)
-//},
-//[currentGroups, currentPolicies, checkedPolicies]);
-
+   
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
     setAddSending(true);
   };
 
   const resetForm = () => {
-    setPolicyDefinition("");
+    setPolicyJSON("");
     setNewServiceAccount(null);
     setAccessKey("");
     setSecretKey("");
@@ -308,73 +212,6 @@ const [policyJSON, setPolicyJSON] = useState<string>("");
   const closeCredentialsModal = () => {
     setNewServiceAccount(null);
     history.push(`${IAM_PAGES.ACCOUNT}`);
-  };
-  
-    const userLoggedIn = decodeFileName(
-    localStorage.getItem("userLoggedIn") || ""
-  );
-
-  const groupSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
-    const value = targetD.value;
-    const checked = targetD.checked;
-
-    let elements: string[] = [...checkedGroups]; // We clone the checkedUsers array
-
-    if (checked) {
-      // If the user has checked this field we need to push this to checkedUsersList
-      elements.push(value);
-    } else {
-      // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter((element) => element !== value);
-    }
-
-    setCheckedGroups(elements);
-
-    return elements;
-  };
-
-  const fetchGroupInfo = () => {
-    if (checkedGroups && checkedGroups.length > 0) {
-      checkedGroups.forEach((element) => {
-      api
-        .invoke("GET", `/api/v1/group?name=${encodeURI(element)}`)
-        .then((res: any) => {
-          var groupPolicies = res.policy.split(',');
-          groupPolicies.forEach((element : string)=> {
-            if (!currentPolicies.includes(element)){
-              currentPolicies.push(element);              
-            }
-          });
-            setCurrentPolicies(currentPolicies);  
-            setCheckedPolicies(currentPolicies);
-             
-        })
-        .catch((err) => {
-          setErrorSnackMessage(err);
-        });
-      })         
-    }   
-  }
-
-  const policySelectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
-    const value = targetD.value;
-    const checked = targetD.checked;
-
-    let elements: string[] = [...checkedPermissions]; // We clone the checkedUsers array
-
-    if (checked) {
-      // If the user has checked this field we need to push this to checkedUsersList
-      elements.push(value);
-    } else {
-      // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter((element) => element !== value);
-    }
-
-    setCheckedPermissions(elements);
-
-    return elements;
   };
 
   return (
@@ -505,36 +342,12 @@ const [policyJSON, setPolicyJSON] = useState<string>("");
                         xs={12}
                         className={classes.codeMirrorContainer}
                       >
-                 {/* <div >
-                     <PanelTitle>Current User: {userLoggedIn} Groups</PanelTitle>
-                    <TableWrapper
-                      // itemActions={userTableActions}
-                      columns={[{ label: "Name", elementKey: "group" }]}
-                      isLoading={loading}
-                      records={currentGroups}
-                      entityName="Groups"
-                      idField="group"
-                      onSelect={groupSelectionChanged }
-                      selectedItems={checkedGroups}
-                    />
-                    </div> */}
                   <div >
-                     <PanelTitle>Current User: {userLoggedIn}</PanelTitle>
-                    <PanelTitle>Access Policies</PanelTitle>
-                    <TableWrapper
-                      // itemActions={userTableActions}
-                      columns={[{ label: "Name", elementKey: "policy" }]}
-                      isLoading={loading}
-                      records={s3Permissions}
-                      entityName="Policies"
-                      idField="policy"
-                       onSelect={policySelectionChanged }
-                      selectedItems={checkedPermissions}
-                    />
+                     <PanelTitle>Current User Policy - edit the JSON to remove permissions for this service account</PanelTitle>
+                    
                   </div>
                   <Grid item xs={12} className={classes.formScrollable}>
                         <CodeMirrorWrapper
-                          label={"Policy "}
                           value={policyJSON}
                           onBeforeChange={(editor, data, value) => {
                             setPolicyJSON(value);

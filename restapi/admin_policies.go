@@ -580,9 +580,7 @@ func setPolicyMultipleEntities(ctx context.Context, client MinioAdmin, policyNam
 
 // parsePolicy() converts from *rawPolicy to *models.Policy
 func parsePolicy(name string, rawPolicy *iampolicy.Policy) (*models.Policy, error) {
-	//fmt.Println("In parsePolicy rawPolicy:", rawPolicy)
 	stringPolicy, err := json.Marshal(rawPolicy)
-	//fmt.Println("In parsePolicy stringPolicy:", string(stringPolicy))
 	if err != nil {
 		return nil, err
 	}
