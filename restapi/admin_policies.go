@@ -332,13 +332,12 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 	return filteredUsers, nil
 }
 
-
 func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	if session == nil {
-		return "nil", prepareError(errorGenericInvalidSession)
+		return "nil", ErrorWithContext(ctx, ErrPolicyNotFound)
 	}
 	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
 
@@ -349,14 +348,14 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 		STSSessionToken:    session.STSSessionToken,
 	})
 	if err != nil {
-		return "nil", prepareError(err, errorGenericInvalidSession)
+		return "nil", ErrorWithContext(ctx, err)
 	}
 	userAdminClient := AdminClient{Client: mAdminClient}
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	accountInfo, err := getAccountInfo(ctx, userAdminClient)
 	if err != nil {
-		return "nil", prepareError(err, errorGenericInvalidSession)
+		return "nil", ErrorWithContext(ctx, err)
 
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
