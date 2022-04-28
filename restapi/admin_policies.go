@@ -118,7 +118,7 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		return policyApi.NewListUsersForPolicyOK().WithPayload(policyUsersResponse)
 	})
 	api.PolicyListGroupsForPolicyHandler = policyApi.ListGroupsForPolicyHandlerFunc(func(params policyApi.ListGroupsForPolicyParams, session *models.Principal) middleware.Responder {
-		policyGroupsResponse, err := getListGroupsForPolicyResponse(session, params.Policy)
+		policyGroupsResponse, err := getListGroupsForPolicyResponse(session, params)
 		if err != nil {
 			return policyApi.NewListGroupsForPolicyDefault(int(err.Code)).WithPayload(err)
 		}
@@ -363,8 +363,8 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 	return string(rawPolicy), nil
 }
 
-func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.ListGroupsForPolicyParams) ([]string, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -372,6 +372,7 @@ func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
+	policy := params.Policy
 	adminClient := AdminClient{Client: mAdmin}
 	policies, err := listPolicies(ctx, adminClient)
 	if err != nil {
