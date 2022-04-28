@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -120,7 +119,6 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
 	policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(rawPolicy))
-	fmt.Println("getSessionResponse - policy.Statements:", policy.Statements)
 	if err != nil {
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
@@ -223,13 +221,11 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 
 	}
 	serializedPolicy, err := json.Marshal(policy)
-	fmt.Println("getSessionResponse - serializedPolicy:", serializedPolicy)
 	if err != nil {
 		return nil, prepareError(err, errorGenericInvalidSession)
 	}
 	var sessionPolicy *models.IamPolicy
 	err = json.Unmarshal(serializedPolicy, &sessionPolicy)
-	fmt.Println("getSessionResponse - sessionPolicy", sessionPolicy)
 	if err != nil {
 		return nil, prepareError(err)
 	}

@@ -332,12 +332,12 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 	return filteredUsers, nil
 }
 
-func getUserPolicyResponse(session *models.Principal) (*models.IamPolicy, *models.Error) {
+func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
 	if session == nil {
-		return nil, prepareError(errorGenericInvalidSession)
+		return "nil", prepareError(errorGenericInvalidSession)
 	}
 	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
 
@@ -348,24 +348,24 @@ func getUserPolicyResponse(session *models.Principal) (*models.IamPolicy, *model
 		STSSessionToken:    session.STSSessionToken,
 	})
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return "nil", prepareError(err, errorGenericInvalidSession)
 	}
 	userAdminClient := AdminClient{Client: mAdminClient}
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	accountInfo, err := getAccountInfo(ctx, userAdminClient)
 	if err != nil {
-		return nil, prepareError(err, errorGenericInvalidSession)
+		return "nil", prepareError(err, errorGenericInvalidSession)
 
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
-
+	fmt.Println("getUserPolicyResponse - rawpolicy:", rawPolicy)
 	policy, err := iampolicy.ParseConfig(bytes.NewReader(rawPolicy))
 	fmt.Println("getUserPolicyResponse - policy:", policy)
+	tempJSONPolicy, err := json.Marshal(policy)
+	fmt.Println("getUserPolicyResponse - string(json.Marshal(policy))", string(tempJSONPolicy))
 
-	var userPolicyResponse *models.IamPolicy
-
-	return userPolicyResponse, nil
+	return string(tempJSONPolicy), nil
 }
 
 func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {

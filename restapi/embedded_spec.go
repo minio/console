@@ -3987,7 +3987,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/iamPolicy"
+              "type": "string"
             }
           },
           "default": {
@@ -10935,7 +10935,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/iamPolicy"
+              "type": "string"
             }
           },
           "default": {

@@ -1576,7 +1576,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/iamPolicy"
+            type: string
         default:
           description: Generic error response.
           schema:
@@ -3023,7 +3023,6 @@ definitions:
         $ref: "#/definitions/setBucketQuota"
       retention:
         $ref: "#/definitions/putBucketRetentionRequest"
-
   error:
     type: object
     required:
