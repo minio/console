@@ -125,12 +125,12 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		return policyApi.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
 	})
 	// Gets policies for currently logged in user
-	api.AdminAPIGetUserPolicyHandler = admin_api.GetUserPolicyHandlerFunc(func(params admin_api.GetUserPolicyParams, session *models.Principal) middleware.Responder {
+	api.PolicyGetUserPolicyHandler = policyApi.GetUserPolicyHandlerFunc(func(params policyApi.GetUserPolicyParams, session *models.Principal) middleware.Responder {
 		userPolicyResponse, err := getUserPolicyResponse(session)
 		if err != nil {
-			return admin_api.NewListGroupsDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewGetUserPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
+		return policyApi.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
 	})
 }
 

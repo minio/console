@@ -249,11 +249,11 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserGetUserInfoHandler: user.GetUserInfoHandlerFunc(func(params user.GetUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user.GetUserInfo has not yet been implemented")
 		}),
-		AdminAPIGetUserPolicyHandler: admin_api.GetUserPolicyHandlerFunc(func(params admin_api.GetUserPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetUserPolicy has not yet been implemented")
+		PolicyGetUserPolicyHandler: policy.GetUserPolicyHandlerFunc(func(params policy.GetUserPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.GetUserPolicy has not yet been implemented")
 		}),
-		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
+		GroupGroupInfoHandler: group.GroupInfoHandlerFunc(func(params group.GroupInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation group.GroupInfo has not yet been implemented")
 		}),
 		InspectInspectHandler: inspect.InspectHandlerFunc(func(params inspect.InspectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation inspect.Inspect has not yet been implemented")
@@ -508,250 +508,250 @@ type ConsoleAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
-	// UserAPIAccountChangePasswordHandler sets the operation handler for the account change password operation
-	UserAPIAccountChangePasswordHandler user_api.AccountChangePasswordHandler
-	// UserAPIAddBucketLifecycleHandler sets the operation handler for the add bucket lifecycle operation
-	UserAPIAddBucketLifecycleHandler user_api.AddBucketLifecycleHandler
-	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
-	AdminAPIAddGroupHandler admin_api.AddGroupHandler
-	// UserAPIAddMultiBucketLifecycleHandler sets the operation handler for the add multi bucket lifecycle operation
-	UserAPIAddMultiBucketLifecycleHandler user_api.AddMultiBucketLifecycleHandler
-	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
-	AdminAPIAddNotificationEndpointHandler admin_api.AddNotificationEndpointHandler
-	// AdminAPIAddPolicyHandler sets the operation handler for the add policy operation
-	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
-	// UserAPIAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
-	UserAPIAddRemoteBucketHandler user_api.AddRemoteBucketHandler
-	// AdminAPIAddTierHandler sets the operation handler for the add tier operation
-	AdminAPIAddTierHandler admin_api.AddTierHandler
-	// AdminAPIAddUserHandler sets the operation handler for the add user operation
-	AdminAPIAddUserHandler admin_api.AddUserHandler
-	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
-	AdminAPIAdminInfoHandler admin_api.AdminInfoHandler
-	// AdminAPIArnListHandler sets the operation handler for the arn list operation
-	AdminAPIArnListHandler admin_api.ArnListHandler
-	// UserAPIBucketInfoHandler sets the operation handler for the bucket info operation
-	UserAPIBucketInfoHandler user_api.BucketInfoHandler
-	// UserAPIBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
-	UserAPIBucketSetPolicyHandler user_api.BucketSetPolicyHandler
-	// AdminAPIBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
-	AdminAPIBulkUpdateUsersGroupsHandler admin_api.BulkUpdateUsersGroupsHandler
-	// AdminAPIChangeUserPasswordHandler sets the operation handler for the change user password operation
-	AdminAPIChangeUserPasswordHandler admin_api.ChangeUserPasswordHandler
-	// UserAPICheckMinIOVersionHandler sets the operation handler for the check min i o version operation
-	UserAPICheckMinIOVersionHandler user_api.CheckMinIOVersionHandler
-	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
-	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
-	// AdminAPICreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
-	AdminAPICreateAUserServiceAccountHandler admin_api.CreateAUserServiceAccountHandler
-	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
-	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
-	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
-	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
-	// AdminAPICreateServiceAccountCredentialsHandler sets the operation handler for the create service account credentials operation
-	AdminAPICreateServiceAccountCredentialsHandler admin_api.CreateServiceAccountCredentialsHandler
-	// AdminAPICreateServiceAccountCredsHandler sets the operation handler for the create service account creds operation
-	AdminAPICreateServiceAccountCredsHandler admin_api.CreateServiceAccountCredsHandler
-	// AdminAPIDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
-	AdminAPIDashboardWidgetDetailsHandler admin_api.DashboardWidgetDetailsHandler
-	// AdminAPIDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
-	AdminAPIDeleteAccessRuleWithBucketHandler admin_api.DeleteAccessRuleWithBucketHandler
-	// UserAPIDeleteAllReplicationRulesHandler sets the operation handler for the delete all replication rules operation
-	UserAPIDeleteAllReplicationRulesHandler user_api.DeleteAllReplicationRulesHandler
-	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
-	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
-	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
-	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
-	// UserAPIDeleteBucketLifecycleRuleHandler sets the operation handler for the delete bucket lifecycle rule operation
-	UserAPIDeleteBucketLifecycleRuleHandler user_api.DeleteBucketLifecycleRuleHandler
-	// UserAPIDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
-	UserAPIDeleteBucketReplicationRuleHandler user_api.DeleteBucketReplicationRuleHandler
-	// UserAPIDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
-	UserAPIDeleteMultipleObjectsHandler user_api.DeleteMultipleObjectsHandler
-	// UserAPIDeleteMultipleServiceAccountsHandler sets the operation handler for the delete multiple service accounts operation
-	UserAPIDeleteMultipleServiceAccountsHandler user_api.DeleteMultipleServiceAccountsHandler
-	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
-	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
-	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
-	UserAPIDeleteObjectRetentionHandler user_api.DeleteObjectRetentionHandler
-	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
-	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
-	// UserAPIDeleteSelectedReplicationRulesHandler sets the operation handler for the delete selected replication rules operation
-	UserAPIDeleteSelectedReplicationRulesHandler user_api.DeleteSelectedReplicationRulesHandler
-	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
-	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
-	// UserAPIDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
-	UserAPIDisableBucketEncryptionHandler user_api.DisableBucketEncryptionHandler
-	// UserAPIDownloadObjectHandler sets the operation handler for the download object operation
-	UserAPIDownloadObjectHandler user_api.DownloadObjectHandler
-	// AdminAPIEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
-	AdminAPIEditTierCredentialsHandler admin_api.EditTierCredentialsHandler
-	// UserAPIEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
-	UserAPIEnableBucketEncryptionHandler user_api.EnableBucketEncryptionHandler
-	// UserAPIGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
-	UserAPIGetBucketEncryptionInfoHandler user_api.GetBucketEncryptionInfoHandler
-	// UserAPIGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
-	UserAPIGetBucketLifecycleHandler user_api.GetBucketLifecycleHandler
-	// UserAPIGetBucketObjectLockingStatusHandler sets the operation handler for the get bucket object locking status operation
-	UserAPIGetBucketObjectLockingStatusHandler user_api.GetBucketObjectLockingStatusHandler
-	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
-	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
-	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
-	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
-	// UserAPIGetBucketReplicationRuleHandler sets the operation handler for the get bucket replication rule operation
-	UserAPIGetBucketReplicationRuleHandler user_api.GetBucketReplicationRuleHandler
-	// UserAPIGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
-	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
-	// UserAPIGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
-	UserAPIGetBucketRewindHandler user_api.GetBucketRewindHandler
-	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
-	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
-	// UserAPIGetObjectMetadataHandler sets the operation handler for the get object metadata operation
-	UserAPIGetObjectMetadataHandler user_api.GetObjectMetadataHandler
-	// UserAPIGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
-	UserAPIGetServiceAccountPolicyHandler user_api.GetServiceAccountPolicyHandler
-	// AdminAPIGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
-	AdminAPIGetSiteReplicationInfoHandler admin_api.GetSiteReplicationInfoHandler
-	// AdminAPIGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
-	AdminAPIGetSiteReplicationStatusHandler admin_api.GetSiteReplicationStatusHandler
-	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
-	AdminAPIGetTierHandler admin_api.GetTierHandler
-	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
-	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
-	// AdminAPIGetUserPolicyHandler sets the operation handler for the get user policy operation
-	AdminAPIGetUserPolicyHandler admin_api.GetUserPolicyHandler
-	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
-	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
-	// AdminAPIInspectHandler sets the operation handler for the inspect operation
-	AdminAPIInspectHandler admin_api.InspectHandler
-	// AdminAPIListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
-	AdminAPIListAUserServiceAccountsHandler admin_api.ListAUserServiceAccountsHandler
-	// AdminAPIListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
-	AdminAPIListAccessRulesWithBucketHandler admin_api.ListAccessRulesWithBucketHandler
-	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
-	UserAPIListBucketEventsHandler user_api.ListBucketEventsHandler
-	// UserAPIListBucketsHandler sets the operation handler for the list buckets operation
-	UserAPIListBucketsHandler user_api.ListBucketsHandler
-	// AdminAPIListConfigHandler sets the operation handler for the list config operation
-	AdminAPIListConfigHandler admin_api.ListConfigHandler
-	// UserAPIListExternalBucketsHandler sets the operation handler for the list external buckets operation
-	UserAPIListExternalBucketsHandler user_api.ListExternalBucketsHandler
-	// AdminAPIListGroupsHandler sets the operation handler for the list groups operation
-	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
-	// AdminAPIListGroupsForPolicyHandler sets the operation handler for the list groups for policy operation
-	AdminAPIListGroupsForPolicyHandler admin_api.ListGroupsForPolicyHandler
-	// AdminAPIListNodesHandler sets the operation handler for the list nodes operation
-	AdminAPIListNodesHandler admin_api.ListNodesHandler
-	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
-	UserAPIListObjectsHandler user_api.ListObjectsHandler
-	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
-	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
-	// AdminAPIListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
-	AdminAPIListPoliciesWithBucketHandler admin_api.ListPoliciesWithBucketHandler
-	// UserAPIListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
-	UserAPIListRemoteBucketsHandler user_api.ListRemoteBucketsHandler
-	// UserAPIListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
-	UserAPIListUserServiceAccountsHandler user_api.ListUserServiceAccountsHandler
-	// AdminAPIListUsersHandler sets the operation handler for the list users operation
-	AdminAPIListUsersHandler admin_api.ListUsersHandler
-	// AdminAPIListUsersForPolicyHandler sets the operation handler for the list users for policy operation
-	AdminAPIListUsersForPolicyHandler admin_api.ListUsersForPolicyHandler
-	// AdminAPIListUsersWithAccessToBucketHandler sets the operation handler for the list users with access to bucket operation
-	AdminAPIListUsersWithAccessToBucketHandler admin_api.ListUsersWithAccessToBucketHandler
-	// UserAPILogSearchHandler sets the operation handler for the log search operation
-	UserAPILogSearchHandler user_api.LogSearchHandler
-	// UserAPILoginHandler sets the operation handler for the login operation
-	UserAPILoginHandler user_api.LoginHandler
-	// UserAPILoginDetailHandler sets the operation handler for the login detail operation
-	UserAPILoginDetailHandler user_api.LoginDetailHandler
-	// UserAPILoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
-	UserAPILoginOauth2AuthHandler user_api.LoginOauth2AuthHandler
-	// UserAPILogoutHandler sets the operation handler for the logout operation
-	UserAPILogoutHandler user_api.LogoutHandler
-	// UserAPIMakeBucketHandler sets the operation handler for the make bucket operation
-	UserAPIMakeBucketHandler user_api.MakeBucketHandler
-	// AdminAPINotificationEndpointListHandler sets the operation handler for the notification endpoint list operation
-	AdminAPINotificationEndpointListHandler admin_api.NotificationEndpointListHandler
-	// AdminAPIPolicyInfoHandler sets the operation handler for the policy info operation
-	AdminAPIPolicyInfoHandler admin_api.PolicyInfoHandler
-	// UserAPIPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
-	UserAPIPostBucketsBucketNameObjectsUploadHandler user_api.PostBucketsBucketNameObjectsUploadHandler
-	// AdminAPIProfilingStartHandler sets the operation handler for the profiling start operation
-	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
-	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
-	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
-	// UserAPIPutBucketTagsHandler sets the operation handler for the put bucket tags operation
-	UserAPIPutBucketTagsHandler user_api.PutBucketTagsHandler
-	// UserAPIPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
-	UserAPIPutObjectLegalHoldHandler user_api.PutObjectLegalHoldHandler
-	// UserAPIPutObjectRestoreHandler sets the operation handler for the put object restore operation
-	UserAPIPutObjectRestoreHandler user_api.PutObjectRestoreHandler
-	// UserAPIPutObjectRetentionHandler sets the operation handler for the put object retention operation
-	UserAPIPutObjectRetentionHandler user_api.PutObjectRetentionHandler
-	// UserAPIPutObjectTagsHandler sets the operation handler for the put object tags operation
-	UserAPIPutObjectTagsHandler user_api.PutObjectTagsHandler
-	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
-	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
-	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
-	AdminAPIRemoveGroupHandler admin_api.RemoveGroupHandler
-	// AdminAPIRemovePolicyHandler sets the operation handler for the remove policy operation
-	AdminAPIRemovePolicyHandler admin_api.RemovePolicyHandler
-	// AdminAPIRemoveUserHandler sets the operation handler for the remove user operation
-	AdminAPIRemoveUserHandler admin_api.RemoveUserHandler
-	// AdminAPIResetConfigHandler sets the operation handler for the reset config operation
-	AdminAPIResetConfigHandler admin_api.ResetConfigHandler
-	// AdminAPIRestartServiceHandler sets the operation handler for the restart service operation
-	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
-	// UserAPISessionCheckHandler sets the operation handler for the session check operation
-	UserAPISessionCheckHandler user_api.SessionCheckHandler
-	// AdminAPISetAccessRuleWithBucketHandler sets the operation handler for the set access rule with bucket operation
-	AdminAPISetAccessRuleWithBucketHandler admin_api.SetAccessRuleWithBucketHandler
-	// UserAPISetBucketQuotaHandler sets the operation handler for the set bucket quota operation
-	UserAPISetBucketQuotaHandler user_api.SetBucketQuotaHandler
-	// UserAPISetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
-	UserAPISetBucketRetentionConfigHandler user_api.SetBucketRetentionConfigHandler
-	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
-	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
-	// AdminAPISetConfigHandler sets the operation handler for the set config operation
-	AdminAPISetConfigHandler admin_api.SetConfigHandler
-	// UserAPISetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
-	UserAPISetMultiBucketReplicationHandler user_api.SetMultiBucketReplicationHandler
-	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
-	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
-	// AdminAPISetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
-	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
-	// UserAPISetServiceAccountPolicyHandler sets the operation handler for the set service account policy operation
-	UserAPISetServiceAccountPolicyHandler user_api.SetServiceAccountPolicyHandler
-	// UserAPIShareObjectHandler sets the operation handler for the share object operation
-	UserAPIShareObjectHandler user_api.ShareObjectHandler
-	// AdminAPISiteReplicationEditHandler sets the operation handler for the site replication edit operation
-	AdminAPISiteReplicationEditHandler admin_api.SiteReplicationEditHandler
-	// AdminAPISiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
-	AdminAPISiteReplicationInfoAddHandler admin_api.SiteReplicationInfoAddHandler
-	// AdminAPISiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
-	AdminAPISiteReplicationRemoveHandler admin_api.SiteReplicationRemoveHandler
-	// AdminAPISubnetInfoHandler sets the operation handler for the subnet info operation
-	AdminAPISubnetInfoHandler admin_api.SubnetInfoHandler
-	// AdminAPISubnetLoginHandler sets the operation handler for the subnet login operation
-	AdminAPISubnetLoginHandler admin_api.SubnetLoginHandler
-	// AdminAPISubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
-	AdminAPISubnetLoginMFAHandler admin_api.SubnetLoginMFAHandler
-	// AdminAPISubnetRegTokenHandler sets the operation handler for the subnet reg token operation
-	AdminAPISubnetRegTokenHandler admin_api.SubnetRegTokenHandler
-	// AdminAPISubnetRegisterHandler sets the operation handler for the subnet register operation
-	AdminAPISubnetRegisterHandler admin_api.SubnetRegisterHandler
-	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
-	AdminAPITiersListHandler admin_api.TiersListHandler
-	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
-	UserAPIUpdateBucketLifecycleHandler user_api.UpdateBucketLifecycleHandler
-	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
-	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
-	// UserAPIUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
-	UserAPIUpdateMultiBucketReplicationHandler user_api.UpdateMultiBucketReplicationHandler
-	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
-	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
-	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
-	AdminAPIUpdateUserInfoHandler admin_api.UpdateUserInfoHandler
+	// AccountAccountChangePasswordHandler sets the operation handler for the account change password operation
+	AccountAccountChangePasswordHandler account.AccountChangePasswordHandler
+	// BucketAddBucketLifecycleHandler sets the operation handler for the add bucket lifecycle operation
+	BucketAddBucketLifecycleHandler bucket.AddBucketLifecycleHandler
+	// GroupAddGroupHandler sets the operation handler for the add group operation
+	GroupAddGroupHandler group.AddGroupHandler
+	// BucketAddMultiBucketLifecycleHandler sets the operation handler for the add multi bucket lifecycle operation
+	BucketAddMultiBucketLifecycleHandler bucket.AddMultiBucketLifecycleHandler
+	// ConfigurationAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
+	ConfigurationAddNotificationEndpointHandler configuration.AddNotificationEndpointHandler
+	// PolicyAddPolicyHandler sets the operation handler for the add policy operation
+	PolicyAddPolicyHandler policy.AddPolicyHandler
+	// BucketAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
+	BucketAddRemoteBucketHandler bucket.AddRemoteBucketHandler
+	// TieringAddTierHandler sets the operation handler for the add tier operation
+	TieringAddTierHandler tiering.AddTierHandler
+	// UserAddUserHandler sets the operation handler for the add user operation
+	UserAddUserHandler user.AddUserHandler
+	// SystemAdminInfoHandler sets the operation handler for the admin info operation
+	SystemAdminInfoHandler system.AdminInfoHandler
+	// SystemArnListHandler sets the operation handler for the arn list operation
+	SystemArnListHandler system.ArnListHandler
+	// BucketBucketInfoHandler sets the operation handler for the bucket info operation
+	BucketBucketInfoHandler bucket.BucketInfoHandler
+	// BucketBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
+	BucketBucketSetPolicyHandler bucket.BucketSetPolicyHandler
+	// UserBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
+	UserBulkUpdateUsersGroupsHandler user.BulkUpdateUsersGroupsHandler
+	// AccountChangeUserPasswordHandler sets the operation handler for the change user password operation
+	AccountChangeUserPasswordHandler account.ChangeUserPasswordHandler
+	// SystemCheckMinIOVersionHandler sets the operation handler for the check min i o version operation
+	SystemCheckMinIOVersionHandler system.CheckMinIOVersionHandler
+	// ConfigurationConfigInfoHandler sets the operation handler for the config info operation
+	ConfigurationConfigInfoHandler configuration.ConfigInfoHandler
+	// UserCreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
+	UserCreateAUserServiceAccountHandler user.CreateAUserServiceAccountHandler
+	// BucketCreateBucketEventHandler sets the operation handler for the create bucket event operation
+	BucketCreateBucketEventHandler bucket.CreateBucketEventHandler
+	// ServiceAccountCreateServiceAccountHandler sets the operation handler for the create service account operation
+	ServiceAccountCreateServiceAccountHandler service_account.CreateServiceAccountHandler
+	// UserCreateServiceAccountCredentialsHandler sets the operation handler for the create service account credentials operation
+	UserCreateServiceAccountCredentialsHandler user.CreateServiceAccountCredentialsHandler
+	// ServiceAccountCreateServiceAccountCredsHandler sets the operation handler for the create service account creds operation
+	ServiceAccountCreateServiceAccountCredsHandler service_account.CreateServiceAccountCredsHandler
+	// SystemDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
+	SystemDashboardWidgetDetailsHandler system.DashboardWidgetDetailsHandler
+	// BucketDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
+	BucketDeleteAccessRuleWithBucketHandler bucket.DeleteAccessRuleWithBucketHandler
+	// BucketDeleteAllReplicationRulesHandler sets the operation handler for the delete all replication rules operation
+	BucketDeleteAllReplicationRulesHandler bucket.DeleteAllReplicationRulesHandler
+	// BucketDeleteBucketHandler sets the operation handler for the delete bucket operation
+	BucketDeleteBucketHandler bucket.DeleteBucketHandler
+	// BucketDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
+	BucketDeleteBucketEventHandler bucket.DeleteBucketEventHandler
+	// BucketDeleteBucketLifecycleRuleHandler sets the operation handler for the delete bucket lifecycle rule operation
+	BucketDeleteBucketLifecycleRuleHandler bucket.DeleteBucketLifecycleRuleHandler
+	// BucketDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
+	BucketDeleteBucketReplicationRuleHandler bucket.DeleteBucketReplicationRuleHandler
+	// ObjectDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
+	ObjectDeleteMultipleObjectsHandler object.DeleteMultipleObjectsHandler
+	// ServiceAccountDeleteMultipleServiceAccountsHandler sets the operation handler for the delete multiple service accounts operation
+	ServiceAccountDeleteMultipleServiceAccountsHandler service_account.DeleteMultipleServiceAccountsHandler
+	// ObjectDeleteObjectHandler sets the operation handler for the delete object operation
+	ObjectDeleteObjectHandler object.DeleteObjectHandler
+	// ObjectDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
+	ObjectDeleteObjectRetentionHandler object.DeleteObjectRetentionHandler
+	// BucketDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
+	BucketDeleteRemoteBucketHandler bucket.DeleteRemoteBucketHandler
+	// BucketDeleteSelectedReplicationRulesHandler sets the operation handler for the delete selected replication rules operation
+	BucketDeleteSelectedReplicationRulesHandler bucket.DeleteSelectedReplicationRulesHandler
+	// ServiceAccountDeleteServiceAccountHandler sets the operation handler for the delete service account operation
+	ServiceAccountDeleteServiceAccountHandler service_account.DeleteServiceAccountHandler
+	// BucketDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
+	BucketDisableBucketEncryptionHandler bucket.DisableBucketEncryptionHandler
+	// ObjectDownloadObjectHandler sets the operation handler for the download object operation
+	ObjectDownloadObjectHandler object.DownloadObjectHandler
+	// TieringEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
+	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
+	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
+	BucketEnableBucketEncryptionHandler bucket.EnableBucketEncryptionHandler
+	// BucketGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
+	BucketGetBucketEncryptionInfoHandler bucket.GetBucketEncryptionInfoHandler
+	// BucketGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
+	BucketGetBucketLifecycleHandler bucket.GetBucketLifecycleHandler
+	// BucketGetBucketObjectLockingStatusHandler sets the operation handler for the get bucket object locking status operation
+	BucketGetBucketObjectLockingStatusHandler bucket.GetBucketObjectLockingStatusHandler
+	// BucketGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
+	BucketGetBucketQuotaHandler bucket.GetBucketQuotaHandler
+	// BucketGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
+	BucketGetBucketReplicationHandler bucket.GetBucketReplicationHandler
+	// BucketGetBucketReplicationRuleHandler sets the operation handler for the get bucket replication rule operation
+	BucketGetBucketReplicationRuleHandler bucket.GetBucketReplicationRuleHandler
+	// BucketGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
+	BucketGetBucketRetentionConfigHandler bucket.GetBucketRetentionConfigHandler
+	// BucketGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
+	BucketGetBucketRewindHandler bucket.GetBucketRewindHandler
+	// BucketGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
+	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
+	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
+	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
+	// ServiceAccountGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
+	ServiceAccountGetServiceAccountPolicyHandler service_account.GetServiceAccountPolicyHandler
+	// SiteReplicationGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
+	SiteReplicationGetSiteReplicationInfoHandler site_replication.GetSiteReplicationInfoHandler
+	// SiteReplicationGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
+	SiteReplicationGetSiteReplicationStatusHandler site_replication.GetSiteReplicationStatusHandler
+	// TieringGetTierHandler sets the operation handler for the get tier operation
+	TieringGetTierHandler tiering.GetTierHandler
+	// UserGetUserInfoHandler sets the operation handler for the get user info operation
+	UserGetUserInfoHandler user.GetUserInfoHandler
+	// PolicyGetUserPolicyHandler sets the operation handler for the get user policy operation
+	PolicyGetUserPolicyHandler policy.GetUserPolicyHandler
+	// GroupGroupInfoHandler sets the operation handler for the group info operation
+	GroupGroupInfoHandler group.GroupInfoHandler
+	// InspectInspectHandler sets the operation handler for the inspect operation
+	InspectInspectHandler inspect.InspectHandler
+	// UserListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
+	UserListAUserServiceAccountsHandler user.ListAUserServiceAccountsHandler
+	// BucketListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
+	BucketListAccessRulesWithBucketHandler bucket.ListAccessRulesWithBucketHandler
+	// BucketListBucketEventsHandler sets the operation handler for the list bucket events operation
+	BucketListBucketEventsHandler bucket.ListBucketEventsHandler
+	// BucketListBucketsHandler sets the operation handler for the list buckets operation
+	BucketListBucketsHandler bucket.ListBucketsHandler
+	// ConfigurationListConfigHandler sets the operation handler for the list config operation
+	ConfigurationListConfigHandler configuration.ListConfigHandler
+	// BucketListExternalBucketsHandler sets the operation handler for the list external buckets operation
+	BucketListExternalBucketsHandler bucket.ListExternalBucketsHandler
+	// GroupListGroupsHandler sets the operation handler for the list groups operation
+	GroupListGroupsHandler group.ListGroupsHandler
+	// PolicyListGroupsForPolicyHandler sets the operation handler for the list groups for policy operation
+	PolicyListGroupsForPolicyHandler policy.ListGroupsForPolicyHandler
+	// SystemListNodesHandler sets the operation handler for the list nodes operation
+	SystemListNodesHandler system.ListNodesHandler
+	// ObjectListObjectsHandler sets the operation handler for the list objects operation
+	ObjectListObjectsHandler object.ListObjectsHandler
+	// PolicyListPoliciesHandler sets the operation handler for the list policies operation
+	PolicyListPoliciesHandler policy.ListPoliciesHandler
+	// BucketListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
+	BucketListPoliciesWithBucketHandler bucket.ListPoliciesWithBucketHandler
+	// BucketListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
+	BucketListRemoteBucketsHandler bucket.ListRemoteBucketsHandler
+	// ServiceAccountListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
+	ServiceAccountListUserServiceAccountsHandler service_account.ListUserServiceAccountsHandler
+	// UserListUsersHandler sets the operation handler for the list users operation
+	UserListUsersHandler user.ListUsersHandler
+	// PolicyListUsersForPolicyHandler sets the operation handler for the list users for policy operation
+	PolicyListUsersForPolicyHandler policy.ListUsersForPolicyHandler
+	// BucketListUsersWithAccessToBucketHandler sets the operation handler for the list users with access to bucket operation
+	BucketListUsersWithAccessToBucketHandler bucket.ListUsersWithAccessToBucketHandler
+	// LoggingLogSearchHandler sets the operation handler for the log search operation
+	LoggingLogSearchHandler logging.LogSearchHandler
+	// AuthLoginHandler sets the operation handler for the login operation
+	AuthLoginHandler auth.LoginHandler
+	// AuthLoginDetailHandler sets the operation handler for the login detail operation
+	AuthLoginDetailHandler auth.LoginDetailHandler
+	// AuthLoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
+	AuthLoginOauth2AuthHandler auth.LoginOauth2AuthHandler
+	// AuthLogoutHandler sets the operation handler for the logout operation
+	AuthLogoutHandler auth.LogoutHandler
+	// BucketMakeBucketHandler sets the operation handler for the make bucket operation
+	BucketMakeBucketHandler bucket.MakeBucketHandler
+	// ConfigurationNotificationEndpointListHandler sets the operation handler for the notification endpoint list operation
+	ConfigurationNotificationEndpointListHandler configuration.NotificationEndpointListHandler
+	// PolicyPolicyInfoHandler sets the operation handler for the policy info operation
+	PolicyPolicyInfoHandler policy.PolicyInfoHandler
+	// ObjectPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
+	ObjectPostBucketsBucketNameObjectsUploadHandler object.PostBucketsBucketNameObjectsUploadHandler
+	// ProfileProfilingStartHandler sets the operation handler for the profiling start operation
+	ProfileProfilingStartHandler profile.ProfilingStartHandler
+	// ProfileProfilingStopHandler sets the operation handler for the profiling stop operation
+	ProfileProfilingStopHandler profile.ProfilingStopHandler
+	// BucketPutBucketTagsHandler sets the operation handler for the put bucket tags operation
+	BucketPutBucketTagsHandler bucket.PutBucketTagsHandler
+	// ObjectPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
+	ObjectPutObjectLegalHoldHandler object.PutObjectLegalHoldHandler
+	// ObjectPutObjectRestoreHandler sets the operation handler for the put object restore operation
+	ObjectPutObjectRestoreHandler object.PutObjectRestoreHandler
+	// ObjectPutObjectRetentionHandler sets the operation handler for the put object retention operation
+	ObjectPutObjectRetentionHandler object.PutObjectRetentionHandler
+	// ObjectPutObjectTagsHandler sets the operation handler for the put object tags operation
+	ObjectPutObjectTagsHandler object.PutObjectTagsHandler
+	// BucketRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
+	BucketRemoteBucketDetailsHandler bucket.RemoteBucketDetailsHandler
+	// GroupRemoveGroupHandler sets the operation handler for the remove group operation
+	GroupRemoveGroupHandler group.RemoveGroupHandler
+	// PolicyRemovePolicyHandler sets the operation handler for the remove policy operation
+	PolicyRemovePolicyHandler policy.RemovePolicyHandler
+	// UserRemoveUserHandler sets the operation handler for the remove user operation
+	UserRemoveUserHandler user.RemoveUserHandler
+	// ConfigurationResetConfigHandler sets the operation handler for the reset config operation
+	ConfigurationResetConfigHandler configuration.ResetConfigHandler
+	// ServiceRestartServiceHandler sets the operation handler for the restart service operation
+	ServiceRestartServiceHandler service.RestartServiceHandler
+	// AuthSessionCheckHandler sets the operation handler for the session check operation
+	AuthSessionCheckHandler auth.SessionCheckHandler
+	// BucketSetAccessRuleWithBucketHandler sets the operation handler for the set access rule with bucket operation
+	BucketSetAccessRuleWithBucketHandler bucket.SetAccessRuleWithBucketHandler
+	// BucketSetBucketQuotaHandler sets the operation handler for the set bucket quota operation
+	BucketSetBucketQuotaHandler bucket.SetBucketQuotaHandler
+	// BucketSetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
+	BucketSetBucketRetentionConfigHandler bucket.SetBucketRetentionConfigHandler
+	// BucketSetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
+	BucketSetBucketVersioningHandler bucket.SetBucketVersioningHandler
+	// ConfigurationSetConfigHandler sets the operation handler for the set config operation
+	ConfigurationSetConfigHandler configuration.SetConfigHandler
+	// BucketSetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
+	BucketSetMultiBucketReplicationHandler bucket.SetMultiBucketReplicationHandler
+	// PolicySetPolicyHandler sets the operation handler for the set policy operation
+	PolicySetPolicyHandler policy.SetPolicyHandler
+	// PolicySetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
+	PolicySetPolicyMultipleHandler policy.SetPolicyMultipleHandler
+	// ServiceAccountSetServiceAccountPolicyHandler sets the operation handler for the set service account policy operation
+	ServiceAccountSetServiceAccountPolicyHandler service_account.SetServiceAccountPolicyHandler
+	// ObjectShareObjectHandler sets the operation handler for the share object operation
+	ObjectShareObjectHandler object.ShareObjectHandler
+	// SiteReplicationSiteReplicationEditHandler sets the operation handler for the site replication edit operation
+	SiteReplicationSiteReplicationEditHandler site_replication.SiteReplicationEditHandler
+	// SiteReplicationSiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
+	SiteReplicationSiteReplicationInfoAddHandler site_replication.SiteReplicationInfoAddHandler
+	// SiteReplicationSiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
+	SiteReplicationSiteReplicationRemoveHandler site_replication.SiteReplicationRemoveHandler
+	// SubnetSubnetInfoHandler sets the operation handler for the subnet info operation
+	SubnetSubnetInfoHandler subnet.SubnetInfoHandler
+	// SubnetSubnetLoginHandler sets the operation handler for the subnet login operation
+	SubnetSubnetLoginHandler subnet.SubnetLoginHandler
+	// SubnetSubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
+	SubnetSubnetLoginMFAHandler subnet.SubnetLoginMFAHandler
+	// SubnetSubnetRegTokenHandler sets the operation handler for the subnet reg token operation
+	SubnetSubnetRegTokenHandler subnet.SubnetRegTokenHandler
+	// SubnetSubnetRegisterHandler sets the operation handler for the subnet register operation
+	SubnetSubnetRegisterHandler subnet.SubnetRegisterHandler
+	// TieringTiersListHandler sets the operation handler for the tiers list operation
+	TieringTiersListHandler tiering.TiersListHandler
+	// BucketUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
+	BucketUpdateBucketLifecycleHandler bucket.UpdateBucketLifecycleHandler
+	// GroupUpdateGroupHandler sets the operation handler for the update group operation
+	GroupUpdateGroupHandler group.UpdateGroupHandler
+	// BucketUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
+	BucketUpdateMultiBucketReplicationHandler bucket.UpdateMultiBucketReplicationHandler
+	// UserUpdateUserGroupsHandler sets the operation handler for the update user groups operation
+	UserUpdateUserGroupsHandler user.UpdateUserGroupsHandler
+	// UserUpdateUserInfoHandler sets the operation handler for the update user info operation
+	UserUpdateUserInfoHandler user.UpdateUserInfoHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -1007,11 +1007,11 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserGetUserInfoHandler == nil {
 		unregistered = append(unregistered, "user.GetUserInfoHandler")
 	}
-	if o.AdminAPIGetUserPolicyHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetUserPolicyHandler")
+	if o.PolicyGetUserPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.GetUserPolicyHandler")
 	}
-	if o.AdminAPIGroupInfoHandler == nil {
-		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
+	if o.GroupGroupInfoHandler == nil {
+		unregistered = append(unregistered, "group.GroupInfoHandler")
 	}
 	if o.InspectInspectHandler == nil {
 		unregistered = append(unregistered, "inspect.InspectHandler")
@@ -1535,11 +1535,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user/policy"] = admin_api.NewGetUserPolicy(o.context, o.AdminAPIGetUserPolicyHandler)
+	o.handlers["GET"]["/user/policy"] = policy.NewGetUserPolicy(o.context, o.PolicyGetUserPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/group"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
+	o.handlers["GET"]["/group"] = group.NewGroupInfo(o.context, o.GroupGroupInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

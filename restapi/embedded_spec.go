@@ -3979,7 +3979,7 @@ func init() {
     "/user/policy": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "returns policies for logged in user",
         "operationId": "GetUserPolicy",
@@ -10927,7 +10927,7 @@ func init() {
     "/user/policy": {
       "get": {
         "tags": [
-          "AdminAPI"
+          "Policy"
         ],
         "summary": "returns policies for logged in user",
         "operationId": "GetUserPolicy",

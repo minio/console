@@ -1567,7 +1567,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-        - AdminAPI
+        - User
   /user/policy:
     get:
       summary: returns policies for logged in user
@@ -1582,7 +1582,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-        - AdminAPI
+        - Policy
   /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user
