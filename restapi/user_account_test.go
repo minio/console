@@ -22,7 +22,7 @@ import (
 	"testing"
 
 	"github.com/minio/console/models"
-	"github.com/minio/console/restapi/operations/user_api"
+	accountApi "github.com/minio/console/restapi/operations/account"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +35,7 @@ func Test_getChangePasswordResponse(t *testing.T) {
 	}
 	CurrentSecretKey := "string"
 	NewSecretKey := "string"
-	changePasswordParameters := user_api.AccountChangePasswordParams{
+	changePasswordParameters := accountApi.AccountChangePasswordParams{
 		Body: &models.AccountChangePasswordRequest{
 			CurrentSecretKey: &CurrentSecretKey,
 			NewSecretKey:     &NewSecretKey,

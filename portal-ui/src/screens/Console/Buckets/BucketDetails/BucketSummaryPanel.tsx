@@ -558,7 +558,7 @@ const BucketSummary = ({
                     iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
                     resourceName={bucketName}
                     property={"Current Status:"}
-                    value={isVersioned ? "Enabled" : "Unversioned (Default)"}
+                    value={isVersioned ? "Versioned" : "Unversioned (Default)"}
                     onEdit={setBucketVersioning}
                     isLoading={loadingVersioning}
                   />

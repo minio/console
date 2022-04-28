@@ -585,12 +585,18 @@ export const getTimeFromTimestamp = (
 };
 
 export const calculateBytes = (
-  x: string,
+  x: string | number,
   showDecimals = false,
   roundFloor = true,
   k8sUnit = false
 ) => {
-  const bytes = parseInt(x, 10);
+  let bytes;
+
+  if (typeof x === "string") {
+    bytes = parseInt(x, 10);
+  } else {
+    bytes = x;
+  }
 
   if (bytes === 0) {
     return { total: 0, unit: units[0] };
