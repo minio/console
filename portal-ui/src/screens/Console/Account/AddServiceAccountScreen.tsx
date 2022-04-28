@@ -47,7 +47,7 @@ import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from   "../../../screens/Console/Tenants/utils";
 import { IPolicyItem } from "../Users/types"
 import { contextType } from "react-copy-to-clipboard";
-import { ISessionResponse } from  "../../../screens/Console/types"
+import { IAMPolicy } from  "../../../screens/Console/Policies/types"
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import { saveSessionResponse } from "../../../screens/Console/actions";
 
@@ -144,7 +144,8 @@ const AddServiceAccount = ({
 const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
 const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
 const [s3Permissions, setS3Permissions] = useState<string[]>([]);
-const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
+const [consolePermissions, setConsolePermissions] = useState<string[]>([]);
 const [policyJSON, setPolicyJSON] = useState<string[]>([]);
 
   useEffect(() => {
@@ -216,11 +217,15 @@ const [policyJSON, setPolicyJSON] = useState<string[]>([]);
 
   useEffect(() => {
     api
-      .invoke("GET", `/api/v1/session`)
-      .then((res: ISessionResponse) => {
-        saveSessionResponse(res);
-        console.log("session get res.permissions:", res.permissions);
-      
+      .invoke("GET", `/api/v1/user/policy`)
+      .then((res: IAMPolicy) => {
+       // saveSessionResponse(res);
+       console.log("getUserPolicy res", res);
+      //setS3Permissions(res.permissions["arn:aws:s3:::*"]);
+     // setCheckedPermissions(res.permissions["arn:aws:s3:::*"]);
+    //   console.log("session get res.permissions[console-ui]:", res.permissions["console-ui"]);
+     // setConsolePermissions(res.permissions["console-ui"]);
+       //console.log("getPolicyDetails JSON.stringify(JSON.parse(result.policy), null, 4):", JSON.stringify(JSON.parse(res.permissions), null, 4));
        // setSessionLoading(false);
        // setDistributedMode(res.distributedMode || false);
         // check for tenants presence, that indicates we are in operator mode
@@ -265,20 +270,20 @@ const [policyJSON, setPolicyJSON] = useState<string[]>([]);
               
     };
 
-useEffect(() => {
-    getPolicyDetails();
+//useEffect(() => {
+ //   getPolicyDetails();
    // console.log("in getPolicyDetails useEffect rawpolicy:", );
-}, [checkedPolicies]);
+//}, [checkedPolicies]);
 
-useEffect(() => {
-fetchGroupInfo();
+//useEffect(() => {
+//fetchGroupInfo();
 //console.log("in fetchGroupInfo useEffect checkedPolicies:", checkedPolicies);
-}, [checkedGroups]);
+//}, [checkedGroups]);
 
-useEffect(() => {
-  console.log("Something changed - currentPolicies:", currentPolicies, "currentGroups:", currentGroups, "checkedPolicies:", checkedPolicies)
-},
-[currentGroups, currentPolicies, checkedPolicies]);
+//useEffect(() => {
+ // console.log("Something changed - currentPolicies:", currentPolicies, "currentGroups:", currentGroups, "checkedPolicies:", checkedPolicies)
+//},
+//[currentGroups, currentPolicies, checkedPolicies]);
 
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
@@ -350,7 +355,7 @@ useEffect(() => {
     const value = targetD.value;
     const checked = targetD.checked;
 
-    let elements: string[] = [...checkedPolicies]; // We clone the checkedUsers array
+    let elements: string[] = [...checkedPermissions]; // We clone the checkedUsers array
 
     if (checked) {
       // If the user has checked this field we need to push this to checkedUsersList
@@ -360,7 +365,7 @@ useEffect(() => {
       elements = elements.filter((element) => element !== value);
     }
 
-    setCheckedPolicies(elements);
+    setCheckedPermissions(elements);
 
     return elements;
   };
@@ -508,16 +513,16 @@ useEffect(() => {
                     </div> */}
                   <div >
                      <PanelTitle>Current User: {userLoggedIn}</PanelTitle>
-                    <PanelTitle>Access Policies (including those inherited from group membership)</PanelTitle>
+                    <PanelTitle>Access Policies</PanelTitle>
                     <TableWrapper
                       // itemActions={userTableActions}
                       columns={[{ label: "Name", elementKey: "policy" }]}
                       isLoading={loading}
-                      records={currentPolicies}
+                      records={s3Permissions}
                       entityName="Policies"
                       idField="policy"
                        onSelect={policySelectionChanged }
-                      selectedItems={checkedPolicies}
+                      selectedItems={checkedPermissions}
                     />
                   </div>
                         <CodeMirrorWrapper

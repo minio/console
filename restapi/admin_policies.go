@@ -32,6 +32,8 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	iampolicy "github.com/minio/pkg/iam/policy"
+
+	policies "github.com/minio/console/restapi/policy"
 )
 
 func registersPoliciesHandler(api *operations.ConsoleAPI) {
@@ -121,6 +123,14 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 			return policyApi.NewListGroupsForPolicyDefault(int(err.Code)).WithPayload(err)
 		}
 		return policyApi.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
+	})
+	// Gets policies for currently logged in user
+	api.AdminAPIGetUserPolicyHandler = admin_api.GetUserPolicyHandlerFunc(func(params admin_api.GetUserPolicyParams, session *models.Principal) middleware.Responder {
+		userPolicyResponse, err := getUserPolicyResponse(session)
+		if err != nil {
+			return admin_api.NewListGroupsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
 	})
 }
 
@@ -320,6 +330,42 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 	}
 	sort.Strings(filteredUsers)
 	return filteredUsers, nil
+}
+
+func getUserPolicyResponse(session *models.Principal) (*models.IamPolicy, *models.Error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	// serialize output
+	if session == nil {
+		return nil, prepareError(errorGenericInvalidSession)
+	}
+	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
+
+	// initialize admin client
+	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+		STSAccessKeyID:     session.STSAccessKeyID,
+		STSSecretAccessKey: session.STSSecretAccessKey,
+		STSSessionToken:    session.STSSessionToken,
+	})
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+	}
+	userAdminClient := AdminClient{Client: mAdminClient}
+	// Obtain the current policy assigned to this user
+	// necessary for generating the list of allowed endpoints
+	accountInfo, err := getAccountInfo(ctx, userAdminClient)
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+
+	}
+	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
+
+	policy, err := iampolicy.ParseConfig(bytes.NewReader(rawPolicy))
+	fmt.Println("getUserPolicyResponse - policy:", policy)
+
+	var userPolicyResponse *models.IamPolicy
+
+	return userPolicyResponse, nil
 }
 
 func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
@@ -539,7 +585,9 @@ func setPolicyMultipleEntities(ctx context.Context, client MinioAdmin, policyNam
 
 // parsePolicy() converts from *rawPolicy to *models.Policy
 func parsePolicy(name string, rawPolicy *iampolicy.Policy) (*models.Policy, error) {
+	//fmt.Println("In parsePolicy rawPolicy:", rawPolicy)
 	stringPolicy, err := json.Marshal(rawPolicy)
+	//fmt.Println("In parsePolicy stringPolicy:", string(stringPolicy))
 	if err != nil {
 		return nil, err
 	}

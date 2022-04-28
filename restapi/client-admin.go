@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -201,6 +202,8 @@ func (ac AdminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.P
 // implements madmin.ListCannedPolicies()
 func (ac AdminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
 	praw, err := ac.Client.InfoCannedPolicy(ctx, name)
+	tempPolicy, _ := iampolicy.ParseConfig(bytes.NewReader(praw))
+	fmt.Println("client.getPolicy - tempPolicy.statements:", tempPolicy.Statements)
 	if err != nil {
 		return nil, err
 	}
