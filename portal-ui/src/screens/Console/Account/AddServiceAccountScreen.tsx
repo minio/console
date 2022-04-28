@@ -45,6 +45,16 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from "../../../screens/Console/Tenants/utils";
+import { IPolicyItem } from "../Users/types"
+import { contextType } from "react-copy-to-clipboard";
+import { IAMPolicy } from  "../../../screens/Console/Policies/types"
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import { saveSessionResponse } from "../../../screens/Console/actions";
+
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+
+import { decodeFileName } from "../../../common/utils";
+import { Session } from "inspector";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -74,6 +84,11 @@ const styles = (theme: Theme) =>
       justifyContent: "flex-start",
       marginLeft: 30,
     },
+    formScrollable: {
+    maxHeight: "calc(100vh - 300px)" as const,
+    overflowY: "auto" as const,
+    marginBottom: 25,
+  },
     sizeNumber: {
       fontSize: 35,
       fontWeight: 700,
@@ -121,12 +136,21 @@ const AddServiceAccount = ({
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+const [loading, setLoading] = useState<boolean>(false);
+ const [checkedGroups, setCheckedGroups] = useState<string[]>([]);
+ const [currentGroups, setCurrentGroups] = useState<string[]>([]);
+const [currentPolicies, setCurrentPolicies] = useState<string[]>([]);
+const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
+const [s3Permissions, setS3Permissions] = useState<string[]>([]);
+const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
+const [consolePermissions, setConsolePermissions] = useState<string[]>([]);
+const [policyJSON, setPolicyJSON] = useState<string>("");
 
   useEffect(() => {
     if (addSending) {
       api
         .invoke("POST", `/api/v1/service-account-credentials`, {
-          policy: policyDefinition,
+          policy: policyJSON,
           accessKey: accessKey,
           secretKey: secretKey,
         })
@@ -152,13 +176,24 @@ const AddServiceAccount = ({
     secretKey,
   ]);
 
+   useEffect(() => {
+    if(isRestrictedByPolicy){
+    api
+      .invoke("GET", `/api/v1/user/policy`)
+      .then((res: string) => {
+       setPolicyJSON(JSON.stringify(JSON.parse(res), null, 4));
+
+      })
+    }
+  }, [isRestrictedByPolicy]);
+
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
     setAddSending(true);
   };
 
   const resetForm = () => {
-    setPolicyDefinition("");
+    setPolicyJSON("");
     setNewServiceAccount(null);
     setAccessKey("");
     setSecretKey("");
@@ -298,13 +333,18 @@ const AddServiceAccount = ({
                         xs={12}
                         className={classes.codeMirrorContainer}
                       >
+                         <div >
+                     <PanelTitle>Current User Policy - edit the JSON to remove permissions for this service account</PanelTitle>
+
+                  </div>
+                  <Grid item xs={12} className={classes.formScrollable}>
                         <CodeMirrorWrapper
-                          label={"Policy "}
-                          value={policyDefinition}
+                          value={policyJSON}
                           onBeforeChange={(editor, data, value) => {
-                            setPolicyDefinition(value);
+                            setPolicyJSON(value);
                           }}
                         />
+                      </Grid> 
                       </Grid>
                     )}
                   </Grid>
