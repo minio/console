@@ -114,6 +114,11 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       size: "50",
     },
+      formScrollable: {
+    maxHeight: "calc(100vh - 300px)" as const,
+    overflowY: "auto" as const,
+    marginBottom: 25,
+  },
     ...formFieldStyles,
     ...modalStyleUtils,
   });
@@ -146,7 +151,7 @@ const [checkedPolicies, setCheckedPolicies] = useState<string[]>([]);
 const [s3Permissions, setS3Permissions] = useState<string[]>([]);
 const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
 const [consolePermissions, setConsolePermissions] = useState<string[]>([]);
-const [policyJSON, setPolicyJSON] = useState<string[]>([]);
+const [policyJSON, setPolicyJSON] = useState<string>("");
 
   useEffect(() => {
     if (addSending) {
@@ -218,9 +223,11 @@ const [policyJSON, setPolicyJSON] = useState<string[]>([]);
   useEffect(() => {
     api
       .invoke("GET", `/api/v1/user/policy`)
-      .then((res: IAMPolicy) => {
+      .then((res: string) => {
        // saveSessionResponse(res);
        console.log("getUserPolicy res", res);
+       setPolicyJSON(JSON.stringify(JSON.parse(res), null, 4));
+       console.log("Does this format nicely? - ", JSON.stringify(JSON.parse(res), null, 4));
       //setS3Permissions(res.permissions["arn:aws:s3:::*"]);
      // setCheckedPermissions(res.permissions["arn:aws:s3:::*"]);
     //   console.log("session get res.permissions[console-ui]:", res.permissions["console-ui"]);
@@ -525,13 +532,16 @@ const [policyJSON, setPolicyJSON] = useState<string[]>([]);
                       selectedItems={checkedPermissions}
                     />
                   </div>
+                  <Grid item xs={12} className={classes.formScrollable}>
                         <CodeMirrorWrapper
                           label={"Policy "}
-                          value={policyDefinition}
+                          value={policyJSON}
                           onBeforeChange={(editor, data, value) => {
-                            setPolicyDefinition(value);
+                            setPolicyJSON(value);
                           }}
+                          editorHeight={"350px"}
                         />
+                        </Grid>
                       </Grid>
                     )}
                   </Grid>
