@@ -67,13 +67,6 @@ const styles = (theme: Theme) =>
       },
     },
     tenantIcon: { width: 40, height: 40, position: "relative" },
-    healthStatusIcon: {
-      position: "absolute",
-      fontSize: 10,
-      top: 0,
-      right: -20,
-      height: 10,
-    },
     tenantItem: {
       border: "1px solid #EAEAEA",
       marginBottom: 16,
@@ -91,30 +84,6 @@ const styles = (theme: Theme) =>
     title: {
       fontSize: 18,
       fontWeight: "bold",
-    },
-    titleSubKey: {
-      fontSize: 14,
-      paddingRight: 8,
-    },
-    titleSubValue: {
-      fontSize: 14,
-      fontWeight: "bold",
-      paddingRight: 16,
-    },
-    boxyTitle: {
-      fontWeight: "bold",
-    },
-    boxyValue: {
-      fontSize: 24,
-      fontWeight: "bold",
-    },
-    boxyUnit: {
-      fontSize: 12,
-      color: "#5E5E5E",
-    },
-    manageButton: {
-      marginRight: 8,
-      textTransform: "initial",
     },
     namespaceLabel: {
       display: "inline-flex",

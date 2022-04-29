@@ -71,10 +71,6 @@ const styles = (theme: Theme) =>
       fontSize: ".9rem",
       marginRight: ".5rem",
     },
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     ...actionsTray,
     ...searchField,
     ...tableStyles,

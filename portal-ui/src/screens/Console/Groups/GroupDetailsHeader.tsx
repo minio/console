@@ -8,10 +8,6 @@ import BackLink from "../../../common/BackLink";
 
 const styles = (theme: Theme) =>
   createStyles({
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
   });
 
 type DetailsHeaderProps = {

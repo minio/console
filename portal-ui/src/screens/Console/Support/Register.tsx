@@ -72,26 +72,6 @@ interface IRegister {
 
 const styles = (theme: Theme) =>
   createStyles({
-    loading: {
-      paddingTop: 8,
-      paddingLeft: 40,
-    },
-    buttons: {
-      justifyContent: "flex-start",
-      gap: 20,
-    },
-    localMessage: {
-      fontSize: 24,
-      color: "#07193E",
-      fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: 10,
-    },
-    headerStyle: {
-      color: theme.palette.primary.main,
-      fontSize: 16,
-      fontWeight: "bold",
-    },
     registerActivationIcon: {
       color: theme.palette.primary.main,
       fontSize: 16,
@@ -137,10 +117,6 @@ const styles = (theme: Theme) =>
         fontWeight: "bold",
       },
     },
-    offlineRegisterButton: {
-      textAlign: "right",
-      paddingRight: 20,
-    },
     copyInputBox: {
       "& button": {
         border: "1px solid #5E5E5E",
@@ -150,12 +126,6 @@ const styles = (theme: Theme) =>
     link: {
       color: "#2781B0",
       cursor: "pointer",
-    },
-    smallBoxy: {
-      border: "#E5E5E5 1px solid",
-      borderRadius: 2,
-      padding: 20,
-      backgroundColor: "#fff",
     },
     sizedLabel: {
       minWidth: "75px",

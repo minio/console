@@ -47,12 +47,6 @@ interface IEditDomains {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    infoText: {
-      fontSize: 14,
-    },
     domainInline: {
       display: "flex",
       marginBottom: 15,

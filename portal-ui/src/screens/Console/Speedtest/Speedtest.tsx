@@ -74,12 +74,6 @@ const styles = (theme: Theme) =>
       fontSize: 13,
       marginBottom: 8,
     },
-    advancedOption: {
-      marginTop: 20,
-    },
-    advancedAutotune: {
-      marginTop: 10,
-    },
     ...advancedFilterToggleStyles,
     ...actionsTray,
     ...searchField,

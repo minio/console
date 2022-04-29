@@ -72,10 +72,6 @@ const styles = (theme: Theme) =>
       paddingTop: 5,
       color: "#42C91A",
     },
-    hide: {
-      opacity: 0,
-      transitionDuration: "0.3s",
-    },
     ...spacingUtils,
     ...modalStyleUtils,
     ...formFieldStyles,

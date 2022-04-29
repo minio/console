@@ -31,10 +31,6 @@ type UserPickerModalProps = {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-      marginTop: "1rem",
-    },
     userSelector: {
       "& .MuiPaper-root": {
         padding: 0,

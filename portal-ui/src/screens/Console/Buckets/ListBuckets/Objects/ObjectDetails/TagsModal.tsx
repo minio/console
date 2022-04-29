@@ -52,10 +52,6 @@ interface ITagModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    pathLabel: {
-      marginTop: 0,
-      marginBottom: 32,
-    },
     newTileHeader: {
       fontSize: 18,
       fontWeight: "bold",

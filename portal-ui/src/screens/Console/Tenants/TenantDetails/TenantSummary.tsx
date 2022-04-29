@@ -88,9 +88,6 @@ const styles = (theme: Theme) =>
         marginRight: 4,
       },
     },
-    centerAlign: {
-      textAlign: "center",
-    },
     detailSection: {
       "& div": {
         "& b,i": {

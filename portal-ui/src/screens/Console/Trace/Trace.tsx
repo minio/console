@@ -55,9 +55,6 @@ const styles = (theme: Theme) =>
     timeItem: {
       width: 100,
     },
-    startButton: {
-      textAlign: "right",
-    },
     ...actionsTray,
     ...searchField,
     ...hrClass,
@@ -85,11 +82,6 @@ const styles = (theme: Theme) =>
         alignItems: "flex-start",
       },
     },
-    checkBoxLabel: {
-      marginTop: 10,
-      fontSize: 16,
-      fontWeight: 500,
-    },
     formBox: {
       border: "1px solid #EAEAEA",
       padding: 25,
@@ -103,9 +95,6 @@ const styles = (theme: Theme) =>
     unCheckedIcon: {
       width: "14px",
       height: "14px",
-    },
-    midColumnCheckboxes: {
-      display: "flex",
     },
     separatorBar: {
       fontSize: 16,

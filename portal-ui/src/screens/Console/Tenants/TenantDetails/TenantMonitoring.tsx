@@ -53,19 +53,6 @@ interface ITenantMonitoring {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    headerLabel: {
-      fontSize: 22,
-      fontWeight: 600,
-      color: "#000",
-      marginTop: 4,
-    },
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
-    tableWrapper: {
-      height: "calc(100vh - 267px)",
-    },
     paperContainer: {
       padding: "15px 15px 15px 50px",
     },

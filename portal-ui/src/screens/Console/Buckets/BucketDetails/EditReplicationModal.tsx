@@ -49,13 +49,6 @@ interface IEditReplicationModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center",
-    },
     sizeFactorContainer: {
       "& label": {
         display: "none",

@@ -60,16 +60,6 @@ interface IBrowserHandlerProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
-    backToBuckets: {
-      color: "#000",
-      fontSize: 14,
-      padding: 0,
-      marginTop: -8,
-    },
     ...containerForHeader(theme.spacing(4)),
   });
 

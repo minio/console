@@ -64,14 +64,8 @@ const styles = (theme: Theme) =>
     loaderAlign: {
       textAlign: "center",
     },
-    title: {
-      marginTop: 35,
-    },
     bold: { fontWeight: "bold" },
     italic: { fontStyle: "italic" },
-    paperContainer: {
-      padding: "15px 15px 15px 50px",
-    },
     fileItem: {
       marginRight: 10,
       display: "flex",

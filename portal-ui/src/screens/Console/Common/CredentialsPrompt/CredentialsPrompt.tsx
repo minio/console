@@ -62,13 +62,6 @@ const styles = (theme: Theme) =>
     buttonSpacer: {
       marginRight: ".9rem",
     },
-    promptIcon: {
-      marginRight: ".1rem",
-      display: "flex",
-      alignItems: "center",
-      height: "2rem",
-      width: "2rem",
-    },
   });
 
 interface ICredentialsPromptProps {
