@@ -6,9 +6,7 @@ import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import BackLink from "../../../common/BackLink";
 
-const styles = (theme: Theme) =>
-  createStyles({
-  });
+const styles = (theme: Theme) => createStyles({});
 
 type DetailsHeaderProps = {
   classes: any;
