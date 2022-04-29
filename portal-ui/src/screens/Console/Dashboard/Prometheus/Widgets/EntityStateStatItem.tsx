@@ -15,40 +15,32 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../../actions";
-import { IDashboardPanel } from "../types";
+import { Box } from "@mui/material";
+import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import { representationNumber } from "../../../../../common/utils";
-import api from "../../../../../common/api";
-import DashboardItemBox from "../../DashboardItemBox";
-import BucketsCountItem from "./BucketsCountItem";
-import ObjectsCountItem from "./ObjectsCountItem";
+import { IDashboardPanel } from "../types";
+import Loader from "../../../Common/Loader/Loader";
 
-interface ISingleRepWidget {
-  title: string;
-  panelItem: IDashboardPanel;
-  timeStart: any;
-  timeEnd: any;
-  propLoading: boolean;
-  displayErrorMessage: any;
-  color?: string;
-  fillColor?: string;
-  apiPrefix: string;
-}
-
-const SingleRepWidget = ({
-  title,
+const EntityStateStatItem = ({
   panelItem,
   timeStart,
   timeEnd,
   propLoading,
   displayErrorMessage,
   apiPrefix,
-}: ISingleRepWidget) => {
+  statLabel,
+}: {
+  panelItem: IDashboardPanel;
+  timeStart: any;
+  timeEnd: any;
+  propLoading: boolean;
+  displayErrorMessage: any;
+  apiPrefix: string;
+  statLabel: any;
+}) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [result, setResult] = useState<IDashboardPanel | null>(null);
+  const [data, setData] = useState<string>("");
 
   useEffect(() => {
     if (propLoading) {
@@ -79,7 +71,7 @@ const SingleRepWidget = ({
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
-          setResult(widgetsWithValue);
+          setData(widgetsWithValue.data);
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -89,50 +81,25 @@ const SingleRepWidget = ({
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
-  let repNumber = "";
+  let toRender = loading ? (
+    <Box
+      sx={{
+        width: "100%",
+        paddingTop: "5px",
+        textAlign: "center",
+        margin: "auto",
+      }}
+    >
+      <Loader style={{ width: 12, height: 12 }} />
+    </Box>
+  ) : (
+    <Box>
+      <Box className="stat-value">{data}</Box>
+      {statLabel}
+    </Box>
+  );
 
-  if (result) {
-    const resultRep = parseInt(result.innerLabel || "0");
-
-    if (!isNaN(resultRep)) {
-      repNumber = representationNumber(resultRep);
-    } else {
-      repNumber = "0";
-    }
-  }
-
-  const renderById = (id: number) => {
-    if (id === 66) {
-      return (
-        <DashboardItemBox>
-          <BucketsCountItem
-            loading={loading}
-            title={title}
-            value={result ? repNumber : ""}
-          />
-        </DashboardItemBox>
-      );
-    }
-    if (id === 44) {
-      return (
-        <DashboardItemBox>
-          <ObjectsCountItem
-            loading={loading}
-            title={title}
-            value={result ? repNumber : ""}
-          />
-        </DashboardItemBox>
-      );
-    }
-
-    return null;
-  };
-
-  return renderById(panelItem.id);
+  return toRender;
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default connector(SingleRepWidget);
+export default EntityStateStatItem;

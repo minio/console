@@ -36,6 +36,7 @@ interface ISingleValueWidget {
   displayErrorMessage: any;
   classes: any;
   apiPrefix: string;
+  renderFn?: (arg: Record<string, any>) => any;
 }
 
 const styles = (theme: Theme) =>
@@ -78,6 +79,7 @@ const SingleValueWidget = ({
   displayErrorMessage,
   classes,
   apiPrefix,
+  renderFn,
 }: ISingleValueWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
@@ -120,6 +122,12 @@ const SingleValueWidget = ({
         });
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+
+  const valueToRender = splitSizeMetric(data);
+
+  if (renderFn) {
+    return renderFn({ valueToRender, loading, title, id: panelItem.id });
+  }
   return (
     <div className={classes.containerAlignment}>
       {loading && (

@@ -184,3 +184,5 @@ export { default as DeleteNonCurrentIcon } from "./DeleteNonCurrentIcon";
 export { default as FilterIcon } from "./FilterIcon";
 export { default as EditTenantIcon } from "./EditTenantIcon";
 export { default as SuccessIcon } from "./SuccessIcon";
+export { default as NetworkGetIcon } from "./NetworkGetIcon";
+export { default as NetworkPutIcon } from "./NetworkPutIcon";
