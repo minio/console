@@ -37,9 +37,6 @@ interface IKeyPairView {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    centerAlign: {
-      textAlign: "center",
-    },
     listHeight: {
       height: "50",
     },

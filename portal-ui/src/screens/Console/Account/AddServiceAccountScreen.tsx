@@ -54,9 +54,6 @@ interface IAddServiceAccountProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     bottomContainer: {
       display: "flex",
       flexGrow: 1,
@@ -70,46 +67,6 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    factorElements: {
-      display: "flex",
-      justifyContent: "flex-start",
-      marginLeft: 30,
-    },
-    sizeNumber: {
-      fontSize: 35,
-      fontWeight: 700,
-      textAlign: "center",
-    },
-    sizeDescription: {
-      fontSize: 14,
-      color: "#777",
-      textAlign: "center",
-    },
-    pageBox: {
-      border: "1px solid #EAEAEA",
-      borderTop: 0,
-    },
-    addPoolTitle: {
-      border: "1px solid #EAEAEA",
-      borderBottom: 0,
-    },
-    headTitle: {
-      fontWeight: "bold",
-      fontSize: 20,
-      paddingLeft: 20,
-      paddingTop: 10,
-      paddingBottom: 40,
-      textAlign: "end",
-    },
-    headIcon: {
-      fontWeight: "bold",
-      size: "50",
-    },
-      formScrollable: {
-    maxHeight: "calc(100vh - 300px)" as const,
-    overflowY: "auto" as const,
-    marginBottom: 25,
-  },
     ...formFieldStyles,
     ...modalStyleUtils,
   });

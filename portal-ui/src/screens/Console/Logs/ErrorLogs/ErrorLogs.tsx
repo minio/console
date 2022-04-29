@@ -65,29 +65,12 @@ const styles = (theme: Theme) =>
       fontSize: 13,
       borderRadius: 4,
     },
-    tab: {
-      paddingLeft: 25,
-    },
-    logerror: {
-      color: "#A52A2A",
-    },
     logerror_tab: {
       color: "#A52A2A",
       paddingLeft: 25,
     },
     nodeField: {
       width: "100%",
-    },
-    ansidefault: {
-      color: "#000",
-    },
-    midColumnCheckboxes: {
-      display: "flex",
-    },
-    checkBoxLabel: {
-      marginTop: 10,
-      fontSize: 16,
-      fontWeight: 500,
     },
     highlight: {
       "& span": {
@@ -115,11 +98,6 @@ const SelectStyled = withStyles((theme: Theme) =>
       "& .MuiSelect-select:focus": {
         backgroundColor: "transparent",
       },
-    },
-    input: {
-      height: 50,
-      fontSize: 13,
-      lineHeight: "50px",
     },
   })
 )(InputBase);

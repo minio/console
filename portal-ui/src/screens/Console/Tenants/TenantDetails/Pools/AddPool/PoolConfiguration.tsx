@@ -78,9 +78,6 @@ const styles = (theme: Theme) =>
       },
     },
 
-    fieldSpaceTop: {
-      marginTop: 15,
-    },
 
     ...modalBasic,
     ...wizardCommon,

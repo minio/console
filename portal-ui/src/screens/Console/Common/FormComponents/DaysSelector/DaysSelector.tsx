@@ -52,11 +52,6 @@ const styles = (theme: Theme) =>
       marginTop: 11,
       marginBottom: 6,
     },
-    dateContainer: {
-      height: 20,
-      textAlign: "right",
-      color: "#848484",
-    },
     dateInputContainer: {
       margin: "0 10px",
     },

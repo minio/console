@@ -89,18 +89,9 @@ const styles = (theme: Theme) =>
       paddingTop: 0,
     },
     ...pageContentStyles,
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     ...searchField,
     capitalize: {
       textTransform: "capitalize",
-    },
-    deleteBtn: {
-      color: "#f44336",
-      border: "1px solid rgba(244, 67, 54, 0.5)",
-      maxWidth: 140,
     },
     ...hrClass,
     ...buttonsStyles,

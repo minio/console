@@ -27,19 +27,33 @@ interface ITabSelector {
 }
 
 const tabSubStyles = makeStyles({
+  tabRoot: {
+    height: "40px",
+    borderBottom: "1px solid #eaeaea",
+  },
   root: {
+    width: "120px",
     backgroundColor: "transparent",
     paddingTop: 0,
     paddingBottom: 0,
-    fontSize: 22,
-    textTransform: "uppercase",
-    color: "#D0D0D0",
+    fontSize: "14px",
+    fontWeight: 600,
+    color: "#07193E",
+    height: "40px",
   },
-  selected: { "& .MuiTab-wrapper": { color: "#07193E", fontWeight: "bold" } },
+  selected: {
+    "&.MuiTab-selected": {
+      backgroundColor: "#F6F7F7 !important",
+    },
+    "&.MuiTab-wrapper": {
+      color: "#07193E",
+      fontWeight: 600,
+    },
+  },
   indicator: {
     background:
       "transparent linear-gradient(90deg, #072B4E 0%, #081C42 100%) 0% 0% no-repeat padding-box;",
-    height: 4,
+    height: 2,
   },
   scroller: {
     maxWidth: 1185,
@@ -47,7 +61,7 @@ const tabSubStyles = makeStyles({
     "&::after": {
       content: '" "',
       backgroundColor: "#EEF1F4",
-      height: 4,
+      height: 2,
       width: "100%",
       display: "block",
     },
@@ -70,6 +84,7 @@ const TabSelector = ({ selectedTab, onChange, tabOptions }: ITabSelector) => {
           onChange(newValue);
         }}
         classes={{
+          root: subStyles.tabRoot,
           indicator: subStyles.indicator,
           scroller: subStyles.scroller,
         }}

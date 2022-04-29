@@ -25,11 +25,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { ILinearGraphConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "../types";
@@ -38,9 +37,9 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import LineChartTooltip from "./tooltips/LineChartTooltip";
-import { openZoomPage } from "../../actions";
 import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
+import ExpandGraphLink from "./ExpandGraphLink";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -56,18 +55,11 @@ interface ILinearGraphWidget {
   xAxisFormatter?: (item: string) => string;
   areaWidget?: boolean;
   zoomActivated?: boolean;
-  openZoomPage: typeof openZoomPage;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
-    containerElements: {
-      display: "flex",
-      flexDirection: "row",
-      height: "100%",
-      flexGrow: 1,
-    },
     verticalAlignment: {
       flexDirection: "column",
     },
@@ -113,7 +105,6 @@ const LinearGraphWidget = ({
   yAxisFormatter = (item: string) => item,
   xAxisFormatter = (item: string) => item,
   zoomActivated = false,
-  openZoomPage,
 }: ILinearGraphWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
@@ -197,24 +188,26 @@ const LinearGraphWidget = ({
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
-    <div className={zoomActivated ? "" : classes.singleValueContainer}>
+    <Box className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
         <div className={classes.titleContainer}>
-          {title}{" "}
-          <button
-            onClick={() => {
-              openZoomPage(panelItem);
-            }}
-            className={classes.zoomChartIcon}
-          >
-            <ZoomOutMapIcon />
-          </button>
+          {title} <ExpandGraphLink panelItem={panelItem} />
         </div>
       )}
-      <div
-        className={
-          zoomActivated ? classes.verticalAlignment : classes.containerElements
+      <Box
+        sx={
+          zoomActivated
+            ? { flexDirection: "column" }
+            : {
+                height: "100%",
+                display: "grid",
+                gridTemplateColumns: {
+                  md: "1fr 1fr",
+                  sm: "1fr",
+                },
+              }
         }
+        style={areaWidget ? { gridTemplateColumns: "1fr" } : {}}
       >
         {loading && <Loader className={classes.loadingAlign} />}
         {!loading && (
@@ -237,24 +230,26 @@ const LinearGraphWidget = ({
                   {areaWidget && (
                     <defs>
                       <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#2781B0" stopOpacity={1} />
                         <stop
-                          offset="0%"
-                          stopColor="#ABC8F2"
-                          stopOpacity={0.9}
+                          offset="100%"
+                          stopColor="#ffffff"
+                          stopOpacity={0}
                         />
+
                         <stop
                           offset="95%"
-                          stopColor="#ABC8F2"
-                          stopOpacity={0}
+                          stopColor="#ffffff"
+                          stopOpacity={0.8}
                         />
                       </linearGradient>
                     </defs>
                   )}
                   <CartesianGrid
-                    strokeDasharray={areaWidget ? "0 0" : "3 3"}
+                    strokeDasharray={areaWidget ? "2 2" : "5 5"}
                     strokeWidth={1}
-                    strokeOpacity={0.5}
-                    stroke={"#07264A30"}
+                    strokeOpacity={1}
+                    stroke={"#eee0e0"}
                     vertical={!areaWidget}
                   />
                   <XAxis
@@ -262,8 +257,8 @@ const LinearGraphWidget = ({
                     tickFormatter={(value: any) => xAxisFormatter(value)}
                     interval={intervalCount}
                     tick={{
-                      fontSize: "70%",
-                      fontWeight: "bold",
+                      fontSize: "68%",
+                      fontWeight: "normal",
                       color: "#404143",
                     }}
                     tickCount={10}
@@ -275,8 +270,8 @@ const LinearGraphWidget = ({
                     hide={hideYAxis}
                     tickFormatter={(value: any) => yAxisFormatter(value)}
                     tick={{
-                      fontSize: "70%",
-                      fontWeight: "bold",
+                      fontSize: "68%",
+                      fontWeight: "normal",
                       color: "#404143",
                     }}
                     stroke={"#082045"}
@@ -287,10 +282,12 @@ const LinearGraphWidget = ({
                         key={`area-${section.dataKey}-${index.toString()}`}
                         type="monotone"
                         dataKey={section.dataKey}
-                        stroke={section.lineColor}
+                        isAnimationActive={false}
+                        stroke={!areaWidget ? section.lineColor : "#D7E5F8"}
                         fill={areaWidget ? "url(#colorUv)" : section.fillColor}
-                        fillOpacity={areaWidget ? 0.3 : 0}
-                        strokeWidth={areaWidget ? 0 : 2}
+                        fillOpacity={areaWidget ? 0.65 : 0}
+                        strokeWidth={!areaWidget ? 3 : 0}
+                        strokeLinecap={"round"}
                         dot={areaWidget ? <CustomizedDot /> : false}
                       />
                     );
@@ -342,14 +339,13 @@ const LinearGraphWidget = ({
             )}
           </React.Fragment>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
 const connector = connect(null, {
   displayErrorMessage: setErrorSnackMessage,
-  openZoomPage: openZoomPage,
 });
 
 export default withStyles(styles)(connector(LinearGraphWidget));

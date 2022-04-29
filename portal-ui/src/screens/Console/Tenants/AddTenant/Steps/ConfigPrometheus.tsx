@@ -65,9 +65,6 @@ const styles = (theme: Theme) =>
         border: "1px solid red",
       },
     },
-    containerItem: {
-      marginRight: 15,
-    },
     fieldGroup: {
       ...createTenantCommon.fieldGroup,
       paddingTop: 15,

@@ -34,9 +34,6 @@ import { EditYamlIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     errorState: {
       color: "#b53b4b",
       fontSize: 14,

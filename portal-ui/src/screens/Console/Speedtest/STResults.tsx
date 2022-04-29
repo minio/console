@@ -116,12 +116,6 @@ const styles = (theme: Theme) =>
     objectGeneral: {
       marginTop: 15,
     },
-    initialResults: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: "#000",
-      textAlign: "center",
-    },
     download: {
       "& .min-icon": {
         width: 35,

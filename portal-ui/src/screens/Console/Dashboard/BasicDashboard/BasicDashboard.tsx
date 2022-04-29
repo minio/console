@@ -23,7 +23,6 @@ import {
   HealIcon,
   PrometheusErrorIcon,
   ServersIcon,
-  SuccessIcon,
   TotalObjectsIcon,
   UptimeIcon,
 } from "../../../../icons";
@@ -39,6 +38,7 @@ import { DiagnosticsMenuIcon } from "../../../../icons/SidebarMenus";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { Link } from "react-router-dom";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
+import TimeStatItem from "../TimeStatItem";
 
 const BoxItem = ({ children }: { children: any }) => {
   return (
@@ -56,63 +56,6 @@ const BoxItem = ({ children }: { children: any }) => {
       }}
     >
       {children}
-    </Box>
-  );
-};
-
-const TimeStatItem = ({
-  icon,
-  label,
-  value,
-}: {
-  icon: any;
-  label: any;
-  value: string;
-}) => {
-  return (
-    <Box
-      sx={{
-        display: "grid",
-        alignItems: "center",
-        gap: "8px",
-        height: "33px",
-        paddingLeft: "15px",
-        gridTemplateColumns: {
-          md: "20px 1.5fr .5fr 20px",
-          xs: "20px 1fr 1fr",
-        },
-        background: "#EBF9EE",
-
-        "& .min-icon": {
-          height: "12px",
-          width: "12px",
-          fill: "#4CCB92",
-        },
-
-        "& .ok-icon": {
-          height: "8px",
-          width: "8px",
-          fill: "#4CCB92",
-          color: "#4CCB92",
-          display: {
-            md: "block",
-            xs: "none",
-          },
-        },
-      }}
-    >
-      {icon}
-      <Box
-        sx={{
-          fontSize: "12px",
-          color: "#4CCB92",
-          fontWeight: 600,
-        }}
-      >
-        {label}
-      </Box>
-      <Box sx={{ fontSize: "12px", color: "#4CCB92" }}>{value}</Box>
-      {value !== "n/a" ? <SuccessIcon className="ok-icon" /> : null}
     </Box>
   );
 };

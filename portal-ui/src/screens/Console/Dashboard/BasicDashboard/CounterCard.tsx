@@ -22,11 +22,13 @@ const CounterCard = ({
   label = "",
   icon = null,
   actions = null,
+  loading = false,
 }: {
   counterValue: string | number;
   label?: any;
   icon?: any;
   actions?: any;
+  loading?: boolean;
 }) => {
   return (
     <Box

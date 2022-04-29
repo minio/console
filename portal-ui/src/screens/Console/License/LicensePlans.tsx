@@ -36,32 +36,6 @@ import {
 
 const styles = (theme: Theme) =>
   createStyles({
-    link: {
-      textDecoration: "underline !important",
-      color: theme.palette.info.main,
-    },
-    linkButton: {
-      fontFamily: '"Lato", sans-serif',
-      fontWeight: "normal",
-      textTransform: "none",
-      fontSize: "inherit",
-      height: 0,
-      padding: 0,
-      margin: 0,
-    },
-    tableContainer: {
-      marginLeft: 28,
-    },
-    detailsContainerBorder: {
-      borderLeft: "1px solid #e2e2e2",
-    },
-    detailsTitle: {
-      fontSize: 19,
-      fontWeight: 700,
-      marginBottom: 26,
-      paddingTop: 18,
-      lineHeight: 1,
-    },
   });
 
 interface IRegisterStatus {

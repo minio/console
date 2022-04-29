@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { GridSize, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import {
   actionsTray,
   widgetContainerCommon,
@@ -34,15 +34,23 @@ import { setErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
 
 import TabSelector from "../../Common/TabSelector/TabSelector";
-import MergedWidgets from "./MergedWidgets";
 import { componentToUse } from "./widgetUtils";
 import ZoomWidget from "./ZoomWidget";
 import { AppState } from "../../../../store";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
-import { useTheme } from "@mui/styles";
+import {
+  DLayoutColumnProps,
+  DLayoutRowProps,
+  resourcesPanelsLayout,
+  RowPanelLayout,
+  summaryPanelsLayout,
+  trafficPanelsLayout,
+} from "./Widgets/LayoutUtil";
+import MergedWidgetsRenderer from "./Widgets/MergedWidgetsRenderer";
+import PageLayout from "../../Common/Layout/PageLayout";
 
 interface IPrDashboard {
-  classes: any;
+  classes?: any;
   displayErrorMessage: typeof setErrorSnackMessage;
   apiPrefix?: string;
   zoomOpen: boolean;
@@ -58,12 +66,10 @@ const styles = (theme: Theme) =>
       flexDirection: "row",
       justifyContent: "flex-start",
       flexWrap: "wrap",
-      maxWidth: 1180,
     },
   });
 
 const PrDashboard = ({
-  classes,
   displayErrorMessage,
   apiPrefix = "admin",
   zoomOpen,
@@ -76,103 +82,9 @@ const PrDashboard = ({
     useState<IDashboardPanel[]>(panelsConfiguration);
   const [curTab, setCurTab] = useState<number>(0);
 
-  const theme = useTheme();
-  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-
-  const panels = useCallback(
-    (tabName: string, filterPanels?: number[][] | null) => {
-      return filterPanels?.map((panelLine, indexLine) => {
-        const totalPanelsContained = panelLine.length;
-
-        let perc = Math.floor(12 / totalPanelsContained);
-
-        if (!biggerThanMd && totalPanelsContained >= 4) {
-          perc = 6;
-        } else if (!biggerThanMd && totalPanelsContained >= 3) {
-          perc = 12;
-        }
-
-        if (perc < 1) {
-          perc = 1;
-        } else if (perc > 12) {
-          perc = 12;
-        }
-
-        return (
-          <Grid
-            item
-            xs={12}
-            key={`line-${tabName}-${indexLine}`}
-            className={classes.dashboardRow}
-          >
-            {panelLine.map((panelInline, indexPanel) => {
-              const panelInfo = panelInformation.find(
-                (panel) => panel.id === panelInline
-              );
-
-              return (
-                <Grid
-                  key={`widget-${panelInline}-${indexPanel}`}
-                  className={classes.widgetPanelDelimiter}
-                  item
-                  xs={12}
-                  sm={perc as GridSize}
-                  md={perc as GridSize}
-                  lg={perc as GridSize}
-                >
-                  <Grid item xs={12}>
-                    {panelInfo ? (
-                      <Fragment>
-                        {panelInfo.mergedPanels ? (
-                          <Fragment>
-                            <MergedWidgets
-                              title={panelInfo.title}
-                              leftComponent={componentToUse(
-                                panelInfo.mergedPanels[0],
-                                timeStart,
-                                timeEnd,
-                                loading,
-                                apiPrefix
-                              )}
-                              rightComponent={componentToUse(
-                                panelInfo.mergedPanels[1],
-                                timeStart,
-                                timeEnd,
-                                loading,
-                                apiPrefix
-                              )}
-                            />
-                          </Fragment>
-                        ) : (
-                          componentToUse(
-                            panelInfo,
-                            timeStart,
-                            timeEnd,
-                            loading,
-                            apiPrefix
-                          )
-                        )}
-                      </Fragment>
-                    ) : null}
-                  </Grid>
-                </Grid>
-              );
-            })}
-          </Grid>
-        );
-      });
-    },
-    [
-      timeStart,
-      timeEnd,
-      loading,
-      apiPrefix,
-      classes.dashboardRow,
-      classes.widgetPanelDelimiter,
-      panelInformation,
-      biggerThanMd,
-    ]
-  );
+  const getPanelDetails = (id: number) => {
+    return panelInformation.find((panel) => panel.id === id);
+  };
 
   const fetchUsage = useCallback(() => {
     let stepCalc = 0;
@@ -223,29 +135,64 @@ const PrDashboard = ({
     }
   }, [loading, fetchUsage]);
 
-  const summaryPanels = [
-    [66, 44, 500, 501],
-    [80, 81, 1],
-    [68, 52],
-    [63, 70],
-  ];
+  const renderCmpByConfig = (
+    panelInfo: IDashboardPanel | undefined,
+    key: string
+  ) => {
+    return (
+      <Fragment key={`widget-${key}`}>
+        {panelInfo ? (
+          <Fragment>
+            {panelInfo.mergedPanels ? (
+              <MergedWidgetsRenderer
+                info={panelInfo}
+                timeStart={timeStart}
+                timeEnd={timeEnd}
+                loading={loading}
+                apiPrefix={apiPrefix}
+                displayErrorMessage={displayErrorMessage}
+              />
+            ) : (
+              componentToUse(panelInfo, timeStart, timeEnd, loading, apiPrefix)
+            )}
+          </Fragment>
+        ) : null}
+      </Fragment>
+    );
+  };
 
-  if (biggerThanMd) {
-    summaryPanels.splice(1, 0, [50, 502]);
-  } else {
-    summaryPanels.splice(1, 0, [50]);
-    summaryPanels.splice(1, 0, [502]);
-  }
+  const renderPanelItems = (layoutRows: DLayoutRowProps[]) => {
+    return layoutRows.reduce((prev: any[], rowItem, rIdx) => {
+      const { columns = [] } = rowItem;
+      const cellItems: any[] = columns.map(
+        (cellItem: DLayoutColumnProps, colIdx: number) => {
+          const panelInfo = getPanelDetails(cellItem.componentId);
+          return renderCmpByConfig(panelInfo, `${rIdx}-${colIdx}`);
+        }
+      );
+      const rowConfig = (
+        <Box sx={rowItem.sx} key={`layout-row-${rIdx}`}>
+          {cellItems}
+        </Box>
+      );
+      return [...prev, rowConfig];
+    }, []);
+  };
 
-  const resourcesPanels = [
-    [76, 77],
-    [11, 8],
-    [82, 74],
-  ];
-  const requestsPanels = [[60], [71, 17], [73]];
+  const renderSummaryPanels = () => {
+    return renderPanelItems(summaryPanelsLayout);
+  };
+
+  const renderTrafficPanels = () => {
+    return renderPanelItems(trafficPanelsLayout);
+  };
+
+  const renderResourcesPanels = () => {
+    return renderPanelItems(resourcesPanelsLayout);
+  };
 
   return (
-    <Fragment>
+    <PageLayout>
       {zoomOpen && (
         <ZoomWidget
           modalOpen={zoomOpen}
@@ -256,13 +203,7 @@ const PrDashboard = ({
           apiPrefix={apiPrefix}
         />
       )}
-      <DateRangeSelector
-        timeStart={timeStart}
-        setTimeStart={setTimeStart}
-        timeEnd={timeEnd}
-        setTimeEnd={setTimeEnd}
-        triggerSync={triggerLoad}
-      />
+
       <Grid item xs={12}>
         <TabSelector
           selectedTab={curTab}
@@ -276,18 +217,43 @@ const PrDashboard = ({
           ]}
         />
       </Grid>
-      <Grid item xs={12} className={classes.widgetsContainer}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          paddingTop: "20px",
+        }}
+      >
+        <Box
+          sx={{
+            marginBottom: "20px",
+          }}
+        >
+          <DateRangeSelector
+            timeStart={timeStart}
+            setTimeStart={setTimeStart}
+            timeEnd={timeEnd}
+            setTimeEnd={setTimeEnd}
+            triggerSync={triggerLoad}
+          />
+        </Box>
         <TabPanel index={0} value={curTab}>
-          {panels("Summary", summaryPanels)}
+          <RowPanelLayout>
+            {panelInformation.length ? renderSummaryPanels() : null}
+          </RowPanelLayout>
         </TabPanel>
         <TabPanel index={1} value={curTab}>
-          {panels("Traffic", requestsPanels)}
+          <RowPanelLayout>
+            {panelInformation.length ? renderTrafficPanels() : null}
+          </RowPanelLayout>
         </TabPanel>
         <TabPanel index={2} value={curTab}>
-          {panels("Resources", resourcesPanels)}
+          <RowPanelLayout>
+            {panelInformation.length ? renderResourcesPanels() : null}
+          </RowPanelLayout>
         </TabPanel>
       </Grid>
-    </Fragment>
+    </PageLayout>
   );
 };
 
