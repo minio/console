@@ -134,7 +134,7 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
                 <br />
                 You can learn more at our{" "}
                 <a
-                  href="https://docs.min.io/minio/baremetal/reference/minio-cli/minio-mc-admin/mc-admin.config.html?ref=con#id4"
+                  href="https://docs.min.io/minio/baremetal/reference/minio-mc-admin/mc-admin.config.html#configuration-settings"
                   target="_blank"
                   rel="noreferrer"
                 >
