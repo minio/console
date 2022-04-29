@@ -164,18 +164,12 @@ test-sso-integration:
 	-p 9000:9000 \
 	-p 9001:9001 \
 	-e MINIO_IDENTITY_OPENID_CLIENT_SECRET=0nfJuqIt0iPnRIUJkvetve5l38C6gi9W \
+	-e MINIO_IDENTITY_OPENID_CONFIG_URL=http://keycloak-container:8080/auth/realms/myrealm/.well-known/openid-configuration \
+	-e MINIO_IDENTITY_OPENID_CLIENT_ID="account" \
 	-e MINIO_ROOT_USER=minio \
 	-e MINIO_ROOT_PASSWORD=minio123 $(MINIO_VERSION) server /data{1...4} --address :9000 --console-address :9001)
-	@(sleep 60)
-	@echo "run mc commands"
-	@(docker run --name minio-client --network my-net -dit --entrypoint=/bin/sh minio/mc)
-	@(docker exec minio-client mc alias set myminio/ http://minio:9000 minio minio123)
-	@(docker exec minio-client mc admin config set myminio identity_openid config_url="http://keycloak-container:8080/auth/realms/myrealm/.well-known/openid-configuration" client_id="account")
-	@(docker exec minio-client mc admin service restart myminio)
 	@echo "starting bash script"
 	@(env bash $(PWD)/sso-integration/set-sso.sh)
-	@echo "install jq"
-	@(sudo apt install jq)
 	@echo "Executing the test:"
 	@(cd sso-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./sso-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/sso-system.out)
 
