@@ -586,6 +586,13 @@ func parseCertificate(name string, rawCert []byte) (*models.CertificateInfo, err
 	}, nil
 }
 
+var secretTypePublicKeyNameMap = map[string]string{
+	"kubernetes.io/tls":        "tls.crt",
+	"cert-manager.io/v1":       "tls.crt",
+	"cert-manager.io/v1alpha2": "tls.crt",
+	// Add newer secretTypes and their corresponding values in future
+}
+
 // parseTenantCertificates convert public key pem certificates stored in k8s secrets for a given Tenant into x509 certificates
 func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespace string, secrets []*miniov2.LocalCertificateReference) ([]*models.CertificateInfo, error) {
 	var certificates []*models.CertificateInfo
@@ -597,9 +604,11 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 		if err != nil {
 			return nil, err
 		}
-		if secret.Type == "kubernetes.io/tls" || secret.Type == "cert-manager.io/v1" || secret.Type == "cert-manager.io/v1alpha2" {
-			publicKey = "tls.crt"
+
+		if v, ok := secretTypePublicKeyNameMap[secret.Type]; ok {
+			publicKey = v
 		}
+
 		// Extract public key from certificate TLS secret
 		if rawCert, ok := keyPair.Data[publicKey]; ok {
 			var blocks []byte
