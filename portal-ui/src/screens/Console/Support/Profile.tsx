@@ -179,18 +179,6 @@ const Profile = ({ classes }: IProfileProps) => {
             </Button>
           </Grid>
         </Grid>
-        {!profilingStarted && (
-          <Fragment>
-            <br />
-            <HelpBox
-              title={
-                "During the profiling run all production traffic will be suspended."
-              }
-              iconComponent={<WarnIcon />}
-              help={<Fragment />}
-            />
-          </Fragment>
-        )}
       </PageLayout>
     </Fragment>
   );
