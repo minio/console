@@ -31,26 +31,24 @@ func registerSiteReplicationStatusHandler(api *operations.ConsoleAPI) {
 	api.SiteReplicationGetSiteReplicationStatusHandler = siteRepApi.GetSiteReplicationStatusHandlerFunc(func(params siteRepApi.GetSiteReplicationStatusParams, session *models.Principal) middleware.Responder {
 		rInfo, err := getSRStatusResponse(session, params)
 		if err != nil {
-			return siteRepApi.NewGetSiteReplicationStatusDefault(500).WithPayload(prepareError(err))
+			return siteRepApi.NewGetSiteReplicationStatusDefault(int(err.Code)).WithPayload(err)
 		}
 		return siteRepApi.NewGetSiteReplicationStatusOK().WithPayload(rInfo)
 
 	})
 }
 
-func getSRStatusResponse(session *models.Principal, params siteRepApi.GetSiteReplicationStatusParams) (info *models.SiteReplicationStatusResponse, err error) {
-
+func getSRStatusResponse(session *models.Principal, params siteRepApi.GetSiteReplicationStatusParams) (*models.SiteReplicationStatusResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, err
+		return nil, ErrorWithContext(ctx, err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	ctx := context.Background()
-
 	res, err := getSRStats(ctx, adminClient, params)
-
 	if err != nil {
-		return nil, err
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return res, nil
 }

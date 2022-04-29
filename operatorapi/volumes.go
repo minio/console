@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"sort"
 
+	errors "github.com/minio/console/restapi"
+
 	miniov1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -33,7 +35,7 @@ import (
 
 func registerVolumesHandlers(api *operations.OperatorAPI) {
 	api.OperatorAPIListPVCsHandler = operator_api.ListPVCsHandlerFunc(func(params operator_api.ListPVCsParams, session *models.Principal) middleware.Responder {
-		payload, err := getPVCsResponse(session)
+		payload, err := getPVCsResponse(session, params)
 
 		if err != nil {
 			return operator_api.NewListPVCsDefault(int(err.Code)).WithPayload(err)
@@ -72,13 +74,13 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 
 }
 
-func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getPVCsResponse(session *models.Principal, params operator_api.ListPVCsParams) (*models.ListPVCsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 
 	// Filter Tenant PVCs. They keep their v1 tenant annotation
@@ -90,7 +92,7 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 	listAllPvcs, err2 := clientset.CoreV1().PersistentVolumeClaims("").List(ctx, listOpts)
 
 	if err2 != nil {
-		return nil, prepareError(err2)
+		return nil, errors.ErrorWithContext(ctx, err2)
 	}
 
 	var ListPVCs []*models.PvcsListResponse
@@ -121,12 +123,12 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 }
 
 func getPVCsForTenantResponse(session *models.Principal, params operator_api.ListPVCsForTenantParams) (*models.ListPVCsResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 
 	// Filter Tenant PVCs. They keep their v1 tenant annotation
@@ -138,7 +140,7 @@ func getPVCsForTenantResponse(session *models.Principal, params operator_api.Lis
 	listAllPvcs, err2 := clientset.CoreV1().PersistentVolumeClaims(params.Namespace).List(ctx, listOpts)
 
 	if err2 != nil {
-		return nil, prepareError(err2)
+		return nil, errors.ErrorWithContext(ctx, err2)
 	}
 
 	var ListPVCs []*models.PvcsListResponse
@@ -169,37 +171,37 @@ func getPVCsForTenantResponse(session *models.Principal, params operator_api.Lis
 }
 
 func getDeletePVCResponse(session *models.Principal, params operator_api.DeletePVCParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return prepareError(err)
+		return errors.ErrorWithContext(ctx, err)
 	}
 	listOpts := metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", params.Tenant),
 		FieldSelector: fmt.Sprintf("metadata.name=%s", params.PVCName),
 	}
 	if err = clientset.CoreV1().PersistentVolumeClaims(params.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, listOpts); err != nil {
-		return prepareError(err)
+		return errors.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
 func getPVCEventsResponse(session *models.Principal, params operator_api.GetPVCEventsParams) (models.EventListWrapper, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 	PVC, err := clientset.CoreV1().PersistentVolumeClaims(params.Namespace).Get(ctx, params.PVCName, metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", PVC.UID)})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, errors.ErrorWithContext(ctx, err)
 	}
 	retval := models.EventListWrapper{}
 	for i := 0; i < len(events.Items); i++ {

@@ -17,7 +17,9 @@
 package restapi
 
 import (
+	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -61,4 +63,154 @@ func TestUniqueKeys(t *testing.T) {
 	// Test-1 test UniqueKeys returns an array with unique elements
 	responseArray := UniqueKeys(exampleMixedArray)
 	assert.ElementsMatchf(responseArray, exampleUniqueArray, "returned array doesn't contain the correct elements %s")
+}
+
+func TestRandomCharStringWithAlphabet(t *testing.T) {
+	type args struct {
+		n        int
+		alphabet string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "generated random string has the right length",
+			args: args{
+				n:        10,
+				alphabet: "A",
+			},
+			want: "AAAAAAAAAA",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, RandomCharStringWithAlphabet(tt.args.n, tt.args.alphabet), "RandomCharStringWithAlphabet(%v, %v)", tt.args.n, tt.args.alphabet)
+		})
+	}
+}
+
+func TestNewSessionCookieForConsole(t *testing.T) {
+	type args struct {
+		token string
+	}
+	tests := []struct {
+		name string
+		args args
+		want http.Cookie
+	}{
+		{
+			name: "session cookie has the right token an security configuration",
+			args: args{
+				token: "jwt-xxxxxxxxx",
+			},
+			want: http.Cookie{
+				Path:     "/",
+				Value:    "jwt-xxxxxxxxx",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				Name:     "token",
+				MaxAge:   3600,
+				Expires:  time.Now().Add(1 * time.Hour),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := NewSessionCookieForConsole(tt.args.token)
+			assert.Equalf(t, tt.want.Value, got.Value, "NewSessionCookieForConsole(%v)", tt.args.token)
+			assert.Equalf(t, tt.want.Path, got.Path, "NewSessionCookieForConsole(%v)", tt.args.token)
+			assert.Equalf(t, tt.want.HttpOnly, got.HttpOnly, "NewSessionCookieForConsole(%v)", tt.args.token)
+			assert.Equalf(t, tt.want.Name, got.Name, "NewSessionCookieForConsole(%v)", tt.args.token)
+			assert.Equalf(t, tt.want.MaxAge, got.MaxAge, "NewSessionCookieForConsole(%v)", tt.args.token)
+			assert.Equalf(t, tt.want.SameSite, got.SameSite, "NewSessionCookieForConsole(%v)", tt.args.token)
+		})
+	}
+}
+
+func TestExpireSessionCookie(t *testing.T) {
+	tests := []struct {
+		name string
+		want http.Cookie
+	}{
+		{
+			name: "cookie is expired correctly",
+			want: http.Cookie{
+				Name:   "token",
+				Value:  "",
+				MaxAge: -1,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ExpireSessionCookie()
+			assert.Equalf(t, tt.want.Name, got.Name, "ExpireSessionCookie()")
+			assert.Equalf(t, tt.want.Value, got.Value, "ExpireSessionCookie()")
+			assert.Equalf(t, tt.want.MaxAge, got.MaxAge, "ExpireSessionCookie()")
+		})
+	}
+}
+
+func TestSanitizeEncodedPrefix(t *testing.T) {
+	type args struct {
+		rawPrefix string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "replace spaces with +",
+			args: args{
+				rawPrefix: "hello world",
+			},
+			want: "hello+world",
+		},
+		{
+			name: "replace spaces with +",
+			args: args{
+				rawPrefix: "   hello-world   ",
+			},
+			want: "+++hello-world+++",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, SanitizeEncodedPrefix(tt.args.rawPrefix), "SanitizeEncodedPrefix(%v)", tt.args.rawPrefix)
+		})
+	}
+}
+
+func Test_isSafeToPreview(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "mime type is safe to preview",
+			args: args{
+				str: "image/jpeg",
+			},
+			want: true,
+		},
+		{
+			name: "mime type is not safe to preview",
+			args: args{
+				str: "application/zip",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, isSafeToPreview(tt.args.str), "isSafeToPreview(%v)", tt.args.str)
+		})
+	}
 }

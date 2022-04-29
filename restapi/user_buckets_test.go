@@ -143,18 +143,17 @@ func TestMakeBucket(t *testing.T) {
 	// mock minIO client
 	minClient := minioClientMock{}
 	function := "makeBucket()"
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	// Test-1: makeBucket() create a bucket
 	// mock function response from makeBucketWithContext(ctx)
 	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
 		return nil
 	}
 	if err := makeBucket(ctx, minClient, "bucktest1", true); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 
-	// Test-2 makeBucket() make sure errors are handled correctly when error on MakeBucketWithContext
+	// Test-2 makeBucket() make sure errors are handled correctly when errors on MakeBucketWithContext
 	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
 		return errors.New("error")
 	}
@@ -175,10 +174,10 @@ func TestDeleteBucket(t *testing.T) {
 		return nil
 	}
 	if err := removeBucket(minClient, "bucktest1"); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 
-	// Test-2: removeBucket() make sure errors are handled correctly when error on DeleteBucket()
+	// Test-2: removeBucket() make sure errors are handled correctly when errors on DeleteBucket()
 	// mock function response from removeBucket(bucketName)
 	minioRemoveBucketMock = func(bucketName string) error {
 		return errors.New("error")
@@ -193,8 +192,7 @@ func TestBucketInfo(t *testing.T) {
 	// mock minIO client
 	minClient := minioClientMock{}
 	adminClient := adminClientMock{}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	function := "getBucketInfo()"
 
 	// Test-1: getBucketInfo() get a bucket with PRIVATE access
@@ -248,7 +246,7 @@ func TestBucketInfo(t *testing.T) {
 
 	bucketInfo, err := getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 	assert.Equal(outputExpected.Name, bucketInfo.Name)
 	assert.Equal(outputExpected.Access, bucketInfo.Access)
@@ -272,7 +270,7 @@ func TestBucketInfo(t *testing.T) {
 	}
 	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 	assert.Equal(outputExpected.Name, bucketInfo.Name)
 	assert.Equal(outputExpected.Access, bucketInfo.Access)
@@ -296,7 +294,7 @@ func TestBucketInfo(t *testing.T) {
 	}
 	bucketInfo, err = getBucketInfo(ctx, minClient, adminClient, bucketToSet)
 	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 	assert.Equal(outputExpected.Name, bucketInfo.Name)
 	assert.Equal(outputExpected.Access, bucketInfo.Access)
@@ -304,7 +302,7 @@ func TestBucketInfo(t *testing.T) {
 	assert.Equal(outputExpected.Size, bucketInfo.Size)
 	assert.Equal(outputExpected.Objects, bucketInfo.Objects)
 
-	// Test-4: getBucketInfo() returns an error while parsing invalid policy
+	// Test-4: getBucketInfo() returns an errors while parsing invalid policy
 	mockPolicy = "policyinvalid"
 	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
 		return mockPolicy, nil
@@ -321,14 +319,13 @@ func TestBucketInfo(t *testing.T) {
 		assert.Equal("invalid character 'p' looking for beginning of value", err.Error())
 	}
 
-	// Test-4: getBucketInfo() handle GetBucketPolicy error correctly
+	// Test-4: getBucketInfo() handle GetBucketPolicy errors correctly
 	// Test removed since we can tolerate this scenario now
 }
 
 func TestSetBucketAccess(t *testing.T) {
 	assert := assert.New(t)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	// mock minIO client
 	minClient := minioClientMock{}
 
@@ -339,30 +336,30 @@ func TestSetBucketAccess(t *testing.T) {
 		return nil
 	}
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC, ""); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 
 	// Test-2: setBucketAccessPolicy() set private access
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", models.BucketAccessPRIVATE, ""); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
 	}
 
-	// Test-3: setBucketAccessPolicy() set invalid access, expected error
+	// Test-3: setBucketAccessPolicy() set invalid access, expected errors
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", "other", ""); assert.Error(err) {
 		assert.Equal("access: `other` not supported", err.Error())
 	}
 
-	// Test-4: setBucketAccessPolicy() set access on empty bucket name, expected error
+	// Test-4: setBucketAccessPolicy() set access on empty bucket name, expected errors
 	if err := setBucketAccessPolicy(ctx, minClient, "", models.BucketAccessPRIVATE, ""); assert.Error(err) {
 		assert.Equal("error: bucket name not present", err.Error())
 	}
 
-	// Test-5: setBucketAccessPolicy() set empty access on bucket, expected error
+	// Test-5: setBucketAccessPolicy() set empty access on bucket, expected errors
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", "", ""); assert.Error(err) {
 		assert.Equal("error: bucket access not present", err.Error())
 	}
 
-	// Test-5: setBucketAccessPolicy() handle error on setPolicy call
+	// Test-5: setBucketAccessPolicy() handle errors on setPolicy call
 	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
 		return errors.New("error")
 	}
@@ -373,8 +370,7 @@ func TestSetBucketAccess(t *testing.T) {
 }
 
 func Test_enableBucketEncryption(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                            context.Context
@@ -410,7 +406,7 @@ func Test_enableBucketEncryption(t *testing.T) {
 				bucketName:     "test",
 				encryptionType: "sse-s3",
 				mockEnableBucketEncryptionFunc: func(ctx context.Context, bucketName string, config *sse.Configuration) error {
-					return errorGenericInvalidSession
+					return ErrInvalidSession
 				},
 			},
 			wantErr: true,
@@ -420,15 +416,14 @@ func Test_enableBucketEncryption(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			minioSetBucketEncryptionMock = tt.args.mockEnableBucketEncryptionFunc
 			if err := enableBucketEncryption(tt.args.ctx, tt.args.client, tt.args.bucketName, tt.args.encryptionType, tt.args.kmsKeyID); (err != nil) != tt.wantErr {
-				t.Errorf("enableBucketEncryption() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("enableBucketEncryption() errors = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
 func Test_disableBucketEncryption(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                   context.Context
@@ -460,7 +455,7 @@ func Test_disableBucketEncryption(t *testing.T) {
 				client:     minClient,
 				bucketName: "test",
 				mockBucketDisableFunc: func(ctx context.Context, bucketName string) error {
-					return ErrorGeneric
+					return ErrDefault
 				},
 			},
 			wantErr: true,
@@ -470,15 +465,14 @@ func Test_disableBucketEncryption(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			minioRemoveBucketEncryptionMock = tt.args.mockBucketDisableFunc
 			if err := disableBucketEncryption(tt.args.ctx, tt.args.client, tt.args.bucketName); (err != nil) != tt.wantErr {
-				t.Errorf("disableBucketEncryption() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("disableBucketEncryption() errors = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
 func Test_getBucketEncryptionInfo(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                     context.Context
@@ -535,7 +529,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 				client:     minClient,
 				bucketName: "test",
 				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
-					return nil, errSSENotConfigured
+					return nil, ErrSSENotConfigured
 				},
 			},
 			wantErr: true,
@@ -546,7 +540,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 			minioGetBucketEncryptionMock = tt.args.mockBucketEncryptionGet
 			got, err := getBucketEncryptionInfo(tt.args.ctx, tt.args.client, tt.args.bucketName)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("getBucketEncryptionInfo() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("getBucketEncryptionInfo() errors = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
@@ -558,8 +552,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 
 func Test_SetBucketRetentionConfig(t *testing.T) {
 	assert := assert.New(t)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx                     context.Context
@@ -651,7 +644,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 			expectedError: errors.New("invalid retention unit"),
 		},
 		{
-			name: "Handle error on objec lock function",
+			name: "Handle errors on objec lock function",
 			args: args{
 				ctx:        ctx,
 				client:     minClient,
@@ -672,9 +665,9 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 			err := setBucketRetentionConfig(tt.args.ctx, tt.args.client, tt.args.bucketName, tt.args.mode, tt.args.unit, tt.args.validity)
 			if tt.expectedError != nil {
 				fmt.Println(t.Name())
-				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("setObjectRetention() error: `%s`, wantErr: `%s`", err, tt.expectedError))
+				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("setObjectRetention() errors: `%s`, wantErr: `%s`", err, tt.expectedError))
 			} else {
-				assert.Nil(err, fmt.Sprintf("setBucketRetentionConfig() error: %v, wantErr: %v", err, tt.expectedError))
+				assert.Nil(err, fmt.Sprintf("setBucketRetentionConfig() errors: %v, wantErr: %v", err, tt.expectedError))
 			}
 		})
 	}
@@ -682,8 +675,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 
 func Test_GetBucketRetentionConfig(t *testing.T) {
 	assert := assert.New(t)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	minClient := minioClientMock{}
 	type args struct {
 		ctx              context.Context
@@ -751,7 +743,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 		{
 			// Description: if minio return NoSuchObjectLockConfiguration, don't panic
 			// and return empty response
-			name: "Handle NoLock Config error",
+			name: "Handle NoLock Config errors",
 			args: args{
 				ctx:        ctx,
 				client:     minClient,
@@ -767,7 +759,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 			expectedError:    nil,
 		},
 		{
-			name: "Return error on invalid mode",
+			name: "Return errors on invalid mode",
 			args: args{
 				ctx:        ctx,
 				client:     minClient,
@@ -782,7 +774,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 			expectedError:    errors.New("invalid retention mode"),
 		},
 		{
-			name: "Return error on invalid unit",
+			name: "Return errors on invalid unit",
 			args: args{
 				ctx:        ctx,
 				client:     minClient,
@@ -805,9 +797,9 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 
 			if tt.expectedError != nil {
 				fmt.Println(t.Name())
-				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("getBucketRetentionConfig() error: `%s`, wantErr: `%s`", err, tt.expectedError))
+				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("getBucketRetentionConfig() errors: `%s`, wantErr: `%s`", err, tt.expectedError))
 			} else {
-				assert.Nil(err, fmt.Sprintf("getBucketRetentionConfig() error: %v, wantErr: %v", err, tt.expectedError))
+				assert.Nil(err, fmt.Sprintf("getBucketRetentionConfig() errors: %v, wantErr: %v", err, tt.expectedError))
 				if !reflect.DeepEqual(resp, tt.expectedResponse) {
 					t.Errorf("getBucketRetentionConfig() resp: %v, expectedResponse: %v", resp, tt.expectedResponse)
 					return
@@ -819,8 +811,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 
 func Test_SetBucketVersioning(t *testing.T) {
 	assert := assert.New(t)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 	errorMsg := "Error Message"
 	minClient := s3ClientMock{}
 	type args struct {
@@ -874,7 +865,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 
 			if tt.expectedError != nil {
 				fmt.Println(t.Name())
-				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("getBucketRetentionConfig() error: `%s`, wantErr: `%s`", err, tt.expectedError))
+				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("getBucketRetentionConfig() errors: `%s`, wantErr: `%s`", err, tt.expectedError))
 			}
 		})
 	}
@@ -1166,7 +1157,7 @@ func Test_getAccountBuckets(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				mockBucketList: madmin.AccountInfo{},
-				mockError:      errors.New("some error"),
+				mockError:      errors.New("some errors"),
 			},
 			want:    []*models.Bucket{},
 			wantErr: assert.Error,

@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	xhttp "github.com/minio/console/pkg/http"
+
 	"github.com/minio/console/pkg/utils"
 
 	"github.com/minio/pkg/env"
@@ -68,7 +70,7 @@ func GetMinioImage() (*string, error) {
 		return &image, nil
 	}
 	latestMinIOImage, errLatestMinIOImage := utils.GetLatestMinIOImage(
-		&utils.HTTPClient{
+		&xhttp.Client{
 			Client: &http.Client{
 				Timeout: 5 * time.Second,
 			},

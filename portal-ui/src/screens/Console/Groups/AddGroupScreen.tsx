@@ -23,7 +23,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import history from "../../../../src/history";
@@ -37,7 +37,7 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import { setErrorSnackMessage } from "../../../../src/actions";
-import SectionTitle from "../Common/SectionTitle";
+import FormLayout from "../Common/FormLayout";
 
 interface IAddGroupProps {
   classes: any;
@@ -152,81 +152,60 @@ const AddGroupScreen = ({ classes, setErrorSnackMessage }: IAddGroupProps) => {
           label={<BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />}
         />
         <PageLayout>
-          <Box
-            sx={{
-              display: "grid",
-              padding: "25px",
-              gap: "25px",
-              gridTemplateColumns: {
-                md: "2fr 1.2fr",
-                xs: "1fr",
-              },
-              border: "1px solid #eaeaea",
-            }}
+          <FormLayout
+            title={"Create Group"}
+            icon={<CreateGroupIcon />}
+            helpbox={<AddGroupHelpBox />}
           >
-            <Box>
-              <form noValidate autoComplete="off" onSubmit={setSaving}>
-                <Grid container item spacing="20">
-                  <Grid item xs={12}>
-                    <SectionTitle icon={<CreateGroupIcon />}>
-                      Create Group
-                    </SectionTitle>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Grid container>
-                      <Grid item xs={12} className={classes.formFieldRow}>
-                        <InputBoxWrapper
-                          id="group-name"
-                          name="group-name"
-                          label="Group Name"
-                          autoFocus={true}
-                          value={groupName}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            setGroupName(e.target.value);
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.userSelector}>
-                        <UsersSelectors
-                          selectedUsers={selectedUsers}
-                          setSelectedUsers={setSelectedUsers}
-                          editMode={true}
-                        />
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12} className={classes.modalButtonBar}>
-                      <Button
-                        type="button"
-                        variant="outlined"
-                        color="primary"
-                        className={classes.spacerRight}
-                        onClick={resetForm}
-                      >
-                        Clear
-                      </Button>
-
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        disabled={saving || !validGroup}
-                      >
-                        Save
-                      </Button>
-                    </Grid>
-                  </Grid>
-                  {saving && (
-                    <Grid item xs={12}>
-                      <LinearProgress />
-                    </Grid>
-                  )}
+            <form noValidate autoComplete="off" onSubmit={setSaving}>
+              <Grid container marginTop={"16px"}>
+                <Grid item xs={12} className={classes.formFieldRow}>
+                  <InputBoxWrapper
+                    id="group-name"
+                    name="group-name"
+                    label="Group Name"
+                    autoFocus={true}
+                    value={groupName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setGroupName(e.target.value);
+                    }}
+                  />
                 </Grid>
-              </form>
-            </Box>
-            <AddGroupHelpBox />
-          </Box>
+                <Grid item xs={12} className={classes.userSelector}>
+                  <UsersSelectors
+                    selectedUsers={selectedUsers}
+                    setSelectedUsers={setSelectedUsers}
+                    editMode={true}
+                  />
+                </Grid>
+              </Grid>
+              <Grid item xs={12} className={classes.modalButtonBar}>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  color="primary"
+                  className={classes.spacerRight}
+                  onClick={resetForm}
+                >
+                  Clear
+                </Button>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={saving || !validGroup}
+                >
+                  Save
+                </Button>
+              </Grid>
+              {saving && (
+                <Grid item xs={12}>
+                  <LinearProgress />
+                </Grid>
+              )}
+            </form>
+          </FormLayout>
         </PageLayout>
       </Grid>
     </Fragment>

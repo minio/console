@@ -45,7 +45,7 @@ const (
 func registerUsersHandlers(api *operations.ConsoleAPI) {
 	// List Users
 	api.UserListUsersHandler = userApi.ListUsersHandlerFunc(func(params userApi.ListUsersParams, session *models.Principal) middleware.Responder {
-		listUsersResponse, err := getListUsersResponse(session)
+		listUsersResponse, err := getListUsersResponse(session, params)
 		if err != nil {
 			return userApi.NewListUsersDefault(int(err.Code)).WithPayload(err)
 		}
@@ -104,7 +104,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 		return userApi.NewBulkUpdateUsersGroupsOK()
 	})
 	api.BucketListUsersWithAccessToBucketHandler = bucketApi.ListUsersWithAccessToBucketHandlerFunc(func(params bucketApi.ListUsersWithAccessToBucketParams, session *models.Principal) middleware.Responder {
-		response, err := getListUsersWithAccessToBucketResponse(session, params.Bucket)
+		response, err := getListUsersWithAccessToBucketResponse(session, params)
 		if err != nil {
 			return bucketApi.NewListUsersWithAccessToBucketDefault(int(err.Code)).WithPayload(err)
 		}
@@ -145,20 +145,19 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 }
 
 // getListUsersResponse performs listUsers() and serializes it to the handler's output
-func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getListUsersResponse(session *models.Principal, params userApi.ListUsersParams) (*models.ListUsersResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
 	users, err := listUsers(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// serialize output
 	listUsersResponse := &models.ListUsersResponse{
@@ -169,7 +168,7 @@ func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse,
 
 // addUser invokes adding a users on `MinioAdmin` and builds the response `models.User`
 func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string, groups []string, policies []string) (*models.User, error) {
-	// Calls into MinIO to add a new user if there's an error return it
+	// Calls into MinIO to add a new user if there's an errors return it
 	if err := client.addUser(ctx, *accessKey, *secretKey); err != nil {
 		return nil, err
 	}
@@ -208,11 +207,11 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 }
 
 func getUserAddResponse(session *models.Principal, params userApi.AddUserParams) (*models.User, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -223,7 +222,7 @@ func getUserAddResponse(session *models.Principal, params userApi.AddUserParams)
 	userExists = err == nil
 
 	if userExists {
-		return nil, prepareError(errNonUniqueAccessKey)
+		return nil, ErrorWithContext(ctx, ErrNonUniqueAccessKey)
 	}
 	user, err := addUser(
 		ctx,
@@ -234,7 +233,7 @@ func getUserAddResponse(session *models.Principal, params userApi.AddUserParams)
 		params.Body.Policies,
 	)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return user, nil
 }
@@ -245,26 +244,21 @@ func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error 
 }
 
 func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
-
 	if session.AccountAccessKey == params.Name {
-		return prepareError(errAvoidSelfAccountDelete)
+		return ErrorWithContext(ctx, ErrAvoidSelfAccountDelete)
 	}
-
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
 	if err := removeUser(ctx, adminClient, params.Name); err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
-
 	return nil
 }
 
@@ -279,12 +273,12 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 }
 
 func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoParams) (*models.User, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	// create a minioClient interface implementation
@@ -299,7 +293,7 @@ func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoPa
 			errorMessage := "User doesn't exist"
 			return nil, &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err.Error())}
 		}
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	var policies []string
@@ -425,12 +419,12 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 }
 
 func getUpdateUserGroupsResponse(session *models.Principal, params userApi.UpdateUserGroupsParams) (*models.User, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	// create a minioClient interface implementation
@@ -440,7 +434,7 @@ func getUpdateUserGroupsResponse(session *models.Principal, params userApi.Updat
 	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
 
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	return user, nil
@@ -462,12 +456,12 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 }
 
 func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserInfoParams) (*models.User, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	// create a minioClient interface implementation
@@ -479,13 +473,13 @@ func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserI
 	groups := params.Body.Groups
 
 	if err := setUserStatus(ctx, adminClient, name, status); err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	userElem, errUG := updateUserGroups(ctx, adminClient, name, groups)
 
 	if errUG != nil {
-		return nil, prepareError(errUG)
+		return nil, ErrorWithContext(ctx, errUG)
 	}
 	return userElem, nil
 }
@@ -517,14 +511,14 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 
 	errorsList := []string{} // We get the errors list because we want to have all errors at once.
 	for _, err := range groupsUpdateList {
-		errorFromUpdate := <-err // We store the error to avoid Data Race
+		errorFromUpdate := <-err // We store the errors to avoid Data Race
 		if errorFromUpdate != nil {
-			// If there is an error, we store the errors strings so we can join them after we receive all errors
+			// If there is an errors, we store the errors strings so we can join them after we receive all errors
 			errorsList = append(errorsList, errorFromUpdate.Error()) // We wait until all the channels have been closed.
 		}
 	}
 
-	// If there are errors, we throw the final error with the errors inside
+	// If there are errors, we throw the final errors with the errors inside
 	if len(errorsList) > 0 {
 		errGen := fmt.Errorf("error in users-groups assignation: %q", strings.Join(errorsList[:], ","))
 		return errGen
@@ -534,12 +528,12 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 }
 
 func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.BulkUpdateUsersGroupsParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 
 	// create a minioClient interface implementation
@@ -550,24 +544,27 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.B
 	groupsList := params.Body.Groups
 
 	if err := addUsersListToGroups(ctx, adminClient, usersList, groupsList); err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 
 	return nil
 }
 
-func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket string) ([]string, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getListUsersWithAccessToBucketResponse(session *models.Principal, params bucketApi.ListUsersWithAccessToBucketParams) ([]string, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
-	return listUsersWithAccessToBucket(ctx, adminClient, bucket)
+	list, err := listUsersWithAccessToBucket(ctx, adminClient, params.Bucket)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return list, nil
 }
 
 func policyAllowsAndMatchesBucket(policy *iampolicy.Policy, bucket string) int {
@@ -587,10 +584,10 @@ func policyAllowsAndMatchesBucket(policy *iampolicy.Policy, bucket string) int {
 	return Unknown
 }
 
-func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bucket string) ([]string, *models.Error) {
+func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bucket string) ([]string, error) {
 	users, err := adminClient.listUsers(ctx)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, err
 	}
 	var retval []string
 	akHasAccess := make(map[string]struct{})
@@ -603,7 +600,7 @@ func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bu
 			}
 			policy, err := adminClient.getPolicy(ctx, policyName)
 			if err != nil {
-				LogError("unable to fetch policy %s: %v", policyName, err)
+				ErrorWithContext(ctx, fmt.Errorf("unable to fetch policy %s: %v", policyName, err))
 				continue
 			}
 			if _, ok := akIsDenied[k]; !ok {
@@ -622,19 +619,19 @@ func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bu
 
 	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
-		LogError("unable to list groups: %v", err)
+		ErrorWithContext(ctx, fmt.Errorf("unable to list groups: %v", err))
 		return retval, nil
 	}
 
 	for _, groupName := range groups {
 		info, err := groupInfo(ctx, adminClient, groupName)
 		if err != nil {
-			LogError("unable to fetch group info %s: %v", groupName, err)
+			ErrorWithContext(ctx, fmt.Errorf("unable to fetch group info %s: %v", groupName, err))
 			continue
 		}
 		policy, err := adminClient.getPolicy(ctx, info.Policy)
 		if err != nil {
-			LogError("unable to fetch group policy %s: %v", info.Policy, err)
+			ErrorWithContext(ctx, fmt.Errorf("unable to fetch group policy %s: %v", info.Policy, err))
 			continue
 		}
 		for _, member := range info.Members {
@@ -665,11 +662,11 @@ func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser str
 
 // getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey
 func getChangeUserPasswordResponse(session *models.Principal, params accountApi.ChangeUserPasswordParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -681,7 +678,7 @@ func getChangeUserPasswordResponse(session *models.Principal, params accountApi.
 
 	// changes password of user to newSecretKey
 	if err := changeUserPassword(ctx, adminClient, user, newSecretKey); err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }

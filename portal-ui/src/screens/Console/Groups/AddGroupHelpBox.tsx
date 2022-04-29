@@ -43,7 +43,7 @@ const FeatureItem = ({
     </Box>
   );
 };
-const AddGroupHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
+const AddGroupHelpBox = () => {
   return (
     <Box
       sx={{
@@ -53,11 +53,6 @@ const AddGroupHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         display: "flex",
         flexFlow: "column",
         padding: "20px",
-        marginLeft: {
-          xs: "0px",
-          sm: "0px",
-          md: hasMargin ? "30px" : "",
-        },
         marginTop: {
           xs: "0px",
         },

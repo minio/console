@@ -103,7 +103,7 @@ const ObjectManager = React.lazy(
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
 
-const AddPolicy = React.lazy(() => import("./Policies/AddPolicyScreen"));
+const AddPolicyScreen = React.lazy(() => import("./Policies/AddPolicyScreen"));
 const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 
 const Account = React.lazy(() => import("./Account/Account"));
@@ -311,7 +311,7 @@ const Console = ({
       path: IAM_PAGES.POLICIES_VIEW,
     },
     {
-      component: AddPolicy,
+      component: AddPolicyScreen,
       path: IAM_PAGES.POLICY_ADD,
     },
     {

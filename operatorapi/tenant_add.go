@@ -41,7 +41,7 @@ import (
 func getTenantCreatedResponse(session *models.Principal, params operator_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
@@ -56,7 +56,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		client: clientSet,
 	}
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	ns := *tenantReq.Namespace
@@ -98,7 +98,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	// Enable/Disable console object browser for MinIO tenant (default is on)
@@ -110,7 +110,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	tenantConfigurationENV["MINIO_ROOT_USER"] = accessKey
 	tenantConfigurationENV["MINIO_ROOT_PASSWORD"] = secretKey
 
-	// delete secrets created if an error occurred during tenant creation,
+	// delete secrets created if an errors occurred during tenant creation,
 	defer func() {
 		if mError != nil {
 			restapi.LogError("deleting secrets created for failed tenant: %s if any: %v", tenantName, mError)
@@ -127,7 +127,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	// Check the Erasure Coding Parity for validity and pass it to Tenant
 	if tenantReq.ErasureCodingParity > 0 {
 		if tenantReq.ErasureCodingParity < 2 || tenantReq.ErasureCodingParity > 8 {
-			return nil, prepareError(errorInvalidErasureCodingValue)
+			return nil, restapi.ErrorWithContext(ctx, restapi.ErrInvalidErasureCodingValue)
 		}
 		tenantConfigurationENV["MINIO_STORAGE_CLASS_STANDARD"] = fmt.Sprintf("EC:%d", tenantReq.ErasureCodingParity)
 	}
@@ -204,7 +204,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 				}
 				_, err := clientSet.CoreV1().Secrets(ns).Create(ctx, &userSecret, metav1.CreateOptions{})
 				if err != nil {
-					return nil, prepareError(err)
+					return nil, restapi.ErrorWithContext(ctx, err)
 				}
 			}
 			// attach the users to the tenant
@@ -248,7 +248,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 				}
 				_, err := clientSet.CoreV1().Secrets(ns).Create(ctx, &userSecret, metav1.CreateOptions{})
 				if err != nil {
-					return nil, prepareError(err)
+					return nil, restapi.ErrorWithContext(ctx, err)
 				}
 			}
 			// attach the users to the tenant
@@ -274,7 +274,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		externalCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
 		externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		minInst.Spec.ExternalCertSecret = externalCertSecret
 	}
@@ -286,7 +286,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.Client}
 			certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, tenantExternalClientCertSecretName, tenantName)
 			if err != nil {
-				return nil, prepareError(restapi.ErrorGeneric)
+				return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault)
 			}
 			if len(certificateSecrets) > 0 {
 				minInst.Spec.ExternalClientCertSecret = certificateSecrets[0]
@@ -296,7 +296,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		// KES configuration for Tenant instance
 		minInst.Spec.KES, err = getKESConfiguration(ctx, &k8sClient, ns, tenantReq.Encryption, secretName, tenantName)
 		if err != nil {
-			return nil, prepareError(restapi.ErrorGeneric)
+			return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault)
 		}
 		// Set Labels, Annotations and Node Selector for KES
 		minInst.Spec.KES.Labels = tenantReq.Encryption.Labels
@@ -306,7 +306,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.Encryption.SecurityContext != nil {
 			sc, err := convertModelSCToK8sSC(tenantReq.Encryption.SecurityContext)
 			if err != nil {
-				return nil, prepareError(err)
+				return nil, restapi.ErrorWithContext(ctx, err)
 			}
 			minInst.Spec.KES.SecurityContext = sc
 		}
@@ -317,7 +317,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		for i, caCertificate := range tenantReq.TLS.CaCertificates {
 			certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
 			if err != nil {
-				return nil, prepareError(restapi.ErrorGeneric, nil, err)
+				return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault, nil, err)
 			}
 			caCertificates = append(caCertificates, tenantSecret{
 				Name: fmt.Sprintf("ca-certificate-%d", i),
@@ -329,7 +329,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if len(caCertificates) > 0 {
 			certificateSecrets, err := createOrReplaceSecrets(ctx, &k8sClient, ns, caCertificates, tenantName)
 			if err != nil {
-				return nil, prepareError(restapi.ErrorGeneric, nil, err)
+				return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault, nil, err)
 			}
 			minInst.Spec.ExternalCaCertSecret = certificateSecrets
 		}
@@ -347,7 +347,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		pool, err := parseTenantPoolRequest(pool)
 		if err != nil {
 			restapi.LogError("parseTenantPoolRequest failed: %v", err)
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		minInst.Spec.Pools = append(minInst.Spec.Pools, *pool)
 	}
@@ -363,7 +363,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	if tenantReq.ImagePullSecret != "" {
 		imagePullSecret = tenantReq.ImagePullSecret
 	} else if imagePullSecret, err = setImageRegistry(ctx, tenantReq.ImageRegistry, clientSet.CoreV1(), ns, tenantName); err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	// pass the image pull secret to the Tenant
 	if imagePullSecret != "" {
@@ -410,7 +410,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.LogSearchConfiguration.SecurityContext != nil {
 			sc, err := convertModelSCToK8sSC(tenantReq.LogSearchConfiguration.SecurityContext)
 			if err != nil {
-				return nil, prepareError(err)
+				return nil, restapi.ErrorWithContext(ctx, err)
 			}
 			logSearchSecurityContext = sc
 		}
@@ -418,7 +418,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.LogSearchConfiguration.PostgresSecurityContext != nil {
 			sc, err := convertModelSCToK8sSC(tenantReq.LogSearchConfiguration.PostgresSecurityContext)
 			if err != nil {
-				return nil, prepareError(err)
+				return nil, restapi.ErrorWithContext(ctx, err)
 			}
 			logSearchPgSecurityContext = sc
 		}
@@ -514,7 +514,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.PrometheusConfiguration != nil && tenantReq.PrometheusConfiguration.SecurityContext != nil {
 			sc, err := convertModelSCToK8sSC(tenantReq.PrometheusConfiguration.SecurityContext)
 			if err != nil {
-				return nil, prepareError(err)
+				return nil, restapi.ErrorWithContext(ctx, err)
 			}
 			minInst.Spec.Prometheus.SecurityContext = sc
 		}
@@ -538,7 +538,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		},
 	}, tenantName)
 	if err != nil {
-		return nil, prepareError(restapi.ErrorGeneric, nil, err)
+		return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault, nil, err)
 	}
 	minInst.Spec.Configuration = &corev1.LocalObjectReference{Name: tenantConfigurationName}
 
@@ -562,20 +562,20 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	_, err = opClient.MinioV2().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
 		restapi.LogError("Creating new tenant failed with: %v", err)
-		return nil, prepareError(err)
+		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
 	// Integrations
 	if os.Getenv("GKE_INTEGRATION") != "" {
 		err := gkeIntegration(clientSet, tenantName, ns, session.STSSessionToken)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 	}
 	response = &models.CreateTenantResponse{

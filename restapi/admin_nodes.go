@@ -28,7 +28,7 @@ import (
 func registerNodesHandler(api *operations.ConsoleAPI) {
 
 	api.SystemListNodesHandler = systemApi.ListNodesHandlerFunc(func(params systemApi.ListNodesParams, session *models.Principal) middleware.Responder {
-		listNodesResponse, err := getListNodesResponse(session)
+		listNodesResponse, err := getListNodesResponse(session, params)
 		if err != nil {
 			return systemApi.NewListNodesDefault(int(err.Code)).WithPayload(err)
 		}
@@ -37,12 +37,12 @@ func registerNodesHandler(api *operations.ConsoleAPI) {
 }
 
 // getListNodesResponse returns a list of available node endpoints .
-func getListNodesResponse(session *models.Principal) ([]string, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getListNodesResponse(session *models.Principal, params systemApi.ListNodesParams) ([]string, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	var nodeList []string
 

@@ -46,7 +46,7 @@ func logout(credentials ConsoleCredentialsI) {
 	credentials.Expire()
 }
 
-// getLogoutResponse performs logout() and returns nil or error
+// getLogoutResponse performs logout() and returns nil or errors
 func getLogoutResponse(session *models.Principal) {
 	creds := getConsoleCredentialsFromSession(session)
 	credentials := ConsoleCredentials{ConsoleCredentials: creds}

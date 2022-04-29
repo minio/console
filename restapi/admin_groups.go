@@ -32,7 +32,7 @@ import (
 func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	// List Groups
 	api.GroupListGroupsHandler = groupApi.ListGroupsHandlerFunc(func(params groupApi.ListGroupsParams, session *models.Principal) middleware.Responder {
-		listGroupsResponse, err := getListGroupsResponse(session)
+		listGroupsResponse, err := getListGroupsResponse(session, params)
 		if err != nil {
 			return groupApi.NewListGroupsDefault(int(err.Code)).WithPayload(err)
 		}
@@ -48,7 +48,7 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	})
 	// Add Group
 	api.GroupAddGroupHandler = groupApi.AddGroupHandlerFunc(func(params groupApi.AddGroupParams, session *models.Principal) middleware.Responder {
-		if err := getAddGroupResponse(session, params.Body); err != nil {
+		if err := getAddGroupResponse(session, params); err != nil {
 			return groupApi.NewAddGroupDefault(int(err.Code)).WithPayload(err)
 		}
 		return groupApi.NewAddGroupCreated()
@@ -71,12 +71,12 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 }
 
 // getListGroupsResponse performs listGroups() and serializes it to the handler's output
-func getListGroupsResponse(session *models.Principal) (*models.ListGroupsResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getListGroupsResponse(session *models.Principal, params groupApi.ListGroupsParams) (*models.ListGroupsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -84,7 +84,7 @@ func getListGroupsResponse(session *models.Principal) (*models.ListGroupsRespons
 
 	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	// serialize output
@@ -107,11 +107,11 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 
 // getGroupInfoResponse performs groupInfo() and serializes it to the handler's output
 func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoParams) (*models.Group, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -119,7 +119,7 @@ func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoPa
 
 	groupDesc, err := groupInfo(ctx, adminClient, params.Name)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 
 	groupResponse := &models.Group{
@@ -146,16 +146,17 @@ func addGroup(ctx context.Context, client MinioAdmin, group string, members []st
 }
 
 // getAddGroupResponse performs addGroup() and serializes it to the handler's output
-func getAddGroupResponse(session *models.Principal, params *models.AddGroupRequest) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+func getAddGroupResponse(session *models.Principal, params groupApi.AddGroupParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// AddGroup request needed to proceed
-	if params == nil {
-		return prepareError(errGroupBodyNotInRequest)
+	if params.Body == nil {
+		return ErrorWithContext(ctx, ErrGroupBodyNotInRequest)
 	}
+	groupRequest := params.Body
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -164,13 +165,13 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 	groupList, _ := adminClient.listGroups(ctx)
 
 	for _, b := range groupList {
-		if b == *params.Group {
-			return prepareError(errGroupAlreadyExists)
+		if b == *groupRequest.Group {
+			return ErrorWithContext(ctx, ErrGroupAlreadyExists)
 		}
 	}
 
-	if err := addGroup(ctx, adminClient, *params.Group, params.Members); err != nil {
-		return prepareError(err)
+	if err := addGroup(ctx, adminClient, *groupRequest.Group, groupRequest.Members); err != nil {
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -191,21 +192,21 @@ func removeGroup(ctx context.Context, client MinioAdmin, group string) error {
 
 // getRemoveGroupResponse performs removeGroup() and serializes it to the handler's output
 func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGroupParams) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if params.Name == "" {
-		return prepareError(errGroupNameNotInRequest)
+		return ErrorWithContext(ctx, ErrGroupNameNotInRequest)
 	}
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// createad a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
 	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -265,13 +266,13 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 // 	also sets the group's status if status in the request is different than the current one.
 //  Then serializes the output to be used by the handler.
 func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGroupParams) (*models.Group, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if params.Name == "" {
-		return nil, prepareError(errGroupNameNotInRequest)
+		return nil, ErrorWithContext(ctx, ErrGroupNameNotInRequest)
 	}
 	if params.Body == nil {
-		return nil, prepareError(errGroupBodyNotInRequest)
+		return nil, ErrorWithContext(ctx, ErrGroupBodyNotInRequest)
 
 	}
 	expectedGroupUpdate := params.Body
@@ -279,7 +280,7 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -287,7 +288,7 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 
 	groupUpdated, err := groupUpdate(ctx, adminClient, groupName, expectedGroupUpdate)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	groupResponse := &models.Group{
 		Name:    groupUpdated.Name,

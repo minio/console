@@ -28,7 +28,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/minio/console/pkg/utils"
+	xhttp "github.com/minio/console/pkg/http"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
 
@@ -897,7 +897,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 	type args struct {
 		ctx               context.Context
 		operatorClient    OperatorClientI
-		httpCl            utils.HTTPClientI
+		httpCl            xhttp.ClientI
 		nameSpace         string
 		tenantName        string
 		mockTenantPatch   func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)

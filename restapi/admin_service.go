@@ -30,7 +30,7 @@ import (
 func registerServiceHandlers(api *operations.ConsoleAPI) {
 	// Restart Service
 	api.ServiceRestartServiceHandler = svcApi.RestartServiceHandlerFunc(func(params svcApi.RestartServiceParams, session *models.Principal) middleware.Responder {
-		if err := getRestartServiceResponse(session); err != nil {
+		if err := getRestartServiceResponse(session, params); err != nil {
 			return svcApi.NewRestartServiceDefault(int(err.Code)).WithPayload(err)
 		}
 		return svcApi.NewRestartServiceNoContent()
@@ -59,19 +59,19 @@ func serviceRestart(ctx context.Context, client MinioAdmin) error {
 }
 
 // getRestartServiceResponse performs serviceRestart()
-func getRestartServiceResponse(session *models.Principal) *models.Error {
-	ctx, cancel := context.WithCancel(context.Background())
+func getRestartServiceResponse(session *models.Principal, params svcApi.RestartServiceParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
 	if err := serviceRestart(ctx, adminClient); err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }

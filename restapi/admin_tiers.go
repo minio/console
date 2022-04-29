@@ -32,7 +32,7 @@ import (
 func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	// return a list of notification endpoints
 	api.TieringTiersListHandler = tieringApi.TiersListHandlerFunc(func(params tieringApi.TiersListParams, session *models.Principal) middleware.Responder {
-		tierList, err := getTiersResponse(session)
+		tierList, err := getTiersResponse(session, params)
 		if err != nil {
 			return tieringApi.NewTiersListDefault(int(err.Code)).WithPayload(err)
 		}
@@ -40,7 +40,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	})
 	// add a new tiers
 	api.TieringAddTierHandler = tieringApi.AddTierHandlerFunc(func(params tieringApi.AddTierParams, session *models.Principal) middleware.Responder {
-		err := getAddTierResponse(session, &params)
+		err := getAddTierResponse(session, params)
 		if err != nil {
 			return tieringApi.NewAddTierDefault(int(err.Code)).WithPayload(err)
 		}
@@ -48,7 +48,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	})
 	// get a tier
 	api.TieringGetTierHandler = tieringApi.GetTierHandlerFunc(func(params tieringApi.GetTierParams, session *models.Principal) middleware.Responder {
-		notifEndpoints, err := getGetTierResponse(session, &params)
+		notifEndpoints, err := getGetTierResponse(session, params)
 		if err != nil {
 			return tieringApi.NewGetTierDefault(int(err.Code)).WithPayload(err)
 		}
@@ -56,7 +56,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	})
 	// edit credentials for a tier
 	api.TieringEditTierCredentialsHandler = tieringApi.EditTierCredentialsHandlerFunc(func(params tieringApi.EditTierCredentialsParams, session *models.Principal) middleware.Responder {
-		err := getEditTierCredentialsResponse(session, &params)
+		err := getEditTierCredentialsResponse(session, params)
 		if err != nil {
 			return tieringApi.NewEditTierCredentialsDefault(int(err.Code)).WithPayload(err)
 		}
@@ -141,21 +141,20 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 }
 
 // getTiersResponse returns a response with a list of tiers
-func getTiersResponse(session *models.Principal) (*models.TierListResponse, *models.Error) {
+func getTiersResponse(session *models.Principal, params tieringApi.TiersListParams) (*models.TierListResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// serialize output
 	tiersResp, err := getTiers(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return tiersResp, nil
 }
@@ -231,20 +230,21 @@ func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierP
 }
 
 // getAddTierResponse returns the response of admin tier
-func getAddTierResponse(session *models.Principal, params *tieringApi.AddTierParams) *models.Error {
+func getAddTierResponse(session *models.Principal, params tieringApi.AddTierParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	// serialize output
-	errTier := addTier(ctx, adminClient, params)
+	errTier := addTier(ctx, adminClient, &params)
 	if errTier != nil {
-		return prepareError(errTier)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
@@ -309,25 +309,24 @@ func getTier(ctx context.Context, client MinioAdmin, params *tieringApi.GetTierP
 	}
 
 	// build response
-	return nil, ErrorGenericNotFound
+	return nil, ErrNotFound
 }
 
 // getGetTierResponse returns a tier
-func getGetTierResponse(session *models.Principal, params *tieringApi.GetTierParams) (*models.Tier, *models.Error) {
+func getGetTierResponse(session *models.Principal, params tieringApi.GetTierParams) (*models.Tier, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// serialize output
-	addTierResp, err := getTier(ctx, adminClient, params)
+	addTierResp, err := getTier(ctx, adminClient, &params)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	return addTierResp, nil
 }
@@ -349,21 +348,20 @@ func editTierCredentials(ctx context.Context, client MinioAdmin, params *tiering
 }
 
 // getEditTierCredentialsResponse returns the result of editing credentials for a tier
-func getEditTierCredentialsResponse(session *models.Principal, params *tieringApi.EditTierCredentialsParams) *models.Error {
+func getEditTierCredentialsResponse(session *models.Principal, params tieringApi.EditTierCredentialsParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// serialize output
-	err = editTierCredentials(ctx, adminClient, params)
+	err = editTierCredentials(ctx, adminClient, &params)
 	if err != nil {
-		return prepareError(err)
+		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }

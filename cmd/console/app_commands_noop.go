@@ -20,8 +20,12 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/minio/console/pkg/logger"
 
 	"github.com/minio/cli"
 	"github.com/minio/console/restapi"
@@ -38,6 +42,17 @@ func StartServer(ctx *cli.Context) error {
 		// Log this as a warning and continue running console without TLS certificates
 		restapi.LogError("Unable to load certs: %v", err)
 	}
+
+	xctx := context.Background()
+	transport := restapi.PrepareSTSClientTransport(false)
+	if err := logger.InitializeLogger(xctx, transport); err != nil {
+		fmt.Println("error InitializeLogger", err)
+		logger.CriticalIf(xctx, err)
+	}
+	// custom error configuration
+	restapi.LogInfo = logger.Info
+	restapi.LogError = logger.Error
+	restapi.LogIf = logger.LogIf
 
 	var rctx restapi.Context
 	if err := rctx.Load(ctx); err != nil {

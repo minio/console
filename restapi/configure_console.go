@@ -20,6 +20,7 @@ package restapi
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"fmt"
 	"io"
@@ -33,6 +34,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/minio/console/pkg/logger"
+	"github.com/minio/console/pkg/utils"
 
 	"github.com/klauspost/compress/gzhttp"
 
@@ -75,7 +79,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt
 		// was generated and signed by us in the first place
-		claims, err := auth.SessionTokenAuthenticate(token)
+		claims, err := auth.ParseClaimsFromToken(token)
 		if err != nil {
 			api.Logger("Unable to validate the session token %s: %v", token, err)
 			return nil, errors.New(401, "incorrect api key auth")
@@ -167,13 +171,43 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 	return handler
 }
 
+func ContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestID, err := utils.NewUUID()
+		if err != nil && err != auth.ErrNoAuthToken {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		ctx := context.WithValue(r.Context(), utils.ContextRequestID, requestID)
+		ctx = context.WithValue(ctx, utils.ContextRequestUserAgent, r.UserAgent())
+		ctx = context.WithValue(ctx, utils.ContextRequestHost, r.Host)
+		ctx = context.WithValue(ctx, utils.ContextRequestRemoteAddr, r.RemoteAddr)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func AuditLogMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rw := logger.NewResponseWriter(w)
+		next.ServeHTTP(rw, r)
+		if strings.HasPrefix(r.URL.Path, "/ws") || strings.HasPrefix(r.URL.Path, "/api") {
+			logger.AuditLog(r.Context(), rw, r, map[string]interface{}{}, "Authorization", "Cookie", "Set-Cookie")
+		}
+	})
+}
+
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
-// So this is a good place to plug in a panic handling middleware, logging and metrics
+// So this is a good place to plug in a panic handling middleware, logger and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	// handle cookie or authorization header for session
-	next := AuthenticationMiddleware(handler)
+	gnext := gzhttp.GzipHandler(handler)
+	// if audit-log is enabled console will log all incoming request
+	next := AuditLogMiddleware(gnext)
 	// serve static files
 	next = FileServerMiddleware(next)
+	// add information to request context
+	next = ContextMiddleware(next)
+	// handle cookie or authorization header for session
+	next = AuthenticationMiddleware(next)
 
 	sslHostFn := secure.SSLHostFunc(func(host string) string {
 		h, _, err := net.SplitHostPort(host)
@@ -210,8 +244,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	}
 	secureMiddleware := secure.New(secureOptions)
 	next = secureMiddleware.Handler(next)
-	gnext := gzhttp.GzipHandler(next)
-	return RejectS3Middleware(gnext)
+	return RejectS3Middleware(next)
 }
 
 // RejectS3Middleware will reject requests that have AWS S3 specific headers.
@@ -242,14 +275,21 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+		sessionToken, _ := auth.DecryptToken(token)
 		// All handlers handle appropriately to return errors
 		// based on their swagger rules, we do not need to
 		// additionally return error here, let the next ServeHTTPs
 		// handle it appropriately.
-		if token != "" {
-			r.Header.Add("Authorization", "Bearer "+token)
+		if len(sessionToken) > 0 {
+			r.Header.Add("Authorization", fmt.Sprintf("Bearer  %s", string(sessionToken)))
 		}
-		next.ServeHTTP(w, r)
+		ctx := r.Context()
+		claims, _ := auth.ParseClaimsFromToken(string(sessionToken))
+		if claims != nil {
+			// save user session id context
+			ctx = context.WithValue(r.Context(), utils.ContextRequestUserID, claims.STSSessionToken)
+		}
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
@@ -362,7 +402,7 @@ func (lw nullWriter) Write(b []byte) (int, error) {
 // This function can be called multiple times, depending on the number of serving schemes.
 // scheme value will be set accordingly: "http", "https" or "unix"
 func configureServer(s *http.Server, _, _ string) {
-	// Turn-off random logging by Go net/http
+	// Turn-off random logger by Go net/http
 	s.ErrorLog = log.New(&nullWriter{}, "", 0)
 }
 

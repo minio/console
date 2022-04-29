@@ -21,6 +21,8 @@ import (
 	"errors"
 	"sort"
 
+	xerrors "github.com/minio/console/restapi"
+
 	"github.com/minio/minio-go/v7/pkg/set"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
@@ -52,8 +54,8 @@ func registerNodesHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewListNodeLabelsOK().WithPayload(*resp)
 	})
 
-	api.OperatorAPIGetAllocatableResourcesHandler = operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, principal *models.Principal) middleware.Responder {
-		resp, err := getAllocatableResourcesResponse(params.NumNodes, principal)
+	api.OperatorAPIGetAllocatableResourcesHandler = operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, session *models.Principal) middleware.Responder {
+		resp, err := getAllocatableResourcesResponse(session, params)
 		if err != nil {
 			return operator_api.NewGetAllocatableResourcesDefault(int(err.Code)).WithPayload(err)
 		}
@@ -71,7 +73,7 @@ type NodeResourceInfo struct {
 func getMaxAllocatableMemory(ctx context.Context, clientset v1.CoreV1Interface, numNodes int32) (*models.MaxAllocatableMemResponse, error) {
 	// can't request less than 4 nodes
 	if numNodes < 4 {
-		return nil, errFewerThanFourNodes
+		return nil, xerrors.ErrFewerThanFourNodes
 	}
 
 	// get all nodes from cluster
@@ -97,15 +99,15 @@ func getMaxAllocatableMemory(ctx context.Context, clientset v1.CoreV1Interface, 
 	}
 	// requesting more nodes than schedulable and less than total number of workers
 	if int(numNodes) > schedulableNodes && int(numNodes) < nonMasterNodes {
-		return nil, errTooManyNodes
+		return nil, xerrors.ErrTooManyNodes
 	}
 	if nonMasterNodes < int(numNodes) {
-		return nil, errTooFewNodes
+		return nil, xerrors.ErrTooFewNodes
 	}
 
 	// not enough schedulable nodes
 	if schedulableNodes < int(numNodes) {
-		return nil, errTooFewSchedulableNodes
+		return nil, xerrors.ErrTooFewAvailableNodes
 	}
 
 	availableMemSizes := []int64{}
@@ -177,12 +179,12 @@ func min(x, y int64) int64 {
 func getMaxAllocatableMemoryResponse(ctx context.Context, session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, *models.Error) {
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
 
 	clusterResources, err := getMaxAllocatableMemory(ctx, client.CoreV1(), numNodes)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
 	return clusterResources, nil
 }
@@ -217,12 +219,12 @@ func getNodeLabels(ctx context.Context, clientset v1.CoreV1Interface) (*models.N
 func getNodeLabelsResponse(ctx context.Context, session *models.Principal) (*models.NodeLabels, *models.Error) {
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
 
 	clusterResources, err := getNodeLabels(ctx, client.CoreV1())
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
 	return clusterResources, nil
 }
@@ -357,17 +359,16 @@ OUTER:
 
 // Get allocatable resources response
 
-func getAllocatableResourcesResponse(numNodes int32, session *models.Principal) (*models.AllocatableResourcesResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func getAllocatableResourcesResponse(session *models.Principal, params operator_api.GetAllocatableResourcesParams) (*models.AllocatableResourcesResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
-
-	clusterResources, err := getAllocatableResources(ctx, client.CoreV1(), numNodes)
+	clusterResources, err := getAllocatableResources(ctx, client.CoreV1(), params.NumNodes)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
 	return clusterResources, nil
 }

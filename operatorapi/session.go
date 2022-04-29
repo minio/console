@@ -17,7 +17,10 @@
 package operatorapi
 
 import (
+	"context"
 	"fmt"
+
+	errors "github.com/minio/console/restapi"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -28,7 +31,7 @@ import (
 func registerSessionHandlers(api *operations.OperatorAPI) {
 	// session check
 	api.AuthSessionCheckHandler = authApi.SessionCheckHandlerFunc(func(params authApi.SessionCheckParams, session *models.Principal) middleware.Responder {
-		sessionResp, err := getSessionResponse(session)
+		sessionResp, err := getSessionResponse(session, params)
 		if err != nil {
 			return authApi.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
 		}
@@ -37,10 +40,12 @@ func registerSessionHandlers(api *operations.OperatorAPI) {
 }
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
-func getSessionResponse(session *models.Principal) (*models.OperatorSessionResponse, *models.Error) {
+func getSessionResponse(session *models.Principal, params authApi.SessionCheckParams) (*models.OperatorSessionResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
 	// serialize output
 	if session == nil {
-		return nil, prepareError(errorGenericInvalidSession)
+		return nil, errors.ErrorWithContext(ctx, errors.ErrInvalidSession)
 	}
 	sessionResp := &models.OperatorSessionResponse{
 		Status:      models.OperatorSessionResponseStatusOk,

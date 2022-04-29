@@ -300,6 +300,7 @@ func Test_SetPolicyMultiple(t *testing.T) {
 
 func Test_policyMatchesBucket(t *testing.T) {
 	type args struct {
+		ctx    context.Context
 		policy *models.Policy
 		bucket string
 	}
@@ -310,7 +311,7 @@ func Test_policyMatchesBucket(t *testing.T) {
 	}{
 		{
 			name: "Test1",
-			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+			args: args{ctx: context.Background(), policy: &models.Policy{Name: "consoleAdmin", Policy: `{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -334,7 +335,7 @@ func Test_policyMatchesBucket(t *testing.T) {
 		},
 		{
 			name: "Test2",
-			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+			args: args{ctx: context.Background(), policy: &models.Policy{Name: "consoleAdmin", Policy: `{
 				"Version": "2012-10-17",
 				"Statement": [
 			{
@@ -352,7 +353,7 @@ func Test_policyMatchesBucket(t *testing.T) {
 		},
 		{
 			name: "Test3",
-			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+			args: args{ctx: context.Background(), policy: &models.Policy{Name: "consoleAdmin", Policy: `{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -388,7 +389,7 @@ func Test_policyMatchesBucket(t *testing.T) {
 		},
 		{
 			name: "Test4",
-			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+			args: args{ctx: context.Background(), policy: &models.Policy{Name: "consoleAdmin", Policy: `{
 				"Version": "2012-10-17",
 				"Statement": [
 			{
@@ -407,7 +408,7 @@ func Test_policyMatchesBucket(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := policyMatchesBucket(tt.args.policy, tt.args.bucket); got != tt.want {
+			if got := policyMatchesBucket(tt.args.ctx, tt.args.policy, tt.args.bucket); got != tt.want {
 				t.Errorf("policyMatchesBucket() = %v, want %v", got, tt.want)
 			}
 		})
