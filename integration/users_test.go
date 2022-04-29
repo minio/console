@@ -854,3 +854,68 @@ func TestUsersGroupsBulk(t *testing.T) {
 	}
 
 }
+
+func Test_GetUserPolicyAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	// 1. Create an active user with valid policy
+	var groups = []string{}
+	var policies = []string{"readwrite"}
+	addUserResponse, addUserError := AddUser(
+		"getpolicyuser", "secretKey", groups, policies)
+	if addUserError != nil {
+		log.Println(addUserError)
+		return
+	}
+	if addUserResponse != nil {
+		fmt.Println("StatusCode:", addUserResponse.StatusCode)
+		assert.Equal(
+			201, addUserResponse.StatusCode, "Status Code is incorrect")
+	}
+
+	type args struct {
+		api string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Get User Policies",
+			args: args{
+				api: "/user/policy",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+
+}
