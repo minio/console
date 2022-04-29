@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/restapi/operations"
@@ -204,9 +203,12 @@ func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGro
 	// createad a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
 	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
-		return ErrorWithContext(ctx, err)
+		err2 := ErrorWithContext(ctx, err)
+		if *err2.DetailedMessage == "The specified group does not exist. (Specified group does not exist)" {
+			err2.Code = 404
+		}
+		return err2
 	}
 	return nil
 }

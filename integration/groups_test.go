@@ -317,7 +317,7 @@ func Test_DeleteGroupAPI(t *testing.T) {
 				api: "?name=grouptests12345",
 			},
 			verb:           "DELETE",
-			expectedStatus: 500,
+			expectedStatus: 404,
 			expectedError:  nil,
 		},
 		{
