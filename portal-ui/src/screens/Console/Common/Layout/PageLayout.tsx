@@ -23,10 +23,20 @@ const PageLayout = ({
   children,
   variant = "constrained",
 }: PageLayoutProps) => {
-  let style = variant === "constrained" ? { maxWidth: 1220 } : {};
+  let style =
+    variant === "constrained"
+      ? { maxWidth: 1220, width: "100%" }
+      : { width: "100%" };
   return (
     <div className={classes.contentSpacer}>
-      <Grid container>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexFlow: "column",
+        }}
+      >
         <Grid item xs={12} className={className} style={style}>
           {children}
         </Grid>
