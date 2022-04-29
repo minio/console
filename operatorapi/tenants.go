@@ -597,7 +597,7 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 		if err != nil {
 			return nil, err
 		}
-		if secret.Type == "kubernetes.io/tls" || secret.Type == "cert-manager.io/v1alpha2" {
+		if secret.Type == "kubernetes.io/tls" || secret.Type == "cert-manager.io/v1" || secret.Type == "cert-manager.io/v1alpha2" {
 			publicKey = "tls.crt"
 		}
 		// Extract public key from certificate TLS secret
