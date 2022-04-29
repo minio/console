@@ -66,14 +66,6 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
-    multiContainer: {
-      display: "flex",
-      alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
-    },
-    sizeFactorContainer: {
-      marginLeft: 8,
-    },
     bottomContainer: {
       display: "flex",
       flexGrow: 1,
@@ -82,25 +74,6 @@ const styles = (theme: Theme) =>
         flexGrow: 1,
         width: "100%",
       },
-    },
-    factorElements: {
-      display: "flex",
-      justifyContent: "flex-start",
-    },
-    sizeNumber: {
-      fontSize: 35,
-      fontWeight: 700,
-      textAlign: "center",
-    },
-    sizeDescription: {
-      fontSize: 14,
-      color: "#777",
-      textAlign: "center",
-    },
-    shortened: {
-      gridTemplateColumns: "auto auto 20px 20px",
-      display: "grid",
-      gridGap: 20,
     },
     ...modalBasic,
     ...modalStyleUtils,

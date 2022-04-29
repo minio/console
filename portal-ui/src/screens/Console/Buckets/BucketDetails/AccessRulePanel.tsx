@@ -67,10 +67,6 @@ const styles = (theme: Theme) =>
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
-    listButton: {
-      marginLeft: "10px",
-      align: "right",
-    },
     ...tableStyles,
     ...actionsTray,
     ...searchField,

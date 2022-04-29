@@ -89,10 +89,6 @@ const styles = (theme: Theme) =>
       marginTop: 10,
       marginBottom: 20,
     },
-    chooseFlavorText: {
-      color: "#000000",
-      fontSize: 14,
-    },
     link: {
       textDecoration: "underline !important",
       color: theme.palette.info.main,
@@ -112,37 +108,7 @@ const styles = (theme: Theme) =>
       color: "#1C5A8D",
       fontWeight: "bold",
     },
-    licenseInfo: {
-      position: "relative",
-    },
-    licenseInfoTitle: {
-      textTransform: "none",
-      color: "#999999",
-      fontSize: 11,
-    },
-    licenseInfoValue: {
-      textTransform: "none",
-      fontSize: 14,
-      fontWeight: "bold",
-    },
-    subnetSubTitle: {
-      fontSize: 14,
-    },
-    verifiedIcon: {
-      width: 96,
-      position: "absolute",
-      right: 0,
-      bottom: 29,
-    },
-    loadingLoginStrategy: {
-      textAlign: "center",
-    },
     ...containerForHeader(theme.spacing(4)),
-    mainContainer: {
-      border: "1px solid #EAEDEE",
-      padding: 40,
-      margin: 40,
-    },
     icon: {
       color: theme.palette.primary.main,
       fontSize: 16,

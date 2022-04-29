@@ -116,9 +116,6 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
-    fieldContainer: {
-      marginBottom: 0,
-    },
     affinityRow: {
       marginBottom: 10,
       display: "flex",

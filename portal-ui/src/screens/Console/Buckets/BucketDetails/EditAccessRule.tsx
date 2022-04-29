@@ -49,9 +49,6 @@ interface IEditAccessRule {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     ...modalStyleUtils,
     ...spacingUtils,
   });

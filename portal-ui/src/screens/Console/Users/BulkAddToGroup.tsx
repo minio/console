@@ -43,9 +43,6 @@ interface IAddToGroup {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     ...modalStyleUtils,
     ...formFieldStyles,
   });

@@ -84,9 +84,6 @@ interface IEditPoolProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     bottomContainer: {
       display: "flex",
       flexGrow: 1,
@@ -99,21 +96,6 @@ const styles = (theme: Theme) =>
           flexFlow: "column",
         },
       },
-    },
-    factorElements: {
-      display: "flex",
-      justifyContent: "flex-start",
-      marginLeft: 30,
-    },
-    sizeNumber: {
-      fontSize: 35,
-      fontWeight: 700,
-      textAlign: "center",
-    },
-    sizeDescription: {
-      fontSize: 14,
-      color: "#777",
-      textAlign: "center",
     },
     pageBox: {
       border: "1px solid #EAEAEA",

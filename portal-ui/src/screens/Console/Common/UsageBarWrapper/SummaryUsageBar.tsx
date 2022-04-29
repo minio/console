@@ -28,15 +28,6 @@ interface ISummaryUsageBar {
 
 const styles = (theme: Theme) =>
   createStyles({
-    allValue: {
-      fontSize: 16,
-      fontWeight: 700,
-      marginBottom: 8,
-    },
-    currentUsage: {
-      fontSize: 12,
-      marginTop: 8,
-    },
     centerItem: {
       textAlign: "center",
     },

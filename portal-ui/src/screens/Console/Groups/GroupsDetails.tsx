@@ -53,10 +53,6 @@ const styles = (theme: Theme) =>
       border: "1px solid #EAEAEA",
       width: "100%",
     },
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     statusLabel: {
       fontSize: ".8rem",
       marginRight: ".7rem",

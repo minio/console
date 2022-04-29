@@ -60,14 +60,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
-    addTenant: {
-      marginRight: 8,
-    },
-    theaderSearchLabel: {
-      color: theme.palette.grey["400"],
-      fontSize: 14,
-      fontWeight: "bold",
-    },
     theaderSearch: {
       borderColor: theme.palette.grey["200"],
       "& .MuiInputBase-input": {
@@ -89,10 +81,6 @@ const styles = (theme: Theme) =>
       },
       marginRight: 10,
       marginLeft: 10,
-    },
-    mainActions: {
-      textAlign: "right",
-      marginBottom: 8,
     },
     tenantsList: {
       height: "calc(100vh - 195px)",

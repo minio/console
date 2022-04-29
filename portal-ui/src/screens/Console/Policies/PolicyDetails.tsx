@@ -82,10 +82,6 @@ const styles = (theme: Theme) =>
       padding: "15px 15px 15px 50px",
       minHeight: "450px",
     },
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     statement: {
       border: "1px solid #DADADA",
       padding: 8,

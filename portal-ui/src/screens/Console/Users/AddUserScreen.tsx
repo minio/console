@@ -56,9 +56,6 @@ interface IAddUserProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     bottomContainer: {
       display: "flex",
       flexGrow: 1,
@@ -71,34 +68,6 @@ const styles = (theme: Theme) =>
           flexFlow: "column",
         },
       },
-    },
-    factorElements: {
-      display: "flex",
-      justifyContent: "flex-start",
-      marginLeft: 30,
-    },
-    sizeNumber: {
-      fontSize: 35,
-      fontWeight: 700,
-      textAlign: "center",
-    },
-    sizeDescription: {
-      fontSize: 14,
-      color: "#777",
-      textAlign: "center",
-    },
-    pageBox: {
-      border: "1px solid #EAEAEA",
-      borderTop: 0,
-    },
-    addPoolTitle: {
-      border: "1px solid #EAEAEA",
-      borderBottom: 0,
-    },
-    headTitle: {
-      fontWeight: "bold",
-      fontSize: 16,
-      paddingLeft: 8,
     },
     ...formFieldStyles,
     ...modalStyleUtils,
