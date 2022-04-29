@@ -13,7 +13,6 @@ import {
   containerForHeader,
   inlineCheckboxes,
 } from "../Common/FormComponents/common/styleLibrary";
-import WarnIcon from "../../../icons/WarnIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
