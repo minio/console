@@ -106,7 +106,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     widgetConfiguration: [
       {
         dataKey: "a",
-        color: colorsMain[0],
+        color: "#2781B0",
         background: {
           fill: "#EEF1F4",
         },
@@ -170,6 +170,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
         keyLabel: "",
         lineColor: "#000",
         fillColor: "#000",
+        strokeWidth: 3,
       },
     ],
     type: widgetType.linearGraph,
@@ -225,7 +226,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-
+    yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {

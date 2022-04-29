@@ -174,7 +174,6 @@ export const radioIcons = {
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
     position: "relative" as const,
-    maxWidth: 1180,
     padding: "20px 35px 0",
     "& h6": {
       color: "#777777",
@@ -228,7 +227,6 @@ export const actionsTray = {
       marginLeft: 15,
     },
     height: 40,
-    maxWidth: 1185,
     marginBottom: 15,
     justifyContent: "flex-start" as const,
     "& > *": {
@@ -569,19 +567,15 @@ export const logsCommon = {
 export const widgetCommon = {
   singleValueContainer: {
     height: 200,
-    maxWidth: 1185,
-    border: "#eef1f4 2px solid",
+    border: "#eaeaea 1px solid",
     backgroundColor: "#fff",
-    borderRadius: 10,
-    width: "100%",
+    borderRadius: "3px",
     padding: 16,
   },
   titleContainer: {
     color: "#404143",
-    fontSize: 14,
-    textTransform: "uppercase" as const,
-    fontWeight: 800,
-    borderBottom: "#eef1f4 1px solid",
+    fontSize: 16,
+    fontWeight: 600,
     paddingBottom: 14,
     marginBottom: 5,
     display: "flex" as const,
@@ -656,7 +650,6 @@ export const widgetContainerCommon = {
     flexDirection: "row" as const,
     justifyContent: "flex-start" as const,
     flexWrap: "wrap" as const,
-    maxWidth: 1180,
   },
 };
 
@@ -1031,7 +1024,6 @@ export const commonDashboardInfocard: any = {
   cardContainer: {
     borderRadius: 10,
     boxShadow: "0 0 15px #00000029",
-    maxWidth: 1185,
     marginBottom: 30,
   },
   cardHeader: {

@@ -14,36 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box, Tooltip } from "@mui/material";
 import React from "react";
+import { Box, Tooltip } from "@mui/material";
+import Loader from "../../../Common/Loader/Loader";
 
-const CounterCard = ({
-  counterValue,
+const NumericStatCard = ({
+  value,
   label = "",
   icon = null,
-  actions = null,
   loading = false,
 }: {
-  counterValue: string | number;
+  value: string | number;
   label?: any;
   icon?: any;
-  actions?: any;
   loading?: boolean;
 }) => {
-  return (
-    <Box
-      sx={{
-        fontFamily: "Lato,sans-serif",
-        color: "#07193E",
-        maxWidth: "300px",
-        display: "flex",
-        marginLeft: "auto",
-        marginRight: "auto",
-        cursor: "default",
-        position: "relative",
-        width: "100%",
-      }}
-    >
+  const getContent = () => {
+    return (
       <Box
         sx={{
           flex: 1,
@@ -53,7 +40,6 @@ const CounterCard = ({
             sm: "0 8px 0 8px",
             xs: "0 10px 0 10px",
           },
-          position: "absolute",
         }}
       >
         <Box
@@ -61,7 +47,7 @@ const CounterCard = ({
             flex: 1,
             display: "flex",
             flexFlow: "column",
-            marginTop: "8px",
+            marginTop: "12px",
             zIndex: 10,
             overflow: "hidden",
           }}
@@ -75,7 +61,7 @@ const CounterCard = ({
             {label}
           </Box>
 
-          <Tooltip title={counterValue} placement="bottom" enterDelay={500}>
+          <Tooltip title={value} placement="bottom" enterDelay={500}>
             <Box
               sx={{
                 fontSize: {
@@ -98,7 +84,7 @@ const CounterCard = ({
                 },
               }}
             >
-              {counterValue}
+              {value}
             </Box>
           </Tooltip>
         </Box>
@@ -116,13 +102,34 @@ const CounterCard = ({
             },
           }}
         >
-          {icon}
-
-          <Box>{actions}</Box>
+          {}
+          {loading ? (
+            <Loader style={{ width: "16px", height: "16px" }} />
+          ) : (
+            icon
+          )}
         </Box>
       </Box>
+    );
+  };
+
+  return (
+    <Box
+      sx={{
+        fontFamily: "Lato,sans-serif",
+        color: "#07193E",
+        maxWidth: "300px",
+        display: "flex",
+        marginLeft: "auto",
+        marginRight: "auto",
+        cursor: "default",
+        position: "relative",
+        width: "100%",
+      }}
+    >
+      {getContent()}
     </Box>
   );
 };
 
-export default CounterCard;
+export default NumericStatCard;

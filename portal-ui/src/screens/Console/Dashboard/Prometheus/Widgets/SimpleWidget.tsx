@@ -36,6 +36,7 @@ interface ISimpleWidget {
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;
+  renderFn?: undefined | null | ((arg: Record<string, any>) => any);
 }
 
 const styles = (theme: Theme) =>
@@ -71,6 +72,7 @@ const SimpleWidget = ({
   propLoading,
   displayErrorMessage,
   apiPrefix,
+  renderFn,
 }: ISimpleWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
@@ -114,6 +116,15 @@ const SimpleWidget = ({
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
+  if (renderFn) {
+    return renderFn({
+      valueToRender: data,
+      loading,
+      title,
+      id: panelItem.id,
+      iconWidget: iconWidget,
+    });
+  }
   return (
     <Fragment>
       {loading && (

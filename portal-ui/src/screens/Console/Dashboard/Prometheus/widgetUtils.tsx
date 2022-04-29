@@ -22,6 +22,13 @@ import PieChartWidget from "./Widgets/PieChartWidget";
 import SimpleWidget from "./Widgets/SimpleWidget";
 import SingleRepWidget from "./Widgets/SingleRepWidget";
 import SingleValueWidget from "./Widgets/SingleValueWidget";
+import CapacityItem from "./Widgets/CapacityItem";
+import DashboardItemBox from "../DashboardItemBox";
+import HealActivityRenderer, {
+  SimpleWidgetRenderProps,
+} from "./Widgets/HealActivityRenderer";
+import ScanActivityRenderer from "./Widgets/ScanActivityRenderer";
+import UptimeActivityRenderer from "./Widgets/UptimeActivityRenderer";
 
 export const componentToUse = (
   value: IDashboardPanel,
@@ -44,6 +51,35 @@ export const componentToUse = (
         />
       );
     case widgetType.simpleWidget:
+      let renderFn;
+      let CmpToRender: any = null;
+      if (value.id === 80) {
+        CmpToRender = HealActivityRenderer;
+      } else if (value.id === 81) {
+        CmpToRender = ScanActivityRenderer;
+      } else if (value.id === 1) {
+        CmpToRender = UptimeActivityRenderer;
+      }
+
+      if ([80, 81, 1].includes(value.id)) {
+        renderFn = ({
+          valueToRender,
+          loading,
+          title,
+          id,
+          iconWidget,
+        }: SimpleWidgetRenderProps) => {
+          return (
+            <CmpToRender
+              valueToRender={valueToRender}
+              loading={loading}
+              title={title}
+              id={id}
+              iconWidget={iconWidget}
+            />
+          );
+        };
+      }
       return (
         <SimpleWidget
           title={value.title}
@@ -53,9 +89,23 @@ export const componentToUse = (
           propLoading={loading}
           apiPrefix={apiPrefix}
           iconWidget={value.widgetIcon}
+          renderFn={renderFn}
         />
       );
     case widgetType.pieChart:
+      if (value.id === 50) {
+        return (
+          <DashboardItemBox>
+            <CapacityItem
+              value={value}
+              timeStart={timeStart}
+              timeEnd={timeEnd}
+              propLoading={loading}
+              apiPrefix={apiPrefix}
+            />
+          </DashboardItemBox>
+        );
+      }
       return (
         <PieChartWidget
           title={value.title}

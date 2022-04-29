@@ -19,6 +19,7 @@ export interface ILinearGraphConfiguration {
   keyLabel: string;
   lineColor: string;
   fillColor: string;
+  strokeWidth?: number;
 }
 
 export interface IBarChartConfiguration {
@@ -26,11 +27,13 @@ export interface IBarChartConfiguration {
   color: string;
   background?: object;
   greatestColor?: string;
+  strokeWidth?: number;
 }
 
 export interface IPieChartConfiguration {
   innerChart: ISinglePieConfiguration;
   outerChart?: ISinglePieConfiguration;
+  strokeWidth?: number;
 }
 
 export interface ISinglePieConfiguration {
