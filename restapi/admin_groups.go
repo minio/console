@@ -18,7 +18,7 @@ package restapi
 
 import (
 	"context"
-	
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/restapi/operations"
