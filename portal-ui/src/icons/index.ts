@@ -186,3 +186,5 @@ export { default as EditTenantIcon } from "./EditTenantIcon";
 export { default as SuccessIcon } from "./SuccessIcon";
 export { default as NetworkGetIcon } from "./NetworkGetIcon";
 export { default as NetworkPutIcon } from "./NetworkPutIcon";
+export { default as RemoveAllIcon } from "./RemoveAllIcon";
+export { default as CancelledIcon } from "./CancelledIcon";
