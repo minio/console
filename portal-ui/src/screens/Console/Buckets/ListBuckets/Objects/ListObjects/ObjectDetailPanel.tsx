@@ -44,7 +44,9 @@ import {
 } from "../../../../../../common/utils";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import {
+  cancelObjectInList,
   completeObject,
+  failObject,
   setLoadingObjectInfo,
   setLoadingVersions,
   setNewObject,
@@ -137,6 +139,8 @@ interface IObjectDetailPanelProps {
   setLoadingObjectInfo: typeof setLoadingObjectInfo;
   setLoadingVersions: typeof setLoadingVersions;
   setSelectedVersion: typeof setSelectedVersion;
+  failObject: typeof failObject;
+  cancelObjectInList: typeof cancelObjectInList;
 }
 
 const emptyFile: IFileInfo = {
@@ -170,6 +174,8 @@ const ObjectDetailPanel = ({
   setLoadingObjectInfo,
   setLoadingVersions,
   setSelectedVersion,
+  failObject,
+  cancelObjectInList,
 }: IObjectDetailPanelProps) => {
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
@@ -294,17 +300,7 @@ const ObjectDetailPanel = ({
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
-    setNewObject({
-      bucketName,
-      done: false,
-      instanceID: identityDownload,
-      percentage: 0,
-      prefix: object.name,
-      type: "download",
-      waitingForFile: true,
-    });
-
-    download(
+    const downloadCall = download(
       bucketName,
       internalPaths,
       object.version_id,
@@ -314,8 +310,29 @@ const ObjectDetailPanel = ({
       },
       () => {
         completeObject(identityDownload);
+      },
+      () => {
+        failObject(identityDownload);
+      },
+      () => {
+        cancelObjectInList(identityDownload);
       }
     );
+
+    setNewObject({
+      bucketName,
+      done: false,
+      instanceID: identityDownload,
+      percentage: 0,
+      prefix: object.name,
+      type: "download",
+      waitingForFile: true,
+      failed: false,
+      cancelled: false,
+      call: downloadCall,
+    });
+
+    downloadCall.send();
   };
 
   const closeDeleteModal = (closeAndReload: boolean) => {
@@ -731,6 +748,8 @@ const mapDispatchToProps = {
   setLoadingObjectInfo,
   setLoadingVersions,
   setSelectedVersion,
+  failObject,
+  cancelObjectInList,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -21,7 +21,13 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IFileItem } from "../../ObjectBrowser/types";
 import ProgressBarWrapper from "../ProgressBarWrapper/ProgressBarWrapper";
-import { DownloadStatIcon, UploadStatIcon } from "../../../../icons";
+import {
+  DisabledIcon,
+  DownloadStatIcon,
+  EnabledIcon,
+  UploadStatIcon,
+  CancelledIcon,
+} from "../../../../icons";
 import clsx from "clsx";
 
 interface IObjectHandled {
@@ -35,15 +41,15 @@ const styles = (theme: Theme) =>
     container: {
       borderBottom: "#E2E2E2 1px solid",
       padding: "15px 5px",
-      margin: "0 15px",
+      margin: "0 30px",
       position: "relative",
       "& .showOnHover": {
-        opacity: 0,
+        opacity: 1,
         transitionDuration: "0.2s",
       },
       "&.inProgress": {
         "& .hideOnProgress": {
-          visibility: "hidden",
+          //visibility: "hidden",
         },
       },
       "&:hover": {
@@ -53,12 +59,18 @@ const styles = (theme: Theme) =>
       },
     },
     headItem: {
-      color: "#868686",
-      fontSize: 12,
+      color: "#000",
+      fontSize: 14,
+      fontWeight: "bold",
       width: "100%",
       whiteSpace: "nowrap",
       textOverflow: "ellipsis",
       overflow: "hidden",
+    },
+    downloadHeader: {
+      display: "flex",
+      alignItems: "center",
+      width: "100%",
     },
     progressContainer: {
       marginTop: 5,
@@ -71,42 +83,65 @@ const styles = (theme: Theme) =>
       paddingTop: 5,
       marginRight: 5,
       "& svg": {
-        width: 20,
-        height: 20,
+        width: 16,
+        height: 16,
       },
     },
-    download: {
-      color: "rgb(113,200,150)",
+    completedSuccess: {
+      color: "#4CCB92",
     },
-    upload: {
-      color: "rgb(66,127,172)",
+    inProgress: {
+      color: "#2781B0",
+    },
+    completedError: {
+      color: "#C83B51",
+    },
+    cancelledAction: {
+      color: "#FFBD62",
     },
     closeIcon: {
+      backgroundColor: "#E9EDEE",
+      display: "block",
+      width: 18,
+      height: 18,
+      borderRadius: "100%",
+      "&:hover": {
+        backgroundColor: "#cecbcb",
+      },
       "&::before": {
         width: 1,
-        height: 12,
+        height: 9,
+        top: "50%",
         content: "' '",
         position: "absolute",
-        transform: "rotate(45deg)",
-        borderLeft: "#9c9c9c 2px solid",
+        transform: "translate(-50%, -50%) rotate(45deg)",
+        borderLeft: "#000 2px solid",
       },
       "&::after": {
         width: 1,
-        height: 12,
+        height: 9,
+        top: "50%",
         content: "' '",
         position: "absolute",
-        transform: "rotate(-45deg)",
-        borderLeft: "#9c9c9c 2px solid",
+        transform: "translate(-50%, -50%) rotate(-45deg)",
+        borderLeft: "#000 2px solid",
       },
     },
     closeButton: {
       backgroundColor: "transparent",
       border: 0,
       right: 0,
+      top: 5,
+      marginTop: 15,
       position: "absolute",
     },
     fileName: {
-      width: 230,
+      width: 295,
+    },
+    bucketName: {
+      fontSize: 12,
+      color: "#696969",
+      fontWeight: "normal",
     },
   });
 
@@ -126,35 +161,74 @@ const ObjectHandled = ({
         <div className={classes.clearListIcon}>
           <button
             onClick={() => {
-              deleteFromList(objectToDisplay.instanceID);
+              if (!objectToDisplay.done) {
+                console.log("//abort");
+
+                objectToDisplay.call?.abort();
+              } else {
+                deleteFromList(objectToDisplay.instanceID);
+              }
             }}
-            className={`${classes.closeButton} hideOnProgress showOnHover`}
-            disabled={objectToDisplay.percentage !== 100}
+            className={`${classes.closeButton} hideOnProgress`}
           >
             <span className={classes.closeIcon} />
           </button>
         </div>
         <div className={classes.objectDetails}>
-          <div
-            className={clsx(classes.iconContainer, {
-              [classes.download]: objectToDisplay.type === "download",
-              [classes.upload]: objectToDisplay.type !== "download",
-            })}
-          >
-            {objectToDisplay.type === "download" ? (
-              <DownloadStatIcon />
-            ) : (
-              <UploadStatIcon />
-            )}
-          </div>
           <div className={classes.fileName}>
-            <div className={classes.headItem}>
+            <Tooltip title={prefix} placement="top-start">
+              <div className={classes.downloadHeader}>
+                <span
+                  className={clsx(classes.iconContainer, {
+                    [classes.inProgress]:
+                      !objectToDisplay.done &&
+                      !objectToDisplay.failed &&
+                      !objectToDisplay.cancelled,
+                    [classes.completedSuccess]:
+                      objectToDisplay.done &&
+                      !objectToDisplay.failed &&
+                      !objectToDisplay.cancelled,
+                    [classes.completedError]: objectToDisplay.failed,
+                    [classes.cancelledAction]: objectToDisplay.cancelled,
+                  })}
+                >
+                  {objectToDisplay.cancelled ? (
+                    <CancelledIcon />
+                  ) : (
+                    <Fragment>
+                      {objectToDisplay.failed ? (
+                        <DisabledIcon />
+                      ) : (
+                        <Fragment>
+                          {objectToDisplay.done ? (
+                            <EnabledIcon />
+                          ) : (
+                            <Fragment>
+                              {objectToDisplay.type === "download" ? (
+                                <DownloadStatIcon />
+                              ) : (
+                                <UploadStatIcon />
+                              )}
+                            </Fragment>
+                          )}
+                        </Fragment>
+                      )}
+                    </Fragment>
+                  )}
+                </span>
+                <span
+                  className={clsx(classes.headItem, {
+                    [classes.completedError]: objectToDisplay.failed,
+                  })}
+                >
+                  {prefix}
+                </span>
+              </div>
+            </Tooltip>
+            <span className={classes.bucketName}>
               <strong>Bucket: </strong>
               {objectToDisplay.bucketName}
-            </div>
-            <Tooltip title={prefix} placement="top-start">
-              <div className={classes.headItem}>{prefix}</div>
-            </Tooltip>
+            </span>
           </div>
         </div>
         <div className={classes.progressContainer}>
@@ -164,6 +238,8 @@ const ObjectHandled = ({
             <ProgressBarWrapper
               value={objectToDisplay.percentage}
               ready={objectToDisplay.done}
+              error={objectToDisplay.failed}
+              cancelled={objectToDisplay.cancelled}
               withLabel
             />
           )}
