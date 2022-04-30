@@ -78,7 +78,6 @@ const styles = (theme: Theme) =>
       },
     },
 
-
     ...modalBasic,
     ...wizardCommon,
   });
