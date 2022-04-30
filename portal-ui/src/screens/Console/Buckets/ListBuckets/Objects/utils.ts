@@ -22,7 +22,9 @@ export const download = (
   versionID: any,
   fileSize: number,
   progressCallback: (progress: number) => void,
-  completeCallback: () => void
+  completeCallback: () => void,
+  errorCallback: () => void,
+  abortCallback: () => void,
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -68,7 +70,19 @@ export const download = (
       document.body.removeChild(link);
     }
   };
-  req.send();
+  req.onerror = () => {
+    if(errorCallback) {
+      errorCallback();
+    }
+  };
+  req.onabort = () => {
+    if(abortCallback) {
+      abortCallback();
+    }
+  };
+  //req.send();
+
+  return req;
 };
 
 // Review file extension by name & returns the type of preview browser that can be used

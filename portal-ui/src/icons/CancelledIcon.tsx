@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2022 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,26 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { SVGProps } from "react";
+import * as React from "react";
+import { SVGProps } from "react";
 
-const DisabledIcon = (props: SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className={`min-icon`}
-      fill={"currentcolor"}
-      viewBox="0 0 16 16"
-      {...props}
-    >
-      <g>
-        <path
-          id="Trazado_7232"
-          data-name="Trazado 7232"
-          d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0m3.235,5.4L8.965,8.174,10.949,10.6a.857.857,0,0,1-1.327,1.086h0L7.857,9.528,6.092,11.686A.857.857,0,0,1,4.765,10.6L6.749,8.174,4.479,5.4A.857.857,0,0,1,5.806,4.314L7.857,6.821l2.05-2.506A.857.857,0,1,1,11.235,5.4"
-        />
-      </g>
-    </svg>
-  );
-};
+const CancelledIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 256 256"
+    {...props}
+  >
+    <path d="M126.09,0C56.45,0,0,56.45,0,126.09s56.45,126.09,126.09,126.09,126.09-56.45,126.09-126.09S195.72,0,126.09,0Zm79.61,146.23H46.48c-11.08,0-20.14-9.07-20.14-20.14h0c0-11.08,9.07-20.14,20.14-20.14H205.7c11.08,0,20.14,9.07,20.14,20.14h0c0,11.08-9.07,20.14-20.14,20.14Z"/>
+  </svg>
+);
 
-export default DisabledIcon;
+export default CancelledIcon;

@@ -236,6 +236,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.CancelledIcon />
+          <br />
+          CancelledIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.ChangeAccessPolicyIcon />
           <br />
           ChangeAccessPolicyIcon
@@ -845,6 +851,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           <cicons.RefreshIcon />
           <br />
           RefreshIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.RemoveAllIcon />
+          <br />
+          RemoveAllIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>

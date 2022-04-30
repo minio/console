@@ -31,11 +31,13 @@ import {
   OBJECT_MANAGER_SET_SEARCH_OBJECT,
   OBJECT_MANAGER_TOGGLE_LIST,
   OBJECT_MANAGER_UPDATE_PROGRESS_OBJECT,
+  OBJECT_MANAGER_SET_LOADING,
+  OBJECT_MANAGER_ERROR_IN_OBJECT,
+  OBJECT_MANAGER_CANCEL_OBJECT,
   REWIND_RESET_REWIND,
   REWIND_SET_ENABLE,
-  IFileItem,
   BUCKET_BROWSER_SET_SELECTED_OBJECT,
-  OBJECT_MANAGER_SET_LOADING,
+  IFileItem,
 } from "./types";
 
 export const setRewindEnable = (
@@ -90,6 +92,13 @@ export const completeObject = (instanceID: string) => {
   };
 };
 
+export const failObject = (instanceID: string) => {
+  return {
+    type: OBJECT_MANAGER_ERROR_IN_OBJECT,
+    instanceID,
+  };
+};
+
 export const deleteFromList = (instanceID: string) => {
   return {
     type: OBJECT_MANAGER_DELETE_FROM_OBJECT_LIST,
@@ -125,6 +134,20 @@ export const setSearchObjects = (searchString: string) => {
   return {
     type: OBJECT_MANAGER_SET_SEARCH_OBJECT,
     searchString,
+  };
+};
+
+export const setLoadingObjectsList = (status: boolean) => {
+  return {
+    type: OBJECT_MANAGER_SET_LOADING,
+    status,
+  };
+};
+
+export const cancelObjectInList = (instanceID: string) => {
+  return {
+    type: OBJECT_MANAGER_CANCEL_OBJECT,
+    instanceID,
   };
 };
 
@@ -174,12 +197,5 @@ export const setSelectedObjectView = (object: string | null) => {
   return {
     type: BUCKET_BROWSER_SET_SELECTED_OBJECT,
     object,
-  };
-};
-
-export const setLoadingObjectsList = (status: boolean) => {
-  return {
-    type: OBJECT_MANAGER_SET_LOADING,
-    status,
   };
 };
