@@ -205,8 +205,9 @@ func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGro
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
+		minioError := madmin.ToErrorResponse(err)
 		err2 := ErrorWithContext(ctx, err)
-		if *err2.DetailedMessage == "The specified group does not exist. (Specified group does not exist)" {
+		if minioError.Code == "XMinioAdminNoSuchGroup" {
 			err2.Code = 404
 		}
 		return err2
