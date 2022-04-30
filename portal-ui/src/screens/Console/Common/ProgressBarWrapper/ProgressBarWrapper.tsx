@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import { styled } from "@mui/material/styles";
 import LinearProgress, {
   linearProgressClasses,
@@ -28,6 +28,8 @@ interface IProgressBarWrapper {
   indeterminate?: boolean;
   withLabel?: boolean;
   size?: string;
+  error?: boolean;
+  cancelled?: boolean;
 }
 
 const BorderLinearProgress = styled(LinearProgress)(() => ({
@@ -48,14 +50,42 @@ const SmallBorderLinearProgress = styled(BorderLinearProgress)(() => ({
   },
 }));
 
-function LinearProgressWithLabel(props: LinearProgressProps) {
+function LinearProgressWithLabel(
+  props: { error: boolean; cancelled: boolean } & LinearProgressProps
+) {
+  let color = "#000";
+  let size = 18;
+
+  if(props.error) {
+    color = "#C83B51"
+    size = 14
+  }
+
+  else if(props.cancelled) {
+    color = "#FFBD62"
+    size = 14
+  }
+
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: "100%", mr: 1 }}>
+      <Box sx={{ width: "100%", mr: 3 }}>
         <BorderLinearProgress variant="determinate" {...props} />
       </Box>
-      <Box sx={{ minWidth: 35, fontSize: 14 }} className={"value"}>
-        {`${Math.round(props.value || 0)}%`}
+      <Box
+        sx={{
+          minWidth: 35,
+          fontSize: size,
+          color: color,
+        }}
+        className={"value"}
+      >
+        {props.cancelled ? (
+          "Cancelled"
+        ) : (
+          <Fragment>
+            {props.error ? "Failed" : `${Math.round(props.value || 0)}%`}
+          </Fragment>
+        )}
       </Box>
     </Box>
   );
@@ -67,22 +97,32 @@ const ProgressBarWrapper = ({
   indeterminate,
   withLabel,
   size = "regular",
+  error,
+  cancelled,
 }: IProgressBarWrapper) => {
   let color: any;
-  if (value === 100 && ready) {
-    color = "success";
-  } else if (value === 100 && !ready) {
+  if (error) {
     color = "error";
+  } else if (cancelled) {
+    color = "warning";
+  }else if (value === 100 && ready) {
+    color = "success";
   } else {
     color = "primary";
   }
   const propsComponent: LinearProgressProps = {
-    variant: indeterminate && !ready ? "indeterminate" : "determinate",
+    variant: indeterminate && !ready && !cancelled ? "indeterminate" : "determinate",
     value: ready ? 100 : value,
     color: color,
   };
   if (withLabel) {
-    return <LinearProgressWithLabel {...propsComponent} />;
+    return (
+      <LinearProgressWithLabel
+        {...propsComponent}
+        error={!!error}
+        cancelled={!!cancelled}
+      />
+    );
   }
   if (size === "small") {
     return <SmallBorderLinearProgress {...propsComponent} />;

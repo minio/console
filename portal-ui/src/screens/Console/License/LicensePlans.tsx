@@ -34,9 +34,7 @@ import {
   PAID_PLANS,
 } from "./utils";
 
-const styles = (theme: Theme) =>
-  createStyles({
-  });
+const styles = (theme: Theme) => createStyles({});
 
 interface IRegisterStatus {
   classes: any;

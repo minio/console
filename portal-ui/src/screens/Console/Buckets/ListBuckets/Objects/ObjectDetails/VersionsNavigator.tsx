@@ -50,7 +50,9 @@ import {
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 import {
+  cancelObjectInList,
   completeObject,
+  failObject,
   setLoadingObjectInfo,
   setLoadingVersions,
   setNewObject,
@@ -128,6 +130,8 @@ interface IVersionsNavigatorProps {
   setSelectedVersion: typeof setSelectedVersion;
   setLoadingVersions: typeof setLoadingVersions;
   setLoadingObjectInfo: typeof setLoadingObjectInfo;
+  failObject: typeof failObject;
+  cancelObjectInList: typeof cancelObjectInList;
 }
 
 const emptyFile: IFileInfo = {
@@ -157,6 +161,8 @@ const VersionsNavigator = ({
   setSelectedVersion,
   setLoadingVersions,
   setLoadingObjectInfo,
+  failObject,
+  cancelObjectInList,
 }: IVersionsNavigatorProps) => {
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
@@ -227,17 +233,7 @@ const VersionsNavigator = ({
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
-    setNewObject({
-      bucketName,
-      done: false,
-      instanceID: identityDownload,
-      percentage: 0,
-      prefix: object.name,
-      type: "download",
-      waitingForFile: true,
-    });
-
-    download(
+    const downloadCall = download(
       bucketName,
       internalPaths,
       object.version_id,
@@ -247,8 +243,29 @@ const VersionsNavigator = ({
       },
       () => {
         completeObject(identityDownload);
+      },
+      () => {
+        failObject(identityDownload);
+      },
+      () => {
+        cancelObjectInList(identityDownload);
       }
     );
+
+    setNewObject({
+      bucketName,
+      done: false,
+      instanceID: identityDownload,
+      percentage: 0,
+      prefix: object.name,
+      type: "download",
+      waitingForFile: true,
+      failed: false,
+      cancelled: false,
+      call: downloadCall,
+    });
+
+    downloadCall.send();
   };
 
   const onShareItem = (item: IFileInfo) => {
@@ -517,6 +534,8 @@ const mapDispatchToProps = {
   setSelectedVersion,
   setLoadingVersions,
   setLoadingObjectInfo,
+  failObject,
+  cancelObjectInList,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

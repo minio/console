@@ -511,12 +511,12 @@ const BucketSummary = ({
                   />
                 </Box>
                 <EditablePropertyItem
-                    iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
-                    resourceName={bucketName}
-                    property={"Quota:"}
-                    value={quotaEnabled ? "Enabled" : "Disabled"}
-                    onEdit={setBucketQuota}
-                    isLoading={loadingQuota}
+                  iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
+                  resourceName={bucketName}
+                  property={"Quota:"}
+                  value={quotaEnabled ? "Enabled" : "Disabled"}
+                  onEdit={setBucketQuota}
+                  isLoading={loadingQuota}
                 />
               </Box>
 
@@ -529,7 +529,7 @@ const BucketSummary = ({
               >
                 <ReportedUsage bucketSize={bucketSize} />
                 {quotaEnabled && quota ? (
-                    <BucketQuotaSize quota={quota} />
+                  <BucketQuotaSize quota={quota} />
                 ) : null}
               </Box>
             </Box>
