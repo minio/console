@@ -287,8 +287,9 @@ const AddBucket = ({
                   object under the same key.
                   <br />
                   <br />
-                  <b>Object Locking</b> Required to support retention and legal
-                  hold. Can only be enabled at bucket creation.
+                  <b>Object Locking</b> prevents objects from being deleted.
+                  Required to support retention and legal hold. Can only be
+                  enabled at bucket creation.
                   <br />
                   <br />
                   <b>Quota</b> limits the amount of data in the bucket.
