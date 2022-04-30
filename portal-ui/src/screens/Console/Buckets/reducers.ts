@@ -69,7 +69,7 @@ const initialState: BucketsState = {
   addBucketRetentionEnabled: false,
   addBucketRetentionMode: "compliance",
   addBucketRetentionUnit: "days",
-  addBucketRetentionValidity: 1,
+  addBucketRetentionValidity: 180,
   bucketDetails: {
     selectedTab: "summary",
     loadingBucket: false,
@@ -163,7 +163,7 @@ export function bucketsReducer(
         addBucketRetentionEnabled: false,
         addBucketRetentionMode: "compliance",
         addBucketRetentionUnit: "days",
-        addBucketRetentionValidity: 1,
+        addBucketRetentionValidity: 180,
       };
     case BUCKET_DETAILS_LOADING:
       return {
