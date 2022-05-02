@@ -52,13 +52,8 @@ import { setErrorSnackMessage } from "../../../../actions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormLayout from "../../Common/FormLayout";
-import { SecureComponent } from "../../../../common/SecureComponent";
-import {
-  CONSOLE_UI_RESOURCE,
-  IAM_SCOPES,
-} from "../../../../common/SecureComponent/permissions";
-import AButton from "../../Common/AButton/AButton";
 import HelpBox from "../../../../common/HelpBox";
+import SectionTitle from "../../Common/SectionTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -87,7 +82,6 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       color: "#000000",
       fontSize: 20,
-      paddingBottom: 8,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -215,7 +209,7 @@ const AddBucket = ({
     addBucketRetention(false);
     addBucketRetentionMode("compliance");
     addBucketRetentionUnit("days");
-    addBucketRetentionValidity(1);
+    addBucketRetentionValidity(180);
   };
 
   useEffect(() => {
@@ -235,7 +229,7 @@ const AddBucket = ({
       addBucketRetention(false);
       addBucketRetentionMode("compliance");
       addBucketRetentionUnit("days");
-      addBucketRetentionValidity(1);
+      addBucketRetentionValidity(180);
     }
 
     if (retentionEnabled) {
@@ -287,21 +281,22 @@ const AddBucket = ({
                   MinIO uses buckets to organize objects. A bucket is similar to
                   a folder or directory in a filesystem, where each bucket can
                   hold an arbitrary number of objects.
-                  <SecureComponent
-                    scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
-                    resource={CONSOLE_UI_RESOURCE}
-                  >
-                    <br />
-                    <br />
-                    To get started,&nbsp;
-                    <AButton
-                      onClick={() => {
-                        history.push("/add-bucket");
-                      }}
-                    >
-                      Create a Bucket.
-                    </AButton>
-                  </SecureComponent>
+                  <br />
+                  <br />
+                  <b>Versioning</b> allows to keep multiple versions of the same
+                  object under the same key.
+                  <br />
+                  <br />
+                  <b>Object Locking</b> prevents objects from being deleted.
+                  Required to support retention and legal hold. Can only be
+                  enabled at bucket creation.
+                  <br />
+                  <br />
+                  <b>Quota</b> limits the amount of data in the bucket.
+                  <br />
+                  <br />
+                  <b>Retention</b> imposes rules to prevent object deletion for
+                  a period of time.
                 </Fragment>
               }
             />
@@ -314,7 +309,7 @@ const AddBucket = ({
               addRecord(e);
             }}
           >
-            <Grid item xs={12} container>
+            <Grid container marginTop={1} spacing={2}>
               <Grid item xs={12}>
                 <InputBoxWrapper
                   id="bucket-name"
@@ -328,8 +323,7 @@ const AddBucket = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <div className={classes.h6title}>Features</div>
-                <br />
+                <SectionTitle>Features</SectionTitle>
                 {!distributedSetup && (
                   <Fragment>
                     <div className={classes.error}>
@@ -360,9 +354,6 @@ const AddBucket = ({
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     addBucketVersioned(event.target.checked);
                   }}
-                  description={
-                    "Allows to keep multiple versions of the same object under the same key."
-                  }
                   label={"Versioning"}
                   disabled={!distributedSetup || lockingEnabled}
                 />
@@ -381,9 +372,6 @@ const AddBucket = ({
                     }
                   }}
                   label={"Object Locking"}
-                  description={
-                    "Required to support retention and legal hold. Can only be enabled at bucket creation."
-                  }
                 />
               </Grid>
 
@@ -397,7 +385,6 @@ const AddBucket = ({
                     addBucketQuota(event.target.checked);
                   }}
                   label={"Quota"}
-                  description={"Limit the amount of data in the bucket."}
                   disabled={!distributedSetup}
                 />
               </Grid>
@@ -413,7 +400,7 @@ const AddBucket = ({
                           addBucketQuotaSize(e.target.value);
                         }
                       }}
-                      label="Quota"
+                      label="Capacity"
                       value={quotaSize}
                       required
                       min="1"
@@ -444,9 +431,6 @@ const AddBucket = ({
                       addBucketRetention(event.target.checked);
                     }}
                     label={"Retention"}
-                    description={
-                      "Impose rules to prevent object deletion for a period of time."
-                    }
                   />
                 </Grid>
               )}
@@ -457,28 +441,13 @@ const AddBucket = ({
                       currentSelection={retentionMode}
                       id="retention_mode"
                       name="retention_mode"
-                      label="Retention Mode"
+                      label="Mode"
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                         addBucketRetentionMode(e.target.value as string);
                       }}
                       selectorOptions={[
                         { value: "compliance", label: "Compliance" },
                         { value: "governance", label: "Governance" },
-                      ]}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <RadioGroupSelector
-                      currentSelection={retentionUnit}
-                      id="retention_unit"
-                      name="retention_unit"
-                      label="Retention Unit"
-                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                        addBucketRetentionUnit(e.target.value as string);
-                      }}
-                      selectorOptions={[
-                        { value: "days", label: "Days" },
-                        { value: "years", label: "Years" },
                       ]}
                     />
                   </Grid>
@@ -490,10 +459,23 @@ const AddBucket = ({
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         addBucketRetentionValidity(e.target.valueAsNumber);
                       }}
-                      label="Retention Validity"
+                      label="Validity"
                       value={String(retentionValidity)}
                       required
-                      min="1"
+                      overlayObject={
+                        <InputUnitMenu
+                          id={"retention_unit"}
+                          onUnitChange={(newValue) => {
+                            addBucketRetentionUnit(newValue);
+                          }}
+                          unitSelected={retentionUnit}
+                          unitsList={[
+                            { value: "days", label: "Days" },
+                            { value: "years", label: "Years" },
+                          ]}
+                          disabled={false}
+                        />
+                      }
                     />
                   </Grid>
                 </React.Fragment>
