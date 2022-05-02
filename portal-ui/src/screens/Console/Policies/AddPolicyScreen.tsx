@@ -99,12 +99,12 @@ const AddPolicyScreen = ({
   };
 
   const validatePolicyname = (policyName: string) => {
-    if (policyName.indexOf(' ') !== -1){
-      return "Policy name cannot contain spaces"
-    } else return ""
-  }
+    if (policyName.indexOf(" ") !== -1) {
+      return "Policy name cannot contain spaces";
+    } else return "";
+  };
 
-  const validSave = (policyName.trim() !== "" )  && (policyName.indexOf(' ') === -1);
+  const validSave = policyName.trim() !== "" && policyName.indexOf(" ") === -1;
 
   return (
     <Fragment>

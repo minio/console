@@ -153,6 +153,31 @@ func Test_AddPolicyAPI(t *testing.T) {
 			expectedStatus: 500,
 			expectedError:  nil,
 		},
+		{
+			name: "Create Policy - Space in Name",
+			args: args{
+				api:  "/policies",
+				name: "space test",
+				policy: swag.String(`
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}`),
+			},
+			expectedStatus: 400,
+			expectedError:  nil,
+		},
 	}
 
 	for _, tt := range tests {

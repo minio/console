@@ -118,6 +118,10 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 				errorCode = 400
 				errorMessage = ErrPolicyBodyNotInRequest.Error()
 			}
+			if errors.Is(err1, ErrPolicyNameContainsSpace) {
+				errorCode = 400
+				errorMessage = ErrPolicyNameContainsSpace.Error()
+			}
 			// console invalid session errors
 			if errors.Is(err1, ErrInvalidSession) {
 				errorCode = 401
