@@ -72,6 +72,7 @@ const AddPolicyScreen = ({
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
 
   const addRecord = (event: React.FormEvent) => {
+
     event.preventDefault();
     if (addLoading) {
       return;
@@ -97,7 +98,13 @@ const AddPolicyScreen = ({
     setPolicyDefinition("");
   };
 
-  const validSave = policyName.trim() !== "";
+  const validatePolicyname = (policyName: string) => {
+    if (policyName.indexOf(' ') !== -1){
+      return "Policy name cannot contain spaces"
+    } else return ""
+  }
+
+  const validSave = (policyName.trim() !== "" )  && (policyName.indexOf(' ') === -1);
 
   return (
     <Fragment>
@@ -126,6 +133,7 @@ const AddPolicyScreen = ({
                     label="Policy Name"
                     autoFocus={true}
                     value={policyName}
+                    error={validatePolicyname(policyName)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPolicyName(e.target.value);
                     }}
