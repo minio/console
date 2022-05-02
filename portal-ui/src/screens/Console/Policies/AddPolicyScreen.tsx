@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -72,6 +72,7 @@ const AddPolicyScreen = ({
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
 
   const addRecord = (event: React.FormEvent) => {
+
     event.preventDefault();
     if (addLoading) {
       return;
@@ -97,7 +98,7 @@ const AddPolicyScreen = ({
     setPolicyDefinition("");
   };
 
-  const validSave = policyName.trim() !== "";
+  const validSave = (policyName.trim() !== "" )  && (policyName.indexOf(' ') === -1);
 
   return (
     <Fragment>
