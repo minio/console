@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -71,15 +71,6 @@ const AddPolicyScreen = ({
   const [policyName, setPolicyName] = useState<string>("");
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
 
-  useEffect(() => {
-    if (policyName.indexOf(' ') !==-1) {
-      setErrorSnackMessage({
-        errorMessage: "Policy name cannot contain spaces",
-        detailedError: "",
-      });
-    }
-  }, [policyName]);
-
   const addRecord = (event: React.FormEvent) => {
 
     event.preventDefault();
@@ -106,6 +97,12 @@ const AddPolicyScreen = ({
     setPolicyName("");
     setPolicyDefinition("");
   };
+
+  const validatePolicyname = (policyName: string) => {
+    if (policyName.indexOf(' ') !== -1){
+      return "Policy name cannot contain spaces"
+    } else return ""
+  }
 
   const validSave = (policyName.trim() !== "" )  && (policyName.indexOf(' ') === -1);
 
@@ -136,6 +133,7 @@ const AddPolicyScreen = ({
                     label="Policy Name"
                     autoFocus={true}
                     value={policyName}
+                    error={validatePolicyname(policyName)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPolicyName(e.target.value);
                     }}
