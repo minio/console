@@ -1008,7 +1008,7 @@ func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBuck
 
 	for content := range mcClient.client.List(ctx, cmd.ListOptions{TimeRef: parsedDate, WithDeleteMarkers: true}) {
 		// build object name
-		name := strings.Replace(content.URL.Path, fmt.Sprintf("/%s/", params.BucketName), "", -1)
+		name := strings.ReplaceAll(content.URL.Path, fmt.Sprintf("/%s/", params.BucketName), "")
 
 		listElement := &models.RewindItem{
 			LastModified: content.Time.Format(time.RFC3339),

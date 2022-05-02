@@ -102,7 +102,6 @@ type MinioAdmin interface {
 	addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
 	// Account password management
 	changePassword(ctx context.Context, accessKey, secretKey string) error
-
 	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
 	// List Tiers
 	listTiers(ctx context.Context) ([]*madmin.TierConfig, error)

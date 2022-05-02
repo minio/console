@@ -427,7 +427,7 @@ func parseSubPath(v string) string {
 		subPath = SlashSeparator + subPath
 	}
 	if !strings.HasSuffix(subPath, SlashSeparator) {
-		subPath = subPath + SlashSeparator
+		subPath += SlashSeparator
 	}
 	return subPath
 }

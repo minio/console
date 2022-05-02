@@ -257,10 +257,8 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
 					ErrorWithContext(ctx, fmt.Errorf("error getting legal hold status for %s : %v", lsObj.VersionID, err))
 				}
-			} else {
-				if legalHoldStatus != nil {
-					obj.LegalHoldStatus = string(*legalHoldStatus)
-				}
+			} else if legalHoldStatus != nil {
+				obj.LegalHoldStatus = string(*legalHoldStatus)
 			}
 			// Add Retention Status if available
 			retention, retUntilDate, err := client.getObjectRetention(ctx, bucketName, lsObj.Key, lsObj.VersionID)
@@ -269,12 +267,10 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
 					ErrorWithContext(ctx, fmt.Errorf("error getting retention status for %s : %v", lsObj.VersionID, err))
 				}
-			} else {
-				if retention != nil && retUntilDate != nil {
-					date := *retUntilDate
-					obj.RetentionMode = string(*retention)
-					obj.RetentionUntilDate = date.Format(time.RFC3339)
-				}
+			} else if retention != nil && retUntilDate != nil {
+				date := *retUntilDate
+				obj.RetentionMode = string(*retention)
+				obj.RetentionUntilDate = date.Format(time.RFC3339)
 			}
 			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
 			if err != nil {
@@ -676,9 +672,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool,
 OUTER_LOOP:
 	for content := range client.list(ctx, listOpts) {
 		if content.Err != nil {
-			switch content.Err.ToGoError().(type) {
-			// ignore same as mc
-			case mc.PathInsufficientPermission:
+			if _, ok := content.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 				// Ignore Permission errors.
 				continue
 			}
@@ -692,9 +686,7 @@ OUTER_LOOP:
 				sent = true
 			case result := <-resultCh:
 				if result.Err != nil {
-					switch result.Err.ToGoError().(type) {
-					// ignore same as mc
-					case mc.PathInsufficientPermission:
+					if _, ok := result.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 						// Ignore Permission errors.
 						continue
 					}
@@ -708,9 +700,7 @@ OUTER_LOOP:
 	close(contentCh)
 	for result := range resultCh {
 		if result.Err != nil {
-			switch result.Err.ToGoError().(type) {
-			// ignore same as mc
-			case mc.PathInsufficientPermission:
+			if _, ok := result.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 				// Ignore Permission errors.
 				continue
 			}
@@ -733,9 +723,7 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 	resultCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 	for result := range resultCh {
 		if result.Err != nil {
-			switch result.Err.ToGoError().(type) {
-			// ignore same as mc
-			case mc.PathInsufficientPermission:
+			if _, ok := result.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 				// Ignore Permission errors.
 				continue
 			}

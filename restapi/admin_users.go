@@ -517,7 +517,7 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 
 	// If there are errors, we throw the final errors with the errors inside
 	if len(errorsList) > 0 {
-		errGen := fmt.Errorf("error in users-groups assignation: %q", strings.Join(errorsList[:], ","))
+		errGen := fmt.Errorf("error in users-groups assignation: %q", strings.Join(errorsList, ","))
 		return errGen
 	}
 

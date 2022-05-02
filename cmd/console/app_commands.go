@@ -40,7 +40,6 @@ var appCmds = []cli.Command{
 
 // StartServer starts the console service
 func StartServer(ctx *cli.Context) error {
-
 	// Load all certificates
 	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates

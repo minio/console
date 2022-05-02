@@ -809,6 +809,7 @@ type PromRespData struct {
 	ResultType string       `json:"resultType"`
 	Result     []DataResult `json:"result"`
 }
+
 type PromResp struct {
 	Status string       `json:"status"`
 	Data   PromRespData `json:"data"`
@@ -818,6 +819,7 @@ type LabelResponse struct {
 	Status string   `json:"status"`
 	Data   []string `json:"data"`
 }
+
 type LabelResults struct {
 	Label    string
 	Response LabelResponse
@@ -1039,7 +1041,7 @@ LabelsWaitLoop:
 					}
 				}
 
-				queryExpr = strings.Replace(queryExpr, "$__query", selector, -1)
+				queryExpr = strings.ReplaceAll(queryExpr, "$__query", selector)
 				endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", prometheusURL, apiType, url.QueryEscape(queryExpr), extraParamters)
 
 				var response PromResp

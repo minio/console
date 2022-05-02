@@ -246,11 +246,12 @@ func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin) (*
 	}
 	res := subnet.LicenseTokenConfig{}
 	for _, kv := range tgt.KVS {
-		if kv.Key == "api_key" {
+		switch kv.Key {
+		case "api_key":
 			res.APIKey = kv.Value
-		} else if kv.Key == "license" {
+		case "license":
 			res.License = kv.Value
-		} else if kv.Key == "proxy" {
+		case "proxy":
 			res.Proxy = kv.Value
 		}
 	}

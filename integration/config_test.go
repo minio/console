@@ -52,7 +52,6 @@ func Test_ConfigAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -79,5 +78,4 @@ func Test_ConfigAPI(t *testing.T) {
 			}
 		})
 	}
-
 }

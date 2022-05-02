@@ -18,12 +18,11 @@ package operatorapi
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"testing"
 
 	storagev1 "k8s.io/api/storage/v1"
-
-	"errors"
 
 	"github.com/minio/console/models"
 	v1 "k8s.io/api/core/v1"
@@ -33,9 +32,11 @@ import (
 
 type k8sClientMock struct{}
 
-var k8sclientGetResourceQuotaMock func(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
-var k8sclientGetNameSpaceMock func(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error)
-var k8sclientStorageClassesMock func(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error)
+var (
+	k8sclientGetResourceQuotaMock func(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
+	k8sclientGetNameSpaceMock     func(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error)
+	k8sclientStorageClassesMock   func(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error)
+)
 
 // mock functions
 func (c k8sClientMock) getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {

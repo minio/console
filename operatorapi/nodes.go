@@ -230,7 +230,6 @@ func getNodeLabelsResponse(ctx context.Context, session *models.Principal) (*mod
 }
 
 func getClusterResourcesInfo(numNodes int32, inNodesResources []NodeResourceInfo) *models.AllocatableResourcesResponse {
-
 	// purge any nodes with 0 cpu
 	var nodesResources []NodeResourceInfo
 	for _, n := range inNodesResources {

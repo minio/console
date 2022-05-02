@@ -42,7 +42,6 @@ func registerParityHandlers(api *operations.OperatorAPI) {
 
 func GetParityInfo(nodes int64, disksPerNode int64) (models.ParityResponse, error) {
 	parityVals, err := utils.PossibleParityValues(fmt.Sprintf(`http://minio{1...%d}/export/set{1...%d}`, nodes, disksPerNode))
-
 	if err != nil {
 		return nil, err
 	}

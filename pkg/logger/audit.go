@@ -144,7 +144,7 @@ func GetAuditEntry(ctx context.Context) *audit.Entry {
 		}
 		r = &audit.Entry{
 			Version: audit.Version,
-			//DeploymentID: globalDeploymentID,
+			// DeploymentID: globalDeploymentID,
 			Time: time.Now().UTC(),
 		}
 		SetAuditEntry(ctx, r)

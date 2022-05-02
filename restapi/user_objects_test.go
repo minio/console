@@ -556,17 +556,19 @@ func Test_listObjects(t *testing.T) {
 
 	t.Parallel()
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.test, func(t *testing.T) {
 			minioListObjectsMock = tt.args.listFunc
 			minioGetObjectLegalHoldMock = tt.args.objectLegalHoldFunc
 			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
 			minioGetObjectTaggingMock = tt.args.objectGetTaggingFunc
 			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions, tt.args.withMetadata)
-			if err == nil && tt.wantError != nil {
+			switch {
+			case err == nil && tt.wantError != nil:
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
-			} else if err != nil && tt.wantError == nil {
+			case err != nil && tt.wantError == nil:
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
-			} else if err != nil && tt.wantError != nil {
+			case err != nil && tt.wantError != nil:
 				if err.Error() != tt.wantError.Error() {
 					t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
 				}
@@ -754,15 +756,17 @@ func Test_deleteObjects(t *testing.T) {
 
 	t.Parallel()
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.test, func(t *testing.T) {
 			mcListMock = tt.args.listFunc
 			mcRemoveMock = tt.args.removeFunc
 			err := deleteObjects(ctx, s3Client1, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive, false, tt.args.nonCurrent)
-			if err == nil && tt.wantError != nil {
+			switch {
+			case err == nil && tt.wantError != nil:
 				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
-			} else if err != nil && tt.wantError == nil {
+			case err != nil && tt.wantError == nil:
 				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
-			} else if err != nil && tt.wantError != nil {
+			case err != nil && tt.wantError != nil:
 				if err.Error() != tt.wantError.Error() {
 					t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
 				}

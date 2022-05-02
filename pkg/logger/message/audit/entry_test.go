@@ -59,7 +59,6 @@ func TestNewEntry(t *testing.T) {
 }
 
 func TestToEntry(t *testing.T) {
-
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/tenants?test=xyz", nil)
 	req.Header.Set("Authorization", "xyz")
 	req.Header.Set("ETag", "\"ABCDE\"")
@@ -91,7 +90,6 @@ func TestToEntry(t *testing.T) {
 			},
 			postFunc: func() {
 				os.Unsetenv("CONSOLE_OPERATOR_MODE")
-
 			},
 			name: "constructs an audit entry from a http request",
 			args: args{

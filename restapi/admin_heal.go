@@ -368,8 +368,7 @@ func getHealOptionsFromReq(req *http.Request) (*healOptions, error) {
 }
 
 func transformScanStr(scanStr string) madmin.HealScanMode {
-	switch scanStr {
-	case "deep":
+	if scanStr == "deep" {
 		return madmin.HealDeepScan
 	}
 	return madmin.HealNormalScan

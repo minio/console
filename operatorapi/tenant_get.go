@@ -64,22 +64,13 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 	}
 
 	// detect if AD/LDAP is enabled
-	ldapEnabled := false
-	if string(tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_ADDR"]) != "" {
-		ldapEnabled = true
-	}
+	ldapEnabled := tenantConfiguration["MINIO_IDENTITY_LDAP_SERVER_ADDR"] != ""
 
 	// detect if OpenID is enabled
-	oidcEnabled := false
-	if string(tenantConfiguration["MINIO_IDENTITY_OPENID_CONFIG_URL"]) != "" {
-		oidcEnabled = true
-	}
+	oidcEnabled := tenantConfiguration["MINIO_IDENTITY_OPENID_CONFIG_URL"] != ""
 
 	// detect if encryption is enabled
-	if minTenant.HasKESEnabled() || string(tenantConfiguration["MINIO_KMS_SECRET_KEY"]) != "" {
-		info.EncryptionEnabled = true
-	}
-
+	info.EncryptionEnabled = minTenant.HasKESEnabled() || tenantConfiguration["MINIO_KMS_SECRET_KEY"] != ""
 	info.LogEnabled = minTenant.HasLogEnabled()
 	info.MonitoringEnabled = minTenant.HasPrometheusEnabled()
 	info.IdpAdEnabled = ldapEnabled
@@ -103,13 +94,13 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 
 	// get tenant service
 	minTenant.EnsureDefaults()
-	//minio service
+	// minio service
 	minSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		// we can tolerate this errors
 		errors.LogError("Unable to get MinIO service name: %v, continuing", err)
 	}
-	//console service
+	// console service
 	conSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		// we can tolerate this errors
@@ -117,13 +108,14 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 	}
 
 	schema := "http"
-	consoleSchema := "http"
+	consoleSchema := schema
 	consolePort := fmt.Sprintf(":%d", miniov2.ConsolePort)
 	if minTenant.TLS() {
 		schema = "https"
-		consoleSchema = "https"
+		consoleSchema = schema
 		consolePort = fmt.Sprintf(":%d", miniov2.ConsoleTLSPort)
 	}
+
 	var minioEndpoint string
 	var consoleEndpoint string
 	if minSvc != nil && len(minSvc.Status.LoadBalancer.Ingress) > 0 {
@@ -136,6 +128,7 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 		}
 
 	}
+
 	if conSvc != nil && len(conSvc.Status.LoadBalancer.Ingress) > 0 {
 		if conSvc.Status.LoadBalancer.Ingress[0].IP != "" {
 			consoleEndpoint = fmt.Sprintf("%s://%s%s", consoleSchema, conSvc.Status.LoadBalancer.Ingress[0].IP, consolePort)
@@ -144,11 +137,10 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 			consoleEndpoint = fmt.Sprintf("%s://%s%s", consoleSchema, conSvc.Status.LoadBalancer.Ingress[0].Hostname, consolePort)
 		}
 	}
-	if minioEndpoint != "" || consoleEndpoint != "" {
-		info.Endpoints = &models.TenantEndpoints{
-			Console: consoleEndpoint,
-			Minio:   minioEndpoint,
-		}
+
+	info.Endpoints = &models.TenantEndpoints{
+		Console: consoleEndpoint,
+		Minio:   minioEndpoint,
 	}
 
 	var domains models.DomainsConfiguration

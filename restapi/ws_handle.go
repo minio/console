@@ -135,7 +135,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	//// DELETE ME !!!
-	//upgrader.CheckOrigin = func(r *http.Request) bool {
+	// upgrader.CheckOrigin = func(r *http.Request) bool {
 	//	return true
 	//}
 

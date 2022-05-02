@@ -23,6 +23,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -30,8 +31,6 @@ import (
 	xerrors "github.com/minio/console/restapi"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
-
-	"errors"
 
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
@@ -429,7 +428,6 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 									}
 								}
 							}
-
 						}
 					}
 					encryptConfig.Gemalto = gemaltoConfig
@@ -688,13 +686,14 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 	}
 	// miniov2 will mount the mTLSCertificates in the following paths
 	// therefore we set these values in the KES yaml kesConfiguration
-	var mTLSClientCrtPath = "/tmp/kes/client.crt"
-	var mTLSClientKeyPath = "/tmp/kes/client.key"
-	var mTLSClientCaPath = "/tmp/kes/ca.crt"
+	mTLSClientCrtPath := "/tmp/kes/client.crt"
+	mTLSClientKeyPath := "/tmp/kes/client.key"
+	mTLSClientCaPath := "/tmp/kes/ca.crt"
 	// map to hold mTLSCertificates for KES mTLS against Vault
 	mTLSCertificates := map[string][]byte{}
 	// if encryption is enabled and encryption is configured to use Vault
-	if encryptionCfg.Vault != nil {
+	switch {
+	case encryptionCfg.Vault != nil:
 		ping := 10 // default ping
 		if encryptionCfg.Vault.Status != nil {
 			ping = int(encryptionCfg.Vault.Status.Ping)
@@ -750,7 +749,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 				kesConfig.Keys.Vault.TLS.CAPath = mTLSClientCaPath
 			}
 		}
-	} else if encryptionCfg.Aws != nil {
+	case encryptionCfg.Aws != nil:
 		// Initialize AWS
 		kesConfig.Keys.Aws = &kes.Aws{
 			SecretsManager: &kes.AwsSecretManager{},
@@ -769,7 +768,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 				}
 			}
 		}
-	} else if encryptionCfg.Gemalto != nil {
+	case encryptionCfg.Gemalto != nil:
 		// Initialize Gemalto
 		kesConfig.Keys.Gemalto = &kes.Gemalto{
 			KeySecure: &kes.GemaltoKeySecure{},
@@ -799,7 +798,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 				}
 			}
 		}
-	} else if encryptionCfg.Gcp != nil {
+	case encryptionCfg.Gcp != nil:
 		// Initialize GCP
 		kesConfig.Keys.Gcp = &kes.Gcp{
 			SecretManager: &kes.GcpSecretManager{},
@@ -818,7 +817,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 				}
 			}
 		}
-	} else if encryptionCfg.Azure != nil {
+	case encryptionCfg.Azure != nil:
 		// Initialize Azure
 		kesConfig.Keys.Azure = &kes.Azure{
 			KeyVault: &kes.AzureKeyVault{},

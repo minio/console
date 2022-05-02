@@ -16,15 +16,13 @@
 
 package subnet
 
-var (
-	OfflinePublicKeys = []string{
-		`-----BEGIN PUBLIC KEY-----
+var OfflinePublicKeys = []string{
+	`-----BEGIN PUBLIC KEY-----
 MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEaK31xujr6/rZ7ZfXZh3SlwovjC+X8wGq
 qkltaKyTLRENd4w3IRktYYCRgzpDLPn/nrf7snV/ERO5qcI7fkEES34IVEr+2Uff
 JkO2PfyyAYEO/5dBlPh1Undu9WQl6J7B
 -----END PUBLIC KEY-----`, // https://subnet.min.io/downloads/license-pubkey.pem
-	}
-)
+}
 
 const (
 	// Constants for subnet configuration

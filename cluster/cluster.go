@@ -25,8 +25,8 @@ import (
 
 // getTLSClientConfig will return the right TLS configuration for the K8S client based on the configured TLS certificate
 func getTLSClientConfig() rest.TLSClientConfig {
-	var defaultRootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-	var customRootCAFile = getK8sAPIServerTLSRootCA()
+	defaultRootCAFile := "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+	customRootCAFile := getK8sAPIServerTLSRootCA()
 	tlsClientConfig := rest.TLSClientConfig{}
 	// if console is running inside k8s by default he will have access to the CA Cert from the k8s local authority
 	if _, err := certutil.NewPool(defaultRootCAFile); err == nil {

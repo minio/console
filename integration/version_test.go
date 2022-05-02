@@ -68,8 +68,6 @@ func Test_VersionAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }

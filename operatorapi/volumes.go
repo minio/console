@@ -36,7 +36,6 @@ import (
 func registerVolumesHandlers(api *operations.OperatorAPI) {
 	api.OperatorAPIListPVCsHandler = operator_api.ListPVCsHandlerFunc(func(params operator_api.ListPVCsParams, session *models.Principal) middleware.Responder {
 		payload, err := getPVCsResponse(session, params)
-
 		if err != nil {
 			return operator_api.NewListPVCsDefault(int(err.Code)).WithPayload(err)
 		}
@@ -46,7 +45,6 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 
 	api.OperatorAPIListPVCsForTenantHandler = operator_api.ListPVCsForTenantHandlerFunc(func(params operator_api.ListPVCsForTenantParams, session *models.Principal) middleware.Responder {
 		payload, err := getPVCsForTenantResponse(session, params)
-
 		if err != nil {
 			return operator_api.NewListPVCsForTenantDefault(int(err.Code)).WithPayload(err)
 		}
@@ -64,21 +62,18 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 
 	api.OperatorAPIGetPVCEventsHandler = operator_api.GetPVCEventsHandlerFunc(func(params operator_api.GetPVCEventsParams, session *models.Principal) middleware.Responder {
 		payload, err := getPVCEventsResponse(session, params)
-
 		if err != nil {
 			return operator_api.NewGetPVCEventsDefault(int(err.Code)).WithPayload(err)
 		}
 
 		return operator_api.NewGetPVCEventsOK().WithPayload(payload)
 	})
-
 }
 
 func getPVCsResponse(session *models.Principal, params operator_api.ListPVCsParams) (*models.ListPVCsResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
-
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}
@@ -126,7 +121,6 @@ func getPVCsForTenantResponse(session *models.Principal, params operator_api.Lis
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
-
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}

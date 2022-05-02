@@ -132,7 +132,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		tenantConfigurationENV["MINIO_STORAGE_CLASS_STANDARD"] = fmt.Sprintf("EC:%d", tenantReq.ErasureCodingParity)
 	}
 
-	//Construct a MinIO Instance with everything we are getting from parameters
+	// Construct a MinIO Instance with everything we are getting from parameters
 	minInst := miniov2.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   tenantName,
@@ -149,7 +149,8 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	var tenantExternalIDPConfigured bool
 	if tenantReq.Idp != nil {
 		// Enable IDP (Active Directory) for MinIO
-		if tenantReq.Idp.ActiveDirectory != nil {
+		switch {
+		case tenantReq.Idp.ActiveDirectory != nil:
 			tenantExternalIDPConfigured = true
 			serverAddress := *tenantReq.Idp.ActiveDirectory.URL
 			tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipTLSVerification
@@ -209,8 +210,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			}
 			// attach the users to the tenant
 			minInst.Spec.Users = users
-
-		} else if tenantReq.Idp.Oidc != nil {
+		case tenantReq.Idp.Oidc != nil:
 			tenantExternalIDPConfigured = true
 			// Enable IDP (OIDC) for MinIO
 			configurationURL := *tenantReq.Idp.Oidc.ConfigurationURL
@@ -228,7 +228,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 				scopes = "openid,profile,email"
 			}
 			tenantConfigurationENV["MINIO_IDENTITY_OPENID_SCOPES"] = scopes
-		} else if len(tenantReq.Idp.Keys) > 0 {
+		case len(tenantReq.Idp.Keys) > 0:
 			// Create the secret any built-in user passed if no external IDP was configured
 			for i := 0; i < len(tenantReq.Idp.Keys); i++ {
 				userSecretName := fmt.Sprintf("%s-user-%d", tenantName, i)
@@ -382,7 +382,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	// Is Log Search enabled? (present in the parameters) if so configure
 	if tenantReq.LogSearchConfiguration != nil {
 
-		//Default class name for Log search
+		// Default class name for Log search
 		diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
 		logSearchImage := ""
 		logSearchPgImage := ""
