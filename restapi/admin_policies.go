@@ -423,7 +423,7 @@ func getAddPolicyResponse(session *models.Principal, params policyApi.AddPolicyP
 	if params.Body == nil {
 		return nil, ErrorWithContext(ctx, ErrPolicyBodyNotInRequest)
 	}
-	if strings.Index(*params.Body.Name, " ") != -1 {
+	if strings.Contains(*params.Body.Name, " ") {
 		return nil, ErrorWithContext(ctx, ErrPolicyNameContainsSpace)
 	}
 	mAdmin, err := NewMinioAdminClient(session)
