@@ -10,6 +10,7 @@ interface IPredefinedList {
   label?: string;
   content: any;
   multiLine?: boolean;
+  actionButton?: React.ReactNode;
 }
 
 const styles = (theme: Theme) =>
@@ -22,6 +23,7 @@ const PredefinedList = ({
   label = "",
   content,
   multiLine = false,
+  actionButton,
 }: IPredefinedList) => {
   return (
     <Fragment>
@@ -31,7 +33,13 @@ const PredefinedList = ({
             {label}
           </Grid>
         )}
-        <Grid item xs={12} className={classes.predefinedList}>
+        <Grid
+          item
+          xs={12}
+          className={`${classes.predefinedList} ${
+            actionButton ? classes.includesActionButton : ""
+          }`}
+        >
           <Grid
             item
             xs={12}
@@ -41,6 +49,9 @@ const PredefinedList = ({
           >
             {content}
           </Grid>
+          {actionButton && (
+            <div className={classes.overlayShareOption}>{actionButton}</div>
+          )}
         </Grid>
       </Grid>
     </Fragment>
