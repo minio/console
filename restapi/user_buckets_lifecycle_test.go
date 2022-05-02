@@ -86,7 +86,6 @@ func TestGetLifecycleRules(t *testing.T) {
 	}
 
 	lifeCycleConfigs, err := getBucketLifecycle(ctx, minClient, bucketName)
-
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -116,7 +115,6 @@ func TestGetLifecycleRules(t *testing.T) {
 	}
 
 	lifeCycleConfigsT2, err := getBucketLifecycle(ctx, minClient, bucketName)
-
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}

@@ -35,6 +35,7 @@ type mockConn struct{}
 func (c mockConn) writeMessage(messageType int, data []byte) error {
 	return connWriteMessageMock(messageType, data)
 }
+
 func (c mockConn) readMessage() (messageType int, p []byte, err error) {
 	return connReadMessageMock()
 }

@@ -62,7 +62,6 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 		}
 		return tieringApi.NewEditTierCredentialsOK()
 	})
-
 }
 
 // getNotificationEndpoints invokes admin info and returns a list of notification endpoints
@@ -160,7 +159,6 @@ func getTiersResponse(session *models.Principal, params tieringApi.TiersListPara
 }
 
 func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierParams) error {
-
 	var cfg *madmin.TierConfig
 	var err error
 
@@ -250,7 +248,6 @@ func getAddTierResponse(session *models.Principal, params tieringApi.AddTierPara
 }
 
 func getTier(ctx context.Context, client MinioAdmin, params *tieringApi.GetTierParams) (*models.Tier, error) {
-
 	tiers, err := client.listTiers(ctx)
 	if err != nil {
 		return nil, err
@@ -334,7 +331,6 @@ func getGetTierResponse(session *models.Principal, params tieringApi.GetTierPara
 func editTierCredentials(ctx context.Context, client MinioAdmin, params *tieringApi.EditTierCredentialsParams) error {
 	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(params.Body.Creds)))
 	l, err := base64.StdEncoding.Decode(base64Text, []byte(params.Body.Creds))
-
 	if err != nil {
 		return err
 	}

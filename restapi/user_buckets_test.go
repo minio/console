@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-
 	"time"
 
 	"github.com/go-openapi/swag"
@@ -37,24 +36,26 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioListBucketsWithContextMock func(ctx context.Context) ([]minio.BucketInfo, error)
-var minioMakeBucketWithContextMock func(ctx context.Context, bucketName, location string, objectLock bool) error
-var minioSetBucketPolicyWithContextMock func(ctx context.Context, bucketName, policy string) error
-var minioRemoveBucketMock func(bucketName string) error
-var minioGetBucketPolicyMock func(bucketName string) (string, error)
-var minioSetBucketEncryptionMock func(ctx context.Context, bucketName string, config *sse.Configuration) error
-var minioRemoveBucketEncryptionMock func(ctx context.Context, bucketName string) error
-var minioGetBucketEncryptionMock func(ctx context.Context, bucketName string) (*sse.Configuration, error)
-var minioSetObjectLockConfigMock func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
-var minioGetBucketObjectLockConfigMock func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
-var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
-var minioSetVersioningMock func(ctx context.Context, state string) *probe.Error
-var minioCopyObjectMock func(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
-var minioSetBucketTaggingMock func(ctx context.Context, bucketName string, tags *tags.Tags) error
-var minioRemoveBucketTaggingMock func(ctx context.Context, bucketName string) error
+
+var (
+	minioMakeBucketWithContextMock      func(ctx context.Context, bucketName, location string, objectLock bool) error
+	minioSetBucketPolicyWithContextMock func(ctx context.Context, bucketName, policy string) error
+	minioRemoveBucketMock               func(bucketName string) error
+	minioGetBucketPolicyMock            func(bucketName string) (string, error)
+	minioSetBucketEncryptionMock        func(ctx context.Context, bucketName string, config *sse.Configuration) error
+	minioRemoveBucketEncryptionMock     func(ctx context.Context, bucketName string) error
+	minioGetBucketEncryptionMock        func(ctx context.Context, bucketName string) (*sse.Configuration, error)
+	minioSetObjectLockConfigMock        func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
+	minioGetBucketObjectLockConfigMock  func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
+	minioGetObjectLockConfigMock        func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
+	minioSetVersioningMock              func(ctx context.Context, state string) *probe.Error
+	minioCopyObjectMock                 func(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
+	minioSetBucketTaggingMock           func(ctx context.Context, bucketName string, tags *tags.Tags) error
+	minioRemoveBucketTaggingMock        func(ctx context.Context, bucketName string) error
+)
 
 // Define a mock struct of minio Client interface implementation
-type minioClientMock struct {
-}
+type minioClientMock struct{}
 
 // mock function of listBucketsWithContext()
 func (mc minioClientMock) listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error) {
@@ -100,6 +101,7 @@ func (mc minioClientMock) setObjectLockConfig(ctx context.Context, bucketName st
 func (mc minioClientMock) getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return minioGetBucketObjectLockConfigMock(ctx, bucketName)
 }
+
 func (mc minioClientMock) getObjectLockConfig(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return minioGetObjectLockConfigMock(ctx, bucketName)
 }
@@ -366,7 +368,6 @@ func TestSetBucketAccess(t *testing.T) {
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC, ""); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
-
 }
 
 func Test_enableBucketEncryption(t *testing.T) {
@@ -951,7 +952,8 @@ func Test_getAccountBuckets(t *testing.T) {
 				mockBucketList: madmin.AccountInfo{
 					AccountName: "test",
 					Buckets: []madmin.BucketAccessInfo{
-						{Name: "bucket-1", Created: tm, Size: 1024,
+						{
+							Name: "bucket-1", Created: tm, Size: 1024,
 							Details: &madmin.BucketDetails{
 								Versioning:          true,
 								VersioningSuspended: false,
@@ -959,7 +961,8 @@ func Test_getAccountBuckets(t *testing.T) {
 								Replication:         false,
 								Tagging:             nil,
 								Quota:               nil,
-							}},
+							},
+						},
 						{Name: "bucket-2", Created: tm, Size: 0},
 					},
 					Policy: []byte(`
@@ -1017,7 +1020,8 @@ func Test_getAccountBuckets(t *testing.T) {
 				mockBucketList: madmin.AccountInfo{
 					AccountName: "test",
 					Buckets: []madmin.BucketAccessInfo{
-						{Name: "bucket-1", Created: tm, Size: 1024,
+						{
+							Name: "bucket-1", Created: tm, Size: 1024,
 							Details: &madmin.BucketDetails{
 								Versioning:          true,
 								VersioningSuspended: false,
@@ -1027,7 +1031,8 @@ func Test_getAccountBuckets(t *testing.T) {
 									"key": "val",
 								}),
 								Quota: nil,
-							}},
+							},
+						},
 						{Name: "bucket-2", Created: tm, Size: 0},
 					},
 					Policy: []byte(`
@@ -1087,7 +1092,8 @@ func Test_getAccountBuckets(t *testing.T) {
 				mockBucketList: madmin.AccountInfo{
 					AccountName: "test",
 					Buckets: []madmin.BucketAccessInfo{
-						{Name: "bucket-1", Created: tm, Size: 1024,
+						{
+							Name: "bucket-1", Created: tm, Size: 1024,
 							Details: &madmin.BucketDetails{
 								Versioning:          true,
 								VersioningSuspended: false,
@@ -1098,7 +1104,8 @@ func Test_getAccountBuckets(t *testing.T) {
 									Quota: 10,
 									Type:  madmin.HardQuota,
 								},
-							}},
+							},
+						},
 						{Name: "bucket-2", Created: tm, Size: 0},
 					},
 					Policy: []byte(`

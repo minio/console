@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -33,8 +34,6 @@ import (
 	"time"
 
 	"github.com/minio/minio-go/v7"
-
-	"errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -154,7 +153,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return objectApi.NewPutObjectTagsOK()
 	})
-	//Restore file version
+	// Restore file version
 	api.ObjectPutObjectRestoreHandler = objectApi.PutObjectRestoreHandlerFunc(func(params objectApi.PutObjectRestoreParams, session *models.Principal) middleware.Responder {
 		if err := getPutObjectRestoreResponse(session, params); err != nil {
 			return objectApi.NewPutObjectRestoreDefault(int(err.Code)).WithPayload(err)
@@ -472,6 +471,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		}
 	}), nil
 }
+
 func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -718,7 +718,6 @@ OUTER_LOOP:
 		}
 	}
 	return nil
-
 }
 
 func deleteSingleObject(ctx context.Context, client MCClient, bucket, object string, versionID string) error {
@@ -755,7 +754,6 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path
 
 		if !lsObj.IsLatest {
 			err := deleteSingleObject(ctx, client, bucket, path, lsObj.VersionID)
-
 			if err != nil {
 				return err
 			}
@@ -1080,7 +1078,6 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 
 	// Copy object call
 	_, err := client.copyObject(ctx, dstOpts, srcOpts)
-
 	if err != nil {
 		return err
 	}
@@ -1110,7 +1107,6 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 	}
 
 	objectInfo, err := getObjectInfo(ctx, minioClient, params.BucketName, prefix)
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -1122,7 +1118,6 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 
 func getObjectInfo(ctx context.Context, client MinioClient, bucketName, prefix string) (minio.ObjectInfo, error) {
 	objectData, err := client.statObject(ctx, bucketName, prefix, minio.GetObjectOptions{})
-
 	if err != nil {
 		return minio.ObjectInfo{}, err
 	}

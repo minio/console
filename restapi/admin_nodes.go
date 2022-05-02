@@ -26,7 +26,6 @@ import (
 )
 
 func registerNodesHandler(api *operations.ConsoleAPI) {
-
 	api.SystemListNodesHandler = systemApi.ListNodesHandlerFunc(func(params systemApi.ListNodesParams, session *models.Principal) middleware.Responder {
 		listNodesResponse, err := getListNodesResponse(session, params)
 		if err != nil {

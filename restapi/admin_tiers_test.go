@@ -130,7 +130,6 @@ func TestGetTiers(t *testing.T) {
 	}
 
 	tiersList, err := getTiers(ctx, adminClient)
-
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -175,7 +174,6 @@ func TestGetTiers(t *testing.T) {
 	}
 
 	tiersListT2, err := getTiers(ctx, adminClient)
-
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}

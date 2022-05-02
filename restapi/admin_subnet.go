@@ -329,7 +329,6 @@ func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInf
 		Organization:    licenseInfo.Organization,
 	}
 	return license, nil
-
 }
 
 func GetSubnetRegToken(ctx context.Context, minioClient MinioAdmin) (string, error) {

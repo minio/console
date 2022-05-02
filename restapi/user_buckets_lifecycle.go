@@ -446,7 +446,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params buc
 			// We add lifecycle rule & expect a response
 			err := addBucketLifecycle(ctx, client, lifecycleParams)
 
-			var errorReturn = ""
+			errorReturn := ""
 
 			if err != nil {
 				errorReturn = err.Error()

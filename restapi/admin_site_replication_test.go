@@ -71,12 +71,12 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 		Enabled: true,
 		Name:    "site1",
 		Sites: []madmin.PeerInfo{
-			madmin.PeerInfo{
+			{
 				Endpoint:     "http://localhost:9000",
 				Name:         "site1",
 				DeploymentID: "12345",
 			},
-			madmin.PeerInfo{
+			{
 				Endpoint:     "http://localhost:9001",
 				Name:         "site2",
 				DeploymentID: "123456",
@@ -89,12 +89,12 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 		Enabled: true,
 		Name:    "site1",
 		Sites: []madmin.PeerInfo{
-			madmin.PeerInfo{
+			{
 				Endpoint:     "http://localhost:9000",
 				Name:         "site1",
 				DeploymentID: "12345",
 			},
-			madmin.PeerInfo{
+			{
 				Endpoint:     "http://localhost:9001",
 				Name:         "site2",
 				DeploymentID: "123456",
@@ -108,13 +108,10 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.getSiteReplicationInfo(ctx)
-
 	if err != nil {
-
 	}
 
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
-
 }
 
 func TestAddSiteReplicationInfo(t *testing.T) {
@@ -145,13 +142,13 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 	}
 
 	sites := []madmin.PeerSite{
-		madmin.PeerSite{
+		{
 			Name:      "site1",
 			Endpoint:  "http://localhost:9000",
 			AccessKey: "test",
 			SecretKey: "test",
 		},
-		madmin.PeerSite{
+		{
 			Name:      "site2",
 			Endpoint:  "http://localhost:9001",
 			AccessKey: "test",
@@ -160,13 +157,10 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.addSiteReplicationInfo(ctx, sites)
-
 	if err != nil {
-
 	}
 
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
-
 }
 
 func TestEditSiteReplicationInfo(t *testing.T) {
@@ -201,13 +195,10 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.editSiteReplicationInfo(ctx, site)
-
 	if err != nil {
-
 	}
 
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
-
 }
 
 func TestDeleteSiteReplicationInfo(t *testing.T) {
@@ -241,13 +232,10 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.deleteSiteReplicationInfo(ctx, remReq)
-
 	if err != nil {
-
 	}
 
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
-
 }
 
 func TestSiteReplicationStatus(t *testing.T) {
@@ -298,11 +286,9 @@ func TestSiteReplicationStatus(t *testing.T) {
 		Groups:   true,
 	}
 	srInfo, err := adminClient.getSiteReplicationStatus(ctx, reqValues)
-
 	if err != nil {
 		assert.Error(err)
 	}
 
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: expected result is not same", function))
-
 }

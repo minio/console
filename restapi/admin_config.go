@@ -63,7 +63,6 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 		}
 		return cfgApi.NewResetConfigOK().WithPayload(resp)
 	})
-
 }
 
 // listConfig gets all configurations' names and their descriptions

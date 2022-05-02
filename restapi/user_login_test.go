@@ -79,9 +79,11 @@ func TestLogin(t *testing.T) {
 
 type IdentityProviderMock struct{}
 
-var idpVerifyIdentityMock func(ctx context.Context, code, state string) (*credentials.Credentials, error)
-var idpVerifyIdentityForOperatorMock func(ctx context.Context, code, state string) (*xoauth2.Token, error)
-var idpGenerateLoginURLMock func() string
+var (
+	idpVerifyIdentityMock            func(ctx context.Context, code, state string) (*credentials.Credentials, error)
+	idpVerifyIdentityForOperatorMock func(ctx context.Context, code, state string) (*xoauth2.Token, error)
+	idpGenerateLoginURLMock          func() string
+)
 
 func (ac IdentityProviderMock) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	return idpVerifyIdentityMock(ctx, code, state)

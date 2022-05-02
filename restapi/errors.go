@@ -225,7 +225,6 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 		}
 	}
 	return &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err1.Error())}
-
 }
 
 // Error receives an errors object and parse it against k8sErrors, returns the right errors code paired with a generic errors message

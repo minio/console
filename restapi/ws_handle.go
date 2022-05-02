@@ -100,7 +100,7 @@ type TraceRequest struct {
 	path       string
 }
 
-//Type for log requests. This allows for filtering by node and kind
+// Type for log requests. This allows for filtering by node and kind
 type LogRequest struct {
 	node    string
 	logType string

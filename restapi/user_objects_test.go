@@ -35,25 +35,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var minioListObjectsMock func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
-var minioGetObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
-var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
-var minioPutObjectMock func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
-var minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
-var minioPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
-var minioGetObjectTaggingMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
-var minioPutObjectTaggingMock func(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
-var minioStatObjectMock func(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
+var (
+	minioListObjectsMock        func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+	minioGetObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
+	minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
+	minioPutObjectMock          func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
+	minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
+	minioPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+	minioGetObjectTaggingMock   func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
+	minioPutObjectTaggingMock   func(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
+	minioStatObjectMock         func(ctx context.Context, bucketName, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
+)
 
-var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
-var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
-var mcGetMock func(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
-var mcShareDownloadMock func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
+var (
+	mcListMock          func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
+	mcRemoveMock        func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
+	mcGetMock           func(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
+	mcShareDownloadMock func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
+)
 
 // mock functions for minioClientMock
 func (ac minioClientMock) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 	return minioListObjectsMock(ctx, bucket, opts)
 }
+
 func (ac minioClientMock) getObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 	return minioGetObjectLegalHoldMock(ctx, bucketName, objectName, opts)
 }
@@ -90,6 +95,7 @@ func (ac minioClientMock) statObject(ctx context.Context, bucketName, prefix str
 func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
 	return mcListMock(ctx, opts)
 }
+
 func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 }
@@ -841,7 +847,6 @@ func Test_shareObject(t *testing.T) {
 			} else {
 				assert.Equal(*url, tt.expected)
 			}
-
 		})
 	}
 }
@@ -1042,7 +1047,6 @@ func Test_putObjectRetention(t *testing.T) {
 			} else {
 				assert.Nil(err, fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
 			}
-
 		})
 	}
 }
@@ -1074,7 +1078,8 @@ func Test_deleteObjectRetention(t *testing.T) {
 				},
 			},
 			wantError: nil,
-		}}
+		},
+	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			minioPutObjectRetentionMock = tt.args.retentionFunc
