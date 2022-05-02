@@ -29,6 +29,8 @@ import { Action } from "kbar/lib/types";
 import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import { routesAsKbarActions } from "./kbar-actions";
+import { Box } from "@mui/material";
+import { MenuExpandedIcon } from "../../icons/SidebarMenus";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -36,23 +38,28 @@ const useStyles = makeStyles((theme: Theme) => ({
     gap: "8px",
     alignItems: "center",
     fontSize: 14,
+    flex: 1,
+    justifyContent: "space-between",
     "& .min-icon": {
-      color: theme.palette.primary.main,
-      width: "18px",
-      height: "18px",
+      width: "17px",
+      height: "17px",
     },
   },
 }));
 
 const searchStyle = {
   padding: "12px 16px",
-  fontSize: "16px",
   width: "100%",
   boxSizing: "border-box" as React.CSSProperties["boxSizing"],
   outline: "none",
   border: "none",
-  background: "transparent",
-  color: "#111111",
+  color: "#858585",
+  boxShadow: "0px 3px 5px #00000017",
+  borderRadius: "4px 4px 0px 0px",
+  fontSize: "14px",
+  backgroundImage: "url(/images/search-icn.svg)",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "95%",
 };
 
 const animatorStyle = {
@@ -60,16 +67,18 @@ const animatorStyle = {
   width: "100%",
   background: "white",
   color: "black",
-  borderRadius: "8px",
+  borderRadius: "4px",
   overflow: "hidden",
-  boxShadow: "rgba(0, 0, 0, 0.2) 0px 6px 20px 0px",
+  boxShadow: "0px 3px 20px #00000055",
 };
 
 const groupNameStyle = {
-  padding: "8px 16px",
+  marginLeft: "30px",
+  padding: "19px 0px 14px 0px",
   fontSize: "10px",
   textTransform: "uppercase" as const,
-  opacity: 0.5,
+  color: "#858585",
+  borderBottom: "1px solid #eaeaea",
 };
 
 const CommandBar = ({
@@ -86,7 +95,11 @@ const CommandBar = ({
   return (
     <KBarPortal>
       <KBarPositioner
-        style={{ zIndex: 9999, backgroundColor: "rgb(33,33,33,0.5)" }}
+        style={{
+          zIndex: 9999,
+          boxShadow: "0px 3px 20px #00000055",
+          borderRadius: "4px",
+        }}
       >
         <KBarAnimator style={animatorStyle}>
           <KBarSearch style={searchStyle} />
@@ -105,7 +118,7 @@ function RenderResults() {
       items={results}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
-          <div style={groupNameStyle}>{item}</div>
+          <Box style={groupNameStyle}>{item}</Box>
         ) : (
           <ResultItem
             action={item}
@@ -148,11 +161,9 @@ const ResultItem = React.forwardRef(
       <div
         ref={ref}
         style={{
-          padding: "12px 16px",
+          padding: "12px 12px 12px 36px",
+          marginTop: "2px",
           background: active ? "#dddddd" : "transparent",
-          borderLeft: `2px solid ${
-            active ? "var(--foreground)" : "transparent"
-          }`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -160,9 +171,11 @@ const ResultItem = React.forwardRef(
         }}
       >
         <div className={classes.resultItem}>
-          {action.icon && action.icon}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div>
+          <Box sx={{ height: "15px", width: "15px", marginRight: "36px" }}>
+            {action.icon && action.icon}
+          </Box>
+          <div style={{ display: "flex", flexDirection: "column", flex: 2 }}>
+            <Box>
               {ancestors.length > 0 &&
                 ancestors.map((ancestor) => (
                   <React.Fragment key={ancestor.id}>
@@ -184,11 +197,33 @@ const ResultItem = React.forwardRef(
                   </React.Fragment>
                 ))}
               <span>{action.name}</span>
-            </div>
+            </Box>
             {action.subtitle && (
-              <span style={{ fontSize: 12 }}>{action.subtitle}</span>
+              <span
+                style={{
+                  fontSize: 12,
+                }}
+              >
+                {action.subtitle}
+              </span>
             )}
           </div>
+          <Box
+            sx={{
+              "& .min-icon": {
+                width: "15px",
+                height: "15px",
+                fill: "#8f8b8b",
+                transform: "rotate(90deg)",
+
+                "& rect": {
+                  fill: "#ffffff",
+                },
+              },
+            }}
+          >
+            <MenuExpandedIcon />
+          </Box>
         </div>
         {action.shortcut?.length ? (
           <div
