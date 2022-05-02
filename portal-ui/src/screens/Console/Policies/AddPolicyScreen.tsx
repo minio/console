@@ -72,6 +72,7 @@ const AddPolicyScreen = ({
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
 
   const addRecord = (event: React.FormEvent) => {
+
     event.preventDefault();
     if (addLoading) {
       return;
