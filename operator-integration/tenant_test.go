@@ -564,3 +564,48 @@ func TestGetPodEvents(t *testing.T) {
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
 }
+
+func GetPodDescribe(nameSpace string, tenant string, podName string) (*http.Response, error) {
+	/*
+		Helper function to get events for pod
+		URL: /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events
+		HTTP Verb: GET
+	*/
+	fmt.Println(nameSpace)
+	fmt.Println(tenant)
+	fmt.Println(podName)
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/namespaces/"+nameSpace+"/tenants/"+tenant+"/pods/"+podName+"/describe", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestGetPodDescribe(t *testing.T) {
+	assert := assert.New(t)
+	namespace := "tenant-lite"
+	tenant := "storage-lite"
+	podName := "storage-lite-pool-0-0"
+	resp, err := GetPodDescribe(namespace, tenant, podName)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, finalResponse)
+	}
+	/*if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}*/
+}
