@@ -270,6 +270,10 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 		host = host + ":" + strconv.Itoa(port)
 	}
 	creds := &madmin.Credentials{AccessKey: accessKey, SecretKey: secretKey}
+	sync := false
+	if params.SyncMode != nil && *params.SyncMode == "sync" {
+		sync = true
+	}
 	remoteBucket := &madmin.BucketTarget{
 		TargetBucket:    *params.TargetBucket,
 		Secure:          secure,
@@ -279,9 +283,9 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 		API:             "s3v4",
 		Type:            "replication",
 		Region:          params.Region,
-		ReplicationSync: *params.SyncMode == "sync",
+		ReplicationSync: sync,
 	}
-	if *params.SyncMode == "async" {
+	if params.SyncMode != nil && *params.SyncMode == "async" {
 		remoteBucket.BandwidthLimit = params.Bandwidth
 	}
 	if params.HealthCheckPeriod > 0 {

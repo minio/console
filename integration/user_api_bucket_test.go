@@ -72,7 +72,39 @@ func AddBucket(name string, locking, versioning bool, quota, retention map[strin
 	return response, err
 }
 
-func BucketGotAdded(name string, locking, versioning bool, quota, retention map[string]interface{}, assert *assert.Assertions, expected int) bool {
+func AddBucketWithPortAndToken(name string, locking bool, versioning bool, quota map[string]interface{}, retention map[string]interface{}, port string, tokenString string) (*http.Response, error) {
+	/*
+	   This is an atomic function that we can re-use to create a bucket on any
+	   desired test.
+	*/
+	// Needed Parameters for API Call
+	requestDataAdd := map[string]interface{}{
+		"name":       name,
+		"locking":    locking,
+		"versioning": versioning,
+		"quota":      quota,
+		"retention":  retention,
+	}
+
+	// Creating the Call by adding the URL and Headers
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest("POST", fmt.Sprintf("http://localhost:%s/api/v1/buckets", port), requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", tokenString))
+	request.Header.Add("Content-Type", "application/json")
+
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func BucketGotAdded(name string, locking bool, versioning bool, quota map[string]interface{}, retention map[string]interface{}, assert *assert.Assertions, expected int) bool {
 	/*
 		The intention of this function is to return either true or false to
 		reduce the code by performing the verification in one place only.

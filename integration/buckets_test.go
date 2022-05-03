@@ -35,6 +35,7 @@ import (
 )
 
 var token string
+var token2 string
 
 func encodeBase64(fileName string) string {
 	/*
@@ -93,7 +94,7 @@ func initConsoleServer() (*restapi.Server, error) {
 func TestMain(m *testing.M) {
 	// start console server
 	go func() {
-		fmt.Println("start server")
+		fmt.Println("start server 9090")
 		srv, err := initConsoleServer()
 		if err != nil {
 			log.Println(err)
@@ -102,6 +103,7 @@ func TestMain(m *testing.M) {
 		}
 		srv.Serve()
 	}()
+
 
 	fmt.Println("sleeping")
 	time.Sleep(2 * time.Second)
