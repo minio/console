@@ -1205,7 +1205,7 @@ export const deleteDialogStyles = {
     justifyContent: "space-between",
   },
   titleText: {
-    fontSize: "1rem",
+    fontSize: 20,
     fontWeight: 600,
     display: "flex",
     alignItems: "center",

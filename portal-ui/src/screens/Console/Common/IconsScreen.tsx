@@ -410,6 +410,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.EditTagIcon />
+          <br />
+          EditTagIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.EditTenantIcon />
           <br />
           EditTenantIcon
