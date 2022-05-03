@@ -204,9 +204,13 @@ func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGro
 	// createad a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
 	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
-		return ErrorWithContext(ctx, err)
+		minioError := madmin.ToErrorResponse(err)
+		err2 := ErrorWithContext(ctx, err)
+		if minioError.Code == "XMinioAdminNoSuchGroup" {
+			err2.Code = 404
+		}
+		return err2
 	}
 	return nil
 }

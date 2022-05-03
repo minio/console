@@ -33,7 +33,11 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { TagsIcon } from "../../../../../../icons";
+import {
+  AddNewTagIcon,
+  DisabledIcon,
+  EditTagIcon,
+} from "../../../../../../icons";
 import { IFileInfo } from "./types";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../../common/SecureComponent";
@@ -56,9 +60,32 @@ const styles = (theme: Theme) =>
       fontSize: 18,
       fontWeight: "bold",
       color: "#000",
-      margin: "20px 0",
+      margin: "35px 0",
       paddingBottom: 15,
-      borderBottom: "#E2E2E2 2px solid",
+      display: "flex",
+      alignItems: "center",
+      "& > svg": {
+        marginRight: 10,
+      },
+    },
+    tagsForLabel: {
+      fontSize: 16,
+      margin: "20px 0 30px",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      width: "100%",
+    },
+    currentTagsContainer: {
+      fontSize: 14,
+      fontWeight: "normal",
+    },
+    noTagsForObject: {
+      color: "#858585",
+    },
+    deleteTag: {
+      color: "#C83B51",
+      marginLeft: 5,
     },
     ...formFieldStyles,
     ...modalStyleUtils,
@@ -152,24 +179,42 @@ const AddTagModal = ({
     setDeleteEnabled(false);
   };
 
+  const tagsFor = (plural: boolean) => (
+    <div className={classes.tagsForLabel}>
+      Tag{plural ? "s" : ""} for: <strong>{currentItem}</strong>
+    </div>
+  );
+
   return (
     <Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
-        title={deleteEnabled ? `Delete Tag` : `Edit Tags for ${currentItem}`}
+        title={
+          deleteEnabled ? (
+            <span style={{ color: "#C83B51" }}>Delete Tag</span>
+          ) : (
+            `Edit Tags`
+          )
+        }
         onClose={() => {
           onCloseAndUpdate(true);
         }}
-        titleIcon={<TagsIcon />}
+        titleIcon={
+          deleteEnabled ? (
+            <DisabledIcon style={{ fill: "#C83B51" }} />
+          ) : (
+            <EditTagIcon />
+          )
+        }
       >
         {deleteEnabled ? (
           <Fragment>
             <Grid container>
+              {tagsFor(false)}
               Are you sure you want to delete the tag{" "}
-              <b className={classes.wrapText}>
+              <b className={classes.deleteTag}>
                 {deleteKey} : {deleteLabel}
-              </b>{" "}
-              from {currentItem}?
+              </b>{" "}?
               <Grid item xs={12} className={classes.modalButtonBar}>
                 <Button
                   type="button"
@@ -177,15 +222,16 @@ const AddTagModal = ({
                   color="primary"
                   onClick={cancelDelete}
                 >
-                  No
+                  Cancel
                 </Button>
                 <Button
                   type="submit"
                   variant="outlined"
                   color="secondary"
                   onClick={deleteTagProcess}
+                  id={"deleteTag"}
                 >
-                  Yes
+                  Delete Tag
                 </Button>
               </Grid>
             </Grid>
@@ -200,44 +246,56 @@ const AddTagModal = ({
                 sx={{
                   display: "flex",
                   flexFlow: "column",
+                  width: "100%",
                 }}
               >
-                <strong>Current Tags:</strong>
-                {currTagKeys.length === 0 ? "No Tags for this object" : ""}
-                <Box>
-                  {currTagKeys.map((tagKey: string, index: number) => {
-                    const tag = get(currentTags, `${tagKey}`, "");
-                    if (tag !== "") {
-                      return (
-                        <SecureComponent
-                          key={`chip-${index}`}
-                          scopes={[IAM_SCOPES.S3_DELETE_OBJECT_TAGGING]}
-                          resource={bucketName}
-                          matchAll
-                          errorProps={{
-                            deleteIcon: null,
-                            onDelete: null,
-                          }}
-                        >
-                          <Chip
-                            style={{
-                              textTransform: "none",
-                              marginRight: "5px",
+                {tagsFor(true)}
+                <div className={classes.currentTagsContainer}>
+                  Current Tags:
+                  <br />
+                  {currTagKeys.length === 0 ? (
+                    <span className={classes.noTagsForObject}>
+                      There are no tags for this object
+                    </span>
+                  ) : (
+                    <Fragment />
+                  )}
+                  <Box sx={{ marginTop: "5px", marginBottom: "15px" }}>
+                    {currTagKeys.map((tagKey: string, index: number) => {
+                      const tag = get(currentTags, `${tagKey}`, "");
+                      if (tag !== "") {
+                        return (
+                          <SecureComponent
+                            key={`chip-${index}`}
+                            scopes={[IAM_SCOPES.S3_DELETE_OBJECT_TAGGING]}
+                            resource={bucketName}
+                            matchAll
+                            errorProps={{
+                              deleteIcon: null,
+                              onDelete: null,
                             }}
-                            size="small"
-                            label={`${tagKey} : ${tag}`}
-                            color="primary"
-                            deleteIcon={<CloseIcon />}
-                            onDelete={() => {
-                              onDeleteTag(tagKey, tag);
-                            }}
-                          />
-                        </SecureComponent>
-                      );
-                    }
-                    return null;
-                  })}
-                </Box>
+                          >
+                            <Chip
+                              style={{
+                                textTransform: "none",
+                                marginRight: "5px",
+                                marginBottom: "5px",
+                              }}
+                              size="small"
+                              label={`${tagKey} : ${tag}`}
+                              color="primary"
+                              deleteIcon={<CloseIcon />}
+                              onDelete={() => {
+                                onDeleteTag(tagKey, tag);
+                              }}
+                            />
+                          </SecureComponent>
+                        );
+                      }
+                      return null;
+                    })}
+                  </Box>
+                </div>
               </Box>
             </SecureComponent>
             <SecureComponent
@@ -247,7 +305,7 @@ const AddTagModal = ({
             >
               <Grid container>
                 <Grid item xs={12} className={classes.newTileHeader}>
-                  Add New Tag
+                  <AddNewTagIcon /> Add New Tag
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
@@ -292,8 +350,9 @@ const AddTagModal = ({
                       isSending
                     }
                     onClick={addTagProcess}
+                    id="saveTag"
                   >
-                    Save new Tag
+                    Save
                   </Button>
                 </Grid>
               </Grid>
