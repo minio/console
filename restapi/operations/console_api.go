@@ -204,9 +204,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketEnableBucketEncryptionHandler: bucket.EnableBucketEncryptionHandlerFunc(func(params bucket.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.EnableBucketEncryption has not yet been implemented")
 		}),
-		PolicyGetAUserPolicyHandler: policy.GetAUserPolicyHandlerFunc(func(params policy.GetAUserPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation policy.GetAUserPolicy has not yet been implemented")
-		}),
 		BucketGetBucketEncryptionInfoHandler: bucket.GetBucketEncryptionInfoHandlerFunc(func(params bucket.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketEncryptionInfo has not yet been implemented")
 		}),
@@ -591,8 +588,6 @@ type ConsoleAPI struct {
 	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
 	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
 	BucketEnableBucketEncryptionHandler bucket.EnableBucketEncryptionHandler
-	// PolicyGetAUserPolicyHandler sets the operation handler for the get a user policy operation
-	PolicyGetAUserPolicyHandler policy.GetAUserPolicyHandler
 	// BucketGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
 	BucketGetBucketEncryptionInfoHandler bucket.GetBucketEncryptionInfoHandler
 	// BucketGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
@@ -966,9 +961,6 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketEnableBucketEncryptionHandler == nil {
 		unregistered = append(unregistered, "bucket.EnableBucketEncryptionHandler")
-	}
-	if o.PolicyGetAUserPolicyHandler == nil {
-		unregistered = append(unregistered, "policy.GetAUserPolicyHandler")
 	}
 	if o.BucketGetBucketEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketEncryptionInfoHandler")
@@ -1480,10 +1472,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/encryption/enable"] = bucket.NewEnableBucketEncryption(o.context, o.BucketEnableBucketEncryptionHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/user/{name}/policy"] = policy.NewGetAUserPolicy(o.context, o.PolicyGetAUserPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -3999,37 +3999,6 @@ func init() {
         }
       }
     },
-    "/user/{name}/policy": {
-      "get": {
-        "tags": [
-          "Policy"
-        ],
-        "summary": "returns policies for specified user",
-        "operationId": "GetAUserPolicy",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
@@ -10962,37 +10931,6 @@ func init() {
         ],
         "summary": "returns policies for logged in user",
         "operationId": "GetUserPolicy",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/user/{name}/policy": {
-      "get": {
-        "tags": [
-          "Policy"
-        ],
-        "summary": "returns policies for specified user",
-        "operationId": "GetAUserPolicy",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
         "responses": {
           "200": {
             "description": "A successful response.",
