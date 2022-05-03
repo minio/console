@@ -25,37 +25,8 @@ const EnabledIcon = (props: SVGProps<SVGSVGElement>) => {
       viewBox="0 0 16 16"
       {...props}
     >
-      <defs>
-        <clipPath id="enabled-clip-path">
-          <rect
-            id="Rectángulo_1067"
-            data-name="Rectángulo 1067"
-            width="16"
-            height="16"
-            fill="none"
-          />
-        </clipPath>
-      </defs>
-      <rect
-        id="Rectángulo_1066"
-        data-name="Rectángulo 1066"
-        width="16"
-        height="16"
-        fill="none"
-      />
-      <g id="Grupo_2453" data-name="Grupo 2453">
-        <g
-          id="Grupo_2452"
-          data-name="Grupo 2452"
-          clipPath="url(#enabled-clip-path)"
-        >
-          <path
-            id="Trazado_7231"
-            data-name="Trazado 7231"
-            d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0m4.575,5.769-.005.005L7.837,11.69a.89.89,0,0,1-.635.284H7.185a.889.889,0,0,1-.628-.26h0L3.421,8.577a.889.889,0,1,1,1.2-1.31q.028.025.053.053L7.16,9.8l4.117-5.246.024-.026h0a.889.889,0,0,1,1.275,1.24"
-            fill="#969fa8"
-          />
-        </g>
+      <g>
+        <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0m4.575,5.769-.005.005L7.837,11.69a.89.89,0,0,1-.635.284H7.185a.889.889,0,0,1-.628-.26h0L3.421,8.577a.889.889,0,1,1,1.2-1.31q.028.025.053.053L7.16,9.8l4.117-5.246.024-.026h0a.889.889,0,0,1,1.275,1.24" />
       </g>
     </svg>
   );

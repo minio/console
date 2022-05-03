@@ -51,6 +51,9 @@ import { BucketsIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import FormLayout from "../../Common/FormLayout";
+import HelpBox from "../../../../common/HelpBox";
+import SectionTitle from "../../Common/SectionTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -79,7 +82,6 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       color: "#000000",
       fontSize: 20,
-      paddingBottom: 8,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -207,7 +209,7 @@ const AddBucket = ({
     addBucketRetention(false);
     addBucketRetentionMode("compliance");
     addBucketRetentionUnit("days");
-    addBucketRetentionValidity(1);
+    addBucketRetentionValidity(180);
   };
 
   useEffect(() => {
@@ -227,7 +229,7 @@ const AddBucket = ({
       addBucketRetention(false);
       addBucketRetentionMode("compliance");
       addBucketRetentionUnit("days");
-      addBucketRetentionValidity(1);
+      addBucketRetentionValidity(180);
     }
 
     if (retentionEnabled) {
@@ -267,7 +269,39 @@ const AddBucket = ({
     <Fragment>
       <PageHeader label={<BackLink to={"/buckets"} label={"Buckets"} />} />
       <PageLayout>
-        <Grid item xs={12} className={classes.boxy}>
+        <FormLayout
+          title={"Create Bucket"}
+          icon={<BucketsIcon />}
+          helpbox={
+            <HelpBox
+              iconComponent={<BucketsIcon />}
+              title={"Buckets"}
+              help={
+                <Fragment>
+                  MinIO uses buckets to organize objects. A bucket is similar to
+                  a folder or directory in a filesystem, where each bucket can
+                  hold an arbitrary number of objects.
+                  <br />
+                  <br />
+                  <b>Versioning</b> allows to keep multiple versions of the same
+                  object under the same key.
+                  <br />
+                  <br />
+                  <b>Object Locking</b> prevents objects from being deleted.
+                  Required to support retention and legal hold. Can only be
+                  enabled at bucket creation.
+                  <br />
+                  <br />
+                  <b>Quota</b> limits the amount of data in the bucket.
+                  <br />
+                  <br />
+                  <b>Retention</b> imposes rules to prevent object deletion for
+                  a period of time.
+                </Fragment>
+              }
+            />
+          }
+        >
           <form
             noValidate
             autoComplete="off"
@@ -275,232 +309,203 @@ const AddBucket = ({
               addRecord(e);
             }}
           >
-            <Grid container>
-              <Grid item xs={12} container className={classes.title}>
-                <Grid item xs={"auto"}>
-                  <BucketsIcon />
-                </Grid>
-                <Grid item xs className={classes.headTitle}>
-                  Create Bucket
-                </Grid>
+            <Grid container marginTop={1} spacing={2}>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="bucket-name"
+                  name="bucket-name"
+                  autoFocus={true}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    addBucketName(event.target.value);
+                  }}
+                  label="Bucket Name"
+                  value={bucketName}
+                />
               </Grid>
-              <Grid item xs={12} container>
-                <Grid item xs={12}>
-                  <InputBoxWrapper
-                    id="bucket-name"
-                    name="bucket-name"
-                    autoFocus={true}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      addBucketName(event.target.value);
-                    }}
-                    label="Bucket Name"
-                    value={bucketName}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <div className={classes.h6title}>Features</div>
-                  <br />
-                  {!distributedSetup && (
-                    <Fragment>
-                      <div className={classes.error}>
-                        These features are unavailable in a single-disk setup.
-                        <br />
-                        Please deploy a server in{" "}
-                        <a
-                          href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Distributed Mode
-                        </a>{" "}
-                        to use these features.
-                      </div>
+              <Grid item xs={12}>
+                <SectionTitle>Features</SectionTitle>
+                {!distributedSetup && (
+                  <Fragment>
+                    <div className={classes.error}>
+                      These features are unavailable in a single-disk setup.
                       <br />
-                      <br />
-                    </Fragment>
-                  )}
-                </Grid>
-
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
-                    value="versioned"
-                    id="versioned"
-                    name="versioned"
-                    checked={versioningEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      addBucketVersioned(event.target.checked);
-                    }}
-                    description={
-                      "Allows to keep multiple versions of the same object under the same key."
-                    }
-                    label={"Versioning"}
-                    disabled={!distributedSetup || lockingEnabled}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
-                    value="locking"
-                    id="locking"
-                    name="locking"
-                    disabled={lockingFieldDisabled || !distributedSetup}
-                    checked={lockingEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      enableObjectLocking(event.target.checked);
-                      if (event.target.checked) {
-                        addBucketVersioned(true);
-                      }
-                    }}
-                    label={"Object Locking"}
-                    description={
-                      "Required to support retention and legal hold. Can only be enabled at bucket creation."
-                    }
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
-                    value="bucket_quota"
-                    id="bucket_quota"
-                    name="bucket_quota"
-                    checked={quotaEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      addBucketQuota(event.target.checked);
-                    }}
-                    label={"Quota"}
-                    description={"Limit the amount of data in the bucket."}
-                    disabled={!distributedSetup}
-                  />
-                </Grid>
-                {quotaEnabled && distributedSetup && (
-                  <React.Fragment>
-                    <Grid item xs={12}>
-                      <InputBoxWrapper
-                        type="number"
-                        id="quota_size"
-                        name="quota_size"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          if (e.target.validity.valid) {
-                            addBucketQuotaSize(e.target.value);
-                          }
-                        }}
-                        label="Quota"
-                        value={quotaSize}
-                        required
-                        min="1"
-                        pattern={"[0-9]*"}
-                        overlayObject={
-                          <InputUnitMenu
-                            id={"quota_unit"}
-                            onUnitChange={(newValue) => {
-                              addBucketQuotaUnit(newValue);
-                            }}
-                            unitSelected={quotaUnit}
-                            unitsList={k8sScalarUnitsExcluding(["Ki"])}
-                            disabled={false}
-                          />
-                        }
-                      />
-                    </Grid>
-                  </React.Fragment>
+                      Please deploy a server in{" "}
+                      <a
+                        href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Distributed Mode
+                      </a>{" "}
+                      to use these features.
+                    </div>
+                    <br />
+                    <br />
+                  </Fragment>
                 )}
-                {versioningEnabled && distributedSetup && (
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormSwitchWrapper
+                  value="versioned"
+                  id="versioned"
+                  name="versioned"
+                  checked={versioningEnabled}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    addBucketVersioned(event.target.checked);
+                  }}
+                  label={"Versioning"}
+                  disabled={!distributedSetup || lockingEnabled}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormSwitchWrapper
+                  value="locking"
+                  id="locking"
+                  name="locking"
+                  disabled={lockingFieldDisabled || !distributedSetup}
+                  checked={lockingEnabled}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    enableObjectLocking(event.target.checked);
+                    if (event.target.checked) {
+                      addBucketVersioned(true);
+                    }
+                  }}
+                  label={"Object Locking"}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormSwitchWrapper
+                  value="bucket_quota"
+                  id="bucket_quota"
+                  name="bucket_quota"
+                  checked={quotaEnabled}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    addBucketQuota(event.target.checked);
+                  }}
+                  label={"Quota"}
+                  disabled={!distributedSetup}
+                />
+              </Grid>
+              {quotaEnabled && distributedSetup && (
+                <React.Fragment>
                   <Grid item xs={12}>
-                    <FormSwitchWrapper
-                      value="bucket_retention"
-                      id="bucket_retention"
-                      name="bucket_retention"
-                      checked={retentionEnabled}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        addBucketRetention(event.target.checked);
+                    <InputBoxWrapper
+                      type="number"
+                      id="quota_size"
+                      name="quota_size"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        if (e.target.validity.valid) {
+                          addBucketQuotaSize(e.target.value);
+                        }
                       }}
-                      label={"Retention"}
-                      description={
-                        "Impose rules to prevent object deletion for a period of time."
+                      label="Capacity"
+                      value={quotaSize}
+                      required
+                      min="1"
+                      pattern={"[0-9]*"}
+                      overlayObject={
+                        <InputUnitMenu
+                          id={"quota_unit"}
+                          onUnitChange={(newValue) => {
+                            addBucketQuotaUnit(newValue);
+                          }}
+                          unitSelected={quotaUnit}
+                          unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                          disabled={false}
+                        />
                       }
                     />
                   </Grid>
-                )}
-                {retentionEnabled && distributedSetup && (
-                  <React.Fragment>
-                    <Grid item xs={12}>
-                      <RadioGroupSelector
-                        currentSelection={retentionMode}
-                        id="retention_mode"
-                        name="retention_mode"
-                        label="Retention Mode"
-                        onChange={(
-                          e: React.ChangeEvent<{ value: unknown }>
-                        ) => {
-                          addBucketRetentionMode(e.target.value as string);
-                        }}
-                        selectorOptions={[
-                          { value: "compliance", label: "Compliance" },
-                          { value: "governance", label: "Governance" },
-                        ]}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <RadioGroupSelector
-                        currentSelection={retentionUnit}
-                        id="retention_unit"
-                        name="retention_unit"
-                        label="Retention Unit"
-                        onChange={(
-                          e: React.ChangeEvent<{ value: unknown }>
-                        ) => {
-                          addBucketRetentionUnit(e.target.value as string);
-                        }}
-                        selectorOptions={[
-                          { value: "days", label: "Days" },
-                          { value: "years", label: "Years" },
-                        ]}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <InputBoxWrapper
-                        type="number"
-                        id="retention_validity"
-                        name="retention_validity"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          addBucketRetentionValidity(e.target.valueAsNumber);
-                        }}
-                        label="Retention Validity"
-                        value={String(retentionValidity)}
-                        required
-                        min="1"
-                      />
-                    </Grid>
-                  </React.Fragment>
-                )}
-              </Grid>
-              <Grid item xs={12} className={classes.buttonContainer}>
-                <Button
-                  type="button"
-                  variant={"outlined"}
-                  className={classes.clearButton}
-                  onClick={resetForm}
-                >
-                  Clear
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={addLoading || !sendEnabled}
-                >
-                  Create Bucket
-                </Button>
-              </Grid>
-              {addLoading && (
+                </React.Fragment>
+              )}
+              {versioningEnabled && distributedSetup && (
                 <Grid item xs={12}>
-                  <LinearProgress />
+                  <FormSwitchWrapper
+                    value="bucket_retention"
+                    id="bucket_retention"
+                    name="bucket_retention"
+                    checked={retentionEnabled}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      addBucketRetention(event.target.checked);
+                    }}
+                    label={"Retention"}
+                  />
                 </Grid>
               )}
+              {retentionEnabled && distributedSetup && (
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    <RadioGroupSelector
+                      currentSelection={retentionMode}
+                      id="retention_mode"
+                      name="retention_mode"
+                      label="Mode"
+                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                        addBucketRetentionMode(e.target.value as string);
+                      }}
+                      selectorOptions={[
+                        { value: "compliance", label: "Compliance" },
+                        { value: "governance", label: "Governance" },
+                      ]}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      type="number"
+                      id="retention_validity"
+                      name="retention_validity"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        addBucketRetentionValidity(e.target.valueAsNumber);
+                      }}
+                      label="Validity"
+                      value={String(retentionValidity)}
+                      required
+                      overlayObject={
+                        <InputUnitMenu
+                          id={"retention_unit"}
+                          onUnitChange={(newValue) => {
+                            addBucketRetentionUnit(newValue);
+                          }}
+                          unitSelected={retentionUnit}
+                          unitsList={[
+                            { value: "days", label: "Days" },
+                            { value: "years", label: "Years" },
+                          ]}
+                          disabled={false}
+                        />
+                      }
+                    />
+                  </Grid>
+                </React.Fragment>
+              )}
             </Grid>
+            <Grid item xs={12} className={classes.buttonContainer}>
+              <Button
+                type="button"
+                variant={"outlined"}
+                className={classes.clearButton}
+                onClick={resetForm}
+              >
+                Clear
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addLoading || !sendEnabled}
+              >
+                Create Bucket
+              </Button>
+            </Grid>
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
           </form>
-        </Grid>
+        </FormLayout>
       </PageLayout>
     </Fragment>
   );

@@ -41,6 +41,7 @@ var (
 	ErrGroupNameNotInRequest            = errors.New("error group name not in request")
 	ErrPolicyNameNotInRequest           = errors.New("error policy name not in request")
 	ErrPolicyBodyNotInRequest           = errors.New("error policy body not in request")
+	ErrPolicyNameContainsSpace          = errors.New("error policy name cannot contain spaces")
 	ErrInvalidEncryptionAlgorithm       = errors.New("error invalid encryption algorithm")
 	ErrSSENotConfigured                 = errors.New("error server side encryption configuration not found")
 	ErrBucketLifeCycleNotConfigured     = errors.New("error bucket life cycle configuration not found")
@@ -116,6 +117,10 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 			if errors.Is(err1, ErrPolicyBodyNotInRequest) {
 				errorCode = 400
 				errorMessage = ErrPolicyBodyNotInRequest.Error()
+			}
+			if errors.Is(err1, ErrPolicyNameContainsSpace) {
+				errorCode = 400
+				errorMessage = ErrPolicyNameContainsSpace.Error()
 			}
 			// console invalid session errors
 			if errors.Is(err1, ErrInvalidSession) {

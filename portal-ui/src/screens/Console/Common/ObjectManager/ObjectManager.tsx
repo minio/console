@@ -23,7 +23,7 @@ import { Tooltip, IconButton } from "@mui/material";
 import { AppState } from "../../../../store";
 import { IFileItem } from "../../ObjectBrowser/types";
 import { deleteFromList, cleanList } from "../../ObjectBrowser/actions";
-import { TrashIcon } from "../../../../icons";
+import { RemoveAllIcon } from "../../../../icons";
 import ObjectHandled from "./ObjectHandled";
 
 interface IObjectManager {
@@ -38,12 +38,12 @@ const styles = (theme: Theme) =>
   createStyles({
     downloadContainer: {
       border: "#EAEDEE 1px solid",
-      boxShadow: "rgba(0, 0, 0, 0.08) 0 3px 10px",
+      boxShadow: "rgba(0, 0, 0, 0.08) 0 2px 10px",
       backgroundColor: "#fff",
       position: "absolute",
-      right: 0,
-      top: 80,
-      width: 300,
+      right: 20,
+      top: 60,
+      width: 400,
       overflowY: "hidden",
       overflowX: "hidden",
       borderRadius: 3,
@@ -58,13 +58,13 @@ const styles = (theme: Theme) =>
       },
     },
     title: {
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: 5,
-      paddingBottom: 12,
+      textAlign: "left",
+      paddingBottom: 20,
       borderBottom: "#E2E2E2 1px solid",
-      margin: "15px 15px 5px 15px",
+      margin: "25px 30px 5px 30px",
+      color: "#000",
     },
     actionsContainer: {
       overflowY: "auto",
@@ -77,12 +77,12 @@ const styles = (theme: Theme) =>
     },
     cleanIcon: {
       position: "absolute",
-      right: 14,
-      top: 12,
+      right: 28,
+      top: 25,
     },
     cleanButton: {
       "& svg": {
-        width: 20,
+        width: 25,
       },
     },
   });
@@ -110,7 +110,7 @@ const ObjectManager = ({
                 onClick={cleanList}
                 className={classes.cleanButton}
               >
-                <TrashIcon />
+                <RemoveAllIcon />
               </IconButton>
             </Tooltip>
           </div>

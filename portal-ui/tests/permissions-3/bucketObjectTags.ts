@@ -47,12 +47,12 @@ test
       .click(Selector("button").withText("Tags"))
       .typeText("#newTagKey", "tag1")
       .typeText("#newTagLabel", "test")
-      .click(Selector("button:enabled").withText("Save New Tag"))
+      .click(Selector("#saveTag:enabled"))
       .click(Selector("button").withText("Tags"))
       .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
       .ok()
       .click(Selector(".MuiChip-deleteIcon"))
-      .click(Selector("button").withText("Yes"))
+      .click(Selector("#deleteTag"))
       .click(Selector("button").withText("Tags"))
       .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
       .notOk();
@@ -85,7 +85,7 @@ test
       .click(Selector("button").withText("Tags"))
       .typeText("#newTagKey", "tag1")
       .typeText("#newTagLabel", "test")
-      .click(Selector("button:enabled").withText("Save New Tag"))
+      .click(Selector("#saveTag:enabled"))
       .click(Selector("button").withText("Tags"))
       .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
       .notOk();

@@ -52,7 +52,9 @@ import {
 import { Badge, Typography } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
+  cancelObjectInList,
   completeObject,
+  failObject,
   openList,
   resetRewind,
   setLoadingObjectInfo,
@@ -241,6 +243,8 @@ interface IListObjectsProps {
   setSelectedObjectView: typeof setSelectedObjectView;
   setLoadingObjectInfo: typeof setLoadingObjectInfo;
   setLoadingObjectsList: typeof setLoadingObjectsList;
+  failObject: typeof failObject;
+  cancelObjectInList: typeof cancelObjectInList;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -300,6 +304,8 @@ const ListObjects = ({
   setSelectedObjectView,
   setLoadingObjectInfo,
   setLoadingObjectsList,
+  failObject,
+  cancelObjectInList,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObjectItem[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
@@ -738,17 +744,7 @@ const ListObjects = ({
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
-    setNewObject({
-      bucketName,
-      done: false,
-      instanceID: identityDownload,
-      percentage: 0,
-      prefix: object.name,
-      type: "download",
-      waitingForFile: true,
-    });
-
-    download(
+    const downloadCall = download(
       bucketName,
       encodeFileName(object.name),
       object.version_id,
@@ -758,8 +754,29 @@ const ListObjects = ({
       },
       () => {
         completeObject(identityDownload);
+      },
+      () => {
+        failObject(identityDownload);
+      },
+      () => {
+        cancelObjectInList(identityDownload);
       }
     );
+
+    setNewObject({
+      bucketName,
+      done: false,
+      instanceID: identityDownload,
+      percentage: 0,
+      prefix: object.name,
+      type: "download",
+      waitingForFile: true,
+      failed: false,
+      cancelled: false,
+      call: downloadCall,
+    });
+
+    downloadCall.send();
   };
 
   const openPath = (idElement: string) => {
@@ -824,16 +841,6 @@ const ListObjects = ({
               `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
             );
 
-            setNewObject({
-              bucketName,
-              done: false,
-              instanceID: identity,
-              percentage: 0,
-              prefix: `${decodeFileName(encodedPath)}${fileName}`,
-              type: "upload",
-              waitingForFile: false,
-            });
-
             let xhr = new XMLHttpRequest();
             xhr.open("POST", uploadUrl, true);
 
@@ -864,12 +871,14 @@ const ListObjects = ({
                     errorMessage = "something went wrong";
                   }
                 }
+                failObject(identity);
                 reject({ status: xhr.status, message: errorMessage });
               }
             };
 
             xhr.upload.addEventListener("error", (event) => {
               reject(errorMessage);
+              failObject(identity);
               return;
             });
 
@@ -881,6 +890,7 @@ const ListObjects = ({
 
             xhr.onerror = () => {
               reject(errorMessage);
+              failObject(identity);
               return;
             };
             xhr.onloadend = () => {
@@ -888,10 +898,27 @@ const ListObjects = ({
                 setLoadingObjectsList(true);
               }
             };
+            xhr.onabort = () => {
+              cancelObjectInList(identity);
+            };
 
             const formData = new FormData();
             if (file.size !== undefined) {
               formData.append(file.size.toString(), blobFile, fileName);
+
+              setNewObject({
+                bucketName,
+                done: false,
+                instanceID: identity,
+                percentage: 0,
+                prefix: `${decodeFileName(encodedPath)}${fileName}`,
+                type: "upload",
+                waitingForFile: false,
+                failed: false,
+                cancelled: false,
+                call: xhr,
+              });
+
               xhr.send(formData);
             }
           });
@@ -934,6 +961,8 @@ const ListObjects = ({
       setErrorSnackMessage,
       updateProgress,
       setLoadingObjectsList,
+      cancelObjectInList,
+      failObject,
     ]
   );
 
@@ -1485,6 +1514,7 @@ const mapDispatchToProps = {
   updateProgress,
   completeObject,
   openList,
+  failObject,
   setSearchObjects,
   setVersionsModeEnabled,
   setShowDeletedObjects,
@@ -1493,6 +1523,7 @@ const mapDispatchToProps = {
   setSelectedObjectView,
   setLoadingObjectInfo,
   setLoadingObjectsList,
+  cancelObjectInList,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
