@@ -342,6 +342,17 @@ export const predefinedList = {
       display: "none",
     },
   },
+  includesActionButton: {
+    paddingRight: 45,
+    position: "relative" as const,
+  },
+  overlayShareOption: {
+    position: "absolute" as const,
+    width: 45,
+    right: 0,
+    top: "50%",
+    transform: "translate(0, -50%)",
+  }
 };
 
 export const objectBrowserCommon = {
