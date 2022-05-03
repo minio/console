@@ -1607,6 +1607,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - Policy
+  /user/{name}/policies:
+    get:
+      summary: returns policies for specified user
+      operationId: GetAUserPolicy
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/aUserPolicyResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Policy
   /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user
@@ -4836,6 +4856,7 @@ definitions:
         type: string
       latest_version:
         type: string
+<<<<<<< HEAD
 
   permissionResource:
     type: object
@@ -4848,3 +4869,10 @@ definitions:
         type: array
         items:
           type: string
+=======
+  aUserPolicyResponse:
+    type: object
+    properties:
+      policy:
+        type: string
+>>>>>>> Created api to generate single JSON including all user permissions to populate AddUserServiceAccount policy restrictor

@@ -125,6 +125,21 @@ const AddServiceAccount = ({ classes, match }: IAddServiceAccountProps) => {
     secretKey,
   ]);
 
+  useEffect(() => {
+    if(isRestrictedByPolicy){
+    api
+      .invoke("GET", `/api/v1/user/${encodeURLString(userName)}/policies`) 
+      
+      .then((res) => {
+        console.log(res)
+      setPolicyJSON(JSON.stringify(JSON.parse(res.policy), null, 4));
+      })
+      .catch((err: ErrorResponseHandler) => {
+        setErrorSnackMessage(err);
+    });
+  }
+  }, [isRestrictedByPolicy, userName, setErrorSnackMessage]);
+
   const addUserServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
     setAddSending(true);

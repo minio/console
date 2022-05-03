@@ -19,6 +19,7 @@ package restapi
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"sort"
@@ -132,6 +133,14 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 			return policyApi.NewGetUserPolicyDefault(int(err.Code)).WithPayload(err)
 		}
 		return policyApi.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
+	})
+	// Gets policies for specified user
+	api.PolicyGetAUserPolicyHandler = policyApi.GetAUserPolicyHandlerFunc(func(params policyApi.GetAUserPolicyParams, session *models.Principal) middleware.Responder {
+		userPolicyResponse, err := getAUserPolicyResponse(session, params)
+		if err != nil {
+			return policyApi.NewGetAUserPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return policyApi.NewGetAUserPolicyOK().WithPayload(userPolicyResponse)
 	})
 }
 
@@ -363,8 +372,83 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 		return "nil", ErrorWithContext(ctx, err)
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
-
 	return string(rawPolicy), nil
+}
+
+func getAUserPolicyResponse(session *models.Principal, params policyApi.GetAUserPolicyParams) (*models.AUserPolicyResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	// serialize output
+	if session == nil {
+		return nil, ErrorWithContext(ctx, ErrPolicyNotFound)
+	}
+	// initialize admin client
+	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+		STSAccessKeyID:     session.STSAccessKeyID,
+		STSSecretAccessKey: session.STSSecretAccessKey,
+		STSSessionToken:    session.STSSessionToken,
+	})
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	userAdminClient := AdminClient{Client: mAdminClient}
+
+	decoded, err := base64.StdEncoding.DecodeString(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	user, err := getUserInfo(ctx, userAdminClient, string(decoded))
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	var userPolicies []string
+	if len(user.PolicyName) > 0 {
+		userPolicies = strings.Split(user.PolicyName, ",")
+	}
+	if len(user.MemberOf) > 0 {
+		for _, group := range user.MemberOf {
+			groupDesc, err := groupInfo(ctx, userAdminClient, group)
+			if err != nil {
+				return nil, ErrorWithContext(ctx, err)
+			}
+			if groupDesc.Policy != "" {
+				userPolicies = append(userPolicies, strings.Split(groupDesc.Policy, ",")...)
+			}
+		}
+	}
+	allKeys := make(map[string]bool)
+	userPolicyList := []string{}
+
+	for _, item := range userPolicies {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			userPolicyList = append(userPolicyList, item)
+		}
+	}
+	var userStatements []iampolicy.Statement
+
+	for _, pol := range userPolicyList {
+		policy, err := getPolicyStatements(ctx, userAdminClient, pol)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		userStatements = append(userStatements, policy...)
+	}
+
+	combinedPolicy := iampolicy.Policy{
+		Version:    "2012-10-17",
+		Statements: userStatements,
+	}
+	parsedPolicy, err := parsePolicy("tempname", &combinedPolicy)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	getUserPoliciesResponse := &models.AUserPolicyResponse{
+		Policy: parsedPolicy.Policy,
+	}
+
+	return getUserPoliciesResponse, nil
 }
 
 func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.ListGroupsForPolicyParams) ([]string, *models.Error) {
@@ -508,6 +592,17 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 		return nil, err
 	}
 	return policy, nil
+}
+
+// getPolicy Statements calls MinIO server to retrieve information of a canned policy.
+// and returns the associated Statements
+func getPolicyStatements(ctx context.Context, client MinioAdmin, name string) ([]iampolicy.Statement, error) {
+	policyRaw, err := client.getPolicy(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return policyRaw.Statements, nil
 }
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
