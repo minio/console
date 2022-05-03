@@ -45,7 +45,6 @@ import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from "../../../screens/Console/Tenants/utils";
 import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
-import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 interface IAddServiceAccountProps {
   classes: any;
