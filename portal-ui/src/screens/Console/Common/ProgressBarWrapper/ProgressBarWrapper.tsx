@@ -56,14 +56,12 @@ function LinearProgressWithLabel(
   let color = "#000";
   let size = 18;
 
-  if(props.error) {
-    color = "#C83B51"
-    size = 14
-  }
-
-  else if(props.cancelled) {
-    color = "#FFBD62"
-    size = 14
+  if (props.error) {
+    color = "#C83B51";
+    size = 14;
+  } else if (props.cancelled) {
+    color = "#FFBD62";
+    size = 14;
   }
 
   return (
@@ -105,13 +103,14 @@ const ProgressBarWrapper = ({
     color = "error";
   } else if (cancelled) {
     color = "warning";
-  }else if (value === 100 && ready) {
+  } else if (value === 100 && ready) {
     color = "success";
   } else {
     color = "primary";
   }
   const propsComponent: LinearProgressProps = {
-    variant: indeterminate && !ready && !cancelled ? "indeterminate" : "determinate",
+    variant:
+      indeterminate && !ready && !cancelled ? "indeterminate" : "determinate",
     value: ready ? 100 : value,
     color: color,
   };
