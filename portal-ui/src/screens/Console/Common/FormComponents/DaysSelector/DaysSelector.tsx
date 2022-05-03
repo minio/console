@@ -23,6 +23,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
+import { LinkIcon } from "../../../../../icons";
 
 interface IDaysSelector {
   classes: any;
@@ -58,13 +59,15 @@ const styles = (theme: Theme) =>
     durationInputs: {
       display: "flex",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
     },
 
     validityIndicator: {
       display: "flex",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      marginTop: 25,
+      marginLeft: 10,
     },
     invalidDurationText: {
       marginTop: 15,
@@ -72,9 +75,16 @@ const styles = (theme: Theme) =>
       color: "red",
       fontSize: 11,
     },
+    reverseInput: {
+      flexFlow: "row-reverse",
+      "& > label": {
+        fontWeight: 400,
+        marginLeft: 15,
+        marginRight: 25,
+      },
+    },
     validityText: {
       fontSize: 14,
-      fontWeight: 600,
       marginTop: 15,
       display: "flex",
       alignItems: "center",
@@ -82,6 +92,16 @@ const styles = (theme: Theme) =>
       "@media (max-width: 900px)": {
         flexFlow: "column",
       },
+      "& > .min-icon": {
+        color: "#5E5E5E",
+        width: 15,
+        height: 15,
+        marginRight: 10,
+      },
+    },
+    validTill: {
+      fontWeight: "bold",
+      marginLeft: 15,
     },
   });
 
@@ -181,61 +201,66 @@ const DaysSelector = ({
   return (
     <Fragment>
       <Grid container className={classes.fieldContainer}>
-        <Grid item xs={12} alignItems={"center"} justifyContent={"center"}>
-          <Grid item xs={12} className={classes.labelContainer}>
-            <InputLabel htmlFor={id} className={classes.inputLabel}>
-              <span>{label}</span>
-            </InputLabel>
+        <Grid item xs={12} className={classes.labelContainer}>
+          <InputLabel
+            htmlFor={id}
+            className={classes.inputLabel}
+            sx={{ marginLeft: "10px" }}
+          >
+            <span>{label}</span>
+          </InputLabel>
+        </Grid>
+        <Grid item xs={12} className={classes.durationInputs}>
+          <Grid item className={classes.dateInputContainer}>
+            <InputBoxWrapper
+              id={id}
+              className={classes.reverseInput}
+              type="number"
+              min="0"
+              max={maxDays ? maxDays.toString() : "999"}
+              label="Days"
+              name={id}
+              onChange={(e) => {
+                setSelectedDays(parseInt(e.target.value));
+              }}
+              value={selectedDays.toString()}
+              extraInputProps={extraInputProps}
+              noLabelMinWidth
+            />
           </Grid>
-          <Grid item xs={12} className={classes.durationInputs}>
-            <Grid item className={classes.dateInputContainer}>
-              <InputBoxWrapper
-                id={id}
-                type="number"
-                min="0"
-                max={maxDays ? maxDays.toString() : "999"}
-                label="Days"
-                name={id}
-                onChange={(e) => {
-                  setSelectedDays(parseInt(e.target.value));
-                }}
-                value={selectedDays.toString()}
-                extraInputProps={extraInputProps}
-                noLabelMinWidth
-              />
-            </Grid>
-            <Grid item className={classes.dateInputContainer}>
-              <InputBoxWrapper
-                id={id}
-                type="number"
-                min="0"
-                max="23"
-                label="Hours"
-                name={id}
-                onChange={(e) => {
-                  setSelectedHours(parseInt(e.target.value));
-                }}
-                value={selectedHours.toString()}
-                extraInputProps={extraInputProps}
-                noLabelMinWidth
-              />
-            </Grid>
-            <Grid item className={classes.dateInputContainer}>
-              <InputBoxWrapper
-                id={id}
-                type="number"
-                min="0"
-                max="59"
-                label="Minutes"
-                name={id}
-                onChange={(e) => {
-                  setSelectedMinutes(parseInt(e.target.value));
-                }}
-                value={selectedMinutes.toString()}
-                extraInputProps={extraInputProps}
-                noLabelMinWidth
-              />
-            </Grid>
+          <Grid item className={classes.dateInputContainer}>
+            <InputBoxWrapper
+              id={id}
+              className={classes.reverseInput}
+              type="number"
+              min="0"
+              max="23"
+              label="Hours"
+              name={id}
+              onChange={(e) => {
+                setSelectedHours(parseInt(e.target.value));
+              }}
+              value={selectedHours.toString()}
+              extraInputProps={extraInputProps}
+              noLabelMinWidth
+            />
+          </Grid>
+          <Grid item className={classes.dateInputContainer}>
+            <InputBoxWrapper
+              id={id}
+              className={classes.reverseInput}
+              type="number"
+              min="0"
+              max="59"
+              label="Minutes"
+              name={id}
+              onChange={(e) => {
+                setSelectedMinutes(parseInt(e.target.value));
+              }}
+              value={selectedMinutes.toString()}
+              extraInputProps={extraInputProps}
+              noLabelMinWidth
+            />
           </Grid>
         </Grid>
         <Grid
@@ -245,6 +270,7 @@ const DaysSelector = ({
         >
           {validDate ? (
             <div className={classes.validityText}>
+              <LinkIcon />
               <div className={classes.validityLabel}>
                 {entity} will be available until:
               </div>{" "}

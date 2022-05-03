@@ -1200,6 +1200,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Describe Pod",
+        "operationId": "DescribePod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/describePodWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
       "get": {
         "tags": [
@@ -2017,11 +2060,92 @@ func init() {
         }
       }
     },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "configMap": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        }
+      }
+    },
     "configureTenantRequest": {
       "type": "object",
       "properties": {
         "prometheusEnabled": {
           "type": "boolean"
+        }
+      }
+    },
+    "container": {
+      "type": "object",
+      "properties": {
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "containerID": {
+          "type": "string"
+        },
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        },
+        "hostPorts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": "string"
+        },
+        "imageID": {
+          "type": "string"
+        },
+        "lastState": {
+          "$ref": "#/definitions/state"
+        },
+        "mounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/mount"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "restartCount": {
+          "type": "integer"
+        },
+        "state": {
+          "$ref": "#/definitions/state"
         }
       }
     },
@@ -2154,6 +2278,95 @@ func init() {
       "properties": {
         "delete_pvcs": {
           "type": "boolean"
+        }
+      }
+    },
+    "describePodWrapper": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/condition"
+          }
+        },
+        "containers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/container"
+          }
+        },
+        "controllerRef": {
+          "type": "string"
+        },
+        "deletionGracePeriodSeconds": {
+          "type": "integer"
+        },
+        "deletionTimestamp": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "nodeName": {
+          "type": "string"
+        },
+        "nodeSelector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelector"
+          }
+        },
+        "phase": {
+          "type": "string"
+        },
+        "podIP": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "priorityClassName": {
+          "type": "string"
+        },
+        "qosClass": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string"
+        },
+        "tolerations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/toleration"
+          }
+        },
+        "volumes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/volume"
+          }
         }
       }
     },
@@ -2323,6 +2536,17 @@ func init() {
           }
         }
       ]
+    },
+    "environmentVariable": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
     },
     "error": {
       "type": "object",
@@ -2886,6 +3110,23 @@ func init() {
         }
       }
     },
+    "mount": {
+      "type": "object",
+      "properties": {
+        "mountPath": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "subPath": {
+          "type": "string"
+        }
+      }
+    },
     "namespace": {
       "type": "object",
       "required": [
@@ -3357,6 +3598,34 @@ func init() {
         }
       }
     },
+    "projectedVolume": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/projectedVolumeSource"
+          }
+        }
+      }
+    },
+    "projectedVolumeSource": {
+      "type": "object",
+      "properties": {
+        "configMap": {
+          "$ref": "#/definitions/configMap"
+        },
+        "downwardApi": {
+          "type": "boolean"
+        },
+        "secret": {
+          "$ref": "#/definitions/secret"
+        },
+        "serviceAccountToken": {
+          "$ref": "#/definitions/serviceAccountToken"
+        }
+      }
+    },
     "prometheusConfiguration": {
       "type": "object",
       "properties": {
@@ -3380,6 +3649,17 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
+        }
+      }
+    },
+    "pvc": {
+      "type": "object",
+      "properties": {
+        "claimName": {
+          "type": "string"
+        },
+        "readOnly": {
+          "type": "boolean"
         }
       }
     },
@@ -3442,6 +3722,17 @@ func init() {
         }
       }
     },
+    "secret": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        }
+      }
+    },
     "securityContext": {
       "type": "object",
       "required": [
@@ -3461,6 +3752,40 @@ func init() {
           "type": "boolean"
         },
         "runAsUser": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceAccountToken": {
+      "type": "object",
+      "properties": {
+        "expirationSeconds": {
+          "type": "integer"
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "exitCode": {
+          "type": "integer"
+        },
+        "finished": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "signal": {
+          "type": "integer"
+        },
+        "started": {
+          "type": "string"
+        },
+        "state": {
           "type": "string"
         }
       }
@@ -3901,6 +4226,26 @@ func init() {
         }
       }
     },
+    "toleration": {
+      "type": "object",
+      "properties": {
+        "effect": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "tolerationSeconds": {
+          "type": "integer"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
     "updateDomainsRequest": {
       "type": "object",
       "properties": {
@@ -4086,6 +4431,20 @@ func init() {
               "$ref": "#/definitions/certificateInfo"
             }
           }
+        }
+      }
+    },
+    "volume": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "projected": {
+          "$ref": "#/definitions/projectedVolume"
+        },
+        "pvc": {
+          "$ref": "#/definitions/pvc"
         }
       }
     }
@@ -5260,6 +5619,49 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Describe Pod",
+        "operationId": "DescribePod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/describePodWrapper"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -6930,11 +7332,92 @@ func init() {
         }
       }
     },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "configMap": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        }
+      }
+    },
     "configureTenantRequest": {
       "type": "object",
       "properties": {
         "prometheusEnabled": {
           "type": "boolean"
+        }
+      }
+    },
+    "container": {
+      "type": "object",
+      "properties": {
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "containerID": {
+          "type": "string"
+        },
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        },
+        "hostPorts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": "string"
+        },
+        "imageID": {
+          "type": "string"
+        },
+        "lastState": {
+          "$ref": "#/definitions/state"
+        },
+        "mounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/mount"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "restartCount": {
+          "type": "integer"
+        },
+        "state": {
+          "$ref": "#/definitions/state"
         }
       }
     },
@@ -7067,6 +7550,95 @@ func init() {
       "properties": {
         "delete_pvcs": {
           "type": "boolean"
+        }
+      }
+    },
+    "describePodWrapper": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/condition"
+          }
+        },
+        "containers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/container"
+          }
+        },
+        "controllerRef": {
+          "type": "string"
+        },
+        "deletionGracePeriodSeconds": {
+          "type": "integer"
+        },
+        "deletionTimestamp": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "nodeName": {
+          "type": "string"
+        },
+        "nodeSelector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelector"
+          }
+        },
+        "phase": {
+          "type": "string"
+        },
+        "podIP": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "priorityClassName": {
+          "type": "string"
+        },
+        "qosClass": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string"
+        },
+        "tolerations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/toleration"
+          }
+        },
+        "volumes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/volume"
+          }
         }
       }
     },
@@ -7236,6 +7808,17 @@ func init() {
           }
         }
       ]
+    },
+    "environmentVariable": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
     },
     "error": {
       "type": "object",
@@ -7787,6 +8370,23 @@ func init() {
         }
       }
     },
+    "mount": {
+      "type": "object",
+      "properties": {
+        "mountPath": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "subPath": {
+          "type": "string"
+        }
+      }
+    },
     "namespace": {
       "type": "object",
       "required": [
@@ -8123,6 +8723,34 @@ func init() {
         }
       }
     },
+    "projectedVolume": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/projectedVolumeSource"
+          }
+        }
+      }
+    },
+    "projectedVolumeSource": {
+      "type": "object",
+      "properties": {
+        "configMap": {
+          "$ref": "#/definitions/configMap"
+        },
+        "downwardApi": {
+          "type": "boolean"
+        },
+        "secret": {
+          "$ref": "#/definitions/secret"
+        },
+        "serviceAccountToken": {
+          "$ref": "#/definitions/serviceAccountToken"
+        }
+      }
+    },
     "prometheusConfiguration": {
       "type": "object",
       "properties": {
@@ -8146,6 +8774,17 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
+        }
+      }
+    },
+    "pvc": {
+      "type": "object",
+      "properties": {
+        "claimName": {
+          "type": "string"
+        },
+        "readOnly": {
+          "type": "boolean"
         }
       }
     },
@@ -8208,6 +8847,17 @@ func init() {
         }
       }
     },
+    "secret": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        }
+      }
+    },
     "securityContext": {
       "type": "object",
       "required": [
@@ -8227,6 +8877,40 @@ func init() {
           "type": "boolean"
         },
         "runAsUser": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceAccountToken": {
+      "type": "object",
+      "properties": {
+        "expirationSeconds": {
+          "type": "integer"
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "exitCode": {
+          "type": "integer"
+        },
+        "finished": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "signal": {
+          "type": "integer"
+        },
+        "started": {
+          "type": "string"
+        },
+        "state": {
           "type": "string"
         }
       }
@@ -8667,6 +9351,26 @@ func init() {
         }
       }
     },
+    "toleration": {
+      "type": "object",
+      "properties": {
+        "effect": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "tolerationSeconds": {
+          "type": "integer"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
     "updateDomainsRequest": {
       "type": "object",
       "properties": {
@@ -8852,6 +9556,20 @@ func init() {
               "$ref": "#/definitions/certificateInfo"
             }
           }
+        }
+      }
+    },
+    "volume": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "projected": {
+          "$ref": "#/definitions/projectedVolume"
+        },
+        "pvc": {
+          "$ref": "#/definitions/pvc"
         }
       }
     }

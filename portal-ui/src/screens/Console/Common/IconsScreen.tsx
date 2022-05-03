@@ -668,6 +668,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.LinkIcon />
+          <br />
+          LinkIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.LockIcon />
           <br />
           LockIcon

@@ -189,3 +189,4 @@ export { default as NetworkPutIcon } from "./NetworkPutIcon";
 export { default as RemoveAllIcon } from "./RemoveAllIcon";
 export { default as CancelledIcon } from "./CancelledIcon";
 export { default as EditTagIcon } from "./EditTagIcon";
+export { default as LinkIcon } from "./LinkIcon";
