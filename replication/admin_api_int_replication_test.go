@@ -247,9 +247,9 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 	fmt.Println("Editing a valid site deployment id::", secondDeploymentID)
 	updatedSiteInfo := map[string]interface{}{
 		"deploymentID": secondDeploymentID,
-		//"endpoint":     "http://minio2:9002",//replace it with docker name
-		"endpoint": "http://localhost:9002",
-		"name":     "sitellhost9002",
+		"endpoint":     "http://minio2:9002", //replace it with docker name
+		//"endpoint": "http://localhost:9002", //local dev
+		"name": "sitellhost9002",
 	}
 	invalidUpdatedSiteInfo := map[string]interface{}{
 		"deploymentID": secondDeploymentID,
@@ -266,13 +266,13 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 		{
 			name:          "Edit an existing valid site",
 			args:          updatedSiteInfo,
-			expStatusCode: 500,
+			expStatusCode: -1,
 			expectedError: false,
 		},
 		{
 			name:          "Edit with an invalid site endpoint",
 			args:          invalidUpdatedSiteInfo,
-			expStatusCode: 500,
+			expStatusCode: -1,
 			expectedError: true,
 		},
 		{
@@ -389,13 +389,9 @@ func TestGetSiteReplicationStatus(t *testing.T) {
 	assert := assert.New(t)
 
 	const (
-		baseUrl             = "http://localhost:9090/api/v1/admin/site-replication/status?"
+		baseAPIURL          = "http://localhost:9090/api/v1/admin/site-replication/status?"
 		lookupDefaultParams = "users=false&groups=false&buckets=false&policies=false&"
 	)
-
-	type args struct {
-		url string
-	}
 
 	tests := []struct {
 		name          string
@@ -406,55 +402,55 @@ func TestGetSiteReplicationStatus(t *testing.T) {
 
 		{
 			name:          "Default replication status",
-			args:          baseUrl + "users=true&groups=true&buckets=true&policies=true",
+			args:          baseAPIURL + "users=true&groups=true&buckets=true&policies=true",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Specific bucket  lookup replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-bucket&entityType=bucket",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-bucket&entityType=bucket",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Invalid specific bucket  lookup replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-bucket-non-existent&entityType=bucket",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-bucket-non-existent&entityType=bucket",
 			expStatusCode: 200,
 			expectedError: true,
 		},
 		{
 			name:          "Specific user lookup replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-user&entityType=user",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-user&entityType=user",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Invalid user lookup replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-user-non-existent&entityType=user",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-user-non-existent&entityType=user",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Specific group lookup replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-group&entityType=group",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-group&entityType=group",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Invalid group lookup replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-group-non-existent&entityType=group",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-group-non-existent&entityType=group",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Specific  policy replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=consoleAdmin&entityType=policy",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=consoleAdmin&entityType=policy",
 			expStatusCode: 200,
 			expectedError: false,
 		},
 		{
 			name:          "Invalid  policy replication status",
-			args:          baseUrl + lookupDefaultParams + "entityValue=test-policies&entityType=policy",
+			args:          baseAPIURL + lookupDefaultParams + "entityValue=test-policies&entityType=policy",
 			expStatusCode: 200,
 			expectedError: false,
 		},
