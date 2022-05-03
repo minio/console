@@ -1583,6 +1583,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - Policy
+  /user/{name}/policy:
+    get:
+      summary: returns policies for specified user
+      operationId: GetAUserPolicy
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Policy
   /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user

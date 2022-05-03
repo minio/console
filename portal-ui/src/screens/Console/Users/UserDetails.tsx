@@ -317,6 +317,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <UserServiceAccountsPanel
                   user={userName}
                   hasPolicy={hasPolicy}
+                  history={history}
                 />
               ),
             }}

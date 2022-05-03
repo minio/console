@@ -41,12 +41,14 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../../Console/Configurations/utils";
 import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 interface IUserServiceAccountsProps {
   classes: any;
   user: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   hasPolicy: boolean;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -64,6 +66,7 @@ const UserServiceAccountsPanel = ({
   user,
   setErrorSnackMessage,
   hasPolicy,
+  history,
 }: IUserServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -235,9 +238,7 @@ const UserServiceAccountsPanel = ({
             color="primary"
             icon={<AddIcon />}
             onClick={() => {
-              setAddScreenOpen(true);
-              setAddScreenOpen(true);
-              setSelectedServiceAccount(null);
+              history.push(`${IAM_PAGES.USER_ACCOUNT}/${user}`);
             }}
             disabled={!hasPolicy}
           />
