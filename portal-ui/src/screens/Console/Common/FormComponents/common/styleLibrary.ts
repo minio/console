@@ -352,7 +352,7 @@ export const predefinedList = {
     right: 0,
     top: "50%",
     transform: "translate(0, -50%)",
-  }
+  },
 };
 
 export const objectBrowserCommon = {

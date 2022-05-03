@@ -24,7 +24,7 @@ export const download = (
   progressCallback: (progress: number) => void,
   completeCallback: () => void,
   errorCallback: () => void,
-  abortCallback: () => void,
+  abortCallback: () => void
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -71,12 +71,12 @@ export const download = (
     }
   };
   req.onerror = () => {
-    if(errorCallback) {
+    if (errorCallback) {
       errorCallback();
     }
   };
   req.onabort = () => {
-    if(abortCallback) {
+    if (abortCallback) {
       abortCallback();
     }
   };
