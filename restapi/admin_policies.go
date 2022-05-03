@@ -31,6 +31,8 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	iampolicy "github.com/minio/pkg/iam/policy"
+
+	policies "github.com/minio/console/restapi/policy"
 )
 
 func registersPoliciesHandler(api *operations.ConsoleAPI) {
@@ -120,6 +122,14 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 			return policyApi.NewListGroupsForPolicyDefault(int(err.Code)).WithPayload(err)
 		}
 		return policyApi.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
+	})
+	// Gets policies for currently logged in user
+	api.PolicyGetUserPolicyHandler = policyApi.GetUserPolicyHandlerFunc(func(params policyApi.GetUserPolicyParams, session *models.Principal) middleware.Responder {
+		userPolicyResponse, err := getUserPolicyResponse(session)
+		if err != nil {
+			return policyApi.NewGetUserPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return policyApi.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
 	})
 }
 
@@ -322,16 +332,47 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 	return filteredUsers, nil
 }
 
+func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	// serialize output
+	if session == nil {
+		return "nil", ErrorWithContext(ctx, ErrPolicyNotFound)
+	}
+	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
+
+	// initialize admin client
+	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+		STSAccessKeyID:     session.STSAccessKeyID,
+		STSSecretAccessKey: session.STSSecretAccessKey,
+		STSSessionToken:    session.STSSessionToken,
+	})
+	if err != nil {
+		return "nil", ErrorWithContext(ctx, err)
+	}
+	userAdminClient := AdminClient{Client: mAdminClient}
+	// Obtain the current policy assigned to this user
+	// necessary for generating the list of allowed endpoints
+	accountInfo, err := getAccountInfo(ctx, userAdminClient)
+	if err != nil {
+		return "nil", ErrorWithContext(ctx, err)
+
+	}
+	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
+
+	return string(rawPolicy), nil
+}
+
 func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.ListGroupsForPolicyParams) ([]string, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	policy := params.Policy
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
+	policy := params.Policy
 	adminClient := AdminClient{Client: mAdmin}
 	policies, err := listPolicies(ctx, adminClient)
 	if err != nil {

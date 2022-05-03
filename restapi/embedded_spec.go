@@ -3976,6 +3976,29 @@ func init() {
         }
       }
     },
+    "/user/policy": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies for logged in user",
+        "operationId": "GetUserPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
@@ -10890,6 +10913,29 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/policy": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies for logged in user",
+        "operationId": "GetUserPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
             }
           },
           "default": {

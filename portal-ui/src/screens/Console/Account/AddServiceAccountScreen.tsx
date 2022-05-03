@@ -44,7 +44,8 @@ import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
-import { getRandomString } from "../../../screens/Console/Tenants/utils";
+import { getRandomString } from   "../../../screens/Console/Tenants/utils";
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -74,32 +75,33 @@ const AddServiceAccount = ({
   classes,
   setErrorSnackMessage,
 }: IAddServiceAccountProps) => {
-  const [addSending, setAddSending] = useState<boolean>(false);
-  const [policyDefinition, setPolicyDefinition] = useState<string>("");
+  const [addSending, setAddSending] = useState<boolean>(false);  
   const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
   const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);  
+const [policyJSON, setPolicyJSON] = useState<string>("");
 
   useEffect(() => {
     if (addSending) {
-      api
-        .invoke("POST", `/api/v1/service-account-credentials`, {
-          policy: policyDefinition,
-          accessKey: accessKey,
-          secretKey: secretKey,
-        })
-        .then((res) => {
-          setAddSending(false);
-          setNewServiceAccount({
-            accessKey: res.accessKey || "",
-            secretKey: res.secretKey || "",
-            url: res.url || "",
-          });
-        })
+        api
+          .invoke("POST", `/api/v1/service-account-credentials`, {
+            policy: policyJSON,
+            accessKey: accessKey,
+            secretKey: secretKey,
+          })
+          .then((res) => {
+            setAddSending(false);
+            setNewServiceAccount({
+              accessKey: res.accessKey || "",
+              secretKey: res.secretKey || "",
+              url: res.url || "",
+            });
+          })
+          
         .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
           setErrorSnackMessage(err);
@@ -109,18 +111,30 @@ const AddServiceAccount = ({
     addSending,
     setAddSending,
     setErrorSnackMessage,
-    policyDefinition,
+    policyJSON,
     accessKey,
     secretKey,
   ]);
 
+  useEffect(() => {
+    if(isRestrictedByPolicy){
+    api
+      .invoke("GET", `/api/v1/user/policy`)
+      .then((res: string) => {
+       setPolicyJSON(JSON.stringify(JSON.parse(res), null, 4));
+    
+      })
+    }
+  }, [isRestrictedByPolicy]);
+
+   
   const addServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
     setAddSending(true);
   };
 
   const resetForm = () => {
-    setPolicyDefinition("");
+    setPolicyJSON("");
     setNewServiceAccount(null);
     setAccessKey("");
     setSecretKey("");
@@ -260,13 +274,19 @@ const AddServiceAccount = ({
                         xs={12}
                         className={classes.codeMirrorContainer}
                       >
+                  <div >
+                     <PanelTitle>Current User Policy - edit the JSON to remove permissions for this service account</PanelTitle>
+                    
+                  </div>
+                  <Grid item xs={12} className={classes.formScrollable}>
                         <CodeMirrorWrapper
-                          label={"Policy "}
-                          value={policyDefinition}
+                          value={policyJSON}
                           onBeforeChange={(editor, data, value) => {
-                            setPolicyDefinition(value);
+                            setPolicyJSON(value);
                           }}
+                          editorHeight={"350px"}
                         />
+                        </Grid>
                       </Grid>
                     )}
                   </Grid>

@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - Auth
     post:
@@ -55,7 +55,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - Auth
   /login/oauth2/auth:
@@ -75,7 +75,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - Auth
 
@@ -122,7 +122,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - System
 
@@ -1568,7 +1568,21 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - User
-
+  /user/policy:
+    get:
+      summary: returns policies for logged in user
+      operationId: GetUserPolicy
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Policy
   /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user
@@ -2765,7 +2779,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [ timeDesc, timeAsc ]
+          enum: [timeDesc, timeAsc]
           default: timeDesc
         - name: timeStart
           in: query
@@ -3009,7 +3023,6 @@ definitions:
         $ref: "#/definitions/setBucketQuota"
       retention:
         $ref: "#/definitions/putBucketRetentionRequest"
-
   error:
     type: object
     required:
@@ -3579,7 +3592,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account, redirect-service-account ]
+        enum: [form, redirect, service-account, redirect-service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -3662,7 +3675,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
       distributedMode:
@@ -3683,7 +3696,7 @@ definitions:
           type: string
       values:
         type: array
-        items: { }
+        items: {}
   resultTarget:
     type: object
     properties:
@@ -4075,7 +4088,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:
