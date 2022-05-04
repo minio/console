@@ -41,7 +41,10 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../../Console/Configurations/utils";
 import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { IAM_PAGES,
+         CONSOLE_UI_RESOURCE,
+         IAM_SCOPES } from "../../../common/SecureComponent/permissions";
+import {  hasPermission,  SecureComponent } from "../../../common/SecureComponent";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -231,6 +234,15 @@ const UserServiceAccountsPanel = ({
             disabled={selectedSAs.length === 0}
             variant={"outlined"}
           />
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
+              IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
+              IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
+              IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS]}
+            resource={CONSOLE_UI_RESOURCE}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
           <RBIconButton
             tooltip={"Create service account"}
             text={"Create service account"}
@@ -242,6 +254,7 @@ const UserServiceAccountsPanel = ({
             }}
             disabled={!hasPolicy}
           />
+          </SecureComponent>
         </Box>
       </div>
       <div className={classes.tableBlock}>
