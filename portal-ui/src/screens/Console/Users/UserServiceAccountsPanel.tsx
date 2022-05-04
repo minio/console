@@ -44,7 +44,7 @@ import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
 import { IAM_PAGES,
          CONSOLE_UI_RESOURCE,
          IAM_SCOPES } from "../../../common/SecureComponent/permissions";
-import {  hasPermission,  SecureComponent } from "../../../common/SecureComponent";
+import { SecureComponent } from "../../../common/SecureComponent";
 
 interface IUserServiceAccountsProps {
   classes: any;
