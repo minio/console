@@ -41,12 +41,17 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../../Console/Configurations/utils";
 import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
+import { IAM_PAGES,
+         CONSOLE_UI_RESOURCE,
+         IAM_SCOPES } from "../../../common/SecureComponent/permissions";
+import { SecureComponent } from "../../../common/SecureComponent";
 
 interface IUserServiceAccountsProps {
   classes: any;
   user: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   hasPolicy: boolean;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -64,6 +69,7 @@ const UserServiceAccountsPanel = ({
   user,
   setErrorSnackMessage,
   hasPolicy,
+  history,
 }: IUserServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -228,6 +234,15 @@ const UserServiceAccountsPanel = ({
             disabled={selectedSAs.length === 0}
             variant={"outlined"}
           />
+          <SecureComponent
+            scopes={[IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
+              IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
+              IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
+              IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS]}
+            resource={CONSOLE_UI_RESOURCE}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
           <RBIconButton
             tooltip={"Create service account"}
             text={"Create service account"}
@@ -235,12 +250,11 @@ const UserServiceAccountsPanel = ({
             color="primary"
             icon={<AddIcon />}
             onClick={() => {
-              setAddScreenOpen(true);
-              setAddScreenOpen(true);
-              setSelectedServiceAccount(null);
+              history.push(`${IAM_PAGES.USER_ACCOUNT}/${user}`);
             }}
             disabled={!hasPolicy}
           />
+          </SecureComponent>
         </Box>
       </div>
       <div className={classes.tableBlock}>
