@@ -31,12 +31,16 @@ import {
 } from "../../../../../../icons";
 import { niceBytes } from "../../../../../../common/utils";
 import SpecificVersionPill from "./SpecificVersionPill";
+import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 interface IFileVersionItem {
   fileName: string;
   versionInfo: IFileInfo;
   index: number;
   isSelected?: boolean;
+  checkable: boolean;
+  isChecked: boolean;
+  onCheck: (versionID: string) => void;
   onShare: (versionInfo: IFileInfo) => void;
   onDownload: (versionInfo: IFileInfo) => void;
   onRestore: (versionInfo: IFileInfo) => void;
@@ -112,6 +116,9 @@ const FileVersionItem = ({
   fileName,
   versionInfo,
   isSelected,
+  checkable,
+  isChecked,
+  onCheck,
   onShare,
   onDownload,
   onRestore,
@@ -180,6 +187,27 @@ const FileVersionItem = ({
           <Grid item xs={12} justifyContent={"space-between"}>
             <Grid container>
               <Grid item xs={4} className={classes.versionContainer}>
+                {checkable && (
+                  <CheckboxWrapper
+                    checked={isChecked}
+                    id={`select-${versionInfo.version_id}`}
+                    label={""}
+                    name={`select-${versionInfo.version_id}`}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onCheck(versionInfo.version_id || "");
+                    }}
+                    value={versionInfo.version_id || ""}
+                    disabled={versionInfo.is_delete_marker}
+                    overrideCheckboxStyles={{
+                      paddingLeft: 0,
+                      height: 34,
+                      width: 25,
+                    }}
+                    noTopMargin
+                  />
+                )}
                 {displayFileIconName(fileName, true)} v{index.toString()}
                 {pill && <SpecificVersionPill type={pill} />}
               </Grid>
