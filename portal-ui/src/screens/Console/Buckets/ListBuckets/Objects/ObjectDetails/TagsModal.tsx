@@ -214,7 +214,8 @@ const AddTagModal = ({
               Are you sure you want to delete the tag{" "}
               <b className={classes.deleteTag}>
                 {deleteKey} : {deleteLabel}
-              </b>{" "}?
+              </b>{" "}
+              ?
               <Grid item xs={12} className={classes.modalButtonBar}>
                 <Button
                   type="button"

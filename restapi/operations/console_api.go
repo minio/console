@@ -249,6 +249,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserGetUserInfoHandler: user.GetUserInfoHandlerFunc(func(params user.GetUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user.GetUserInfo has not yet been implemented")
 		}),
+		PolicyGetUserPolicyHandler: policy.GetUserPolicyHandlerFunc(func(params policy.GetUserPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.GetUserPolicy has not yet been implemented")
+		}),
 		GroupGroupInfoHandler: group.GroupInfoHandlerFunc(func(params group.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation group.GroupInfo has not yet been implemented")
 		}),
@@ -615,6 +618,8 @@ type ConsoleAPI struct {
 	TieringGetTierHandler tiering.GetTierHandler
 	// UserGetUserInfoHandler sets the operation handler for the get user info operation
 	UserGetUserInfoHandler user.GetUserInfoHandler
+	// PolicyGetUserPolicyHandler sets the operation handler for the get user policy operation
+	PolicyGetUserPolicyHandler policy.GetUserPolicyHandler
 	// GroupGroupInfoHandler sets the operation handler for the group info operation
 	GroupGroupInfoHandler group.GroupInfoHandler
 	// InspectInspectHandler sets the operation handler for the inspect operation
@@ -1001,6 +1006,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserGetUserInfoHandler == nil {
 		unregistered = append(unregistered, "user.GetUserInfoHandler")
+	}
+	if o.PolicyGetUserPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.GetUserPolicyHandler")
 	}
 	if o.GroupGroupInfoHandler == nil {
 		unregistered = append(unregistered, "group.GroupInfoHandler")
@@ -1524,6 +1532,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/user"] = user.NewGetUserInfo(o.context, o.UserGetUserInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/user/policy"] = policy.NewGetUserPolicy(o.context, o.PolicyGetUserPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
