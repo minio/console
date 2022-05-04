@@ -99,10 +99,16 @@ const AddGroupHelpBox = () => {
         }}
       >
         <FeatureItem icon={<GroupsIcon />} description={`Add Users to Group`} />
+        <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+        Select from the list of displayed users to assign users to the new group at creation. These users inherit the policies assigned to the group.
+        </Box>
         <FeatureItem
           icon={<IAMPoliciesIcon />}
           description={`Assign Custom IAM Policies for Group`}
         />
+         <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+         You can add policies to the group by selecting it from the Groups view after creation. The Policy view lets you manage the assigned policies for the group. 
+        </Box>
       </Box>
     </Box>
   );
