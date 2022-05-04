@@ -205,7 +205,7 @@ const AddBucket = ({
     addBucketQuota(false);
     addBucketQuotaType("hard");
     addBucketQuotaSize("1");
-    addBucketQuotaUnit("TiB");
+    addBucketQuotaUnit("Ti");
     addBucketRetention(false);
     addBucketRetentionMode("compliance");
     addBucketRetentionUnit("days");
