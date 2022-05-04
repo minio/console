@@ -126,6 +126,8 @@ export const IAM_PAGES = {
   GROUPS_VIEW: "/identity/groups/:groupName+",
   ACCOUNT: "/identity/account",
   ACCOUNT_ADD: "/identity/new-account",
+  USER_ACCOUNT: "/identity/new-user-sa",
+  USER_ACCOUNT_ADD: "/identity/new-user-sa/:userName+",
   /* Access */
   POLICIES: "/access/policies",
   POLICY_ADD: "/access/add-policy",
@@ -313,6 +315,12 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_ENABLE_USER,
     IAM_SCOPES.ADMIN_DISABLE_USER,
     IAM_SCOPES.ADMIN_DELETE_USER,
+  ],
+  [IAM_PAGES.USER_ACCOUNT_ADD]: [
+    IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
+    IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
+    IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
+    IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
   ],
   [IAM_PAGES.USER_ADD]: [IAM_SCOPES.ADMIN_CREATE_USER], // displays create user button
   [IAM_PAGES.ACCOUNT_ADD]: [IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT],
