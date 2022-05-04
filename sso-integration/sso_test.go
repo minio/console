@@ -93,8 +93,8 @@ func TestMain(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	// execute bash script to get the code and state
-	cmd, err := exec.Command("./logssorun2.sh").Output()
+	// execute script to get the code and state
+	cmd, err := exec.Command("python3", "dex-requests.py").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
