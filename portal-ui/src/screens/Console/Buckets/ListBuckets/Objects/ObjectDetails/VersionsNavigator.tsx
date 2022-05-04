@@ -191,6 +191,12 @@ const VersionsNavigator = ({
   }
 
   useEffect(() => {
+    if (!loadingVersions && !actualInfo) {
+      setLoadingVersions(true);
+    }
+  }, [loadingVersions, actualInfo, setLoadingVersions]);
+
+  useEffect(() => {
     if (loadingVersions && internalPaths !== "") {
       api
         .invoke(
