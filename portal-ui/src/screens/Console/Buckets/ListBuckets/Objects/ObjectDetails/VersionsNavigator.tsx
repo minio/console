@@ -61,7 +61,12 @@ import {
 } from "../../../../ObjectBrowser/actions";
 
 import { AppState } from "../../../../../../store";
-import { DeleteNonCurrentIcon, VersionsIcon } from "../../../../../../icons";
+import {
+  DeleteIcon,
+  DeleteNonCurrentIcon,
+  SelectMultipleIcon,
+  VersionsIcon,
+} from "../../../../../../icons";
 import VirtualizedList from "../../../../Common/VirtualizedList/VirtualizedList";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -69,6 +74,7 @@ import PreviewFileModal from "../Preview/PreviewFileModal";
 import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
+import DeleteSelectedVersions from "./DeleteSelectedVersions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -174,6 +180,9 @@ const VersionsNavigator = ({
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [deleteNonCurrentOpen, setDeleteNonCurrentOpen] =
     useState<boolean>(false);
+  const [selectEnabled, setSelectEnabled] = useState<boolean>(false);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [delSelectedVOpen, setDelSelectedVOpen] = useState<boolean>(false);
 
   // calculate object name to display
   let objectNameArray: string[] = [];
@@ -318,6 +327,17 @@ const VersionsNavigator = ({
     }
   };
 
+  const closeSelectedVersions = (reloadOnComplete: boolean) => {
+    setDelSelectedVOpen(false);
+
+    if (reloadOnComplete) {
+      setLoadingVersions(true);
+      setSelectedVersion("");
+      setLoadingObjectInfo(true);
+      setSelectedItems([]);
+    }
+  };
+
   const totalSpace = versions.reduce((acc: number, currValue: IFileInfo) => {
     if (currValue.size) {
       return acc + parseInt(currValue.size);
@@ -352,6 +372,23 @@ const VersionsNavigator = ({
     }
   });
 
+  const onCheckVersion = (selectedVersion: string) => {
+    if (selectedItems.includes(selectedVersion)) {
+      const filteredItems = selectedItems.filter(
+        (element) => element !== selectedVersion
+      );
+
+      setSelectedItems(filteredItems);
+
+      return;
+    }
+
+    const cloneState = [...selectedItems];
+    cloneState.push(selectedVersion);
+
+    setSelectedItems(cloneState);
+  };
+
   const renderVersion = (elementIndex: number) => {
     const item = filteredRecords[elementIndex];
     const versOrd = versions.length - versions.indexOf(item);
@@ -367,6 +404,9 @@ const VersionsNavigator = ({
         onPreview={onPreviewItem}
         globalClick={onGlobalClick}
         isSelected={selectedVersion === item.version_id}
+        checkable={selectEnabled}
+        onCheck={onCheckVersion}
+        isChecked={selectedItems.includes(item.version_id || "")}
       />
     );
   };
@@ -419,6 +459,15 @@ const VersionsNavigator = ({
           selectedObject={internalPaths}
         />
       )}
+      {delSelectedVOpen && (
+        <DeleteSelectedVersions
+          selectedBucket={bucketName}
+          selectedObject={decodeFileName(internalPaths)}
+          deleteOpen={delSelectedVOpen}
+          selectedVersions={selectedItems}
+          closeDeleteModalAndRefresh={closeSelectedVersions}
+        />
+      )}
       <Grid container className={classes.versionsContainer}>
         {!actualInfo && (
           <Grid item xs={12}>
@@ -468,6 +517,32 @@ const VersionsNavigator = ({
                 }
                 actions={
                   <Fragment>
+                    <RBIconButton
+                      id={"select-multiple-versions"}
+                      tooltip={"Select Multiple Versions"}
+                      onClick={() => {
+                        setSelectEnabled(!selectEnabled);
+                      }}
+                      text={""}
+                      icon={<SelectMultipleIcon />}
+                      color="primary"
+                      variant={selectEnabled ? "contained" : "outlined"}
+                      style={{ marginRight: 8 }}
+                    />
+                    {selectEnabled && (
+                      <RBIconButton
+                        id={"delete-multiple-versions"}
+                        tooltip={"Delete Selected Versions"}
+                        onClick={() => {
+                          setDelSelectedVOpen(true);
+                        }}
+                        text={""}
+                        icon={<DeleteIcon />}
+                        color="secondary"
+                        style={{ marginRight: 8 }}
+                        disabled={selectedItems.length === 0}
+                      />
+                    )}
                     <RBIconButton
                       id={"delete-non-current"}
                       tooltip={"Delete Non Current Versions"}
