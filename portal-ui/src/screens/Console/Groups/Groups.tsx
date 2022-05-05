@@ -20,7 +20,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, Box } from "@mui/material";
 import { AddIcon, GroupsIcon, UsersIcon, DeleteIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
@@ -185,22 +185,18 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
     history.push(`${IAM_PAGES.GROUPS}/${group}`);
   };
 
-//  const deleteAction = (group: any) => {
- //   setDeleteOpen(true);
- //   setSelectedGroup([group]);
- // };
 
   const tableActions = [
     {
-      type: "edit",
+      type: "view",
       onClick: viewAction,
       disableButtonFunction: () => !getGroup,
     },
-  //  {
-  //    type: "delete",
-  //   onClick: deleteAction,
-   //   disableButtonFunction: () => !deleteGroup,
-   // },
+    {
+      type: "edit",
+     onClick: viewAction,
+      disableButtonFunction: () => !getGroup,
+    },
   ];
 
 
@@ -226,19 +222,26 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
       <PageHeader label={"Groups"} />
 
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTrayTest}>
+        <Grid item xs={12} className={classes.actionsTray}>
+       
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
             errorProps={{ disabled: true }}
-          >
+         > 
             <SearchBox
               placeholder={"Search Groups"}
               onChange={setFilter}
               overrideClass={classes.searchField}
               value={filter}
             />
-          </SecureComponent>
+          </SecureComponent> 
+          <Box
+            sx={{
+              display: "flex",
+            }}
+          >
+            {" "}
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[
@@ -258,7 +261,8 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
               disabled={checkedGroups.length === 0}
               variant={"outlined"}
             />
-            </SecureComponent>
+            
+           </SecureComponent>
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[
@@ -279,6 +283,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
               }}
             />
           </SecureComponent>
+          </Box>
         </Grid>
         {loading && <LinearProgress />}
         {!loading && (
