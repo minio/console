@@ -65,6 +65,7 @@ import {
   setSearchObjects,
   setSelectedObjectView,
   setShowDeletedObjects,
+  setSimplePathHandler,
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/actions";
@@ -221,14 +222,15 @@ interface IListObjectsProps {
   searchObjects: string;
   showDeleted: boolean;
   loading: boolean;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  resetRewind: typeof resetRewind;
   loadingBucket: boolean;
-  setBucketInfo: typeof setBucketInfo;
   bucketInfo: BucketInfo | null;
   versionsMode: boolean;
   detailsOpen: boolean;
+  simplePath: string | null;
+  setSnackBarMessage: typeof setSnackBarMessage;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
+  resetRewind: typeof resetRewind;
+  setBucketInfo: typeof setBucketInfo;
   setBucketDetailsLoad: typeof setBucketDetailsLoad;
   setNewObject: typeof setNewObject;
   updateProgress: typeof updateProgress;
@@ -245,6 +247,7 @@ interface IListObjectsProps {
   setLoadingObjectsList: typeof setLoadingObjectsList;
   failObject: typeof failObject;
   cancelObjectInList: typeof cancelObjectInList;
+  setSimplePathHandler: typeof setSimplePathHandler;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -294,6 +297,7 @@ const ListObjects = ({
   searchObjects,
   versionsMode,
   openList,
+  simplePath,
   setVersionsModeEnabled,
   showDeleted,
   detailsOpen,
@@ -306,6 +310,7 @@ const ListObjects = ({
   setLoadingObjectsList,
   failObject,
   cancelObjectInList,
+  setSimplePathHandler,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObjectItem[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
@@ -482,9 +487,9 @@ const ListObjects = ({
     const decodedIPaths = decodeFileName(internalPaths);
 
     if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
-      setLoadingObjectsList(true);
       setObjectDetailsView(false);
-      setSearchObjects("");
+      setSelectedObjectView(null);
+      setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths);
     } else {
       setLoadingObjectInfo(true);
       setObjectDetailsView(true);
@@ -492,18 +497,26 @@ const ListObjects = ({
       setSelectedObjectView(
         `${decodedIPaths ? `${encodeFileName(decodedIPaths)}` : ``}`
       );
+      setSimplePathHandler(
+        `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
+      );
     }
   }, [
     internalPaths,
-    setSearchObjects,
     rewindDate,
     rewindEnabled,
     setLoadingObjectInfo,
     setLoadingVersions,
     setObjectDetailsView,
     setSelectedObjectView,
-    setLoadingObjectsList,
+    setSimplePathHandler,
   ]);
+
+  useEffect(() => {
+    setSearchObjects("");
+    setLoadingObjectsList(true);
+    setSelectedObjects([]);
+  }, [simplePath, setSearchObjects, setLoadingObjectsList, setSelectedObjects]);
 
   useEffect(() => {
     if (loading) {
@@ -795,11 +808,8 @@ const ListObjects = ({
   const uploadObject = useCallback(
     (files: File[], folderPath: string): void => {
       let pathPrefix = "";
-      if (internalPaths) {
-        const decodedPath = decodeFileName(internalPaths);
-        pathPrefix = decodedPath.endsWith("/")
-          ? decodedPath
-          : decodedPath + "/";
+      if (simplePath) {
+        pathPrefix = simplePath.endsWith("/") ? simplePath : simplePath + "/";
       }
 
       const upload = (
@@ -812,13 +822,23 @@ const ListObjects = ({
           return new Promise((resolve, reject) => {
             let uploadUrl = `api/v1/buckets/${bucketName}/objects/upload`;
             const fileName = file.name;
+
             const blobFile = new Blob([file], { type: file.type });
 
             let encodedPath = "";
-            const relativeFolderPath =
-              get(file, "webkitRelativePath", "") !== ""
-                ? get(file, "webkitRelativePath", "")
-                : folderPath;
+
+            const filePath = get(file, "path", "");
+            const fileWebkitRelativePath = get(file, "webkitRelativePath", "");
+
+            let relativeFolderPath = folderPath;
+
+            // File was uploaded via drag & drop
+            if (filePath !== "") {
+              relativeFolderPath = filePath;
+            } else if (fileWebkitRelativePath !== "") {
+              // File was uploaded using upload button
+              relativeFolderPath = fileWebkitRelativePath;
+            }
 
             if (path !== "" || relativeFolderPath !== "") {
               const finalFolderPath = relativeFolderPath
@@ -826,9 +846,20 @@ const ListObjects = ({
                 .slice(0, -1)
                 .join("/");
 
+              const pathClean = path.endsWith("/") ? path.slice(0, -1) : path;
+
               encodedPath = encodeFileName(
-                `${path}${finalFolderPath}${
-                  !finalFolderPath.endsWith("/") ? "/" : ""
+                `${pathClean}${
+                  !pathClean.endsWith("/") &&
+                  finalFolderPath !== "" &&
+                  !finalFolderPath.startsWith("/")
+                    ? "/"
+                    : ""
+                }${finalFolderPath}${
+                  !finalFolderPath.endsWith("/") ||
+                  (finalFolderPath.trim() === "" && !path.endsWith("/"))
+                    ? "/"
+                    : ""
                 }`
               );
             }
@@ -947,6 +978,7 @@ const ListObjects = ({
           }
           // We force objects list reload after all promises were handled
           setLoadingObjectsList(true);
+          setSelectedObjects([]);
         });
       };
 
@@ -955,7 +987,6 @@ const ListObjects = ({
     [
       bucketName,
       completeObject,
-      internalPaths,
       openList,
       setNewObject,
       setErrorSnackMessage,
@@ -963,6 +994,7 @@ const ListObjects = ({
       setLoadingObjectsList,
       cancelObjectInList,
       failObject,
+      simplePath,
     ]
   );
 
@@ -1502,6 +1534,7 @@ const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
   detailsOpen: objectBrowser.objectDetailsOpen,
   selectedInternalPaths: objectBrowser.selectedInternalPaths,
   loading: objectBrowser.loadingObjects,
+  simplePath: objectBrowser.simplePath,
 });
 
 const mapDispatchToProps = {
@@ -1524,6 +1557,7 @@ const mapDispatchToProps = {
   setLoadingObjectInfo,
   setLoadingObjectsList,
   cancelObjectInList,
+  setSimplePathHandler,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
