@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, Box } from "@mui/material";
-import { AddIcon, GroupsIcon, UsersIcon, DeleteIcon } from "../../../icons";
+import { AddIcon, GroupsIcon, UsersIcon, DeleteIcon, IAMPoliciesIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -75,20 +75,10 @@ const styles = (theme: Theme) =>
       ...searchField.searchField,
       maxWidth: 380,
     },
-    actionsTrayTest: {
-      display: "flex" as const,
-      justifyContent: "space-between" as const,
-      marginBottom: "1rem",
-      alignItems: "center",
-      "& button": {
-        flexGrow: 0,
-      },
-    },
     ...containerForHeader(theme.spacing(4)),
   });
 
 const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
-  const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
   const [records, setRecords] = useState<any[]>([]);
@@ -134,13 +124,6 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
     setCheckedGroups(elements);
 
     return elements;
-  };
-
-  const closeDeleteGroupsBulk = (unCheckAll: boolean = false) => {
-    setDeleteOpen(false);
-    if (unCheckAll) {
-      setCheckedGroups([]);
-    }
   };
 
   useEffect(() => {
@@ -209,10 +192,10 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      {setPolicyOpen && (
+      {policyOpen && (
         <SetPolicy
           open={policyOpen}
-          selectedGroup={selectedGroup}
+          selectedGroup={checkedGroups[0]}
           selectedUser={null}
           closeModalAndRefresh={() => {
             setPolicyOpen(false);
@@ -242,6 +225,27 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
             }}
           >
             {" "}
+            <SecureComponent
+            resource={CONSOLE_UI_RESOURCE}
+            scopes={[
+              IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY
+            ]}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
+          <RBIconButton
+              tooltip={"Select Policy"}
+              onClick={() => {
+                setPolicyOpen(true);
+              }}
+              text={"Assign Policy"}
+              icon={<IAMPoliciesIcon />}
+              color="primary"
+              disabled={checkedGroups.length !== 1}
+              variant={"outlined"}
+            />
+            
+           </SecureComponent>
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[

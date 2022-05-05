@@ -22,7 +22,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../icons";
-import { group } from "console";
 
 interface IDeleteGroup {
   selectedGroups: string[];
