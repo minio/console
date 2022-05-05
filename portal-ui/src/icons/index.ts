@@ -190,3 +190,5 @@ export { default as RemoveAllIcon } from "./RemoveAllIcon";
 export { default as CancelledIcon } from "./CancelledIcon";
 export { default as EditTagIcon } from "./EditTagIcon";
 export { default as LinkIcon } from "./LinkIcon";
+export { default as AlertIcon } from "./AlertIcon";
+export { default as InfoIcon } from "./InfoIcon";
