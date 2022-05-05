@@ -245,17 +245,7 @@ const Watch = ({
               }}
               variant="standard"
             />
-            {!start && (
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                onClick={() => setStart(true)}
-              >
-                Start
-              </Button>
-            )}
-            {start && (
+            {start ? (
               <Button
                 type="submit"
                 variant="contained"
@@ -263,6 +253,15 @@ const Watch = ({
                 onClick={() => setStart(false)}
               >
                 Stop
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={() => setStart(true)}
+              >
+                Start
               </Button>
             )}
           </Grid>
