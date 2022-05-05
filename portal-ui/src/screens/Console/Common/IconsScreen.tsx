@@ -164,6 +164,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.AlertIcon />
+          <br />
+          AlertIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.AllBucketsIcon />
           <br />
           AllBucketsIcon
@@ -623,6 +629,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           <cicons.IAMPoliciesIcon />
           <br />
           IAMPoliciesIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.InfoIcon />
+          <br />
+          InfoIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>

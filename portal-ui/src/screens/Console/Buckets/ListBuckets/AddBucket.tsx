@@ -47,13 +47,14 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
-import { BucketsIcon } from "../../../../icons";
+import { BucketsIcon, InfoIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormLayout from "../../Common/FormLayout";
 import HelpBox from "../../../../common/HelpBox";
 import SectionTitle from "../../Common/SectionTitle";
+import { SRInfoStateType } from "../../../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -69,6 +70,20 @@ const styles = (theme: Theme) =>
       border: "1px solid #b53b4b",
       padding: 8,
       borderRadius: 3,
+    },
+    alertVersioning: {
+      border: "#E2E2E2 1px solid",
+      backgroundColor: "#FBFAFA",
+      borderRadius: 3,
+      display: "flex",
+      alignItems: "center",
+      padding: "10px",
+      color: "#767676",
+      "& > .min-icon ": {
+        width: 20,
+        height: 20,
+        marginRight: 10,
+      },
     },
     title: {
       marginBottom: 8,
@@ -112,6 +127,7 @@ interface IAddBucketProps {
   retentionUnit: string;
   retentionValidity: number;
   distributedSetup: boolean;
+  siteReplicationInfo: SRInfoStateType;
 }
 
 const AddBucket = ({
@@ -140,6 +156,7 @@ const AddBucket = ({
   retentionUnit,
   retentionValidity,
   distributedSetup,
+  siteReplicationInfo,
 }: IAddBucketProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [sendEnabled, setSendEnabled] = useState<boolean>(false);
@@ -155,7 +172,10 @@ const AddBucket = ({
 
     let request: MakeBucketRequest = {
       name: bucketName,
-      versioning: distributedSetup ? versioningEnabled : false,
+      versioning:
+        distributedSetup && !siteReplicationInfo.enabled
+          ? versioningEnabled
+          : false,
       locking: distributedSetup ? lockingEnabled : false,
     };
 
@@ -346,6 +366,16 @@ const AddBucket = ({
               </Grid>
 
               <Grid item xs={12}>
+                {siteReplicationInfo.enabled && (
+                  <Fragment>
+                    <br />
+                    <div className={classes.alertVersioning}>
+                      <InfoIcon /> Versioning setting cannot be changed as
+                      cluster replication is enabled for this site.
+                    </div>
+                    <br />
+                  </Fragment>
+                )}
                 <FormSwitchWrapper
                   value="versioned"
                   id="versioned"
@@ -355,7 +385,11 @@ const AddBucket = ({
                     addBucketVersioned(event.target.checked);
                   }}
                   label={"Versioning"}
-                  disabled={!distributedSetup || lockingEnabled}
+                  disabled={
+                    !distributedSetup ||
+                    lockingEnabled ||
+                    siteReplicationInfo.enabled
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -367,7 +401,7 @@ const AddBucket = ({
                   checked={lockingEnabled}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     enableObjectLocking(event.target.checked);
-                    if (event.target.checked) {
+                    if (event.target.checked && !siteReplicationInfo.enabled) {
                       addBucketVersioned(true);
                     }
                   }}
@@ -525,6 +559,7 @@ const mapState = (state: AppState) => ({
   retentionUnit: state.buckets.addBucketRetentionUnit,
   retentionValidity: state.buckets.addBucketRetentionValidity,
   distributedSetup: state.system.distributedSetup,
+  siteReplicationInfo: state.system.siteReplicationInfo,
 });
 
 const connector = connect(mapState, {
