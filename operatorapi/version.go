@@ -49,7 +49,8 @@ func getVersionResponse(params user_api.CheckMinIOVersionParams) (*models.CheckO
 	ver, err := utils.GetLatestMinIOImage(&xhttp.Client{
 		Client: &http.Client{
 			Timeout: 15 * time.Second,
-		}})
+		},
+	})
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}

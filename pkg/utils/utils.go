@@ -30,10 +30,12 @@ func NewUUID() (string, error) {
 // Key used for Get/SetReqInfo
 type key string
 
-const ContextLogKey = key("console-log")
-const ContextRequestID = key("request-id")
-const ContextRequestUserID = key("request-user-id")
-const ContextRequestUserAgent = key("request-user-agent")
-const ContextRequestHost = key("request-host")
-const ContextRequestRemoteAddr = key("request-remote-addr")
-const ContextAuditKey = key("request-audit-entry")
+const (
+	ContextLogKey            = key("console-log")
+	ContextRequestID         = key("request-id")
+	ContextRequestUserID     = key("request-user-id")
+	ContextRequestUserAgent  = key("request-user-agent")
+	ContextRequestHost       = key("request-host")
+	ContextRequestRemoteAddr = key("request-remote-addr")
+	ContextAuditKey          = key("request-audit-entry")
+)

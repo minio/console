@@ -35,8 +35,7 @@ import (
 var token string
 
 func initConsoleServer() (*restapi.Server, error) {
-
-	//os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
+	// os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
 
 	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
 	if err != nil {
@@ -58,7 +57,7 @@ func initConsoleServer() (*restapi.Server, error) {
 	// register all APIs
 	server.ConfigureAPI()
 
-	//restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = globalRootCAs, globalPublicCerts, globalTLSCerts
+	// restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = globalRootCAs, globalPublicCerts, globalTLSCerts
 
 	consolePort, _ := strconv.Atoi("9090")
 
@@ -71,7 +70,6 @@ func initConsoleServer() (*restapi.Server, error) {
 }
 
 func TestMain(m *testing.M) {
-
 	// start console server
 	go func() {
 		fmt.Println("start server")
@@ -82,7 +80,6 @@ func TestMain(m *testing.M) {
 			return
 		}
 		srv.Serve()
-
 	}()
 
 	fmt.Println("sleeping")
@@ -111,7 +108,6 @@ func TestMain(m *testing.M) {
 	request.Header.Add("Content-Type", "application/json")
 
 	response, err := client.Do(request)
-
 	if err != nil {
 		log.Println(err)
 		return

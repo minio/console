@@ -60,7 +60,6 @@ func getSpeedtestOptionsFromReq(req *http.Request) (*madmin.SpeedtestOpts, error
 	}
 
 	size, err := humanize.ParseBytes(paramSize)
-
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse object size")
 	}
@@ -78,7 +77,6 @@ func getSpeedtestOptionsFromReq(req *http.Request) (*madmin.SpeedtestOpts, error
 	}
 
 	concurrent, err := strconv.Atoi(paramConcurrent)
-
 	if err != nil {
 		return nil, fmt.Errorf("invalid concurrent value: %s", paramConcurrent)
 	}
@@ -100,7 +98,6 @@ func getSpeedtestOptionsFromReq(req *http.Request) (*madmin.SpeedtestOpts, error
 
 func startSpeedtest(ctx context.Context, conn WSConn, client MinioAdmin, speedtestOpts *madmin.SpeedtestOpts) error {
 	speedtestRes, err := client.speedtest(ctx, *speedtestOpts)
-
 	if err != nil {
 		LogError("error initializing speedtest: %v", err)
 		return err

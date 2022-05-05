@@ -92,7 +92,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewListTenantsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewListTenantsOK().WithPayload(resp)
-
 	})
 	// List Tenants by namespace
 	api.OperatorAPIListTenantsHandler = operator_api.ListTenantsHandlerFunc(func(params operator_api.ListTenantsParams, session *models.Principal) middleware.Responder {
@@ -101,7 +100,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewListTenantsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewListTenantsOK().WithPayload(resp)
-
 	})
 	// Detail Tenant
 	api.OperatorAPITenantDetailsHandler = operator_api.TenantDetailsHandlerFunc(func(params operator_api.TenantDetailsParams, session *models.Principal) middleware.Responder {
@@ -110,7 +108,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewTenantDetailsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewTenantDetailsOK().WithPayload(resp)
-
 	})
 
 	// Tenant Security details
@@ -120,7 +117,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewTenantSecurityDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewTenantSecurityOK().WithPayload(resp)
-
 	})
 
 	// Update Tenant Security configuration
@@ -130,7 +126,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewUpdateTenantSecurityDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewUpdateTenantSecurityNoContent()
-
 	})
 
 	// Tenant identity provider details
@@ -140,7 +135,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewTenantIdentityProviderDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewTenantIdentityProviderOK().WithPayload(resp)
-
 	})
 
 	// Update Tenant identity provider configuration
@@ -150,7 +144,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewUpdateTenantIdentityProviderDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewUpdateTenantIdentityProviderNoContent()
-
 	})
 
 	// Delete Tenant
@@ -160,7 +153,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewDeleteTenantDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewDeleteTenantNoContent()
-
 	})
 
 	// Delete Pod
@@ -170,7 +162,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewDeletePodDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewDeletePodNoContent()
-
 	})
 
 	// Update Tenant
@@ -266,7 +257,7 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewDescribePodOK().WithPayload(payload)
 	})
 
-	//Get tenant monitoring info
+	// Get tenant monitoring info
 	api.OperatorAPIGetTenantMonitoringHandler = operator_api.GetTenantMonitoringHandlerFunc(func(params operator_api.GetTenantMonitoringParams, session *models.Principal) middleware.Responder {
 		payload, err := getTenantMonitoringResponse(session, params)
 		if err != nil {
@@ -274,7 +265,7 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewGetTenantMonitoringOK().WithPayload(payload)
 	})
-	//Set configuration fields for Prometheus monitoring on a tenant
+	// Set configuration fields for Prometheus monitoring on a tenant
 	api.OperatorAPISetTenantMonitoringHandler = operator_api.SetTenantMonitoringHandlerFunc(func(params operator_api.SetTenantMonitoringParams, session *models.Principal) middleware.Responder {
 		_, err := setTenantMonitoringResponse(session, params)
 		if err != nil {
@@ -403,8 +394,8 @@ func deleteTenantAction(
 	operatorClient OperatorClientI,
 	clientset v1.CoreV1Interface,
 	tenant *miniov2.Tenant,
-	deletePvcs bool) error {
-
+	deletePvcs bool,
+) error {
 	err := operatorClient.TenantDelete(ctx, tenant.Namespace, tenant.Name, metav1.DeleteOptions{})
 	if err != nil {
 		// try to delete pvc even if the tenant doesn't exist anymore but only if deletePvcs is set to true,
@@ -548,7 +539,7 @@ func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 	for _, p := range tenant.Spec.Pools {
 		pools = append(pools, parseTenantPool(&p))
 		poolSize := int64(p.Servers) * int64(p.VolumesPerServer) * p.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
-		totalSize = totalSize + poolSize
+		totalSize += poolSize
 	}
 	var deletion string
 	if tenant.ObjectMeta.DeletionTimestamp != nil {
@@ -862,7 +853,6 @@ func updateTenantIdentityProvider(ctx context.Context, operatorClient OperatorCl
 }
 
 func getTenantIdentityProviderResponse(session *models.Principal, params operator_api.TenantIdentityProviderParams) (*models.IdpConfiguration, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -893,7 +883,6 @@ func getTenantIdentityProviderResponse(session *models.Principal, params operato
 }
 
 func getUpdateTenantIdentityProviderResponse(session *models.Principal, params operator_api.UpdateTenantIdentityProviderParams) *models.Error {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -918,7 +907,6 @@ func getUpdateTenantIdentityProviderResponse(session *models.Principal, params o
 }
 
 func getTenantSecurityResponse(session *models.Principal, params operator_api.TenantSecurityParams) (*models.TenantSecurityResponse, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -948,7 +936,6 @@ func getTenantSecurityResponse(session *models.Principal, params operator_api.Te
 }
 
 func getUpdateTenantSecurityResponse(session *models.Principal, params operator_api.UpdateTenantSecurityParams) *models.Error {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
@@ -1010,7 +997,7 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		}
 		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificate)
 	}
-	//Create new Certificate Secrets for MinIO
+	// Create new Certificate Secrets for MinIO
 	secretName := fmt.Sprintf("%s-%s", minInst.Name, strings.ToLower(utils.RandomCharString(5)))
 	externalCertSecretName := fmt.Sprintf("%s-external-certificates", secretName)
 	externalCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.Minio, externalCertSecretName, minInst.Name)
@@ -1077,11 +1064,11 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 		var instanceCount int64
 		var volumeCount int64
 		for _, pool := range tenant.Spec.Pools {
-			instanceCount = instanceCount + int64(pool.Servers)
-			volumeCount = volumeCount + int64(pool.Servers*pool.VolumesPerServer)
+			instanceCount += int64(pool.Servers)
+			volumeCount += int64(pool.Servers * pool.VolumesPerServer)
 			if pool.VolumeClaimTemplate != nil {
 				poolSize := int64(pool.VolumesPerServer) * int64(pool.Servers) * pool.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
-				totalSize = totalSize + poolSize
+				totalSize += poolSize
 			}
 		}
 
@@ -1322,7 +1309,6 @@ func getTenantAddPoolResponse(session *models.Principal, params operator_api.Ten
 
 // getTenantUsageResponse returns the usage of a tenant
 func getTenantUsageResponse(session *models.Principal, params operator_api.GetTenantUsageParams) (*models.TenantUsage, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -1373,7 +1359,6 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 
 // getTenantLogsResponse returns the logs of a tenant
 func getTenantLogsResponse(session *models.Principal, params operator_api.GetTenantLogsParams) (*models.TenantLogs, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -1470,7 +1455,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 
 // setTenantLogsResponse returns the logs of a tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -1488,21 +1472,21 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 
-	var labels = make(map[string]string)
+	labels := make(map[string]string)
 	for i := 0; i < len(params.Data.Labels); i++ {
 		if params.Data.Labels[i] != nil {
 			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
 		}
 	}
 	minTenant.Spec.Log.Labels = labels
-	var annotations = make(map[string]string)
+	annotations := make(map[string]string)
 	for i := 0; i < len(params.Data.Annotations); i++ {
 		if params.Data.Annotations[i] != nil {
 			annotations[params.Data.Annotations[i].Key] = params.Data.Annotations[i].Value
 		}
 	}
 	minTenant.Spec.Log.Annotations = annotations
-	var nodeSelector = make(map[string]string)
+	nodeSelector := make(map[string]string)
 	for i := 0; i < len(params.Data.NodeSelector); i++ {
 		if params.Data.NodeSelector[i] != nil {
 			nodeSelector[params.Data.NodeSelector[i].Key] = params.Data.NodeSelector[i].Value
@@ -1533,21 +1517,21 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if minTenant.Spec.Log.Db != nil {
 		modified = true
 	}
-	var dbLabels = make(map[string]string)
+	dbLabels := make(map[string]string)
 	for i := 0; i < len(params.Data.DbLabels); i++ {
 		if params.Data.DbLabels[i] != nil {
 			dbLabels[params.Data.DbLabels[i].Key] = params.Data.DbLabels[i].Value
 		}
 		modified = true
 	}
-	var dbAnnotations = make(map[string]string)
+	dbAnnotations := make(map[string]string)
 	for i := 0; i < len(params.Data.DbAnnotations); i++ {
 		if params.Data.DbAnnotations[i] != nil {
 			dbAnnotations[params.Data.DbAnnotations[i].Key] = params.Data.DbAnnotations[i].Value
 		}
 		modified = true
 	}
-	var dbNodeSelector = make(map[string]string)
+	dbNodeSelector := make(map[string]string)
 	for i := 0; i < len(params.Data.DbNodeSelector); i++ {
 		if params.Data.DbNodeSelector[i] != nil {
 			dbNodeSelector[params.Data.DbNodeSelector[i].Key] = params.Data.DbNodeSelector[i].Value
@@ -1587,7 +1571,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	}
 	if modified {
 		if minTenant.Spec.Log.Db == nil {
-			//Default class name for Log search
+			// Default class name for Log search
 			diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
 			logSearchStorageClass := "standard"
 
@@ -1637,7 +1621,6 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 
 // enableTenantLoggingResponse enables Tenant Logging
 func enableTenantLoggingResponse(session *models.Principal, params operator_api.EnableTenantLoggingParams) (bool, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -1656,7 +1639,7 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 	}
 	minTenant.EnsureDefaults()
 
-	//Default class name for Log search
+	// Default class name for Log search
 	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
 	logSearchStorageClass := "standard"
 
@@ -1698,7 +1681,6 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 
 // disableTenantLoggingResponse disables Tenant Logging
 func disableTenantLoggingResponse(session *models.Principal, params operator_api.DisableTenantLoggingParams) (bool, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -1758,7 +1740,8 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 			TimeCreated: pod.CreationTimestamp.Unix(),
 			PodIP:       pod.Status.PodIP,
 			Restarts:    restarts,
-			Node:        pod.Spec.NodeName})
+			Node:        pod.Spec.NodeName,
+		})
 	}
 	return retval, nil
 }
@@ -1918,19 +1901,22 @@ func getDescribePodResponse(session *models.Principal, params operator_api.Descr
 			for j := range pod.Spec.Volumes[i].Projected.Sources {
 				retval.Volumes[i].Projected.Sources[j] = &models.ProjectedVolumeSource{}
 				if pod.Spec.Volumes[i].Projected.Sources[j].Secret != nil {
-					retval.Volumes[i].Projected.Sources[j].Secret = &models.Secret{Name: pod.Spec.Volumes[i].Projected.Sources[j].Secret.Name,
-						Optional: pod.Spec.Volumes[i].Projected.Sources[j].Secret.Optional != nil}
+					retval.Volumes[i].Projected.Sources[j].Secret = &models.Secret{
+						Name:     pod.Spec.Volumes[i].Projected.Sources[j].Secret.Name,
+						Optional: pod.Spec.Volumes[i].Projected.Sources[j].Secret.Optional != nil,
+					}
 				}
 				if pod.Spec.Volumes[i].Projected.Sources[j].DownwardAPI != nil {
 					retval.Volumes[i].Projected.Sources[j].DownwardAPI = true
 				}
 				if pod.Spec.Volumes[i].Projected.Sources[j].ConfigMap != nil {
-					retval.Volumes[i].Projected.Sources[j].ConfigMap = &models.ConfigMap{Name: pod.Spec.Volumes[i].Projected.Sources[j].ConfigMap.Name,
-						Optional: pod.Spec.Volumes[i].Projected.Sources[j].ConfigMap.Optional != nil}
+					retval.Volumes[i].Projected.Sources[j].ConfigMap = &models.ConfigMap{
+						Name:     pod.Spec.Volumes[i].Projected.Sources[j].ConfigMap.Name,
+						Optional: pod.Spec.Volumes[i].Projected.Sources[j].ConfigMap.Optional != nil,
+					}
 				}
 				if pod.Spec.Volumes[i].Projected.Sources[j].ServiceAccountToken != nil {
-					retval.Volumes[i].Projected.Sources[j].ServiceAccountToken =
-						&models.ServiceAccountToken{ExpirationSeconds: *pod.Spec.Volumes[i].Projected.Sources[j].ServiceAccountToken.ExpirationSeconds}
+					retval.Volumes[i].Projected.Sources[j].ServiceAccountToken = &models.ServiceAccountToken{ExpirationSeconds: *pod.Spec.Volumes[i].Projected.Sources[j].ServiceAccountToken.ExpirationSeconds}
 				}
 			}
 		}
@@ -2093,7 +2079,7 @@ func translateTimestampSince(timestamp metav1.Time) string {
 	return duration.HumanDuration(time.Since(timestamp.Time))
 }
 
-//get values for prometheus metrics
+// get values for prometheus metrics
 func getTenantMonitoringResponse(session *models.Principal, params operator_api.GetTenantMonitoringParams) (*models.TenantMonitoringInfo, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -2184,12 +2170,10 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	}
 
 	return monitoringInfo, nil
-
 }
 
-//sets tenant Prometheus monitoring cofiguration fields to values provided
+// sets tenant Prometheus monitoring cofiguration fields to values provided
 func setTenantMonitoringResponse(session *models.Principal, params operator_api.SetTenantMonitoringParams) (bool, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -2225,19 +2209,19 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 		return true, nil
 	}
 
-	var labels = make(map[string]string)
+	labels := make(map[string]string)
 	for i := 0; i < len(params.Data.Labels); i++ {
 		if params.Data.Labels[i] != nil {
 			labels[params.Data.Labels[i].Key] = params.Data.Labels[i].Value
 		}
 	}
-	var annotations = make(map[string]string)
+	annotations := make(map[string]string)
 	for i := 0; i < len(params.Data.Annotations); i++ {
 		if params.Data.Annotations[i] != nil {
 			annotations[params.Data.Annotations[i].Key] = params.Data.Annotations[i].Value
 		}
 	}
-	var nodeSelector = make(map[string]string)
+	nodeSelector := make(map[string]string)
 	for i := 0; i < len(params.Data.NodeSelector); i++ {
 		if params.Data.NodeSelector[i] != nil {
 			nodeSelector[params.Data.NodeSelector[i].Key] = params.Data.NodeSelector[i].Value
@@ -2285,7 +2269,6 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	}
 
 	return true, nil
-
 }
 
 // parseTenantPoolRequest parse pool request and returns the equivalent
@@ -2756,8 +2739,8 @@ func updateTenantPools(
 	operatorClient OperatorClientI,
 	namespace string,
 	tenantName string,
-	poolsReq []*models.Pool) (*miniov2.Tenant, error) {
-
+	poolsReq []*models.Pool,
+) (*miniov2.Tenant, error) {
 	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
@@ -2804,7 +2787,7 @@ func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLP
 	}
 	// remove managed fields
 	tenant.ManagedFields = []metav1.ManagedFieldsEntry{}
-	//yb, err := yaml.Marshal(tenant)
+	// yb, err := yaml.Marshal(tenant)
 	j8sJSONSerializer := k8sJson.NewSerializerWithOptions(
 		k8sJson.DefaultMetaFactory, nil, nil,
 		k8sJson.SerializerOptions{
@@ -2925,7 +2908,6 @@ func getUpdateDomainsResponse(session *models.Principal, params operator_api.Upd
 }
 
 func updateTenantDomains(ctx context.Context, operatorClient OperatorClientI, namespace string, tenantName string, domainConfig *models.DomainsConfiguration) error {
-
 	minTenant, err := getTenant(ctx, operatorClient, namespace, tenantName)
 	if err != nil {
 		return err

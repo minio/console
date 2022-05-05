@@ -35,7 +35,6 @@ func registerAdminArnsHandlers(api *operations.ConsoleAPI) {
 		}
 		return systemApi.NewArnListOK().WithPayload(arnsResp)
 	})
-
 }
 
 // getArns invokes admin info and returns a list of arns

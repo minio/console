@@ -31,7 +31,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func AddPolicy(name string, definition string) (*http.Response, error) {
+func AddPolicy(name, definition string) (*http.Response, error) {
 	/*
 		This is an atomic function to add user and can be reused across
 		different functions.
@@ -59,7 +59,7 @@ func AddPolicy(name string, definition string) (*http.Response, error) {
 	return response, err
 }
 
-func SetPolicy(policies []string, entityName string, entityType string) (*http.Response, error) {
+func SetPolicy(policies []string, entityName, entityType string) (*http.Response, error) {
 	/*
 		This is an atomic function to add user and can be reused across
 		different functions.
@@ -182,7 +182,6 @@ func Test_AddPolicyAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -213,7 +212,6 @@ func Test_AddPolicyAPI(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func Test_SetPolicyAPI(t *testing.T) {
@@ -298,7 +296,6 @@ func Test_SetPolicyAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -330,7 +327,6 @@ func Test_SetPolicyAPI(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func Test_SetPolicyMultipleAPI(t *testing.T) {
@@ -412,7 +408,6 @@ func Test_SetPolicyMultipleAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -442,7 +437,6 @@ func Test_SetPolicyMultipleAPI(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func Test_ListPoliciesAPI(t *testing.T) {
@@ -469,7 +463,6 @@ func Test_ListPoliciesAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -492,7 +485,6 @@ func Test_ListPoliciesAPI(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func Test_GetPolicyAPI(t *testing.T) {
@@ -544,7 +536,6 @@ func Test_GetPolicyAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -567,7 +558,6 @@ func Test_GetPolicyAPI(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func Test_PolicyListUsersAPI(t *testing.T) {
@@ -621,7 +611,6 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -646,10 +635,8 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 					assert.Equal("[\"policyuser4\"]\n", string(bodyBytes))
 				}
 			}
-
 		})
 	}
-
 }
 
 func Test_PolicyListGroupsAPI(t *testing.T) {
@@ -703,7 +690,6 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -728,10 +714,8 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 					assert.Equal("[\"testgroup12345\"]\n", string(bodyBytes))
 				}
 			}
-
 		})
 	}
-
 }
 
 func Test_DeletePolicyAPI(t *testing.T) {
@@ -785,7 +769,6 @@ func Test_DeletePolicyAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -808,5 +791,4 @@ func Test_DeletePolicyAPI(t *testing.T) {
 			}
 		})
 	}
-
 }

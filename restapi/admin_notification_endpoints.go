@@ -43,7 +43,6 @@ func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 		}
 		return configurationApi.NewAddNotificationEndpointCreated().WithPayload(notifEndpoints)
 	})
-
 }
 
 // getNotificationEndpoints invokes admin info and returns a list of notification endpoints
@@ -64,7 +63,6 @@ func getNotificationEndpoints(ctx context.Context, client MinioAdmin) (*models.N
 					})
 				}
 			}
-
 		}
 	}
 

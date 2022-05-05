@@ -27,7 +27,8 @@ func TestGetDivisibleSize(t *testing.T) {
 	testCases := []struct {
 		totalSizes []uint64
 		result     uint64
-	}{{[]uint64{24, 32, 16}, 8},
+	}{
+		{[]uint64{24, 32, 16}, 8},
 		{[]uint64{32, 8, 4}, 4},
 		{[]uint64{8, 8, 8}, 8},
 		{[]uint64{24}, 24},
@@ -143,7 +144,7 @@ func TestGetSetIndexes(t *testing.T) {
 	for _, testCase := range testCases {
 		testCase := testCase
 		t.Run("", func(t *testing.T) {
-			var argPatterns = make([]ellipses.ArgPattern, len(testCase.args))
+			argPatterns := make([]ellipses.ArgPattern, len(testCase.args))
 			for i, arg := range testCase.args {
 				patterns, err := ellipses.FindEllipsesPatterns(arg)
 				if err != nil {

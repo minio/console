@@ -21,10 +21,9 @@ import (
 	"context"
 	b64 "encoding/base64"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
-
-	"errors"
 
 	"github.com/klauspost/compress/gzip"
 

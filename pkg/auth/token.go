@@ -233,7 +233,7 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 // Decrypts a blob of data using AEAD scheme AES-GCM if the executing CPU
 // provides AES hardware support, otherwise will use ChaCha20-Poly1305with
 // and a pbkdf2 derived key
-func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
+func decrypt(ciphertext, associatedData []byte) ([]byte, error) {
 	var (
 		algorithm [1]byte
 		iv        [16]byte
@@ -257,7 +257,7 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 		mac := hmac.New(sha256.New, derivedKey())
 		mac.Write(iv[:])
 		sealingKey := mac.Sum(nil)
-		block, err := aes.NewCipher(sealingKey[:])
+		block, err := aes.NewCipher(sealingKey)
 		if err != nil {
 			return nil, err
 		}

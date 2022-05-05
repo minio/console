@@ -99,8 +99,8 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 
 	tenantURL := fmt.Sprintf("%s://%s.%s.svc.%s%s", tenantSchema, tenant.ConsoleCIServiceName(), tenant.Namespace, v2.GetClusterDomain(), tenantPort)
 	// for development
-	//tenantURL = "http://localhost:9091"
-	//tenantURL = "https://localhost:9443"
+	// tenantURL = "http://localhost:9091"
+	// tenantURL = "https://localhost:9443"
 
 	h := sha1.New()
 	h.Write([]byte(nsTenant))
@@ -201,7 +201,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		return
 	}
 	tenantBase := fmt.Sprintf("/api/%s/%s/%s", proxyMethod, tenant.Namespace, tenant.Name)
-	targetURL.Path = strings.Replace(req.URL.Path, tenantBase, "", -1)
+	targetURL.Path = strings.ReplaceAll(req.URL.Path, tenantBase, "")
 
 	proxiedCookie := &http.Cookie{
 		Name:     "token",
@@ -219,7 +219,6 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 	default:
 		handleHTTPRequest(responseWriter, req, proxyCookieJar, tenantBase, targetURL)
 	}
-
 }
 
 func handleHTTPRequest(responseWriter http.ResponseWriter, req *http.Request, proxyCookieJar *cookiejar.Jar, tenantBase string, targetURL *url2.URL) {
@@ -227,11 +226,13 @@ func handleHTTPRequest(responseWriter http.ResponseWriter, req *http.Request, pr
 		// FIXME: use restapi.GetConsoleHTTPClient()
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	client := &http.Client{Transport: tr,
-		Jar: proxyCookieJar,
+	client := &http.Client{
+		Transport: tr,
+		Jar:       proxyCookieJar,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
-		}}
+		},
+	}
 
 	// are we proxying something with cp=y? (console proxy) then add cpb (console proxy base) so the console
 	// on the other side updates the <base href="" /> to this value overriding sub path or root

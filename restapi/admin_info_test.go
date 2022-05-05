@@ -56,5 +56,4 @@ func TestAdminInfo(t *testing.T) {
 	serverInfo, err = GetAdminInfo(ctx, adminClient)
 	assert.Nil(serverInfo, "server info was not returned nil")
 	assert.NotNil(err, "An error should have ben returned")
-
 }

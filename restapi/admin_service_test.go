@@ -18,9 +18,8 @@ package restapi
 
 import (
 	"context"
-	"testing"
-
 	"errors"
+	"testing"
 
 	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"

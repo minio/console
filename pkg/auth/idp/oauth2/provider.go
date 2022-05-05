@@ -41,7 +41,7 @@ import (
 type Configuration interface {
 	Exchange(ctx context.Context, code string, opts ...xoauth2.AuthCodeOption) (*xoauth2.Token, error)
 	AuthCodeURL(state string, opts ...xoauth2.AuthCodeOption) string
-	PasswordCredentialsToken(ctx context.Context, username string, password string) (*xoauth2.Token, error)
+	PasswordCredentialsToken(ctx context.Context, username, password string) (*xoauth2.Token, error)
 	Client(ctx context.Context, t *xoauth2.Token) *http.Client
 	TokenSource(ctx context.Context, t *xoauth2.Token) xoauth2.TokenSource
 }
@@ -76,7 +76,7 @@ func (ac Config) AuthCodeURL(state string, opts ...xoauth2.AuthCodeOption) strin
 	return ac.AuthCodeURL(state, opts...)
 }
 
-func (ac Config) PasswordCredentialsToken(ctx context.Context, username string, password string) (*xoauth2.Token, error) {
+func (ac Config) PasswordCredentialsToken(ctx context.Context, username, password string) (*xoauth2.Token, error) {
 	return ac.PasswordCredentialsToken(ctx, username, password)
 }
 

@@ -18,10 +18,9 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
-
-	"errors"
 
 	"github.com/minio/madmin-go"
 	iampolicy "github.com/minio/pkg/iam/policy"
@@ -30,10 +29,13 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
-var minioListServiceAccountsMock func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
-var minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
-var minioInfoServiceAccountMock func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
-var minioUpdateServiceAccountMock func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
+
+var (
+	minioListServiceAccountsMock  func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
+	minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
+	minioInfoServiceAccountMock   func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
+	minioUpdateServiceAccountMock func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
+)
 
 // mock function of AddServiceAccount()
 func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {

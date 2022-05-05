@@ -20,11 +20,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"testing"
-
-	"errors"
 
 	"github.com/minio/console/models"
 	iampolicy "github.com/minio/pkg/iam/policy"
@@ -33,10 +32,13 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioListPoliciesMock func() (map[string]*iampolicy.Policy, error)
-var minioGetPolicyMock func(name string) (*iampolicy.Policy, error)
-var minioRemovePolicyMock func(name string) error
-var minioAddPolicyMock func(name string, policy *iampolicy.Policy) error
-var minioSetPolicyMock func(policyName, entityName string, isGroup bool) error
+
+var (
+	minioGetPolicyMock    func(name string) (*iampolicy.Policy, error)
+	minioRemovePolicyMock func(name string) error
+	minioAddPolicyMock    func(name string, policy *iampolicy.Policy) error
+	minioSetPolicyMock    func(policyName, entityName string, isGroup bool) error
+)
 
 // mock function of listPolicies()
 func (ac adminClientMock) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
@@ -70,7 +72,6 @@ func TestListPolicies(t *testing.T) {
 	adminClient := adminClientMock{}
 	// mock function response from listPolicies()
 	minioListPoliciesMock = func() (map[string]*iampolicy.Policy, error) {
-
 		var readonly iampolicy.Policy
 		var readwrite iampolicy.Policy
 		var diagnostis iampolicy.Policy

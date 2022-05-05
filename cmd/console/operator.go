@@ -189,7 +189,6 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 
 // StartServer starts the console service
 func startOperatorServer(ctx *cli.Context) error {
-
 	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates
 		restapi.LogError("Unable to load certs: %v", err)

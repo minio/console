@@ -52,7 +52,6 @@ func configureFlags(api *operations.OperatorAPI) {
 }
 
 func configureAPI(api *operations.OperatorAPI) http.Handler {
-
 	// Applies when the "x-token" header is set
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt

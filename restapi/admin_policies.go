@@ -356,7 +356,6 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 	accountInfo, err := getAccountInfo(ctx, userAdminClient)
 	if err != nil {
 		return "nil", ErrorWithContext(ctx, err)
-
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
 
@@ -458,7 +457,6 @@ func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*mo
 
 // getAddPolicyResponse performs addPolicy() and serializes it to the handler's output
 func getAddPolicyResponse(session *models.Principal, params policyApi.AddPolicyParams) (*models.Policy, *models.Error) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if params.Body == nil {

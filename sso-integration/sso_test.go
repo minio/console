@@ -37,8 +37,7 @@ import (
 var token string
 
 func initConsoleServer() (*restapi.Server, error) {
-
-	//os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
+	// os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
 
 	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
 	if err != nil {
@@ -70,7 +69,6 @@ func initConsoleServer() (*restapi.Server, error) {
 }
 
 func TestMain(t *testing.T) {
-
 	assert := assert.New(t)
 
 	// start console server
@@ -83,7 +81,6 @@ func TestMain(t *testing.T) {
 			return
 		}
 		srv.Serve()
-
 	}()
 
 	fmt.Println("sleeping")
@@ -119,7 +116,7 @@ func TestMain(t *testing.T) {
 	fmt.Println("index0")
 	fmt.Println(temp[0])
 
-	if int(len(temp)) >= 2 {
+	if len(temp) >= 2 {
 		fmt.Println("index 1")
 		fmt.Println(temp[1])
 	} else {
@@ -128,8 +125,8 @@ func TestMain(t *testing.T) {
 	}
 
 	// get login credentials
-	codeVarIable := string(strings.TrimSpace(temp[0]))
-	stateVarIabl := string(strings.TrimSpace(temp[1]))
+	codeVarIable := strings.TrimSpace(temp[0])
+	stateVarIabl := strings.TrimSpace(temp[1])
 	requestData := map[string]string{
 		"code":  codeVarIable,
 		"state": stateVarIabl,
@@ -164,5 +161,4 @@ func TestMain(t *testing.T) {
 	} else {
 		fmt.Println(token)
 	}
-
 }
