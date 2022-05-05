@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-import { AddIcon, GroupsIcon, UsersIcon } from "../../../icons";
+import { AddIcon, GroupsIcon, UsersIcon, DeleteIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -75,6 +75,15 @@ const styles = (theme: Theme) =>
       ...searchField.searchField,
       maxWidth: 380,
     },
+    actionsTrayTest: {
+      display: "flex" as const,
+      justifyContent: "space-between" as const,
+      marginBottom: "1rem",
+      alignItems: "center",
+      "& button": {
+        flexGrow: 0,
+      },
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -85,6 +94,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   const [records, setRecords] = useState<any[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
+  const [checkedGroups, setCheckedGroups] = useState<string[]>([]);
 
   useEffect(() => {
     isLoading(true);
@@ -105,6 +115,33 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   const getGroup = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_GET_GROUP,
   ]);
+
+  const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...checkedGroups]; // We clone the checkedUsers array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to checkedUsersList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+
+    setCheckedGroups(elements);
+
+    return elements;
+  };
+
+  const closeDeleteGroupsBulk = (unCheckAll: boolean = false) => {
+    setDeleteOpen(false);
+    if (unCheckAll) {
+      setCheckedGroups([]);
+    }
+  };
 
   useEffect(() => {
     if (loading) {
@@ -134,7 +171,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
-
+    setCheckedGroups([]);
     if (refresh) {
       isLoading(true);
     }
@@ -148,30 +185,31 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
     history.push(`${IAM_PAGES.GROUPS}/${group}`);
   };
 
-  const deleteAction = (group: any) => {
-    setDeleteOpen(true);
-    setSelectedGroup(group);
-  };
+//  const deleteAction = (group: any) => {
+ //   setDeleteOpen(true);
+ //   setSelectedGroup([group]);
+ // };
 
   const tableActions = [
     {
-      type: "view",
+      type: "edit",
       onClick: viewAction,
       disableButtonFunction: () => !getGroup,
     },
-    {
-      type: "delete",
-      onClick: deleteAction,
-      disableButtonFunction: () => !deleteGroup,
-    },
+  //  {
+  //    type: "delete",
+  //   onClick: deleteAction,
+   //   disableButtonFunction: () => !deleteGroup,
+   // },
   ];
+
 
   return (
     <React.Fragment>
       {deleteOpen && (
         <DeleteGroup
           deleteOpen={deleteOpen}
-          selectedGroup={selectedGroup}
+          selectedGroups={checkedGroups}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
@@ -188,7 +226,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
       <PageHeader label={"Groups"} />
 
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray}>
+        <Grid item xs={12} className={classes.actionsTrayTest}>
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
@@ -201,7 +239,26 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
               value={filter}
             />
           </SecureComponent>
-
+          <SecureComponent
+            resource={CONSOLE_UI_RESOURCE}
+            scopes={[
+              IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP
+            ]}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
+          <RBIconButton
+              tooltip={"Delete Selected"}
+              onClick={() => {
+                setDeleteOpen(true);
+              }}
+              text={"Delete Selected"}
+              icon={<DeleteIcon />}
+              color="secondary"
+              disabled={checkedGroups.length === 0}
+              variant={"outlined"}
+            />
+            </SecureComponent>
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[
@@ -238,6 +295,8 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
                       itemActions={tableActions}
                       columns={[{ label: "Name", elementKey: "" }]}
                       isLoading={loading}
+                      selectedItems={checkedGroups}
+                      onSelect={deleteGroup ? selectionChanged : undefined}
                       records={filteredRecords}
                       entityName="Groups"
                       idField=""
