@@ -37,6 +37,7 @@ import {
   REWIND_RESET_REWIND,
   REWIND_SET_ENABLE,
   BUCKET_BROWSER_SET_SELECTED_OBJECT,
+  BUCKET_BROWSER_SET_SIMPLE_PATH,
   IFileItem,
 } from "./types";
 
@@ -197,5 +198,12 @@ export const setSelectedObjectView = (object: string | null) => {
   return {
     type: BUCKET_BROWSER_SET_SELECTED_OBJECT,
     object,
+  };
+};
+
+export const setSimplePathHandler = (path: string | null) => {
+  return {
+    type: BUCKET_BROWSER_SET_SIMPLE_PATH,
+    path,
   };
 };
