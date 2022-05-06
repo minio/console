@@ -54,7 +54,7 @@ const DeleteGroup = ({
     }
   }; 
 
-  const renderGroups = selectedGroups.map((group) => <div><b>{group}</b></div>);
+  const renderGroups = selectedGroups.map((group) => <div key={group}><b>{group}</b></div>);
 
   return (
     <ConfirmDialog
