@@ -172,6 +172,8 @@ const styles = (theme: Theme) =>
         borderTop: "#F0F3F5 1px solid",
       },
       "& .MuiClockPicker-arrowSwitcher": {
+        marginRight: 10,
+        marginTop: -1,
         "& > div": {
           width: 0,
         },
@@ -182,6 +184,8 @@ const styles = (theme: Theme) =>
           width: 255,
           height: 255,
           backgroundColor: "#fff",
+          marginTop: 30,
+          marginBottom: 14,
           border: "#F0F3F5 3px solid",
           "& > div:nth-child(2)": {
             backgroundColor: "#B4B5B4",
