@@ -107,7 +107,8 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   ]);
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
+    const { target: { value = "", checked = false } = {} } = e;
+    
     const value = targetD.value;
     const checked = targetD.checked;
 
