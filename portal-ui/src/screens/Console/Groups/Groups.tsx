@@ -107,10 +107,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   ]);
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value = "", checked = false } = {} } = e;
-    
-    const value = targetD.value;
-    const checked = targetD.checked;
+    const { target: { value = "", checked = false } = {} } = e;      
 
     let elements: string[] = [...checkedGroups]; // We clone the checkedUsers array
 
