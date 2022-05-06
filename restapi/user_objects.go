@@ -17,8 +17,6 @@
 package restapi
 
 import (
-	"archive/zip"
-	"bytes"
 	"context"
 	"encoding/base64"
 	"errors"
@@ -33,15 +31,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7"
-
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/klauspost/compress/zip"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	objectApi "github.com/minio/console/restapi/operations/object"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/tags"
 	"github.com/minio/pkg/mimedb"
 )
@@ -469,8 +467,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 }
 
 func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	var prefix string
 	mClient, err := newMinioClient(session)
 	if params.Prefix != "" {
@@ -492,28 +489,44 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	w := new(bytes.Buffer)
-	zipw := zip.NewWriter(w)
-	var folder string
-	if len(folders) > 1 {
-		folder = folders[len(folders)-2]
-	}
-	for i := 0; i < len(objects); i++ {
-		name := folder + objects[i].Name[len(prefix)-1:]
-		object, err := mClient.GetObject(ctx, params.BucketName, objects[i].Name, minio.GetObjectOptions{})
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
+
+	resp, pw := io.Pipe()
+	// Create file async
+	go func() {
+		defer pw.Close()
+		zipw := zip.NewWriter(pw)
+		var folder string
+		if len(folders) > 1 {
+			folder = folders[len(folders)-2]
 		}
-		f, err := zipw.Create(name)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
+		defer zipw.Close()
+
+		for i, obj := range objects {
+			name := folder + objects[i].Name[len(prefix)-1:]
+			object, err := mClient.GetObject(ctx, params.BucketName, obj.Name, minio.GetObjectOptions{})
+			if err != nil {
+				// Ignore errors, move to next
+				continue
+			}
+			modified, _ := time.Parse(time.RFC3339, obj.LastModified)
+			f, err := zipw.CreateHeader(&zip.FileHeader{
+				Name:     name,
+				NonUTF8:  false,
+				Method:   zip.Deflate,
+				Modified: modified,
+			})
+			if err != nil {
+				// Ignore errors, move to next
+				continue
+			}
+			_, err = io.Copy(f, object)
+			if err != nil {
+				// We have a partial object, report error.
+				pw.CloseWithError(err)
+				return
+			}
 		}
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(object)
-		f.Write(buf.Bytes())
-	}
-	zipw.Close()
-	resp := io.NopCloser(bytes.NewReader(w.Bytes()))
+	}()
 
 	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
 		defer resp.Close()
