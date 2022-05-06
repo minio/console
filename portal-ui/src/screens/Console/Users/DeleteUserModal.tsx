@@ -26,7 +26,7 @@ import { ConfirmDeleteIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { encodeURLString } from "../../../common/utils";
 
-interface IDeleteUserProps {
+interface IDeleteUserStringProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   userName: string;
@@ -38,7 +38,7 @@ const DeleteUserModal = ({
   deleteOpen,
   userName,
   setErrorSnackMessage,
-}: IDeleteUserProps) => {
+}: IDeleteUserStringProps) => {
   const onDelSuccess = () => {
     history.push(IAM_PAGES.USERS);
   };

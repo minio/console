@@ -17,7 +17,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { User } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
@@ -28,14 +27,14 @@ import { encodeURLString } from "../../../common/utils";
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
-  selectedUser: User | null;
+  selectedUsers: string[] | null;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteUser = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
-  selectedUser,
+  selectedUsers,
   setErrorSnackMessage,
 }: IDeleteUserProps) => {
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
@@ -44,23 +43,34 @@ const DeleteUser = ({
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
-  if (!selectedUser) {
+  const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
+
+  if (!selectedUsers) {
     return null;
   }
+  const renderUsers = selectedUsers.map((user) => (
+    <div key={user}>
+      <b>{user}</b>
+    </div>
+  ));
 
   const onConfirmDelete = () => {
-    invokeDeleteApi(
-      "DELETE",
-      `/api/v1/user/${encodeURLString(selectedUser.accessKey)}`,
-      {
-        id: selectedUser.id,
+    for (let user of selectedUsers) {
+      if (user === userLoggedIn) {
+        setErrorSnackMessage({
+          errorMessage: "Cannot delete currently logged in user",
+          detailedError: `Cannot delete currently logged in user ${userLoggedIn}`,
+        });
+        closeDeleteModalAndRefresh(true);
+      } else {
+        invokeDeleteApi("DELETE", `/api/v1/user/${encodeURLString(user)}`);
       }
-    );
+    }
   };
 
   return (
     <ConfirmDialog
-      title={`Delete User`}
+      title={`Delete User${selectedUsers.length > 1 ? "s" : ""}`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
@@ -69,8 +79,9 @@ const DeleteUser = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete user <br />
-          <b>{selectedUser.accessKey}</b>?
+          Are you sure you want to delete the following {selectedUsers.length}{" "}
+          user{selectedUsers.length > 1 ? "s?" : "?"}
+          <b>{renderUsers}</b>
         </DialogContentText>
       }
     />
