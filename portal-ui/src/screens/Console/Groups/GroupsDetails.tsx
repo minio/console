@@ -378,7 +378,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
       {deleteOpen && (
         <DeleteGroup
           deleteOpen={deleteOpen}
-          selectedGroup={groupName}
+          selectedGroups={[groupName]}
           closeDeleteModalAndRefresh={(isDelSuccess: boolean) => {
             setDeleteOpen(false);
             if (isDelSuccess) {
