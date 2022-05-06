@@ -39,6 +39,7 @@ import {
   OBJECT_MANAGER_SET_LOADING,
   OBJECT_MANAGER_ERROR_IN_OBJECT,
   OBJECT_MANAGER_CANCEL_OBJECT,
+  BUCKET_BROWSER_SET_SIMPLE_PATH,
 } from "./types";
 
 const defaultRewind = {
@@ -67,6 +68,7 @@ const initialState: ObjectBrowserState = {
   selectedVersion: "",
   showDeleted: false,
   selectedInternalPaths: null,
+  simplePath: null,
 };
 
 export function objectBrowserReducer(
@@ -295,11 +297,19 @@ export function objectBrowserReducer(
       return {
         ...state,
         objectDetailsOpen: action.status,
+        selectedInternalPaths: action.status
+          ? state.selectedInternalPaths
+          : null,
       };
     case BUCKET_BROWSER_SET_SELECTED_OBJECT:
       return {
         ...state,
         selectedInternalPaths: action.object,
+      };
+    case BUCKET_BROWSER_SET_SIMPLE_PATH:
+      return {
+        ...state,
+        simplePath: action.path,
       };
     default:
       return state;
