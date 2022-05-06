@@ -27,14 +27,12 @@ import (
 )
 
 func registerSiteReplicationStatusHandler(api *operations.ConsoleAPI) {
-
 	api.SiteReplicationGetSiteReplicationStatusHandler = siteRepApi.GetSiteReplicationStatusHandlerFunc(func(params siteRepApi.GetSiteReplicationStatusParams, session *models.Principal) middleware.Responder {
 		rInfo, err := getSRStatusResponse(session, params)
 		if err != nil {
 			return siteRepApi.NewGetSiteReplicationStatusDefault(int(err.Code)).WithPayload(err)
 		}
 		return siteRepApi.NewGetSiteReplicationStatusOK().WithPayload(rInfo)
-
 	})
 }
 
@@ -54,7 +52,6 @@ func getSRStatusResponse(session *models.Principal, params siteRepApi.GetSiteRep
 }
 
 func getSRStats(ctx context.Context, client MinioAdmin, params siteRepApi.GetSiteReplicationStatusParams) (info *models.SiteReplicationStatusResponse, err error) {
-
 	srParams := madmin.SRStatusOptions{
 		Buckets:  *params.Buckets,
 		Policies: *params.Policies,
@@ -86,5 +83,4 @@ func getSRStats(ctx context.Context, client MinioAdmin, params siteRepApi.GetSit
 		return nil, err
 	}
 	return &retInfo, nil
-
 }

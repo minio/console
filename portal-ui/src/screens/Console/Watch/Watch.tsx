@@ -245,15 +245,25 @@ const Watch = ({
               }}
               variant="standard"
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={start}
-              onClick={() => setStart(true)}
-            >
-              Start
-            </Button>
+            {start ? (
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={() => setStart(false)}
+              >
+                Stop
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={() => setStart(true)}
+              >
+                Start
+              </Button>
+            )}
           </Grid>
 
           <div className={classes.tableBlock}>

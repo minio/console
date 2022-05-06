@@ -248,7 +248,6 @@ func getObjectHCCChange(h madmin.HealResultItem) (b, a col, err error) {
 	}
 	a, err = getHColCode(surplusShardsAfterHeal, parityShards)
 	return
-
 }
 
 // getReplicatedFileHCCChange - fetches health color code for metadata
@@ -369,8 +368,7 @@ func getHealOptionsFromReq(req *http.Request) (*healOptions, error) {
 }
 
 func transformScanStr(scanStr string) madmin.HealScanMode {
-	switch scanStr {
-	case "deep":
+	if scanStr == "deep" {
 		return madmin.HealDeepScan
 	}
 	return madmin.HealNormalScan

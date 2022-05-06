@@ -130,14 +130,14 @@ func TestGetTiers(t *testing.T) {
 	}
 
 	tiersList, err := getTiers(ctx, adminClient)
-
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// verify length of tiers list is correct
 	assert.Equal(len(tiersList.Items), len(returnListMock), fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 	for i, conf := range returnListMock {
-		if conf.Type == madmin.TierType(0) {
+		switch conf.Type {
+		case madmin.TierType(0):
 			// S3
 			assert.Equal(expectedOutput.Items[i].S3.Name, conf.Name)
 			assert.Equal(expectedOutput.Items[i].S3.Bucket, conf.S3.Bucket)
@@ -147,7 +147,7 @@ func TestGetTiers(t *testing.T) {
 			assert.Equal(expectedOutput.Items[i].S3.Endpoint, conf.S3.Endpoint)
 			assert.Equal(expectedOutput.Items[i].S3.Region, conf.S3.Region)
 			assert.Equal(expectedOutput.Items[i].S3.Storageclass, conf.S3.StorageClass)
-		} else if conf.Type == madmin.TierType(1) {
+		case madmin.TierType(1):
 			// Azure
 			assert.Equal(expectedOutput.Items[i].Azure.Name, conf.Name)
 			assert.Equal(expectedOutput.Items[i].Azure.Bucket, conf.Azure.Bucket)
@@ -156,7 +156,7 @@ func TestGetTiers(t *testing.T) {
 			assert.Equal(expectedOutput.Items[i].Azure.Accountname, conf.Azure.AccountName)
 			assert.Equal(expectedOutput.Items[i].Azure.Endpoint, conf.Azure.Endpoint)
 			assert.Equal(expectedOutput.Items[i].Azure.Region, conf.Azure.Region)
-		} else if conf.Type == madmin.TierType(2) {
+		case madmin.TierType(2):
 			// GCS
 			assert.Equal(expectedOutput.Items[i].Gcs.Name, conf.Name)
 			assert.Equal(expectedOutput.Items[i].Gcs.Bucket, conf.GCS.Bucket)
@@ -175,7 +175,6 @@ func TestGetTiers(t *testing.T) {
 	}
 
 	tiersListT2, err := getTiers(ctx, adminClient)
-
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}

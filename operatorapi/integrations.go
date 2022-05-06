@@ -112,7 +112,6 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 			Name: tenantNpSvc,
 		},
 		Spec: corev1.ServiceSpec{
-
 			Selector: map[string]string{
 				"v1.min.io/instance": tenantName,
 			},
@@ -132,7 +131,7 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		return err
 	}
 
-	//NOW FOR Console
+	// NOW FOR Console
 	// create consoleManagedCertificate
 
 	// get a nodeport port for this tenant and create a nodeport for it

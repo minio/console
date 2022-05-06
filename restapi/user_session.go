@@ -115,7 +115,6 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	accountInfo, err := getAccountInfo(ctx, userAdminClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
-
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
 	policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(rawPolicy))

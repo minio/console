@@ -27,11 +27,13 @@ import (
 
 type Oauth2configMock struct{}
 
-var oauth2ConfigExchangeMock func(ctx context.Context, code string, opts ...oauth2.AuthCodeOption) (*oauth2.Token, error)
-var oauth2ConfigAuthCodeURLMock func(state string, opts ...oauth2.AuthCodeOption) string
-var oauth2ConfigPasswordCredentialsTokenMock func(ctx context.Context, username string, password string) (*oauth2.Token, error)
-var oauth2ConfigClientMock func(ctx context.Context, t *oauth2.Token) *http.Client
-var oauth2ConfigokenSourceMock func(ctx context.Context, t *oauth2.Token) oauth2.TokenSource
+var (
+	oauth2ConfigExchangeMock                 func(ctx context.Context, code string, opts ...oauth2.AuthCodeOption) (*oauth2.Token, error)
+	oauth2ConfigAuthCodeURLMock              func(state string, opts ...oauth2.AuthCodeOption) string
+	oauth2ConfigPasswordCredentialsTokenMock func(ctx context.Context, username, password string) (*oauth2.Token, error)
+	oauth2ConfigClientMock                   func(ctx context.Context, t *oauth2.Token) *http.Client
+	oauth2ConfigokenSourceMock               func(ctx context.Context, t *oauth2.Token) oauth2.TokenSource
+)
 
 func (ac Oauth2configMock) Exchange(ctx context.Context, code string, opts ...oauth2.AuthCodeOption) (*oauth2.Token, error) {
 	return oauth2ConfigExchangeMock(ctx, code, opts...)
@@ -41,7 +43,7 @@ func (ac Oauth2configMock) AuthCodeURL(state string, opts ...oauth2.AuthCodeOpti
 	return oauth2ConfigAuthCodeURLMock(state, opts...)
 }
 
-func (ac Oauth2configMock) PasswordCredentialsToken(ctx context.Context, username string, password string) (*oauth2.Token, error) {
+func (ac Oauth2configMock) PasswordCredentialsToken(ctx context.Context, username, password string) (*oauth2.Token, error) {
 	return oauth2ConfigPasswordCredentialsTokenMock(ctx, username, password)
 }
 

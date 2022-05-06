@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -33,8 +34,6 @@ import (
 	"time"
 
 	"github.com/minio/minio-go/v7"
-
-	"errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -154,7 +153,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return objectApi.NewPutObjectTagsOK()
 	})
-	//Restore file version
+	// Restore file version
 	api.ObjectPutObjectRestoreHandler = objectApi.PutObjectRestoreHandlerFunc(func(params objectApi.PutObjectRestoreParams, session *models.Principal) middleware.Responder {
 		if err := getPutObjectRestoreResponse(session, params); err != nil {
 			return objectApi.NewPutObjectRestoreDefault(int(err.Code)).WithPayload(err)
@@ -258,10 +257,8 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
 					ErrorWithContext(ctx, fmt.Errorf("error getting legal hold status for %s : %v", lsObj.VersionID, err))
 				}
-			} else {
-				if legalHoldStatus != nil {
-					obj.LegalHoldStatus = string(*legalHoldStatus)
-				}
+			} else if legalHoldStatus != nil {
+				obj.LegalHoldStatus = string(*legalHoldStatus)
 			}
 			// Add Retention Status if available
 			retention, retUntilDate, err := client.getObjectRetention(ctx, bucketName, lsObj.Key, lsObj.VersionID)
@@ -270,12 +267,10 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
 					ErrorWithContext(ctx, fmt.Errorf("error getting retention status for %s : %v", lsObj.VersionID, err))
 				}
-			} else {
-				if retention != nil && retUntilDate != nil {
-					date := *retUntilDate
-					obj.RetentionMode = string(*retention)
-					obj.RetentionUntilDate = date.Format(time.RFC3339)
-				}
+			} else if retention != nil && retUntilDate != nil {
+				date := *retUntilDate
+				obj.RetentionMode = string(*retention)
+				obj.RetentionUntilDate = date.Format(time.RFC3339)
 			}
 			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
 			if err != nil {
@@ -472,6 +467,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		}
 	}), nil
 }
+
 func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -676,9 +672,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool,
 OUTER_LOOP:
 	for content := range client.list(ctx, listOpts) {
 		if content.Err != nil {
-			switch content.Err.ToGoError().(type) {
-			// ignore same as mc
-			case mc.PathInsufficientPermission:
+			if _, ok := content.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 				// Ignore Permission errors.
 				continue
 			}
@@ -692,9 +686,7 @@ OUTER_LOOP:
 				sent = true
 			case result := <-resultCh:
 				if result.Err != nil {
-					switch result.Err.ToGoError().(type) {
-					// ignore same as mc
-					case mc.PathInsufficientPermission:
+					if _, ok := result.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 						// Ignore Permission errors.
 						continue
 					}
@@ -708,9 +700,7 @@ OUTER_LOOP:
 	close(contentCh)
 	for result := range resultCh {
 		if result.Err != nil {
-			switch result.Err.ToGoError().(type) {
-			// ignore same as mc
-			case mc.PathInsufficientPermission:
+			if _, ok := result.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 				// Ignore Permission errors.
 				continue
 			}
@@ -718,7 +708,6 @@ OUTER_LOOP:
 		}
 	}
 	return nil
-
 }
 
 func deleteSingleObject(ctx context.Context, client MCClient, bucket, object string, versionID string) error {
@@ -734,9 +723,7 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 	resultCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 	for result := range resultCh {
 		if result.Err != nil {
-			switch result.Err.ToGoError().(type) {
-			// ignore same as mc
-			case mc.PathInsufficientPermission:
+			if _, ok := result.Err.ToGoError().(mc.PathInsufficientPermission); ok {
 				// Ignore Permission errors.
 				continue
 			}
@@ -755,7 +742,6 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path
 
 		if !lsObj.IsLatest {
 			err := deleteSingleObject(ctx, client, bucket, path, lsObj.VersionID)
-
 			if err != nil {
 				return err
 			}
@@ -1080,7 +1066,6 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 
 	// Copy object call
 	_, err := client.copyObject(ctx, dstOpts, srcOpts)
-
 	if err != nil {
 		return err
 	}
@@ -1110,7 +1095,6 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 	}
 
 	objectInfo, err := getObjectInfo(ctx, minioClient, params.BucketName, prefix)
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -1122,7 +1106,6 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 
 func getObjectInfo(ctx context.Context, client MinioClient, bucketName, prefix string) (minio.ObjectInfo, error) {
 	objectData, err := client.statObject(ctx, bucketName, prefix, minio.GetObjectOptions{})
-
 	if err != nil {
 		return minio.ObjectInfo{}, err
 	}

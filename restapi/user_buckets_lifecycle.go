@@ -176,7 +176,8 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 	opts := ilm.LifecycleOptions{}
 
 	// Verify if transition rule is requested
-	if params.Body.Type == models.AddBucketLifecycleTypeTransition {
+	switch params.Body.Type {
+	case models.AddBucketLifecycleTypeTransition:
 		if params.Body.TransitionDays == 0 && params.Body.NoncurrentversionTransitionDays == 0 {
 			return errors.New("only one expiry configuration can be set (days or date)")
 		}
@@ -199,8 +200,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			opts.TransitionDays = strconv.Itoa(int(params.Body.TransitionDays))
 			opts.StorageClass = strings.ToUpper(params.Body.StorageClass)
 		}
-
-	} else if params.Body.Type == models.AddBucketLifecycleTypeExpiry {
+	case models.AddBucketLifecycleTypeExpiry:
 		// Verify if expiry items are set
 		if params.Body.NoncurrentversionTransitionDays != 0 {
 			return errors.New("non current version Transition Days cannot be set when expiry is being configured")
@@ -224,10 +224,9 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 		} else {
 			opts.ExpiryDays = strconv.Itoa(int(params.Body.ExpiryDays))
 		}
-
-	} else {
+	default:
 		// Non set, we return errors
-		return errors.New("no valid configuration requested")
+		return errors.New("no valid lifecycle configuration requested")
 	}
 
 	var err2 *probe.Error
@@ -276,7 +275,8 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 	opts := ilm.LifecycleOptions{}
 
 	// Verify if transition items are set
-	if *params.Body.Type == models.UpdateBucketLifecycleTypeTransition {
+	switch *params.Body.Type {
+	case models.UpdateBucketLifecycleTypeTransition:
 		if params.Body.TransitionDays == 0 && params.Body.NoncurrentversionTransitionDays == 0 {
 			return errors.New("you must select transition days or non-current transition days configuration")
 		}
@@ -299,8 +299,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 			opts.TransitionDays = strconv.Itoa(int(params.Body.TransitionDays))
 			opts.StorageClass = strings.ToUpper(params.Body.StorageClass)
 		}
-
-	} else if *params.Body.Type == models.UpdateBucketLifecycleTypeExpiry { // Verify if expiry configuration is set
+	case models.UpdateBucketLifecycleTypeExpiry: // Verify if expiry configuration is set
 		if params.Body.NoncurrentversionTransitionDays != 0 {
 			return errors.New("non current version Transition Days cannot be set when expiry is being configured")
 		}
@@ -323,8 +322,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 		} else {
 			opts.ExpiryDays = strconv.Itoa(int(params.Body.ExpiryDays))
 		}
-
-	} else {
+	default:
 		// Non set, we return errors
 		return errors.New("no valid configuration requested")
 	}
@@ -446,7 +444,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params buc
 			// We add lifecycle rule & expect a response
 			err := addBucketLifecycle(ctx, client, lifecycleParams)
 
-			var errorReturn = ""
+			errorReturn := ""
 
 			if err != nil {
 				errorReturn = err.Error()

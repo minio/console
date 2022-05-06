@@ -56,7 +56,7 @@ var isValidSetSize = func(count uint64) bool {
 // input argument patterns, the symmetry calculation is to ensure that
 // we also use uniform number of drives common across all ellipses patterns.
 func possibleSetCountsWithSymmetry(setCounts []uint64, argPatterns []ellipses.ArgPattern) []uint64 {
-	var newSetCounts = make(map[uint64]struct{})
+	newSetCounts := make(map[uint64]struct{})
 	for _, ss := range setCounts {
 		var symmetry bool
 		for _, argPattern := range argPatterns {
@@ -177,7 +177,7 @@ func getTotalSizes(argPatterns []ellipses.ArgPattern) []uint64 {
 	for _, argPattern := range argPatterns {
 		var totalSize uint64 = 1
 		for _, p := range argPattern {
-			totalSize = totalSize * uint64(len(p.Seq))
+			totalSize *= uint64(len(p.Seq))
 		}
 		totalSizes = append(totalSizes, totalSize)
 	}
@@ -206,7 +206,7 @@ func PossibleParityValues(args ...string) ([]string, error) {
 // of endpoints following the ellipses pattern, this is what is used
 // by the object layer for initializing itself.
 func parseEndpointSet(args ...string) (setIndexes [][]uint64, err error) {
-	var argPatterns = make([]ellipses.ArgPattern, len(args))
+	argPatterns := make([]ellipses.ArgPattern, len(args))
 	for i, arg := range args {
 		patterns, err := ellipses.FindEllipsesPatterns(arg)
 		if err != nil {

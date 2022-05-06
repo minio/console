@@ -54,7 +54,6 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 		}
 		return systemApi.NewDashboardWidgetDetailsOK().WithPayload(infoResp)
 	})
-
 }
 
 type UsageInfo struct {
@@ -82,10 +81,10 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		}
 	}
 
-	//serverArray contains the serverProperties which describe the servers in the network
+	// serverArray contains the serverProperties which describe the servers in the network
 	var serverArray []*models.ServerProperties
 	for _, serv := range serverInfo.Servers {
-		var drives = []*models.ServerDrives{}
+		drives := []*models.ServerDrives{}
 
 		for _, drive := range serv.Disks {
 			drives = append(drives, &models.ServerDrives{
@@ -102,7 +101,7 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 			})
 		}
 
-		var newServer = &models.ServerProperties{
+		newServer := &models.ServerProperties{
 			State:      serv.State,
 			Endpoint:   serv.Endpoint,
 			Uptime:     serv.Uptime,
@@ -189,7 +188,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `time() - max(minio_node_process_starttime_seconds{job="${jobid}"})`,
+				Expr:         `time() - max(minio_node_process_starttime_seconds{$__query})`,
 				LegendFormat: "{{instance}}",
 				Step:         60,
 			},
@@ -215,7 +214,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (instance) (minio_s3_traffic_received_bytes{job="${jobid}"})`,
+				Expr:         `sum by (instance) (minio_s3_traffic_received_bytes{$__query})`,
 				LegendFormat: "{{instance}}",
 				Step:         60,
 			},
@@ -241,7 +240,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `topk(1, sum(minio_cluster_capacity_usable_free_bytes{job="${jobid}"}) by (instance))`,
+				Expr:         `topk(1, sum(minio_cluster_capacity_usable_free_bytes{$__query}) by (instance))`,
 				LegendFormat: "",
 				Step:         300,
 			},
@@ -259,7 +258,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum(minio_bucket_usage_total_bytes{job="${jobid}"}) by (instance)`,
+				Expr:         `sum(minio_bucket_usage_total_bytes{$__query}) by (instance)`,
 				LegendFormat: "Used Capacity",
 			},
 		},
@@ -283,7 +282,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `max by (range) (minio_bucket_objects_size_distribution{job="${jobid}"})`,
+				Expr:         `max by (range) (minio_bucket_objects_size_distribution{$__query})`,
 				LegendFormat: "{{range}}",
 				Step:         300,
 			},
@@ -309,7 +308,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum(minio_node_file_descriptor_open_total{job="${jobid}"})`,
+				Expr:         `sum(minio_node_file_descriptor_open_total{$__query})`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -335,7 +334,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (instance) (minio_s3_traffic_sent_bytes{job="${jobid}"})`,
+				Expr:         `sum by (instance) (minio_s3_traffic_sent_bytes{$__query})`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -361,7 +360,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum without (server,instance) (minio_node_go_routine_total{job="${jobid}"})`,
+				Expr:         `sum without (server,instance) (minio_node_go_routine_total{$__query})`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -387,7 +386,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_nodes_online_total{job="${jobid}"}`,
+				Expr:         `minio_cluster_nodes_online_total{$__query}`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -413,7 +412,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_disk_online_total{job="${jobid}"}`,
+				Expr:         `minio_cluster_disk_online_total{$__query}`,
 				LegendFormat: "Total online disks in MinIO Cluster",
 				Step:         60,
 			},
@@ -439,7 +438,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `count(count by (bucket) (minio_bucket_usage_total_bytes{job="${jobid}"}))`,
+				Expr:         `count(count by (bucket) (minio_bucket_usage_total_bytes{$__query}))`,
 				LegendFormat: "",
 			},
 		},
@@ -456,7 +455,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server) (rate(minio_s3_traffic_received_bytes{job="${jobid}"}[$__rate_interval]))`,
+				Expr:         `sum by (server) (rate(minio_s3_traffic_received_bytes{$__query}[$__rate_interval]))`,
 				LegendFormat: "Data Received [{{server}}]",
 			},
 		},
@@ -473,7 +472,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server) (rate(minio_s3_traffic_sent_bytes{job="${jobid}"}[$__rate_interval]))`,
+				Expr:         `sum by (server) (rate(minio_s3_traffic_sent_bytes{$__query}[$__rate_interval]))`,
 				LegendFormat: "Data Sent [{{server}}]",
 			},
 		},
@@ -498,7 +497,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_nodes_offline_total{job="${jobid}"}`,
+				Expr:         `minio_cluster_nodes_offline_total{$__query}`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -524,7 +523,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_disk_offline_total{job="${jobid}"}`,
+				Expr:         `minio_cluster_disk_offline_total{$__query}`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -550,7 +549,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `topk(1, sum(minio_bucket_usage_object_total{job="${jobid}"}) by (instance))`,
+				Expr:         `topk(1, sum(minio_bucket_usage_object_total{$__query}) by (instance))`,
 				LegendFormat: "",
 			},
 		},
@@ -575,7 +574,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_heal_time_last_activity_nano_seconds{job="${jobid}"}`,
+				Expr:         `minio_heal_time_last_activity_nano_seconds{$__query}`,
 				LegendFormat: "{{server}}",
 				Step:         60,
 			},
@@ -601,7 +600,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_usage_last_activity_nano_seconds{job="${jobid}"}`,
+				Expr:         `minio_usage_last_activity_nano_seconds{$__query}`,
 				LegendFormat: "{{server}}",
 				Step:         60,
 			},
@@ -619,7 +618,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server,api) (increase(minio_s3_requests_total{job="${jobid}"}[$__rate_interval]))`,
+				Expr:         `sum by (server,api) (increase(minio_s3_requests_total{$__query}[$__rate_interval]))`,
 				LegendFormat: "{{server,api}}",
 			},
 		},
@@ -636,7 +635,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server,api) (increase(minio_s3_requests_errors_total{job="${jobid}"}[$__rate_interval]))`,
+				Expr:         `sum by (server,api) (increase(minio_s3_requests_errors_total{$__query}[$__rate_interval]))`,
 				LegendFormat: "{{server,api}}",
 			},
 		},
@@ -653,13 +652,13 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_inter_node_traffic_sent_bytes{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_inter_node_traffic_sent_bytes{$__query}[$__rate_interval])`,
 				LegendFormat: "Internode Bytes Received [{{server}}]",
 				Step:         4,
 			},
 
 			{
-				Expr:         `rate(minio_inter_node_traffic_sent_bytes{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_inter_node_traffic_sent_bytes{$__query}[$__rate_interval])`,
 				LegendFormat: "Internode Bytes Received [{{server}}]",
 			},
 		},
@@ -676,7 +675,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_node_process_cpu_total_seconds{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_node_process_cpu_total_seconds{$__query}[$__rate_interval])`,
 				LegendFormat: "CPU Usage Rate [{{server}}]",
 			},
 		},
@@ -693,7 +692,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_node_process_resident_memory_bytes{job="${jobid}"}`,
+				Expr:         `minio_node_process_resident_memory_bytes{$__query}`,
 				LegendFormat: "Memory Used [{{server}}]",
 			},
 		},
@@ -710,7 +709,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_node_disk_used_bytes{job="${jobid}"}`,
+				Expr:         `minio_node_disk_used_bytes{$__query}`,
 				LegendFormat: "Used Capacity [{{server}}:{{disk}}]",
 			},
 		},
@@ -727,7 +726,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_disk_free_inodes{job="${jobid}"}`,
+				Expr:         `minio_cluster_disk_free_inodes{$__query}`,
 				LegendFormat: "Free Inodes [{{server}}:{{disk}}]",
 			},
 		},
@@ -744,13 +743,13 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_node_syscall_read_total{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_node_syscall_read_total{$__query}[$__rate_interval])`,
 				LegendFormat: "Read Syscalls [{{server}}]",
 				Step:         60,
 			},
 
 			{
-				Expr:         `rate(minio_node_syscall_read_total{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_node_syscall_read_total{$__query}[$__rate_interval])`,
 				LegendFormat: "Read Syscalls [{{server}}]",
 			},
 		},
@@ -767,7 +766,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_node_file_descriptor_open_total{job="${jobid}"}`,
+				Expr:         `minio_node_file_descriptor_open_total{$__query}`,
 				LegendFormat: "Open FDs [{{server}}]",
 			},
 		},
@@ -784,12 +783,12 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_node_io_rchar_bytes{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_node_io_rchar_bytes{$__query}[$__rate_interval])`,
 				LegendFormat: "Node RChar [{{server}}]",
 			},
 
 			{
-				Expr:         `rate(minio_node_io_rchar_bytes{job="${jobid}"}[$__rate_interval])`,
+				Expr:         `rate(minio_node_io_rchar_bytes{$__query}[$__rate_interval])`,
 				LegendFormat: "Node RChar [{{server}}]",
 			},
 		},
@@ -810,6 +809,7 @@ type PromRespData struct {
 	ResultType string       `json:"resultType"`
 	Result     []DataResult `json:"result"`
 }
+
 type PromResp struct {
 	Status string       `json:"status"`
 	Data   PromRespData `json:"data"`
@@ -819,6 +819,7 @@ type LabelResponse struct {
 	Status string   `json:"status"`
 	Data   []string `json:"data"`
 }
+
 type LabelResults struct {
 	Label    string
 	Response LabelResponse
@@ -951,16 +952,21 @@ func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (
 	defer cancel()
 	prometheusURL := getPrometheusURL()
 	prometheusJobID := getPrometheusJobID()
+	prometheusExtraLabels := getPrometheusExtraLabels()
 
 	// We test if prometheus URL is reachable. this is meant to avoid unuseful calls and application hang.
 	if !testPrometheusURL(ctx, prometheusURL) {
 		return nil, ErrorWithContext(ctx, errors.New("Prometheus URL is unreachable"))
 	}
 
-	return getWidgetDetails(ctx, prometheusURL, prometheusJobID, params.WidgetID, params.Step, params.Start, params.End)
+	selector := fmt.Sprintf(`{job="%s"}`, prometheusJobID)
+	if strings.TrimSpace(prometheusExtraLabels) != "" {
+		selector = fmt.Sprintf(`{job="%s",%s}`, prometheusJobID, prometheusExtraLabels)
+	}
+	return getWidgetDetails(ctx, prometheusURL, selector, params.WidgetID, params.Step, params.Start, params.End)
 }
 
-func getWidgetDetails(ctx context.Context, prometheusURL string, prometheusJobID string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *models.Error) {
+func getWidgetDetails(ctx context.Context, prometheusURL string, selector string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *models.Error) {
 	labelResultsCh := make(chan LabelResults)
 
 	for _, lbl := range labels {
@@ -973,7 +979,6 @@ func getWidgetDetails(ctx context.Context, prometheusURL string, prometheusJobID
 			}
 
 			labelResultsCh <- LabelResults{Label: lbl.Name, Response: response}
-
 		}(lbl)
 	}
 
@@ -1027,7 +1032,7 @@ LabelsWaitLoop:
 				// replace the `$__rate_interval` global for step with unit (s for seconds)
 				queryExpr := strings.ReplaceAll(target.Expr, "$__rate_interval", fmt.Sprintf("%ds", 240))
 				if strings.Contains(queryExpr, "$") {
-					var re = regexp.MustCompile(`\$([a-z]+)`)
+					re := regexp.MustCompile(`\$([a-z]+)`)
 
 					for _, match := range re.FindAllStringSubmatch(queryExpr, -1) {
 						if val, ok := labelMap[match[1]]; ok {
@@ -1036,7 +1041,7 @@ LabelsWaitLoop:
 					}
 				}
 
-				queryExpr = strings.Replace(queryExpr, "${jobid}", prometheusJobID, -1)
+				queryExpr = strings.ReplaceAll(queryExpr, "$__query", selector)
 				endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", prometheusURL, apiType, url.QueryEscape(queryExpr), extraParamters)
 
 				var response PromResp
@@ -1057,7 +1062,6 @@ LabelsWaitLoop:
 				}
 
 				targetResults <- &targetResult
-
 			}(target, step, start, end)
 		}
 

@@ -112,10 +112,10 @@ func TestLogSearch(t *testing.T) {
 			if !reflect.DeepEqual(resp, tt.expectedResponse) {
 				t.Errorf("\ngot: %d \nwant: %d", resp, tt.expectedResponse)
 			}
-			//if tt.wantErr {
+			// if tt.wantErr {
 			//	assert.Equal(tt.expectedError.Code, err.Code, fmt.Sprintf("logSearch() error code: `%v`, wantErr: `%v`", err.Code, tt.expectedError))
 			//	assert.Equal(tt.expectedError.Message, err.Message, fmt.Sprintf("logSearch() error message: `%v`, wantErr: `%v`", err.Message, tt.expectedError))
-			//} else {
+			// } else {
 			//	assert.Nil(err, fmt.Sprintf("logSearch() error: %v, wantErr: %v", err, tt.expectedError))
 			//	buf1, err1 := tt.expectedResponse.MarshalBinary()
 			//	buf2, err2 := resp.MarshalBinary()
@@ -132,7 +132,7 @@ func TestLogSearch(t *testing.T) {
 			//	if checkSum1 != checkSum2 {
 			//		t.Errorf("logSearch() resp: %v, expectedResponse: %v", resp, tt.expectedResponse)
 			//	}
-			//}
+			// }
 		})
 	}
 }

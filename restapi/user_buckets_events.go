@@ -51,7 +51,6 @@ func registerBucketEventsHandlers(api *operations.ConsoleAPI) {
 		}
 		return bucketApi.NewDeleteBucketEventNoContent()
 	})
-
 }
 
 // listBucketEvents fetches a list of all events set for a bucket and serializes them for a proper output
@@ -98,27 +97,33 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 	}
 	for _, embed := range bn.TopicConfigs {
 		prefix, suffix := getFilters(embed.Config)
-		configs = append(configs, &models.NotificationConfig{ID: embed.ID,
+		configs = append(configs, &models.NotificationConfig{
+			ID:     embed.ID,
 			Arn:    swag.String(embed.Topic),
 			Events: prettyEventNames(embed.Events),
 			Prefix: prefix,
-			Suffix: suffix})
+			Suffix: suffix,
+		})
 	}
 	for _, embed := range bn.QueueConfigs {
 		prefix, suffix := getFilters(embed.Config)
-		configs = append(configs, &models.NotificationConfig{ID: embed.ID,
+		configs = append(configs, &models.NotificationConfig{
+			ID:     embed.ID,
 			Arn:    swag.String(embed.Queue),
 			Events: prettyEventNames(embed.Events),
 			Prefix: prefix,
-			Suffix: suffix})
+			Suffix: suffix,
+		})
 	}
 	for _, embed := range bn.LambdaConfigs {
 		prefix, suffix := getFilters(embed.Config)
-		configs = append(configs, &models.NotificationConfig{ID: embed.ID,
+		configs = append(configs, &models.NotificationConfig{
+			ID:     embed.ID,
 			Arn:    swag.String(embed.Lambda),
 			Events: prettyEventNames(embed.Events),
 			Prefix: prefix,
-			Suffix: suffix})
+			Suffix: suffix,
+		})
 	}
 	return configs, nil
 }

@@ -27,7 +27,6 @@ import (
 )
 
 func TestTiersList(t *testing.T) {
-
 	assert := assert.New(t)
 
 	// image for now:
@@ -51,5 +50,4 @@ func TestTiersList(t *testing.T) {
 	assert.NotNil(response, "Tiers List response is nil")
 	assert.Nil(err, "Tiers List errored out")
 	assert.Equal(response.StatusCode, 200)
-
 }

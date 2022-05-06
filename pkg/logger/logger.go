@@ -144,7 +144,7 @@ func uniqueEntries(paths []string) []string {
 // and GOROOT directories. Also append github.com/minio/minio
 // This is done to clean up the filename, when stack trace is
 // displayed when an errors happens.
-func Init(goPath string, goRoot string) {
+func Init(goPath, goRoot string) {
 	var goPathList []string
 	var goRootList []string
 	var defaultgoPathList []string

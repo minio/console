@@ -35,7 +35,6 @@ import (
 const apiURL = "http://localhost:9090/api/v1/admin/site-replication"
 
 func makeExecuteReq(method string, body io.Reader) (*http.Response, error) {
-
 	client := &http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -45,14 +44,12 @@ func makeExecuteReq(method string, body io.Reader) (*http.Response, error) {
 		apiURL,
 		body,
 	)
-
 	if err != nil {
 		return nil, err
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 	response, err := client.Do(request)
-
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +61,6 @@ func AddSiteReplicationInfo(sites []map[string]interface{}) (int, error) {
 	requestDataJSON, _ := json.Marshal(sites)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	response, err := makeExecuteReq("POST", requestDataBody)
-
 	if err != nil {
 		log.Println(response)
 		return -1, err
@@ -80,8 +76,6 @@ func EditSiteReplicationInfo(editedSite map[string]interface{}) (int, error) {
 	requestDataJSON, _ := json.Marshal(editedSite)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	response, err := makeExecuteReq("PUT", requestDataBody)
-
-	fmt.Println(response, err)
 	if err != nil {
 		return -1, err
 	}
@@ -90,18 +84,13 @@ func EditSiteReplicationInfo(editedSite map[string]interface{}) (int, error) {
 	}
 
 	return -1, nil
-
 }
 
 func DeleteSiteReplicationInfo(delReq map[string]interface{}) (int, error) {
-
 	requestDataJSON, _ := json.Marshal(delReq)
 	requestDataBody := bytes.NewReader(requestDataJSON)
-
 	response, err := makeExecuteReq("DELETE", requestDataBody)
-
 	if err != nil {
-		log.Println(response)
 		return -1, err
 	}
 	if response != nil {
@@ -109,12 +98,14 @@ func DeleteSiteReplicationInfo(delReq map[string]interface{}) (int, error) {
 	}
 
 	return -1, nil
-
 }
 
 func TestGetSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	response, err := makeExecuteReq("GET", nil)
+
+	// defer response.Body.Close()
+
 	tgt := &models.SiteReplicationInfoResponse{}
 	json.NewDecoder(response.Body).Decode(tgt)
 	if err != nil {
@@ -129,6 +120,7 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 func TestAddSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	fmt.Println("Add Site Replication")
+
 	sites := make([]map[string]interface{}, 2)
 	sites[0] = map[string]interface{}{
 		"accessKey": "minioadmin",
@@ -138,7 +130,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 	}
 	sites[1] = map[string]interface{}{
 		"accessKey": "minioadmin",
-		"endpoint":  "http://minio1:9001", //Docker container .
+		"endpoint":  "http://minio1:9001", // Docker container .
 		// "endpoint":  "http://localhost:9001", for local development
 		"secretKey": "minioadmin",
 		"name":      "sitellhost9001",
@@ -190,7 +182,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 			expectedError: false,
 		},
 
-		//context deadline error
+		// context deadline error
 		{
 			name: "Add Invalid Site name for Replication",
 			args: args{
@@ -199,7 +191,8 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 			expStatusCode: 0,
 			expectedError: true,
 		},
-		//site already added  error 500
+
+		// site already added  error 500
 		{
 			name: "Add same Site name for Replication",
 			args: args{
@@ -247,8 +240,8 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 	fmt.Println("Editing a valid site deployment id::", secondDeploymentID)
 	updatedSiteInfo := map[string]interface{}{
 		"deploymentID": secondDeploymentID,
-		"endpoint":     "http://minio2:9002", //replace it with docker name
-		//"endpoint": "http://localhost:9002", //local dev
+		"endpoint":     "http://minio2:9002", // replace it with docker name
+		// "endpoint": "http://localhost:9002", // local dev
 		"name": "sitellhost9002",
 	}
 	invalidUpdatedSiteInfo := map[string]interface{}{
@@ -294,7 +287,6 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 				assert.NotEmpty(err)
 				return
 			}
-
 		})
 	}
 }
@@ -372,7 +364,6 @@ func makeStatusExecuteReq(method string, url string) (*http.Response, error) {
 		url,
 		nil,
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +390,6 @@ func TestGetSiteReplicationStatus(t *testing.T) {
 		expStatusCode int
 		expectedError bool
 	}{
-
 		{
 			name:          "Default replication status",
 			args:          baseAPIURL + "users=true&groups=true&buckets=true&policies=true",
@@ -473,7 +463,6 @@ func TestGetSiteReplicationStatus(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expStatusCode, response.StatusCode, "Status Code for", ti)
 			}
-
 		})
 	}
 }

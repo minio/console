@@ -88,8 +88,7 @@ func printEndFunc(functionName string) {
 }
 
 func initConsoleServer() (*operatorapi.Server, error) {
-
-	//os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
+	// os.Setenv("CONSOLE_MINIO_SERVER", "localhost:9000")
 
 	swaggerSpec, err := loads.Embedded(operatorapi.SwaggerJSON, operatorapi.FlatSwaggerJSON)
 	if err != nil {
@@ -133,7 +132,6 @@ func TestMain(m *testing.M) {
 			return
 		}
 		srv.Serve()
-
 	}()
 
 	fmt.Println("sleeping")
@@ -200,7 +198,6 @@ func TestMain(m *testing.M) {
 	request.Header.Add("Content-Type", "application/json")
 
 	response, err := client.Do(request)
-
 	if err != nil {
 		log.Println(err)
 		return

@@ -154,7 +154,6 @@ func NotifyPostgres() (*http.Response, error) {
 }
 
 func TestNotifyPostgres(t *testing.T) {
-
 	// Variables
 	assert := assert.New(t)
 
@@ -170,11 +169,9 @@ func TestNotifyPostgres(t *testing.T) {
 	if response != nil {
 		assert.Equal(200, response.StatusCode, finalResponse)
 	}
-
 }
 
 func TestRestartService(t *testing.T) {
-
 	assert := assert.New(t)
 	restartResponse, restartError := RestartService()
 	assert.Nil(restartError)
@@ -190,7 +187,6 @@ func TestRestartService(t *testing.T) {
 			addObjRsp,
 		)
 	}
-
 }
 
 func ListPoliciesWithBucket(bucketName string) (*http.Response, error) {
@@ -214,7 +210,6 @@ func ListPoliciesWithBucket(bucketName string) (*http.Response, error) {
 }
 
 func TestListPoliciesWithBucket(t *testing.T) {
-
 	// Test Variables
 	bucketName := "testlistpolicieswithbucket"
 	assert := assert.New(t)
@@ -234,7 +229,6 @@ func TestListPoliciesWithBucket(t *testing.T) {
 			parsedResponse,
 		)
 	}
-
 }
 
 func ListUsersWithAccessToBucket(bucketName string) (*http.Response, error) {
@@ -258,7 +252,6 @@ func ListUsersWithAccessToBucket(bucketName string) (*http.Response, error) {
 }
 
 func TestListUsersWithAccessToBucket(t *testing.T) {
-
 	// Test Variables
 	bucketName := "testlistuserswithaccesstobucket1"
 	assert := assert.New(t)
@@ -278,11 +271,9 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 			parsedResponse,
 		)
 	}
-
 }
 
 func TestGetNodes(t *testing.T) {
-
 	assert := assert.New(t)
 	getNodesResponse, getNodesError := GetNodes()
 	assert.Nil(getNodesError)
@@ -298,7 +289,6 @@ func TestGetNodes(t *testing.T) {
 			addObjRsp,
 		)
 	}
-
 }
 
 func ArnList() (*http.Response, error) {

@@ -126,7 +126,8 @@ func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoPa
 		Members: groupDesc.Members,
 		Name:    groupDesc.Name,
 		Policy:  groupDesc.Policy,
-		Status:  groupDesc.Status}
+		Status:  groupDesc.Status,
+	}
 
 	return groupResponse, nil
 }
@@ -277,7 +278,6 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 	}
 	if params.Body == nil {
 		return nil, ErrorWithContext(ctx, ErrGroupBodyNotInRequest)
-
 	}
 	expectedGroupUpdate := params.Body
 	groupName := params.Name

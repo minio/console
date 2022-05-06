@@ -31,10 +31,13 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioListUsersMock func() (map[string]madmin.UserInfo, error)
-var minioAddUserMock func(accessKey, secreyKey string) error
-var minioRemoveUserMock func(accessKey string) error
-var minioGetUserInfoMock func(accessKey string) (madmin.UserInfo, error)
-var minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
+
+var (
+	minioAddUserMock       func(accessKey, secreyKey string) error
+	minioRemoveUserMock    func(accessKey string) error
+	minioGetUserInfoMock   func(accessKey string) (madmin.UserInfo, error)
+	minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
+)
 
 // mock function of listUsers()
 func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
@@ -51,12 +54,12 @@ func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) erro
 	return minioRemoveUserMock(accessKey)
 }
 
-//mock function of getUserInfo()
+// mock function of getUserInfo()
 func (ac adminClientMock) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
 	return minioGetUserInfoMock(accessKey)
 }
 
-//mock function of setUserStatus()
+// mock function of setUserStatus()
 func (ac adminClientMock) setUserStatus(ctx context.Context, accessKey string, status madmin.AccountStatus) error {
 	return minioSetUserStatusMock(accessKey, status)
 }
@@ -414,12 +417,14 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	adminClient := adminClientMock{}
-	user1 := madmin.UserInfo{SecretKey: "testtest",
+	user1 := madmin.UserInfo{
+		SecretKey:  "testtest",
 		PolicyName: "consoleAdmin,testPolicy,redundantPolicy",
 		Status:     "enabled",
 		MemberOf:   []string{"group1"},
 	}
-	user2 := madmin.UserInfo{SecretKey: "testtest",
+	user2 := madmin.UserInfo{
+		SecretKey:  "testtest",
 		PolicyName: "testPolicy, otherPolicy",
 		Status:     "enabled",
 		MemberOf:   []string{"group1"},
@@ -562,5 +567,4 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 			assert.Equal(got, tt.want)
 		})
 	}
-
 }

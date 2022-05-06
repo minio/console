@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -31,8 +32,6 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/sse"
 	"github.com/minio/minio-go/v7/pkg/tags"
-
-	"errors"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -64,7 +63,6 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteBucketHandler = bucketApi.DeleteBucketHandlerFunc(func(params bucketApi.DeleteBucketParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteBucketResponse(session, params); err != nil {
 			return bucketApi.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
-
 		}
 		return bucketApi.NewDeleteBucketNoContent()
 	})
@@ -287,7 +285,6 @@ func getBucketReplicationRuleResponse(session *models.Principal, params bucketAp
 	minioClient := minioClient{client: mClient}
 
 	replicationRules, err := minioClient.getBucketReplication(ctx, params.BucketName)
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -722,7 +719,6 @@ func getBucketInfoResponse(session *models.Principal, params bucketApi.BucketInf
 		return nil, ErrorWithContext(ctx, err)
 	}
 	return bucket, nil
-
 }
 
 // policyAccess2consoleAccess gets the equivalent of policy.BucketPolicy to models.BucketAccess
@@ -984,7 +980,7 @@ func getBucketObjectLockingResponse(session *models.Principal, params bucketApi.
 func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	var prefix = ""
+	prefix := ""
 	if params.Prefix != nil {
 		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
@@ -1012,7 +1008,7 @@ func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBuck
 
 	for content := range mcClient.client.List(ctx, cmd.ListOptions{TimeRef: parsedDate, WithDeleteMarkers: true}) {
 		// build object name
-		name := strings.Replace(content.URL.Path, fmt.Sprintf("/%s/", params.BucketName), "", -1)
+		name := strings.ReplaceAll(content.URL.Path, fmt.Sprintf("/%s/", params.BucketName), "")
 
 		listElement := &models.RewindItem{
 			LastModified: content.Time.Format(time.RFC3339),

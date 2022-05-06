@@ -100,7 +100,7 @@ type TraceRequest struct {
 	path       string
 }
 
-//Type for log requests. This allows for filtering by node and kind
+// Type for log requests. This allows for filtering by node and kind
 type LogRequest struct {
 	node    string
 	logType string
@@ -135,7 +135,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	//// DELETE ME !!!
-	//upgrader.CheckOrigin = func(r *http.Request) bool {
+	// upgrader.CheckOrigin = func(r *http.Request) bool {
 	//	return true
 	//}
 

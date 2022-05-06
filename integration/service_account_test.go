@@ -74,7 +74,8 @@ func TestAddServiceAccount(t *testing.T) {
 		assert.Equal(201, response.StatusCode, "Status Code is incorrect")
 	}
 
-	requestDataPolicy := map[string]interface{}{"policy": `
+	requestDataPolicy := map[string]interface{}{
+		"policy": `
   {
   "Version": "2012-10-17",
   "Statement": [
@@ -161,7 +162,6 @@ func TestAddServiceAccount(t *testing.T) {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 		assert.Equal(204, response.StatusCode, "has to be 204 when delete user")
 	}
-
 }
 
 func Test_ServiceAccountsAPI(t *testing.T) {
@@ -238,7 +238,6 @@ func Test_ServiceAccountsAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -268,10 +267,8 @@ func Test_ServiceAccountsAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }
 
 func DeleteMultipleServiceAccounts(serviceAccounts []string) (*http.Response, error) {
@@ -310,9 +307,9 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 	serviceAccountLengthInBytes := 40 // As observed, update as needed
 
 	// 1. Create the user
-	var groups = []string{}
-	var policies = []string{}
-	var secretKey = "testcreateserviceaccountforuserwithcrede"
+	groups := []string{}
+	policies := []string{}
+	secretKey := "testcreateserviceaccountforuserwithcrede"
 	response, err := AddUser(userName, "secretKey", groups, policies)
 	if err != nil {
 		log.Println(err)
@@ -405,5 +402,4 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 			inspectHTTPResponse(response),
 		)
 	}
-
 }
