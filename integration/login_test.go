@@ -32,7 +32,6 @@ import (
 )
 
 func TestLoginStrategy(t *testing.T) {
-
 	assert := assert.New(t)
 
 	// image for now:
@@ -70,11 +69,9 @@ func TestLoginStrategy(t *testing.T) {
 		assert.Equal(models.LoginDetailsLoginStrategyForm, loginDetails.LoginStrategy, "Login Details don't match")
 
 	}
-
 }
 
 func TestLogout(t *testing.T) {
-
 	assert := assert.New(t)
 
 	// image for now:
@@ -133,5 +130,4 @@ func TestLogout(t *testing.T) {
 	assert.NotNil(response, "Logout response is nil")
 	assert.Nil(err, "Logout errored out")
 	assert.Equal(response.StatusCode, 200)
-
 }

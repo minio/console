@@ -65,14 +65,13 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 	adminClient := AdminClient{Client: mAdmin}
 
 	k, r, err := adminClient.inspect(ctx, cfg)
-
 	if err != nil {
 		return nil, nil, ErrorWithContext(ctx, err)
 	}
 	return &k, r, nil
 }
 
-//borrowed from mc cli
+// borrowed from mc cli
 func decryptInspect(key [32]byte, r io.Reader) io.ReadCloser {
 	stream, err := sio.AES_256_GCM.Stream(key[:])
 	if err != nil {
@@ -112,7 +111,6 @@ func processInspectResponse(isEnc bool, k *[32]byte, r io.ReadCloser) func(w htt
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
 
 		_, err := io.Copy(w, r)
-
 		if err != nil {
 			LogError("Unable to write all the data: %v", err)
 		}

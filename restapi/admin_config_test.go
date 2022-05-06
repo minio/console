@@ -48,9 +48,12 @@ const (
 
 // assigning mock at runtime instead of compile time
 var minioHelpConfigKVMock func(subSys, key string, envOnly bool) (madmin.Help, error)
-var minioGetConfigKVMock func(key string) ([]byte, error)
-var minioSetConfigKVMock func(kv string) (restart bool, err error)
-var minioDelConfigKVMock func(name string) (err error)
+
+var (
+	minioGetConfigKVMock func(key string) ([]byte, error)
+	minioSetConfigKVMock func(kv string) (restart bool, err error)
+	minioDelConfigKVMock func(name string) (err error)
+)
 
 // mock function helpConfigKV()
 func (ac adminClientMock) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
@@ -168,7 +171,6 @@ func TestSetConfig(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	assert.Equal(restart, true)
-
 }
 
 func TestDelConfig(t *testing.T) {
@@ -523,7 +525,6 @@ func Test_getConfig(t *testing.T) {
 				name:   "notify_postgres",
 			},
 			mock: func() {
-
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
 					x := make(map[string]string)
@@ -588,7 +589,6 @@ func Test_getConfig(t *testing.T) {
 				name:   "notify_postgresx",
 			},
 			mock: func() {
-
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
 					return nil, errors.New("invalid config")

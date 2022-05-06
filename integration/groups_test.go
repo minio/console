@@ -65,7 +65,6 @@ func Test_AddGroupAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -92,10 +91,8 @@ func Test_AddGroupAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }
 
 func Test_GetGroupAPI(t *testing.T) {
@@ -133,7 +130,6 @@ func Test_GetGroupAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -158,10 +154,8 @@ func Test_GetGroupAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }
 
 func Test_ListGroupsAPI(t *testing.T) {
@@ -181,7 +175,6 @@ func Test_ListGroupsAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -206,10 +199,8 @@ func Test_ListGroupsAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }
 
 func Test_PutGroupsAPI(t *testing.T) {
@@ -253,7 +244,6 @@ func Test_PutGroupsAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -281,10 +271,8 @@ func Test_PutGroupsAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }
 
 func Test_DeleteGroupAPI(t *testing.T) {
@@ -333,7 +321,6 @@ func Test_DeleteGroupAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -358,8 +345,6 @@ func Test_DeleteGroupAPI(t *testing.T) {
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
 			}
-
 		})
 	}
-
 }

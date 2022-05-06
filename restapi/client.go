@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -27,8 +28,6 @@ import (
 
 	"github.com/minio/minio-go/v7/pkg/replication"
 	"github.com/minio/minio-go/v7/pkg/sse"
-
-	"errors"
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg"

@@ -34,7 +34,7 @@ import (
 
 func registerNamespaceHandlers(api *operations.OperatorAPI) {
 	// Add Namespace
-	//api.OperatorAPICreateNamespaceHandler = operator_api.CreateNamespaceHandlerFunc(func(params operator_api.CreateNamespaceParams, session *models.Principal) middleware.Responder {
+	// api.OperatorAPICreateNamespaceHandler = operator_api.CreateNamespaceHandlerFunc(func(params operator_api.CreateNamespaceParams, session *models.Principal) middleware.Responder {
 	api.OperatorAPICreateNamespaceHandler = operator_api.CreateNamespaceHandlerFunc(func(params operator_api.CreateNamespaceParams, session *models.Principal) middleware.Responder {
 		err := getNamespaceCreatedResponse(session, params)
 		if err != nil {
@@ -48,7 +48,6 @@ func getNamespaceCreatedResponse(session *models.Principal, params operator_api.
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
-
 	if err != nil {
 		return xerrors.ErrorWithContext(ctx, err)
 	}

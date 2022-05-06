@@ -34,7 +34,6 @@ import (
 )
 
 func TestObjectGet(t *testing.T) {
-
 	// for setup we'll create a bucket and upload a file
 	endpoint := "localhost:9000"
 	accessKeyID := "minioadmin"
@@ -194,5 +193,4 @@ func TestObjectGet(t *testing.T) {
 			}
 		})
 	}
-
 }

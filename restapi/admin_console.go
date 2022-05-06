@@ -60,7 +60,6 @@ func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin, logReq
 
 			// zero value returned because the channel is closed and empty
 			if !ok {
-
 				return nil
 			}
 			if logInfo.Err != nil {

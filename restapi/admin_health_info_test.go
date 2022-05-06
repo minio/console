@@ -73,7 +73,6 @@ func Test_serverHealthInfo(t *testing.T) {
 					_ = json.Unmarshal(data, &t)
 					testReceiver <- t
 					return nil
-
 				},
 			},
 			wantError: nil,
@@ -94,7 +93,6 @@ func Test_serverHealthInfo(t *testing.T) {
 					_ = json.Unmarshal(data, &t)
 					testReceiver <- t
 					return nil
-
 				},
 			},
 			wantError: nil,
@@ -114,7 +112,6 @@ func Test_serverHealthInfo(t *testing.T) {
 					var t madmin.HealthInfo
 					_ = json.Unmarshal(data, &t)
 					return errors.New("error on write")
-
 				},
 			},
 			wantError: errors.New("error on write"),
@@ -134,7 +131,6 @@ func Test_serverHealthInfo(t *testing.T) {
 					var t madmin.HealthInfo
 					_ = json.Unmarshal(data, &t)
 					return nil
-
 				},
 			},
 			wantError: nil,
@@ -147,7 +143,8 @@ func Test_serverHealthInfo(t *testing.T) {
 			testReceiver = make(chan madmin.HealthInfo, len(tt.args.mockMessages))
 			// mock function same for all tests, changes mockMessages
 			minioServerHealthInfoMock = func(ctx context.Context, healthDataTypes []madmin.HealthDataType,
-				deadline time.Duration) (interface{}, string, error) {
+				deadline time.Duration,
+			) (interface{}, string, error) {
 				info := tt.args.mockMessages[0]
 				return info, madmin.HealthInfoVersion, nil
 			}

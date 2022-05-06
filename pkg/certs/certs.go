@@ -119,7 +119,7 @@ func ParsePublicCertFile(certFile string) (x509Certs []*x509.Certificate, err er
 
 // MkdirAllIgnorePerm attempts to create all directories, ignores any permission denied errors.
 func MkdirAllIgnorePerm(path string) error {
-	err := os.MkdirAll(path, 0700)
+	err := os.MkdirAll(path, 0o700)
 	if err != nil {
 		// It is possible in kubernetes like deployments this directory
 		// is already mounted and is not writable, ignore any write errors.
@@ -250,7 +250,7 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 		return nil, nil, err
 	}
 
-	//Console has support for multiple certificates. It expects the following structure:
+	// Console has support for multiple certificates. It expects the following structure:
 	// certs/
 	//  │
 	//  ├─ public.crt
@@ -266,8 +266,8 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 	//     └─ private.key
 	//  ...
 	//
-	//Therefore, we read all filenames in the cert directory and check
-	//for each directory whether it contains a public.crt and private.key.
+	// Therefore, we read all filenames in the cert directory and check
+	// for each directory whether it contains a public.crt and private.key.
 	// If so, we try to add it to certificate manager.
 	root, err := os.Open(GlobalCertsDir.Get())
 	if err != nil {

@@ -16,10 +16,17 @@ linters:
     - ineffassign
     - gosimple
     - deadcode
-    - unparam
+    - structcheck
+    - gomodguard
+    - gofmt
     - unused
     - structcheck
-    - goheader
+    - unconvert
+    - varcheck
+    - gocritic
+    - gofumpt
+    - tenv
+    - durationcheck
 
 linters-settings:
   goheader:

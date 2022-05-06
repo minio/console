@@ -62,8 +62,10 @@ const (
 	SubPath = "CONSOLE_SUBPATH"
 )
 
-var subPath = "/"
-var subPathOnce sync.Once
+var (
+	subPath     = "/"
+	subPathOnce sync.Once
+)
 
 func configureFlags(api *operations.ConsoleAPI) {
 	api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{
@@ -135,7 +137,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerSubnetHandlers(api)
 	// Register Account handlers
 	registerAdminTiersHandlers(api)
-	//Register Inspect Handler
+	// Register Inspect Handler
 	registerInspectHandler(api)
 	// Register nodes handlers
 	registerNodesHandler(api)
@@ -408,7 +410,6 @@ func configureServer(s *http.Server, _, _ string) {
 
 func getSubPath() string {
 	subPathOnce.Do(func() {
-
 		subPath = parseSubPath(env.Get(SubPath, ""))
 	})
 	return subPath
@@ -426,7 +427,7 @@ func parseSubPath(v string) string {
 		subPath = SlashSeparator + subPath
 	}
 	if !strings.HasSuffix(subPath, SlashSeparator) {
-		subPath = subPath + SlashSeparator
+		subPath += SlashSeparator
 	}
 	return subPath
 }

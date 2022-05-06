@@ -25,9 +25,7 @@ import (
 	"github.com/minio/console/pkg/http"
 )
 
-var (
-	ErrCantDetermineMinIOImage = errors.New("can't determine MinIO Image")
-)
+var ErrCantDetermineMinIOImage = errors.New("can't determine MinIO Image")
 
 // getLatestMinIOImage returns the latest docker image for MinIO if found on the internet
 func GetLatestMinIOImage(client http.ClientI) (*string, error) {
@@ -41,7 +39,7 @@ func GetLatestMinIOImage(client http.ClientI) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var re = regexp.MustCompile(`minio\.(RELEASE.*?Z)"`)
+	re := regexp.MustCompile(`minio\.(RELEASE.*?Z)"`)
 	// look for a single match
 	matches := re.FindAllStringSubmatch(string(body), 1)
 	for i := range matches {

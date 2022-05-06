@@ -231,6 +231,10 @@ func getPrometheusJobID() string {
 	return env.Get(PrometheusJobID, "minio-job")
 }
 
+func getPrometheusExtraLabels() string {
+	return env.Get(PrometheusExtraLabels, "")
+}
+
 var (
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool

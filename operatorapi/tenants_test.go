@@ -45,17 +45,21 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 )
 
-var opClientTenantDeleteMock func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
-var opClientTenantGetMock func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
-var opClientTenantPatchMock func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
-var opClientTenantUpdateMock func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error)
+var (
+	opClientTenantDeleteMock func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
+	opClientTenantGetMock    func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
+	opClientTenantPatchMock  func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+	opClientTenantUpdateMock func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error)
+)
 
-var opClientTenantListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
-var httpClientGetMock func(url string) (resp *http.Response, err error)
-var httpClientPostMock func(url, contentType string, body io.Reader) (resp *http.Response, err error)
-var httpClientDoMock func(req *http.Request) (*http.Response, error)
-var k8sclientGetSecretMock func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
-var k8sclientGetServiceMock func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
+var (
+	opClientTenantListMock  func(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
+	httpClientGetMock       func(url string) (resp *http.Response, err error)
+	httpClientPostMock      func(url, contentType string, body io.Reader) (resp *http.Response, err error)
+	httpClientDoMock        func(req *http.Request) (*http.Response, error)
+	k8sclientGetSecretMock  func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
+	k8sclientGetServiceMock func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
+)
 
 // mock function of TenantDelete()
 func (ac opClientMock) TenantDelete(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
@@ -758,7 +762,8 @@ func Test_TenantAddPool(t *testing.T) {
 				},
 			},
 			wantErr: false,
-		}, {
+		},
+		{
 			name: "Add pool, error size",
 			args: args{
 				ctx:            context.Background(),

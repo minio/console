@@ -19,17 +19,18 @@ package restapi
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"testing"
-
-	"errors"
 
 	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"
 )
 
-var minioStartProfiling func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
-var minioStopProfiling func() (io.ReadCloser, error)
+var (
+	minioStartProfiling func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
+	minioStopProfiling  func() (io.ReadCloser, error)
+)
 
 // mock function of startProfiling()
 func (ac adminClientMock) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
@@ -69,8 +70,8 @@ func TestStartProfiling(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	assert.Equal(2, len(startProfilingResults))
-	//Test-2 : startProfiling() Correctly handles errors returned by Minio
-	//mock function response from startProfiling()
+	// Test-2 : startProfiling() Correctly handles errors returned by Minio
+	// mock function response from startProfiling()
 	minioStartProfiling = func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 		return nil, errors.New("error")
 	}

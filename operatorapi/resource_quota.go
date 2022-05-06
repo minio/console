@@ -41,7 +41,6 @@ func registerResourceQuotaHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewGetResourceQuotaDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewGetResourceQuotaOK().WithPayload(resp)
-
 	})
 }
 

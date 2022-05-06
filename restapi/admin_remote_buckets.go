@@ -80,7 +80,6 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	// set multi-bucket replication
 	api.BucketSetMultiBucketReplicationHandler = bucketApi.SetMultiBucketReplicationHandlerFunc(func(params bucketApi.SetMultiBucketReplicationParams, session *models.Principal) middleware.Responder {
 		response, err := setMultiBucketReplicationResponse(session, params)
-
 		if err != nil {
 			return bucketApi.NewSetMultiBucketReplicationDefault(int(err.Code)).WithPayload(err)
 		}
@@ -91,7 +90,6 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	// list external buckets
 	api.BucketListExternalBucketsHandler = bucketApi.ListExternalBucketsHandlerFunc(func(params bucketApi.ListExternalBucketsParams, session *models.Principal) middleware.Responder {
 		response, err := listExternalBucketsResponse(params)
-
 		if err != nil {
 			return bucketApi.NewListExternalBucketsDefault(int(err.Code)).WithPayload(err)
 		}
@@ -102,7 +100,6 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	// delete replication rule
 	api.BucketDeleteBucketReplicationRuleHandler = bucketApi.DeleteBucketReplicationRuleHandlerFunc(func(params bucketApi.DeleteBucketReplicationRuleParams, session *models.Principal) middleware.Responder {
 		err := deleteReplicationRuleResponse(session, params)
-
 		if err != nil {
 			return bucketApi.NewDeleteBucketReplicationRuleDefault(int(err.Code)).WithPayload(err)
 		}
@@ -113,7 +110,6 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	// delete all replication rules for a bucket
 	api.BucketDeleteAllReplicationRulesHandler = bucketApi.DeleteAllReplicationRulesHandlerFunc(func(params bucketApi.DeleteAllReplicationRulesParams, session *models.Principal) middleware.Responder {
 		err := deleteBucketReplicationRulesResponse(session, params)
-
 		if err != nil {
 			return bucketApi.NewDeleteAllReplicationRulesDefault(int(err.Code)).WithPayload(err)
 		}
@@ -124,7 +120,6 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	// delete selected replication rules for a bucket
 	api.BucketDeleteSelectedReplicationRulesHandler = bucketApi.DeleteSelectedReplicationRulesHandlerFunc(func(params bucketApi.DeleteSelectedReplicationRulesParams, session *models.Principal) middleware.Responder {
 		err := deleteSelectedReplicationRulesResponse(session, params)
-
 		if err != nil {
 			return bucketApi.NewDeleteSelectedReplicationRulesDefault(int(err.Code)).WithPayload(err)
 		}
@@ -132,7 +127,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 		return bucketApi.NewDeleteSelectedReplicationRulesNoContent()
 	})
 
-	//update local bucket replication config item
+	// update local bucket replication config item
 	api.BucketUpdateMultiBucketReplicationHandler = bucketApi.UpdateMultiBucketReplicationHandlerFunc(func(params bucketApi.UpdateMultiBucketReplicationParams, session *models.Principal) middleware.Responder {
 		err := updateBucketReplicationResponse(session, params)
 		if err != nil {
@@ -470,7 +465,7 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 					params.Body.StorageClass)
 			}
 
-			var errorReturn = ""
+			errorReturn := ""
 
 			if err != nil {
 				deleteRemoteBucket(ctx, client, sourceBucket, arn)
@@ -682,7 +677,6 @@ func deleteAllReplicationRules(ctx context.Context, session *models.Principal, b
 	}
 
 	return nil
-
 }
 
 func deleteSelectedReplicationRules(ctx context.Context, session *models.Principal, bucketName string, rules []string) error {
@@ -738,7 +732,6 @@ func deleteReplicationRuleResponse(session *models.Principal, params bucketApi.D
 	defer cancel()
 
 	err := deleteReplicationRule(ctx, session, params.BucketName, params.RuleID)
-
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -750,7 +743,6 @@ func deleteBucketReplicationRulesResponse(session *models.Principal, params buck
 	defer cancel()
 
 	err := deleteAllReplicationRules(ctx, session, params.BucketName)
-
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -762,7 +754,6 @@ func deleteSelectedReplicationRulesResponse(session *models.Principal, params bu
 	defer cancel()
 
 	err := deleteSelectedReplicationRules(ctx, session, params.BucketName, params.Rules.Rules)
-
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

@@ -16,5 +16,7 @@
 
 package operatorapi
 
-type opClientMock struct{}
-type httpClientMock struct{}
+type (
+	opClientMock   struct{}
+	httpClientMock struct{}
+)

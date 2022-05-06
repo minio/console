@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -25,15 +26,16 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"
-
-	"errors"
 )
 
 // assigning mock at runtime instead of compile time
 var minioListGroupsMock func() ([]string, error)
-var minioUpdateGroupMembersMock func(madmin.GroupAddRemove) error
-var minioGetGroupDescriptionMock func(group string) (*madmin.GroupDesc, error)
-var minioSetGroupStatusMock func(group string, status madmin.GroupStatus) error
+
+var (
+	minioUpdateGroupMembersMock  func(madmin.GroupAddRemove) error
+	minioGetGroupDescriptionMock func(group string) (*madmin.GroupDesc, error)
+	minioSetGroupStatusMock      func(group string, status madmin.GroupStatus) error
+)
 
 // mock function of listGroups()
 func (ac adminClientMock) listGroups(ctx context.Context) ([]string, error) {

@@ -102,7 +102,6 @@ type MinioAdmin interface {
 	addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
 	// Account password management
 	changePassword(ctx context.Context, accessKey, secretKey string) error
-
 	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
 	// List Tiers
 	listTiers(ctx context.Context) ([]*madmin.TierConfig, error)
@@ -120,7 +119,7 @@ type MinioAdmin interface {
 	editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error)
 	deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
 
-	//Replication status
+	// Replication status
 	getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
 }
 
@@ -151,7 +150,7 @@ func (ac AdminClient) removeUser(ctx context.Context, accessKey string) error {
 	return ac.Client.RemoveUser(ctx, accessKey)
 }
 
-//implements madmin.GetUserInfo()
+// implements madmin.GetUserInfo()
 func (ac AdminClient) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
 	return ac.Client.GetUserInfo(ctx, accessKey)
 }
@@ -285,7 +284,6 @@ func (ac AdminClient) serviceTrace(ctx context.Context, threshold int64, s3, int
 
 // implements madmin.GetLogs()
 func (ac AdminClient) getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
-
 	return ac.Client.GetLogs(ctx, node, lineCnt, logKind)
 }
 
@@ -330,7 +328,8 @@ func (ac AdminClient) AccountInfo(ctx context.Context) (madmin.AccountInfo, erro
 }
 
 func (ac AdminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
-	forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
+	forceStart, forceStop bool,
+) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
 	return ac.Client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
 }
 
@@ -467,7 +466,6 @@ func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (
 		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
 		Secure: tlsEnabled,
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -494,11 +492,9 @@ func (ac AdminClient) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) 
 	return ac.Client.Speedtest(ctx, opts)
 }
 
-//Site Replication
+// Site Replication
 func (ac AdminClient) getSiteReplicationInfo(ctx context.Context) (*madmin.SiteReplicationInfo, error) {
-
 	res, err := ac.Client.SiteReplicationInfo(ctx)
-
 	if err != nil {
 		return nil, err
 	}
@@ -511,9 +507,7 @@ func (ac AdminClient) getSiteReplicationInfo(ctx context.Context) (*madmin.SiteR
 }
 
 func (ac AdminClient) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error) {
-
 	res, err := ac.Client.SiteReplicationAdd(ctx, sites)
-
 	if err != nil {
 		return nil, err
 	}
@@ -527,7 +521,6 @@ func (ac AdminClient) addSiteReplicationInfo(ctx context.Context, sites []madmin
 }
 
 func (ac AdminClient) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error) {
-
 	res, err := ac.Client.SiteReplicationEdit(ctx, site)
 	if err != nil {
 		return nil, err
@@ -540,7 +533,6 @@ func (ac AdminClient) editSiteReplicationInfo(ctx context.Context, site madmin.P
 }
 
 func (ac AdminClient) deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error) {
-
 	res, err := ac.Client.SiteReplicationRemove(ctx, removeReq)
 	if err != nil {
 		return nil, err
@@ -552,7 +544,6 @@ func (ac AdminClient) deleteSiteReplicationInfo(ctx context.Context, removeReq m
 }
 
 func (ac AdminClient) getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error) {
-
 	res, err := ac.Client.SRStatusInfo(ctx, params)
 	if err != nil {
 		return nil, err

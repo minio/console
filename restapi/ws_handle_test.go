@@ -26,8 +26,10 @@ import (
 
 // Common mocks for WSConn interface
 // assigning mock at runtime instead of compile time
-var connWriteMessageMock func(messageType int, data []byte) error
-var connReadMessageMock func() (messageType int, p []byte, err error)
+var (
+	connWriteMessageMock func(messageType int, data []byte) error
+	connReadMessageMock  func() (messageType int, p []byte, err error)
+)
 
 // The Conn type represents a WebSocket connection.
 type mockConn struct{}
@@ -35,6 +37,7 @@ type mockConn struct{}
 func (c mockConn) writeMessage(messageType int, data []byte) error {
 	return connWriteMessageMock(messageType, data)
 }
+
 func (c mockConn) readMessage() (messageType int, p []byte, err error) {
 	return connReadMessageMock()
 }

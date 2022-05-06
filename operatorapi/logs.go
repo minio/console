@@ -25,8 +25,10 @@ import (
 	"github.com/minio/cli"
 )
 
-var infoLog = log.New(os.Stdout, "I: ", log.LstdFlags)
-var errorLog = log.New(os.Stdout, "E: ", log.LstdFlags)
+var (
+	infoLog  = log.New(os.Stdout, "I: ", log.LstdFlags)
+	errorLog = log.New(os.Stdout, "E: ", log.LstdFlags)
+)
 
 func logInfo(msg string, data ...interface{}) {
 	infoLog.Printf(msg+"\n", data...)

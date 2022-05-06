@@ -34,7 +34,6 @@ mr/cKCUyBL7rcAvg0zNq1vcSrUSGlAmY3SEDCu3GOKnjG/U4E7+p957ocWSV+mQU
 )
 
 func TestGetLicenseInfoFromJWT(t *testing.T) {
-
 	mockLicense, _ := GetLicenseInfoFromJWT(license, publicKeys)
 
 	type args struct {

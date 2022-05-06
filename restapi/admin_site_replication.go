@@ -27,14 +27,12 @@ import (
 )
 
 func registerSiteReplicationHandler(api *operations.ConsoleAPI) {
-
 	api.SiteReplicationGetSiteReplicationInfoHandler = siteRepApi.GetSiteReplicationInfoHandlerFunc(func(params siteRepApi.GetSiteReplicationInfoParams, session *models.Principal) middleware.Responder {
 		rInfo, err := getSRInfoResponse(session, params)
 		if err != nil {
 			return siteRepApi.NewGetSiteReplicationInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return siteRepApi.NewGetSiteReplicationInfoOK().WithPayload(rInfo)
-
 	})
 
 	api.SiteReplicationSiteReplicationInfoAddHandler = siteRepApi.SiteReplicationInfoAddHandlerFunc(func(params siteRepApi.SiteReplicationInfoAddParams, session *models.Principal) middleware.Responder {
@@ -72,13 +70,12 @@ func getSRInfoResponse(session *models.Principal, params siteRepApi.GetSiteRepli
 	adminClient := AdminClient{Client: mAdmin}
 
 	res, err := getSRConfig(ctx, adminClient)
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
 	return res, nil
-
 }
+
 func getSRAddResponse(session *models.Principal, params siteRepApi.SiteReplicationInfoAddParams) (*models.SiteReplicationAddResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -93,8 +90,8 @@ func getSRAddResponse(session *models.Principal, params siteRepApi.SiteReplicati
 		return nil, ErrorWithContext(ctx, err)
 	}
 	return res, nil
-
 }
+
 func getSREditResponse(session *models.Principal, params siteRepApi.SiteReplicationEditParams) (*models.PeerSiteEditResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -108,8 +105,8 @@ func getSREditResponse(session *models.Principal, params siteRepApi.SiteReplicat
 		return nil, ErrorWithContext(ctx, err)
 	}
 	return eRes, nil
-
 }
+
 func getSRRemoveResponse(session *models.Principal, params siteRepApi.SiteReplicationRemoveParams) (*models.PeerSiteRemoveResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -127,7 +124,6 @@ func getSRRemoveResponse(session *models.Principal, params siteRepApi.SiteReplic
 
 func getSRConfig(ctx context.Context, client MinioAdmin) (info *models.SiteReplicationInfoResponse, err error) {
 	srInfo, err := client.getSiteReplicationInfo(ctx)
-
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +131,7 @@ func getSRConfig(ctx context.Context, client MinioAdmin) (info *models.SiteRepli
 
 	if len(srInfo.Sites) > 0 {
 		for _, s := range srInfo.Sites {
-			var pInfo = &models.PeerInfo{
+			pInfo := &models.PeerInfo{
 				DeploymentID: s.DeploymentID,
 				Endpoint:     s.Endpoint,
 				Name:         s.Name,
@@ -150,14 +146,14 @@ func getSRConfig(ctx context.Context, client MinioAdmin) (info *models.SiteRepli
 		Sites:                   sites,
 	}
 	return res, nil
-
 }
+
 func addSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationInfoAddParams) (info *models.SiteReplicationAddResponse, err error) {
 	var rSites []madmin.PeerSite
 
 	if len(params.Body) > 0 {
 		for _, aSite := range params.Body {
-			var pInfo = &madmin.PeerSite{
+			pInfo := &madmin.PeerSite{
 				AccessKey: aSite.AccessKey,
 				Name:      aSite.Name,
 				SecretKey: aSite.SecretKey,
@@ -167,7 +163,6 @@ func addSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepA
 		}
 	}
 	cc, err := client.addSiteReplicationInfo(ctx, rSites)
-
 	if err != nil {
 		return nil, err
 	}
@@ -181,12 +176,12 @@ func addSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepA
 
 	return res, nil
 }
-func editSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationEditParams) (info *models.PeerSiteEditResponse, err error) {
 
+func editSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationEditParams) (info *models.PeerSiteEditResponse, err error) {
 	peerSiteInfo := &madmin.PeerInfo{
-		Endpoint:     params.Body.Endpoint,     //only endpoint can be edited.
-		Name:         params.Body.Name,         //does not get updated.
-		DeploymentID: params.Body.DeploymentID, //readonly
+		Endpoint:     params.Body.Endpoint,     // only endpoint can be edited.
+		Name:         params.Body.Name,         // does not get updated.
+		DeploymentID: params.Body.DeploymentID, // readonly
 	}
 	eRes, err := client.editSiteReplicationInfo(ctx, *peerSiteInfo)
 	if err != nil {
@@ -200,6 +195,7 @@ func editSiteReplication(ctx context.Context, client MinioAdmin, params *siteRep
 	}
 	return editRes, nil
 }
+
 func removeSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepApi.SiteReplicationRemoveParams) (info *models.PeerSiteRemoveResponse, err error) {
 	delAll := params.Body.All
 	siteNames := params.Body.Sites

@@ -30,10 +30,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var DeletePodCollectionMock func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
-var DeleteSecretMock func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
-var CreateSecretMock func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
-var UpdateSecretMock func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
+var (
+	DeletePodCollectionMock func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
+	DeleteSecretMock        func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
+	CreateSecretMock        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
+	UpdateSecretMock        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
+)
 
 func (c k8sClientMock) deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
 	return DeletePodCollectionMock(ctx, namespace, opts, listOpts)

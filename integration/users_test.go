@@ -31,7 +31,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func AddUser(accessKey string, secretKey string, groups []string, policies []string) (*http.Response, error) {
+func AddUser(accessKey, secretKey string, groups, policies []string) (*http.Response, error) {
 	/*
 		This is an atomic function to add user and can be reused across
 		different functions.
@@ -80,7 +80,7 @@ func DeleteUser(userName string) (*http.Response, error) {
 	return response, err
 }
 
-func ListUsers(offset string, limit string) (*http.Response, error) {
+func ListUsers(offset, limit string) (*http.Response, error) {
 	/*
 		This is an atomic function to list users.
 		{{baseUrl}}/users?offset=-5480083&limit=-5480083
@@ -122,7 +122,7 @@ func GetUserInformation(userName string) (*http.Response, error) {
 	return response, err
 }
 
-func UpdateUserInformation(name string, status string, groups []string) (*http.Response, error) {
+func UpdateUserInformation(name, status string, groups []string) (*http.Response, error) {
 	/*
 		Helper function to update user information:
 		PUT: {{baseUrl}}/user?name=proident velit
@@ -207,7 +207,7 @@ func UpdateGroupsForAUser(userName string, groups []string) (*http.Response, err
 	return response, err
 }
 
-func CreateServiceAccountForUser(userName string, policy string) (*http.Response, error) {
+func CreateServiceAccountForUser(userName, policy string) (*http.Response, error) {
 	/*
 		Helper function to Create Service Account for user
 		POST: api/v1/user/username/service-accounts
@@ -237,7 +237,7 @@ func CreateServiceAccountForUser(userName string, policy string) (*http.Response
 	return response, err
 }
 
-func CreateServiceAccountForUserWithCredentials(userName string, policy string, accessKey string, secretKey string) (*http.Response, error) {
+func CreateServiceAccountForUserWithCredentials(userName, policy, accessKey, secretKey string) (*http.Response, error) {
 	// Helper function to test "Create Service Account for User With Credentials" end point.
 	client := &http.Client{
 		Timeout: 3 * time.Second,
@@ -312,7 +312,7 @@ func AddGroup(group string, members []string) (*http.Response, error) {
 	return response, err
 }
 
-func UsersGroupsBulk(users []string, groups []string) (*http.Response, error) {
+func UsersGroupsBulk(users, groups []string) (*http.Response, error) {
 	/*
 		Helper function to test Bulk functionality to Add Users to Groups.
 		PUT: {{baseUrl}}/users-groups-bulk
@@ -363,8 +363,8 @@ func TestAddUser(t *testing.T) {
 	assert := assert.New(t)
 
 	// With no groups & no policies
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	response, err := AddUser("accessKey", "secretKey", groups, policies)
 	if err != nil {
 		log.Println(err)
@@ -384,7 +384,6 @@ func TestAddUser(t *testing.T) {
 		fmt.Println("DELETE StatusCode:", response.StatusCode)
 		assert.Equal(204, response.StatusCode, "has to be 204 when delete user")
 	}
-
 }
 
 func TestListUsers(t *testing.T) {
@@ -398,8 +397,8 @@ func TestListUsers(t *testing.T) {
 	assert := assert.New(t)
 
 	// With no groups & no policies
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 
 	// 1. Create the users
 	numberOfUsers := 5
@@ -454,7 +453,6 @@ func TestListUsers(t *testing.T) {
 				response.StatusCode, "has to be 204 when delete user")
 		}
 	}
-
 }
 
 func TestGetUserInfo(t *testing.T) {
@@ -465,8 +463,8 @@ func TestGetUserInfo(t *testing.T) {
 	// 1. Create the user
 	fmt.Println("TestGetUserInfo(): 1. Create the user")
 	assert := assert.New(t)
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	response, err := AddUser("accessKey", "secretKey", groups, policies)
 	if err != nil {
 		log.Println(err)
@@ -500,7 +498,6 @@ func TestGetUserInfo(t *testing.T) {
 	expected := "{\"accessKey\":\"accessKey\",\"memberOf\":null,\"policy\":[],\"status\":\"enabled\"}\n"
 	obtained := string(b)
 	assert.Equal(expected, obtained, "User Information is wrong")
-
 }
 
 func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
@@ -511,8 +508,8 @@ func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
 	assert := assert.New(t)
 
 	// 1. Create an active user
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	addUserResponse, addUserError := AddUser(
 		"updateuser", "secretKey", groups, policies)
 	if addUserError != nil {
@@ -545,7 +542,6 @@ func TestUpdateUserInfoSuccessfulResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "disabled"))
-
 }
 
 func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
@@ -556,8 +552,8 @@ func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 	assert := assert.New(t)
 
 	// 1. Create an active user
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	addUserResponse, addUserError := AddUser(
 		"updateusererror", "secretKey", groups, policies)
 	if addUserError != nil {
@@ -590,7 +586,6 @@ func TestUpdateUserInfoGenericErrorResponse(t *testing.T) {
 		log.Fatalln(err)
 	}
 	assert.True(strings.Contains(string(b), "status not valid"))
-
 }
 
 func TestRemoveUserSuccessfulResponse(t *testing.T) {
@@ -601,8 +596,8 @@ func TestRemoveUserSuccessfulResponse(t *testing.T) {
 	assert := assert.New(t)
 
 	// 1. Create an active user
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	addUserResponse, addUserError := AddUser(
 		"testremoveuser1", "secretKey", groups, policies)
 	if addUserError != nil {
@@ -644,7 +639,6 @@ func TestRemoveUserSuccessfulResponse(t *testing.T) {
 	fmt.Println(finalResponse)
 	assert.True(strings.Contains(
 		finalResponse, "The specified user does not exist"), finalResponse)
-
 }
 
 func TestUpdateGroupsForAUser(t *testing.T) {
@@ -657,8 +651,8 @@ func TestUpdateGroupsForAUser(t *testing.T) {
 	groupName := "updategroupforausergroup"
 	userName := "updategroupsforauser1"
 	assert := assert.New(t)
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	response, err := AddUser(userName, "secretKey", groups, policies)
 	if err != nil {
 		log.Println(err)
@@ -670,7 +664,7 @@ func TestUpdateGroupsForAUser(t *testing.T) {
 	}
 
 	// 2. Update the groups of the created user with newGroups
-	var newGroups = make([]string, 3)
+	newGroups := make([]string, 3)
 	for i := 0; i < numberOfGroups; i++ {
 		newGroups[i] = groupName + strconv.Itoa(i)
 	}
@@ -701,7 +695,6 @@ func TestUpdateGroupsForAUser(t *testing.T) {
 		assert.True(strings.Contains(
 			finalResponse, groupName+strconv.Itoa(i)), finalResponse)
 	}
-
 }
 
 func TestCreateServiceAccountForUser(t *testing.T) {
@@ -716,8 +709,8 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 	serviceAccountLengthInBytes := 40 // As observed, update as needed
 
 	// 1. Create the user
-	var groups = []string{}
-	var policies = []string{}
+	groups := []string{}
+	policies := []string{}
 	response, err := AddUser(userName, "secretKey", groups, policies)
 	if err != nil {
 		log.Println(err)
@@ -762,7 +755,6 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 		)
 	}
 	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
-
 }
 
 func TestUsersGroupsBulk(t *testing.T) {
@@ -774,11 +766,11 @@ func TestUsersGroupsBulk(t *testing.T) {
 	assert := assert.New(t)
 	numberOfUsers := 5
 	numberOfGroups := 1
-	//var groups = []string{}
-	var policies = []string{}
+	// var groups = []string{}
+	policies := []string{}
 	username := "testusersgroupbulk"
 	groupName := "testusersgroupsbulkgroupone"
-	var members = []string{}
+	members := []string{}
 	users := make([]string, numberOfUsers)
 	groups := make([]string, numberOfGroups)
 
@@ -850,17 +842,16 @@ func TestUsersGroupsBulk(t *testing.T) {
 			assert.Equal(200, responseGetUserInfo.StatusCode, finalResponse)
 		}
 		// Make sure the user belongs to the created group
-		assert.True(strings.Contains(string(finalResponse), groupName))
+		assert.True(strings.Contains(finalResponse, groupName))
 	}
-
 }
 
 func Test_GetUserPolicyAPI(t *testing.T) {
 	assert := assert.New(t)
 
 	// 1. Create an active user with valid policy
-	var groups = []string{}
-	var policies = []string{"readwrite"}
+	groups := []string{}
+	policies := []string{"readwrite"}
 	addUserResponse, addUserError := AddUser(
 		"getpolicyuser", "secretKey", groups, policies)
 	if addUserError != nil {
@@ -894,7 +885,6 @@ func Test_GetUserPolicyAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -917,5 +907,4 @@ func Test_GetUserPolicyAPI(t *testing.T) {
 			}
 		})
 	}
-
 }

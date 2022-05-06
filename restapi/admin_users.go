@@ -121,7 +121,6 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
-
 	// Get list of all users in the MinIO
 	// This call requires explicit authentication, no anonymous requests are
 	// allowed for listing users.
@@ -238,7 +237,7 @@ func getUserAddResponse(session *models.Principal, params userApi.AddUserParams)
 	return user, nil
 }
 
-//removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
+// removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
 func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error {
 	return client.removeUser(ctx, accessKey)
 }
@@ -265,7 +264,6 @@ func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserP
 // getUserInfo calls MinIO server get the User Information
 func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*madmin.UserInfo, error) {
 	userInfo, err := client.getUserInfo(ctx, accessKey)
-
 	if err != nil {
 		return nil, err
 	}
@@ -340,7 +338,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 		go func() error {
 			defer close(chProcess)
 
-			//Compare if groupName is in the arrays
+			// Compare if groupName is in the arrays
 			isGroupPersistent := IsElementInArray(groupsToAssign, groupName)
 			isInOriginGroups := IsElementInArray(originGroups, groupName)
 
@@ -432,7 +430,6 @@ func getUpdateUserGroupsResponse(session *models.Principal, params userApi.Updat
 	adminClient := AdminClient{Client: mAdmin}
 
 	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -520,7 +517,7 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 
 	// If there are errors, we throw the final errors with the errors inside
 	if len(errorsList) > 0 {
-		errGen := fmt.Errorf("error in users-groups assignation: %q", strings.Join(errorsList[:], ","))
+		errGen := fmt.Errorf("error in users-groups assignation: %q", strings.Join(errorsList, ","))
 		return errGen
 	}
 

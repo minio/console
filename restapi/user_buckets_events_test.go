@@ -18,10 +18,9 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
-
-	"errors"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
@@ -39,12 +38,13 @@ func (mc minioClientMock) getBucketNotification(ctx context.Context, bucketName 
 }
 
 //// Mock mc S3Client functions ////
-var mcAddNotificationConfigMock func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
-var mcRemoveNotificationConfigMock func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
+var (
+	mcAddNotificationConfigMock    func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+	mcRemoveNotificationConfigMock func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
+)
 
 // Define a mock struct of mc S3Client interface implementation
-type s3ClientMock struct {
-}
+type s3ClientMock struct{}
 
 // implements mc.S3Client.AddNotificationConfigMock()
 func (c s3ClientMock) addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
@@ -114,7 +114,8 @@ func TestDeleteBucketNotification(t *testing.T) {
 	events := []models.NotificationEventType{
 		models.NotificationEventTypeGet,
 		models.NotificationEventTypeDelete,
-		models.NotificationEventTypePut}
+		models.NotificationEventTypePut,
+	}
 	prefix := "/photos"
 	suffix := ".jpg"
 	mcRemoveNotificationConfigMock = func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
