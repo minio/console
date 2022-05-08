@@ -383,7 +383,8 @@ const ListObjects = ({
 
           setQuota(quotaVals);
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error("Error Getting Quota Status: ", err.detailedError);
           setQuota(null);
         });
     }
@@ -453,7 +454,7 @@ const ListObjects = ({
             setLoadingVersioning(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            console.error("Error Getting Object Versioning Status: ", err.detailedError);
             setLoadingVersioning(false);
           });
       } else {
@@ -473,7 +474,7 @@ const ListObjects = ({
             setLoadingLocking(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            console.error("Error Getting Object Locking Status: ", err.detailedError);
             setLoadingLocking(false);
           });
       } else {
