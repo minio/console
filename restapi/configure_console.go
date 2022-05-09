@@ -43,6 +43,7 @@ import (
 	portal_ui "github.com/minio/console/portal-ui"
 	"github.com/minio/pkg/env"
 	"github.com/minio/pkg/mimedb"
+	xnet "github.com/minio/pkg/net"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
@@ -212,11 +213,11 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	next = AuthenticationMiddleware(next)
 
 	sslHostFn := secure.SSLHostFunc(func(host string) string {
-		h, _, err := net.SplitHostPort(host)
+		xhost, err := xnet.ParseHost(host)
 		if err != nil {
 			return host
 		}
-		return net.JoinHostPort(h, TLSPort)
+		return net.JoinHostPort(xhost.Name, TLSPort)
 	})
 
 	// Secure middleware, this middleware wrap all the previous handlers and add
@@ -257,6 +258,7 @@ func RejectS3Middleware(next http.Handler) http.Handler {
 			strings.HasPrefix(r.Header.Get("Authorization"), "AWS4-HMAC-SHA256") ||
 			r.URL.Query().Get("AWSAccessKeyId") != "" {
 			w.WriteHeader(http.StatusForbidden)
+			w.Header().Set("Location", getMinIOServer())
 			w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <Error>
   <Code>AccessDenied</Code>
