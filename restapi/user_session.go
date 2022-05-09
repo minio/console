@@ -20,12 +20,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"net/http"
-	"net/url"
 	"strconv"
 	"time"
 
 	policies "github.com/minio/console/restapi/policy"
+	"github.com/minio/madmin-go"
 
 	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/minio/pkg/bucket/policy/condition"
@@ -39,31 +38,6 @@ import (
 	"github.com/minio/console/restapi/operations"
 	authApi "github.com/minio/console/restapi/operations/auth"
 )
-
-func isErasureMode() bool {
-	u, err := url.Parse(getMinIOServer())
-	if err != nil {
-		panic(err)
-	}
-	u.Path = "/minio/health/cluster"
-
-	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
-	if err != nil {
-		panic(err)
-	}
-
-	clnt := GetConsoleHTTPClient()
-	resp, err := clnt.Do(req)
-	if err != nil {
-		panic(err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return false
-	}
-
-	return resp.Header.Get("x-minio-write-quorum") != ""
-}
 
 func registerSessionHandlers(api *operations.ConsoleAPI) {
 	// session check
@@ -94,6 +68,7 @@ func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
 func getSessionResponse(ctx context.Context, session *models.Principal) (*models.SessionResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
+
 	// serialize output
 	if session == nil {
 		return nil, ErrorWithContext(ctx, ErrInvalidSession)
@@ -116,6 +91,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 	}
+	erasure := accountInfo.Server.Type == madmin.Erasure
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
 	policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(rawPolicy))
 	if err != nil {
@@ -232,7 +208,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		Features:        getListOfEnabledFeatures(session),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
-		DistributedMode: isErasureMode(),
+		DistributedMode: erasure,
 		Permissions:     resourcePermissions,
 	}
 	return sessionResp, nil

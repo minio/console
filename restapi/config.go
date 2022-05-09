@@ -19,12 +19,12 @@ package restapi
 import (
 	"crypto/x509"
 	"net"
-	"net/url"
 	"strconv"
 	"strings"
 
 	xcerts "github.com/minio/pkg/certs"
 	"github.com/minio/pkg/env"
+	xnet "github.com/minio/pkg/net"
 )
 
 var (
@@ -59,7 +59,7 @@ func GetMinIORegion() string {
 }
 
 func getMinIOEndpoint() string {
-	u, err := url.Parse(getMinIOServer())
+	u, err := xnet.ParseHTTPURL(getMinIOServer())
 	if err != nil {
 		panic(err)
 	}
@@ -67,7 +67,7 @@ func getMinIOEndpoint() string {
 }
 
 func getMinIOEndpointIsSecure() bool {
-	u, err := url.Parse(getMinIOServer())
+	u, err := xnet.ParseHTTPURL(getMinIOServer())
 	if err != nil {
 		panic(err)
 	}

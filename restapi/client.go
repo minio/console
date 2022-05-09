@@ -21,13 +21,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/url"
 	"path"
 	"strings"
 	"time"
 
 	"github.com/minio/minio-go/v7/pkg/replication"
 	"github.com/minio/minio-go/v7/pkg/sse"
+	xnet "github.com/minio/pkg/net"
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg"
@@ -388,20 +388,18 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 // computeObjectURLWithoutEncode returns a MinIO url containing the object filename without encoding
 func computeObjectURLWithoutEncode(bucketName, prefix string) (string, error) {
 	endpoint := getMinIOServer()
-	u, err := url.Parse(endpoint)
+	u, err := xnet.ParseHTTPURL(endpoint)
 	if err != nil {
 		return "", fmt.Errorf("the provided endpoint is invalid")
 	}
-	objectURL := fmt.Sprintf("%s:%s", u.Hostname(), u.Port())
+	var p string
 	if strings.TrimSpace(bucketName) != "" {
-		objectURL = path.Join(objectURL, bucketName)
+		p = path.Join(p, bucketName)
 	}
 	if strings.TrimSpace(prefix) != "" {
-		objectURL = pathJoinFinalSlash(objectURL, prefix)
+		p = pathJoinFinalSlash(p, prefix)
 	}
-
-	objectURL = fmt.Sprintf("%s://%s", u.Scheme, objectURL)
-	return objectURL, nil
+	return fmt.Sprintf("%s://%s/%s", u.Scheme, u.Host, p), nil
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket

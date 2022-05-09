@@ -52,27 +52,6 @@ func Test_getSessionResponse(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "malformed minio endpoint URL",
-			args: args{
-				ctx: ctx,
-				session: &models.Principal{
-					STSAccessKeyID:     "",
-					STSSecretAccessKey: "",
-					STSSessionToken:    "",
-					AccountAccessKey:   "",
-					Hm:                 false,
-				},
-			},
-			want:    nil,
-			wantErr: true,
-			preFunc: func() {
-				os.Setenv(ConsoleMinIOServer, "malformed")
-			},
-			postFunc: func() {
-				os.Unsetenv(ConsoleMinIOServer)
-			},
-		},
-		{
 			name: "malformed session",
 			args: args{
 				ctx: ctx,
@@ -89,6 +68,7 @@ func Test_getSessionResponse(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.preFunc != nil {
 				tt.preFunc()
