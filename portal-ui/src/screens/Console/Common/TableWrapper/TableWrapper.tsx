@@ -739,7 +739,6 @@ const TableWrapper = ({
                       )}
                       {hasOptions && (
                         <Column
-                          headerRenderer={() => <Fragment>Options</Fragment>}
                           dataKey={idField}
                           width={optionsWidth}
                           headerClassName="optionsAlignment"

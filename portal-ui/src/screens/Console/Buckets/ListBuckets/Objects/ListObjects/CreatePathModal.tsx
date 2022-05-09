@@ -27,7 +27,7 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import history from "../../../../../../history";
-import { decodeFileName, encodeFileName } from "../../../../../../common/utils";
+import { encodeFileName } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
@@ -40,8 +40,7 @@ interface ICreatePath {
   folderName: string;
   onClose: () => any;
   existingFiles: BucketObjectItem[];
-  detailsOpen: boolean;
-  selectedInternalPaths: string | null;
+  simplePath: string | null;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
@@ -59,53 +58,31 @@ const CreatePathModal = ({
   setModalErrorSnackMessage,
   classes,
   existingFiles,
-  detailsOpen,
-  selectedInternalPaths,
+  simplePath,
 }: ICreatePath) => {
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [currentPath, setCurrentPath] = useState(bucketName);
 
-  let currentPath = `${bucketName}/${decodeFileName(folderName)}`;
+  useEffect(() => {
+    if(simplePath) {
+      const newPath = `${bucketName}${
+          !bucketName.endsWith("/") && !simplePath.startsWith("/") ? "/" : ""
+      }${simplePath}`;
 
-  if (selectedInternalPaths && detailsOpen) {
-    const decodedPathFileName = decodeFileName(selectedInternalPaths).split(
-      "/"
-    );
-
-    if (decodedPathFileName) {
-      decodedPathFileName.pop();
-      const joinFileName = decodedPathFileName.join("/");
-      const joinPaths = `${joinFileName}${
-        joinFileName.endsWith("/") ? "" : "/"
-      }`;
-      currentPath = `${bucketName}/${joinPaths}`;
+      setCurrentPath(newPath);
     }
-  }
+  }, [simplePath, bucketName]);
 
   const resetForm = () => {
     setPathUrl("");
   };
 
   const createProcess = () => {
-    let folderPath = "";
+    let folderPath = "/";
 
-    if (selectedInternalPaths && detailsOpen) {
-      const decodedPathFileName = decodeFileName(selectedInternalPaths).split(
-        "/"
-      );
-
-      if (decodedPathFileName) {
-        decodedPathFileName.pop();
-        const joinFileName = decodedPathFileName.join("/");
-        folderPath = `${joinFileName}${joinFileName.endsWith("/") ? "" : "/"}`;
-      }
-    } else {
-      if (folderName !== "") {
-        const decodedFolderName = decodeFileName(folderName);
-        folderPath = decodedFolderName.endsWith("/")
-          ? decodedFolderName
-          : `${decodedFolderName}/`;
-      }
+    if (simplePath) {
+      folderPath = simplePath.endsWith("/") ? simplePath : `${simplePath}/`;
     }
 
     const sharesName = (record: BucketObjectItem) =>
@@ -118,8 +95,14 @@ const CreatePathModal = ({
       });
       return;
     }
+
+    const cleanPathURL = pathUrl
+      .split("/")
+      .filter((splitItem) => splitItem.trim() !== "")
+      .join("/");
+
     const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
-      `${folderPath}${pathUrl}/`
+      `${folderPath}${cleanPathURL}/`
     )}`;
     history.push(newPath);
     onClose();
@@ -205,8 +188,7 @@ const CreatePathModal = ({
 };
 
 const mapStateToProps = ({ objectBrowser }: AppState) => ({
-  detailsOpen: objectBrowser.objectDetailsOpen,
-  selectedInternalPaths: objectBrowser.selectedInternalPaths,
+  simplePath: objectBrowser.simplePath,
 });
 
 const mapDispatchToProps = {

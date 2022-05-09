@@ -47,6 +47,8 @@ export const BUCKET_BROWSER_OBJECT_DETAILS_STATE =
   "BUCKET_BROWSER/OBJECT_DETAILS_STATE";
 export const BUCKET_BROWSER_SET_SELECTED_OBJECT =
   "BUCKET_BROWSER/SET_SELECTED_OBJECT";
+export const BUCKET_BROWSER_SET_SIMPLE_PATH =
+  "BUCKET_BROWSER/SET_SIMPLE_PATH";
 
 export interface Route {
   route: string;
@@ -74,6 +76,7 @@ export interface ObjectBrowserState {
   showDeleted: boolean;
   objectDetailsOpen: boolean;
   selectedInternalPaths: string | null;
+  simplePath: string | null;
 }
 
 export interface ObjectBrowserReducer {
@@ -209,6 +212,11 @@ interface CancelObjectInManager {
   instanceID: string;
 }
 
+interface SetBrowserPath {
+  type: typeof BUCKET_BROWSER_SET_SIMPLE_PATH;
+  path: string;
+}
+
 export type ObjectBrowserActionTypes =
   | RewindSetEnabled
   | RewindReset
@@ -231,4 +239,5 @@ export type ObjectBrowserActionTypes =
   | SetObjectDetailsState
   | SetSelectedObject
   | SetObjectManagerLoading
-  | CancelObjectInManager;
+  | CancelObjectInManager
+  | SetBrowserPath;

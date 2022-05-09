@@ -24,45 +24,51 @@ import useApi from "../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../icons";
 
 interface IDeleteGroup {
-  selectedGroup: string;
+  selectedGroups: string[];
   deleteOpen: boolean;
   closeDeleteModalAndRefresh: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteGroup = ({
-  selectedGroup,
+  selectedGroups,
   deleteOpen,
   closeDeleteModalAndRefresh,
   setErrorSnackMessage,
 }: IDeleteGroup) => {
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) => {
+    setErrorSnackMessage(err);
+    closeDeleteModalAndRefresh(true);
+  }
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
-  if (!selectedGroup) {
+  if (!selectedGroups) {
     return null;
   }
-  const onDeleteGroup = () => {
-    invokeDeleteApi("DELETE", `/api/v1/group?name=${encodeURI(selectedGroup)}`);
-  };
+  const onDeleteGroups = () => {
+    for (let group of selectedGroups){
+    invokeDeleteApi("DELETE", `/api/v1/group?name=${encodeURI(group)}`);
+    }
+  }; 
+
+  const renderGroups = selectedGroups.map((group) => <div key={group}><b>{group}</b></div>);
 
   return (
     <ConfirmDialog
-      title={`Delete Group`}
+      title={`Delete Group${selectedGroups.length >1 ? "s": ""}`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
-      onConfirm={onDeleteGroup}
+      onConfirm={onDeleteGroups}
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete group
-          <br />
-          <b>{selectedGroup}</b>?
+          Are you sure you want to delete the following {selectedGroups.length} group{selectedGroups.length >1 ? "s?": "?"}    
+          {renderGroups}      
         </DialogContentText>
       }
     />

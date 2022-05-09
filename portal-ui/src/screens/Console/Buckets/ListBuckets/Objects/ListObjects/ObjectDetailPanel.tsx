@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import createStyles from "@mui/styles/createStyles";
 import get from "lodash/get";
@@ -81,6 +81,7 @@ import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
+import Loader from "../../../../Common/Loader/Loader";
 
 const styles = () =>
   createStyles({
@@ -199,12 +200,6 @@ const ObjectDetailPanel = ({
   if (actualInfo) {
     objectNameArray = actualInfo.name.split("/");
   }
-
-  useEffect(() => {
-    if (bucketName !== "" && internalPaths) {
-      setLoadingObjectInfo(true);
-    }
-  }, [internalPaths, bucketName, setLoadingObjectInfo]);
 
   useEffect(() => {
     if (distributedSetup && allInfoElements && allInfoElements.length >= 1) {
@@ -368,7 +363,17 @@ const ObjectDetailPanel = ({
     }
   };
 
+  const loaderForContainer = (
+    <div style={{ textAlign: "center", marginTop: 35 }}>
+      <Loader />
+    </div>
+  );
+
   if (!actualInfo) {
+    if (loadingObjectInfo) {
+      return loaderForContainer;
+    }
+
     return null;
   }
 
@@ -568,162 +573,164 @@ const ObjectDetailPanel = ({
         />
       )}
 
-      {!actualInfo && (
-        <Grid item xs={12}>
-          <LinearProgress />
-        </Grid>
-      )}
-
-      <ActionsListSection
-        title={
-          <div className={classes.ObjectDetailsTitle}>
-            {displayFileIconName(objectName, true)}
-            <span className={classes.objectNameContainer}>{objectName}</span>
-          </div>
-        }
-        items={multiActionButtons}
-      />
-
-      <Grid item xs={12} sx={{ textAlign: "center" }}>
-        <SecureComponent
-          resource={[
-            bucketName,
-            currentItem,
-            [bucketName, actualInfo.name].join("/"),
-          ]}
-          scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-          errorProps={{ disabled: true }}
-        >
-          <Button
-            startIcon={<DeleteIcon />}
-            color="secondary"
-            variant={"outlined"}
-            onClick={() => {
-              setDeleteOpen(true);
-            }}
-            disabled={selectedVersion === "" && actualInfo.is_delete_marker}
-            sx={{
-              width: "calc(100% - 44px)",
-              margin: "8px 0",
-              "& svg.min-icon": {
-                width: 14,
-                height: 14,
-              },
-            }}
-          >
-            Delete{selectedVersion !== "" ? " version" : ""}
-          </Button>
-        </SecureComponent>
-      </Grid>
-      <Grid item xs={12} className={classes.headerForSection}>
-        <span>Object Info</span>
-        <ObjectInfoIcon />
-      </Grid>
-      <Box className={classes.detailContainer}>
-        <strong>Name:</strong>
-        <br />
-        {objectName}
-      </Box>
-      {selectedVersion !== "" && (
-        <Box className={classes.detailContainer}>
-          <strong>Version ID:</strong>
-          <br />
-          {selectedVersion}
-        </Box>
-      )}
-      <Box className={classes.detailContainer}>
-        <strong>Size:</strong>
-        <br />
-        {niceBytes(actualInfo.size || "0")}
-      </Box>
-      {actualInfo.version_id &&
-        actualInfo.version_id !== "null" &&
-        selectedVersion === "" && (
-          <Box className={classes.detailContainer}>
-            <strong>Versions:</strong>
-            <br />
-            {versions.length} version{versions.length !== 1 ? "s" : ""},{" "}
-            {niceBytesInt(totalVersionsSize)}
-          </Box>
-        )}
-      {selectedVersion === "" && (
-        <Box className={classes.detailContainer}>
-          <strong>Last Modified:</strong>
-          <br />
-          {calculateLastModifyTime(actualInfo.last_modified)}
-        </Box>
-      )}
-      <Box className={classes.detailContainer}>
-        <strong>ETAG:</strong>
-        <br />
-        {actualInfo.etag || "N/A"}
-      </Box>
-      <Box className={classes.detailContainer}>
-        <strong>Tags:</strong>
-        <br />
-        {tagKeys.length === 0
-          ? "N/A"
-          : tagKeys.map((tagKey, index) => {
-              return (
-                <span key={`key-vs-${index.toString()}`}>
-                  {tagKey}:{get(actualInfo, `tags.${tagKey}`, "")}
-                  {index < tagKeys.length - 1 ? ", " : ""}
+      {loadingObjectInfo ? (
+        <Fragment>{loaderForContainer}</Fragment>
+      ) : (
+        <Fragment>
+          <ActionsListSection
+            title={
+              <div className={classes.ObjectDetailsTitle}>
+                {displayFileIconName(objectName, true)}
+                <span className={classes.objectNameContainer}>
+                  {objectName}
                 </span>
-              );
-            })}
-      </Box>
-      <Box className={classes.detailContainer}>
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
-          resource={bucketName}
-        >
-          <Fragment>
-            <strong>Legal Hold:</strong>
-            <br />
-            {actualInfo.legal_hold_status ? "On" : "Off"}
-          </Fragment>
-        </SecureComponent>
-      </Box>
-      <Box className={classes.detailContainer}>
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
-          resource={bucketName}
-        >
-          <Fragment>
-            <strong>Retention Policy:</strong>
-            <br />
-            <span className={classes.capitalizeFirst}>
-              {actualInfo.version_id && actualInfo.version_id !== "null" ? (
-                <Fragment>
-                  {actualInfo.retention_mode
-                    ? actualInfo.retention_mode.toLowerCase()
-                    : "None"}
-                </Fragment>
-              ) : (
-                <Fragment>
-                  {actualInfo.retention_mode
-                    ? actualInfo.retention_mode.toLowerCase()
-                    : "None"}
-                </Fragment>
-              )}
-            </span>
-          </Fragment>
-        </SecureComponent>
-      </Box>
-      <Grid item xs={12} className={classes.headerForSection}>
-        <span>Metadata</span>
-        <MetadataIcon />
-      </Grid>
-      <Box className={classes.detailContainer}>
-        {actualInfo ? (
-          <ObjectMetaData
-            bucketName={bucketName}
-            internalPaths={internalPaths}
-            actualInfo={actualInfo}
-            linear
+              </div>
+            }
+            items={multiActionButtons}
           />
-        ) : null}
-      </Box>
+
+          <Grid item xs={12} sx={{ textAlign: "center" }}>
+            <SecureComponent
+              resource={[
+                bucketName,
+                currentItem,
+                [bucketName, actualInfo.name].join("/"),
+              ]}
+              scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+              errorProps={{ disabled: true }}
+            >
+              <Button
+                startIcon={<DeleteIcon />}
+                color="secondary"
+                variant={"outlined"}
+                onClick={() => {
+                  setDeleteOpen(true);
+                }}
+                disabled={selectedVersion === "" && actualInfo.is_delete_marker}
+                sx={{
+                  width: "calc(100% - 44px)",
+                  margin: "8px 0",
+                  "& svg.min-icon": {
+                    width: 14,
+                    height: 14,
+                  },
+                }}
+              >
+                Delete{selectedVersion !== "" ? " version" : ""}
+              </Button>
+            </SecureComponent>
+          </Grid>
+          <Grid item xs={12} className={classes.headerForSection}>
+            <span>Object Info</span>
+            <ObjectInfoIcon />
+          </Grid>
+          <Box className={classes.detailContainer}>
+            <strong>Name:</strong>
+            <br />
+            {objectName}
+          </Box>
+          {selectedVersion !== "" && (
+            <Box className={classes.detailContainer}>
+              <strong>Version ID:</strong>
+              <br />
+              {selectedVersion}
+            </Box>
+          )}
+          <Box className={classes.detailContainer}>
+            <strong>Size:</strong>
+            <br />
+            {niceBytes(actualInfo.size || "0")}
+          </Box>
+          {actualInfo.version_id &&
+            actualInfo.version_id !== "null" &&
+            selectedVersion === "" && (
+              <Box className={classes.detailContainer}>
+                <strong>Versions:</strong>
+                <br />
+                {versions.length} version{versions.length !== 1 ? "s" : ""},{" "}
+                {niceBytesInt(totalVersionsSize)}
+              </Box>
+            )}
+          {selectedVersion === "" && (
+            <Box className={classes.detailContainer}>
+              <strong>Last Modified:</strong>
+              <br />
+              {calculateLastModifyTime(actualInfo.last_modified)}
+            </Box>
+          )}
+          <Box className={classes.detailContainer}>
+            <strong>ETAG:</strong>
+            <br />
+            {actualInfo.etag || "N/A"}
+          </Box>
+          <Box className={classes.detailContainer}>
+            <strong>Tags:</strong>
+            <br />
+            {tagKeys.length === 0
+              ? "N/A"
+              : tagKeys.map((tagKey, index) => {
+                  return (
+                    <span key={`key-vs-${index.toString()}`}>
+                      {tagKey}:{get(actualInfo, `tags.${tagKey}`, "")}
+                      {index < tagKeys.length - 1 ? ", " : ""}
+                    </span>
+                  );
+                })}
+          </Box>
+          <Box className={classes.detailContainer}>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
+              resource={bucketName}
+            >
+              <Fragment>
+                <strong>Legal Hold:</strong>
+                <br />
+                {actualInfo.legal_hold_status ? "On" : "Off"}
+              </Fragment>
+            </SecureComponent>
+          </Box>
+          <Box className={classes.detailContainer}>
+            <SecureComponent
+              scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
+              resource={bucketName}
+            >
+              <Fragment>
+                <strong>Retention Policy:</strong>
+                <br />
+                <span className={classes.capitalizeFirst}>
+                  {actualInfo.version_id && actualInfo.version_id !== "null" ? (
+                    <Fragment>
+                      {actualInfo.retention_mode
+                        ? actualInfo.retention_mode.toLowerCase()
+                        : "None"}
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      {actualInfo.retention_mode
+                        ? actualInfo.retention_mode.toLowerCase()
+                        : "None"}
+                    </Fragment>
+                  )}
+                </span>
+              </Fragment>
+            </SecureComponent>
+          </Box>
+          <Grid item xs={12} className={classes.headerForSection}>
+            <span>Metadata</span>
+            <MetadataIcon />
+          </Grid>
+          <Box className={classes.detailContainer}>
+            {actualInfo ? (
+              <ObjectMetaData
+                bucketName={bucketName}
+                internalPaths={internalPaths}
+                actualInfo={actualInfo}
+                linear
+              />
+            ) : null}
+          </Box>
+        </Fragment>
+      )}
     </Fragment>
   );
 };
