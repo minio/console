@@ -48,6 +48,7 @@ export interface BucketInfo {
   creation_date?: string;
   objects?: number;
   size?: number;
+  details?: BucketDetails;
 }
 
 export interface BucketList {
@@ -71,6 +72,14 @@ export interface BucketEventList {
 export interface BucketPolicy {
   name: string;
   body: string;
+}
+
+export interface BucketDetails {
+  versioning?: boolean;
+  quota?: BucketQuota
+  locking?: boolean
+  replication?: boolean
+  tags?: object
 }
 
 export interface ArnList {

@@ -118,9 +118,10 @@ type MinioAdmin interface {
 	addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error)
 	editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error)
 	deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
-
 	// Replication status
 	getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
+	// Quota
+	getBucketQuota(ctx context.Context, bucket string) (madmin.BucketQuota, error)
 }
 
 // Interface implementation

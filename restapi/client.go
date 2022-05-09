@@ -80,6 +80,7 @@ type MinioClient interface {
 	GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error)
 	SetBucketTagging(ctx context.Context, bucketName string, tags *tags.Tags) error
 	RemoveBucketTagging(ctx context.Context, bucketName string) error
+	getBucketVersioning(ctx context.Context, bucketName string) (minio.BucketVersioningConfiguration, error)
 }
 
 // Interface implementation

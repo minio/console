@@ -52,6 +52,8 @@ var (
 	minioCopyObjectMock                 func(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
 	minioSetBucketTaggingMock           func(ctx context.Context, bucketName string, tags *tags.Tags) error
 	minioRemoveBucketTaggingMock        func(ctx context.Context, bucketName string) error
+	minioGetBucketVersioningMock        func(ctx context.Context, bucketName string) (version minio.BucketVersioningConfiguration, err error)
+	minioGetBucketQuotaMock             func(ctx context.Context, bucketName string) (quota madmin.BucketQuota, err error)
 )
 
 // Define a mock struct of minio Client interface implementation
@@ -133,6 +135,14 @@ func (mc minioClientMock) RemoveBucketTagging(ctx context.Context, bucketName st
 	return minioRemoveBucketTaggingMock(ctx, bucketName)
 }
 
+func (mc minioClientMock) getBucketVersioning(ctx context.Context, bucketName string) (minio.BucketVersioningConfiguration, error) {
+	return minioGetBucketVersioningMock(ctx, bucketName)
+}
+
+func (ac adminClientMock) getBucketQuota(ctx context.Context, bucketName string) (madmin.BucketQuota, error) {
+	return minioGetBucketQuotaMock(ctx, bucketName)
+}
+
 func minioGetBucketTaggingMock(ctx context.Context, bucketName string) (*tags.Tags, error) {
 	fmt.Println(ctx)
 	fmt.Println(bucketName)
@@ -203,6 +213,21 @@ func TestBucketInfo(t *testing.T) {
 	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
 		return mockPolicy, nil
 	}
+
+	minioGetBucketQuotaMock = func(ctx context.Context, bucketName string) (madmin.BucketQuota, error) {
+		return madmin.BucketQuota{}, nil
+	}
+
+	minioGetBucketVersioningMock = func(ctx context.Context, bucketName string) (minio.BucketVersioningConfiguration, error) {
+		return minio.BucketVersioningConfiguration{}, nil
+	}
+
+	minioGetObjectLockConfigMock = func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+		testValue := uint(50)
+
+		return "", nil, &testValue, nil, nil
+	}
+
 	bucketToSet := "csbucket"
 	outputExpected := &models.Bucket{
 		Name:         swag.String(bucketToSet),

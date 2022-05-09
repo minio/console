@@ -573,6 +573,7 @@ func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.Buck
 	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access, req.Definition); err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+
 	// set bucket access policy
 	bucket, err := getBucketInfo(ctx, minioClient, adminClient, bucketName)
 	if err != nil {
@@ -660,12 +661,17 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 			bucketAccess = policyAccess2consoleAccess(policyAccess)
 		}
 	}
+
+	// We get Bucket details for the request
+	bucketDetails := &models.BucketDetails{}
+
+	// Tags for the bucket
 	bucketTags, err := client.GetBucketTagging(ctx, bucketName)
 	if err != nil {
 		// we can tolerate this errors
 		ErrorWithContext(ctx, fmt.Errorf("error getting bucket tags: %v", err))
 	}
-	bucketDetails := &models.BucketDetails{}
+
 	if bucketTags != nil {
 		bucketDetails.Tags = bucketTags.ToMap()
 	}
@@ -673,6 +679,40 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 	info, err := adminClient.AccountInfo(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	// Versioning Information
+	versioning, err := client.getBucketVersioning(ctx, bucketName)
+	if err != nil {
+		// We tolerate this error
+		ErrorWithContext(ctx, fmt.Errorf("error getting versioning state: %v", err))
+	} else {
+		bucketDetails.Versioning = versioning.Status == "Enabled"
+	}
+
+	// Quota Information
+	quota, err := adminClient.getBucketQuota(ctx, bucketName)
+	if err != nil {
+		// We tolerate this error
+		ErrorWithContext(ctx, fmt.Errorf("error getting quota state: %v", err))
+	} else {
+		bucketDetails.Quota = &models.BucketDetailsQuota{
+			Quota: int64(quota.Quota),
+			Type:  string(quota.Type),
+		}
+	}
+
+	// Object Locking
+	_, _, _, _, err = client.getObjectLockConfig(ctx, bucketName)
+	if err != nil {
+		// We tolerate this error
+		if minio.ToErrorResponse(err).Code == "ObjectLockConfigurationNotFoundError" {
+			bucketDetails.Locking = false
+		} else {
+			ErrorWithContext(ctx, err)
+		}
+	} else {
+		bucketDetails.Locking = true
 	}
 
 	var bucketInfo madmin.BucketAccessInfo

@@ -26,10 +26,8 @@ import { setErrorSnackMessage } from "../../../../actions";
 import {
   BucketEncryptionInfo,
   BucketInfo,
-  BucketObjectLocking,
   BucketQuota,
   BucketReplication,
-  BucketVersioning,
 } from "../types";
 import { BucketList } from "../../Watch/types";
 import {
@@ -110,19 +108,14 @@ const BucketSummary = ({
   const [encryptionCfg, setEncryptionCfg] =
     useState<BucketEncryptionInfo | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
-  const [hasObjectLocking, setHasObjectLocking] = useState<boolean>(false);
   const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] =
     useState<boolean>(false);
   const [replicationRules, setReplicationRules] = useState<boolean>(false);
-  const [loadingObjectLocking, setLoadingLocking] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
   const [bucketLoading, setBucketLoading] = useState<boolean>(true);
   const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
-  const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
-  const [loadingQuota, setLoadingQuota] = useState<boolean>(true);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [loadingRetention, setLoadingRetention] = useState<boolean>(true);
-  const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
@@ -148,10 +141,6 @@ const BucketSummary = ({
     policyDefinition = bucketInfo.definition;
   }
 
-  const displayGetBucketObjectLockConfiguration = hasPermission(bucketName, [
-    IAM_SCOPES.S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION,
-  ]);
-
   const displayGetBucketEncryptionConfiguration = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
   ]);
@@ -161,12 +150,14 @@ const BucketSummary = ({
   ]);
 
   useEffect(() => {
-    if (loadingBucket) {
-      setBucketLoading(true);
-    } else {
-      setBucketLoading(false);
+    if (displayGetBucketQuota) {
+      if (loadingBucket) {
+        setBucketLoading(true);
+      } else {
+        setBucketLoading(false);
+      }
     }
-  }, [loadingBucket, setBucketLoading]);
+  }, [loadingBucket, setBucketLoading, displayGetBucketQuota]);
 
   useEffect(() => {
     if (loadingEncryption) {
@@ -199,78 +190,18 @@ const BucketSummary = ({
   }, [loadingEncryption, bucketName, displayGetBucketEncryptionConfiguration]);
 
   useEffect(() => {
-    if (loadingVersioning && distributedSetup) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioning) => {
-          setIsVersioned(res.is_versioned);
-          setLoadingVersioning(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoadingVersioning(false);
-        });
-    }
-  }, [loadingVersioning, setErrorSnackMessage, bucketName, distributedSetup]);
+    if (bucketInfo?.details?.quota) {
+      setQuota(bucketInfo.details.quota);
 
-  useEffect(() => {
-    if (loadingQuota && distributedSetup) {
-      if (displayGetBucketQuota) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
-          .then((res: BucketQuota) => {
-            setQuota(res);
-            if (res.quota) {
-              setQuotaEnabled(true);
-            } else {
-              setQuotaEnabled(false);
-            }
-            setLoadingQuota(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            setQuotaEnabled(false);
-            setLoadingQuota(false);
-          });
+      if (bucketInfo.details.quota.quota) {
+        setQuotaEnabled(true);
       } else {
         setQuotaEnabled(false);
-        setLoadingQuota(false);
       }
+      return;
     }
-  }, [
-    loadingQuota,
-    setLoadingVersioning,
-    setErrorSnackMessage,
-    bucketName,
-    distributedSetup,
-    displayGetBucketQuota,
-  ]);
-
-  useEffect(() => {
-    if (loadingVersioning && distributedSetup) {
-      if (displayGetBucketObjectLockConfiguration) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-          .then((res: BucketObjectLocking) => {
-            setHasObjectLocking(res.object_locking_enabled);
-            setLoadingLocking(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
-            setLoadingLocking(false);
-          });
-      } else {
-        setLoadingLocking(false);
-      }
-    }
-  }, [
-    loadingObjectLocking,
-    setErrorSnackMessage,
-    bucketName,
-    loadingVersioning,
-    distributedSetup,
-    displayGetBucketObjectLockConfiguration,
-  ]);
+    setQuotaEnabled(false);
+  }, [bucketInfo]);
 
   useEffect(() => {
     if (loadingSize) {
@@ -312,7 +243,7 @@ const BucketSummary = ({
   }, [loadingReplication, setErrorSnackMessage, bucketName, distributedSetup]);
 
   useEffect(() => {
-    if (loadingRetention && hasObjectLocking) {
+    if (loadingRetention && bucketInfo?.details?.locking) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/retention`)
         .then((res: IRetentionConfig) => {
@@ -326,13 +257,12 @@ const BucketSummary = ({
           setRetentionConfig(null);
         });
     }
-  }, [loadingRetention, hasObjectLocking, bucketName]);
+  }, [loadingRetention, bucketInfo, bucketName]);
 
   const loadAllBucketData = () => {
     setBucketDetailsLoad(true);
     setBucketLoading(true);
     setLoadingSize(true);
-    setLoadingVersioning(true);
     setLoadingEncryption(true);
     setLoadingRetention(true);
   };
@@ -350,7 +280,7 @@ const BucketSummary = ({
   };
   const closeEnableBucketQuota = () => {
     setEnableQuotaScreenOpen(false);
-    setLoadingQuota(true);
+    setBucketDetailsLoad(true);
   };
 
   const closeSetAccessPolicy = () => {
@@ -411,7 +341,7 @@ const BucketSummary = ({
           closeVersioningModalAndRefresh={closeEnableVersioning}
           modalOpen={enableVersioningOpen}
           selectedBucket={bucketName}
-          versioningCurrentState={isVersioned}
+          versioningCurrentState={get(bucketInfo, "details.versioning", false)}
         />
       )}
 
@@ -488,11 +418,17 @@ const BucketSummary = ({
                     value={
                       <LabelWithIcon
                         icon={
-                          hasObjectLocking ? <EnabledIcon /> : <DisabledIcon />
+                          get(bucketInfo, "details.locking", false) ? (
+                            <EnabledIcon />
+                          ) : (
+                            <DisabledIcon />
+                          )
                         }
                         label={
                           <label className={classes.textMuted}>
-                            {hasObjectLocking ? "Enabled" : "Disabled"}
+                            {get(bucketInfo, "details.locking", false)
+                              ? "Enabled"
+                              : "Disabled"}
                           </label>
                         }
                       />
@@ -516,7 +452,7 @@ const BucketSummary = ({
                   property={"Quota:"}
                   value={quotaEnabled ? "Enabled" : "Disabled"}
                   onEdit={setBucketQuota}
-                  isLoading={loadingQuota}
+                  isLoading={false}
                 />
               </Box>
 
@@ -558,9 +494,13 @@ const BucketSummary = ({
                     iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
                     resourceName={bucketName}
                     property={"Current Status:"}
-                    value={isVersioned ? "Versioned" : "Unversioned (Default)"}
+                    value={
+                      get(bucketInfo, "details.versioning", false)
+                        ? "Versioned"
+                        : "Unversioned (Default)"
+                    }
                     onEdit={setBucketVersioning}
-                    isLoading={loadingVersioning}
+                    isLoading={false}
                   />
                 </Box>
               </Box>
@@ -568,7 +508,7 @@ const BucketSummary = ({
           </SecureComponent>
         )}
 
-        {hasObjectLocking && (
+        {get(bucketInfo, "details.locking", false) && (
           <SecureComponent
             scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
             resource={bucketName}
@@ -639,9 +579,7 @@ const BucketSummary = ({
                     gridTemplateColumns: "1fr",
                     alignItems: "flex-start",
                   }}
-                >
-                  {/*Spacer*/}
-                </Box>
+                 />
               </Box>
             </Grid>
           </SecureComponent>
