@@ -310,6 +310,31 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/csr:
+    get:
+      summary: List Tenant Certificate Signing Request
+      operationId: ListTenantCertificateSigningRequest
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/csrElement"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/identity-provider:
     get:
       summary: Tenant Identity Provider
@@ -1579,6 +1604,30 @@ definitions:
         type: string
       password:
         type: string
+
+  csrElement:
+    type: object
+    properties:
+      status:
+        type: string
+      name:
+        type: string
+      generate_name:
+        type: string
+      namespace:
+        type: string
+      resource_version:
+        type: string
+      generation:
+        type: integer
+        format: int64
+      deletion_grace_period_seconds:
+        type: integer
+        format: int64
+      annotations:
+        type: array
+        items:
+          $ref: "#/definitions/annotation"
 
   createTenantRequest:
     type: object

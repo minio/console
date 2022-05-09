@@ -583,6 +583,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/csr": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List Tenant Certificate Signing Request",
+        "operationId": "ListTenantCertificateSigningRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/csrElement"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/disable-logging": {
       "post": {
         "tags": [
@@ -2269,6 +2306,40 @@ func init() {
           "type": "string"
         },
         "node": {
+          "type": "string"
+        }
+      }
+    },
+    "csrElement": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "deletion_grace_period_seconds": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "generate_name": {
+          "type": "string"
+        },
+        "generation": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "resource_version": {
+          "type": "string"
+        },
+        "status": {
           "type": "string"
         }
       }
@@ -5012,6 +5083,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/csr": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List Tenant Certificate Signing Request",
+        "operationId": "ListTenantCertificateSigningRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/csrElement"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/disable-logging": {
       "post": {
         "tags": [
@@ -7541,6 +7649,40 @@ func init() {
           "type": "string"
         },
         "node": {
+          "type": "string"
+        }
+      }
+    },
+    "csrElement": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "deletion_grace_period_seconds": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "generate_name": {
+          "type": "string"
+        },
+        "generation": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "resource_version": {
+          "type": "string"
+        },
+        "status": {
           "type": "string"
         }
       }
