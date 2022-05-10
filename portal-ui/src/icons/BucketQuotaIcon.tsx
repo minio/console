@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const BucketQuotaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -47,7 +45,7 @@ const BucketQuotaIcon = (props: SVGProps<SVGSVGElement>) => (
     >
       <rect width="256" height="256" fill="#fff" />
       <g id="Enable_Bucket_Quota_icon" data-name="Enable Bucket Quota icon">
-        <g id="Grupo_2411" data-name="Grupo 2411" clipPath="url(#clip-path)">
+        <g id="Grupo_2411" data-name="Grupo 2411">
           <path
             id="Trazado_7154"
             data-name="Trazado 7154"

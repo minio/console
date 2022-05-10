@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const CreateUserIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -48,7 +46,7 @@ const CreateUserIcon = (props: SVGProps<SVGSVGElement>) => (
       <rect width="256" height="256" fill="#fff" />
       <g id="Create_User-2" data-name="Create User">
         <g id="Grupo_2404" data-name="Grupo 2404" transform="translate(12)">
-          <g id="Grupo_2403" data-name="Grupo 2403" clipPath="url(#clip-path)">
+          <g id="Grupo_2403" data-name="Grupo 2403">
             <path
               id="Trazado_7140"
               data-name="Trazado 7140"

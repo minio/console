@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const ServiceAccountCredentialsIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -66,7 +64,6 @@ const ServiceAccountCredentialsIcon = (props: SVGProps<SVGSVGElement>) => (
             id="Grupo_2393"
             data-name="Grupo 2393"
             transform="translate(0 -0.001)"
-            clipPath="url(#clip-path)"
           >
             <path
               id="Trazado_7132"
