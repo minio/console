@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const LoginMinIOLogo = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     viewBox="0 0 284.616 49.568"
     className={"min-icon"}
     fill={"currentcolor"}

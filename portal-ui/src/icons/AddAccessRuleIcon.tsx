@@ -20,26 +20,10 @@ import { SVGProps } from "react";
 const AddAccessRuleIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
   >
-    <defs>
-      <clipPath id="clip-path">
-        <rect
-          id="Rectángulo_1018"
-          data-name="Rectángulo 1018"
-          width="221.51"
-          height="256.002"
-          fill="#4ccb92"
-        />
-      </clipPath>
-      <clipPath id="clip-Add_Access_Rule">
-        <rect width="256" height="256" />
-      </clipPath>
-    </defs>
     <g
       id="Add_Access_Rule"
       data-name="Add Access Rule"
@@ -48,7 +32,7 @@ const AddAccessRuleIcon = (props: SVGProps<SVGSVGElement>) => (
       <rect width="256" height="256" fill="#fff" />
       <g id="Add_Access_Rule_Icon" data-name="Add Access Rule Icon">
         <g id="Grupo_2406" data-name="Grupo 2406" transform="translate(18)">
-          <g id="Grupo_2405" data-name="Grupo 2405" clipPath="url(#clip-path)">
+          <g id="Grupo_2405" data-name="Grupo 2405">
             <path
               id="Trazado_7142"
               data-name="Trazado 7142"

@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const EditYamlIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -50,7 +48,7 @@ const EditYamlIcon = (props: SVGProps<SVGSVGElement>) => (
           fill="none"
         />
         <g id="Grupo_2399" data-name="Grupo 2399" transform="translate(25)">
-          <g id="Grupo_2398" data-name="Grupo 2398" clipPath="url(#clip-path)">
+          <g id="Grupo_2398" data-name="Grupo 2398">
             <path
               id="Trazado_7135"
               data-name="Trazado 7135"

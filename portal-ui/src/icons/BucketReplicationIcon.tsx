@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const BucketReplicationIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -51,7 +49,7 @@ const BucketReplicationIcon = (props: SVGProps<SVGSVGElement>) => (
         data-name="Set Bucket Replication icon"
       >
         <g id="Grupo_2409" data-name="Grupo 2409" transform="translate(0 32)">
-          <g id="Grupo_2408" data-name="Grupo 2408" clipPath="url(#clip-path)">
+          <g id="Grupo_2408" data-name="Grupo 2408">
             <path
               id="Trazado_7146"
               data-name="Trazado 7146"

@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const CreateNewPathIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -52,7 +50,7 @@ const CreateNewPathIcon = (props: SVGProps<SVGSVGElement>) => (
           data-name="Grupo 2415"
           transform="translate(0.424 26.642)"
         >
-          <g id="Grupo_2414" data-name="Grupo 2414" clipPath="url(#clip-path)">
+          <g id="Grupo_2414" data-name="Grupo 2414">
             <path
               id="Trazado_7162"
               data-name="Trazado 7162"

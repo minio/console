@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const DriveFormatErrorsIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -63,7 +61,6 @@ const DriveFormatErrorsIcon = (props: SVGProps<SVGSVGElement>) => (
             id="Grupo_2412"
             data-name="Grupo 2412"
             transform="translate(0 0.001)"
-            clipPath="url(#clip-path)"
           >
             <path
               id="Trazado_7156"

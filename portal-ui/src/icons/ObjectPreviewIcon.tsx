@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const ObjectPreviewIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -48,7 +46,7 @@ const ObjectPreviewIcon = (props: SVGProps<SVGSVGElement>) => (
       <rect width="256" height="256" fill="#fff" />
       <g id="Object_Preview_Icon" data-name="Object Preview Icon">
         <g id="Grupo_2420" data-name="Grupo 2420" transform="translate(20)">
-          <g id="Grupo_2419" data-name="Grupo 2419" clipPath="url(#clip-path)">
+          <g id="Grupo_2419" data-name="Grupo 2419">
             <path
               id="Trazado_7171"
               data-name="Trazado 7171"

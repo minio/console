@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const BucketEncryptionIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -50,7 +48,7 @@ const BucketEncryptionIcon = (props: SVGProps<SVGSVGElement>) => (
         id="Enable_Bucket_Encryption_Icon"
         data-name="Enable Bucket Encryption Icon"
       >
-        <g id="Grupo_2410" data-name="Grupo 2410" clipPath="url(#clip-path)">
+        <g id="Grupo_2410" data-name="Grupo 2410">
           <path
             id="Trazado_7149"
             data-name="Trazado 7149"
