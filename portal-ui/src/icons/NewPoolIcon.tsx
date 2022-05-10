@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const NewPoolIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -48,7 +46,7 @@ const NewPoolIcon = (props: SVGProps<SVGSVGElement>) => (
       <rect width="256" height="256" fill="#fff" />
       <g id="Expand_Tenants_Add_Pools" data-name="Expand Tenants Add Pools">
         <g id="Grupo_2392" data-name="Grupo 2392" transform="translate(14)">
-          <g id="Grupo_2391" data-name="Grupo 2391" clipPath="url(#clip-path)">
+          <g id="Grupo_2391" data-name="Grupo 2391">
             <path
               id="Trazado_7129"
               data-name="Trazado 7129"

@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const FormatDrivesIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -52,12 +50,7 @@ const FormatDrivesIcon = (props: SVGProps<SVGSVGElement>) => (
           data-name="Format Drives Icon"
           transform="translate(0 -3)"
         >
-          <g
-            id="Grupo_2430"
-            data-name="Grupo 2430"
-            transform="translate(0 10)"
-            clipPath="url(#clip-path)"
-          >
+          <g id="Grupo_2430" data-name="Grupo 2430" transform="translate(0 10)">
             <path
               id="Trazado_7192"
               data-name="Trazado 7192"

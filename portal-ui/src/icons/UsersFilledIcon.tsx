@@ -36,7 +36,7 @@ const UserFilledIcon = (props: SVGProps<SVGSVGElement>) => (
         />
       </clipPath>
     </defs>
-    <g id="Group_2365" data-name="Group 2365" clipPath="url(#clip-path)">
+    <g id="Group_2365" data-name="Group 2365">
       <path
         id="Path_7088"
         data-name="Path 7088"

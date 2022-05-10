@@ -20,8 +20,6 @@ import { SVGProps } from "react";
 const ChangePasswordIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="284.616"
-    height="49.568"
     className={"min-icon"}
     viewBox="0 0 256 256"
     {...props}
@@ -48,7 +46,7 @@ const ChangePasswordIcon = (props: SVGProps<SVGSVGElement>) => (
       <rect width="256" height="256" fill="#fff" />
       <g id="Change_User_Password_Icon" data-name="Change User Password Icon">
         <g id="Grupo_2422" data-name="Grupo 2422" transform="translate(11)">
-          <g id="Grupo_2421" data-name="Grupo 2421" clipPath="url(#clip-path)">
+          <g id="Grupo_2421" data-name="Grupo 2421">
             <path
               id="Trazado_7174"
               data-name="Trazado 7174"
