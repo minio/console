@@ -398,6 +398,9 @@ export const objectBrowserCommon = {
     paddingRight: "10px",
     display: "flex",
     alignItems: "center",
+    "@media (max-width: 1060px)": {
+      display: "none",
+    },
   },
   smallLabel: {
     color: "#9C9C9C",
@@ -407,9 +410,20 @@ export const objectBrowserCommon = {
     marginLeft: 10,
     fontSize: 14,
     color: "#969FA8",
+    "@media (max-width: 600px)": {
+      marginLeft: 0,
+      "& span": {
+        marginBottom: 10,
+        display: "flex",
+        flexDirection: "column"
+      }
+    },
   },
   detailsSpacer: {
     marginRight: 18,
+    "@media (max-width: 600px)": {
+      marginRight: 0
+    }
   },
   breadcrumbsList: {
     textOverflow: "ellipsis" as const,
@@ -421,6 +435,32 @@ export const objectBrowserCommon = {
     marginLeft: 15,
     marginRight: 10,
     width: 0, // WA to avoid overflow if child elements in flexbox list.**
+  },
+  breadcrumbsSecond: {
+    display: "none" as const,
+    marginTop: 15,
+    marginBottom: 5,
+    justifyContent: "flex-start" as const,
+    "& > div": {
+      fontSize: 12,
+      fontWeight: "normal",
+      flexDirection: "row" as const,
+      flexWrap: "nowrap" as const,
+    },
+    "@media (max-width: 1060px)": {
+      display: "flex" as const,
+    },
+  },
+  overrideShowDeleted: {
+    "@media (max-width: 600px)": {
+      flexDirection: "row" as const,
+    },
+  },
+  actionsSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 15,
   },
 };
 
@@ -1391,6 +1431,9 @@ export const objectBrowserExtras = {
   },
   titleSpacer: {
     marginLeft: 10,
+    "@media (max-width: 600px)": {
+      marginLeft: 0,
+    }
   },
 };
 

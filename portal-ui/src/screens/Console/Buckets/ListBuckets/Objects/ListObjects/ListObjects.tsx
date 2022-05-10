@@ -142,6 +142,9 @@ const styles = (theme: Theme) =>
       "&.actionsPanelOpen": {
         minHeight: "100%",
       },
+      "@media (max-width: 800px)": {
+        width: 800,
+      },
     },
     "@global": {
       ".rowLine:hover  .iconFileElm": {
@@ -185,6 +188,21 @@ const styles = (theme: Theme) =>
     },
     breadcrumbsContainer: {
       padding: "12px 14px 5px",
+    },
+    parentWrapper: {
+      "@media (max-width: 800px)": {
+        overflowX: "auto",
+      },
+    },
+    fullContainer: {
+      "@media (max-width: 799px)": {
+        width: 0,
+      },
+    },
+    hideListOnSmall: {
+      "@media (max-width: 799px)": {
+        visibility: "hidden",
+      },
     },
     ...objectBrowserExtras,
     ...objectBrowserCommon,
@@ -454,7 +472,10 @@ const ListObjects = ({
             setLoadingVersioning(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            console.error("Error Getting Object Versioning Status: ", err.detailedError);
+            console.error(
+              "Error Getting Object Versioning Status: ",
+              err.detailedError
+            );
             setLoadingVersioning(false);
           });
       } else {
@@ -474,7 +495,10 @@ const ListObjects = ({
             setLoadingLocking(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            console.error("Error Getting Object Locking Status: ", err.detailedError);
+            console.error(
+              "Error Getting Object Locking Status: ",
+              err.detailedError
+            );
             setLoadingLocking(false);
           });
       } else {
@@ -1321,81 +1345,90 @@ const ListObjects = ({
             }
             actions={
               <Fragment>
-                <RBIconButton
-                  id={"rewind-objects-list"}
-                  tooltip={"Rewind Bucket"}
-                  text={"Rewind"}
-                  icon={
-                    <Badge
-                      badgeContent=" "
-                      color="secondary"
-                      variant="dot"
-                      invisible={!rewindEnabled}
-                      className={classes.badgeOverlap}
-                      sx={{ height: 12 }}
-                    >
-                      <HistoryIcon />
-                    </Badge>
-                  }
-                  color="primary"
-                  variant={"outlined"}
-                  onClick={() => {
-                    setRewindSelect(true);
-                  }}
-                  disabled={
-                    !isVersioned ||
-                    !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
-                  }
-                />
-                <RBIconButton
-                  id={"refresh-objects-list"}
-                  tooltip={"Reload List"}
-                  text={"Refresh"}
-                  icon={<RefreshIcon />}
-                  color="primary"
-                  variant={"outlined"}
-                  onClick={() => {
-                    if (versionsMode) {
-                      setLoadingVersions(true);
-                    } else {
-                      setLoadingObjectsList(true);
+                <div className={classes.actionsSection}>
+                  <RBIconButton
+                    id={"rewind-objects-list"}
+                    tooltip={"Rewind Bucket"}
+                    text={"Rewind"}
+                    icon={
+                      <Badge
+                        badgeContent=" "
+                        color="secondary"
+                        variant="dot"
+                        invisible={!rewindEnabled}
+                        className={classes.badgeOverlap}
+                        sx={{ height: 16 }}
+                      >
+                        <HistoryIcon
+                          style={{
+                            minWidth: 16,
+                            minHeight: 16,
+                            width: 16,
+                            height: 16,
+                          }}
+                        />
+                      </Badge>
                     }
-                  }}
-                  disabled={
-                    !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
-                    rewindEnabled
-                  }
-                />
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleUploadButton}
-                  style={{ display: "none" }}
-                  ref={fileUpload}
-                />
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleUploadButton}
-                  style={{ display: "none" }}
-                  ref={folderUpload}
-                />
-                <UploadFilesButton
-                  bucketName={bucketName}
-                  uploadPath={uploadPath.join("/")}
-                  uploadFileFunction={(closeMenu) => {
-                    if (fileUpload && fileUpload.current) {
-                      fileUpload.current.click();
+                    color="primary"
+                    variant={"outlined"}
+                    onClick={() => {
+                      setRewindSelect(true);
+                    }}
+                    disabled={
+                      !isVersioned ||
+                      !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
                     }
-                    closeMenu();
-                  }}
-                  uploadFolderFunction={(closeMenu) => {
-                    if (folderUpload && folderUpload.current) {
-                      folderUpload.current.click();
+                  />
+                  <RBIconButton
+                    id={"refresh-objects-list"}
+                    tooltip={"Reload List"}
+                    text={"Refresh"}
+                    icon={<RefreshIcon />}
+                    color="primary"
+                    variant={"outlined"}
+                    onClick={() => {
+                      if (versionsMode) {
+                        setLoadingVersions(true);
+                      } else {
+                        setLoadingObjectsList(true);
+                      }
+                    }}
+                    disabled={
+                      !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
+                      rewindEnabled
                     }
-                    closeMenu();
-                  }}
-                />
+                  />
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    style={{ display: "none" }}
+                    ref={fileUpload}
+                  />
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    style={{ display: "none" }}
+                    ref={folderUpload}
+                  />
+                  <UploadFilesButton
+                    bucketName={bucketName}
+                    uploadPath={uploadPath.join("/")}
+                    uploadFileFunction={(closeMenu) => {
+                      if (fileUpload && fileUpload.current) {
+                        fileUpload.current.click();
+                      }
+                      closeMenu();
+                    }}
+                    uploadFolderFunction={(closeMenu) => {
+                      if (folderUpload && folderUpload.current) {
+                        folderUpload.current.click();
+                      }
+                      closeMenu();
+                    }}
+                  />
+                </div>
               </Fragment>
             }
           />
@@ -1426,7 +1459,7 @@ const ListObjects = ({
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.fullContainer}>
                   <Grid item xs={12} className={classes.breadcrumbsContainer}>
                     <BrowserBreadcrumbs
                       bucketName={bucketName}
@@ -1443,6 +1476,7 @@ const ListObjects = ({
                               onChange={setDeletedAction}
                               checked={showDeleted}
                               overrideLabelClasses={classes.labelStyle}
+                              className={classes.overrideShowDeleted}
                               noTopMargin
                             />
                           </div>
@@ -1482,6 +1516,7 @@ const ListObjects = ({
 
                       return "";
                     }}
+                    parentClassName={classes.parentWrapper}
                   />
                 </Grid>
               </SecureComponent>
@@ -1496,6 +1531,7 @@ const ListObjects = ({
                 closePanel={() => {
                   onClosePanel(false);
                 }}
+                className={`${versionsMode ? classes.hideListOnSmall : ""}`}
               >
                 {selectedObjects.length > 0 && (
                   <ActionsListSection
