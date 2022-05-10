@@ -12,9 +12,9 @@ import (
 
 func Inspect(volume string, file string, enc bool) (*http.Response, error) {
 
-	requestUrl := fmt.Sprintf("http://localhost:9090/api/v1/admin/inspect?volume=%s&file=%s&encrypt=%t", volume, file, enc)
+	var requestURL = fmt.Sprintf("http://localhost:9090/api/v1/admin/inspect?volume=%s&file=%s&encrypt=%t", volume, file, enc)
 	request, err := http.NewRequest(
-		"GET", requestUrl, nil)
+		"GET", requestURL, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -28,7 +28,7 @@ func Inspect(volume string, file string, enc bool) (*http.Response, error) {
 }
 
 func TestInspect(t *testing.T) {
-	assert := assert.New(t)
+	var assert = assert.New(t)
 
 	type args struct {
 		volume  string
@@ -37,7 +37,7 @@ func TestInspect(t *testing.T) {
 	}
 
 	// Inspect returns successful response always
-	tests := []struct {
+	var tests = []struct {
 		name          string
 		args          args
 		expStatusCode int
