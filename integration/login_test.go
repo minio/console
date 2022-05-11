@@ -131,3 +131,33 @@ func TestLogout(t *testing.T) {
 	assert.Nil(err, "Logout errored out")
 	assert.Equal(response.StatusCode, 200)
 }
+
+func TestBadLogin(t *testing.T) {
+	assert := assert.New(t)
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	requestData := map[string]string{
+		"accessKey": "minioadmin",
+		"secretKey": "minioadminbad",
+	}
+
+	requestDataJSON, _ := json.Marshal(requestData)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/login", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+
+	assert.Equal(response.StatusCode, 500, "Login request not rejected")
+	assert.NotNil(response, "Login response is  nil")
+	assert.Nil(err, "Login errored out")
+}

@@ -20,6 +20,7 @@ package integration
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -34,6 +35,8 @@ import (
 	"time"
 
 	"github.com/minio/console/models"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -2005,43 +2008,60 @@ func TestDeleteBucket(t *testing.T) {
 	/*
 		Test to delete a bucket
 	*/
-
-	// 1. Create the bucket
 	assert := assert.New(t)
-	if !BucketGotAdded("testdeletebucket1", false, false, nil, nil, assert, 201) {
-		return
+	type args struct {
+		bucketName       string
+		createBucketName string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+	}{
+		{
+			name:           "Delete a bucket",
+			expectedStatus: 204,
+			args: args{
+				bucketName:       "testdeletebucket1",
+				createBucketName: "testdeletebucket1",
+			},
+		}, {
+			name:           "Delete invalid bucket",
+			expectedStatus: 404,
+			args: args{
+				bucketName:       "nonexistingbucket",
+				createBucketName: "",
+			},
+		},
 	}
 
-	// 2. Delete the bucket
-	deleteBucketResponse, deleteBucketError := DeleteBucket("testdeletebucket1")
-	assert.Nil(deleteBucketError)
-	if deleteBucketError != nil {
-		log.Println(deleteBucketError)
-		return
-	}
-	if deleteBucketResponse != nil {
-		assert.Equal(
-			204, deleteBucketResponse.StatusCode, "Status Code is incorrect")
+	// Initialize minio client object.
+	minioClient, err := minio.New("localhost:9000", &minio.Options{
+		Creds:  credentials.NewStaticV4("minioadmin", "minioadmin", ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Fatalln(err)
 	}
 
-	// 3. Verify the bucket is gone by trying to put a tag
-	tags := make(map[string]string)
-	tags["tag1"] = "tag1"
-	putBucketTagResponse, putBucketTagError := PutBucketsTags(
-		"testdeletebucket1", tags)
-	if putBucketTagError != nil {
-		log.Println(putBucketTagError)
-		assert.Fail("Error adding a tag to the bucket")
-		return
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create bucket if needed for the test
+			if tt.args.createBucketName != "" {
+				if err := minioClient.MakeBucket(context.Background(), tt.args.createBucketName, minio.MakeBucketOptions{}); err != nil {
+					assert.Failf("Failed to create bucket", "Could not create bucket %s: %v", tt.args.createBucketName, err)
+				}
+			}
+
+			// Delete the bucket
+			deleteBucketResponse, deleteBucketError := DeleteBucket(tt.args.bucketName)
+			assert.Nil(deleteBucketError)
+			if deleteBucketResponse != nil {
+				assert.Equal(
+					tt.expectedStatus, deleteBucketResponse.StatusCode, "Status Code is incorrect")
+			}
+		})
 	}
-	finalResponse := inspectHTTPResponse(putBucketTagResponse)
-	if putBucketTagResponse != nil {
-		assert.Equal(
-			500, putBucketTagResponse.StatusCode,
-			finalResponse)
-	}
-	assert.True(
-		strings.Contains(finalResponse, "The specified bucket does not exist"))
 }
 
 func TestListBuckets(t *testing.T) {
