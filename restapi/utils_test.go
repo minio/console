@@ -214,3 +214,33 @@ func Test_isSafeToPreview(t *testing.T) {
 		})
 	}
 }
+
+func TestRandomCharString(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantLength int
+	}{
+		{
+			name: "valid string",
+			args: args{
+				n: 1,
+			},
+			wantLength: 1,
+		}, {
+			name: "valid string",
+			args: args{
+				n: 64,
+			},
+			wantLength: 64,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.wantLength, len(RandomCharString(tt.args.n)), "RandomCharString(%v)", tt.args.n)
+		})
+	}
+}
