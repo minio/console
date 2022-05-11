@@ -2062,7 +2062,6 @@ func TestDeleteBucket(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func TestListBuckets(t *testing.T) {

@@ -135,10 +135,6 @@ func TestLogout(t *testing.T) {
 func TestBadLogin(t *testing.T) {
 	assert := assert.New(t)
 
-	// image for now:
-	// minio: 9000
-	// console: 9090
-
 	client := &http.Client{
 		Timeout: 2 * time.Second,
 	}
@@ -164,5 +160,4 @@ func TestBadLogin(t *testing.T) {
 	assert.Equal(response.StatusCode, 500, "Login request not rejected")
 	assert.NotNil(response, "Login response is  nil")
 	assert.Nil(err, "Login errored out")
-
 }
