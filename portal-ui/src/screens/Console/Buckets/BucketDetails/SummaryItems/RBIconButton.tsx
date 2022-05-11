@@ -100,8 +100,10 @@ const RBIconButton = (props: RBIconProps) => {
         "& span": {
           fontSize: 14,
           "@media (max-width: 900px)": {
-            display: showLabelAlways ? "inline" : "none",
-            marginRight: showLabelAlways ? "7px" : "",
+            "&:not(.MuiBadge-root, .MuiBadge-badge)": {
+              display: showLabelAlways ? "inline" : "none",
+              marginRight: showLabelAlways ? "7px" : "",
+            },
           },
         },
       }}
