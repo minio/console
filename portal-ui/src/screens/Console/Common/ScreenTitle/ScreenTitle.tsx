@@ -39,6 +39,9 @@ const styles = (theme: Theme) =>
         width: 44,
         height: 44,
       },
+      "@media (max-width: 600px)": {
+        display: "none"
+      },
     },
     headerBarSubheader: {
       color: "grey",
@@ -72,11 +75,15 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       "@media (max-width: 600px)": {
         flexFlow: "column",
+        width: "100%",
       },
     },
     rightItems: {
       display: "flex",
       alignItems: "center",
+      "@media (max-width: 600px)": {
+        width: "100%",
+      },
     },
   });
 

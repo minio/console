@@ -24,6 +24,7 @@ import { ClosePanelIcon } from "../../../../../../icons";
 interface IDetailsListPanel {
   classes: any;
   open: boolean;
+  className?: string;
   closePanel: () => void;
   children: React.ReactNode;
 }
@@ -51,6 +52,13 @@ const styles = (theme: Theme) =>
         borderLeftWidth: 1,
         opacity: 1,
       },
+      "@media (max-width: 799px)": {
+        "&.open": {
+          width: "100%",
+          minWidth: "100%",
+          borderLeftWidth: 0,
+        },
+      },
     },
     closePanel: {
       position: "absolute",
@@ -66,10 +74,14 @@ const DetailsListPanel = ({
   classes,
   open,
   closePanel,
+  className = "",
   children,
 }: IDetailsListPanel) => {
   return (
-    <Grid item className={`${classes.detailsList} ${open ? "open" : ""}`}>
+    <Grid
+      item
+      className={`${classes.detailsList} ${open ? "open" : ""} ${className}`}
+    >
       <IconButton onClick={closePanel} className={classes.closePanel}>
         <ClosePanelIcon />
       </IconButton>

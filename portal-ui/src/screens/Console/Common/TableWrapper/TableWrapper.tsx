@@ -80,6 +80,7 @@ interface ISortConfig {
   currentSort: string;
   currentDirection: "ASC" | "DESC" | undefined;
 }
+
 interface TableWrapperProps {
   itemActions?: ItemActions[] | null;
   columns: IColumns[];
@@ -109,6 +110,7 @@ interface TableWrapperProps {
   }: {
     index: number;
   }) => "deleted" | "" | React.CSSProperties;
+  parentClassName?: string;
 }
 
 const borderColor = "#9c9c9c80";
@@ -462,6 +464,7 @@ const TableWrapper = ({
   disabled = false,
   onSelectAll,
   rowStyle,
+  parentClassName = "",
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -552,7 +555,7 @@ const TableWrapper = ({
   };
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} className={parentClassName}>
       <Paper
         className={`${classes.paper} ${noBackground ? classes.noBackground : ""}
         ${disabled ? classes.disabled : ""} 

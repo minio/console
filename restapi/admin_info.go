@@ -959,9 +959,9 @@ func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (
 		return nil, ErrorWithContext(ctx, errors.New("Prometheus URL is unreachable"))
 	}
 
-	selector := fmt.Sprintf(`{job="%s"}`, prometheusJobID)
+	selector := fmt.Sprintf(`job="%s"`, prometheusJobID)
 	if strings.TrimSpace(prometheusExtraLabels) != "" {
-		selector = fmt.Sprintf(`{job="%s",%s}`, prometheusJobID, prometheusExtraLabels)
+		selector = fmt.Sprintf(`job="%s",%s`, prometheusJobID, prometheusExtraLabels)
 	}
 	return getWidgetDetails(ctx, prometheusURL, selector, params.WidgetID, params.Step, params.Start, params.End)
 }
