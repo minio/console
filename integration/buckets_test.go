@@ -158,7 +158,7 @@ func TestMain(m *testing.M) {
 
 	requestDataBody = bytes.NewReader(requestDataJSON)
 
-	// get list of buckets
+	// delete bucket
 	request, err = http.NewRequest("DELETE", "http://localhost:9090/api/v1/buckets/test1", requestDataBody)
 	if err != nil {
 		log.Println(err)
