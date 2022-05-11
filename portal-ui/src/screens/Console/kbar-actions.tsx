@@ -18,10 +18,12 @@ import { Action } from "kbar/lib/types";
 import history from "../../history";
 import { BucketsIcon } from "../../icons";
 import { validRoutes } from "./valid-routes";
+import { Bucket } from "./Buckets/types";
 
 export const routesAsKbarActions = (
   features: string[] | null,
-  operatorMode: boolean
+  operatorMode: boolean,
+  buckets: Bucket[]
 ) => {
   const initialActions: Action[] = [];
   const allowedMenuItems = validRoutes(features, operatorMode);
@@ -58,6 +60,20 @@ export const routesAsKbarActions = (
       icon: <BucketsIcon />,
     };
     initialActions.push(a);
+
+    if (buckets) {
+      buckets.map((buck) => [
+        initialActions.push({
+          id: buck.name,
+          name: buck.name,
+          section: "List of Buckets",
+          perform: () => {
+            history.push(`/buckets/${buck.name}/browse`);
+          },
+          icon: <BucketsIcon />,
+        }),
+      ]);
+    }
   }
   return initialActions;
 };

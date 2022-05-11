@@ -20,13 +20,7 @@ import { AppState } from "../../store";
 import { connect } from "react-redux";
 import CommandBar from "./CommandBar";
 
-const ConsoleKBar = ({
-  features,
-  operatorMode,
-}: {
-  operatorMode: boolean;
-  features: string[] | null;
-}) => {
+const ConsoleKBar = ({ features }: { features: string[] | null }) => {
   // if we are hiding the menu also disable the k-bar so just return console
   if (features?.includes("hide-menu")) {
     return <Console />;
@@ -38,14 +32,13 @@ const ConsoleKBar = ({
         enableHistory: true,
       }}
     >
-      <CommandBar operatorMode={operatorMode} features={features} />
+      <CommandBar />
       <Console />
     </KBarProvider>
   );
 };
 
 const mapState = (state: AppState) => ({
-  operatorMode: state.system.operatorMode,
   features: state.console.session.features,
 });
 
