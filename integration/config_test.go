@@ -149,7 +149,7 @@ func Test_ResetConfigAPI(t *testing.T) {
 	assert := assert.New(t)
 
 	type args struct {
-		name      string
+		name string
 	}
 	tests := []struct {
 		name           string
@@ -160,7 +160,7 @@ func Test_ResetConfigAPI(t *testing.T) {
 		{
 			name: "Reset Config - Valid",
 			args: args{
-				name:      "region",
+				name: "region",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -168,7 +168,7 @@ func Test_ResetConfigAPI(t *testing.T) {
 		{
 			name: "Reset Config - Invalid",
 			args: args{
-				name:      "regiontest",
+				name: "regiontest",
 			},
 			expectedStatus: 500,
 			expectedError:  nil,
