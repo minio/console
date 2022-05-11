@@ -46,6 +46,7 @@ import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
@@ -293,7 +294,7 @@ const ListBuckets = ({
             <RBIconButton
               tooltip={"Create Bucket"}
               onClick={() => {
-                history.push("/add-bucket");
+                history.push(IAM_PAGES.ADD_BUCKETS);
               }}
               text={"Create Bucket"}
               icon={<AddIcon />}
@@ -358,7 +359,7 @@ const ListBuckets = ({
                           To get started,&nbsp;
                           <AButton
                             onClick={() => {
-                              history.push("/add-bucket");
+                              history.push(IAM_PAGES.ADD_BUCKETS);
                             }}
                           >
                             Create a Bucket.

@@ -18,6 +18,7 @@ import { Action } from "kbar/lib/types";
 import history from "../../history";
 import { BucketsIcon } from "../../icons";
 import { validRoutes } from "./valid-routes";
+import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 
 export const routesAsKbarActions = (
   features: string[] | null,
@@ -54,7 +55,7 @@ export const routesAsKbarActions = (
       id: `create-bucket`,
       name: "Create Bucket",
       section: "Buckets",
-      perform: () => history.push(`/add-bucket`),
+      perform: () => history.push(IAM_PAGES.ADD_BUCKETS),
       icon: <BucketsIcon />,
     };
     initialActions.push(a);
