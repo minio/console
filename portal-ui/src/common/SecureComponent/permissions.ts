@@ -113,21 +113,21 @@ export const IAM_SCOPES = {
 export const IAM_PAGES = {
   /* Buckets */
   BUCKETS: "/buckets",
-  ADD_BUCKETS: "/add-bucket",
+  ADD_BUCKETS: "/buckets/add-bucket",
   BUCKETS_ADMIN_VIEW: "/buckets/:bucketName/admin*",
   BUCKETS_BROWSE_VIEW: "/buckets/:bucketName/browse*",
   /* Identity */
   IDENTITY: "/identity",
   USERS: "/identity/users",
-  USERS_VIEW: "/identity/users/:userName+",
-  USER_ADD: "/identity/add-user",
+  USERS_VIEW: "/identity/users/:userName",
+  USER_ADD: "/identity/users/add-user",
   GROUPS: "/identity/groups",
-  GROUPS_ADD: "/identity/create-group",
+  GROUPS_ADD: "/identity/groups/create-group",
   GROUPS_VIEW: "/identity/groups/:groupName+",
   ACCOUNT: "/identity/account",
-  ACCOUNT_ADD: "/identity/new-account",
-  USER_ACCOUNT: "/identity/new-user-sa",
-  USER_ACCOUNT_ADD: "/identity/new-user-sa/:userName+",
+  ACCOUNT_ADD: "/identity/account/new-account",
+  USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
+
   /* Access */
   POLICIES: "/access/policies",
   POLICY_ADD: "/access/add-policy",
@@ -316,7 +316,7 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_DISABLE_USER,
     IAM_SCOPES.ADMIN_DELETE_USER,
   ],
-  [IAM_PAGES.USER_ACCOUNT_ADD]: [
+  [IAM_PAGES.USER_SA_ACCOUNT_ADD]: [
     IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
     IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
     IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,

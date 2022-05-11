@@ -22,6 +22,7 @@ import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 import LoadingComponent from "../../../common/LoadingComponent";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
 const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
@@ -41,7 +42,7 @@ const Buckets = () => {
     <Router history={history}>
       <Switch>
         <Route
-          path="/add-bucket"
+          path={IAM_PAGES.ADD_BUCKETS}
           children={(routerProps) => (
             <Suspense fallback={<LoadingComponent />}>
               <AddBucket />

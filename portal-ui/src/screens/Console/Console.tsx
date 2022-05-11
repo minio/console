@@ -424,7 +424,7 @@ const Console = ({
     },
     {
       component: UserSACreate,
-      path: IAM_PAGES.USER_ACCOUNT_ADD,
+      path: IAM_PAGES.USER_SA_ACCOUNT_ADD,
       forceDisplay: true, // user has implicit access to service-accounts
     },
     {
