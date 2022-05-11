@@ -18,7 +18,6 @@ import * as roles from "./roles";
 import * as elements from "./elements";
 import * as constants from "./constants";
 import { Selector } from "testcafe";
-import { logoutItem } from "./elements-menu";
 
 import * as Minio from "minio";
 
@@ -157,8 +156,7 @@ export const cleanUpBucketAndUploads = (t, modifier) => {
 export const createUser = (t) => {
   return t
     .useRole(roles.admin)
-    .navigateTo("http://localhost:9090/identity/users")
-    .click(elements.createUserButton)
+    .navigateTo(`http://localhost:9090/identity/users/add-user`)
     .typeText(elements.usersAccessKeyInput, constants.TEST_USER_NAME)
     .typeText(elements.usersSecretKeyInput, constants.TEST_PASSWORD)
     .click(elements.saveButton);
