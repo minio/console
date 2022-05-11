@@ -59,6 +59,10 @@ const styles = (theme: Theme) =>
       "&.deleted": {
         color: "#868686",
       },
+      "@media (max-width: 799px)": {
+        padding: "5px 0px",
+        margin: 0,
+      },
     },
     intermediateLayer: {
       margin: "0 1.5rem 0 1.5rem",
@@ -67,6 +71,15 @@ const styles = (theme: Theme) =>
         "& > div": {
           borderBottomColor: "#F8F8F8",
         },
+      },
+      "@media (max-width: 799px)": {
+        margin: 0,
+        "&:hover, &.selected": {
+          backgroundColor: "transparent",
+          "& > div": {
+            borderBottomColor: "#E2E2E2",
+          },
+        }
       },
     },
     versionContainer: {
@@ -81,21 +94,42 @@ const styles = (theme: Theme) =>
         minHeight: 18,
         marginRight: 10,
       },
+      "@media (max-width: 799px)": {
+        fontSize: 14,
+        "& svg.min-icon": {
+          display: "none",
+        }
+      },
     },
     buttonContainer: {
       textAlign: "right",
       "& button": {
         marginLeft: "1.5rem",
       },
+      "@media (max-width: 600px)": {
+        "& button": {
+          marginLeft: "5px",
+        },
+      },
     },
     versionID: {
       fontSize: "12px",
       margin: "2px 0",
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
+      maxWidth: "95%",
+      overflow: "hidden",
     },
     versionData: {
       marginRight: "10px",
       fontSize: 12,
       color: "#868686",
+      "@media (max-width: 799px)": {
+        textOverflow: "ellipsis",
+        maxWidth: "95%",
+        overflow: "hidden",
+        whiteSpace: "nowrap"
+      },
     },
     ctrItem: {
       position: "relative",
@@ -108,7 +142,23 @@ const styles = (theme: Theme) =>
         backgroundColor: "#F8F8F8",
         left: "24px",
       },
+      "@media (max-width: 799px)": {
+        "&::before": {
+          display: "none",
+        }
+      },
     },
+    collapsableInfo: {
+      "@media (max-width: 799px)": {
+        display: "flex",
+        flexDirection: "column",
+      },
+    },
+    versionItem: {
+      "@media (max-width: 799px)": {
+        display: "none"
+      },
+    }
   });
 
 const FileVersionItem = ({
@@ -186,7 +236,7 @@ const FileVersionItem = ({
         >
           <Grid item xs={12} justifyContent={"space-between"}>
             <Grid container>
-              <Grid item xs={4} className={classes.versionContainer}>
+              <Grid item xs md={4} className={classes.versionContainer}>
                 {checkable && (
                   <CheckboxWrapper
                     checked={isChecked}
@@ -209,9 +259,9 @@ const FileVersionItem = ({
                   />
                 )}
                 {displayFileIconName(fileName, true)} v{index.toString()}
-                {pill && <SpecificVersionPill type={pill} />}
+                <span className={classes.versionItem}>{pill && <SpecificVersionPill type={pill} />}</span>
               </Grid>
-              <Grid item xs={8} className={classes.buttonContainer}>
+              <Grid item xs={10} md={8} className={classes.buttonContainer}>
                 {versionItemButtons.map((button, index) => {
                   return (
                     <Tooltip
@@ -260,7 +310,7 @@ const FileVersionItem = ({
           <Grid item xs={12} className={classes.versionID}>
             {versionInfo.version_id !== "null" ? versionInfo.version_id : "-"}
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.collapsableInfo}>
             <span className={classes.versionData}>
               <strong>Last modified:</strong>{" "}
               <reactMoment.default>

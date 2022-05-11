@@ -201,7 +201,7 @@ const styles = (theme: Theme) =>
     },
     hideListOnSmall: {
       "@media (max-width: 799px)": {
-        visibility: "hidden",
+        display: "none",
       },
     },
     ...objectBrowserExtras,
