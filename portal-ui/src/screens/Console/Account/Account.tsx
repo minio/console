@@ -55,6 +55,7 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
+import { ISessionResponse } from "../../Console/types"
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -97,9 +98,22 @@ const Account = ({
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
+  const [userIDP, setUserIDP] = useState<boolean>(false);
+
   useEffect(() => {
     fetchRecords();
   }, []);
+
+ useEffect(() => {
+    api
+    .invoke("GET", `/api/v1/session`)
+   .then((res: ISessionResponse) => {
+     setUserIDP(res.features.includes("external-idp"))
+   })
+   .catch((err: ErrorResponseHandler) => {
+     setErrorSnackMessage(err);
+   });
+}, []);
 
   useEffect(() => {
     if (loading) {
@@ -240,7 +254,7 @@ const Account = ({
                 icon={<PasswordKeyIcon />}
                 color={"primary"}
                 variant={"outlined"}
-                disabled={false}
+                disabled={userIDP}
               />
             </SecureComponent>
             <RBIconButton
