@@ -212,6 +212,35 @@ export const validRoutes = (
         },
       ],
     },
+
+    {
+      component: NavLink,
+      to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
+      name: "Notifications",
+      icon: LambdaIcon,
+      id: "lambda",
+    },
+    {
+      component: NavLink,
+      to: IAM_PAGES.TIERS,
+      name: "Tiers",
+      icon: TiersIcon,
+      id: "tiers",
+    },
+    {
+      component: NavLink,
+      to: IAM_PAGES.SITE_REPLICATION,
+      name: "Site Replication",
+      icon: RecoverIcon,
+      id: "sitereplication",
+    },
+    {
+      component: NavLink,
+      to: IAM_PAGES.SETTINGS,
+      name: "Configurations",
+      id: "configurations",
+      icon: SettingsIcon,
+    },
     {
       component: NavLink,
       to: IAM_PAGES.LICENSE,
@@ -219,41 +248,6 @@ export const validRoutes = (
       id: "license",
       icon: LicenseIcon,
       forceDisplay: true,
-    },
-    {
-      name: "Settings",
-      id: "settings",
-      icon: SettingsIcon,
-      children: [
-        {
-          component: NavLink,
-          to: IAM_PAGES.SETTINGS,
-          name: "Configurations",
-          id: "configurations",
-          icon: SettingsIcon,
-        },
-        {
-          component: NavLink,
-          to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
-          name: "Notifications",
-          icon: LambdaIcon,
-          id: "lambda",
-        },
-        {
-          component: NavLink,
-          to: IAM_PAGES.TIERS,
-          name: "Tiers",
-          icon: TiersIcon,
-          id: "tiers",
-        },
-        {
-          component: NavLink,
-          to: IAM_PAGES.SITE_REPLICATION,
-          name: "Site Replication",
-          icon: RecoverIcon,
-          id: "sitereplication",
-        },
-      ],
     },
     {
       type: "item",

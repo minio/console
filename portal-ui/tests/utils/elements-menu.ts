@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import * as constants from "./constants";
 import { Selector } from "testcafe";
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
@@ -69,20 +68,17 @@ export const iamPoliciesElement = sidebarItem.withAttribute(
   "/access/policies"
 );
 
-export const settingsElement = Selector(".MuiPaper-root")
+export const configurationsElement = Selector(".MuiPaper-root")
   .find("ul")
-  .child("#settings");
-export const settingsChildren = Selector("#settings-children");
+  .child("#configurations");
 
-export const configurationsElement = settingsChildren
-  .find("a")
-  .withAttribute("href", "/settings/configurations");
-export const notificationEndpointsElement = settingsChildren
-  .find("a")
-  .withAttribute("href", "/settings/notification-endpoints");
-export const tiersElement = settingsChildren
-  .find("a")
-  .withAttribute("href", "/settings/tiers");
+export const notificationEndpointsElement = Selector(".MuiPaper-root")
+  .find("ul")
+  .child("#lambda");
+
+export const tiersElement = Selector(".MuiPaper-root")
+  .find("ul")
+  .child("#tiers");
 
 export const supportElement = Selector(".MuiPaper-root")
   .find("ul")
