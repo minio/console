@@ -240,7 +240,7 @@ const Account = ({
                 icon={<PasswordKeyIcon />}
                 color={"primary"}
                 variant={"outlined"}
-                disabled={selectedSAs.length === 0}
+                disabled={false}
               />
             </SecureComponent>
             <RBIconButton
