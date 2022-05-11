@@ -15,13 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as roles from "../utils/roles";
-import { settingsElement } from "../utils/elements-menu";
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 import { Selector } from "testcafe";
 
 let testDomainUrl = "http://localhost:9090";
 const screenUrl = `${testDomainUrl}${IAM_PAGES.SITE_REPLICATION}`;
-const siteReplicationEl = Selector("span").withText("Site Replication");
+const siteReplicationEl = Selector(".MuiPaper-root")
+  .find("ul")
+  .child("#sitereplication");
 export const addSitesBtn = Selector("button").withText("Add Sites");
 
 /* Begin Local Testing config block */
@@ -36,12 +37,7 @@ fixture("Site Replication Status for user with Admin permissions")
   });
 
 test("Site replication sidebar item exists", async (t) => {
-  await t
-    .expect(settingsElement.exists)
-    .ok()
-    .click(settingsElement)
-    .expect(siteReplicationEl.exists)
-    .ok();
+  await t.expect(siteReplicationEl.exists).ok();
 });
 
 test("Add Sites button exists", async (t) => {
