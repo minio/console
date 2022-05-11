@@ -17,6 +17,8 @@
 package integration
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -81,7 +83,7 @@ func Test_GetConfigAPI(t *testing.T) {
 		{
 			name: "Get Config - Valid",
 			args: args{
-				name: "/storage_class",
+				name: "storage_class",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -89,7 +91,7 @@ func Test_GetConfigAPI(t *testing.T) {
 		{
 			name: "Get Config - Invalid",
 			args: args{
-				name: "/asdf",
+				name: "asdf",
 			},
 			expectedStatus: 404,
 			expectedError:  nil,
@@ -103,7 +105,7 @@ func Test_GetConfigAPI(t *testing.T) {
 			}
 
 			request, err := http.NewRequest(
-				"GET", fmt.Sprintf("http://localhost:9090/api/v1/configs%s", tt.args.name), nil)
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1/configs/%s", tt.args.name), nil)
 			if err != nil {
 				log.Println(err)
 				return
