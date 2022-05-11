@@ -40,7 +40,7 @@ const DeleteGroup = ({
   const onDelError = (err: ErrorResponseHandler) => {
     setErrorSnackMessage(err);
     closeDeleteModalAndRefresh(true);
-  }
+  };
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -49,16 +49,20 @@ const DeleteGroup = ({
     return null;
   }
   const onDeleteGroups = () => {
-    for (let group of selectedGroups){
-    invokeDeleteApi("DELETE", `/api/v1/group?name=${encodeURI(group)}`);
+    for (let group of selectedGroups) {
+      invokeDeleteApi("DELETE", `/api/v1/group?name=${encodeURI(group)}`);
     }
-  }; 
+  };
 
-  const renderGroups = selectedGroups.map((group) => <div key={group}><b>{group}</b></div>);
+  const renderGroups = selectedGroups.map((group) => (
+    <div key={group}>
+      <b>{group}</b>
+    </div>
+  ));
 
   return (
     <ConfirmDialog
-      title={`Delete Group${selectedGroups.length >1 ? "s": ""}`}
+      title={`Delete Group${selectedGroups.length > 1 ? "s" : ""}`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
@@ -67,8 +71,9 @@ const DeleteGroup = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete the following {selectedGroups.length} group{selectedGroups.length >1 ? "s?": "?"}    
-          {renderGroups}      
+          Are you sure you want to delete the following {selectedGroups.length}{" "}
+          group{selectedGroups.length > 1 ? "s?" : "?"}
+          {renderGroups}
         </DialogContentText>
       }
     />

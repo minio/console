@@ -40,7 +40,7 @@ const styles = (theme: Theme) =>
         height: 44,
       },
       "@media (max-width: 600px)": {
-        display: "none"
+        display: "none",
       },
     },
     headerBarSubheader: {

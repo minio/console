@@ -21,7 +21,13 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, Box } from "@mui/material";
-import { AddIcon, GroupsIcon, UsersIcon, DeleteIcon, IAMPoliciesIcon } from "../../../icons";
+import {
+  AddIcon,
+  GroupsIcon,
+  UsersIcon,
+  DeleteIcon,
+  IAMPoliciesIcon,
+} from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -107,7 +113,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   ]);
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value = "", checked = false } = {} } = e;      
+    const { target: { value = "", checked = false } = {} } = e;
 
     let elements: string[] = [...checkedGroups]; // We clone the checkedUsers array
 
@@ -166,7 +172,6 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
     history.push(`${IAM_PAGES.GROUPS}/${group}`);
   };
 
-
   const tableActions = [
     {
       type: "view",
@@ -175,11 +180,10 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
     },
     {
       type: "edit",
-     onClick: viewAction,
+      onClick: viewAction,
       disableButtonFunction: () => !getGroup,
     },
   ];
-
 
   return (
     <React.Fragment>
@@ -204,19 +208,18 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
 
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
-       
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
             scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
             errorProps={{ disabled: true }}
-         > 
+          >
             <SearchBox
               placeholder={"Search Groups"}
               onChange={setFilter}
               overrideClass={classes.searchField}
               value={filter}
             />
-          </SecureComponent> 
+          </SecureComponent>
           <Box
             sx={{
               display: "flex",
@@ -224,67 +227,61 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
           >
             {" "}
             <SecureComponent
-            resource={CONSOLE_UI_RESOURCE}
-            scopes={[
-              IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY
-            ]}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-          <RBIconButton
-              tooltip={"Select Policy"}
-              onClick={() => {
-                setPolicyOpen(true);
-              }}
-              text={"Assign Policy"}
-              icon={<IAMPoliciesIcon />}
-              color="primary"
-              disabled={checkedGroups.length < 1}
-              variant={"outlined"}
-            />
-            
-           </SecureComponent>
-          <SecureComponent
-            resource={CONSOLE_UI_RESOURCE}
-            scopes={[
-              IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP
-            ]}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-          <RBIconButton
-              tooltip={"Delete Selected"}
-              onClick={() => {
-                setDeleteOpen(true);
-              }}
-              text={"Delete Selected"}
-              icon={<DeleteIcon />}
-              color="secondary"
-              disabled={checkedGroups.length === 0}
-              variant={"outlined"}
-            />
-            
-           </SecureComponent>
-          <SecureComponent
-            resource={CONSOLE_UI_RESOURCE}
-            scopes={[
-              IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-              IAM_SCOPES.ADMIN_LIST_USERS,
-            ]}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <RBIconButton
-              tooltip={"Create Group"}
-              text={"Create Group"}
-              variant="contained"
-              color="primary"
-              icon={<AddIcon />}
-              onClick={() => {
-                history.push(`${IAM_PAGES.GROUPS_ADD}`);
-              }}
-            />
-          </SecureComponent>
+              resource={CONSOLE_UI_RESOURCE}
+              scopes={[IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY]}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Select Policy"}
+                onClick={() => {
+                  setPolicyOpen(true);
+                }}
+                text={"Assign Policy"}
+                icon={<IAMPoliciesIcon />}
+                color="primary"
+                disabled={checkedGroups.length < 1}
+                variant={"outlined"}
+              />
+            </SecureComponent>
+            <SecureComponent
+              resource={CONSOLE_UI_RESOURCE}
+              scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Delete Selected"}
+                onClick={() => {
+                  setDeleteOpen(true);
+                }}
+                text={"Delete Selected"}
+                icon={<DeleteIcon />}
+                color="secondary"
+                disabled={checkedGroups.length === 0}
+                variant={"outlined"}
+              />
+            </SecureComponent>
+            <SecureComponent
+              resource={CONSOLE_UI_RESOURCE}
+              scopes={[
+                IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+                IAM_SCOPES.ADMIN_LIST_USERS,
+              ]}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <RBIconButton
+                tooltip={"Create Group"}
+                text={"Create Group"}
+                variant="contained"
+                color="primary"
+                icon={<AddIcon />}
+                onClick={() => {
+                  history.push(`${IAM_PAGES.GROUPS_ADD}`);
+                }}
+              />
+            </SecureComponent>
           </Box>
         </Grid>
         {loading && <LinearProgress />}

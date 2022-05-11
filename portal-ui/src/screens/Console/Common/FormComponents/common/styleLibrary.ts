@@ -415,15 +415,15 @@ export const objectBrowserCommon = {
       "& span": {
         marginBottom: 10,
         display: "flex",
-        flexDirection: "column"
-      }
+        flexDirection: "column",
+      },
     },
   },
   detailsSpacer: {
     marginRight: 18,
     "@media (max-width: 600px)": {
-      marginRight: 0
-    }
+      marginRight: 0,
+    },
   },
   breadcrumbsList: {
     textOverflow: "ellipsis" as const,
@@ -1433,7 +1433,7 @@ export const objectBrowserExtras = {
     marginLeft: 10,
     "@media (max-width: 600px)": {
       marginLeft: 0,
-    }
+    },
   },
 };
 
