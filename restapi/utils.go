@@ -17,8 +17,6 @@
 package restapi
 
 import (
-	"crypto/rand"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -42,9 +40,6 @@ const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
 
 func RandomCharStringWithAlphabet(n int, alphabet string) string {
 	random := make([]byte, n)
-	if _, err := io.ReadFull(rand.Reader, random); err != nil {
-		panic(err) // Can only happen if we would run out of entropy.
-	}
 
 	var s strings.Builder
 	for _, v := range random {
