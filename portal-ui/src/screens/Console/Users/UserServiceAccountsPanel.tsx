@@ -41,9 +41,11 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../../Console/Configurations/utils";
 import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
-import { IAM_PAGES,
-         CONSOLE_UI_RESOURCE,
-         IAM_SCOPES } from "../../../common/SecureComponent/permissions";
+import {
+  IAM_PAGES,
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 
 interface IUserServiceAccountsProps {
@@ -235,25 +237,30 @@ const UserServiceAccountsPanel = ({
             variant={"outlined"}
           />
           <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
+            scopes={[
+              IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
               IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
               IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
-              IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS]}
+              IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
+            ]}
             resource={CONSOLE_UI_RESOURCE}
             matchAll
             errorProps={{ disabled: true }}
           >
-          <RBIconButton
-            tooltip={"Create service account"}
-            text={"Create service account"}
-            variant="contained"
-            color="primary"
-            icon={<AddIcon />}
-            onClick={() => {
-              history.push(`${IAM_PAGES.USER_ACCOUNT}/${user}`);
-            }}
-            disabled={!hasPolicy}
-          />
+            <RBIconButton
+              tooltip={"Create service account"}
+              text={"Create service account"}
+              variant="contained"
+              color="primary"
+              icon={<AddIcon />}
+              onClick={() => {
+                let newSAPath = `/identity/users/${user}/new-user-sa`;
+                newSAPath = `${IAM_PAGES.USER_SA_ACCOUNT_ADD}/${user}`;
+                newSAPath = `/identity/users/new-user-sa/${user}`;
+                history.push(newSAPath);
+              }}
+              disabled={!hasPolicy}
+            />
           </SecureComponent>
         </Box>
       </div>

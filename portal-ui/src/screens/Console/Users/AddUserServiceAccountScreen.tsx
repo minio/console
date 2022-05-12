@@ -273,15 +273,14 @@ const AddServiceAccount = ({
                         xs={12}
                         className={classes.codeMirrorContainer}
                       >
-                        
-                  <Grid item xs={12} className={classes.formScrollable}>
-                        <CodeMirrorWrapper
-                          label={"Policy"}
-                          value={policyJSON}
-                          onBeforeChange={(editor, data, value) => {
-                            setPolicyJSON(value);
-                          }}
-                        />
+                        <Grid item xs={12} className={classes.formScrollable}>
+                          <CodeMirrorWrapper
+                            label={"Policy"}
+                            value={policyJSON}
+                            onBeforeChange={(editor, data, value) => {
+                              setPolicyJSON(value);
+                            }}
+                          />
                         </Grid>
                       </Grid>
                     )}
