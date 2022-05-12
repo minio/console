@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { applyMiddleware, combineReducers, compose, createStore } from "redux";
-import thunk from "redux-thunk";
+import { combineReducers } from "redux";
 import { systemReducer } from "./reducer";
 import { traceReducer } from "./screens/Console/Trace/reducers";
 import { logReducer } from "./screens/Console/Logs/reducers";
@@ -27,6 +26,7 @@ import { objectBrowserReducer } from "./screens/Console/ObjectBrowser/reducers";
 import { tenantsReducer } from "./screens/Console/Tenants/reducer";
 import { directCSIReducer } from "./screens/Console/DirectCSI/reducer";
 import { dashboardReducer } from "./screens/Console/Dashboard/reducer";
+import { configureStore } from "@reduxjs/toolkit";
 
 const globalReducer = combineReducers({
   system: systemReducer,
@@ -42,21 +42,8 @@ const globalReducer = combineReducers({
   dashboard: dashboardReducer,
 });
 
-declare global {
-  interface Window {
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
-  }
-}
-
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 export type AppState = ReturnType<typeof globalReducer>;
 
-export const store = createStore(
-  globalReducer,
-  composeEnhancers(applyMiddleware(thunk))
-);
-
-export default function configureStore() {
-  return store;
-}
+export const store = configureStore({
+  reducer: globalReducer,
+});

@@ -18,7 +18,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import Routes from "./Routes";
-import configureStore from "./store";
+
 import * as serviceWorker from "./serviceWorker";
 import {
   StyledEngineProvider,
@@ -32,6 +32,7 @@ import "react-resizable/css/styles.css";
 
 import "./index.css";
 import theme from "./theme/main";
+import { store } from "./store";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -127,7 +128,7 @@ const GlobalCss = withStyles({
 })(() => null);
 
 ReactDOM.render(
-  <Provider store={configureStore()}>
+  <Provider store={store}>
     <GlobalCss />
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
