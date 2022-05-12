@@ -55,8 +55,6 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
-import { ISessionResponse } from "../../Console/types"
-
 import { AppState } from "../../../store";
 
 const DeleteServiceAccount = withSuspense(
