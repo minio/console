@@ -158,64 +158,72 @@ const BrowserBreadcrumbs = ({
   };
 
   return (
-    <div className={classes.breadcrumbsMain}>
-      {createFolderOpen && (
-        <CreatePathModal
-          modalOpen={createFolderOpen}
-          bucketName={bucketName}
-          folderName={internalPaths}
-          onClose={closeAddFolderModal}
-          existingFiles={existingFiles}
-        />
-      )}
-      <Grid item xs={12} className={`${classes.breadcrumbs}`}>
-        <IconButton
-          onClick={goBackFunction}
-          sx={{
-            border: "#EAEDEE 1px solid",
-            backgroundColor: "#fff",
-            borderLeft: 0,
-            borderRadius: 0,
-            width: 38,
-            height: 38,
-            marginRight: "10px",
-          }}
-        >
-          <BackCaretIcon />
-        </IconButton>
-        <div className={classes.breadcrumbsList} dir="rtl">
-          {listBreadcrumbs}
-        </div>
-        <div className={classes.additionalOptions}>{additionalOptions}</div>
-      </Grid>
-      {!hidePathButton && (
-        <Tooltip title={"Choose or create a new path"}>
-          <Button
-            id={"new-path"}
-            onClick={() => {
-              setCreateFolderOpen(true);
-            }}
-            disabled={
-              rewindEnabled ||
-              !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
-            }
-            endIcon={<NewPathIcon />}
-            disableTouchRipple
-            disableRipple
-            focusRipple={false}
+    <Fragment>
+      <div className={classes.breadcrumbsMain}>
+        {createFolderOpen && (
+          <CreatePathModal
+            modalOpen={createFolderOpen}
+            bucketName={bucketName}
+            folderName={internalPaths}
+            onClose={closeAddFolderModal}
+            existingFiles={existingFiles}
+          />
+        )}
+        <Grid item xs={12} className={`${classes.breadcrumbs}`}>
+          <IconButton
+            onClick={goBackFunction}
             sx={{
-              color: "#969FA8",
-              border: "#969FA8 1px solid",
-              whiteSpace: "nowrap",
-              minWidth: "160px",
+              border: "#EAEDEE 1px solid",
+              backgroundColor: "#fff",
+              borderLeft: 0,
+              borderRadius: 0,
+              width: 38,
+              height: 38,
+              marginRight: "10px",
             }}
-            variant={"outlined"}
           >
-            Create new path
-          </Button>
-        </Tooltip>
-      )}
-    </div>
+            <BackCaretIcon />
+          </IconButton>
+          <div className={classes.breadcrumbsList} dir="rtl">
+            {listBreadcrumbs}
+          </div>
+          <div className={classes.additionalOptions}>{additionalOptions}</div>
+        </Grid>
+        {!hidePathButton && (
+          <Tooltip title={"Choose or create a new path"}>
+            <Button
+              id={"new-path"}
+              onClick={() => {
+                setCreateFolderOpen(true);
+              }}
+              disabled={
+                rewindEnabled ||
+                !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
+              }
+              endIcon={<NewPathIcon />}
+              disableTouchRipple
+              disableRipple
+              focusRipple={false}
+              sx={{
+                color: "#969FA8",
+                border: "#969FA8 1px solid",
+                whiteSpace: "nowrap",
+                minWidth: "160px",
+                "@media (max-width: 1060px)": {
+                  fontSize: 0,
+                  minWidth: 40,
+                  padding: "0 10px 0 0",
+                },
+              }}
+              variant={"outlined"}
+            >
+              Create new path
+            </Button>
+          </Tooltip>
+        )}
+      </div>
+      <div className={classes.breadcrumbsSecond}>{additionalOptions}</div>
+    </Fragment>
   );
 };
 

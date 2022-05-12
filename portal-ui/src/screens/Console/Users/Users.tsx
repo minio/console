@@ -37,9 +37,9 @@ const Users = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path={IAM_PAGES.USERS_VIEW} component={UserDetails} />
-        <Route path={IAM_PAGES.USERS} component={ListUsers} />
-        <Route path={IAM_PAGES.USER_ADD} component={AddUserScreen} />
+        <Route path={IAM_PAGES.USER_ADD} exact component={AddUserScreen} />
+        <Route path={IAM_PAGES.USERS_VIEW} exact component={UserDetails} />
+        <Route path={IAM_PAGES.USERS} exact component={ListUsers} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>

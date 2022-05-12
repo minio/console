@@ -20,18 +20,21 @@ import * as constants from "../utils/constants";
 import * as functions from "../utils/functions";
 import { Selector } from "testcafe";
 import { groupsElement, identityElement } from "../utils/elements-menu";
+import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
-const groupsListItemFor = (modifier) => {
+const groupsListItemFor = (modifier: string) => {
   return Selector(".ReactVirtualized__Table__rowColumn").withText(
     `${constants.TEST_GROUP_NAME}-${modifier}`
   );
 };
 
-const createGroup = async (t, modifier) => {
+const appBaseUrl = "http://localhost:9090";
+let groupsPageUrl = `${appBaseUrl}${IAM_PAGES.GROUPS}`;
+let groupsAddPageUrl = `${appBaseUrl}${IAM_PAGES.GROUPS_ADD}`;
+const createGroup = async (t: TestController, modifier: string) => {
   await t
     .useRole(roles.groups)
-    .navigateTo("http://localhost:9090/identity/groups")
-    .click(elements.createGroupButton)
+    .navigateTo(groupsAddPageUrl)
     .typeText(
       elements.groupNameInput,
       `${constants.TEST_GROUP_NAME}-${modifier}`
@@ -42,7 +45,7 @@ const createGroup = async (t, modifier) => {
 };
 
 fixture("For user with Groups permissions")
-  .page("http://localhost:9090")
+  .page(appBaseUrl)
   .beforeEach(async (t) => {
     await t.useRole(roles.groups);
   });
@@ -58,30 +61,25 @@ test("Groups sidebar item exists", async (t) => {
 
 test("Create Group button exists", async (t) => {
   const createGroupButtonExists = elements.createGroupButton.exists;
-  await t
-    .navigateTo("http://localhost:9090/identity/groups")
-    .expect(createGroupButtonExists)
-    .ok();
+  await t.navigateTo(groupsPageUrl).expect(createGroupButtonExists).ok();
 });
 
 test("Create Group button is clickable", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/identity/groups")
-    .click(elements.createGroupButton);
+  await t.navigateTo(groupsPageUrl).click(elements.createGroupButton);
 });
 
-test("Group Name input exists in the Create Group modal", async (t) => {
+test("Group Name input exists in the Create Group page", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/identity/groups")
+    .navigateTo(groupsPageUrl)
     .click(elements.createGroupButton)
     .expect(elements.groupNameInput.exists)
     .ok();
 });
 
-test("Users table exists in the Create Group modal", async (t) => {
+test("Users table exists in the Create Groups page", async (t) => {
   const createGroupUserTableExists = elements.table.exists;
   await t
-    .navigateTo("http://localhost:9090/identity/groups")
+    .navigateTo(groupsPageUrl)
     .click(elements.createGroupButton)
     .expect(createGroupUserTableExists)
     .ok();
@@ -90,31 +88,24 @@ test("Users table exists in the Create Group modal", async (t) => {
 test.before(async (t) => {
   // A user must be created as we need to choose a user from the dropdown
   await functions.createUser(t);
-})(
-  "Create Group modal can be submitted after inputs are entered",
-  async (t) => {
-    // We need to log back in after we use the admin account to create bucket,
-    // using the specific role we use in this module
-    await t
-      .useRole(roles.groups)
-      .navigateTo("http://localhost:9090/identity/groups")
-      .click(elements.createGroupButton)
-      .typeText(elements.groupNameInput, constants.TEST_GROUP_NAME)
-      .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
-      .click(elements.groupUserCheckbox)
-      .click(elements.saveButton);
-  }
-);
+})("Create Group page can be submitted after inputs are entered", async (t) => {
+  // We need to log back in after we use the admin account to create bucket,
+  // using the specific role we use in this module
+  await t
+    .useRole(roles.groups)
+    .navigateTo(groupsAddPageUrl)
+    .typeText(elements.groupNameInput, constants.TEST_GROUP_NAME)
+    .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
+    .click(elements.groupUserCheckbox)
+    .click(elements.saveButton);
+});
 
 test.before(async (t) => {
   // A user must be created as we need to choose a user from the dropdown
   await functions.createUser(t);
   await createGroup(t, "groups-table");
 })("Groups table exists", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/identity/groups")
-    .expect(elements.table.exists)
-    .ok();
+  await t.navigateTo(groupsPageUrl).expect(elements.table.exists).ok();
 });
 
 test.before(async (t) => {
@@ -123,7 +114,7 @@ test.before(async (t) => {
   await createGroup(t, "disable-enable");
 })("Created Group can be disabled and enabled back", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/identity/groups")
+    .navigateTo(groupsPageUrl)
     .click(groupsListItemFor("disable-enable"))
     .click(elements.switchInput)
     .expect(elements.groupStatusText.innerText)
@@ -131,20 +122,4 @@ test.before(async (t) => {
     .click(elements.switchInput)
     .expect(elements.groupStatusText.innerText)
     .eql("Enabled");
-});
-
-test.before(async (t) => {
-  // A user must be created as we need to choose a user from the dropdown
-  await functions.createUser(t);
-  await createGroup(t, "view-delete");
-})("Created Group can be viewed and deleted", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/identity/groups")
-    .click(groupsListItemFor("view-delete"))
-    .click(elements.editMembersButton)
-    .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
-    .click(elements.groupUserCheckbox)
-    .click(elements.saveButton)
-    .click(elements.deleteGroupIconButton)
-    .click(elements.deleteButton);
 });

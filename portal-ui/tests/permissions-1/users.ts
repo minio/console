@@ -19,6 +19,7 @@ import * as elements from "../utils/elements";
 import * as constants from "../utils/constants";
 import { Selector } from "testcafe";
 import { identityElement, usersElement } from "../utils/elements-menu";
+import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
 const userListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
   constants.TEST_USER_NAME
@@ -44,43 +45,27 @@ test("Users sidebar item exists", async (t) => {
     .expect(usersExist)
     .ok();
 });
-
+const appBaseUrl = "http://localhost:9090";
+let usersPageUrl = `${appBaseUrl}${IAM_PAGES.USERS}`;
+let usersAddPageUrl = `${appBaseUrl}${IAM_PAGES.USER_ADD}`;
 test("Create User button exists", async (t) => {
   const createUserButtonExists = elements.createUserButton.exists;
-  await t
-    .navigateTo("http://localhost:9090/identity/users")
-    .expect(createUserButtonExists)
-    .ok();
+  await t.navigateTo(usersPageUrl).expect(createUserButtonExists).ok();
 });
 
 test("Create User button is clickable", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/identity/users")
-    .click(elements.createUserButton);
+  await t.navigateTo(usersPageUrl).click(elements.createUserButton);
 });
 
-test("Access Key input exists in the Create User modal", async (t) => {
+test("Create User Page to create a user", async (t) => {
   const accessKeyInputExists = elements.usersAccessKeyInput.exists;
-  await t
-    .navigateTo("http://localhost:9090/identity/users")
-    .click(elements.createUserButton)
-    .expect(accessKeyInputExists)
-    .ok();
-});
-
-test("Secret Key input exists in the Create User modal", async (t) => {
   const secretKeyInputExists = elements.usersSecretKeyInput.exists;
   await t
-    .navigateTo("http://localhost:9090/identity/users")
-    .click(elements.createUserButton)
+    .navigateTo(usersAddPageUrl)
+    .expect(accessKeyInputExists)
+    .ok()
     .expect(secretKeyInputExists)
-    .ok();
-});
-
-test("Create User modal can be submitted after inputs are entered", async (t) => {
-  await t
-    .navigateTo("http://localhost:9090/identity/users")
-    .click(elements.createUserButton)
+    .ok()
     .typeText(elements.usersAccessKeyInput, constants.TEST_USER_NAME)
     .typeText(elements.usersSecretKeyInput, constants.TEST_PASSWORD)
     .click(elements.saveButton);
@@ -88,16 +73,13 @@ test("Create User modal can be submitted after inputs are entered", async (t) =>
 
 test("Users table exists", async (t) => {
   const usersTableExists = elements.table.exists;
-  await t
-    .navigateTo("http://localhost:9090/identity/users")
-    .expect(usersTableExists)
-    .ok();
+  await t.navigateTo(usersPageUrl).expect(usersTableExists).ok();
 });
 
 test("Created User can be viewed and deleted", async (t) => {
   const userListItemExists = userListItem.exists;
   await t
-    .navigateTo("http://localhost:9090/identity/users")
+    .navigateTo(usersPageUrl)
     .typeText(elements.searchResourceInput, constants.TEST_USER_NAME)
     .expect(userListItemExists)
     .ok()

@@ -77,7 +77,7 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Settings"} />
+      <PageHeader label={"Configurations"} />
 
       <PageLayout>
         <Grid item xs={12}>
@@ -124,7 +124,7 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
         </Grid>
         <Grid item xs={12} sx={{ paddingTop: "15px" }}>
           <HelpBox
-            title={"Learn more about SETTINGS"}
+            title={"Learn more about CONFIGURATIONS"}
             iconComponent={<SettingsIcon />}
             help={
               <Fragment>

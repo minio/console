@@ -16,7 +16,7 @@
 
 import * as constants from "./constants";
 import { Selector } from "testcafe";
-
+import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 //----------------------------------------------------
 // Buttons
 //----------------------------------------------------
