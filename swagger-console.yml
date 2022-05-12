@@ -2168,7 +2168,7 @@ paths:
         - Configuration
 
   /configs/{name}/reset:
-    get:
+    post:
       summary: Configuration reset
       operationId: ResetConfig
       parameters:
