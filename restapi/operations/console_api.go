@@ -1692,10 +1692,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/user"] = user.NewRemoveUser(o.context, o.UserRemoveUserHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/configs/{name}/reset"] = configuration.NewResetConfig(o.context, o.ConfigurationResetConfigHandler)
+	o.handlers["POST"]["/configs/{name}/reset"] = configuration.NewResetConfig(o.context, o.ConfigurationResetConfigHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
