@@ -57,6 +57,8 @@ import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccount
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
 import { ISessionResponse } from "../../Console/types"
 
+import { AppState } from "../../../store";
+
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
 );
@@ -78,12 +80,14 @@ interface IServiceAccountsProps {
   classes: any;
   history: any;
   displayErrorMessage: typeof setErrorSnackMessage;
+  features: any;
 }
 
 const Account = ({
   classes,
   displayErrorMessage,
   history,
+  features,
 }: IServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -98,23 +102,12 @@ const Account = ({
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
-  const [userIDP, setUserIDP] = useState<boolean>(false);
+  const userIDP = (features && features.includes("external-idp")) || false;
 
   useEffect(() => {
     fetchRecords();
   }, []);
-
- useEffect(() => {
-    api
-    .invoke("GET", `/api/v1/session`)
-   .then((res: ISessionResponse) => {
-     setUserIDP(res.features.includes("external-idp"))
-   })
-   .catch((err: ErrorResponseHandler) => {
-     setErrorSnackMessage(err);
-   });
-}, []);
-
+  
   useEffect(() => {
     if (loading) {
       api
@@ -315,7 +308,11 @@ const Account = ({
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  features: state.console.session.features,
+});
+
+const connector = connect(mapState, {
   displayErrorMessage: setErrorSnackMessage,
 });
 
