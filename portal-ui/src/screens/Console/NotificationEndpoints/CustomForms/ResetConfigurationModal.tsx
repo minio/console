@@ -57,7 +57,7 @@ const ResetConfigurationModal = ({
   useEffect(() => {
     if (resetLoading) {
       api
-        .invoke("GET", `/api/v1/configs/${configurationName}/reset`)
+        .invoke("POST", `/api/v1/configs/${configurationName}/reset`)
         .then((res) => {
           setResetLoading(false);
           closeResetModalAndRefresh(true);

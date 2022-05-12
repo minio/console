@@ -2587,7 +2587,7 @@ func init() {
       }
     },
     "/configs/{name}/reset": {
-      "get": {
+      "post": {
         "tags": [
           "Configuration"
         ],
@@ -9535,7 +9535,7 @@ func init() {
       }
     },
     "/configs/{name}/reset": {
-      "get": {
+      "post": {
         "tags": [
           "Configuration"
         ],
