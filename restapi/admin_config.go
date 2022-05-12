@@ -147,7 +147,12 @@ func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams
 
 	configkv, err := getConfig(ctx, adminClient, params.Name)
 	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
+		errorVal := ErrorWithContext(ctx, err)
+		minioError := madmin.ToErrorResponse(err)
+		if minioError.Code == "XMinioConfigError" {
+			errorVal.Code = 404
+		}
+		return nil, errorVal
 	}
 	configurationObj := &models.Configuration{
 		Name:      params.Name,
