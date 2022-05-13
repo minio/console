@@ -144,7 +144,7 @@ test-sso-integration:
 	@echo "Run Dex container using MinIO Image: quay.io/minio/dex:latest"
 	@(docker run \
 		-e DEX_ISSUER=http://dex:5556/dex \
-		-e DEX_CLIENT_REDIRECT_URI=http://127.0.0.1:9001/oauth_callback \
+		-e DEX_CLIENT_REDIRECT_URI=http://127.0.0.1:9090/oauth_callback \
 		-e DEX_LDAP_SERVER=openldap:389 \
 		--network my-net \
 		-p 5556:5556 \
@@ -163,7 +163,7 @@ test-sso-integration:
 	-e MINIO_IDENTITY_OPENID_CLIENT_SECRET="minio-client-app-secret" \
 	-e MINIO_IDENTITY_OPENID_CLAIM_NAME=name \
 	-e MINIO_IDENTITY_OPENID_CONFIG_URL=http://dex:5556/dex/.well-known/openid-configuration \
-	-e MINIO_IDENTITY_OPENID_REDIRECT_URI=http://127.0.0.1:9001/oauth_callback \
+	-e MINIO_IDENTITY_OPENID_REDIRECT_URI=http://127.0.0.1:9090/oauth_callback \
 	-e MINIO_ROOT_USER=minio \
 	-e MINIO_ROOT_PASSWORD=minio123 $(MINIO_VERSION) server /data{1...4} --address :9000 --console-address :9001)
 	@echo "run mc commands to set the policy"
