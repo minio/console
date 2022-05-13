@@ -260,7 +260,7 @@ func TestListTenants(t *testing.T) {
 	}
 	TenantName := &result.Tenants[0].Name // The array has to be empty, no index accessible
 	fmt.Println(*TenantName)
-	assert.Equal("storage-lite", *TenantName, *TenantName)
+	assert.Equal("storage-kms-encrypted", *TenantName, *TenantName)
 	printEndFunc("TestListTenants")
 }
 
@@ -637,5 +637,39 @@ func TestGetCSR(t *testing.T) {
 		assert.Equal(
 			200, resp.StatusCode, finalResponse)
 	}
-	assert.Equal(strings.Contains(finalResponse, "Automatically approved by MinIO Operator"), true)
+	assert.Equal(strings.Contains(finalResponse, "Automatically approved by MinIO Operator"), true, finalResponse)
+}
+
+func TestGetMultipleCSRs(t *testing.T) {
+	/*
+		We can have multiple CSRs per tenant, the idea is to support them in our API and test them here, making sure we
+		can retrieve them all, as an example I found this tenant:
+		storage-kms-encrypted  -client  -tenant-kms-encrypted-csr
+		storage-kms-encrypted  -kes     -tenant-kms-encrypted-csr
+		storage-kms-encrypted           -tenant-kms-encrypted-csr
+		Notice the nomenclature of it:
+		<tenant-name>-<*>-<namespace>-csr
+		where * is anything either nothing or something, anything.
+	*/
+	assert := assert.New(t)
+	namespace := "tenant-kms-encrypted"
+	tenant := "storage-kms-encrypted"
+	resp, err := GetCSR(namespace, tenant)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, finalResponse)
+	}
+	var expectedMessages [3]string
+	expectedMessages[0] = "storage-kms-encrypted-tenant-kms-encrypted-csr"
+	expectedMessages[1] = "storage-kms-encrypted-kes-tenant-kms-encrypted-csr"
+	expectedMessages[2] = "Automatically approved by MinIO Operator"
+	for _, element := range expectedMessages {
+		assert.Equal(strings.Contains(finalResponse, element), true)
+	}
 }

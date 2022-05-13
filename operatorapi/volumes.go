@@ -30,6 +30,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	v1 "k8s.io/api/certificates/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -230,43 +231,67 @@ func getPVCEventsResponse(session *models.Principal, params operator_api.GetPVCE
 	return retval, nil
 }
 
-func getTenantCSResponse(session *models.Principal, params operator_api.ListTenantCertificateSigningRequestParams) (*models.CsrElement, *models.Error) {
+func getTenantCSResponse(session *models.Principal, params operator_api.ListTenantCertificateSigningRequestParams) (*models.CsrElements, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}
-	csrName := params.Tenant + "-" + params.Namespace + "-csr"
-	csrResult, csrError := clientset.CertificatesV1().CertificateSigningRequests().Get(ctx, csrName, metav1.GetOptions{})
-	if csrError != nil {
-		return nil, errors.ErrorWithContext(ctx, err)
+
+	// Get CSRs by Label "v1.min.io/tenant=" + params.Tenant
+	listByTenantLabel := metav1.ListOptions{LabelSelector: "v1.min.io/tenant=" + params.Tenant}
+	listResult, listError := clientset.CertificatesV1().CertificateSigningRequests().List(ctx, listByTenantLabel)
+	if listError != nil {
+		return nil, errors.ErrorWithContext(ctx, listError)
 	}
-	annotations := []*models.Annotation{}
-	for k, v := range csrResult.ObjectMeta.Annotations {
-		annotations = append(annotations, &models.Annotation{Key: k, Value: v})
+
+	// Get CSR by label "v1.min.io/kes=" + params.Tenant + "-kes"
+	listByKESLabel := metav1.ListOptions{LabelSelector: "v1.min.io/kes=" + params.Tenant + "-kes"}
+	listKESResult, listKESError := clientset.CertificatesV1().CertificateSigningRequests().List(ctx, listByKESLabel)
+	if listKESError != nil {
+		return nil, errors.ErrorWithContext(ctx, listKESError)
 	}
-	var DeletionGracePeriodSeconds int64
-	DeletionGracePeriodSeconds = 0
-	if csrResult.ObjectMeta.DeletionGracePeriodSeconds != nil {
-		DeletionGracePeriodSeconds = *csrResult.ObjectMeta.DeletionGracePeriodSeconds
+
+	var listOfCSRs []v1.CertificateSigningRequest
+	for index := 0; index < len(listResult.Items); index++ {
+		listOfCSRs = append(listOfCSRs, listResult.Items[index])
 	}
-	messages := ""
-	// A CSR.Status can contain multiple Conditions
-	for i := 0; i < len(csrResult.Status.Conditions); i++ {
-		messages = messages + " " + csrResult.Status.Conditions[i].Message
+	for index := 0; index < len(listKESResult.Items); index++ {
+		listOfCSRs = append(listOfCSRs, listKESResult.Items[index])
 	}
-	retval := &models.CsrElement{
-		Name:                       csrResult.ObjectMeta.Name,
-		Annotations:                annotations,
-		DeletionGracePeriodSeconds: DeletionGracePeriodSeconds,
-		GenerateName:               csrResult.ObjectMeta.GenerateName,
-		Generation:                 csrResult.ObjectMeta.Generation,
-		Namespace:                  csrResult.ObjectMeta.Namespace,
-		ResourceVersion:            csrResult.ObjectMeta.ResourceVersion,
-		Status:                     messages,
+
+	var arrayElements []*models.CsrElement
+	for index := 0; index < len(listOfCSRs); index++ {
+		csrResult := listOfCSRs[index]
+		annotations := []*models.Annotation{}
+		for k, v := range csrResult.ObjectMeta.Annotations {
+			annotations = append(annotations, &models.Annotation{Key: k, Value: v})
+		}
+		var DeletionGracePeriodSeconds int64
+		DeletionGracePeriodSeconds = 0
+		if csrResult.ObjectMeta.DeletionGracePeriodSeconds != nil {
+			DeletionGracePeriodSeconds = *csrResult.ObjectMeta.DeletionGracePeriodSeconds
+		}
+		messages := ""
+		// A CSR.Status can contain multiple Conditions
+		for i := 0; i < len(csrResult.Status.Conditions); i++ {
+			messages = messages + " " + csrResult.Status.Conditions[i].Message
+		}
+		retval := &models.CsrElement{
+			Name:                       csrResult.ObjectMeta.Name,
+			Annotations:                annotations,
+			DeletionGracePeriodSeconds: DeletionGracePeriodSeconds,
+			GenerateName:               csrResult.ObjectMeta.GenerateName,
+			Generation:                 csrResult.ObjectMeta.Generation,
+			Namespace:                  csrResult.ObjectMeta.Namespace,
+			ResourceVersion:            csrResult.ObjectMeta.ResourceVersion,
+			Status:                     messages,
+		}
+		arrayElements = append(arrayElements, retval)
 	}
-	return retval, nil
+	result := &models.CsrElements{CsrElement: arrayElements}
+	return result, nil
 }
 
 func getPVCDescribeResponse(session *models.Principal, params operator_api.GetPVCDescribeParams) (*models.DescribePVCWrapper, *models.Error) {
