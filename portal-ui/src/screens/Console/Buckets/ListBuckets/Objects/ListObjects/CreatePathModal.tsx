@@ -65,9 +65,9 @@ const CreatePathModal = ({
   const [currentPath, setCurrentPath] = useState(bucketName);
 
   useEffect(() => {
-    if(simplePath) {
+    if (simplePath) {
       const newPath = `${bucketName}${
-          !bucketName.endsWith("/") && !simplePath.startsWith("/") ? "/" : ""
+        !bucketName.endsWith("/") && !simplePath.startsWith("/") ? "/" : ""
       }${simplePath}`;
 
       setCurrentPath(newPath);

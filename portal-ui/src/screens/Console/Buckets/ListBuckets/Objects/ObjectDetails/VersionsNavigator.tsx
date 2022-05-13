@@ -80,6 +80,9 @@ const styles = (theme: Theme) =>
   createStyles({
     versionsContainer: {
       padding: 10,
+      "@media (max-width: 799px)": {
+        minHeight: 800,
+      },
     },
     noBottomBorder: {
       borderBottom: 0,
@@ -88,6 +91,9 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
       height: "calc(100% - 120px)",
       overflow: "auto",
+      "@media (max-width: 799px)": {
+        height: 600,
+      },
     },
     screenTitleContainer: {
       position: "relative",
@@ -101,6 +107,11 @@ const styles = (theme: Theme) =>
         height: "40px",
         bottom: 0,
       },
+      "@media (max-width: 799px)": {
+        "&::before": {
+          display: "none",
+        },
+      },
     },
     sortByLabel: {
       color: "#838383",
@@ -108,6 +119,9 @@ const styles = (theme: Theme) =>
       whiteSpace: "nowrap",
       marginRight: 12,
       fontSize: 14,
+      "@media (max-width: 600px)": {
+        display: "none",
+      },
     },
     ...hrClass,
     ...buttonsStyles,

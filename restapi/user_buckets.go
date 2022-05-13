@@ -632,7 +632,12 @@ func getDeleteBucketResponse(session *models.Principal, params bucketApi.DeleteB
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := removeBucket(minioClient, bucketName); err != nil {
-		return ErrorWithContext(ctx, err)
+		resp := ErrorWithContext(ctx, err)
+		errResp := minio.ToErrorResponse(err)
+		if errResp.Code == "NoSuchBucket" {
+			resp.Code = 404
+		}
+		return resp
 	}
 	return nil
 }

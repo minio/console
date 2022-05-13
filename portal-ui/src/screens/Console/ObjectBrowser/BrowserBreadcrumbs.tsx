@@ -17,6 +17,7 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
+import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
 import withStyles from "@mui/styles/withStyles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,13 +27,14 @@ import { Button, IconButton, Tooltip } from "@mui/material";
 import { ObjectBrowserState } from "./types";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeFileName } from "../../../common/utils";
-import { BackCaretIcon, NewPathIcon } from "../../../icons";
+import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { setVersionsModeEnabled } from "./actions";
 import history from "../../../history";
 import withSuspense from "../Common/Components/withSuspense";
+import { setSnackBarMessage } from "../../../actions";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -55,6 +57,7 @@ interface IObjectBrowser {
   existingFiles: BucketObjectItem[];
   additionalOptions?: React.ReactNode;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
+  setSnackBarMessage: typeof setSnackBarMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -76,6 +79,7 @@ const BrowserBreadcrumbs = ({
   hidePathButton,
   setVersionsModeEnabled,
   additionalOptions,
+  setSnackBarMessage,
 }: IObjectBrowser) => {
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
@@ -158,64 +162,103 @@ const BrowserBreadcrumbs = ({
   };
 
   return (
-    <div className={classes.breadcrumbsMain}>
-      {createFolderOpen && (
-        <CreatePathModal
-          modalOpen={createFolderOpen}
-          bucketName={bucketName}
-          folderName={internalPaths}
-          onClose={closeAddFolderModal}
-          existingFiles={existingFiles}
-        />
-      )}
-      <Grid item xs={12} className={`${classes.breadcrumbs}`}>
-        <IconButton
-          onClick={goBackFunction}
-          sx={{
-            border: "#EAEDEE 1px solid",
-            backgroundColor: "#fff",
-            borderLeft: 0,
-            borderRadius: 0,
-            width: 38,
-            height: 38,
-            marginRight: "10px",
-          }}
-        >
-          <BackCaretIcon />
-        </IconButton>
-        <div className={classes.breadcrumbsList} dir="rtl">
-          {listBreadcrumbs}
-        </div>
-        <div className={classes.additionalOptions}>{additionalOptions}</div>
-      </Grid>
-      {!hidePathButton && (
-        <Tooltip title={"Choose or create a new path"}>
-          <Button
-            id={"new-path"}
-            onClick={() => {
-              setCreateFolderOpen(true);
-            }}
-            disabled={
-              rewindEnabled ||
-              !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
-            }
-            endIcon={<NewPathIcon />}
-            disableTouchRipple
-            disableRipple
-            focusRipple={false}
+    <Fragment>
+      <div className={classes.breadcrumbsMain}>
+        {createFolderOpen && (
+          <CreatePathModal
+            modalOpen={createFolderOpen}
+            bucketName={bucketName}
+            folderName={internalPaths}
+            onClose={closeAddFolderModal}
+            existingFiles={existingFiles}
+          />
+        )}
+        <Grid item xs={12} className={`${classes.breadcrumbs}`}>
+          <IconButton
+            onClick={goBackFunction}
             sx={{
-              color: "#969FA8",
-              border: "#969FA8 1px solid",
-              whiteSpace: "nowrap",
-              minWidth: "160px",
+              border: "#EAEDEE 1px solid",
+              backgroundColor: "#fff",
+              borderLeft: 0,
+              borderRadius: 0,
+              width: 38,
+              height: 38,
+              marginRight: "10px",
             }}
-            variant={"outlined"}
           >
-            Create new path
-          </Button>
-        </Tooltip>
-      )}
-    </div>
+            <BackCaretIcon />
+          </IconButton>
+          <div className={classes.breadcrumbsList} dir="rtl">
+            {listBreadcrumbs}
+          </div>
+          <CopyToClipboard text={`${bucketName}/${splitPaths.join("/")}`}>
+            <Button
+              id={"copy-path"}
+              startIcon={<CopyIcon />}
+              disableTouchRipple
+              disableRipple
+              focusRipple={false}
+              variant={"outlined"}
+              onClick={() => {
+                setSnackBarMessage("Path copied to clipboard")
+              }}
+              sx={{
+                marginRight: "3px",
+                padding: "0",
+                color: "#969FA8",
+                border: "#969FA8 1px solid",
+                width: "20px",
+                height: "20px",
+                minHeight: "20px",
+                minWidth: "28px",
+                "&.MuiButton-root": {
+                  height: "28px",
+                },
+                "& .min-icon": {
+                  width: "12px",
+                  height: "12px",
+                  marginLeft: "12px",
+                },
+              }}
+            />
+          </CopyToClipboard>
+          <div className={classes.additionalOptions}>{additionalOptions}</div>
+        </Grid>
+        {!hidePathButton && (
+          <Tooltip title={"Choose or create a new path"}>
+            <Button
+              id={"new-path"}
+              onClick={() => {
+                setCreateFolderOpen(true);
+              }}
+              disabled={
+                rewindEnabled ||
+                !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
+              }
+              endIcon={<NewPathIcon />}
+              disableTouchRipple
+              disableRipple
+              focusRipple={false}
+              sx={{
+                color: "#969FA8",
+                border: "#969FA8 1px solid",
+                whiteSpace: "nowrap",
+                minWidth: "160px",
+                "@media (max-width: 1060px)": {
+                  fontSize: 0,
+                  minWidth: 40,
+                  padding: "0 10px 0 0",
+                },
+              }}
+              variant={"outlined"}
+            >
+              Create new path
+            </Button>
+          </Tooltip>
+        )}
+      </div>
+      <div className={classes.breadcrumbsSecond}>{additionalOptions}</div>
+    </Fragment>
   );
 };
 
@@ -227,6 +270,7 @@ const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
 
 const mapDispatchToProps = {
   setVersionsModeEnabled,
+  setSnackBarMessage,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

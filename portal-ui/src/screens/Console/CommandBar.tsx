@@ -24,6 +24,8 @@ import {
   KBarSearch,
   useMatches,
   useRegisterActions,
+  useKBar,
+  KBarState,
 } from "kbar";
 import { Action } from "kbar/lib/types";
 import { Theme } from "@mui/material/styles";
@@ -31,6 +33,11 @@ import makeStyles from "@mui/styles/makeStyles";
 import { routesAsKbarActions } from "./kbar-actions";
 import { Box } from "@mui/material";
 import { MenuExpandedIcon } from "../../icons/SidebarMenus";
+import { AppState } from "../../store";
+import { connect } from "react-redux";
+import useApi from "./Common/Hooks/useApi";
+import { useCallback, useEffect, useState } from "react";
+import { Bucket, BucketList } from "./Buckets/types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -81,19 +88,81 @@ const groupNameStyle = {
   borderBottom: "1px solid #eaeaea",
 };
 
-const CommandBar = ({
-  features,
-  operatorMode,
+const KBarStateChangeMonitor = ({
+  onShow,
+  onHide,
 }: {
-  operatorMode: boolean;
-  features: string[] | null;
+  onShow?: () => void;
+  onHide?: () => void;
 }) => {
-  const initialActions: Action[] = routesAsKbarActions(features, operatorMode);
+  const [isOpen, setIsOpen] = useState(false);
+  const { visualState } = useKBar((state: KBarState) => {
+    return {
+      visualState: state.visualState,
+    };
+  });
 
-  useRegisterActions(initialActions, [operatorMode]);
+  useEffect(() => {
+    if (visualState === "showing") {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visualState]);
+
+  useEffect(() => {
+    if (isOpen) {
+      onShow?.();
+    } else {
+      onHide?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  //just to hook into the internal state of KBar. !
+  return null;
+};
+
+const CommandBar = ({
+  features = [],
+  operatorMode = false,
+}: {
+  operatorMode?: boolean;
+  features?: string[] | null;
+}) => {
+  const [buckets, setBuckets] = useState<Bucket[]>([]);
+
+  const [, invokeListBucketsApi] = useApi(
+    (res: BucketList) => {
+      setBuckets(res.buckets);
+    },
+    () => {}
+  );
+
+  const fetchBuckets = useCallback(() => {
+    invokeListBucketsApi("GET", `/api/v1/buckets`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const initialActions: Action[] = routesAsKbarActions(
+    features,
+    operatorMode,
+    buckets
+  );
+
+  useRegisterActions(initialActions, [operatorMode, buckets, features]);
+
+  //fetch buckets everytime the kbar is shown so that new buckets created elsewhere , within first page is also shown
 
   return (
     <KBarPortal>
+      <KBarStateChangeMonitor
+        onShow={fetchBuckets}
+        onHide={() => {
+          setBuckets([]);
+        }}
+      />
       <KBarPositioner
         style={{
           zIndex: 9999,
@@ -250,4 +319,11 @@ const ResultItem = React.forwardRef(
   }
 );
 
-export default CommandBar;
+const mapState = (state: AppState) => ({
+  operatorMode: state.system.operatorMode,
+  features: state.console.session.features,
+});
+
+const connector = connect(mapState, null);
+
+export default connector(CommandBar);
