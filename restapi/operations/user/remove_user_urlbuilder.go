@@ -26,6 +26,7 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+	"strings"
 )
 
 // RemoveUserURL generates an URL for the remove user operation
@@ -56,22 +57,20 @@ func (o *RemoveUserURL) SetBasePath(bp string) {
 func (o *RemoveUserURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/user"
+	var _path = "/user/{name}"
+
+	name := o.Name
+	if name != "" {
+		_path = strings.Replace(_path, "{name}", name, -1)
+	} else {
+		return nil, errors.New("name is required on RemoveUserURL")
+	}
 
 	_basePath := o._basePath
 	if _basePath == "" {
 		_basePath = "/api/v1"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
-
-	qs := make(url.Values)
-
-	nameQ := o.Name
-	if nameQ != "" {
-		qs.Set("name", nameQ)
-	}
-
-	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

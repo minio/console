@@ -26,8 +26,8 @@ import { Link } from "react-router-dom";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import { ObjectBrowserState } from "./types";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
-import { encodeFileName } from "../../../common/utils";
-import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
+import { BackCaretIcon, CopyIcon, NewPathIcon  } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
@@ -95,7 +95,7 @@ const BrowserBreadcrumbs = ({
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
     const route = `/buckets/${bucketName}/browse/${
-      subSplit ? `${encodeFileName(subSplit)}` : ``
+      subSplit ? `${encodeURLString(subSplit)}` : ``
     }`;
 
     if (index === lastBreadcrumbsIndex && objectItem === versionedFile) {

@@ -37,7 +37,6 @@ import api from "../../common/api";
 import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
-import { encodeFileName } from "../../common/utils";
 import {
   ConsoleLogo,
   DocumentationIcon,
@@ -349,7 +348,7 @@ const Login = ({
         // We set the state in redux
         userLoggedIn(true);
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
-          localStorage.setItem("userLoggedIn", encodeFileName(accessKey));
+          localStorage.setItem("userLoggedIn", accessKey);
         }
         let targetPath = "/";
         if (

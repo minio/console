@@ -59,6 +59,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import { AppState } from "../../../store";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import PolicyView from "./PolicyView";
+import { decodeURLString, encodeURLString } from "../../../common/utils";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -110,7 +111,9 @@ const PolicyDetails = ({
   const [userList, setUserList] = useState<string[]>([]);
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [policyName, setPolicyName] = useState<string>(match.params[0]);
+
+  const policyName = decodeURLString(match.params["policyName"]);
+
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [filterUsers, setFilterUsers] = useState<string>("");
@@ -179,7 +182,7 @@ const PolicyDetails = ({
           api
             .invoke(
               "GET",
-              `/api/v1/policies/${encodeURIComponent(policyName)}/users`
+              `/api/v1/policies/${encodeURLString(policyName)}/users`
             )
             .then((result: any) => {
               setUserList(result);
@@ -201,7 +204,7 @@ const PolicyDetails = ({
           api
             .invoke(
               "GET",
-              `/api/v1/policies/${encodeURIComponent(policyName)}/groups`
+              `/api/v1/policies/${encodeURLString(policyName)}/groups`
             )
             .then((result: any) => {
               setGroupList(result);
@@ -220,10 +223,7 @@ const PolicyDetails = ({
       if (loadingPolicy) {
         if (displayPolicy) {
           api
-            .invoke(
-              "GET",
-              `/api/v1/policy?name=${encodeURIComponent(policyName)}`
-            )
+            .invoke("GET", `/api/v1/policy/${encodeURLString(policyName)}`)
             .then((result: any) => {
               if (result) {
                 setPolicy(result);
@@ -271,7 +271,6 @@ const PolicyDetails = ({
   ]);
 
   const resetForm = () => {
-    setPolicyName("");
     setPolicyDefinition("");
   };
 
@@ -287,7 +286,7 @@ const PolicyDetails = ({
   };
 
   const userViewAction = (user: any) => {
-    history.push(`${IAM_PAGES.USERS}/${user}`);
+    history.push(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
   };
   const userTableActions = [
     {
@@ -302,7 +301,7 @@ const PolicyDetails = ({
   );
 
   const groupViewAction = (group: any) => {
-    history.push(`${IAM_PAGES.GROUPS}/${group}`);
+    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
   };
 
   const groupTableActions = [

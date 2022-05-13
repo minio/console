@@ -19,8 +19,9 @@ import { connect } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import {
-  decodeFileName,
+  decodeURLString,
   deleteCookie,
+  encodeURLString,
   getCookieValue,
   performDownload,
 } from "../../../../../../common/utils";
@@ -77,8 +78,8 @@ const InspectObject = ({
   };
 
   const performInspect = async () => {
-    const file = encodeURIComponent(inspectPath + "/xl.meta");
-    const volume = encodeURIComponent(volumeName);
+    const file = encodeURLString(inspectPath + "/xl.meta");
+    const volume = encodeURLString(volumeName);
 
     const urlOfInspectApi = `/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
 
@@ -137,7 +138,7 @@ const InspectObject = ({
               onSubmit(e);
             }}
           >
-            Would you like to encrypt <b>{decodeFileName(inspectPath)}</b>?{" "}
+            Would you like to encrypt <b>{decodeURLString(inspectPath)}</b>?{" "}
             <br />
             <FormSwitchWrapper
               label={"Encrypt"}

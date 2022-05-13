@@ -18,6 +18,7 @@ package integration
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -62,6 +63,7 @@ func AddUser(accessKey, secretKey string, groups, policies []string) (*http.Resp
 }
 
 func DeleteUser(userName string) (*http.Response, error) {
+	userName = base64.StdEncoding.EncodeToString([]byte(userName))
 	/*
 		This is an atomic function to delete user and can be reused across
 		different functions.
@@ -70,7 +72,7 @@ func DeleteUser(userName string) (*http.Response, error) {
 		Timeout: 3 * time.Second,
 	}
 	request, err := http.NewRequest(
-		"DELETE", "http://localhost:9090/api/v1/user?name="+userName, nil)
+		"DELETE", "http://localhost:9090/api/v1/user/"+userName, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -102,6 +104,7 @@ func ListUsers(offset, limit string) (*http.Response, error) {
 }
 
 func GetUserInformation(userName string) (*http.Response, error) {
+	userName = base64.StdEncoding.EncodeToString([]byte(userName))
 	/*
 		Helper function to get user information via API:
 		{{baseUrl}}/user?name=proident velit
@@ -111,7 +114,7 @@ func GetUserInformation(userName string) (*http.Response, error) {
 	}
 	request, err := http.NewRequest(
 		"GET",
-		"http://localhost:9090/api/v1/user?name="+userName,
+		"http://localhost:9090/api/v1/user/"+userName,
 		nil)
 	if err != nil {
 		log.Println(err)
@@ -123,6 +126,7 @@ func GetUserInformation(userName string) (*http.Response, error) {
 }
 
 func UpdateUserInformation(name, status string, groups []string) (*http.Response, error) {
+	name = base64.StdEncoding.EncodeToString([]byte(name))
 	/*
 		Helper function to update user information:
 		PUT: {{baseUrl}}/user?name=proident velit
@@ -145,7 +149,7 @@ func UpdateUserInformation(name, status string, groups []string) (*http.Response
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
-		"PUT", "http://localhost:9090/api/v1/user?name="+name, requestDataBody)
+		"PUT", "http://localhost:9090/api/v1/user/"+name, requestDataBody)
 	if err != nil {
 		log.Println(err)
 	}
@@ -156,6 +160,7 @@ func UpdateUserInformation(name, status string, groups []string) (*http.Response
 }
 
 func RemoveUser(name string) (*http.Response, error) {
+	name = base64.StdEncoding.EncodeToString([]byte(name))
 	/*
 		Helper function to remove user.
 		DELETE: {{baseUrl}}/user?name=proident velit
@@ -164,7 +169,7 @@ func RemoveUser(name string) (*http.Response, error) {
 		Timeout: 3 * time.Second,
 	}
 	request, err := http.NewRequest(
-		"DELETE", "http://localhost:9090/api/v1/user?name="+name, nil)
+		"DELETE", "http://localhost:9090/api/v1/user/"+name, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -175,6 +180,7 @@ func RemoveUser(name string) (*http.Response, error) {
 }
 
 func UpdateGroupsForAUser(userName string, groups []string) (*http.Response, error) {
+	userName = base64.StdEncoding.EncodeToString([]byte(userName))
 	/*
 		Helper function to update groups for a user
 		PUT: {{baseUrl}}/user/groups?name=username
@@ -195,7 +201,7 @@ func UpdateGroupsForAUser(userName string, groups []string) (*http.Response, err
 	requestDataBody := bytes.NewReader(requestDataJSON)
 	request, err := http.NewRequest(
 		"PUT",
-		"http://localhost:9090/api/v1/user/groups?name="+userName,
+		"http://localhost:9090/api/v1/user/"+userName+"/groups",
 		requestDataBody,
 	)
 	if err != nil {
@@ -208,6 +214,7 @@ func UpdateGroupsForAUser(userName string, groups []string) (*http.Response, err
 }
 
 func CreateServiceAccountForUser(userName, policy string) (*http.Response, error) {
+	userName = base64.StdEncoding.EncodeToString([]byte(userName))
 	/*
 		Helper function to Create Service Account for user
 		POST: api/v1/user/username/service-accounts
@@ -238,6 +245,7 @@ func CreateServiceAccountForUser(userName, policy string) (*http.Response, error
 }
 
 func CreateServiceAccountForUserWithCredentials(userName, policy, accessKey, secretKey string) (*http.Response, error) {
+	userName = base64.StdEncoding.EncodeToString([]byte(userName))
 	// Helper function to test "Create Service Account for User With Credentials" end point.
 	client := &http.Client{
 		Timeout: 3 * time.Second,
@@ -264,6 +272,7 @@ func CreateServiceAccountForUserWithCredentials(userName, policy, accessKey, sec
 }
 
 func ReturnsAListOfServiceAccountsForAUser(userName string) (*http.Response, error) {
+	userName = base64.StdEncoding.EncodeToString([]byte(userName))
 	/*
 		Helper function to return a list of service accounts for a user.
 		GET: {{baseUrl}}/user/:name/service-accounts
@@ -740,8 +749,10 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 	}
 
 	// 3. Verify the service account for the user
-	listOfAccountsResponse,
-		listOfAccountsError := ReturnsAListOfServiceAccountsForAUser(userName)
+	listOfAccountsResponse, listOfAccountsError := ReturnsAListOfServiceAccountsForAUser(userName)
+
+	fmt.Println(listOfAccountsResponse, listOfAccountsError)
+
 	if listOfAccountsError != nil {
 		log.Println(listOfAccountsError)
 		assert.Fail("Error in listOfAccountsError")
@@ -754,6 +765,7 @@ func TestCreateServiceAccountForUser(t *testing.T) {
 			finalResponse,
 		)
 	}
+
 	assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
 }
 

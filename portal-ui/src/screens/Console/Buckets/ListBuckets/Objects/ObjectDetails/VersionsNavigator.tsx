@@ -43,8 +43,8 @@ import {
   setSnackBarMessage,
 } from "../../../../../../actions";
 import {
-  decodeFileName,
-  encodeFileName,
+  decodeURLString,
+  encodeURLString,
   niceBytesInt,
 } from "../../../../../../common/utils";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
@@ -258,7 +258,7 @@ const VersionsNavigator = ({
   };
 
   const downloadObject = (object: IFileInfo) => {
-    const identityDownload = encodeFileName(
+    const identityDownload = encodeURLString(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
@@ -482,7 +482,7 @@ const VersionsNavigator = ({
       {delSelectedVOpen && (
         <DeleteSelectedVersions
           selectedBucket={bucketName}
-          selectedObject={decodeFileName(internalPaths)}
+          selectedObject={decodeURLString(internalPaths)}
           deleteOpen={delSelectedVOpen}
           selectedVersions={selectedItems}
           closeDeleteModalAndRefresh={closeSelectedVersions}
@@ -500,7 +500,7 @@ const VersionsNavigator = ({
             <Grid item xs={12}>
               <BrowserBreadcrumbs
                 bucketName={bucketName}
-                internalPaths={decodeFileName(internalPaths)}
+                internalPaths={decodeURLString(internalPaths)}
                 existingFiles={[]}
                 hidePathButton={true}
               />

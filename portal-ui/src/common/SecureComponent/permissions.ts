@@ -126,7 +126,7 @@ export const IAM_PAGES = {
   GROUPS_VIEW: "/identity/groups/:groupName+",
   ACCOUNT: "/identity/account",
   ACCOUNT_ADD: "/identity/account/new-account",
-  USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
+  USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName+",
 
   /* Access */
   POLICIES: "/access/policies",

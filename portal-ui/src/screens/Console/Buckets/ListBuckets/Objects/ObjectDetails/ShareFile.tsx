@@ -39,7 +39,7 @@ import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import { ShareIcon } from "../../../../../../icons";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 
@@ -127,7 +127,7 @@ const ShareFile = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects?prefix=${encodeFileName(
+            `/api/v1/buckets/${bucketName}/objects?prefix=${encodeURLString(
               dataObject.name
             )}${distributedSetup ? "&with_versions=true" : ""}`
           )
@@ -177,7 +177,7 @@ const ShareFile = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects/share?prefix=${encodeFileName(
+            `/api/v1/buckets/${bucketName}/objects/share?prefix=${encodeURLString(
               dataObject.name
             )}&version_id=${versionID}${
               selectedDate !== "" ? `&expires=${diffDate}s` : ""

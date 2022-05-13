@@ -34,6 +34,7 @@ import { connect } from "react-redux";
 import HelpBox from "../../../common/HelpBox";
 import {
   deleteCookie,
+  encodeURLString,
   getCookieValue,
   performDownload,
 } from "../../../common/utils";
@@ -158,8 +159,8 @@ const Inspect = ({
   };
 
   const performInspect = async () => {
-    const file = encodeURIComponent(inspectPath);
-    const volume = encodeURIComponent(volumeName);
+    const file = encodeURLString(inspectPath);
+    const volume = encodeURLString(volumeName);
 
     const urlOfInspectApi = `/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
 

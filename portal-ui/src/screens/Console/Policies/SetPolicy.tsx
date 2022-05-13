@@ -34,6 +34,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "./PolicySelectors";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import { encodeURLString } from "../../../common/utils";
 
 interface ISetPolicyProps {
   classes: any;
@@ -104,7 +105,7 @@ const SetPolicy = ({
   const fetchGroupInformation = () => {
     if (selectedGroup) {
       api
-        .invoke("GET", `/api/v1/group?name=${encodeURI(selectedGroup)}`)
+        .invoke("GET", `/api/v1/group/${encodeURLString(selectedGroup)}`)
         .then((res: any) => {
           const groupPolicy: String = get(res, "policy", "");
           setActualPolicy(groupPolicy.split(","));

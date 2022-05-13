@@ -45,6 +45,7 @@ import { setErrorSnackMessage } from "../../../../src/actions";
 import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from "../../../screens/Console/Tenants/utils";
 import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
+import { decodeURLString, encodeURLString } from "../../../common/utils";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -86,14 +87,16 @@ const AddServiceAccount = ({
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [policyJSON, setPolicyJSON] = useState<string>("");
 
-  const userName = match.params["userName"];
+  const userName = decodeURLString(match.params["userName"]);
 
   useEffect(() => {
     if (addSending) {
       api
         .invoke(
           "POST",
-          `/api/v1/user/${userName}/service-account-credentials`,
+          `/api/v1/user/${encodeURLString(
+            userName
+          )}/service-account-credentials`,
           {
             policy: policyJSON,
             accessKey: accessKey,
@@ -137,15 +140,15 @@ const AddServiceAccount = ({
 
   const closeCredentialsModal = () => {
     setNewServiceAccount(null);
-    history.push(`${IAM_PAGES.USERS}/${userName}`);
+    history.push(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
   };
 
   return (
     <Fragment>
-      {newServiceAccount !== null && (
+      {newServiceAccount && (
         <CredentialsPrompt
           newServiceAccount={newServiceAccount}
-          open={newServiceAccount !== null}
+          open
           closeModal={() => {
             closeCredentialsModal();
           }}
@@ -156,7 +159,7 @@ const AddServiceAccount = ({
         <PageHeader
           label={
             <BackLink
-              to={`${IAM_PAGES.USERS}/${userName}`}
+              to={`${IAM_PAGES.USERS}/${encodeURLString(userName)}`}
               label={"User Details - " + userName}
             />
           }

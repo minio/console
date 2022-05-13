@@ -34,7 +34,6 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import { ChangePasswordIcon } from "../../../icons";
-import { decodeFileName } from "../../../common/utils";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -65,9 +64,7 @@ const ChangePassword = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const userLoggedIn = decodeFileName(
-    localStorage.getItem("userLoggedIn") || ""
-  );
+  const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
 
   const changePassword = (event: React.FormEvent) => {
     event.preventDefault();
@@ -129,7 +126,8 @@ const ChangePassword = ({
       titleIcon={<ChangePasswordIcon />}
     >
       <div>
-        This will change your Console password. Please note your new password down, as it will be required to log into Console after this session.
+        This will change your Console password. Please note your new password
+        down, as it will be required to log into Console after this session.
       </div>
       <form
         noValidate
@@ -150,15 +148,9 @@ const ChangePassword = ({
                 label="Current Password"
                 type={showPassword ? "text" : "password"}
                 value={currentPassword}
-                overlayAction={() =>
-                  setShowPassword(!showPassword)
-                }
+                overlayAction={() => setShowPassword(!showPassword)}
                 overlayIcon={
-                  showPassword ? (
-                    <VisibilityOffIcon />
-                  ) : (
-                    <RemoveRedEyeIcon />
-                  )
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
                 }
               />
             </Grid>
@@ -172,15 +164,9 @@ const ChangePassword = ({
                 label="New Password"
                 type={showPassword ? "text" : "password"}
                 value={newPassword}
-                overlayAction={() =>
-                  setShowPassword(!showPassword)
-                }
+                overlayAction={() => setShowPassword(!showPassword)}
                 overlayIcon={
-                  showPassword ? (
-                    <VisibilityOffIcon />
-                  ) : (
-                    <RemoveRedEyeIcon />
-                  )
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
                 }
               />
             </Grid>
@@ -194,15 +180,9 @@ const ChangePassword = ({
                 label="Type New Password Again"
                 type={showPassword ? "text" : "password"}
                 value={reNewPassword}
-                overlayAction={() =>
-                  setShowPassword(!showPassword)
-                }
+                overlayAction={() => setShowPassword(!showPassword)}
                 overlayIcon={
-                  showPassword ? (
-                    <VisibilityOffIcon />
-                  ) : (
-                    <RemoveRedEyeIcon />
-                  )
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
                 }
               />
             </Grid>
