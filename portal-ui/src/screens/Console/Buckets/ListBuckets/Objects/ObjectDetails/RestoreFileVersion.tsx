@@ -23,7 +23,7 @@ import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import RecoverIcon from "../../../../../../icons/RecoverIcon";
@@ -59,7 +59,7 @@ const RestoreFileVersion = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/restore?prefix=${encodeFileName(
+        `/api/v1/buckets/${bucketName}/objects/restore?prefix=${encodeURLString(
           objectPath
         )}&version_id=${versionID}`
       )

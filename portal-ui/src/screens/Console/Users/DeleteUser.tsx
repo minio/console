@@ -23,6 +23,7 @@ import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ErrorResponseHandler } from "../../../common/types";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -50,7 +51,7 @@ const DeleteUser = ({
   const onConfirmDelete = () => {
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/user?name=${encodeURI(selectedUser.accessKey)}`,
+      `/api/v1/user/${encodeURLString(selectedUser.accessKey)}`,
       {
         id: selectedUser.id,
       }

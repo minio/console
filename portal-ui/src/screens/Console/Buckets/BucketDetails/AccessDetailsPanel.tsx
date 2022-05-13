@@ -44,6 +44,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { tableStyles } from "../../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
+import { encodeURLString } from "../../../../common/utils";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -122,7 +123,7 @@ const AccessDetails = ({
       type: "view",
       disableButtonFunction: () => !viewPolicy,
       onClick: (policy: any) => {
-        history.push(`${IAM_PAGES.POLICIES}/${policy.name}`);
+        history.push(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
       },
     },
   ];
@@ -132,7 +133,7 @@ const AccessDetails = ({
       type: "view",
       disableButtonFunction: () => !viewUser,
       onClick: (user: any) => {
-        history.push(`${IAM_PAGES.USERS}/${user}`);
+        history.push(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
       },
     },
   ];

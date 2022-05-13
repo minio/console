@@ -47,7 +47,7 @@ import SetUserPolicies from "./SetUserPolicies";
 import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
-import DeleteUserString from "./DeleteUserString";
+import DeleteUserModal from "./DeleteUserModal";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -56,6 +56,7 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import BackLink from "../../../common/BackLink";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { decodeURLString, encodeURLString } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -101,8 +102,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
-
-  const userName = match.params["userName"];
+  const userName = decodeURLString(match.params["userName"]);
 
   const changeUserPassword = () => {
     setChangeUserPasswordModalOpen(true);
@@ -118,7 +118,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     }
     setLoading(true);
     api
-      .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
+      .invoke("GET", `/api/v1/user/${encodeURLString(userName)}`)
       .then((res) => {
         setAddLoading(false);
         const memberOf = res.memberOf || [];
@@ -154,7 +154,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     }
     setAddLoading(true);
     api
-      .invoke("PUT", `/api/v1/user?name=${encodeURIComponent(userName)}`, {
+      .invoke("PUT", `/api/v1/user/${encodeURLString(userName)}`, {
         status: isEnabled ? "enabled" : "disabled",
         groups: selectedGroups,
       })
@@ -210,7 +210,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         />
       )}
       {deleteOpen && (
-        <DeleteUserString
+        <DeleteUserModal
           deleteOpen={deleteOpen}
           userName={userName}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
@@ -348,7 +348,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                           type: "view",
                           onClick: (policy: IPolicyItem) => {
                             history.push(
-                              `${IAM_PAGES.POLICIES}/${policy.policy}`
+                              `${IAM_PAGES.POLICIES}/${encodeURLString(
+                                policy.policy
+                              )}`
                             );
                           },
                         },

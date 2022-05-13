@@ -25,6 +25,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,7 +64,7 @@ const DeleteServiceAccount = ({
   const onConfirmDelete = () => {
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/service-accounts/${selectedServiceAccount}`
+      `/api/v1/service-accounts/${encodeURLString(selectedServiceAccount)}`
     );
   };
 

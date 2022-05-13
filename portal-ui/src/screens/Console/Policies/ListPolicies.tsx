@@ -50,6 +50,7 @@ import SearchBox from "../Common/SearchBox";
 
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { encodeURLString } from "../../../common/utils";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -142,7 +143,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   };
 
   const viewAction = (policy: any) => {
-    history.push(`${IAM_PAGES.POLICIES}/${policy.name}`);
+    history.push(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
   };
 
   const tableActions = [

@@ -57,6 +57,7 @@ import {
 
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { encodeURLString } from "../../../common/utils";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -169,7 +170,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   );
 
   const viewAction = (group: any) => {
-    history.push(`${IAM_PAGES.GROUPS}/${group}`);
+    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
   };
 
   const tableActions = [
@@ -225,7 +226,6 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
               display: "flex",
             }}
           >
-            {" "}
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
               scopes={[IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY]}

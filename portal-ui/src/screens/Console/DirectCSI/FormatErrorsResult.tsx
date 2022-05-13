@@ -23,6 +23,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectCSIFormatResItem } from "./types";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { DriveFormatErrorsIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
 
 interface IFormatErrorsProps {
   open: boolean;
@@ -43,7 +44,7 @@ const download = (filename: string, text: string) => {
   let element = document.createElement("a");
   element.setAttribute(
     "href",
-    "data:application/json;charset=utf-8," + encodeURIComponent(text)
+    "data:application/json;charset=utf-8," + encodeURLString(text)
   );
   element.setAttribute("download", filename);
 

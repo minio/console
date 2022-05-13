@@ -32,6 +32,7 @@ import api from "../../../common/api";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { ChangeAccessPolicyIcon } from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import { encodeURLString } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,7 +74,12 @@ const ServiceAccountPolicy = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/service-accounts/${selectedAccessKey}/policy`)
+        .invoke(
+          "GET",
+          `/api/v1/service-accounts/${encodeURLString(
+            selectedAccessKey
+          )}/policy`
+        )
         .then((res) => {
           setLoading(false);
           setPolicyDefinition(res);
@@ -88,9 +94,13 @@ const ServiceAccountPolicy = ({
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
     api
-      .invoke("PUT", `/api/v1/service-accounts/${selectedAccessKey}/policy`, {
-        policy: newPolicy,
-      })
+      .invoke(
+        "PUT",
+        `/api/v1/service-accounts/${encodeURLString(selectedAccessKey)}/policy`,
+        {
+          policy: newPolicy,
+        }
+      )
       .then((res) => {
         closeModalAndRefresh();
       })

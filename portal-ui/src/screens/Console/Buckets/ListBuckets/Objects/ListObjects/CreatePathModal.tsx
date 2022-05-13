@@ -27,7 +27,7 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import history from "../../../../../../history";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
@@ -101,7 +101,7 @@ const CreatePathModal = ({
       .filter((splitItem) => splitItem.trim() !== "")
       .join("/");
 
-    const newPath = `/buckets/${bucketName}/browse/${encodeFileName(
+    const newPath = `/buckets/${bucketName}/browse/${encodeURLString(
       `${folderPath}${cleanPathURL}/`
     )}`;
     history.push(newPath);

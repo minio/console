@@ -31,6 +31,7 @@ import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import AddMembersToGroup from "../../../icons/AddMembersToGroupIcon";
+import { encodeURLString } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,7 +69,7 @@ const ChangeUserGroups = ({
     }
 
     api
-      .invoke("GET", `/api/v1/user?name=${encodeURI(selectedUser)}`)
+      .invoke("GET", `/api/v1/user/${encodeURLString(selectedUser)}`)
       .then((res) => {
         setAddLoading(false);
         setAccessKey(res.accessKey);
@@ -100,7 +101,7 @@ const ChangeUserGroups = ({
     setAddLoading(true);
     if (selectedUser !== null) {
       api
-        .invoke("PUT", `/api/v1/user?name=${encodeURI(selectedUser)}`, {
+        .invoke("PUT", `/api/v1/user/${encodeURLString(selectedUser)}`, {
           status: enabled ? "enabled" : "disabled",
           groups: selectedGroups,
         })

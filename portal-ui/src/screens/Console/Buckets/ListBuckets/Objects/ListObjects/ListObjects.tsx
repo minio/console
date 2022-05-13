@@ -36,8 +36,8 @@ import TableWrapper, {
   ItemActions,
 } from "../../../../Common/TableWrapper/TableWrapper";
 import {
-  decodeFileName,
-  encodeFileName,
+  decodeURLString,
+  encodeURLString,
   niceBytesInt,
 } from "../../../../../../common/utils";
 
@@ -509,7 +509,7 @@ const ListObjects = ({
   }, [bucketName, loadingLocking, setErrorSnackMessage, displayListObjects]);
 
   useEffect(() => {
-    const decodedIPaths = decodeFileName(internalPaths);
+    const decodedIPaths = decodeURLString(internalPaths);
 
     if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
       setObjectDetailsView(false);
@@ -520,7 +520,7 @@ const ListObjects = ({
       setObjectDetailsView(true);
       setLoadingVersions(true);
       setSelectedObjectView(
-        `${decodedIPaths ? `${encodeFileName(decodedIPaths)}` : ``}`
+        `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
       );
       setSimplePathHandler(
         `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
@@ -548,7 +548,7 @@ const ListObjects = ({
       if (displayListObjects) {
         let pathPrefix = "";
         if (internalPaths) {
-          const decodedPath = decodeFileName(internalPaths);
+          const decodedPath = decodeURLString(internalPaths);
           pathPrefix = decodedPath.endsWith("/")
             ? decodedPath
             : decodedPath + "/";
@@ -585,7 +585,7 @@ const ListObjects = ({
           .invoke(
             "GET",
             `${urlTake}${
-              pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+              pathPrefix ? `?prefix=${encodeURLString(pathPrefix)}` : ``
             }`
           )
           .then((res: BucketObjectItemsList) => {
@@ -596,7 +596,7 @@ const ListObjects = ({
             // We separate items between folders or files to display folders at the beginning always.
             records.forEach((record) => {
               // We omit files from the same path
-              if (record.name !== decodeFileName(internalPaths)) {
+              if (record.name !== decodeURLString(internalPaths)) {
                 // this is a folder
                 if (record.name.endsWith("/")) {
                   folders.push(record);
@@ -619,14 +619,14 @@ const ListObjects = ({
 
                 let pathPrefix = "";
                 if (internalPaths) {
-                  const decodedPath = decodeFileName(internalPaths);
+                  const decodedPath = decodeURLString(internalPaths);
                   pathPrefix = decodedPath.endsWith("/")
                     ? decodedPath
                     : decodedPath + "/";
                 }
 
                 pathTest = `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-                  pathPrefix ? `?prefix=${encodeFileName(pathPrefix)}` : ``
+                  pathPrefix ? `?prefix=${encodeURLString(pathPrefix)}` : ``
                 }`;
               }
 
@@ -665,7 +665,7 @@ const ListObjects = ({
                       setSelectedObjectView(internalPaths);
 
                       // We split the selected object URL & remove the last item to fetch the files list for the parent folder
-                      const parentPath = `${decodeFileName(internalPaths)
+                      const parentPath = `${decodeURLString(internalPaths)
                         .split("/")
                         .slice(0, -1)
                         .join("/")}/`;
@@ -675,7 +675,7 @@ const ListObjects = ({
                           "GET",
                           `${urlTake}${
                             pathPrefix
-                              ? `?prefix=${encodeFileName(parentPath)}`
+                              ? `?prefix=${encodeURLString(parentPath)}`
                               : ``
                           }`
                         )
@@ -778,13 +778,13 @@ const ListObjects = ({
   };
 
   const downloadObject = (object: BucketObjectItem) => {
-    const identityDownload = encodeFileName(
+    const identityDownload = encodeURLString(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
     const downloadCall = download(
       bucketName,
-      encodeFileName(object.name),
+      encodeURLString(object.name),
       object.version_id,
       object.size,
       (progress) => {
@@ -821,13 +821,15 @@ const ListObjects = ({
     setSelectedObjects([]);
 
     const newPath = `/buckets/${bucketName}/browse${
-      idElement ? `/${encodeFileName(idElement)}` : ``
+      idElement ? `/${encodeURLString(idElement)}` : ``
     }`;
     history.push(newPath);
 
     setObjectDetailsView(true);
     setLoadingVersions(true);
-    setSelectedObjectView(`${idElement ? `${encodeFileName(idElement)}` : ``}`);
+    setSelectedObjectView(
+      `${idElement ? `${encodeURLString(idElement)}` : ``}`
+    );
   };
 
   const uploadObject = useCallback(
@@ -873,7 +875,7 @@ const ListObjects = ({
 
               const pathClean = path.endsWith("/") ? path.slice(0, -1) : path;
 
-              encodedPath = encodeFileName(
+              encodedPath = encodeURLString(
                 `${pathClean}${
                   !pathClean.endsWith("/") &&
                   finalFolderPath !== "" &&
@@ -893,7 +895,7 @@ const ListObjects = ({
               uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
             }
 
-            const identity = encodeFileName(
+            const identity = encodeURLString(
               `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
             );
 
@@ -967,7 +969,7 @@ const ListObjects = ({
                 done: false,
                 instanceID: identity,
                 percentage: 0,
-                prefix: `${decodeFileName(encodedPath)}${fileName}`,
+                prefix: `${decodeURLString(encodedPath)}${fileName}`,
                 type: "upload",
                 waitingForFile: false,
                 failed: false,
@@ -1134,7 +1136,7 @@ const ListObjects = ({
     setLoadingObjectsList(true);
   };
 
-  const pageTitle = decodeFileName(internalPaths);
+  const pageTitle = decodeURLString(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
 
   const plSelect = filteredRecords;
@@ -1187,7 +1189,7 @@ const ListObjects = ({
       setVersionsModeEnabled(false);
       // We change URL to be the contained folder
 
-      const decodedPath = decodeFileName(internalPaths);
+      const decodedPath = decodeURLString(internalPaths);
       const splitURLS = decodedPath.split("/");
 
       // We remove the last section of the URL as it should be a file
@@ -1199,7 +1201,7 @@ const ListObjects = ({
         URLItem = `${splitURLS.join("/")}/`;
       }
 
-      history.push(`/buckets/${bucketName}/browse/${encodeFileName(URLItem)}`);
+      history.push(`/buckets/${bucketName}/browse/${encodeURLString(URLItem)}`);
     }
 
     setObjectDetailsView(false);

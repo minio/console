@@ -35,7 +35,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { decodeFileName } from "../../../common/utils";
+import { decodeURLString, encodeURLString } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -165,7 +165,9 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   };
 
   const viewAction = (selectionElement: any): void => {
-    history.push(`${IAM_PAGES.USERS}/${encodeURI(selectionElement.accessKey)}`);
+    history.push(
+      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.accessKey)}`
+    );
   };
 
   const deleteAction = (selectionElement: any): void => {
@@ -173,7 +175,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
     setSelectedUser(selectionElement);
   };
 
-  const userLoggedIn = decodeFileName(
+  const userLoggedIn = decodeURLString(
     localStorage.getItem("userLoggedIn") || ""
   );
 

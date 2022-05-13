@@ -36,8 +36,8 @@ import {
   setSnackBarMessage,
 } from "../../../../../../actions";
 import {
-  decodeFileName,
-  encodeFileName,
+  decodeURLString,
+  encodeURLString,
   niceBytes,
   niceBytesInt,
   niceDaysInt,
@@ -191,7 +191,7 @@ const ObjectDetailPanel = ({
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [totalVersionsSize, setTotalVersionsSize] = useState<number>(0);
 
-  const internalPathsDecoded = decodeFileName(internalPaths) || "";
+  const internalPathsDecoded = decodeURLString(internalPaths) || "";
   const allPathData = internalPathsDecoded.split("/");
   const currentItem = allPathData.pop() || "";
 
@@ -291,7 +291,7 @@ const ObjectDetailPanel = ({
   };
 
   const downloadObject = (object: IFileInfo) => {
-    const identityDownload = encodeFileName(
+    const identityDownload = encodeURLString(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 

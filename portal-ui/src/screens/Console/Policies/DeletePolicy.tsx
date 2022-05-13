@@ -22,6 +22,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
 
 interface IDeletePolicyProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -47,7 +48,10 @@ const DeletePolicy = ({
   }
 
   const onConfirmDelete = () => {
-    invokeDeleteApi("DELETE", `/api/v1/policy?name=${selectedPolicy}`);
+    invokeDeleteApi(
+      "DELETE",
+      `/api/v1/policy/${encodeURLString(selectedPolicy)}`
+    );
   };
 
   return (

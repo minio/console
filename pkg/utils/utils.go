@@ -16,7 +16,11 @@
 
 package utils
 
-import "github.com/google/uuid"
+import (
+	"encoding/base64"
+
+	"github.com/google/uuid"
+)
 
 // NewUUID - get a random UUID.
 func NewUUID() (string, error) {
@@ -25,6 +29,15 @@ func NewUUID() (string, error) {
 		return "", err
 	}
 	return u.String(), nil
+}
+
+// DecodeBase64 : decoded base64 input into utf-8 text
+func DecodeBase64(s string) (string, error) {
+	decodedInput, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		return "", err
+	}
+	return string(decodedInput), nil
 }
 
 // Key used for Get/SetReqInfo

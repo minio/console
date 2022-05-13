@@ -17,6 +17,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { AddMembersToGroupIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
 
 type UserPickerModalProps = {
   classes?: any;
@@ -55,7 +56,7 @@ const AddGroupMember = ({
 
   function addMembersToGroup() {
     return api
-      .invoke("PUT", `/api/v1/group?name=${encodeURI(selectedGroup)}`, {
+      .invoke("PUT", `/api/v1/group/${encodeURLString(selectedGroup)}`, {
         group: selectedGroup,
         members: selectedUsers,
         status: groupStatus,

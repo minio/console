@@ -39,14 +39,14 @@ import { AddIcon, DeleteIcon } from "../../../icons";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
-import { selectSAs } from "../../Console/Configurations/utils";
+import { selectSAs } from "../Configurations/utils";
 import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
 import {
-  IAM_PAGES,
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
+import { encodeURLString } from "../../../common/utils";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -94,7 +94,7 @@ const UserServiceAccountsPanel = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/user/${user}/service-accounts`)
+        .invoke("GET", `/api/v1/user/${encodeURLString(user)}/service-accounts`)
         .then((res: string[]) => {
           const serviceAccounts = res.sort(stringSort);
           setLoading(false);
@@ -254,10 +254,9 @@ const UserServiceAccountsPanel = ({
               color="primary"
               icon={<AddIcon />}
               onClick={() => {
-                let newSAPath = `/identity/users/${user}/new-user-sa`;
-                newSAPath = `${IAM_PAGES.USER_SA_ACCOUNT_ADD}/${user}`;
-                newSAPath = `/identity/users/new-user-sa/${user}`;
-                history.push(newSAPath);
+                history.push(
+                  `/identity/users/new-user-sa/${encodeURLString(user)}`
+                );
               }}
               disabled={!hasPolicy}
             />
