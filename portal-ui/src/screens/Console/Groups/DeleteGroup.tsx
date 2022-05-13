@@ -22,6 +22,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
 
 interface IDeleteGroup {
   selectedGroups: string[];
@@ -39,7 +40,7 @@ const DeleteGroup = ({
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) => {
     setErrorSnackMessage(err);
-    closeDeleteModalAndRefresh(true);
+    closeDeleteModalAndRefresh(false);
   };
   const onClose = () => closeDeleteModalAndRefresh(false);
 
@@ -50,7 +51,7 @@ const DeleteGroup = ({
   }
   const onDeleteGroups = () => {
     for (let group of selectedGroups) {
-      invokeDeleteApi("DELETE", `/api/v1/group?name=${encodeURI(group)}`);
+      invokeDeleteApi("DELETE", `/api/v1/group/${encodeURLString(group)}`);
     }
   };
 

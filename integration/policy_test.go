@@ -18,6 +18,7 @@ package integration
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -519,7 +520,7 @@ func Test_GetPolicyAPI(t *testing.T) {
 		{
 			name: "Get Policies - Invalid",
 			args: args{
-				api: "/policy?name=test3",
+				api: base64.StdEncoding.EncodeToString([]byte("test3")),
 			},
 			expectedStatus: 500,
 			expectedError:  nil,
@@ -527,7 +528,7 @@ func Test_GetPolicyAPI(t *testing.T) {
 		{
 			name: "Get Policies - Valid",
 			args: args{
-				api: "/policy?name=getpolicytest",
+				api: base64.StdEncoding.EncodeToString([]byte("getpolicytest")),
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -541,7 +542,7 @@ func Test_GetPolicyAPI(t *testing.T) {
 			}
 
 			request, err := http.NewRequest(
-				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", tt.args.api), nil)
 			if err != nil {
 				log.Println(err)
 				return
@@ -594,7 +595,7 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Valid",
 			args: args{
-				api: "/policies/policylistusers/users",
+				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("policylistusers")) + "/users",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -602,7 +603,7 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Invalid",
 			args: args{
-				api: "/policies/test2/users",
+				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("test2")) + "/users",
 			},
 			expectedStatus: 404,
 			expectedError:  nil,
@@ -673,7 +674,8 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Valid",
 			args: args{
-				api: "/policies/policylistgroups/groups",
+
+				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("policylistgroups")) + "/groups",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -681,7 +683,7 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Invalid",
 			args: args{
-				api: "/policies/test3/groups",
+				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("test3")) + "/groups",
 			},
 			expectedStatus: 404,
 			expectedError:  nil,
@@ -750,7 +752,7 @@ func Test_DeletePolicyAPI(t *testing.T) {
 		{
 			name: "Delete Policies - Valid",
 			args: args{
-				api:    "/policy?name=testdelete",
+				api:    base64.StdEncoding.EncodeToString([]byte("testdelete")),
 				method: "DELETE",
 			},
 			expectedStatus: 204,
@@ -759,7 +761,7 @@ func Test_DeletePolicyAPI(t *testing.T) {
 		{
 			name: "Get Policy After Delete - Invalid",
 			args: args{
-				api:    "/policy?name=testdelete",
+				api:    base64.StdEncoding.EncodeToString([]byte("testdelete")),
 				method: "GET",
 			},
 			expectedStatus: 500,
@@ -774,7 +776,7 @@ func Test_DeletePolicyAPI(t *testing.T) {
 			}
 
 			request, err := http.NewRequest(
-				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
+				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", tt.args.api), nil)
 			if err != nil {
 				log.Println(err)
 				return

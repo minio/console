@@ -24,6 +24,7 @@ import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { encodeURLString } from "../../../common/utils";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -32,7 +33,7 @@ interface IDeleteUserProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-const DeleteUserString = ({
+const DeleteUserModal = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   userName,
@@ -51,9 +52,11 @@ const DeleteUserString = ({
   }
 
   const onConfirmDelete = () => {
-    invokeDeleteApi("DELETE", `/api/v1/user?name=${encodeURI(userName)}`, {
-      id: userName,
-    });
+    invokeDeleteApi(
+      "DELETE",
+      `/api/v1/user/${encodeURLString(userName)}`,
+      null
+    );
   };
 
   return (
@@ -81,4 +84,4 @@ const mapDispatchToProps = {
 
 const connector = connect(null, mapDispatchToProps);
 
-export default connector(DeleteUserString);
+export default connector(DeleteUserModal);

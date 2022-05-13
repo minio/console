@@ -28,7 +28,10 @@ const Policies = () => {
           exact={true}
           component={ListPolicies}
         />
-        <Route path={`${IAM_PAGES.POLICIES}/*`} component={PolicyDetails} />
+        <Route
+          path={`${IAM_PAGES.POLICIES}/:policyName+`}
+          component={PolicyDetails}
+        />
         <Route path="/" component={ListPolicies} />
         <Route component={NotFoundPage} />
       </Switch>

@@ -18,6 +18,7 @@ package integration
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -95,7 +96,7 @@ func TestAddServiceAccount(t *testing.T) {
 	requestDataJSON, _ = json.Marshal(requestDataPolicy)
 	requestDataBody = bytes.NewReader(requestDataJSON)
 	request, err = http.NewRequest(
-		"PUT", "http://localhost:9090/api/v1/service-accounts/testuser1/policy", requestDataBody)
+		"PUT", "http://localhost:9090/api/v1/service-accounts/"+base64.StdEncoding.EncodeToString([]byte("testuser1"))+"/policy", requestDataBody)
 	if err != nil {
 		log.Println(err)
 		return
@@ -114,7 +115,7 @@ func TestAddServiceAccount(t *testing.T) {
 
 	// Test policy
 	request, err = http.NewRequest(
-		"GET", "http://localhost:9090/api/v1/service-accounts/testuser1/policy", nil)
+		"GET", "http://localhost:9090/api/v1/service-accounts/"+base64.StdEncoding.EncodeToString([]byte("testuser1"))+"/policy", nil)
 	if err != nil {
 		log.Println(err)
 		return
@@ -146,7 +147,7 @@ func TestAddServiceAccount(t *testing.T) {
 	// {{baseUrl}}/user?name=proident velit
 	// Investiga como se borra en el browser.
 	request, err = http.NewRequest(
-		"DELETE", "http://localhost:9090/api/v1/service-accounts/testuser1", nil)
+		"DELETE", "http://localhost:9090/api/v1/service-accounts/"+base64.StdEncoding.EncodeToString([]byte("testuser1")), nil)
 	if err != nil {
 		log.Println(err)
 		return

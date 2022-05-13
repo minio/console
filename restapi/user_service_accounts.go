@@ -23,6 +23,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/minio/console/pkg/utils"
+
 	userApi "github.com/minio/console/restapi/operations/user"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -233,8 +235,11 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
-
-	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, params.Name)
+	name, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, name)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -254,7 +259,10 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 	serviceAccount := params.Body
-	user := params.Name
+	user, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
 	if user == serviceAccount.AccessKey {
 		return nil, ErrorWithContext(ctx, errors.New("Access Key already in use"))
 	}
@@ -331,7 +339,10 @@ func getUserServiceAccountsResponse(ctx context.Context, session *models.Princip
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
-
+	user, err = utils.DecodeBase64(user)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
 	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient, user)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -348,7 +359,10 @@ func deleteServiceAccount(ctx context.Context, userClient MinioAdmin, accessKey 
 func getDeleteServiceAccountResponse(session *models.Principal, params saApi.DeleteServiceAccountParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	accessKey := params.AccessKey
+	accessKey, err := utils.DecodeBase64(params.AccessKey)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
@@ -381,7 +395,10 @@ func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 func getServiceAccountPolicyResponse(session *models.Principal, params saApi.GetServiceAccountPolicyParams) (string, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	accessKey := params.AccessKey
+	accessKey, err := utils.DecodeBase64(params.AccessKey)
+	if err != nil {
+		return "", ErrorWithContext(ctx, err)
+	}
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return "", ErrorWithContext(ctx, err)
@@ -408,7 +425,10 @@ func setServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.SetServiceAccountPolicyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	accessKey := params.AccessKey
+	accessKey, err := utils.DecodeBase64(params.AccessKey)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
 	policy := *params.Policy.Policy
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {

@@ -20,7 +20,7 @@ import { DialogContentText } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import { decodeFileName } from "../../../../../../common/utils";
+import { decodeURLString } from "../../../../../../common/utils";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../../../common/api";
@@ -89,7 +89,7 @@ const DeleteNonCurrentVersions = ({
       confirmationContent={
         <DialogContentText>
           Are you sure you want to delete all the non-current versions for:{" "}
-          <b>{decodeFileName(selectedObject)}</b>? <br />
+          <b>{decodeURLString(selectedObject)}</b>? <br />
           <br />
           To continue please type <b>YES, PROCEED</b> in the box.
           <Grid item xs={12}>

@@ -60,7 +60,7 @@ type UpdateUserGroupsParams struct {
 	Body *models.UpdateUserGroups
 	/*
 	  Required: true
-	  In: query
+	  In: path
 	*/
 	Name string
 }
@@ -73,8 +73,6 @@ func (o *UpdateUserGroupsParams) BindRequest(r *http.Request, route *middleware.
 	var res []error
 
 	o.HTTPRequest = r
-
-	qs := runtime.Values(r.URL.Query())
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
@@ -104,8 +102,8 @@ func (o *UpdateUserGroupsParams) BindRequest(r *http.Request, route *middleware.
 		res = append(res, errors.Required("body", "body", ""))
 	}
 
-	qName, qhkName, _ := qs.GetOK("name")
-	if err := o.bindName(qName, qhkName, route.Formats); err != nil {
+	rName, rhkName, _ := route.Params.GetOK("name")
+	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -114,22 +112,15 @@ func (o *UpdateUserGroupsParams) BindRequest(r *http.Request, route *middleware.
 	return nil
 }
 
-// bindName binds and validates parameter Name from query.
+// bindName binds and validates parameter Name from path.
 func (o *UpdateUserGroupsParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("name", "query", rawData)
-	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
 	// Required: true
-	// AllowEmptyValue: false
-
-	if err := validate.RequiredString("name", "query", raw); err != nil {
-		return err
-	}
+	// Parameter is provided by construction from the route
 	o.Name = raw
 
 	return nil

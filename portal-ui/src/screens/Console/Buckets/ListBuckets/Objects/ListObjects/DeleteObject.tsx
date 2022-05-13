@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import { decodeFileName } from "../../../../../../common/utils";
+import { decodeURLString } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
@@ -55,7 +55,7 @@ const DeleteObject = ({
     return null;
   }
   const onConfirmDelete = () => {
-    const decodedSelectedObject = decodeFileName(selectedObject);
+    const decodedSelectedObject = decodeURLString(selectedObject);
     const recursive = decodedSelectedObject.endsWith("/");
     invokeDeleteApi(
       "DELETE",
@@ -79,7 +79,7 @@ const DeleteObject = ({
       confirmationContent={
         <DialogContentText>
           Are you sure you want to delete: <br />
-          <b>{decodeFileName(selectedObject)}</b>{" "}
+          <b>{decodeURLString(selectedObject)}</b>{" "}
           {selectedVersion !== "" ? (
             <Fragment>
               <br />

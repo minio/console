@@ -20,7 +20,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid, LinearProgress } from "@mui/material";
 import { BucketObjectItem } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import clsx from "clsx";
 
 const styles = () =>
@@ -75,7 +75,7 @@ const PreviewFile = ({
   let path = "";
 
   if (object) {
-    const encodedPath = encodeFileName(object.name);
+    const encodedPath = encodeURLString(object.name);
     let basename = document.baseURI.replace(window.location.origin, "");
     path = `${window.location.origin}${basename}api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
     if (object.version_id) {

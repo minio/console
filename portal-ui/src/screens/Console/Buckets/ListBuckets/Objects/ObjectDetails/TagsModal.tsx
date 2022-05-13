@@ -27,7 +27,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -108,7 +108,7 @@ const AddTagModal = ({
   const [deleteKey, setDeleteKey] = useState<string>("");
   const [deleteLabel, setDeleteLabel] = useState<string>("");
 
-  const selectedObject = encodeFileName(actualInfo.name);
+  const selectedObject = encodeURLString(actualInfo.name);
   const currentTags = actualInfo.tags;
   const currTagKeys = Object.keys(currentTags || {});
 
