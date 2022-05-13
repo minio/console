@@ -34,6 +34,9 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import { ChangePasswordIcon } from "../../../icons";
+import { decodeFileName } from "../../../common/utils";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,6 +63,11 @@ const ChangePassword = ({
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const userLoggedIn = decodeFileName(
+    localStorage.getItem("userLoggedIn") || ""
+  );
 
   const changePassword = (event: React.FormEvent) => {
     event.preventDefault();
@@ -110,7 +118,7 @@ const ChangePassword = ({
 
   return open ? (
     <ModalWrapper
-      title="Change Password"
+      title={`Change Password for ${userLoggedIn}`}
       modalOpen={open}
       onClose={() => {
         setNewPassword("");
@@ -120,6 +128,9 @@ const ChangePassword = ({
       }}
       titleIcon={<ChangePasswordIcon />}
     >
+      <div>
+        This will change your Console password. Please note your new password down, as it will be required to log into Console after this session.
+      </div>
       <form
         noValidate
         autoComplete="off"
@@ -137,8 +148,18 @@ const ChangePassword = ({
                   setCurrentPassword(event.target.value);
                 }}
                 label="Current Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={currentPassword}
+                overlayAction={() =>
+                  setShowPassword(!showPassword)
+                }
+                overlayIcon={
+                  showPassword ? (
+                    <VisibilityOffIcon />
+                  ) : (
+                    <RemoveRedEyeIcon />
+                  )
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -149,8 +170,18 @@ const ChangePassword = ({
                   setNewPassword(event.target.value);
                 }}
                 label="New Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={newPassword}
+                overlayAction={() =>
+                  setShowPassword(!showPassword)
+                }
+                overlayIcon={
+                  showPassword ? (
+                    <VisibilityOffIcon />
+                  ) : (
+                    <RemoveRedEyeIcon />
+                  )
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -161,8 +192,18 @@ const ChangePassword = ({
                   setReNewPassword(event.target.value);
                 }}
                 label="Type New Password Again"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={reNewPassword}
+                overlayAction={() =>
+                  setShowPassword(!showPassword)
+                }
+                overlayIcon={
+                  showPassword ? (
+                    <VisibilityOffIcon />
+                  ) : (
+                    <RemoveRedEyeIcon />
+                  )
+                }
               />
             </Grid>
           </Grid>
