@@ -34,8 +34,8 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 	AddBucket("testaccessruleadd", false, false, nil, nil)
 
 	type args struct {
-		prefix         string
-		access          string
+		prefix string
+		access string
 	}
 	tests := []struct {
 		name           string
