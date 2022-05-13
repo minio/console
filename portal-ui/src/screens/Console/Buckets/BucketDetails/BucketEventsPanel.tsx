@@ -203,6 +203,7 @@ const BucketEventsPanel = ({
         </Grid>
         {!loadingEvents && (
           <Grid item xs={12}>
+             <br />
             <HelpBox
               title={"Lambda Notifications"}
               iconComponent={<LambdaIcon />}
