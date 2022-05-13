@@ -1351,8 +1351,10 @@ jobs:
           echo ${{ github.event.number }}
           echo ${{ github.run_id }}
           ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/
+          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/
           go tool cover -html=all.out -o coverage.html
           ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/
+          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`

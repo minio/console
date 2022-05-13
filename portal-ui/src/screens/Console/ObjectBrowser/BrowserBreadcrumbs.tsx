@@ -17,6 +17,7 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
+import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
 import withStyles from "@mui/styles/withStyles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,13 +27,14 @@ import { Button, IconButton, Tooltip } from "@mui/material";
 import { ObjectBrowserState } from "./types";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeFileName } from "../../../common/utils";
-import { BackCaretIcon, NewPathIcon } from "../../../icons";
+import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { setVersionsModeEnabled } from "./actions";
 import history from "../../../history";
 import withSuspense from "../Common/Components/withSuspense";
+import { setSnackBarMessage } from "../../../actions";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -55,6 +57,7 @@ interface IObjectBrowser {
   existingFiles: BucketObjectItem[];
   additionalOptions?: React.ReactNode;
   setVersionsModeEnabled: typeof setVersionsModeEnabled;
+  setSnackBarMessage: typeof setSnackBarMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -76,6 +79,7 @@ const BrowserBreadcrumbs = ({
   hidePathButton,
   setVersionsModeEnabled,
   additionalOptions,
+  setSnackBarMessage,
 }: IObjectBrowser) => {
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
@@ -187,6 +191,37 @@ const BrowserBreadcrumbs = ({
           <div className={classes.breadcrumbsList} dir="rtl">
             {listBreadcrumbs}
           </div>
+          <CopyToClipboard text={`${bucketName}/${splitPaths.join("/")}`}>
+            <Button
+              id={"copy-path"}
+              startIcon={<CopyIcon />}
+              disableTouchRipple
+              disableRipple
+              focusRipple={false}
+              variant={"outlined"}
+              onClick={() => {
+                setSnackBarMessage("Path copied to clipboard")
+              }}
+              sx={{
+                marginRight: "3px",
+                padding: "0",
+                color: "#969FA8",
+                border: "#969FA8 1px solid",
+                width: "20px",
+                height: "20px",
+                minHeight: "20px",
+                minWidth: "28px",
+                "&.MuiButton-root": {
+                  height: "28px",
+                },
+                "& .min-icon": {
+                  width: "12px",
+                  height: "12px",
+                  marginLeft: "12px",
+                },
+              }}
+            />
+          </CopyToClipboard>
           <div className={classes.additionalOptions}>{additionalOptions}</div>
         </Grid>
         {!hidePathButton && (
@@ -235,6 +270,7 @@ const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
 
 const mapDispatchToProps = {
   setVersionsModeEnabled,
+  setSnackBarMessage,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
