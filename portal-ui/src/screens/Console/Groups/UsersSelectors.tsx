@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,18 +29,19 @@ import {
   selectorsCommon,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
+import { useDispatch } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 interface IGroupsProps {
   classes: any;
   selectedUsers: string[];
   setSelectedUsers: any;
   editMode?: boolean;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -82,8 +82,8 @@ const UsersSelectors = ({
   selectedUsers,
   setSelectedUsers,
   editMode = false,
-  setModalErrorSnackMessage,
 }: IGroupsProps) => {
+  const dispatch = useDispatch();
   //Local States
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
@@ -103,10 +103,10 @@ const UsersSelectors = ({
         isLoading(false);
       })
       .catch((err: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
         isLoading(false);
       });
-  }, [setModalErrorSnackMessage]);
+  }, [dispatch]);
 
   //Effects
   useEffect(() => {
@@ -187,10 +187,4 @@ const UsersSelectors = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(UsersSelectors));
+export default withStyles(styles)(UsersSelectors);

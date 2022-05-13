@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,11 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DIRECT_CSI_SELECT_DRIVE } from "./types";
+let objectCalls: { [key: string]: XMLHttpRequest } = {};
 
-export const selectDrive = (driveName: string) => {
-  return {
-    type: DIRECT_CSI_SELECT_DRIVE,
-    driveName,
-  };
+export const storeCallForObjectWithID = (id: string, call: XMLHttpRequest) => {
+  objectCalls[id] = call;
+};
+
+export const callForObjectID = (id: string): XMLHttpRequest => {
+  return objectCalls[id];
+};
+
+export const makeid = (length: number) => {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 };

@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { ConfirmDeleteIcon } from "../../../../icons";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../common/api";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeleteLifecycleRule {
   deleteOpen: boolean;
   onCloseAndRefresh: (refresh: boolean) => any;
   bucket: string;
   id: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -45,8 +45,8 @@ const DeleteBucketLifecycleRule = ({
   deleteOpen,
   bucket,
   id,
-  setErrorSnackMessage,
 }: IDeleteLifecycleRule) => {
+  const dispatch = useDispatch();
   const [deletingRule, setDeletingRule] = useState<boolean>(false);
 
   useEffect(() => {
@@ -59,10 +59,10 @@ const DeleteBucketLifecycleRule = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setDeletingRule(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [deletingRule, bucket, id, onCloseAndRefresh, setErrorSnackMessage]);
+  }, [deletingRule, bucket, id, onCloseAndRefresh, dispatch]);
 
   const onConfirmDelete = () => {
     setDeletingRule(true);
@@ -86,8 +86,4 @@ const DeleteBucketLifecycleRule = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(DeleteBucketLifecycleRule));
+export default withStyles(styles)(DeleteBucketLifecycleRule);

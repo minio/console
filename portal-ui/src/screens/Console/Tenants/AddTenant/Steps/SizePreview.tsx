@@ -15,12 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../../store";
-import { isPageValid, updateAddField } from "../../actions";
 import {
   modalBasic,
   wizardCommon,
@@ -30,32 +29,11 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { niceBytes } from "../../../../../common/utils";
-import { Opts } from "../../ListTenants/utils";
-import { IResourcesSize } from "../../ListTenants/types";
-import { IErasureCodeCalc } from "../../../../../common/types";
 
 import { Divider } from "@mui/material";
-import { IntegrationConfiguration } from "./TenantResources/utils";
 
 interface ISizePreviewProps {
   classes: any;
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  volumeSize: string;
-  sizeFactor: string;
-  drivesPerServer: string;
-  nodes: string;
-  memoryNode: string;
-  ecParity: string;
-  ecParityChoices: Opts[];
-  cleanECChoices: string[];
-  resourcesSize: IResourcesSize;
-  distribution: any;
-  ecParityCalc: IErasureCodeCalc;
-  limitSize: any;
-  selectedStorageClass: string;
-  cpuToUse: string;
-  integrationSelection: IntegrationConfiguration;
 }
 
 const styles = (theme: Theme) =>
@@ -72,16 +50,36 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const SizePreview = ({
-  classes,
-  nodes,
-  memoryNode,
-  ecParity,
-  distribution,
-  ecParityCalc,
-  cpuToUse,
-  integrationSelection,
-}: ISizePreviewProps) => {
+const SizePreview = ({ classes }: ISizePreviewProps) => {
+  const nodes = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.tenantSize.nodes
+  );
+  const memoryNode = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest
+  );
+  const ecParity = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.tenantSize.ecParity
+  );
+
+  const distribution = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.distribution
+  );
+  const ecParityCalc = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.ecParityCalc
+  );
+
+  const cpuToUse = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesCPURequest
+  );
+  const integrationSelection = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.integrationSelection
+  );
+
   const usableInformation = ecParityCalc.storageFactors.find(
     (element) => element.erasureCode === ecParity
   );
@@ -238,30 +236,4 @@ const SizePreview = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
-  sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,
-  drivesPerServer: state.tenants.createTenant.fields.tenantSize.drivesPerServer,
-  nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-  memoryNode:
-    state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest,
-  ecParity: state.tenants.createTenant.fields.tenantSize.ecParity,
-  ecParityChoices: state.tenants.createTenant.fields.tenantSize.ecParityChoices,
-  cleanECChoices: state.tenants.createTenant.fields.tenantSize.cleanECChoices,
-  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
-  distribution: state.tenants.createTenant.fields.tenantSize.distribution,
-  ecParityCalc: state.tenants.createTenant.fields.tenantSize.ecParityCalc,
-  limitSize: state.tenants.createTenant.fields.tenantSize.limitSize,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  cpuToUse: state.tenants.createTenant.fields.tenantSize.resourcesCPURequest,
-  integrationSelection:
-    state.tenants.createTenant.fields.tenantSize.integrationSelection,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-});
-
-export default withStyles(styles)(connector(SizePreview));
+export default withStyles(styles)(SizePreview);

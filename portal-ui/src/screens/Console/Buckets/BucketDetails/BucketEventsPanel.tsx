@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -23,8 +23,8 @@ import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import AddIcon from "../../../../icons/AddIcon";
 import LambdaIcon from "../../../../icons/LambdaIcon";
-import { BucketEvent, BucketEventList, BucketInfo } from "../types";
-import { setErrorSnackMessage } from "../../../../actions";
+import { BucketEvent, BucketEventList } from "../types";
+
 import { AppState } from "../../../../store";
 import {
   actionsTray,
@@ -37,13 +37,14 @@ import api from "../../../../common/api";
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -60,18 +61,15 @@ const styles = (theme: Theme) =>
 interface IBucketEventsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
 }
 
-const BucketEventsPanel = ({
-  classes,
-  match,
-  setErrorSnackMessage,
-  loadingBucket,
-  bucketInfo,
-}: IBucketEventsProps) => {
+const BucketEventsPanel = ({ classes, match }: IBucketEventsProps) => {
+  const dispatch = useDispatch();
+
+  const loadingBucket = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.loadingBucket
+  );
+
   const [addEventScreenOpen, setAddEventScreenOpen] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [records, setRecords] = useState<BucketEvent[]>([]);
@@ -102,13 +100,13 @@ const BucketEventsPanel = ({
           })
           .catch((err: ErrorResponseHandler) => {
             setLoadingEvents(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
       } else {
         setLoadingEvents(false);
       }
     }
-  }, [loadingEvents, setErrorSnackMessage, bucketName, displayEvents]);
+  }, [loadingEvents, dispatch, bucketName, displayEvents]);
 
   const eventsDisplay = (events: string[]) => {
     return <Fragment>{events.join(", ")}</Fragment>;
@@ -203,7 +201,7 @@ const BucketEventsPanel = ({
         </Grid>
         {!loadingEvents && (
           <Grid item xs={12}>
-             <br />
+            <br />
             <HelpBox
               title={"Lambda Notifications"}
               iconComponent={<LambdaIcon />}
@@ -234,14 +232,4 @@ const BucketEventsPanel = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  loadingBucket: state.buckets.bucketDetails.loadingBucket,
-  bucketInfo: state.buckets.bucketDetails.bucketInfo,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(BucketEventsPanel));
+export default withStyles(styles)(BucketEventsPanel);

@@ -15,47 +15,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import { AppState } from "../../../../../../store";
-import { isPageValid, updateAddField } from "../../../actions";
 import {
   formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { IResourcesSize } from "../../../ListTenants/types";
 import { AllocableResourcesResponse } from "../../../types";
 import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { floor } from "lodash";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import { isPageValid, updateAddField } from "../../../tenantsSlice";
 
 interface ITenantSizeResourcesProps {
   classes: any;
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  nodes: string;
-  resourcesSize: IResourcesSize;
-  selectedStorageClass: string;
-  maxAllocatableResources: AllocableResourcesResponse;
-  maxCPUsUse: string;
-  maxMemorySize: string;
-
-  resourcesSpecifyLimit: boolean;
-  resourcesCPURequestError: string;
-  resourcesCPURequest: string;
-  resourcesCPULimitError: string;
-  resourcesCPULimit: string;
-  resourcesMemoryRequestError: string;
-  resourcesMemoryRequest: string;
-  resourcesMemoryLimitError: string;
-  resourcesMemoryLimit: string;
 }
 
 const styles = (theme: Theme) =>
@@ -78,45 +59,100 @@ const styles = (theme: Theme) =>
 
 const TenantSizeResources = ({
   classes,
-  updateAddField,
-  isPageValid,
-  nodes,
+}: // updateAddField,
+// isPageValid,
 
-  resourcesSize,
-  selectedStorageClass,
-  maxAllocatableResources,
-  maxCPUsUse,
-  maxMemorySize,
-  resourcesSpecifyLimit,
-  resourcesCPURequestError,
-  resourcesCPURequest,
-  resourcesCPULimitError,
-  resourcesCPULimit,
-  resourcesMemoryRequestError,
-  resourcesMemoryRequest,
-  resourcesMemoryLimitError,
-  resourcesMemoryLimit,
-}: ITenantSizeResourcesProps) => {
+ITenantSizeResourcesProps) => {
+  const dispatch = useDispatch();
+
+  const nodes = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.tenantSize.nodes
+  );
+
+  const resourcesSize = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesSize
+  );
+  const selectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+  );
+  const maxCPUsUse = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.tenantSize.maxCPUsUse
+  );
+  const maxMemorySize = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.maxMemorySize
+  );
+
+  const resourcesSpecifyLimit = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesSpecifyLimit
+  );
+
+  const resourcesCPURequestError = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesCPURequestError
+  );
+  const resourcesCPURequest = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesCPURequest
+  );
+  const resourcesCPULimitError = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesCPULimitError
+  );
+  const resourcesCPULimit = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesCPULimit
+  );
+
+  const resourcesMemoryRequestError = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequestError
+  );
+  const resourcesMemoryRequest = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest
+  );
+  const resourcesMemoryLimitError = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesMemoryLimitError
+  );
+  const resourcesMemoryLimit = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.tenantSize.resourcesMemoryLimit
+  );
+
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("tenantSize", field, value);
+      dispatch(
+        updateAddField({
+          pageName: "tenantSize",
+          field: field,
+          value: value,
+        })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   /*Debounce functions*/
 
   useEffect(() => {
-    isPageValid(
-      "tenantSize",
-      resourcesMemoryRequestError === "" &&
-        resourcesMemoryLimitError === "" &&
-        resourcesCPURequestError === "" &&
-        resourcesCPULimitError === ""
+    dispatch(
+      isPageValid({
+        pageName: "tenantSize",
+        valid:
+          resourcesMemoryRequestError === "" &&
+          resourcesMemoryLimitError === "" &&
+          resourcesCPURequestError === "" &&
+          resourcesCPULimitError === "",
+      })
     );
   }, [
-    isPageValid,
+    dispatch,
     resourcesMemoryRequestError,
     resourcesMemoryLimitError,
     resourcesCPURequestError,
@@ -378,42 +414,4 @@ const TenantSizeResources = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  nodes: state.tenants.createTenant.fields.tenantSize.nodes,
-
-  resourcesSize: state.tenants.createTenant.fields.tenantSize.resourcesSize,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  maxAllocatableResources:
-    state.tenants.createTenant.fields.tenantSize.maxAllocatableResources,
-  maxCPUsUse: state.tenants.createTenant.fields.tenantSize.maxCPUsUse,
-  maxMemorySize: state.tenants.createTenant.fields.tenantSize.maxMemorySize,
-
-  resourcesSpecifyLimit:
-    state.tenants.createTenant.fields.tenantSize.resourcesSpecifyLimit,
-
-  resourcesCPURequestError:
-    state.tenants.createTenant.fields.tenantSize.resourcesCPURequestError,
-  resourcesCPURequest:
-    state.tenants.createTenant.fields.tenantSize.resourcesCPURequest,
-  resourcesCPULimitError:
-    state.tenants.createTenant.fields.tenantSize.resourcesCPULimitError,
-  resourcesCPULimit:
-    state.tenants.createTenant.fields.tenantSize.resourcesCPULimit,
-
-  resourcesMemoryRequestError:
-    state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequestError,
-  resourcesMemoryRequest:
-    state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest,
-  resourcesMemoryLimitError:
-    state.tenants.createTenant.fields.tenantSize.resourcesMemoryLimitError,
-  resourcesMemoryLimit:
-    state.tenants.createTenant.fields.tenantSize.resourcesMemoryLimit,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-});
-
-export default withStyles(styles)(connector(TenantSizeResources));
+export default withStyles(styles)(TenantSizeResources);

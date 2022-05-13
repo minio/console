@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,10 +29,6 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 
 import { IFileInfo } from "./types";
-import {
-  setModalErrorSnackMessage,
-  setModalSnackMessage,
-} from "../../../../../../actions";
 import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
@@ -42,6 +38,10 @@ import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSel
 import { encodeURLString } from "../../../../../../common/utils";
 import { ShareIcon } from "../../../../../../icons";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
+import {
+  setModalErrorSnackMessage,
+  setModalSnackMessage,
+} from "../../../../../../systemSlice";
 
 const CopyIcon = React.lazy(() => import("../../../../../../icons/CopyIcon"));
 
@@ -84,10 +84,7 @@ interface IShareFileProps {
   open: boolean;
   bucketName: string;
   dataObject: IFileInfo;
-  distributedSetup: boolean;
   closeModalAndRefresh: () => void;
-  setModalSnackMessage: typeof setModalSnackMessage;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const ShareFile = ({
@@ -96,10 +93,11 @@ const ShareFile = ({
   closeModalAndRefresh,
   bucketName,
   dataObject,
-  distributedSetup,
-  setModalSnackMessage,
-  setModalErrorSnackMessage,
 }: IShareFileProps) => {
+  const dispatch = useDispatch();
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
@@ -147,7 +145,7 @@ const ShareFile = ({
             setVersionID("null");
           })
           .catch((error: ErrorResponseHandler) => {
-            setModalErrorSnackMessage(error);
+            dispatch(setModalErrorSnackMessage(error));
           });
 
         setIsLoadingVersion(false);
@@ -159,7 +157,7 @@ const ShareFile = ({
     }
     setVersionID(dataObject.version_id || "null");
     setIsLoadingVersion(false);
-  }, [bucketName, dataObject, distributedSetup, setModalErrorSnackMessage]);
+  }, [bucketName, dataObject, distributedSetup, dispatch]);
 
   useEffect(() => {
     if (dateValid && !isLoadingVersion) {
@@ -188,7 +186,7 @@ const ShareFile = ({
             setIsLoadingFile(false);
           })
           .catch((error: ErrorResponseHandler) => {
-            setModalErrorSnackMessage(error);
+            dispatch(setModalErrorSnackMessage(error));
             setShareURL("");
             setIsLoadingFile(false);
           });
@@ -200,7 +198,7 @@ const ShareFile = ({
     bucketName,
     dateValid,
     setShareURL,
-    setModalErrorSnackMessage,
+    dispatch,
     distributedSetup,
     isLoadingVersion,
     versionID,
@@ -254,7 +252,11 @@ const ShareFile = ({
                       <BoxIconButton
                         variant="outlined"
                         onClick={() => {
-                          setModalSnackMessage("Share URL Copied to clipboard");
+                          dispatch(
+                            setModalSnackMessage(
+                              "Share URL Copied to clipboard"
+                            )
+                          );
                         }}
                         disabled={shareURL === "" || isLoadingFile}
                         sx={{
@@ -278,13 +280,4 @@ const ShareFile = ({
   );
 };
 
-const mapStateToProps = ({ system }: AppState) => ({
-  distributedSetup: get(system, "distributedSetup", false),
-});
-
-const connector = connect(mapStateToProps, {
-  setModalSnackMessage,
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(ShareFile));
+export default withStyles(styles)(ShareFile);

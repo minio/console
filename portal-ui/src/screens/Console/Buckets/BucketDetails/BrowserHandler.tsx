@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -23,64 +23,58 @@ import { Grid, IconButton, Tooltip } from "@mui/material";
 import get from "lodash/get";
 import { AppState } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
-import {
-  setSearchObjects,
-  setVersionsModeEnabled,
-  setSearchVersions,
-} from "../../ObjectBrowser/actions";
+
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import SettingsIcon from "../../../../icons/SettingsIcon";
-import { BucketInfo } from "../types";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
+  IAM_PAGES,
   IAM_PERMISSIONS,
   IAM_ROLES,
   IAM_SCOPES,
-  IAM_PAGES,
 } from "../../../../common/SecureComponent/permissions";
 import SearchBox from "../../Common/SearchBox";
 import BackLink from "../../../../common/BackLink";
-
-interface IBrowserHandlerProps {
-  versionsMode: boolean;
-  match: any;
-  history: any;
-  classes: any;
-  setVersionsModeEnabled: typeof setVersionsModeEnabled;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  bucketInfo: BucketInfo | null;
-  searchObjects: string;
-  versionedFile: string;
-  searchVersions: string;
-  setSearchObjects: typeof setSearchObjects;
-  setSearchVersions: typeof setSearchVersions;
-}
+import {
+  setSearchObjects,
+  setSearchVersions,
+  setVersionsModeEnabled,
+} from "../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
     ...containerForHeader(theme.spacing(4)),
   });
 
-const BrowserHandler = ({
-  versionsMode,
-  match,
-  history,
-  classes,
-  setVersionsModeEnabled,
-  searchObjects,
-  setSearchObjects,
-  setSearchVersions,
-  versionedFile,
-  searchVersions,
-}: IBrowserHandlerProps) => {
+interface IBrowserHandlerProps {
+  match: any;
+  history: any;
+  classes: any;
+}
+
+const BrowserHandler = ({ match, history, classes }: IBrowserHandlerProps) => {
+  const dispatch = useDispatch();
+  const versionsMode = useSelector(
+    (state: AppState) => state.objectBrowser.versionsMode
+  );
+  const searchObjects = useSelector(
+    (state: AppState) => state.objectBrowser.searchObjects
+  );
+  const versionedFile = useSelector(
+    (state: AppState) => state.objectBrowser.versionedFile
+  );
+  const searchVersions = useSelector(
+    (state: AppState) => state.objectBrowser.searchVersions
+  );
+
   const bucketName = match.params["bucketName"];
   const internalPaths = get(match.params, "subpaths", "");
 
   useEffect(() => {
-    setVersionsModeEnabled(false);
-  }, [internalPaths, setVersionsModeEnabled]);
+    dispatch(setVersionsModeEnabled({ status: false }));
+  }, [internalPaths, dispatch]);
 
   const openBucketConfiguration = () => {
     history.push(`/buckets/${bucketName}/admin`);
@@ -120,7 +114,7 @@ const BrowserHandler = ({
                 <SearchBox
                   placeholder={"Start typing to filter objects in the bucket"}
                   onChange={(value) => {
-                    setSearchObjects(value);
+                    dispatch(setSearchObjects(value));
                   }}
                   value={searchObjects}
                 />
@@ -130,7 +124,7 @@ const BrowserHandler = ({
                 <SearchBox
                   placeholder={`Start typing to filter versions of ${versionedFile}`}
                   onChange={(value) => {
-                    setSearchVersions(value);
+                    dispatch(setSearchVersions(value));
                   }}
                   value={searchVersions}
                 />
@@ -146,22 +140,4 @@ const BrowserHandler = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
-  versionsMode: get(objectBrowser, "versionsMode", false),
-  bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
-  bucketInfo: buckets.bucketDetails.bucketInfo,
-  searchObjects: objectBrowser.searchObjects,
-  versionedFile: objectBrowser.versionedFile,
-  searchVersions: objectBrowser.searchVersions,
-});
-
-const mapDispatchToProps = {
-  setVersionsModeEnabled,
-  setErrorSnackMessage,
-  setSearchObjects,
-  setSearchVersions,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default withStyles(styles)(connector(BrowserHandler));
+export default withStyles(styles)(BrowserHandler);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -29,7 +29,7 @@ import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { AddIcon, TenantsIcon } from "../../../../icons";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -45,6 +45,7 @@ import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import SearchBox from "../../Common/SearchBox";
 import PageLayout from "../../Common/Layout/PageLayout";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -52,7 +53,6 @@ const CredentialsPrompt = withSuspense(
 
 interface ITenantsList {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -87,7 +87,8 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
+const ListTenants = ({ classes }: ITenantsList) => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
@@ -137,13 +138,13 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
             setIsLoading(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setIsLoading(false);
           });
       };
       fetchRecords();
     }
-  }, [isLoading, setErrorSnackMessage]);
+  }, [isLoading, dispatch]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -261,8 +262,4 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(ListTenants));
+export default withStyles(styles)(ListTenants);

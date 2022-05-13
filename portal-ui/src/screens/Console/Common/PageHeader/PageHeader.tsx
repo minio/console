@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -24,24 +24,10 @@ import IconButton from "@mui/material/IconButton";
 import { AppState } from "../../../../store";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
-import { IFileItem } from "../../ObjectBrowser/types";
-import { toggleList } from "../../ObjectBrowser/actions";
+
 import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
 import { Box } from "@mui/material";
-
-interface IPageHeader {
-  classes: any;
-  sidebarOpen?: boolean;
-  operatorMode?: boolean;
-  label: any;
-  actions?: any;
-  managerObjects: IFileItem[];
-  toggleList: typeof toggleList;
-  middleComponent?: React.ReactNode;
-  features: string[];
-  managerOpen: boolean;
-  newItems: boolean;
-}
+import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -100,19 +86,40 @@ const styles = (theme: Theme) =>
     },
   });
 
+interface IPageHeader {
+  classes: any;
+  label: any;
+  actions?: any;
+  middleComponent?: React.ReactNode;
+}
+
 const PageHeader = ({
   classes,
   label,
   actions,
-  sidebarOpen,
-  operatorMode,
-  managerObjects,
-  toggleList,
   middleComponent,
-  features,
-  managerOpen,
-  newItems,
 }: IPageHeader) => {
+  const dispatch = useDispatch();
+
+  const sidebarOpen = useSelector(
+    (state: AppState) => state.system.sidebarOpen
+  );
+  const operatorMode = useSelector(
+    (state: AppState) => state.system.operatorMode
+  );
+  const managerObjects = useSelector(
+    (state: AppState) => state.objectBrowser.objectManager.objectsToManage
+  );
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+  const managerOpen = useSelector(
+    (state: AppState) => state.objectBrowser.objectManager.managerOpen
+  );
+  const newItems = useSelector(
+    (state: AppState) => state.objectBrowser.objectManager.newItems
+  );
+
   const [newObject, setNewObject] = useState<boolean>(false);
 
   useEffect(() => {
@@ -187,7 +194,7 @@ const PageHeader = ({
             aria-label="Refresh List"
             component="span"
             onClick={() => {
-              toggleList();
+              dispatch(toggleList());
             }}
             id="object-manager-toggle"
             size="large"
@@ -222,19 +229,4 @@ const PageHeader = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  sidebarOpen: state.system.sidebarOpen,
-  operatorMode: state.system.operatorMode,
-  managerObjects: state.objectBrowser.objectManager.objectsToManage,
-  features: state.console.session.features,
-  managerOpen: state.objectBrowser.objectManager.managerOpen,
-  newItems: state.objectBrowser.objectManager.newItems,
-});
-
-const mapDispatchToProps = {
-  toggleList,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
-
-export default connector(withStyles(styles)(PageHeader));
+export default withStyles(styles)(PageHeader);

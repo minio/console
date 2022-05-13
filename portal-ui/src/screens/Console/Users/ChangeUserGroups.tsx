@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -25,13 +25,13 @@ import {
   modalBasic,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import AddMembersToGroup from "../../../icons/AddMembersToGroupIcon";
 import { encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,7 +47,6 @@ interface IChangeUserGroupsContentProps {
   closeModalAndRefresh: () => void;
   selectedUser: string;
   open: boolean;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const ChangeUserGroups = ({
@@ -55,8 +54,8 @@ const ChangeUserGroups = ({
   closeModalAndRefresh,
   selectedUser,
   open,
-  setModalErrorSnackMessage,
 }: IChangeUserGroupsContentProps) => {
+  const dispatch = useDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -78,9 +77,9 @@ const ChangeUserGroups = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
-  }, [selectedUser, setModalErrorSnackMessage]);
+  }, [selectedUser, dispatch]);
 
   useEffect(() => {
     if (selectedUser === null) {
@@ -111,7 +110,7 @@ const ChangeUserGroups = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     } else {
       api
@@ -126,7 +125,7 @@ const ChangeUserGroups = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     }
   };
@@ -203,10 +202,4 @@ const ChangeUserGroups = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(ChangeUserGroups));
+export default withStyles(styles)(ChangeUserGroups);

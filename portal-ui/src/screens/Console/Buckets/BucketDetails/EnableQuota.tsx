@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -27,7 +26,7 @@ import {
   k8sScalarUnitsExcluding,
 } from "../../../../common/utils";
 import { BucketQuota } from "../types";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import {
   formFieldStyles,
@@ -39,6 +38,8 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
 import { BucketQuotaIcon } from "../../../../icons";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import { useDispatch } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,7 +54,6 @@ interface IEnableQuotaProps {
   cfg: BucketQuota | null;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const EnableQuota = ({
@@ -63,8 +63,8 @@ const EnableQuota = ({
   cfg,
   selectedBucket,
   closeModalAndRefresh,
-  setModalErrorSnackMessage,
 }: IEnableQuotaProps) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quotaSize, setQuotaSize] = useState<string>("1");
@@ -100,7 +100,7 @@ const EnableQuota = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -204,8 +204,4 @@ const EnableQuota = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(EnableQuota));
+export default withStyles(styles)(EnableQuota);

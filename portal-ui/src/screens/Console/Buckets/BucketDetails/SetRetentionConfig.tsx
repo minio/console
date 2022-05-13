@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -27,7 +27,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import {
   ErrorResponseHandler,
   IRetentionConfig,
@@ -37,6 +37,7 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Loader from "../../Common/Loader/Loader";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -51,7 +52,6 @@ interface ISetRetentionConfigProps {
   open: boolean;
   bucketName: string;
   closeModalAndRefresh: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const SetRetentionConfig = ({
@@ -59,8 +59,8 @@ const SetRetentionConfig = ({
   open,
   bucketName,
   closeModalAndRefresh,
-  setModalErrorSnackMessage,
 }: ISetRetentionConfigProps) => {
+  const dispatch = useDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loadingForm, setLoadingForm] = useState<boolean>(true);
   const [retentionMode, setRetentionMode] = useState<string>("compliance");
@@ -86,7 +86,7 @@ const SetRetentionConfig = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -214,8 +214,4 @@ const SetRetentionConfig = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(SetRetentionConfig));
+export default withStyles(styles)(SetRetentionConfig);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
@@ -27,8 +27,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { AppState } from "../../../store";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { stringSort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -47,11 +45,11 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import { encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 
 interface IUserServiceAccountsProps {
   classes: any;
   user: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   hasPolicy: boolean;
   history: any;
 }
@@ -69,10 +67,11 @@ const styles = (theme: Theme) =>
 const UserServiceAccountsPanel = ({
   classes,
   user,
-  setErrorSnackMessage,
   hasPolicy,
   history,
 }: IUserServiceAccountsProps) => {
+  const dispatch = useDispatch();
+
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
@@ -101,11 +100,11 @@ const UserServiceAccountsPanel = ({
           setRecords(serviceAccounts);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, setLoading, setRecords, setErrorSnackMessage, user]);
+  }, [loading, setLoading, setRecords, user, dispatch]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -139,7 +138,7 @@ const UserServiceAccountsPanel = ({
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
     if (refresh) {
-      setSnackBarMessage(`Service accounts deleted successfully.`);
+      dispatch(setSnackBarMessage(`Service accounts deleted successfully.`));
       setSelectedSAs([]);
       setLoading(true);
     }
@@ -280,12 +279,4 @@ const UserServiceAccountsPanel = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(UserServiceAccountsPanel));
+export default withStyles(styles)(UserServiceAccountsPanel);

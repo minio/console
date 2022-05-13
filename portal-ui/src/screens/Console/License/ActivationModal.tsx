@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -23,7 +23,10 @@ import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  formFieldStyles,
+} from "../Common/FormComponents/common/styleLibrary";
 import {
   SubnetLoginRequest,
   SubnetLoginResponse,
@@ -32,17 +35,16 @@ import {
   SubnetRegisterRequest,
   SubnetRegTokenResponse,
 } from "./types";
-import { setModalErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-
-import { formFieldStyles } from "../Common/FormComponents/common/styleLibrary";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import Link from "@mui/material/Link";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,15 +79,10 @@ interface IActivationModal {
   classes: any;
   open: boolean;
   closeModal: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
-const ActivationModal = ({
-  classes,
-  open,
-  closeModal,
-  setModalErrorSnackMessage,
-}: IActivationModal) => {
+const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
+  const dispatch = useDispatch();
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");
   const [subnetEmail, setSubnetEmail] = useState<string>("");
@@ -125,7 +122,7 @@ const ActivationModal = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -148,7 +145,7 @@ const ActivationModal = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     }
   };
@@ -178,7 +175,7 @@ const ActivationModal = ({
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setSubnetOTP("");
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -212,7 +209,7 @@ const ActivationModal = ({
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         clearForm();
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -477,10 +474,4 @@ const ActivationModal = ({
   ) : null;
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(ActivationModal));
+export default withStyles(styles)(ActivationModal);

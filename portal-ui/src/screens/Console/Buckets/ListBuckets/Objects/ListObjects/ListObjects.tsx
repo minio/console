@@ -22,11 +22,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { withRouter } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
@@ -51,31 +50,9 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { Badge, Typography } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import {
-  cancelObjectInList,
-  completeObject,
-  failObject,
-  openList,
-  resetRewind,
-  setLoadingObjectInfo,
-  setLoadingObjectsList,
-  setLoadingVersions,
-  setNewObject,
-  setObjectDetailsView,
-  setSearchObjects,
-  setSelectedObjectView,
-  setShowDeletedObjects,
-  setSimplePathHandler,
-  setVersionsModeEnabled,
-  updateProgress,
-} from "../../../../ObjectBrowser/actions";
-import { Route } from "../../../../ObjectBrowser/types";
 
 import { download, extensionPreview, sortListObjects } from "../utils";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../../../actions";
+
 import {
   BucketInfo,
   BucketObjectLocking,
@@ -86,14 +63,13 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 
-import { setBucketDetailsLoad, setBucketInfo } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../../../common/SecureComponent";
 
 import withSuspense from "../../../../Common/Components/withSuspense";
@@ -111,6 +87,34 @@ import ActionsListSection from "./ActionsListSection";
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../../../systemSlice";
+import { setBucketDetailsLoad, setBucketInfo } from "../../../bucketsSlice";
+import {
+  makeid,
+  storeCallForObjectWithID,
+} from "../../../../ObjectBrowser/transferManager";
+import {
+  cancelObjectInList,
+  completeObject,
+  failObject,
+  openList,
+  resetRewind,
+  setLoadingObjectInfo,
+  setLoadingObjectsList,
+  setLoadingVersions,
+  setNewObject,
+  setObjectDetailsView,
+  setSearchObjects,
+  setSelectedObjectView,
+  setShowDeletedObjects,
+  setSimplePathHandler,
+  setVersionsModeEnabled,
+  updateProgress,
+} from "../../../../ObjectBrowser/objectBrowserSlice";
+import makeStyles from "@mui/styles/makeStyles";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -134,7 +138,7 @@ const PreviewFileModal = withSuspense(
   React.lazy(() => import("../Preview/PreviewFileModal"))
 );
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     browsePaper: {
       border: 0,
@@ -207,7 +211,8 @@ const styles = (theme: Theme) =>
     ...objectBrowserExtras,
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
-  });
+  })
+);
 
 const baseDnDStyle = {
   borderWidth: 2,
@@ -227,46 +232,6 @@ const acceptDnDStyle = {
   backgroundColor: "#fafafa",
   borderColor: "#00e676",
 };
-
-interface IListObjectsProps {
-  classes: any;
-  match: any;
-  history: any;
-  routesList: Route[];
-  downloadingFiles: string[];
-  rewindEnabled: boolean;
-  rewindDate: any;
-  bucketToRewind: string;
-  searchObjects: string;
-  showDeleted: boolean;
-  loading: boolean;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
-  versionsMode: boolean;
-  detailsOpen: boolean;
-  simplePath: string | null;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  resetRewind: typeof resetRewind;
-  setBucketInfo: typeof setBucketInfo;
-  setBucketDetailsLoad: typeof setBucketDetailsLoad;
-  setNewObject: typeof setNewObject;
-  updateProgress: typeof updateProgress;
-  completeObject: typeof completeObject;
-  openList: typeof openList;
-  setSearchObjects: typeof setSearchObjects;
-  selectedInternalPaths: string | null;
-  setVersionsModeEnabled: typeof setVersionsModeEnabled;
-  setShowDeletedObjects: typeof setShowDeletedObjects;
-  setLoadingVersions: typeof setLoadingVersions;
-  setObjectDetailsView: typeof setObjectDetailsView;
-  setSelectedObjectView: typeof setSelectedObjectView;
-  setLoadingObjectInfo: typeof setLoadingObjectInfo;
-  setLoadingObjectsList: typeof setLoadingObjectsList;
-  failObject: typeof failObject;
-  cancelObjectInList: typeof cancelObjectInList;
-  setSimplePathHandler: typeof setSimplePathHandler;
-}
 
 function useInterval(callback: any, delay: number) {
   const savedCallback = useRef<Function | null>(null);
@@ -293,43 +258,54 @@ function useInterval(callback: any, delay: number) {
 
 const defLoading = <Typography component="h3">Loading...</Typography>;
 
-const ListObjects = ({
-  classes,
-  match,
-  history,
-  rewindEnabled,
-  rewindDate,
-  loading,
-  bucketToRewind,
-  setSnackBarMessage,
-  setErrorSnackMessage,
-  resetRewind,
-  setBucketDetailsLoad,
-  loadingBucket,
-  setBucketInfo,
-  bucketInfo,
-  setNewObject,
-  updateProgress,
-  completeObject,
-  setSearchObjects,
-  searchObjects,
-  versionsMode,
-  openList,
-  simplePath,
-  setVersionsModeEnabled,
-  showDeleted,
-  detailsOpen,
-  setShowDeletedObjects,
-  setLoadingVersions,
-  setObjectDetailsView,
-  selectedInternalPaths,
-  setSelectedObjectView,
-  setLoadingObjectInfo,
-  setLoadingObjectsList,
-  failObject,
-  cancelObjectInList,
-  setSimplePathHandler,
-}: IListObjectsProps) => {
+interface IListObjectsProps {
+  match: any;
+  history: any;
+}
+
+const ListObjects = ({ match, history }: IListObjectsProps) => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const rewindEnabled = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+  );
+  const rewindDate = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.dateToRewind
+  );
+  const bucketToRewind = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.bucketToRewind
+  );
+  const versionsMode = useSelector(
+    (state: AppState) => state.objectBrowser.versionsMode
+  );
+
+  const searchObjects = useSelector(
+    (state: AppState) => state.objectBrowser.searchObjects
+  );
+  const showDeleted = useSelector(
+    (state: AppState) => state.objectBrowser.showDeleted
+  );
+  const detailsOpen = useSelector(
+    (state: AppState) => state.objectBrowser.objectDetailsOpen
+  );
+  const selectedInternalPaths = useSelector(
+    (state: AppState) => state.objectBrowser.selectedInternalPaths
+  );
+  const loading = useSelector(
+    (state: AppState) => state.objectBrowser.loadingObjects
+  );
+  const simplePath = useSelector(
+    (state: AppState) => state.objectBrowser.simplePath
+  );
+
+  const loadingBucket = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.loadingBucket
+  );
+  const bucketInfo = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.bucketInfo
+  );
+
   const [records, setRecords] = useState<BucketObjectItem[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
@@ -410,14 +386,14 @@ const ListObjects = ({
 
   useEffect(() => {
     if (selectedObjects.length > 0) {
-      setObjectDetailsView(true);
+      dispatch(setObjectDetailsView(true));
       return;
     }
 
     if (selectedObjects.length === 0 && selectedInternalPaths === null) {
-      setObjectDetailsView(false);
+      dispatch(setObjectDetailsView(false));
     }
-  }, [selectedObjects, selectedInternalPaths, setObjectDetailsView]);
+  }, [selectedObjects, selectedInternalPaths, dispatch]);
 
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
@@ -450,10 +426,10 @@ const ListObjects = ({
 
   useEffect(() => {
     if (!iniLoad) {
-      setBucketDetailsLoad(true);
+      dispatch(setBucketDetailsLoad(true));
       setIniLoad(true);
     }
-  }, [iniLoad, setBucketDetailsLoad, setIniLoad]);
+  }, [iniLoad, dispatch, setIniLoad]);
 
   useInterval(() => {
     // Your custom logic here
@@ -483,7 +459,7 @@ const ListObjects = ({
         setRecords([]);
       }
     }
-  }, [bucketName, loadingVersioning, setErrorSnackMessage, displayListObjects]);
+  }, [bucketName, loadingVersioning, dispatch, displayListObjects]);
 
   useEffect(() => {
     if (loadingLocking) {
@@ -506,42 +482,39 @@ const ListObjects = ({
         setLoadingLocking(false);
       }
     }
-  }, [bucketName, loadingLocking, setErrorSnackMessage, displayListObjects]);
+  }, [bucketName, loadingLocking, dispatch, displayListObjects]);
 
   useEffect(() => {
     const decodedIPaths = decodeURLString(internalPaths);
 
     if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
-      setObjectDetailsView(false);
-      setSelectedObjectView(null);
-      setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths);
-    } else {
-      setLoadingObjectInfo(true);
-      setObjectDetailsView(true);
-      setLoadingVersions(true);
-      setSelectedObjectView(
-        `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
+      dispatch(setObjectDetailsView(false));
+      dispatch(setSelectedObjectView(""));
+      dispatch(
+        setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
       );
-      setSimplePathHandler(
-        `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
+    } else {
+      dispatch(setLoadingObjectInfo(true));
+      dispatch(setObjectDetailsView(true));
+      dispatch(setLoadingVersions(true));
+      dispatch(
+        setSelectedObjectView(
+          `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
+        )
+      );
+      dispatch(
+        setSimplePathHandler(
+          `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
+        )
       );
     }
-  }, [
-    internalPaths,
-    rewindDate,
-    rewindEnabled,
-    setLoadingObjectInfo,
-    setLoadingVersions,
-    setObjectDetailsView,
-    setSelectedObjectView,
-    setSimplePathHandler,
-  ]);
+  }, [internalPaths, rewindDate, rewindEnabled, dispatch]);
 
   useEffect(() => {
-    setSearchObjects("");
-    setLoadingObjectsList(true);
+    dispatch(setSearchObjects(""));
+    dispatch(setLoadingObjectsList(true));
     setSelectedObjects([]);
-  }, [simplePath, setSearchObjects, setLoadingObjectsList, setSelectedObjects]);
+  }, [simplePath, dispatch, setSelectedObjects]);
 
   useEffect(() => {
     if (loading) {
@@ -564,7 +537,7 @@ const ListObjects = ({
         // Is rewind enabled?, we use Rewind API
         if (rewindEnabled) {
           if (bucketToRewind !== bucketName) {
-            resetRewind();
+            dispatch(resetRewind());
             return;
           }
 
@@ -636,7 +609,7 @@ const ListObjects = ({
                   //It is a file since it has elements in the object, setting file flag and waiting for component mount
                   if (!res.objects) {
                     // It is a folder, we remove loader & set original results list
-                    setLoadingObjectsList(false);
+                    dispatch(setLoadingObjectsList(false));
                     setRecords(recordsInElement);
                   } else {
                     // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
@@ -661,8 +634,8 @@ const ListObjects = ({
                       setRecords(recordsInElement);
                     } else {
                       // This is a file. We change URL & Open file details view.
-                      setObjectDetailsView(true);
-                      setSelectedObjectView(internalPaths);
+                      dispatch(setObjectDetailsView(true));
+                      dispatch(setSelectedObjectView(internalPaths));
 
                       // We split the selected object URL & remove the last item to fetch the files list for the parent folder
                       const parentPath = `${decodeURLString(internalPaths)
@@ -687,30 +660,30 @@ const ListObjects = ({
                         .catch(() => {});
                     }
 
-                    setLoadingObjectsList(false);
+                    dispatch(setLoadingObjectsList(false));
                   }
                 })
                 .catch((err: ErrorResponseHandler) => {
-                  setLoadingObjectsList(false);
-                  setErrorSnackMessage(err);
+                  dispatch(setLoadingObjectsList(false));
+                  dispatch(setErrorSnackMessage(err));
                 });
             } else {
               setRecords(recordsInElement);
-              setLoadingObjectsList(false);
+              dispatch(setLoadingObjectsList(false));
             }
           })
           .catch((err: ErrorResponseHandler) => {
-            setLoadingObjectsList(false);
-            setErrorSnackMessage(err);
+            dispatch(setLoadingObjectsList(false));
+            dispatch(setErrorSnackMessage(err));
           });
       } else {
-        setLoadingObjectsList(false);
+        dispatch(setLoadingObjectsList(false));
       }
     }
   }, [
     loading,
     match,
-    setErrorSnackMessage,
+    dispatch,
     bucketName,
     rewindEnabled,
     rewindDate,
@@ -719,10 +692,6 @@ const ListObjects = ({
     showDeleted,
     displayListObjects,
     bucketToRewind,
-    resetRewind,
-    setObjectDetailsView,
-    setSelectedObjectView,
-    setLoadingObjectsList,
   ]);
 
   // bucket info
@@ -731,29 +700,23 @@ const ListObjects = ({
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}`)
         .then((res: BucketInfo) => {
-          setBucketDetailsLoad(false);
-          setBucketInfo(res);
+          dispatch(setBucketDetailsLoad(false));
+          dispatch(setBucketInfo(res));
         })
         .catch((err: ErrorResponseHandler) => {
-          setBucketDetailsLoad(false);
-          setErrorSnackMessage(err);
+          dispatch(setBucketDetailsLoad(false));
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [
-    bucketName,
-    loadingBucket,
-    setBucketDetailsLoad,
-    setBucketInfo,
-    setErrorSnackMessage,
-  ]);
+  }, [bucketName, loadingBucket, dispatch]);
 
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
 
     if (refresh) {
-      setSnackBarMessage(`Objects deleted successfully.`);
+      dispatch(setSnackBarMessage(`Objects deleted successfully.`));
       setSelectedObjects([]);
-      setLoadingObjectsList(true);
+      dispatch(setLoadingObjectsList(true));
     }
   };
 
@@ -788,31 +751,39 @@ const ListObjects = ({
       object.version_id,
       object.size,
       (progress) => {
-        updateProgress(identityDownload, progress);
+        dispatch(
+          updateProgress({
+            instanceID: identityDownload,
+            progress: progress,
+          })
+        );
       },
       () => {
-        completeObject(identityDownload);
+        dispatch(completeObject(identityDownload));
       },
       () => {
-        failObject(identityDownload);
+        dispatch(failObject(identityDownload));
       },
       () => {
-        cancelObjectInList(identityDownload);
+        dispatch(cancelObjectInList(identityDownload));
       }
     );
-
-    setNewObject({
-      bucketName,
-      done: false,
-      instanceID: identityDownload,
-      percentage: 0,
-      prefix: object.name,
-      type: "download",
-      waitingForFile: true,
-      failed: false,
-      cancelled: false,
-      call: downloadCall,
-    });
+    const ID = makeid(8);
+    storeCallForObjectWithID(ID, downloadCall);
+    dispatch(
+      setNewObject({
+        ID,
+        bucketName,
+        done: false,
+        instanceID: identityDownload,
+        percentage: 0,
+        prefix: object.name,
+        type: "download",
+        waitingForFile: true,
+        failed: false,
+        cancelled: false,
+      })
+    );
 
     downloadCall.send();
   };
@@ -825,10 +796,12 @@ const ListObjects = ({
     }`;
     history.push(newPath);
 
-    setObjectDetailsView(true);
-    setLoadingVersions(true);
-    setSelectedObjectView(
-      `${idElement ? `${encodeURLString(idElement)}` : ``}`
+    dispatch(setObjectDetailsView(true));
+    dispatch(setLoadingVersions(true));
+    dispatch(
+      setSelectedObjectView(
+        `${idElement ? `${encodeURLString(idElement)}` : ``}`
+      )
     );
   };
 
@@ -915,7 +888,7 @@ const ListObjects = ({
             xhr.onload = function (event) {
               // resolve promise only when HTTP code is ok
               if (xhr.status >= 200 && xhr.status < 300) {
-                completeObject(identity);
+                dispatch(completeObject(identity));
                 resolve({ status: xhr.status });
               } else {
                 // reject promise if there was a server error
@@ -929,53 +902,61 @@ const ListObjects = ({
                     errorMessage = "something went wrong";
                   }
                 }
-                failObject(identity);
+                dispatch(dispatch(failObject(identity)));
                 reject({ status: xhr.status, message: errorMessage });
               }
             };
 
             xhr.upload.addEventListener("error", (event) => {
               reject(errorMessage);
-              failObject(identity);
+              dispatch(dispatch(failObject(identity)));
               return;
             });
 
             xhr.upload.addEventListener("progress", (event) => {
               const progress = Math.floor((event.loaded * 100) / event.total);
 
-              updateProgress(identity, progress);
+              dispatch(
+                updateProgress({
+                  instanceID: identity,
+                  progress: progress,
+                })
+              );
             });
 
             xhr.onerror = () => {
               reject(errorMessage);
-              failObject(identity);
+              dispatch(failObject(identity));
               return;
             };
             xhr.onloadend = () => {
               if (files.length === 0) {
-                setLoadingObjectsList(true);
+                dispatch(setLoadingObjectsList(true));
               }
             };
             xhr.onabort = () => {
-              cancelObjectInList(identity);
+              dispatch(cancelObjectInList(identity));
             };
 
             const formData = new FormData();
             if (file.size !== undefined) {
               formData.append(file.size.toString(), blobFile, fileName);
-
-              setNewObject({
-                bucketName,
-                done: false,
-                instanceID: identity,
-                percentage: 0,
-                prefix: `${decodeURLString(encodedPath)}${fileName}`,
-                type: "upload",
-                waitingForFile: false,
-                failed: false,
-                cancelled: false,
-                call: xhr,
-              });
+              const ID = makeid(8);
+              storeCallForObjectWithID(ID, xhr);
+              dispatch(
+                setNewObject({
+                  ID,
+                  bucketName,
+                  done: false,
+                  instanceID: identity,
+                  percentage: 0,
+                  prefix: `${decodeURLString(encodedPath)}${fileName}`,
+                  type: "upload",
+                  waitingForFile: false,
+                  failed: false,
+                  cancelled: false,
+                })
+              );
 
               xhr.send(formData);
             }
@@ -984,7 +965,7 @@ const ListObjects = ({
 
         const uploadFilePromises: any = [];
         // open object manager
-        openList();
+        dispatch(openList());
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           uploadFilePromises.push(uploadPromise(file));
@@ -1001,28 +982,17 @@ const ListObjects = ({
               errorMessage: "There were some errors during file upload",
               detailedError: `Uploaded files ${successUploadedFiles}/${totalFiles}`,
             };
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           }
           // We force objects list reload after all promises were handled
-          setLoadingObjectsList(true);
+          dispatch(setLoadingObjectsList(true));
           setSelectedObjects([]);
         });
       };
 
       upload(files, bucketName, pathPrefix, folderPath);
     },
-    [
-      bucketName,
-      completeObject,
-      openList,
-      setNewObject,
-      setErrorSnackMessage,
-      updateProgress,
-      setLoadingObjectsList,
-      cancelObjectInList,
-      failObject,
-      simplePath,
-    ]
+    [bucketName, dispatch, simplePath]
   );
 
   const onDrop = useCallback(
@@ -1124,7 +1094,7 @@ const ListObjects = ({
       elements = elements.filter((element) => element !== value);
     }
     setSelectedObjects(elements);
-    setSelectedObjectView(null);
+    dispatch(setSelectedObjectView(""));
 
     return elements;
   };
@@ -1133,7 +1103,7 @@ const ListObjects = ({
     const newSortDirection = get(sortData, "sortDirection", "DESC");
     setCurrentSortField(sortData.sortBy);
     setSortDirection(newSortDirection);
-    setLoadingObjectsList(true);
+    dispatch(setLoadingObjectsList(true));
   };
 
   const pageTitle = decodeURLString(internalPaths);
@@ -1151,7 +1121,7 @@ const ListObjects = ({
   }
 
   const selectAllItems = () => {
-    setSelectedObjectView(null);
+    dispatch(setSelectedObjectView(""));
 
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
@@ -1182,11 +1152,9 @@ const ListObjects = ({
   }
 
   const onClosePanel = (forceRefresh: boolean) => {
-    setSelectedObjectView(null);
-    setVersionsModeEnabled(false);
+    dispatch(setSelectedObjectView(""));
+    dispatch(setVersionsModeEnabled({ status: false }));
     if (detailsOpen && selectedInternalPaths !== null) {
-      setSelectedObjectView(null);
-      setVersionsModeEnabled(false);
       // We change URL to be the contained folder
 
       const decodedPath = decodeURLString(internalPaths);
@@ -1204,16 +1172,16 @@ const ListObjects = ({
       history.push(`/buckets/${bucketName}/browse/${encodeURLString(URLItem)}`);
     }
 
-    setObjectDetailsView(false);
+    dispatch(setObjectDetailsView(false));
     setSelectedObjects([]);
 
     if (forceRefresh) {
-      setLoadingObjectsList(true);
+      dispatch(setLoadingObjectsList(true));
     }
   };
 
   const setDeletedAction = () => {
-    setShowDeletedObjects(!showDeleted);
+    dispatch(setShowDeletedObjects(!showDeleted));
     onClosePanel(true);
   };
 
@@ -1390,9 +1358,9 @@ const ListObjects = ({
                     variant={"outlined"}
                     onClick={() => {
                       if (versionsMode) {
-                        setLoadingVersions(true);
+                        dispatch(setLoadingVersions(true));
                       } else {
-                        setLoadingObjectsList(true);
+                        dispatch(setLoadingObjectsList(true));
                       }
                     }}
                     disabled={
@@ -1559,46 +1527,4 @@ const ListObjects = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser, buckets }: AppState) => ({
-  routesList: get(objectBrowser, "routesList", []),
-  downloadingFiles: get(objectBrowser, "downloadingFiles", []),
-  rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
-  rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
-  bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
-  versionsMode: get(objectBrowser, "versionsMode", false),
-  loadingBucket: buckets.bucketDetails.loadingBucket,
-  bucketInfo: buckets.bucketDetails.bucketInfo,
-  searchObjects: objectBrowser.searchObjects,
-  showDeleted: objectBrowser.showDeleted,
-  detailsOpen: objectBrowser.objectDetailsOpen,
-  selectedInternalPaths: objectBrowser.selectedInternalPaths,
-  loading: objectBrowser.loadingObjects,
-  simplePath: objectBrowser.simplePath,
-});
-
-const mapDispatchToProps = {
-  setSnackBarMessage,
-  setErrorSnackMessage,
-  resetRewind,
-  setBucketDetailsLoad,
-  setBucketInfo,
-  setNewObject,
-  updateProgress,
-  completeObject,
-  openList,
-  failObject,
-  setSearchObjects,
-  setVersionsModeEnabled,
-  setShowDeletedObjects,
-  setLoadingVersions,
-  setObjectDetailsView,
-  setSelectedObjectView,
-  setLoadingObjectInfo,
-  setLoadingObjectsList,
-  cancelObjectInList,
-  setSimplePathHandler,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default withRouter(connector(withStyles(styles)(ListObjects)));
+export default withRouter(ListObjects);

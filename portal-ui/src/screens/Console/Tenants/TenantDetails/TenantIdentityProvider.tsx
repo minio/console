@@ -32,8 +32,7 @@ import Grid from "@mui/material/Grid";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Button, DialogContentText, Typography } from "@mui/material";
 import api from "../../../../common/api";
-import { setErrorSnackMessage } from "../../../../actions";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import Loader from "../../Common/Loader/Loader";
@@ -49,12 +48,12 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantIdentityProvider {
   classes: any;
   loadingTenant: boolean;
   tenant: ITenant | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -88,8 +87,8 @@ const TenantIdentityProvider = ({
   classes,
   tenant,
   loadingTenant,
-  setErrorSnackMessage,
 }: ITenantIdentityProvider) => {
+  const dispatch = useDispatch();
   const [isSending, setIsSending] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [idpSelection, setIdpSelection] = useState<string>("Built-in");
@@ -214,9 +213,9 @@ const TenantIdentityProvider = ({
         }
       })
       .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
-  }, [tenant, setErrorSnackMessage]);
+  }, [tenant, dispatch]);
 
   useEffect(() => {
     if (tenant) {
@@ -269,7 +268,7 @@ const TenantIdentityProvider = ({
         getTenantIdentityProviderInfo();
       })
       .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setIsSending(false);
       });
   };
@@ -600,10 +599,6 @@ const mapState = (state: AppState) => ({
   tenant: state.tenants.tenantDetails.tenantInfo,
 });
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
+const connector = connect(mapState, null);
 
 export default withStyles(styles)(connector(TenantIdentityProvider));

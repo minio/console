@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,12 +27,12 @@ import {
 } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { IEvent } from "../../ListTenants/types";
-import { setErrorSnackMessage } from "../../../../../actions";
 import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import { AppState } from "../../../../../store";
 import EventsList from "../events/EventsList";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPodEventsProps {
   classes: any;
@@ -40,8 +40,6 @@ interface IPodEventsProps {
   namespace: string;
   podName: string;
   propLoading: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  loadingTenant: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -62,9 +60,11 @@ const PodEvents = ({
   namespace,
   podName,
   propLoading,
-  setErrorSnackMessage,
-  loadingTenant,
 }: IPodEventsProps) => {
+  const dispatch = useDispatch();
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+  );
   const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -97,11 +97,11 @@ const PodEvents = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, podName, namespace, tenant, setErrorSnackMessage]);
+  }, [loading, podName, namespace, tenant, dispatch]);
 
   return (
     <React.Fragment>
@@ -111,11 +111,5 @@ const PodEvents = ({
     </React.Fragment>
   );
 };
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-});
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
 
-export default withStyles(styles)(connector(PodEvents));
+export default withStyles(styles)(PodEvents);

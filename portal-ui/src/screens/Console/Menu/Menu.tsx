@@ -15,14 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { Drawer } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import clsx from "clsx";
 import { AppState } from "../../../store";
-import { setMenuOpen, userLoggedIn } from "../../../actions";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
@@ -34,6 +33,7 @@ import { resetSession } from "../actions";
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import { validRoutes } from "../valid-routes";
+import { menuOpen, userLogged } from "../../../systemSlice";
 
 const drawerWidth = 250;
 
@@ -86,25 +86,22 @@ const styles = (theme: Theme) =>
 
 interface IMenuProps {
   classes?: any;
-  userLoggedIn: typeof userLoggedIn;
-  operatorMode?: boolean;
-  sidebarOpen: boolean;
-  setMenuOpen: typeof setMenuOpen;
   features?: string[] | null;
 }
 
-const Menu = ({
-  userLoggedIn,
-  classes,
-  operatorMode = false,
-  sidebarOpen,
-  setMenuOpen,
-  features,
-}: IMenuProps) => {
+const Menu = ({ classes, features }: IMenuProps) => {
+  const dispatch = useDispatch();
+  const sidebarOpen = useSelector(
+    (state: AppState) => state.system.sidebarOpen
+  );
+  const operatorMode = useSelector(
+    (state: AppState) => state.system.operatorMode
+  );
+
   const logout = () => {
     const deleteSession = () => {
       clearSession();
-      userLoggedIn(false);
+      dispatch(userLogged(false));
       localStorage.setItem("userLoggedIn", "");
       localStorage.setItem("redirect-path", "");
       resetSession();
@@ -139,7 +136,7 @@ const Menu = ({
     >
       <MenuToggle
         onToggle={(nextState) => {
-          setMenuOpen(nextState);
+          dispatch(menuOpen(nextState));
         }}
         isOperatorMode={operatorMode}
         isOpen={sidebarOpen}
@@ -154,14 +151,9 @@ const Menu = ({
   );
 };
 const mapState = (state: AppState) => ({
-  sidebarOpen: state.system.sidebarOpen,
-  operatorMode: state.system.operatorMode,
   features: state.console.session.features,
 });
 
-const connector = connect(mapState, {
-  userLoggedIn,
-  setMenuOpen,
-});
+const connector = connect(mapState, null);
 
 export default connector(withStyles(styles)(Menu));

@@ -16,8 +16,7 @@
 
 import React, { Fragment } from "react";
 import { CapacityValues, ITenant, ValueUnit } from "./types";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import Grid from "@mui/material/Grid";
 import history from "../../../../history";
 import { Theme } from "@mui/material/styles";
@@ -331,8 +330,4 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(TenantListItem));
+export default withStyles(styles)(TenantListItem);

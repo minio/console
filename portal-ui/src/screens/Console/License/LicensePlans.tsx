@@ -26,12 +26,12 @@ import { Box, Tooltip } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { HelpIconFilled, LicenseDocIcon, OpenSourceIcon } from "../../../icons";
 import {
-  LICENSE_PLANS,
-  FEATURE_ITEMS,
   COMMUNITY_PLAN_FEATURES,
-  STANDARD_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
+  FEATURE_ITEMS,
+  LICENSE_PLANS,
   PAID_PLANS,
+  STANDARD_PLAN_FEATURES,
 } from "./utils";
 
 const styles = (theme: Theme) => createStyles({});
@@ -761,7 +761,7 @@ const LicensePlans = ({
                 return (
                   <Box className="feature-item">
                     <Box className="feature-item-info">
-                      <div className="xs-only"> </div>
+                      <div className="xs-only"></div>
                       <Box className="plan-feature">
                         <CheckCircleIcon />
                       </Box>

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,7 +28,6 @@ import {
   LifecycleConfigIcon,
   SelectAllIcon,
 } from "../../../../icons";
-import { setErrorSnackMessage } from "../../../../actions";
 import {
   containerForHeader,
   searchField,
@@ -55,6 +54,7 @@ import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import BulkLifecycleModal from "./BulkLifecycleModal";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,14 +84,11 @@ const styles = (theme: Theme) =>
 interface IListBucketsProps {
   classes: any;
   history: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-const ListBuckets = ({
-  classes,
-  history,
-  setErrorSnackMessage,
-}: IListBucketsProps) => {
+const ListBuckets = ({ classes, history }: IListBucketsProps) => {
+  const dispatch = useDispatch();
+
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
@@ -114,12 +111,12 @@ const ListBuckets = ({
           })
           .catch((err: ErrorResponseHandler) => {
             setLoading(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
       };
       fetchRecords();
     }
-  }, [loading, setErrorSnackMessage]);
+  }, [loading, dispatch]);
 
   const filteredRecords = records.filter((b: Bucket) => {
     if (filterBuckets === "") {
@@ -378,8 +375,4 @@ const ListBuckets = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default connector(withStyles(styles)(ListBuckets));
+export default withStyles(styles)(ListBuckets);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,10 +30,11 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangeUserPasswordRequest } from "../Buckets/types";
-import { setModalErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import { ChangePasswordIcon } from "../../../icons";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -51,7 +52,6 @@ interface IChangeUserPasswordProps {
   open: boolean;
   userName: string;
   closeModal: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const ChangeUserPassword = ({
@@ -59,8 +59,8 @@ const ChangeUserPassword = ({
   open,
   userName,
   closeModal,
-  setModalErrorSnackMessage,
 }: IChangeUserPasswordProps) => {
+  const dispatch = useDispatch();
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -74,10 +74,12 @@ const ChangeUserPassword = ({
     setLoading(true);
 
     if (newPassword.length < 8) {
-      setModalErrorSnackMessage({
-        errorMessage: "Passwords must be at least 8 characters long",
-        detailedError: "",
-      });
+      dispatch(
+        setModalErrorSnackMessage({
+          errorMessage: "Passwords must be at least 8 characters long",
+          detailedError: "",
+        })
+      );
       setLoading(false);
       return;
     }
@@ -99,7 +101,7 @@ const ChangeUserPassword = ({
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -175,8 +177,4 @@ const ChangeUserPassword = ({
   ) : null;
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(ChangeUserPassword));
+export default withStyles(styles)(ChangeUserPassword);

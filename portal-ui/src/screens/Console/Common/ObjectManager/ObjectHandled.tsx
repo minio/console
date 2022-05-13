@@ -22,13 +22,14 @@ import withStyles from "@mui/styles/withStyles";
 import { IFileItem } from "../../ObjectBrowser/types";
 import ProgressBarWrapper from "../ProgressBarWrapper/ProgressBarWrapper";
 import {
+  CancelledIcon,
   DisabledIcon,
   DownloadStatIcon,
   EnabledIcon,
   UploadStatIcon,
-  CancelledIcon,
 } from "../../../../icons";
 import clsx from "clsx";
+import { callForObjectID } from "../../ObjectBrowser/transferManager";
 
 interface IObjectHandled {
   classes: any;
@@ -163,8 +164,10 @@ const ObjectHandled = ({
             onClick={() => {
               if (!objectToDisplay.done) {
                 console.log("//abort");
-
-                objectToDisplay.call?.abort();
+                const call = callForObjectID(objectToDisplay.ID);
+                if (call) {
+                  call.abort();
+                }
               } else {
                 deleteFromList(objectToDisplay.instanceID);
               }

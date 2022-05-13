@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,12 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  TRACE_MESSAGE_RECEIVED,
-  TRACE_RESET_MESSAGES,
-  TRACE_SET_STARTED,
-  TraceActionTypes,
-} from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TraceMessage } from "./types";
 
 export interface TraceState {
@@ -32,27 +27,23 @@ const initialState: TraceState = {
   traceStarted: false,
 };
 
-export function traceReducer(
-  state = initialState,
-  action: TraceActionTypes
-): TraceState {
-  switch (action.type) {
-    case TRACE_MESSAGE_RECEIVED:
-      return {
-        ...state,
-        messages: [...state.messages, action.message],
-      };
-    case TRACE_RESET_MESSAGES:
-      return {
-        ...state,
-        messages: [],
-      };
-    case TRACE_SET_STARTED:
-      return {
-        ...state,
-        traceStarted: action.status,
-      };
-    default:
-      return state;
-  }
-}
+export const traceSlice = createSlice({
+  name: "trace",
+  initialState,
+  reducers: {
+    traceMessageReceived: (state, action: PayloadAction<TraceMessage>) => {
+      state.messages.push(action.payload);
+    },
+    traceResetMessages: (state) => {
+      state.messages = [];
+    },
+    setTraceStarted: (state, action: PayloadAction<boolean>) => {
+      state.traceStarted = action.payload;
+    },
+  },
+});
+
+export const { traceMessageReceived, traceResetMessages, setTraceStarted } =
+  traceSlice.actions;
+
+export default traceSlice.reducer;

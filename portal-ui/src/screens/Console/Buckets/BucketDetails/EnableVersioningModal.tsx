@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, Fragment } from "react";
-import { connect } from "react-redux";
+import React, { Fragment, useState } from "react";
 import { DialogContentText } from "@mui/material";
 import api from "../../../../common/api";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../icons";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
   modalOpen: boolean;
   selectedBucket: string;
   versioningCurrentState: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const EnableVersioningModal = ({
@@ -36,8 +36,8 @@ const EnableVersioningModal = ({
   modalOpen,
   selectedBucket,
   versioningCurrentState,
-  setErrorSnackMessage,
 }: IVersioningEventProps) => {
+  const dispatch = useDispatch();
   const [versioningLoading, setVersioningLoading] = useState<boolean>(false);
 
   const enableVersioning = () => {
@@ -56,7 +56,7 @@ const EnableVersioningModal = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setVersioningLoading(false);
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
   };
 
@@ -93,8 +93,4 @@ const EnableVersioningModal = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default connector(EnableVersioningModal);
+export default EnableVersioningModal;

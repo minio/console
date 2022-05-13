@@ -20,7 +20,6 @@ import { Box } from "@mui/material";
 import { CircleIcon, DrivesIcon, ServersIcon } from "../../../../../icons";
 import DualStatCard from "./DualStatCard";
 import { IDashboardPanel } from "../types";
-import { setErrorSnackMessage } from "../../../../../actions";
 
 const EntityStateItemRenderer = ({
   info,
@@ -28,14 +27,12 @@ const EntityStateItemRenderer = ({
   timeEnd,
   loading,
   apiPrefix,
-  displayErrorMessage,
 }: {
   info: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
   loading: boolean;
   apiPrefix: string;
-  displayErrorMessage: typeof setErrorSnackMessage;
 }) => {
   const { mergedPanels = [], id } = info;
   const [leftPanel, rightPanel] = mergedPanels;
@@ -46,7 +43,6 @@ const EntityStateItemRenderer = ({
       timeStart={timeStart}
       timeEnd={timeEnd}
       propLoading={loading}
-      displayErrorMessage={displayErrorMessage}
       apiPrefix={apiPrefix}
       statLabel={
         <Box
@@ -59,7 +55,8 @@ const EntityStateItemRenderer = ({
             },
           }}
         >
-          <CircleIcon /> <div className="stat-text">Online</div>
+          <CircleIcon />
+          <div className="stat-text">Online</div>
         </Box>
       }
     />
@@ -70,7 +67,6 @@ const EntityStateItemRenderer = ({
       timeStart={timeStart}
       timeEnd={timeEnd}
       propLoading={loading}
-      displayErrorMessage={displayErrorMessage}
       apiPrefix={apiPrefix}
       statLabel={
         <Box
@@ -83,7 +79,8 @@ const EntityStateItemRenderer = ({
             },
           }}
         >
-          <CircleIcon /> <div className="stat-text">Offline</div>
+          <CircleIcon />
+          <div className="stat-text">Offline</div>
         </Box>
       }
     />

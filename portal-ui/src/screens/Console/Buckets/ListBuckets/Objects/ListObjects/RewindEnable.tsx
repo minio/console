@@ -15,53 +15,38 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { ObjectBrowserReducer } from "../../../../ObjectBrowser/types";
-import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
-import {
-  resetRewind,
-  setRewindEnable,
-} from "../../../../ObjectBrowser/actions";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateTimePickerWrapper from "../../../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { AppState } from "../../../../../../store";
+import {
+  resetRewind,
+  setRewindEnable,
+} from "../../../../ObjectBrowser/objectBrowserSlice";
 
 interface IRewindEnable {
   closeModalAndRefresh: () => void;
-  classes: any;
   open: boolean;
   bucketName: string;
-  bucketToRewind: string;
-  rewindEnabled: boolean;
-  dateRewind: any;
-  resetRewind: typeof resetRewind;
-  setRewindEnable: typeof setRewindEnable;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalBasic,
-  });
 
 const RewindEnable = ({
   closeModalAndRefresh,
-  classes,
   open,
   bucketName,
-  bucketToRewind,
-  rewindEnabled,
-  dateRewind,
-  resetRewind,
-  setRewindEnable,
 }: IRewindEnable) => {
+  const dispatch = useDispatch();
+
+  const rewindEnabled = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+  );
+  const dateRewind = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.dateToRewind
+  );
+
   const [rewindEnabling, setRewindEnabling] = useState<boolean>(false);
   const [rewindEnableButton, setRewindEnableButton] = useState<boolean>(true);
   const [dateSelected, setDateSelected] = useState<any>(null);
@@ -75,10 +60,16 @@ const RewindEnable = ({
 
   const rewindApply = () => {
     if (!rewindEnableButton && rewindEnabled) {
-      resetRewind();
+      dispatch(resetRewind());
     } else {
       setRewindEnabling(true);
-      setRewindEnable(true, bucketName, dateSelected);
+      dispatch(
+        setRewindEnable({
+          state: true,
+          bucket: bucketName,
+          dateRewind: dateSelected,
+        })
+      );
     }
     closeModalAndRefresh();
   };
@@ -116,7 +107,7 @@ const RewindEnable = ({
             />
           </Grid>
         )}
-        <Grid item xs={12} className={classes.buttonContainer}>
+        <Grid item xs={12} style={{ textAlign: "right" }}>
           <Button
             type="button"
             variant="contained"
@@ -139,17 +130,4 @@ const RewindEnable = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
-  bucketToRewind: objectBrowser.rewind.bucketToRewind,
-  rewindEnabled: objectBrowser.rewind.rewindEnabled,
-  dateRewind: objectBrowser.rewind.dateToRewind,
-});
-
-const mapDispatchToProps = {
-  resetRewind,
-  setRewindEnable,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default withStyles(styles)(connector(RewindEnable));
+export default RewindEnable;

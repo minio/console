@@ -28,34 +28,25 @@ import Grid from "@mui/material/Grid";
 import { niceBytes } from "../../../../../../common/utils";
 import { Paper, SelectChangeEvent } from "@mui/material";
 import api from "../../../../../../common/api";
-import { ITenant } from "../../../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { IQuotaElement, IQuotas, Opts } from "../../../ListTenants/utils";
+import { IQuotaElement, IQuotas } from "../../../ListTenants/utils";
 import { AppState } from "../../../../../../store";
-import { connect } from "react-redux";
-import {
-  setEditPoolField,
-  isEditPoolPageValid,
-  setEditPoolStorageClasses,
-} from "../../../actions";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   commonFormValidation,
   IValidation,
 } from "../../../../../../utils/validationFunctions";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import {
+  isEditPoolPageValid,
+  setEditPoolField,
+  setEditPoolStorageClasses,
+} from "../../../tenantsSlice";
 
 interface IPoolResourcesProps {
-  tenant: ITenant | null;
   classes: any;
-  storageClasses: Opts[];
-  numberOfNodes: string;
-  storageClass: string;
-  volumeSize: string;
-  volumesPerServer: string;
-  setEditPoolField: typeof setEditPoolField;
-  isEditPoolPageValid: typeof isEditPoolPageValid;
-  setEditPoolStorageClasses: typeof setEditPoolStorageClasses;
 }
 
 const styles = (theme: Theme) =>
@@ -92,18 +83,28 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const PoolResources = ({
-  tenant,
-  classes,
-  storageClasses,
-  numberOfNodes,
-  storageClass,
-  volumeSize,
-  volumesPerServer,
-  setEditPoolField,
-  setEditPoolStorageClasses,
-  isEditPoolPageValid,
-}: IPoolResourcesProps) => {
+const PoolResources = ({ classes }: IPoolResourcesProps) => {
+  const dispatch = useDispatch();
+
+  const tenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.tenantInfo
+  );
+  const storageClasses = useSelector(
+    (state: AppState) => state.tenants.editPool.storageClasses
+  );
+  const numberOfNodes = useSelector((state: AppState) =>
+    state.tenants.editPool.fields.setup.numberOfNodes.toString()
+  );
+  const storageClass = useSelector(
+    (state: AppState) => state.tenants.editPool.fields.setup.storageClass
+  );
+  const volumeSize = useSelector((state: AppState) =>
+    state.tenants.editPool.fields.setup.volumeSize.toString()
+  );
+  const volumesPerServer = useSelector((state: AppState) =>
+    state.tenants.editPool.fields.setup.volumesPerServer.toString()
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const instanceCapacity: number =
@@ -141,16 +142,15 @@ const PoolResources = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isEditPoolPageValid("setup", Object.keys(commonVal).length === 0);
+    dispatch(
+      isEditPoolPageValid({
+        page: "setup",
+        status: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
-  }, [
-    isEditPoolPageValid,
-    numberOfNodes,
-    volumeSize,
-    volumesPerServer,
-    storageClass,
-  ]);
+  }, [dispatch, numberOfNodes, volumeSize, volumesPerServer, storageClass]);
 
   useEffect(() => {
     if (storageClasses.length === 0 && tenant) {
@@ -170,18 +170,30 @@ const PoolResources = ({
             return { label: name, value: name };
           });
 
-          setEditPoolField("setup", "storageClass", newStorage[0].value);
+          dispatch(
+            setEditPoolField({
+              page: "setup",
+              field: "storageClass",
+              value: newStorage[0].value,
+            })
+          );
 
-          setEditPoolStorageClasses(newStorage);
+          dispatch(setEditPoolStorageClasses(newStorage));
         })
         .catch((err: ErrorResponseHandler) => {
           console.error(err);
         });
     }
-  }, [tenant, storageClasses, setEditPoolStorageClasses, setEditPoolField]);
+  }, [tenant, storageClasses, dispatch]);
 
   const setFieldInfo = (fieldName: string, value: any) => {
-    setEditPoolField("setup", fieldName, value);
+    dispatch(
+      setEditPoolField({
+        page: "setup",
+        field: fieldName,
+        value: value,
+      })
+    );
   };
 
   return (
@@ -289,22 +301,4 @@ const PoolResources = ({
   );
 };
 
-const mapState = (state: AppState) => {
-  const setupFields = state.tenants.editPool.fields.setup;
-  return {
-    tenant: state.tenants.tenantDetails.tenantInfo,
-    storageClasses: state.tenants.editPool.storageClasses,
-    numberOfNodes: setupFields.numberOfNodes.toString(),
-    storageClass: setupFields.storageClass,
-    volumeSize: setupFields.volumeSize.toString(),
-    volumesPerServer: setupFields.volumesPerServer.toString(),
-  };
-};
-
-const connector = connect(mapState, {
-  setEditPoolField,
-  isEditPoolPageValid,
-  setEditPoolStorageClasses,
-});
-
-export default withStyles(styles)(connector(PoolResources));
+export default withStyles(styles)(PoolResources);

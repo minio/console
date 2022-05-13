@@ -15,18 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import {
   actionsTray,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import {
-  BucketInfo,
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
@@ -46,6 +45,7 @@ import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import EditReplicationModal from "./EditReplicationModal";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -57,9 +57,6 @@ const DeleteReplicationRule = withSuspense(
 interface IBucketReplicationProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
 }
 
 const styles = (theme: Theme) =>
@@ -74,9 +71,13 @@ const styles = (theme: Theme) =>
 const BucketReplicationPanel = ({
   classes,
   match,
-  setErrorSnackMessage,
-  loadingBucket,
 }: IBucketReplicationProps) => {
+  const dispatch = useDispatch();
+
+  const loadingBucket = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.loadingBucket
+  );
+
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
@@ -117,19 +118,14 @@ const BucketReplicationPanel = ({
             setLoadingReplication(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setLoadingReplication(false);
           });
       } else {
         setLoadingReplication(false);
       }
     }
-  }, [
-    loadingReplication,
-    setErrorSnackMessage,
-    bucketName,
-    displayReplicationRules,
-  ]);
+  }, [loadingReplication, dispatch, bucketName, displayReplicationRules]);
 
   const closeAddReplication = () => {
     setOpenReplicationOpen(false);
@@ -369,14 +365,4 @@ const BucketReplicationPanel = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  loadingBucket: state.buckets.bucketDetails.loadingBucket,
-  bucketInfo: state.buckets.bucketDetails.bucketInfo,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(BucketReplicationPanel));
+export default withStyles(styles)(BucketReplicationPanel);

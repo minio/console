@@ -15,30 +15,30 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../actions";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ErrorResponseHandler } from "../../../common/types";
 import { ConfirmDeleteIcon } from "../../../icons";
 import { encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedUsers: string[] | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteUser = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedUsers,
-  setErrorSnackMessage,
 }: IDeleteUserProps) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -88,10 +88,4 @@ const DeleteUser = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteUser);
+export default DeleteUser;

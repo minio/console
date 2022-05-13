@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -29,7 +29,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import { niceBytes, nsToSeconds } from "../../../../common/utils";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -48,11 +48,10 @@ import {
 import { SecureComponent } from "../../../../common/SecureComponent";
 import { SearchIcon } from "../../../../icons";
 import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ILogSearchProps {
   classes: any;
-  features: string[] | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -121,11 +120,12 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const LogsSearchMain = ({
-  classes,
-  features,
-  setErrorSnackMessage,
-}: ILogSearchProps) => {
+const LogsSearchMain = ({ classes }: ILogSearchProps) => {
+  const dispatch = useDispatch();
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+
   const [loading, setLoading] = useState<boolean>(true);
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
@@ -205,7 +205,7 @@ const LogsSearchMain = ({
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setAlreadyFetching(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     } else {
       setLoading(false);
@@ -226,7 +226,7 @@ const LogsSearchMain = ({
     timeStart,
     timeEnd,
     recordsResp,
-    setErrorSnackMessage,
+    dispatch,
   ]);
 
   useEffect(() => {
@@ -521,14 +521,4 @@ const LogsSearchMain = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
-
-export default withStyles(styles)(connector(LogsSearchMain));
+export default withStyles(styles)(LogsSearchMain);

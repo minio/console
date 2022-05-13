@@ -29,13 +29,16 @@ import {
   ConfirmDeleteIcon,
   RecoverIcon,
 } from "../../../../icons";
-import { connect } from "react-redux";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
+import { useDispatch } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
 import HelpBox from "../../../../common/HelpBox";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import history from "../../../../history";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -44,11 +47,8 @@ export type ReplicationSite = {
   isCurrent?: boolean;
 };
 
-const SiteReplication = ({
-  setSnackBarMessage,
-}: {
-  setSnackBarMessage: (msg: string) => void;
-}) => {
+const SiteReplication = () => {
+  const dispatch = useDispatch();
   const [sites, setSites] = useState([]);
 
   const [deleteAll, setIsDeleteAll] = useState(false);
@@ -83,11 +83,11 @@ const SiteReplication = ({
   const [isRemoving, invokeSiteRemoveApi] = useApi(
     (res: any) => {
       setIsDeleteAll(false);
-      setSnackBarMessage(`Successfully deleted.`);
+      dispatch(setSnackBarMessage(`Successfully deleted.`));
       getSites();
     },
     (err: ErrorResponseHandler) => {
-      setErrorSnackMessage(err);
+      dispatch(setErrorSnackMessage(err));
     }
   );
 
@@ -259,9 +259,4 @@ const SiteReplication = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-});
-
-export default connector(SiteReplication);
+export default SiteReplication;
