@@ -1341,7 +1341,7 @@ jobs:
           echo "put together the outs for final coverage resolution"
           ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out > all.out
           echo "Download mc for Ubuntu"
-          wget https://dl.min.io/client/mc/release/linux-amd64/mc
+          wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
           chmod +x mc
           echo "Create the folder to put the all.out file"
@@ -1351,16 +1351,18 @@ jobs:
           echo ${{ github.event.number }}
           echo ${{ github.run_id }}
           ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/
+          go tool cover -html=all.out -o coverage.html
+          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          echo "result:"
-          echo $result
-          threshold=46.1
+          threshold=46.6
+          echo "Result:"
+          echo "$result%"
           if (( $(echo "$result >= $threshold" |bc -l) )); then
-            echo "It is equal or greater than threshold, passed!"
+            echo "It is equal or greater than threshold ($threshold%), passed!"
           else
-            echo "It is smaller than threshold value, failed!"
+            echo "It is smaller than threshold ($threshold%) value, failed!"
             exit 1
           fi

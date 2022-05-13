@@ -39,6 +39,7 @@ interface CheckBoxProps {
   index?: number;
   noTopMargin?: boolean;
   checked: boolean;
+  className?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -74,6 +75,7 @@ const CheckboxWrapper = ({
   overrideLabelClasses = "",
   overrideCheckboxStyles,
   classes,
+  className,
 }: CheckBoxProps) => {
   return (
     <React.Fragment>
@@ -82,7 +84,7 @@ const CheckboxWrapper = ({
         xs={12}
         className={`${classes.fieldContainer} ${
           noTopMargin ? classes.noTopMargin : ""
-        }`}
+        } ${className ? className : ""}`}
       >
         <div>
           <Checkbox

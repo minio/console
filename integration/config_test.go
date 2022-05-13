@@ -31,8 +31,48 @@ import (
 func Test_ConfigAPI(t *testing.T) {
 	assert := assert.New(t)
 
+	tests := []struct {
+		name           string
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name:           "Config - Valid",
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request, err := http.NewRequest("GET", "http://localhost:9090/api/v1/configs", nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+}
+
+func Test_GetConfigAPI(t *testing.T) {
+	assert := assert.New(t)
+
 	type args struct {
-		api string
+		name string
 	}
 	tests := []struct {
 		name           string
@@ -41,11 +81,19 @@ func Test_ConfigAPI(t *testing.T) {
 		expectedError  error
 	}{
 		{
-			name: "Config - Valid",
+			name: "Get Config - Valid",
 			args: args{
-				api: "/configs",
+				name: "storage_class",
 			},
 			expectedStatus: 200,
+			expectedError:  nil,
+		},
+		{
+			name: "Get Config - Invalid",
+			args: args{
+				name: "asdf",
+			},
+			expectedStatus: 404,
 			expectedError:  nil,
 		},
 	}
@@ -56,12 +104,8 @@ func Test_ConfigAPI(t *testing.T) {
 				Timeout: 3 * time.Second,
 			}
 
-			requestDataPolicy := map[string]interface{}{}
-
-			requestDataJSON, _ := json.Marshal(requestDataPolicy)
-			requestDataBody := bytes.NewReader(requestDataJSON)
 			request, err := http.NewRequest(
-				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), requestDataBody)
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1/configs/%s", tt.args.name), nil)
 			if err != nil {
 				log.Println(err)
 				return
