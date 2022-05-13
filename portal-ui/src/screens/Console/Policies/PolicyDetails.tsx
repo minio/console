@@ -58,6 +58,7 @@ import {
 import withSuspense from "../Common/Components/withSuspense";
 import { AppState } from "../../../store";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import PolicyView from "./PolicyView";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -384,74 +385,7 @@ const PolicyDetails = ({
               <Fragment>
                 <div className={classes.sectionTitle}>Policy Summary</div>
                 <Paper className={classes.paperContainer}>
-                  <form
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                      saveRecord(e);
-                    }}
-                  >
-                    <Grid container>
-                      <Grid item xs={8}>
-                        <h4>Statements</h4>
-                      </Grid>
-                      <Grid item xs={4} />
-
-                      <Fragment>
-                        {policyStatements.map((stmt, i) => {
-                          return (
-                            <Grid
-                              item
-                              xs={12}
-                              className={classes.statement}
-                              key={`s-${i}`}
-                            >
-                              <Grid container>
-                                <Grid item xs={2} className={classes.labelCol}>
-                                  Effect
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <Fragment>{stmt.Effect}</Fragment>
-                                </Grid>
-                                <Grid
-                                  item
-                                  xs={2}
-                                  className={classes.labelCol}
-                                />
-                                <Grid item xs={4} />
-                                <Grid item xs={2} className={classes.labelCol}>
-                                  Actions
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <ul>
-                                    {stmt.Action &&
-                                      stmt.Action.map((act, actIndex) => (
-                                        <li key={`${i}-r-${actIndex}`}>
-                                          {act}
-                                        </li>
-                                      ))}
-                                  </ul>
-                                </Grid>
-                                <Grid item xs={2} className={classes.labelCol}>
-                                  Resources
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <ul>
-                                    {stmt.Resource &&
-                                      stmt.Resource.map((res, resIndex) => (
-                                        <li key={`${i}-r-${resIndex}`}>
-                                          {res}
-                                        </li>
-                                      ))}
-                                  </ul>
-                                </Grid>
-                              </Grid>
-                            </Grid>
-                          );
-                        })}
-                      </Fragment>
-                    </Grid>
-                  </form>
+                  <PolicyView policyStatements={policyStatements} />
                 </Paper>
               </Fragment>
             ),
