@@ -81,7 +81,7 @@ const styles = (theme: Theme) =>
       height: "100%",
     },
     paperContainer: {
-      padding: "15px 15px 15px 50px",
+      padding: "15px 15px 15px 15px",
       minHeight: "450px",
     },
     statement: {
