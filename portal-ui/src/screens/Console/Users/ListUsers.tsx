@@ -35,7 +35,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { decodeURLString, encodeURLString } from "../../../common/utils";
+import { encodeURLString } from "../../../common/utils";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -163,10 +163,6 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
       `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.accessKey)}`
     );
   };
-
-  const userLoggedIn = decodeURLString(
-    localStorage.getItem("userLoggedIn") || ""
-  );
 
   const tableActions = [
     {
