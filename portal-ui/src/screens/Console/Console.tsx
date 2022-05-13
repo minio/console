@@ -14,8 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, Suspense, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  Suspense,
+  useEffect,
+  useState,
+  useLayoutEffect,
+} from "react";
 import { Theme } from "@mui/material/styles";
+import debounce from "lodash/debounce";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
@@ -200,6 +207,7 @@ const Console = ({
   operatorMode,
   distributedSetup,
   features,
+  setMenuOpen,
 }: IConsoleProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
@@ -222,6 +230,22 @@ const Console = ({
         console.error(err);
       });
   };
+
+  // Layout effect to be executed after last re-render for resizing only
+  useLayoutEffect(() => {
+    // Debounce to not execute constantly
+    const debounceSize = debounce(() => {
+      if (open && window.innerWidth <= 800) {
+        setMenuOpen(false);
+      }
+    }, 300);
+
+    // Added event listener for window resize
+    window.addEventListener("resize", debounceSize);
+
+    // We remove the listener on component unmount
+    return () => window.removeEventListener("resize", debounceSize);
+  });
 
   const consoleAdminRoutes: IRouteRule[] = [
     {
