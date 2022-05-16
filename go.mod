@@ -22,9 +22,9 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.19.2
-	github.com/minio/madmin-go v1.3.12
-	github.com/minio/mc v0.0.0-20220419155441-cc4ff3a0cc82
-	github.com/minio/minio-go/v7 v7.0.24
+	github.com/minio/madmin-go v1.3.13
+	github.com/minio/mc v0.0.0-20220512134321-aa60a8db1e4d
+	github.com/minio/minio-go/v7 v7.0.26
 	github.com/minio/operator v0.0.0-20220414212219-ba4c097324b2
 	github.com/minio/pkg v1.1.23
 	github.com/minio/selfupdate v0.4.0
@@ -120,8 +120,9 @@ require (
 	github.com/power-devops/perfstat v0.0.0-20220216144756-c35f1ee13d7c // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/common v0.32.1 // indirect
+	github.com/prometheus/common v0.33.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/prometheus/prom2json v1.3.1 // indirect
 	github.com/rivo/tview v0.0.0-20220216162559-96063d6082f3 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect
