@@ -26,9 +26,10 @@ const userListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
 );
 
 const userDeleteIconButton = userListItem
-  .nextSibling()
-  .child("button")
-  .withAttribute("aria-label", "delete");
+  .child("checkbox")
+  .withAttribute("aria-label", "secondary checkbox");
+
+const userCheckbox = Selector(".TableCheckbox");
 
 fixture("For user with Users permissions")
   .page("http://localhost:9090")
@@ -78,12 +79,15 @@ test("Users table exists", async (t) => {
 
 test("Created User can be viewed and deleted", async (t) => {
   const userListItemExists = userListItem.exists;
+  const deleteSelectedButton =
+    Selector("button:enabled").withExactText("Delete Selected");
   await t
     .navigateTo(usersPageUrl)
     .typeText(elements.searchResourceInput, constants.TEST_USER_NAME)
     .expect(userListItemExists)
     .ok()
-    .click(userDeleteIconButton)
+    .click(userCheckbox)
+    .click(deleteSelectedButton)
     .click(elements.deleteButton)
     .expect(userListItemExists)
     .notOk();
