@@ -674,7 +674,6 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Valid",
 			args: args{
-
 				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("policylistgroups")) + "/groups",
 			},
 			expectedStatus: 200,
@@ -794,9 +793,10 @@ func Test_DeletePolicyAPI(t *testing.T) {
 		})
 	}
 }
+
 func Test_GetAUserPolicyAPI(t *testing.T) {
 	assert := assert.New(t)
-	//Create a User with a Policy to use for testing
+	// Create a User with a Policy to use for testing
 	groups := []string{}
 	policies := []string{"readwrite"}
 	_, err := AddUser("getuserpolicyuser", "secretKey", groups, policies)
@@ -804,7 +804,7 @@ func Test_GetAUserPolicyAPI(t *testing.T) {
 		log.Println(err)
 		return
 	}
-	//encode usernames to pass to api
+	// encode usernames to pass to api
 	bName := []byte("getuserpolicyuser")
 	fName := []byte("failname")
 	encodedName := base64.URLEncoding.EncodeToString(bName)
