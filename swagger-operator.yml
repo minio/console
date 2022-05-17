@@ -1288,6 +1288,35 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/describe:
+    get:
+      summary: Get Describe output for PVC
+      operationId: GetPVCDescribe
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: PVCName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/describePVCWrapper"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /nodes/labels:
     get:
       summary: List node labels
@@ -2961,6 +2990,40 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/toleration"
+
+  describePVCWrapper:
+    type: object
+    properties:
+      name:
+        type: string
+      namespace:
+        type: string
+      storageClass:
+        type: string
+      status:
+        type: string
+      volume:
+        type: string
+      labels:
+        type: array
+        items:
+          $ref: "#/definitions/label"
+      annotations:
+        type: array
+        items:
+          $ref: "#/definitions/annotation"
+      finalizers:
+        type: array
+        items:
+          type: string
+      capacity:
+        type: string
+      accessModes:
+        type: array
+        items:
+          type: string
+      volumeMode:
+        type: string
 
   container:
     type: object
