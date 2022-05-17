@@ -5803,6 +5803,23 @@ func init() {
         }
       }
     },
+    "permissionResource": {
+      "type": "object",
+      "properties": {
+        "conditionOperator": {
+          "type": "string"
+        },
+        "prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "string"
+        }
+      }
+    },
     "policy": {
       "type": "object",
       "properties": {
@@ -6173,6 +6190,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "allowResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionResource"
+          }
+        },
         "distributedMode": {
           "type": "boolean"
         },
@@ -12877,6 +12900,23 @@ func init() {
         }
       }
     },
+    "permissionResource": {
+      "type": "object",
+      "properties": {
+        "conditionOperator": {
+          "type": "string"
+        },
+        "prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "string"
+        }
+      }
+    },
     "policy": {
       "type": "object",
       "properties": {
@@ -13247,6 +13287,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "allowResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionResource"
+          }
+        },
         "distributedMode": {
           "type": "boolean"
         },
