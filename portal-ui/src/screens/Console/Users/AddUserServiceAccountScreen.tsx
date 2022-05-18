@@ -138,7 +138,7 @@ const AddServiceAccount = ({ classes, match }: IAddServiceAccountProps) => {
         setErrorSnackMessage(err);
     });
   }
-  }, [isRestrictedByPolicy, userName, setErrorSnackMessage]);
+  }, [isRestrictedByPolicy, userName]);
 
   const addUserServiceAccount = (e: React.FormEvent) => {
     e.preventDefault();
