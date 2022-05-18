@@ -18,7 +18,6 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 
 import api from "./common/api";
-import { saveSessionResponse } from "./screens/Console/actions";
 import { ISessionResponse } from "./screens/Console/types";
 import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
@@ -33,6 +32,7 @@ import {
 } from "./systemSlice";
 import { SRInfoStateType } from "./types";
 import { AppState } from "./store";
+import { saveSessionResponse } from "./screens/Console/consoleSlice";
 
 interface ProtectedRouteProps {
   Component: any;

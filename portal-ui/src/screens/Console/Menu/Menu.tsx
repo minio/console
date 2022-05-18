@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Drawer } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -29,11 +29,11 @@ import { clearSession } from "../../../common/utils";
 import history, { baseUrl } from "../../../history";
 import api from "../../../common/api";
 
-import { resetSession } from "../actions";
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import { validRoutes } from "../valid-routes";
 import { menuOpen, userLogged } from "../../../systemSlice";
+import { resetSession } from "../consoleSlice";
 
 const drawerWidth = 250;
 
@@ -86,11 +86,15 @@ const styles = (theme: Theme) =>
 
 interface IMenuProps {
   classes?: any;
-  features?: string[] | null;
 }
 
-const Menu = ({ classes, features }: IMenuProps) => {
+const Menu = ({ classes }: IMenuProps) => {
   const dispatch = useDispatch();
+
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+
   const sidebarOpen = useSelector(
     (state: AppState) => state.system.sidebarOpen
   );
@@ -104,7 +108,7 @@ const Menu = ({ classes, features }: IMenuProps) => {
       dispatch(userLogged(false));
       localStorage.setItem("userLoggedIn", "");
       localStorage.setItem("redirect-path", "");
-      resetSession();
+      dispatch(resetSession());
       history.push(`${baseUrl}login`);
     };
     api
@@ -150,10 +154,5 @@ const Menu = ({ classes, features }: IMenuProps) => {
     </Drawer>
   );
 };
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
 
-const connector = connect(mapState, null);
-
-export default connector(withStyles(styles)(Menu));
+export default withStyles(styles)(Menu);

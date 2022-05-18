@@ -19,7 +19,7 @@ import traceReducer from "./screens/Console/Trace/traceSlice";
 import { logReducer } from "./screens/Console/Logs/reducers";
 import healthInfoReducer from "./screens/Console/HealthInfo/healthInfoSlice";
 import { watchReducer } from "./screens/Console/Watch/reducers";
-import { consoleReducer } from "./screens/Console/reducer";
+import consoleReducer from "./screens/Console/consoleSlice";
 import bucketsReducer from "./screens/Console/Buckets/bucketsSlice";
 import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserSlice";
 import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
