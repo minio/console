@@ -17,7 +17,7 @@
 import systemReducer from "./systemSlice";
 import traceReducer from "./screens/Console/Trace/traceSlice";
 import { logReducer } from "./screens/Console/Logs/reducers";
-import { healthInfoReducer } from "./screens/Console/HealthInfo/reducers";
+import healthInfoReducer from "./screens/Console/HealthInfo/healthInfoSlice";
 import { watchReducer } from "./screens/Console/Watch/reducers";
 import { consoleReducer } from "./screens/Console/reducer";
 import bucketsReducer from "./screens/Console/Buckets/bucketsSlice";

@@ -20,8 +20,7 @@ import {
   w3cwebsocket as W3CWebSocket,
 } from "websocket";
 import { AppState } from "../../../store";
-import { connect, useDispatch, useSelector } from "react-redux";
-import { healthInfoMessageReceived, healthInfoResetMessage } from "./actions";
+import { useDispatch, useSelector } from "react-redux";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -51,6 +50,10 @@ import HelpBox from "../../../common/HelpBox";
 import WarnIcon from "../../../icons/WarnIcon";
 import Loader from "../Common/Loader/Loader";
 import { setServerDiagStat } from "../../../systemSlice";
+import {
+  healthInfoMessageReceived,
+  healthInfoResetMessage,
+} from "./healthInfoSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,20 +91,15 @@ const styles = (theme: Theme) =>
 
 interface IHealthInfo {
   classes: any;
-  healthInfoMessageReceived: typeof healthInfoMessageReceived;
-  healthInfoResetMessage: typeof healthInfoResetMessage;
-  message: HealthInfoMessage;
   namespace: string;
   tenant: string;
 }
 
-const HealthInfo = ({
-  classes,
-  healthInfoMessageReceived,
-  healthInfoResetMessage,
-  message,
-}: IHealthInfo) => {
+const HealthInfo = ({ classes }: IHealthInfo) => {
   const dispatch = useDispatch();
+
+  const message = useSelector((state: AppState) => state.healthInfo.message);
+
   const serverDiagnosticStatus = useSelector(
     (state: AppState) => state.system.serverDiagnosticStatus
   );
@@ -164,7 +162,7 @@ const HealthInfo = ({
 
   useEffect(() => {
     if (startDiagnostic) {
-      healthInfoResetMessage();
+      dispatch(healthInfoResetMessage());
       setDiagFileContent("");
       const url = new URL(window.location.toString());
       const isDev = process.env.NODE_ENV === "development";
@@ -200,7 +198,7 @@ const HealthInfo = ({
             m.serverHealthInfo.timestamp = new Date(
               m.serverHealthInfo.timestamp.toString()
             );
-            healthInfoMessageReceived(m.serverHealthInfo);
+            dispatch(healthInfoMessageReceived(m.serverHealthInfo));
           }
           if (m.encoded !== "") {
             setDiagFileContent(m.encoded);
@@ -235,12 +233,7 @@ const HealthInfo = ({
       // reset start status
       setStartDiagnostic(false);
     }
-  }, [
-    healthInfoMessageReceived,
-    healthInfoResetMessage,
-    startDiagnostic,
-    dispatch,
-  ]);
+  }, [startDiagnostic, dispatch]);
 
   return (
     <Fragment>
@@ -328,14 +321,4 @@ const HealthInfo = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  message: state.healthInfo.message,
-  serverDiagnosticStatus: state.system.serverDiagnosticStatus,
-});
-
-const connector = connect(mapState, {
-  healthInfoMessageReceived: healthInfoMessageReceived,
-  healthInfoResetMessage: healthInfoResetMessage,
-});
-
-export default connector(withStyles(styles)(HealthInfo));
+export default withStyles(styles)(HealthInfo);
