@@ -1485,6 +1485,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/describe": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Describe output for PVC",
+        "operationId": "GetPVCDescribe",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "PVCName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/describePVCWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/events": {
       "get": {
         "tags": [
@@ -2349,6 +2392,56 @@ func init() {
       "properties": {
         "delete_pvcs": {
           "type": "boolean"
+        }
+      }
+    },
+    "describePVCWrapper": {
+      "type": "object",
+      "properties": {
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "capacity": {
+          "type": "string"
+        },
+        "finalizers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "storageClass": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "volumeMode": {
+          "type": "string"
         }
       }
     },
@@ -5985,6 +6078,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/describe": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Describe output for PVC",
+        "operationId": "GetPVCDescribe",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "PVCName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/describePVCWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/events": {
       "get": {
         "tags": [
@@ -7692,6 +7828,56 @@ func init() {
       "properties": {
         "delete_pvcs": {
           "type": "boolean"
+        }
+      }
+    },
+    "describePVCWrapper": {
+      "type": "object",
+      "properties": {
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        },
+        "capacity": {
+          "type": "string"
+        },
+        "finalizers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/label"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "storageClass": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "volumeMode": {
+          "type": "string"
         }
       }
     },
