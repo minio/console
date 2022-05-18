@@ -18,14 +18,9 @@ import { SubnetInfo } from "../../License/types";
 import {
   IAffinityModel,
   IDomainsRequest,
-  IResourceModel,
   ITolerationModel,
 } from "../../../../common/types";
-import {
-  ICertificateInfo,
-  ISecurityContext,
-  NodeMaxAllocatableResources,
-} from "../types";
+import { ICertificateInfo, ISecurityContext } from "../types";
 
 export interface IEvent {
   namespace: string;

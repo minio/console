@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { connect } from "react-redux";
-import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,8 +23,6 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ITenant } from "../ListTenants/types";
-import { setErrorSnackMessage } from "../../../../actions";
-import { AppState } from "../../../../store";
 import { LinearProgress } from "@mui/material";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
@@ -34,8 +30,6 @@ interface ITenantTrace {
   classes: any;
   match: any;
   tenant: ITenant | null;
-
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -76,31 +70,4 @@ const TenantTrace = ({ classes, match }: ITenantTrace) => {
   );
 };
 
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  tenant: state.tenants.tenantDetails.tenantInfo,
-  logEnabled: get(state.tenants.tenantDetails.tenantInfo, "logEnabled", false),
-  monitoringEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "monitoringEnabled",
-    false
-  ),
-  encryptionEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "encryptionEnabled",
-    false
-  ),
-  adEnabled: get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false),
-  oidcEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "idpOidcEnabled",
-    false
-  ),
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(TenantTrace));
+export default withStyles(styles)(TenantTrace);

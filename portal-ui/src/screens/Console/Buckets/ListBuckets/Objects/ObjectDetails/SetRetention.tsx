@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,7 +27,7 @@ import {
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
-import { setModalErrorSnackMessage } from "../../../../../../actions";
+
 import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
@@ -36,6 +36,7 @@ import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSele
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -66,7 +67,6 @@ interface ISetRetentionProps {
   objectName: string;
   bucketName: string;
   objectInfo: IFileInfo;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 interface IRefObject {
@@ -80,8 +80,8 @@ const SetRetention = ({
   objectName,
   objectInfo,
   bucketName,
-  setModalErrorSnackMessage,
 }: ISetRetentionProps) => {
+  const dispatch = useDispatch();
   const [statusEnabled, setStatusEnabled] = useState<boolean>(true);
   const [type, setType] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -148,7 +148,7 @@ const SetRetention = ({
         closeModalAndRefresh(true);
       })
       .catch((error: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(error);
+        dispatch(setModalErrorSnackMessage(error));
         setIsSaving(false);
       });
   };
@@ -169,7 +169,7 @@ const SetRetention = ({
         closeModalAndRefresh(true);
       })
       .catch((error: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(error);
+        dispatch(setModalErrorSnackMessage(error));
         setIsSaving(false);
       });
   };
@@ -290,10 +290,4 @@ const SetRetention = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(SetRetention));
+export default withStyles(styles)(SetRetention);

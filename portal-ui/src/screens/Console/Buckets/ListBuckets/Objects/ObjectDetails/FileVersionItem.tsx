@@ -79,7 +79,7 @@ const styles = (theme: Theme) =>
           "& > div": {
             borderBottomColor: "#E2E2E2",
           },
-        }
+        },
       },
     },
     versionContainer: {
@@ -98,7 +98,7 @@ const styles = (theme: Theme) =>
         fontSize: 14,
         "& svg.min-icon": {
           display: "none",
-        }
+        },
       },
     },
     buttonContainer: {
@@ -128,7 +128,7 @@ const styles = (theme: Theme) =>
         textOverflow: "ellipsis",
         maxWidth: "95%",
         overflow: "hidden",
-        whiteSpace: "nowrap"
+        whiteSpace: "nowrap",
       },
     },
     ctrItem: {
@@ -145,7 +145,7 @@ const styles = (theme: Theme) =>
       "@media (max-width: 799px)": {
         "&::before": {
           display: "none",
-        }
+        },
       },
     },
     collapsableInfo: {
@@ -156,9 +156,9 @@ const styles = (theme: Theme) =>
     },
     versionItem: {
       "@media (max-width: 799px)": {
-        display: "none"
+        display: "none",
       },
-    }
+    },
   });
 
 const FileVersionItem = ({
@@ -259,7 +259,9 @@ const FileVersionItem = ({
                   />
                 )}
                 {displayFileIconName(fileName, true)} v{index.toString()}
-                <span className={classes.versionItem}>{pill && <SpecificVersionPill type={pill} />}</span>
+                <span className={classes.versionItem}>
+                  {pill && <SpecificVersionPill type={pill} />}
+                </span>
               </Grid>
               <Grid item xs={10} md={8} className={classes.buttonContainer}>
                 {versionItemButtons.map((button, index) => {

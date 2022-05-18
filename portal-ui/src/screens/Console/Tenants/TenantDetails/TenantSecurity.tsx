@@ -35,8 +35,7 @@ import { Button, DialogContentText } from "@mui/material";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
-import { setErrorSnackMessage } from "../../../../actions";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
@@ -44,12 +43,12 @@ import { AddIcon, ConfirmModalIcon } from "../../../../icons";
 import Loader from "../../Common/Loader/Loader";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 import SectionTitle from "../../Common/SectionTitle";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantSecurity {
   classes: any;
   loadingTenant: boolean;
   tenant: ITenant | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -83,8 +82,8 @@ const TenantSecurity = ({
   classes,
   tenant,
   loadingTenant,
-  setErrorSnackMessage,
 }: ITenantSecurity) => {
+  const dispatch = useDispatch();
   const [isSending, setIsSending] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [enableAutoCert, setEnableAutoCert] = useState<boolean>(false);
@@ -116,9 +115,9 @@ const TenantSecurity = ({
         setMinioTLSCaCertificateSecrets(res.customCertificates.minioCAs || []);
       })
       .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
-  }, [tenant, setErrorSnackMessage]);
+  }, [tenant, dispatch]);
 
   useEffect(() => {
     if (tenant) {
@@ -187,7 +186,7 @@ const TenantSecurity = ({
         getTenantSecurityInfo();
       })
       .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setIsSending(false);
       });
   };
@@ -537,10 +536,6 @@ const mapState = (state: AppState) => ({
   tenant: state.tenants.tenantDetails.tenantInfo,
 });
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
+const connector = connect(mapState, null);
 
 export default withStyles(styles)(connector(TenantSecurity));

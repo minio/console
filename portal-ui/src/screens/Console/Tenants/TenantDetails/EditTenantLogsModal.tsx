@@ -26,9 +26,8 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Button, Grid } from "@mui/material";
 import api from "../../../../common/api";
-import { ITenant } from "../ListTenants/types";
+import { IKeyValue, ITenant } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { IKeyValue } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {
@@ -36,8 +35,10 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import { clearValidationError } from "../utils";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import { useDispatch } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IEditTenantLogsProps {
   tenant: ITenant;
@@ -101,6 +102,7 @@ const EditTenantLogsModal = ({
   dbCPURequest,
   dbMemRequest,
 }: IEditTenantLogsProps) => {
+  const dispatch = useDispatch();
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
     labels.length > 0 ? [...labels] : [{ key: "", value: "" }]
@@ -278,10 +280,12 @@ const EditTenantLogsModal = ({
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           if (!checkValid()) {
-            setModalErrorSnackMessage({
-              errorMessage: "Some fields have invalid values",
-              detailedError: "",
-            });
+            dispatch(
+              setModalErrorSnackMessage({
+                errorMessage: "Some fields have invalid values",
+                detailedError: "",
+              })
+            );
           } else {
             api
               .invoke(

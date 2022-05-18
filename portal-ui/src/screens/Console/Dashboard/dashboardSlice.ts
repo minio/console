@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,12 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { zoomState } from "./types";
-import {
-  ZoomActionTypes,
-  DASHBOARD_OPEN_ZOOM,
-  DASHBOARD_CLOSE_ZOOM,
-} from "./actions";
+import { IDashboardPanel } from "./Prometheus/types";
 
 export interface DashboardState {
   zoom: zoomState;
@@ -31,29 +28,20 @@ const initialState: DashboardState = {
     widgetRender: null,
   },
 };
+export const dashboardSlice = createSlice({
+  name: "dashboard",
+  initialState,
+  reducers: {
+    openZoomPage: (state, action: PayloadAction<IDashboardPanel>) => {
+      state.zoom.openZoom = true;
+      state.zoom.widgetRender = action.payload;
+    },
+    closeZoomPage: (state) => {
+      state.zoom.openZoom = false;
+      state.zoom.widgetRender = null;
+    },
+  },
+});
+export const { openZoomPage, closeZoomPage } = dashboardSlice.actions;
 
-export function dashboardReducer(
-  state = initialState,
-  action: ZoomActionTypes
-): DashboardState {
-  switch (action.type) {
-    case DASHBOARD_OPEN_ZOOM:
-      return {
-        ...state,
-        zoom: {
-          openZoom: true,
-          widgetRender: { ...action.widget },
-        },
-      };
-    case DASHBOARD_CLOSE_ZOOM:
-      return {
-        ...state,
-        zoom: {
-          openZoom: false,
-          widgetRender: null,
-        },
-      };
-    default:
-      return state;
-  }
-}
+export default dashboardSlice.reducer;

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,7 +25,6 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { isPageValid, updateAddField } from "../../actions";
 import { AppState } from "../../../../../store";
 import { clearValidationError } from "../../utils";
 import {
@@ -35,26 +34,12 @@ import {
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { ISecurityContext } from "../../types";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SectionH1 from "../../../Common/SectionH1";
+import { isPageValid, updateAddField } from "../../tenantsSlice";
 
 interface IConfigureProps {
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  storageClasses: any;
   classes: any;
-  logSearchEnabled: boolean;
-  logSearchVolumeSize: string;
-  logSearchSizeFactor: string;
-  logSearchSelectedStorageClass: string;
-  logSearchImage: string;
-  logSearchPostgresImage: string;
-  logSearchPostgresInitImage: string;
-  selectedStorageClass: string;
-  tenantSecurityContext: ISecurityContext;
-  logSearchSecurityContext: ISecurityContext;
-  logSearchPostgresSecurityContext: ISecurityContext;
 }
 
 const styles = (theme: Theme) =>
@@ -96,23 +81,54 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const ConfigLogSearch = ({
-  classes,
-  storageClasses,
-  logSearchEnabled,
-  logSearchVolumeSize,
-  logSearchSizeFactor,
-  logSearchImage,
-  logSearchPostgresImage,
-  logSearchPostgresInitImage,
-  logSearchSelectedStorageClass,
-  updateAddField,
-  isPageValid,
-  selectedStorageClass,
-  tenantSecurityContext,
-  logSearchSecurityContext,
-  logSearchPostgresSecurityContext,
-}: IConfigureProps) => {
+const ConfigLogSearch = ({ classes }: IConfigureProps) => {
+  const dispatch = useDispatch();
+
+  const storageClasses = useSelector(
+    (state: AppState) => state.tenants.createTenant.storageClasses
+  );
+  const logSearchEnabled = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchEnabled
+  );
+  const logSearchVolumeSize = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchVolumeSize
+  );
+  const logSearchSelectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass
+  );
+  const logSearchImage = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchImage
+  );
+  const logSearchPostgresImage = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchPostgresImage
+  );
+  const logSearchPostgresInitImage = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchPostgresInitImage
+  );
+  const selectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+  );
+  const tenantSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.tenantSecurityContext
+  );
+  const logSearchSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.logSearchSecurityContext
+  );
+  const logSearchPostgresSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure
+        .logSearchPostgresSecurityContext
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const configureSTClasses = [
@@ -123,9 +139,11 @@ const ConfigLogSearch = ({
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("configure", field, value);
+      dispatch(
+        updateAddField({ pageName: "configure", field: field, value: value })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   // Validation
@@ -209,14 +227,19 @@ const ConfigLogSearch = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isPageValid("configure", Object.keys(commonVal).length === 0);
+    dispatch(
+      isPageValid({
+        pageName: "configure",
+        valid: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
   }, [
     logSearchImage,
     logSearchPostgresImage,
     logSearchPostgresInitImage,
-    isPageValid,
+    dispatch,
     logSearchEnabled,
     logSearchSelectedStorageClass,
     logSearchVolumeSize,
@@ -533,35 +556,4 @@ const ConfigLogSearch = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  storageClasses: state.tenants.createTenant.storageClasses,
-  logSearchEnabled:
-    state.tenants.createTenant.fields.configure.logSearchEnabled,
-  logSearchVolumeSize:
-    state.tenants.createTenant.fields.configure.logSearchVolumeSize,
-  logSearchSizeFactor:
-    state.tenants.createTenant.fields.configure.logSearchSizeFactor,
-  logSearchSelectedStorageClass:
-    state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass,
-  logSearchImage: state.tenants.createTenant.fields.configure.logSearchImage,
-  logSearchPostgresImage:
-    state.tenants.createTenant.fields.configure.logSearchPostgresImage,
-  logSearchPostgresInitImage:
-    state.tenants.createTenant.fields.configure.logSearchPostgresInitImage,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  tenantSecurityContext:
-    state.tenants.createTenant.fields.configure.tenantSecurityContext,
-  logSearchSecurityContext:
-    state.tenants.createTenant.fields.configure.logSearchSecurityContext,
-  logSearchPostgresSecurityContext:
-    state.tenants.createTenant.fields.configure
-      .logSearchPostgresSecurityContext,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-});
-
-export default withStyles(styles)(connector(ConfigLogSearch));
+export default withStyles(styles)(ConfigLogSearch);

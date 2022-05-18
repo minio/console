@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,12 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import {
-  HEALTH_INFO_MESSAGE_RECEIVED,
-  HEALTH_INFO_RESET_MESSAGE,
-  HealthInfoActionTypes,
-} from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HealthInfoMessage } from "./types";
 
 export interface HealthInfoState {
@@ -29,22 +24,23 @@ const initialState: HealthInfoState = {
   message: {} as HealthInfoMessage,
 };
 
-export function healthInfoReducer(
-  state = initialState,
-  action: HealthInfoActionTypes
-): HealthInfoState {
-  switch (action.type) {
-    case HEALTH_INFO_MESSAGE_RECEIVED:
-      return {
-        ...state,
-        message: action.message,
-      };
-    case HEALTH_INFO_RESET_MESSAGE:
-      return {
-        ...state,
-        message: {} as HealthInfoMessage,
-      };
-    default:
-      return state;
-  }
-}
+export const healthInfoSlice = createSlice({
+  name: "trace",
+  initialState,
+  reducers: {
+    healthInfoMessageReceived: (
+      state,
+      action: PayloadAction<HealthInfoMessage>
+    ) => {
+      state.message = action.payload;
+    },
+    healthInfoResetMessage: (state) => {
+      state.message = {} as HealthInfoMessage;
+    },
+  },
+});
+
+export const { healthInfoMessageReceived, healthInfoResetMessage } =
+  healthInfoSlice.actions;
+
+export default healthInfoSlice.reducer;

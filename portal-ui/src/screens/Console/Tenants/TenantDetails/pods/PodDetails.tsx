@@ -23,7 +23,7 @@ import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Link } from "react-router-dom";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import PodLogs from "./PodLogs";
 import PodEvents from "./PodEvents";
 import PodDescribe from "./PodDescribe";
@@ -31,7 +31,6 @@ import PodDescribe from "./PodDescribe";
 interface IPodDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>

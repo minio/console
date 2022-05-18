@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -24,7 +24,7 @@ import { Box, Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
-import { serverNeedsRestart, setErrorSnackMessage } from "../../../../actions";
+
 import {
   fieldBasic,
   settingsCommon,
@@ -39,6 +39,10 @@ import {
 } from "../../Configurations/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ResetConfigurationModal from "./ResetConfigurationModal";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,8 +56,6 @@ const styles = (theme: Theme) =>
   });
 
 interface IAddNotificationEndpointProps {
-  serverNeedsRestart: typeof serverNeedsRestart;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   selectedConfiguration: IConfigurationElement;
   classes: any;
   history: any;
@@ -61,13 +63,12 @@ interface IAddNotificationEndpointProps {
 }
 
 const EditConfiguration = ({
-  serverNeedsRestart,
   selectedConfiguration,
-  setErrorSnackMessage,
   classes,
   history,
   className = "",
 }: IAddNotificationEndpointProps) => {
+  const dispatch = useDispatch();
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
@@ -90,14 +91,14 @@ const EditConfiguration = ({
           })
           .catch((err: ErrorResponseHandler) => {
             setLoadingConfig(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
 
         return;
       }
       setLoadingConfig(false);
     }
-  }, [loadingConfig, selectedConfiguration, setErrorSnackMessage]);
+  }, [loadingConfig, selectedConfiguration, dispatch]);
 
   useEffect(() => {
     if (saving) {
@@ -112,23 +113,16 @@ const EditConfiguration = ({
         )
         .then((res) => {
           setSaving(false);
-          serverNeedsRestart(res.restart);
+          dispatch(setServerNeedsRestart(res.restart));
 
           history.push("/settings");
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [
-    saving,
-    history,
-    serverNeedsRestart,
-    selectedConfiguration,
-    valuesObj,
-    setErrorSnackMessage,
-  ]);
+  }, [saving, history, dispatch, selectedConfiguration, valuesObj]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
@@ -145,7 +139,7 @@ const EditConfiguration = ({
 
   const continueReset = (restart: boolean) => {
     setResetConfigurationOpen(false);
-    serverNeedsRestart(restart);
+    dispatch(setServerNeedsRestart(restart));
     if (restart) {
       setLoadingConfig(true);
     }
@@ -235,11 +229,4 @@ const EditConfiguration = ({
   );
 };
 
-const mapDispatchToProps = {
-  serverNeedsRestart,
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(withStyles(styles)(EditConfiguration));
+export default withStyles(styles)(EditConfiguration);

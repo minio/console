@@ -17,10 +17,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../../../store";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../../../actions";
-import { setSelectedPool } from "../../../actions";
-import { IPool, ITenant } from "../../../ListTenants/types";
+import { useDispatch, useSelector } from "react-redux";
+
+import { IPool } from "../../../ListTenants/types";
 import Grid from "@mui/material/Grid";
 import { TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -36,15 +35,12 @@ import {
   tableStyles,
   tenantDetailsStyles,
 } from "../../../../Common/FormComponents/common/styleLibrary";
+import { setSelectedPool } from "../../../tenantsSlice";
 
 interface IPoolsSummary {
   classes: any;
-  tenant: ITenant | null;
-  loadingTenant: boolean;
   history: any;
   setPoolDetailsView: () => void;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setSelectedPool: typeof setSelectedPool;
 }
 
 const styles = (theme: Theme) =>
@@ -57,12 +53,18 @@ const styles = (theme: Theme) =>
 
 const PoolsListing = ({
   classes,
-  tenant,
-  loadingTenant,
-  setSelectedPool,
   history,
   setPoolDetailsView,
 }: IPoolsSummary) => {
+  const dispatch = useDispatch();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+  );
+  const tenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.tenantInfo
+  );
+
   const [pools, setPools] = useState<IPool[]>([]);
   const [filter, setFilter] = useState<string>("");
 
@@ -85,7 +87,7 @@ const PoolsListing = ({
     {
       type: "view",
       onClick: (selectedValue: IPool) => {
-        setSelectedPool(selectedValue.name);
+        dispatch(setSelectedPool(selectedValue.name));
         setPoolDetailsView();
       },
     },
@@ -148,15 +150,4 @@ const PoolsListing = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  tenant: state.tenants.tenantDetails.tenantInfo,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  setSelectedPool,
-});
-
-export default withStyles(styles)(connector(PoolsListing));
+export default withStyles(styles)(PoolsListing);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,13 +26,14 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { ChangeAccessPolicyIcon } from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,7 +60,6 @@ interface IServiceAccountPolicyProps {
   open: boolean;
   selectedAccessKey: string | null;
   closeModalAndRefresh: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const ServiceAccountPolicy = ({
@@ -67,8 +67,8 @@ const ServiceAccountPolicy = ({
   open,
   selectedAccessKey,
   closeModalAndRefresh,
-  setModalErrorSnackMessage,
 }: IServiceAccountPolicyProps) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   useEffect(() => {
@@ -86,10 +86,10 @@ const ServiceAccountPolicy = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     }
-  }, [loading, setLoading, setModalErrorSnackMessage, selectedAccessKey]);
+  }, [loading, setLoading, dispatch, selectedAccessKey]);
 
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
@@ -105,7 +105,7 @@ const ServiceAccountPolicy = ({
         closeModalAndRefresh();
       })
       .catch((err: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -163,8 +163,4 @@ const ServiceAccountPolicy = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(ServiceAccountPolicy));
+export default withStyles(styles)(ServiceAccountPolicy);

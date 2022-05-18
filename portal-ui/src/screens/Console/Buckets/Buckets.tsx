@@ -17,9 +17,7 @@
 import React, { Suspense } from "react";
 import history from "../../../history";
 import { Redirect, Route, Router, Switch, withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { AppState } from "../../../store";
-import { setMenuOpen } from "../../../actions";
+
 import NotFoundPage from "../../NotFoundPage";
 import LoadingComponent from "../../../common/LoadingComponent";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -30,12 +28,6 @@ const BrowserHandler = React.lazy(
   () => import("./BucketDetails/BrowserHandler")
 );
 const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket"));
-
-const mapState = (state: AppState) => ({
-  open: state.system.sidebarOpen,
-});
-
-const connector = connect(mapState, { setMenuOpen });
 
 const Buckets = () => {
   return (
@@ -105,4 +97,4 @@ const Buckets = () => {
   );
 };
 
-export default withRouter(connector(Buckets));
+export default withRouter(Buckets);

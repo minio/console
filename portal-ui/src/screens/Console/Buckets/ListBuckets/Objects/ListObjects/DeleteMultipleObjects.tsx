@@ -15,21 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import useApi from "../../../../Common/Hooks/useApi";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedObjects: string[];
   selectedBucket: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
+
   versioning: boolean;
 }
 
@@ -38,11 +39,13 @@ const DeleteObject = ({
   deleteOpen,
   selectedBucket,
   selectedObjects,
-  setErrorSnackMessage,
+
   versioning,
 }: IDeleteObjectProps) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
   const [deleteVersions, setDeleteVersions] = useState<boolean>(false);
 
@@ -111,10 +114,4 @@ const DeleteObject = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteObject);
+export default DeleteObject;

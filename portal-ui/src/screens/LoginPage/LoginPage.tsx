@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Box,
   InputAdornment,
@@ -30,8 +30,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { ILoginDetails, loginStrategyType } from "./types";
-import { SystemState } from "../../types";
-import { setErrorSnackMessage, userLoggedIn } from "../../actions";
 import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
 import history from "../../history";
@@ -53,6 +51,7 @@ import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
+import { setErrorSnackMessage, userLogged } from "../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -280,18 +279,10 @@ function LoginField(props: TextFieldProps) {
   );
 }
 
-const mapState = (state: SystemState) => ({
-  loggedIn: state.loggedIn,
-});
-
-const connector = connect(mapState, { userLoggedIn, setErrorSnackMessage });
-
 // The inferred type will look like:
 // {isOn: boolean, toggleOn: () => void}
 
 interface ILoginProps {
-  userLoggedIn: typeof userLoggedIn;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
@@ -303,11 +294,9 @@ interface LoginStrategyPayload {
   [key: string]: any;
 }
 
-const Login = ({
-  classes,
-  userLoggedIn,
-  setErrorSnackMessage,
-}: ILoginProps) => {
+const Login = ({ classes }: ILoginProps) => {
+  const dispatch = useDispatch();
+
   const [accessKey, setAccessKey] = useState<string>("");
   const [jwt, setJwt] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -346,7 +335,7 @@ const Login = ({
       )
       .then(() => {
         // We set the state in redux
-        userLoggedIn(true);
+        dispatch(userLogged(true));
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
           localStorage.setItem("userLoggedIn", accessKey);
         }
@@ -362,7 +351,7 @@ const Login = ({
       })
       .catch((err) => {
         setLoginSending(false);
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
   };
 
@@ -375,11 +364,11 @@ const Login = ({
           setLoadingFetchConfiguration(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoadingFetchConfiguration(false);
         });
     }
-  }, [loadingFetchConfiguration, setErrorSnackMessage]);
+  }, [loadingFetchConfiguration, dispatch]);
 
   useEffect(() => {
     if (loadingVersion) {
@@ -629,6 +618,7 @@ const Login = ({
           }}
         >
           <Grid
+            item
             xs={12}
             style={{
               background:
@@ -654,6 +644,7 @@ const Login = ({
             </Box>
           </Grid>
           <Grid
+            item
             xs={12}
             style={{
               backgroundColor: "white",
@@ -754,4 +745,4 @@ const Login = ({
   );
 };
 
-export default connector(withStyles(styles)(Login));
+export default withStyles(styles)(Login);

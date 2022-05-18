@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,17 +29,17 @@ import {
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { PolicyList } from "./types";
-import { setModalErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string[];
   setSelectedPolicy: any;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -77,8 +77,8 @@ const PolicySelectors = ({
   classes,
   selectedPolicy = [],
   setSelectedPolicy,
-  setModalErrorSnackMessage,
 }: ISelectPolicyProps) => {
+  const dispatch = useDispatch();
   // Local State
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
@@ -96,9 +96,9 @@ const PolicySelectors = ({
       })
       .catch((err: ErrorResponseHandler) => {
         isLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
-  }, [setModalErrorSnackMessage]);
+  }, [dispatch]);
 
   //Effects
   useEffect(() => {
@@ -174,8 +174,4 @@ const PolicySelectors = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(PolicySelectors));
+export default withStyles(styles)(PolicySelectors);

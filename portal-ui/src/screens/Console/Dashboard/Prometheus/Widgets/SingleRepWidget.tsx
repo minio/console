@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../../actions";
+import { connect, useDispatch } from "react-redux";
+
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -25,6 +25,7 @@ import api from "../../../../../common/api";
 import DashboardItemBox from "../../DashboardItemBox";
 import BucketsCountItem from "./BucketsCountItem";
 import ObjectsCountItem from "./ObjectsCountItem";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface ISingleRepWidget {
   title: string;
@@ -32,7 +33,7 @@ interface ISingleRepWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-  displayErrorMessage: any;
+
   color?: string;
   fillColor?: string;
   apiPrefix: string;
@@ -44,9 +45,10 @@ const SingleRepWidget = ({
   timeStart,
   timeEnd,
   propLoading,
-  displayErrorMessage,
+
   apiPrefix,
 }: ISingleRepWidget) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
 
@@ -83,11 +85,11 @@ const SingleRepWidget = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, panelItem, timeEnd, timeStart, dispatch, apiPrefix]);
 
   let repNumber = "";
 
@@ -132,7 +134,7 @@ const SingleRepWidget = ({
 };
 
 const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
+  setErrorSnackMessage: setErrorSnackMessage,
 });
 
 export default connector(SingleRepWidget);

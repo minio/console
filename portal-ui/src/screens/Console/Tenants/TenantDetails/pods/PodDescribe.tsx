@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -37,11 +36,12 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
-import { setErrorSnackMessage } from "../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
-import { AppState } from "../../../../../store";
 import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../../../../../store";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPodEventsProps {
   classes: any;
@@ -49,8 +49,6 @@ interface IPodEventsProps {
   namespace: string;
   podName: string;
   propLoading: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  loadingTenant: boolean;
 }
 
 interface Annotation {
@@ -90,7 +88,7 @@ interface Container {
   name: string;
   ports: string[];
   ready: boolean;
-  state: State
+  state: State;
 }
 
 interface Label {
@@ -105,7 +103,7 @@ interface Toleration {
   tolerationSeconds: number;
 }
 
-interface VolumePVC{
+interface VolumePVC {
   claimName: string;
 }
 
@@ -168,7 +166,6 @@ interface IPodDescribeTableProps {
   items: any[];
 }
 
-
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
@@ -192,104 +189,130 @@ const twoColCssGridLayoutConfig = {
 const HeaderSection = ({ title }: { title: string }) => {
   return (
     <Box
-
       sx={{
         borderBottom: "1px solid #eaeaea",
         margin: 0,
         marginBottom: "20px",
       }}
-      >
+    >
       <h3>{title}</h3>
     </Box>
-    
   );
 };
 
-const PodDescribeSummary = ({describeInfo}: IPodDescribeSummaryProps) => {
+const PodDescribeSummary = ({ describeInfo }: IPodDescribeSummaryProps) => {
   return (
     <React.Fragment>
       <HeaderSection title={"Summary"} />
-        <Box sx={{ ...twoColCssGridLayoutConfig }}>
-          <LabelValuePair label={"Name"} value={describeInfo.name} />
-          <LabelValuePair label={"Namespace"} value={describeInfo.namespace} />
-          <LabelValuePair label={"Node"} value={describeInfo.nodeName} />
-          <LabelValuePair label={"Start time"} value={describeInfo.startTime} />
-          <LabelValuePair label={"Status"} value={describeInfo.phase} />
-          <LabelValuePair label={"QoS Class"} value={describeInfo.qosClass} />
-          <LabelValuePair label={"IP"} value={describeInfo.podIP} />
-        </Box>
+      <Box sx={{ ...twoColCssGridLayoutConfig }}>
+        <LabelValuePair label={"Name"} value={describeInfo.name} />
+        <LabelValuePair label={"Namespace"} value={describeInfo.namespace} />
+        <LabelValuePair label={"Node"} value={describeInfo.nodeName} />
+        <LabelValuePair label={"Start time"} value={describeInfo.startTime} />
+        <LabelValuePair label={"Status"} value={describeInfo.phase} />
+        <LabelValuePair label={"QoS Class"} value={describeInfo.qosClass} />
+        <LabelValuePair label={"IP"} value={describeInfo.podIP} />
+      </Box>
     </React.Fragment>
   );
 };
 
-const PodDescribeAnnotations = ({annotations}: IPodDescribeAnnotationsProps) => {
+const PodDescribeAnnotations = ({
+  annotations,
+}: IPodDescribeAnnotationsProps) => {
   return (
     <React.Fragment>
       <HeaderSection title={"Annotations"} />
-        <Box>
-          {annotations.map((annotation, index) => (
-            <Chip style={{ margin: "0.5%" }} label={`${annotation.key}: ${annotation.value}`} key={index} />
-          ))}
-        </Box>
+      <Box>
+        {annotations.map((annotation, index) => (
+          <Chip
+            style={{ margin: "0.5%" }}
+            label={`${annotation.key}: ${annotation.value}`}
+            key={index}
+          />
+        ))}
+      </Box>
     </React.Fragment>
   );
 };
 
-const PodDescribeLabels = ({labels}: IPodDescribeLabelsProps) => {
+const PodDescribeLabels = ({ labels }: IPodDescribeLabelsProps) => {
   return (
     <React.Fragment>
       <HeaderSection title={"Labels"} />
-        <Box>
-          {labels.map((label, index) => (
-            <Chip style={{ margin: "0.5%" }} label={`${label.key}: ${label.value}`} key={index} />
-          ))}
-        </Box>
+      <Box>
+        {labels.map((label, index) => (
+          <Chip
+            style={{ margin: "0.5%" }}
+            label={`${label.key}: ${label.value}`}
+            key={index}
+          />
+        ))}
+      </Box>
     </React.Fragment>
   );
 };
 
-
-const PodDescribeConditions = ({conditions}: IPodDescribeConditionsProps) => {
-  return <PodDescribeTable
+const PodDescribeConditions = ({ conditions }: IPodDescribeConditionsProps) => {
+  return (
+    <PodDescribeTable
       title="Conditions"
       columns={["type", "status"]}
       columnsLabels={["Type", "Status"]}
       items={conditions}
-    />;
+    />
+  );
 };
 
-const PodDescribeTolerations = ({tolerations}: IPodDescribeTolerationsProps) => {
-  return <PodDescribeTable
+const PodDescribeTolerations = ({
+  tolerations,
+}: IPodDescribeTolerationsProps) => {
+  return (
+    <PodDescribeTable
       title="Tolerations"
       columns={["effect", "key", "operator", "tolerationSeconds"]}
       columnsLabels={["Effect", "Key", "Operator", "Seconds of toleration"]}
       items={tolerations}
-    />;
+    />
+  );
 };
 
-const PodDescribeVolumes = ({volumes}: IPodDescribeVolumesProps) => {
+const PodDescribeVolumes = ({ volumes }: IPodDescribeVolumesProps) => {
   return (
     <React.Fragment>
-        {volumes.map((volume, index) => (
-          <React.Fragment key={index}>
-            <HeaderSection title={`Volume ${volume.name}`} />
-            <Box sx={{ ...twoColCssGridLayoutConfig }}>
-              {volume.pvc && (
-                <React.Fragment>
-                  <LabelValuePair label={"Type"} value="Persistant Volume Claim" />
-                  <LabelValuePair label={"Claim Name"} value={volume.pvc.claimName} />
-                </React.Fragment>
-              )}
-              {/* TODO Add component to display projected data (Maybe change API response) */}
-              {volume.projected && <LabelValuePair label={"Type"} value="Projected" />}
-            </Box>
-          </React.Fragment>
-        ))}          
+      {volumes.map((volume, index) => (
+        <React.Fragment key={index}>
+          <HeaderSection title={`Volume ${volume.name}`} />
+          <Box sx={{ ...twoColCssGridLayoutConfig }}>
+            {volume.pvc && (
+              <React.Fragment>
+                <LabelValuePair
+                  label={"Type"}
+                  value="Persistant Volume Claim"
+                />
+                <LabelValuePair
+                  label={"Claim Name"}
+                  value={volume.pvc.claimName}
+                />
+              </React.Fragment>
+            )}
+            {/* TODO Add component to display projected data (Maybe change API response) */}
+            {volume.projected && (
+              <LabelValuePair label={"Type"} value="Projected" />
+            )}
+          </Box>
+        </React.Fragment>
+      ))}
     </React.Fragment>
   );
 };
 
-const PodDescribeTable = ({title, items, columns, columnsLabels}: IPodDescribeTableProps) => {
+const PodDescribeTable = ({
+  title,
+  items,
+  columns,
+  columnsLabels,
+}: IPodDescribeTableProps) => {
   return (
     <React.Fragment>
       <HeaderSection title={title} />
@@ -298,13 +321,17 @@ const PodDescribeTable = ({title, items, columns, columnsLabels}: IPodDescribeTa
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow>
-                {columnsLabels.map((label, index) => <TableCell key={index}>{label}</TableCell> )}
+                {columnsLabels.map((label, index) => (
+                  <TableCell key={index}>{label}</TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((item, i) => (
                 <TableRow key={i}>
-                  {columns.map((column, j) => <TableCell key={j}>{item[column]}</TableCell> )}
+                  {columns.map((column, j) => (
+                    <TableCell key={j}>{item[column]}</TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
@@ -315,45 +342,60 @@ const PodDescribeTable = ({title, items, columns, columnsLabels}: IPodDescribeTa
   );
 };
 
-
-const PodDescribeContainers = ({containers}: IPodDescribeContainersProps) => {
+const PodDescribeContainers = ({ containers }: IPodDescribeContainersProps) => {
   return (
     <React.Fragment>
-        {containers.map((container, index) => (
-          <React.Fragment key={index}>
-            <HeaderSection title={`Container ${container.name}`} />
-            <Box style={{ wordBreak: "break-all" }} sx={{ ...twoColCssGridLayoutConfig }} >
-              <LabelValuePair label={"Image"} value={container.image} />
-              <LabelValuePair label={"Ready"} value={`${container.ready}`} />
-              <LabelValuePair label={"Ports"} value={container.ports.join(", ")} />
-              <LabelValuePair label={"Host Ports"} value={container.hostPorts.join(", ")} />
-              <LabelValuePair label={"Arguments"} value={container.args.join(", ")} />
-              <LabelValuePair label={"Started"} value={container.state.started} />
-              <LabelValuePair label={"State"} value={container.state.state} />
-            </Box>
-            <Box style={{ wordBreak: "break-all" }} sx={{ ...twoColCssGridLayoutConfig }} >
-              <LabelValuePair label={"Image ID"} value={container.imageID} />
-              <LabelValuePair label={"Container ID"} value={container.containerID} />
-            </Box>
-            <PodDescribeTable
-              title="Mounts"
-              columns={["name", "mountPath"]}
-              columnsLabels={["Name", "Mount Path"]}
-              items={container.mounts}
+      {containers.map((container, index) => (
+        <React.Fragment key={index}>
+          <HeaderSection title={`Container ${container.name}`} />
+          <Box
+            style={{ wordBreak: "break-all" }}
+            sx={{ ...twoColCssGridLayoutConfig }}
+          >
+            <LabelValuePair label={"Image"} value={container.image} />
+            <LabelValuePair label={"Ready"} value={`${container.ready}`} />
+            <LabelValuePair
+              label={"Ports"}
+              value={container.ports.join(", ")}
             />
-            <PodDescribeTable
-              title="Environment Variables"
-              columns={["key", "value"]}
-              columnsLabels={["Key", "Value"]}
-              items={container.environmentVariables}
+            <LabelValuePair
+              label={"Host Ports"}
+              value={container.hostPorts.join(", ")}
             />
-          </React.Fragment>
-
-        ))}
+            <LabelValuePair
+              label={"Arguments"}
+              value={container.args.join(", ")}
+            />
+            <LabelValuePair label={"Started"} value={container.state.started} />
+            <LabelValuePair label={"State"} value={container.state.state} />
+          </Box>
+          <Box
+            style={{ wordBreak: "break-all" }}
+            sx={{ ...twoColCssGridLayoutConfig }}
+          >
+            <LabelValuePair label={"Image ID"} value={container.imageID} />
+            <LabelValuePair
+              label={"Container ID"}
+              value={container.containerID}
+            />
+          </Box>
+          <PodDescribeTable
+            title="Mounts"
+            columns={["name", "mountPath"]}
+            columnsLabels={["Name", "Mount Path"]}
+            items={container.mounts}
+          />
+          <PodDescribeTable
+            title="Environment Variables"
+            columns={["key", "value"]}
+            columnsLabels={["Key", "Value"]}
+            items={container.environmentVariables}
+          />
+        </React.Fragment>
+      ))}
     </React.Fragment>
   );
 };
-
 
 const PodDescribe = ({
   classes,
@@ -361,9 +403,12 @@ const PodDescribe = ({
   namespace,
   podName,
   propLoading,
-  setErrorSnackMessage,
-  loadingTenant,
 }: IPodEventsProps) => {
+  const dispatch = useDispatch();
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+  );
+
   const [describeInfo, setDescribeInfo] = useState<DescribeResponse>();
   const [loading, setLoading] = useState<boolean>(true);
   const [curTab, setCurTab] = useState<number>(0);
@@ -392,36 +437,37 @@ const PodDescribe = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, podName, namespace, tenant, setErrorSnackMessage]);
+  }, [loading, podName, namespace, tenant, dispatch]);
 
   const renderTabComponent = (index: number, info: DescribeResponse) => {
     switch (index) {
       case 0:
-        return <PodDescribeSummary describeInfo={info} />
+        return <PodDescribeSummary describeInfo={info} />;
       case 1:
-        return <PodDescribeAnnotations annotations={info.annotations} />
+        return <PodDescribeAnnotations annotations={info.annotations} />;
       case 2:
-        return <PodDescribeLabels labels={info.labels} />
+        return <PodDescribeLabels labels={info.labels} />;
       case 3:
-        return <PodDescribeConditions conditions={info.conditions} />
+        return <PodDescribeConditions conditions={info.conditions} />;
       case 4:
-        return <PodDescribeTolerations tolerations={info.tolerations} />
+        return <PodDescribeTolerations tolerations={info.tolerations} />;
       case 5:
-        return <PodDescribeVolumes volumes={info.volumes} />
+        return <PodDescribeVolumes volumes={info.volumes} />;
       case 6:
-        return <PodDescribeContainers containers={info.containers} />
+        return <PodDescribeContainers containers={info.containers} />;
       default:
         break;
     }
   };
   return (
     <React.Fragment>
-      {describeInfo && (<Grid item xs={12}>
-        <Tabs
+      {describeInfo && (
+        <Grid item xs={12}>
+          <Tabs
             value={curTab}
             onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
               setCurTab(newValue);
@@ -430,7 +476,8 @@ const PodDescribe = ({
             textColor="primary"
             aria-label="cluster-tabs"
             variant="scrollable"
-            scrollButtons="auto">
+            scrollButtons="auto"
+          >
             <Tab label="Summary" />
             <Tab label="Annotations" />
             <Tab label="Labels" />
@@ -438,17 +485,12 @@ const PodDescribe = ({
             <Tab label="Tolerations" />
             <Tab label="Volumes" />
             <Tab label="Containers" />
-        </Tabs>
-        {renderTabComponent(curTab, describeInfo)}
-      </Grid>)}
+          </Tabs>
+          {renderTabComponent(curTab, describeInfo)}
+        </Grid>
+      )}
     </React.Fragment>
   );
 };
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-});
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
 
-export default withStyles(styles)(connector(PodDescribe));
+export default withStyles(styles)(PodDescribe);

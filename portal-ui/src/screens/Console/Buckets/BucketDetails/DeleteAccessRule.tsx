@@ -20,19 +20,12 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { setErrorSnackMessage } from "../../../../actions";
-import { AppState } from "../../../../store";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
-
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-});
-
-const connector = connect(mapState, { setErrorSnackMessage });
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeleteAccessRule {
   modalOpen: boolean;
@@ -52,8 +45,10 @@ const DeleteAccessRule = ({
   bucket,
   toDelete,
 }: IDeleteAccessRule) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => onClose();
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
@@ -81,4 +76,4 @@ const DeleteAccessRule = ({
   );
 };
 
-export default withStyles(styles)(connector(DeleteAccessRule));
+export default withStyles(styles)(DeleteAccessRule);

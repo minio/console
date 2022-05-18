@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
-import { connect } from "react-redux";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -36,7 +35,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import { LifeCycleItem } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { LifecycleConfigIcon } from "../../../../icons";
@@ -52,6 +51,8 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import { useDispatch } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -85,7 +86,6 @@ interface IAddUserContentProps {
   selectedBucket: string;
   lifecycleRule: LifeCycleItem;
   open: boolean;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const EditLifecycleConfiguration = ({
@@ -94,8 +94,8 @@ const EditLifecycleConfiguration = ({
   selectedBucket,
   lifecycleRule,
   open,
-  setModalErrorSnackMessage,
 }: IAddUserContentProps) => {
+  const dispatch = useDispatch();
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [tags, setTags] = useState<string>("");
@@ -321,7 +321,7 @@ const EditLifecycleConfiguration = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     }
   };
@@ -571,10 +571,4 @@ const EditLifecycleConfiguration = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(EditLifecycleConfiguration));
+export default withStyles(styles)(EditLifecycleConfiguration);

@@ -21,17 +21,18 @@ import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import api from "../../../../../common/api";
 import { IEvent } from "../../ListTenants/types";
 import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import EventsList from "../events/EventsList";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPVCDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -43,11 +44,8 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantVolumes = ({
-  classes,
-  match,
-  setErrorSnackMessage,
-}: IPVCDetailsProps) => {
+const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const tenantNamespace = match.params["tenantNamespace"];
   const tenantName = match.params["tenantName"];
@@ -71,11 +69,11 @@ const TenantVolumes = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, PVCName, tenantNamespace, tenantName, setErrorSnackMessage]);
+  }, [loading, PVCName, tenantNamespace, tenantName, dispatch]);
 
   return (
     <Fragment>

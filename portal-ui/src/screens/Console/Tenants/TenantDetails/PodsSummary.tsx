@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -26,22 +26,20 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { niceDays } from "../../../../common/utils";
 import { IPodListElement } from "../ListTenants/types";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { AppState } from "../../../../store";
-import { setTenantDetailsLoad } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "../../../../icons/SearchIcon";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IPodsSummary {
   classes: any;
   match: any;
   history: any;
-  loadingTenant: boolean;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -51,12 +49,13 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PodsSummary = ({
-  classes,
-  match,
-  history,
-  loadingTenant,
-}: IPodsSummary) => {
+const PodsSummary = ({ classes, match, history }: IPodsSummary) => {
+  const dispatch = useDispatch();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+  );
+
   const [pods, setPods] = useState<IPodListElement[]>([]);
   const [loadingPods, setLoadingPods] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -117,13 +116,15 @@ const PodsSummary = ({
           setLoadingPods(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage({
-            errorMessage: "Error loading pods",
-            detailedError: err.detailedError,
-          });
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Error loading pods",
+              detailedError: err.detailedError,
+            })
+          );
         });
     }
-  }, [loadingPods, tenantName, tenantNamespace]);
+  }, [loadingPods, tenantName, tenantNamespace, dispatch]);
 
   return (
     <Fragment>
@@ -182,12 +183,4 @@ const PodsSummary = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(PodsSummary));
+export default withStyles(styles)(PodsSummary);

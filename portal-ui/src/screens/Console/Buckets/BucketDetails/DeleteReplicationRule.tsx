@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
@@ -25,6 +25,7 @@ import { ConfirmDeleteIcon } from "../../../../icons";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import WarningMessage from "../../Common/WarningMessage/WarningMessage";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeleteReplicationProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -35,7 +36,6 @@ interface IDeleteReplicationProps {
   remainingRules: number;
   allSelected: boolean;
   deleteSelectedRules?: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteReplicationRule = ({
@@ -46,13 +46,14 @@ const DeleteReplicationRule = ({
   rulesToDelete,
   remainingRules,
   allSelected,
-  setErrorSnackMessage,
   deleteSelectedRules = false,
 }: IDeleteReplicationProps) => {
+  const dispatch = useDispatch();
   const [confirmationText, setConfirmationText] = useState<string>("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -135,10 +136,4 @@ const DeleteReplicationRule = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteReplicationRule);
+export default DeleteReplicationRule;

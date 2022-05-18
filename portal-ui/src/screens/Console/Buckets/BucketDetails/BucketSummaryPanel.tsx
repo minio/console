@@ -15,17 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Grid } from "@mui/material";
 import get from "lodash/get";
 import { AppState } from "../../../../store";
-import { setErrorSnackMessage } from "../../../../actions";
 import {
   BucketEncryptionInfo,
-  BucketInfo,
   BucketObjectLocking,
   BucketQuota,
   BucketReplication,
@@ -41,7 +39,7 @@ import {
   IRetentionConfig,
 } from "../../../../common/types";
 import api from "../../../../common/api";
-import { setBucketDetailsLoad } from "../actions";
+
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -56,6 +54,8 @@ import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
 import ReportedUsage from "./SummaryItems/ReportedUsage";
 import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";
 import SectionTitle from "../../Common/SectionTitle";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setBucketDetailsLoad } from "../bucketsSlice";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -75,16 +75,6 @@ const BucketTags = withSuspense(
 
 const EnableQuota = withSuspense(React.lazy(() => import("./EnableQuota")));
 
-interface IBucketSummaryProps {
-  classes: any;
-  match: any;
-  distributedSetup: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
-  setBucketDetailsLoad: typeof setBucketDetailsLoad;
-}
-
 const styles = (theme: Theme) =>
   createStyles({
     ...spacingUtils,
@@ -98,15 +88,25 @@ const twoColCssGridLayoutConfig = {
   gap: 2,
 };
 
-const BucketSummary = ({
-  classes,
-  match,
-  distributedSetup,
-  setErrorSnackMessage,
-  loadingBucket,
-  bucketInfo,
-  setBucketDetailsLoad,
-}: IBucketSummaryProps) => {
+interface IBucketSummaryProps {
+  classes: any;
+  match: any;
+}
+
+const BucketSummary = ({ classes, match }: IBucketSummaryProps) => {
+  const dispatch = useDispatch();
+
+  const loadingBucket = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.loadingBucket
+  );
+  const bucketInfo = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.bucketInfo
+  );
+
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
+
   const [encryptionCfg, setEncryptionCfg] =
     useState<BucketEncryptionInfo | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
@@ -207,11 +207,11 @@ const BucketSummary = ({
           setLoadingVersioning(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoadingVersioning(false);
         });
     }
-  }, [loadingVersioning, setErrorSnackMessage, bucketName, distributedSetup]);
+  }, [loadingVersioning, dispatch, bucketName, distributedSetup]);
 
   useEffect(() => {
     if (loadingQuota && distributedSetup) {
@@ -228,7 +228,7 @@ const BucketSummary = ({
             setLoadingQuota(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setQuotaEnabled(false);
             setLoadingQuota(false);
           });
@@ -240,7 +240,7 @@ const BucketSummary = ({
   }, [
     loadingQuota,
     setLoadingVersioning,
-    setErrorSnackMessage,
+    dispatch,
     bucketName,
     distributedSetup,
     displayGetBucketQuota,
@@ -256,7 +256,7 @@ const BucketSummary = ({
             setLoadingLocking(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setLoadingLocking(false);
           });
       } else {
@@ -265,7 +265,7 @@ const BucketSummary = ({
     }
   }, [
     loadingObjectLocking,
-    setErrorSnackMessage,
+    dispatch,
     bucketName,
     loadingVersioning,
     distributedSetup,
@@ -290,10 +290,10 @@ const BucketSummary = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoadingSize(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [loadingSize, setErrorSnackMessage, bucketName]);
+  }, [loadingSize, dispatch, bucketName]);
 
   useEffect(() => {
     if (loadingReplication && distributedSetup) {
@@ -305,11 +305,11 @@ const BucketSummary = ({
           setLoadingReplication(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoadingReplication(false);
         });
     }
-  }, [loadingReplication, setErrorSnackMessage, bucketName, distributedSetup]);
+  }, [loadingReplication, dispatch, bucketName, distributedSetup]);
 
   useEffect(() => {
     if (loadingRetention && hasObjectLocking) {
@@ -329,7 +329,7 @@ const BucketSummary = ({
   }, [loadingRetention, hasObjectLocking, bucketName]);
 
   const loadAllBucketData = () => {
-    setBucketDetailsLoad(true);
+    dispatch(setBucketDetailsLoad(true));
     setBucketLoading(true);
     setLoadingSize(true);
     setLoadingVersioning(true);
@@ -502,12 +502,7 @@ const BucketSummary = ({
                 <Box className={classes.spacerTop}>
                   <LabelValuePair
                     label={"Tags:"}
-                    value={
-                      <BucketTags
-                        setErrorSnackMessage={setErrorSnackMessage}
-                        bucketName={bucketName}
-                      />
-                    }
+                    value={<BucketTags bucketName={bucketName} />}
                   />
                 </Box>
                 <EditablePropertyItem
@@ -651,16 +646,4 @@ const BucketSummary = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  distributedSetup: state.system.distributedSetup,
-  loadingBucket: state.buckets.bucketDetails.loadingBucket,
-  bucketInfo: state.buckets.bucketDetails.bucketInfo,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  setBucketDetailsLoad,
-});
-
-export default withStyles(styles)(connector(BucketSummary));
+export default withStyles(styles)(BucketSummary);

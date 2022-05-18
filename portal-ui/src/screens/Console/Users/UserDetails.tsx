@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,10 +27,7 @@ import {
   TrashIcon,
   UsersIcon,
 } from "../../../icons";
-import {
-  setErrorSnackMessage,
-  setModalErrorSnackMessage,
-} from "../../../actions";
+
 import {
   actionsTray,
   containerForHeader,
@@ -57,6 +54,7 @@ import BackLink from "../../../common/BackLink";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -81,7 +79,6 @@ const styles = (theme: Theme) =>
 interface IUserDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 interface IGroupItem {
@@ -89,6 +86,8 @@ interface IGroupItem {
 }
 
 const UserDetails = ({ classes, match }: IUserDetailsProps) => {
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
@@ -144,9 +143,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
-  }, [userName]);
+  }, [userName, dispatch]);
 
   const saveRecord = (isEnabled: boolean) => {
     if (addLoading) {
@@ -163,7 +162,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -372,10 +371,4 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(UserDetails));
+export default withStyles(styles)(UserDetails);

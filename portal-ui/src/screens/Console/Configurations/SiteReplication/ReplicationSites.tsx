@@ -26,9 +26,7 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
 import useApi from "../../Common/Hooks/useApi";
-import { connect } from "react-redux";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
-import { ErrorResponseHandler } from "../../../../common/types";
+import { useDispatch } from "react-redux";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -38,6 +36,10 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,18 +51,15 @@ const styles = (theme: Theme) =>
 const ReplicationSites = ({
   sites,
   onDeleteSite,
-  setErrorSnackMessage,
-  setSnackBarMessage,
   onRefresh,
   classes,
 }: {
   sites: ReplicationSite[];
   onDeleteSite: (isAll: boolean, sites: string[]) => void;
-  setErrorSnackMessage: (err: ErrorResponseHandler) => void;
-  setSnackBarMessage: (msg: string) => void;
   onRefresh: () => void;
   classes: any;
 }) => {
+  const dispatch = useDispatch();
   const [deleteSiteKey, setIsDeleteSiteKey] = useState<string>("");
   const [editSite, setEditSite] = useState<any>(null);
   const [editEndPointName, setEditEndPointName] = useState<string>("");
@@ -69,17 +68,19 @@ const ReplicationSites = ({
     (res: any) => {
       if (res.success) {
         setEditSite(null);
-        setSnackBarMessage(res.status);
+        dispatch(setSnackBarMessage(res.status));
       } else {
-        setErrorSnackMessage({
-          errorMessage: "Error",
-          detailedError: res.status,
-        });
+        dispatch(
+          setErrorSnackMessage({
+            errorMessage: "Error",
+            detailedError: res.status,
+          })
+        );
       }
       onRefresh();
     },
     (err: any) => {
-      setErrorSnackMessage(err);
+      dispatch(setErrorSnackMessage(err));
       onRefresh();
     }
   );
@@ -353,8 +354,4 @@ const ReplicationSites = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-});
-export default connector(withStyles(styles)(ReplicationSites));
+export default withStyles(styles)(ReplicationSites);
