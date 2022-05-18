@@ -1234,11 +1234,11 @@ jobs:
 
       - uses: actions/cache@v2
         id: coverage-cache-unittest-operatorapi
-        name: Coverage Cache RestAPI
+        name: Coverage Cache unit test operatorAPI
         with:
           path: |
             ./operator-unittest/coverage/
-          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+          key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
 
   b-integration-tests:
     name: Integration Tests with Latest Distributed MinIO
