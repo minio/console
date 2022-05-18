@@ -1237,7 +1237,7 @@ jobs:
         name: Coverage Cache unit test operatorAPI
         with:
           path: |
-            ./operator-unittest/coverage/
+            ./operatorapi/coverage/
           key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
 
   b-integration-tests:
@@ -1408,7 +1408,7 @@ jobs:
         name: Coverage Cache RestAPI
         with:
           path: |
-            ./operator-unittest/coverage/
+            ./operatorapi/coverage/
           key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
 
       - uses: actions/cache@v2
@@ -1430,7 +1430,7 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out ../operator-unittest/coverage/coverage-unit-test-operatorapi.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out ../operatorapi/coverage/coverage-unit-test-operatorapi.out > all.out
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
