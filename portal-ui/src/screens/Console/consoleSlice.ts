@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,31 +14,36 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ISessionResponse } from "./types";
 
-export const SESSION_RESPONSE = "SESSION_RESPONSE";
-export const RESET_SESSION = "RESET_SESSION";
-
-interface SessionAction {
-  type: typeof SESSION_RESPONSE;
-  message: ISessionResponse;
+export interface ConsoleState {
+  session: ISessionResponse;
 }
 
-interface ResetSessionAction {
-  type: typeof RESET_SESSION;
-}
+const initialState: ConsoleState = {
+  session: {
+    operator: false,
+    status: "",
+    features: [],
+    distributedMode: false,
+    permissions: {},
+  },
+};
 
-export type SessionActionTypes = SessionAction | ResetSessionAction;
+export const consoleSlice = createSlice({
+  name: "console",
+  initialState,
+  reducers: {
+    saveSessionResponse: (state, action: PayloadAction<ISessionResponse>) => {
+      state.session = action.payload;
+    },
+    resetSession: (state) => {
+      state.session = initialState.session;
+    },
+  },
+});
 
-export function saveSessionResponse(message: ISessionResponse) {
-  return {
-    type: SESSION_RESPONSE,
-    message: message,
-  };
-}
+export const { saveSessionResponse, resetSession } = consoleSlice.actions;
 
-export function resetSession() {
-  return {
-    type: RESET_SESSION,
-  };
-}
+export default consoleSlice.reducer;

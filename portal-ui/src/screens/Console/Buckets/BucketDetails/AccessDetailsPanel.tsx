@@ -15,12 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Paper } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { AppState } from "../../../../store";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { TabPanel } from "../../../shared/tabs";
 import { Policy } from "../../Policies/types";
 import { ISessionResponse } from "../../types";
@@ -37,14 +37,15 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { tableStyles } from "../../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { encodeURLString } from "../../../../common/utils";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
@@ -52,7 +53,7 @@ const mapState = (state: AppState) => ({
   bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
-const connector = connect(mapState, { setErrorSnackMessage });
+const connector = connect(mapState, null);
 
 function a11yProps(index: any) {
   return {
@@ -63,7 +64,7 @@ function a11yProps(index: any) {
 
 interface IAccessDetailsProps {
   session: ISessionResponse;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
+
   classes: any;
   match: any;
   loadingBucket: boolean;
@@ -76,10 +77,11 @@ const styles = (theme: Theme) =>
   });
 const AccessDetails = ({
   match,
-  setErrorSnackMessage,
+
   loadingBucket,
   classes,
 }: IAccessDetailsProps) => {
+  const dispatch = useDispatch();
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
   const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
@@ -148,14 +150,14 @@ const AccessDetails = ({
             setLoadingUsers(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setLoadingUsers(false);
           });
       } else {
         setLoadingUsers(false);
       }
     }
-  }, [loadingUsers, setErrorSnackMessage, bucketName, displayUsersList]);
+  }, [loadingUsers, dispatch, bucketName, displayUsersList]);
 
   useEffect(() => {
     if (loadingPolicies) {
@@ -167,14 +169,14 @@ const AccessDetails = ({
             setLoadingPolicies(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setLoadingPolicies(false);
           });
       } else {
         setLoadingPolicies(false);
       }
     }
-  }, [loadingPolicies, setErrorSnackMessage, bucketName, displayPoliciesList]);
+  }, [loadingPolicies, dispatch, bucketName, displayPoliciesList]);
 
   return (
     <Fragment>

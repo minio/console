@@ -18,7 +18,6 @@ import React from "react";
 import { componentToUse } from "../widgetUtils";
 import MergedWidgets from "../MergedWidgets";
 import { IDashboardPanel } from "../types";
-import { setErrorSnackMessage } from "../../../../../actions";
 import EntityStateItemRenderer from "./EntityStateItemRenderer";
 import NetworkItem from "./NetworkItem";
 import DashboardItemBox from "../../DashboardItemBox";
@@ -29,14 +28,12 @@ const MergedWidgetsRenderer = ({
   timeEnd,
   loading,
   apiPrefix,
-  displayErrorMessage,
 }: {
   info: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
   loading: boolean;
   apiPrefix: string;
-  displayErrorMessage: typeof setErrorSnackMessage;
 }) => {
   const { mergedPanels = [], title = "", id } = info;
   const [leftPanel, rightPanel] = mergedPanels;
@@ -50,7 +47,6 @@ const MergedWidgetsRenderer = ({
             timeStart={timeStart}
             timeEnd={timeEnd}
             loading={loading}
-            displayErrorMessage={displayErrorMessage}
             apiPrefix={apiPrefix}
           />
         </DashboardItemBox>

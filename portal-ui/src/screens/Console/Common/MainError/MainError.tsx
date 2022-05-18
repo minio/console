@@ -14,19 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, useCallback } from "react";
-import { connect } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import get from "lodash/get";
 import { AppState } from "../../../../store";
-import { setErrorSnackMessage } from "../../../../actions";
-import { snackBarMessage } from "../../../../types";
 import { Box } from "@mui/material";
 import { AlertCloseIcon } from "../../../../icons";
 import { Portal } from "@mui/base";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IMainErrorProps {
-  snackBar: snackBarMessage;
-  displayErrorMessage: typeof setErrorSnackMessage;
   isModal?: boolean;
 }
 
@@ -40,11 +37,11 @@ const stopHideTimer = () => {
   clearInterval(timerI);
 };
 
-const MainError = ({
-  snackBar,
-  displayErrorMessage,
-  isModal = false,
-}: IMainErrorProps) => {
+const MainError = ({ isModal = false }: IMainErrorProps) => {
+  const dispatch = useDispatch();
+  const snackBar = useSelector((state: AppState) => {
+    return isModal ? state.system.modalSnackBar : state.system.snackBar;
+  });
   const [displayErrorMsg, setDisplayErrorMsg] = useState<boolean>(false);
 
   const closeErrorMessage = useCallback(() => {
@@ -53,10 +50,10 @@ const MainError = ({
 
   useEffect(() => {
     if (!displayErrorMsg) {
-      displayErrorMessage({ detailedError: "", errorMessage: "" });
+      dispatch(setErrorSnackMessage({ detailedError: "", errorMessage: "" }));
       clearInterval(timerI);
     }
-  }, [displayErrorMessage, displayErrorMsg]);
+  }, [dispatch, displayErrorMsg]);
 
   useEffect(() => {
     if (snackBar.message !== "" && snackBar.type === "error") {
@@ -162,16 +159,4 @@ const MainError = ({
   );
 };
 
-const mapState = (state: AppState, ownProps: any) => ({
-  snackBar: ownProps.isModal
-    ? state.system.modalSnackBar
-    : state.system.snackBar,
-});
-
-const mapDispatchToProps = {
-  displayErrorMessage: setErrorSnackMessage,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
-
-export default connector(MainError);
+export default MainError;

@@ -14,14 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface IDeleteSelectedVersionsProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -29,7 +30,6 @@ interface IDeleteSelectedVersionsProps {
   selectedVersions: string[];
   selectedObject: string;
   selectedBucket: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteObject = ({
@@ -38,8 +38,8 @@ const DeleteObject = ({
   selectedBucket,
   selectedVersions,
   selectedObject,
-  setErrorSnackMessage,
 }: IDeleteSelectedVersionsProps) => {
+  const dispatch = useDispatch();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const onClose = () => closeDeleteModalAndRefresh(false);
@@ -69,7 +69,7 @@ const DeleteObject = ({
             closeDeleteModalAndRefresh(true);
           })
           .catch((error: ErrorResponseHandler) => {
-            setErrorSnackMessage(error);
+            dispatch(setErrorSnackMessage(error));
             setDeleteLoading(false);
           });
       }
@@ -80,7 +80,7 @@ const DeleteObject = ({
     selectedBucket,
     selectedObject,
     selectedVersions,
-    setErrorSnackMessage,
+    dispatch,
   ]);
 
   if (!selectedVersions) {
@@ -106,10 +106,4 @@ const DeleteObject = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteObject);
+export default DeleteObject;

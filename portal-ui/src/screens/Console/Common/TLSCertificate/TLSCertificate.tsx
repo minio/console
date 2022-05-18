@@ -22,15 +22,15 @@ import { ICertificateInfo } from "../../Tenants/types";
 import LanguageIcon from "@mui/icons-material/Language";
 import Chip from "@mui/material/Chip";
 import {
-  Typography,
-  Divider,
   Box,
-  Grid,
   Container,
-  ListItemText,
+  Divider,
+  Grid,
   List,
   ListItem,
   ListItemAvatar,
+  ListItemText,
+  Typography,
 } from "@mui/material";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 import Moment from "react-moment";

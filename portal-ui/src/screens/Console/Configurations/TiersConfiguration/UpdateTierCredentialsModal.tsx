@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -26,7 +26,7 @@ import {
   formFieldStyles,
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
@@ -34,13 +34,13 @@ import { ITierElement } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { LockIcon } from "../../../../icons";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITierCredentialsModal {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => any;
   classes: any;
   tierData: ITierElement;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -57,8 +57,8 @@ const UpdateTierCredentialsModal = ({
   closeModalAndRefresh,
   classes,
   tierData,
-  setModalErrorSnackMessage,
 }: ITierCredentialsModal) => {
+  const dispatch = useDispatch();
   const [savingTiers, setSavingTiers] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -112,7 +112,7 @@ const UpdateTierCredentialsModal = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setSavingTiers(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     } else {
       setModalErrorSnackMessage({
@@ -235,8 +235,4 @@ const UpdateTierCredentialsModal = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(UpdateTierCredentialsModal));
+export default withStyles(styles)(UpdateTierCredentialsModal);

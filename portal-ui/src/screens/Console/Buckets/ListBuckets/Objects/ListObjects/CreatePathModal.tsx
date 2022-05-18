@@ -25,13 +25,14 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import history from "../../../../../../history";
 import { encodeURLString } from "../../../../../../common/utils";
-import { setModalErrorSnackMessage } from "../../../../../../actions";
+
 import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
 import { AppState } from "../../../../../../store";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface ICreatePath {
   classes: any;
@@ -41,7 +42,6 @@ interface ICreatePath {
   onClose: () => any;
   existingFiles: BucketObjectItem[];
   simplePath: string | null;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -55,11 +55,11 @@ const CreatePathModal = ({
   folderName,
   bucketName,
   onClose,
-  setModalErrorSnackMessage,
   classes,
   existingFiles,
   simplePath,
 }: ICreatePath) => {
+  const dispatch = useDispatch();
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState(bucketName);
@@ -89,10 +89,12 @@ const CreatePathModal = ({
       record.name === folderPath + pathUrl;
 
     if (existingFiles.findIndex(sharesName) !== -1) {
-      setModalErrorSnackMessage({
-        errorMessage: "Folder cannot have the same name as an existing file",
-        detailedError: "",
-      });
+      dispatch(
+        setModalErrorSnackMessage({
+          errorMessage: "Folder cannot have the same name as an existing file",
+          detailedError: "",
+        })
+      );
       return;
     }
 
@@ -191,10 +193,6 @@ const mapStateToProps = ({ objectBrowser }: AppState) => ({
   simplePath: objectBrowser.simplePath,
 });
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 
 export default connector(withStyles(styles)(CreatePathModal));

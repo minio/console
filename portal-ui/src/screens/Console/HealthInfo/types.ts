@@ -17,6 +17,7 @@
 export const DiagStatError = "error";
 export const DiagStatSuccess = "success";
 export const DiagStatInProgress = "inProgress";
+
 export interface HealthInfoMessage {
   timestamp: Date;
   error: string;
@@ -50,6 +51,7 @@ export interface drivePerfInfo {
   throughput: diskThroughput;
   error: string;
 }
+
 export interface diskLatency {
   avg_secs: number;
   percentile50_secs: number;
@@ -89,6 +91,7 @@ export interface netLatency {
   min_secs: number;
   max_secs: number;
 }
+
 export interface netThroughput {
   avg_bytes_per_sec: number;
   percentile50_bytes_per_sec: number;

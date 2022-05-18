@@ -17,21 +17,12 @@
 import React from "react";
 import history from "../../../history";
 import { Route, Router, Switch, withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { AppState } from "../../../store";
-import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 
 import ListUsers from "./ListUsers";
 import UserDetails from "./UserDetails";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import AddUserScreen from "./AddUserScreen";
-
-const mapState = (state: AppState) => ({
-  open: state.system.sidebarOpen,
-});
-
-const connector = connect(mapState, { setMenuOpen });
 
 const Users = () => {
   return (
@@ -46,4 +37,4 @@ const Users = () => {
   );
 };
 
-export default withRouter(connector(Users));
+export default withRouter(Users);

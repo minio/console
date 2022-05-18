@@ -15,17 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { deleteDialogStyles } from "../../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,7 +42,7 @@ interface IResetConfiguration {
   classes: any;
   configurationName: string;
   closeResetModalAndRefresh: (reloadConfiguration: boolean) => void;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
+
   resetOpen: boolean;
 }
 
@@ -49,9 +50,9 @@ const ResetConfigurationModal = ({
   classes,
   configurationName,
   closeResetModalAndRefresh,
-  setErrorSnackMessage,
   resetOpen,
 }: IResetConfiguration) => {
+  const dispatch = useDispatch();
   const [resetLoading, setResetLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -64,15 +65,10 @@ const ResetConfigurationModal = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setResetLoading(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [
-    closeResetModalAndRefresh,
-    configurationName,
-    resetLoading,
-    setErrorSnackMessage,
-  ]);
+  }, [closeResetModalAndRefresh, configurationName, resetLoading, dispatch]);
 
   const resetConfiguration = () => {
     setResetLoading(true);
@@ -106,10 +102,4 @@ const ResetConfigurationModal = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(ResetConfigurationModal));
+export default withStyles(styles)(ResetConfigurationModal);

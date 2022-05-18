@@ -20,12 +20,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { connect } from "react-redux";
 import {
-  Grid,
+  Button,
   FormControl,
+  Grid,
+  InputBase,
   MenuItem,
   Select,
-  InputBase,
-  Button,
 } from "@mui/material";
 
 import moment from "moment/moment";
@@ -42,9 +42,9 @@ import { wsProtocol } from "../../../../utils/wsUtils";
 import {
   actionsTray,
   containerForHeader,
+  inlineCheckboxes,
   logsCommon,
   searchField,
-  inlineCheckboxes,
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
@@ -110,6 +110,7 @@ interface ILogs {
   messages: LogMessage[];
   logsStarted: boolean;
 }
+
 var c: any = null;
 
 const ErrorLogs = ({

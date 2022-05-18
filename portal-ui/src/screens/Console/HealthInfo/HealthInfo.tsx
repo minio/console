@@ -20,8 +20,7 @@ import {
   w3cwebsocket as W3CWebSocket,
 } from "websocket";
 import { AppState } from "../../../store";
-import { connect } from "react-redux";
-import { healthInfoMessageReceived, healthInfoResetMessage } from "./actions";
+import { useDispatch, useSelector } from "react-redux";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -44,12 +43,17 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { Button, Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
+
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
 import HelpBox from "../../../common/HelpBox";
 import WarnIcon from "../../../icons/WarnIcon";
 import Loader from "../Common/Loader/Loader";
+import { setServerDiagStat } from "../../../systemSlice";
+import {
+  healthInfoMessageReceived,
+  healthInfoResetMessage,
+} from "./healthInfoSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -87,25 +91,18 @@ const styles = (theme: Theme) =>
 
 interface IHealthInfo {
   classes: any;
-  healthInfoMessageReceived: typeof healthInfoMessageReceived;
-  healthInfoResetMessage: typeof healthInfoResetMessage;
-  message: HealthInfoMessage;
   namespace: string;
   tenant: string;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  setServerDiagStat: typeof setServerDiagStat;
-  serverDiagnosticStatus: string;
 }
 
-const HealthInfo = ({
-  classes,
-  healthInfoMessageReceived,
-  healthInfoResetMessage,
-  message,
-  setSnackBarMessage,
-  setServerDiagStat,
-  serverDiagnosticStatus,
-}: IHealthInfo) => {
+const HealthInfo = ({ classes }: IHealthInfo) => {
+  const dispatch = useDispatch();
+
+  const message = useSelector((state: AppState) => state.healthInfo.message);
+
+  const serverDiagnosticStatus = useSelector(
+    (state: AppState) => state.system.serverDiagnosticStatus
+  );
   const [startDiagnostic, setStartDiagnostic] = useState(false);
   const [diagStarted, setDiagStarted] = useState<boolean>(false);
   const [downloadDisabled, setDownloadDisabled] = useState(true);
@@ -165,7 +162,7 @@ const HealthInfo = ({
 
   useEffect(() => {
     if (startDiagnostic) {
-      healthInfoResetMessage();
+      dispatch(healthInfoResetMessage());
       setDiagFileContent("");
       const url = new URL(window.location.toString());
       const isDev = process.env.NODE_ENV === "development";
@@ -193,7 +190,7 @@ const HealthInfo = ({
           setMessage(
             "Diagnostic started. Please do not refresh page during diagnosis."
           );
-          setServerDiagStat(DiagStatInProgress);
+          dispatch(setServerDiagStat(DiagStatInProgress));
         };
         c.onmessage = (message: IMessageEvent) => {
           let m: ReportMessage = JSON.parse(message.data.toString());
@@ -201,7 +198,7 @@ const HealthInfo = ({
             m.serverHealthInfo.timestamp = new Date(
               m.serverHealthInfo.timestamp.toString()
             );
-            healthInfoMessageReceived(m.serverHealthInfo);
+            dispatch(healthInfoMessageReceived(m.serverHealthInfo));
           }
           if (m.encoded !== "") {
             setDiagFileContent(m.encoded);
@@ -211,7 +208,7 @@ const HealthInfo = ({
           console.log("error closing websocket:", error.message);
           c.close(1000);
           clearInterval(interval);
-          setServerDiagStat(DiagStatError);
+          dispatch(setServerDiagStat(DiagStatError));
         };
         c.onclose = (event: ICloseEvent) => {
           clearInterval(interval);
@@ -223,12 +220,12 @@ const HealthInfo = ({
             // handle close with error
             console.log("connection closed by server with code:", event.code);
             setMessage("An error occurred while getting Diagnostic file.");
-            setServerDiagStat(DiagStatError);
+            dispatch(setServerDiagStat(DiagStatError));
           } else {
             console.log("connection closed by server");
 
             setMessage("Diagnostic file is ready to be downloaded.");
-            setServerDiagStat(DiagStatSuccess);
+            dispatch(setServerDiagStat(DiagStatSuccess));
           }
         };
       }
@@ -236,13 +233,7 @@ const HealthInfo = ({
       // reset start status
       setStartDiagnostic(false);
     }
-  }, [
-    healthInfoMessageReceived,
-    healthInfoResetMessage,
-    startDiagnostic,
-    setSnackBarMessage,
-    setServerDiagStat,
-  ]);
+  }, [startDiagnostic, dispatch]);
 
   return (
     <Fragment>
@@ -330,16 +321,4 @@ const HealthInfo = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  message: state.healthInfo.message,
-  serverDiagnosticStatus: state.system.serverDiagnosticStatus,
-});
-
-const connector = connect(mapState, {
-  healthInfoMessageReceived: healthInfoMessageReceived,
-  healthInfoResetMessage: healthInfoResetMessage,
-  setSnackBarMessage,
-  setServerDiagStat,
-});
-
-export default connector(withStyles(styles)(HealthInfo));
+export default withStyles(styles)(HealthInfo);

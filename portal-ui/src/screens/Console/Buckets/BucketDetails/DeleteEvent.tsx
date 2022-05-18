@@ -16,21 +16,21 @@
 
 import React from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { BucketEvent } from "../types";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
   bucketEvent: BucketEvent | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteEvent = ({
@@ -38,10 +38,11 @@ const DeleteEvent = ({
   deleteOpen,
   selectedBucket,
   bucketEvent,
-  setErrorSnackMessage,
 }: IDeleteEventProps) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -88,8 +89,4 @@ const DeleteEvent = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default connector(DeleteEvent);
+export default DeleteEvent;

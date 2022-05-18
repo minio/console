@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,18 +27,17 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { IEvent } from "../ListTenants/types";
-import { setErrorSnackMessage } from "../../../../actions";
 import { niceDays } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import { AppState } from "../../../../store";
 import EventsList from "./events/EventsList";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantEventsProps {
   classes: any;
   match: any;
   loadingTenant: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -53,8 +52,8 @@ const TenantEvents = ({
   classes,
   match,
   loadingTenant,
-  setErrorSnackMessage,
 }: ITenantEventsProps) => {
+  const dispatch = useDispatch();
   const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const tenantName = match.params["tenantName"];
@@ -83,11 +82,11 @@ const TenantEvents = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, tenantNamespace, tenantName, setErrorSnackMessage]);
+  }, [loading, tenantNamespace, tenantName, dispatch]);
 
   return (
     <React.Fragment>
@@ -101,8 +100,6 @@ const TenantEvents = ({
 const mapState = (state: AppState) => ({
   loadingTenant: state.tenants.tenantDetails.loadingTenant,
 });
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
+const connector = connect(mapState, null);
 
 export default withStyles(styles)(connector(TenantEvents));

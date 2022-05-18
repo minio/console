@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -24,11 +24,12 @@ import {
   deleteDialogStyles,
   modalBasic,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage } from "../../../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../../../icons";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,7 +47,6 @@ interface IAddNamespace {
   namespace: string;
   addNamespaceOpen: boolean;
   closeAddNamespaceModalAndRefresh: (reloadNamespaceData: boolean) => void;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const AddNamespaceModal = ({
@@ -54,8 +54,8 @@ const AddNamespaceModal = ({
   namespace,
   addNamespaceOpen,
   closeAddNamespaceModalAndRefresh,
-  setErrorSnackMessage,
 }: IAddNamespace) => {
+  const dispatch = useDispatch();
   const [addNamespaceLoading, setAddNamespaceLoading] =
     useState<boolean>(false);
 
@@ -71,14 +71,14 @@ const AddNamespaceModal = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setAddNamespaceLoading(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
   }, [
     addNamespaceLoading,
     closeAddNamespaceModalAndRefresh,
     namespace,
-    setErrorSnackMessage,
+    dispatch,
   ]);
 
   const addNamespace = () => {
@@ -114,10 +114,4 @@ const AddNamespaceModal = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddNamespaceModal));
+export default withStyles(styles)(AddNamespaceModal);

@@ -21,13 +21,14 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { IDashboardPanel } from "../types";
 import Loader from "../../../Common/Loader/Loader";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 const EntityStateStatItem = ({
   panelItem,
   timeStart,
   timeEnd,
   propLoading,
-  displayErrorMessage,
   apiPrefix,
   statLabel,
 }: {
@@ -35,10 +36,10 @@ const EntityStateStatItem = ({
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-  displayErrorMessage: any;
   apiPrefix: string;
   statLabel: any;
 }) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
 
@@ -75,11 +76,11 @@ const EntityStateStatItem = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, panelItem, timeEnd, timeStart, dispatch, apiPrefix]);
 
   let toRender = loading ? (
     <Box

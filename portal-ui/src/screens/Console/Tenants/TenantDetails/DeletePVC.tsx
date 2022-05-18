@@ -18,41 +18,43 @@ import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../actions";
+import { useDispatch } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { IStoragePVCs } from "../../Storage/types";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeletePVC {
   deleteOpen: boolean;
   selectedPVC: IStoragePVCs;
   closeDeleteModalAndRefresh: (refreshList: boolean) => any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeletePVC = ({
   deleteOpen,
   selectedPVC,
   closeDeleteModalAndRefresh,
-  setErrorSnackMessage,
 }: IDeletePVC) => {
+  const dispatch = useDispatch();
   const [retypePVC, setRetypePVC] = useState("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
 
   const onConfirmDelete = () => {
     if (retypePVC !== selectedPVC.name) {
-      setErrorSnackMessage({
-        errorMessage: "PVC name is incorrect",
-        detailedError: "",
-      });
+      dispatch(
+        setErrorSnackMessage({
+          errorMessage: "PVC name is incorrect",
+          detailedError: "",
+        })
+      );
       return;
     }
     invokeDeleteApi(
@@ -93,8 +95,4 @@ const DeletePVC = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default connector(DeletePVC);
+export default DeletePVC;

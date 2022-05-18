@@ -17,17 +17,12 @@
 import React from "react";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { Box } from "@mui/material";
-import { openZoomPage } from "../../actions";
 import { IDashboardPanel } from "../types";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
+import { openZoomPage } from "../../dashboardSlice";
 
-const ExpandGraphLink = ({
-  panelItem,
-  openZoomPage,
-}: {
-  panelItem: IDashboardPanel;
-  openZoomPage: (p: IDashboardPanel) => void;
-}) => {
+const ExpandGraphLink = ({ panelItem }: { panelItem: IDashboardPanel }) => {
+  const dispatch = useDispatch();
   return (
     <Box
       sx={{
@@ -63,14 +58,14 @@ const ExpandGraphLink = ({
         className={"link-text"}
         onClick={(e) => {
           e.preventDefault();
-          openZoomPage(panelItem);
+          dispatch(openZoomPage(panelItem));
         }}
       >
         Expand Graph
       </a>
       <button
         onClick={() => {
-          openZoomPage(panelItem);
+          dispatch(openZoomPage(panelItem));
         }}
         className={"zoom-graph-icon"}
       >
@@ -80,8 +75,4 @@ const ExpandGraphLink = ({
   );
 };
 
-const connector = connect(null, {
-  openZoomPage: openZoomPage,
-});
-
-export default connector(ExpandGraphLink);
+export default ExpandGraphLink;

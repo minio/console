@@ -16,74 +16,63 @@
 
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { connect } from "react-redux";
-import { AppState } from "./store";
-import {
-  consoleOperatorMode,
-  setDistributedMode,
-  setErrorSnackMessage,
-  setSiteReplicationInfo,
-  userLoggedIn,
-} from "./actions";
+
 import api from "./common/api";
-import { saveSessionResponse } from "./screens/Console/actions";
 import { ISessionResponse } from "./screens/Console/types";
 import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
-import { SRInfoStateType } from "./types";
 import { baseUrl } from "./history";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  globalSetDistributedSetup,
+  operatorMode,
+  setSiteReplicationInfo,
+  userLogged,
+} from "./systemSlice";
+import { SRInfoStateType } from "./types";
+import { AppState } from "./store";
+import { saveSessionResponse } from "./screens/Console/consoleSlice";
 
 interface ProtectedRouteProps {
-  loggedIn: boolean;
   Component: any;
-  userLoggedIn: typeof userLoggedIn;
-  consoleOperatorMode: typeof consoleOperatorMode;
-  saveSessionResponse: typeof saveSessionResponse;
-  setDistributedMode: typeof setDistributedMode;
-  setSiteReplicationInfo: typeof setSiteReplicationInfo;
 }
 
-const ProtectedRoute = ({
-  Component,
-  loggedIn,
-  userLoggedIn,
-  consoleOperatorMode,
-  saveSessionResponse,
-  setDistributedMode,
-  setSiteReplicationInfo,
-}: ProtectedRouteProps) => {
+const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
+  const dispatch = useDispatch();
+
+  const isOperatorMode = useSelector(
+    (state: AppState) => state.system.operatorMode
+  );
+
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
+  const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
 
   useEffect(() => {
     api
       .invoke("GET", `/api/v1/session`)
       .then((res: ISessionResponse) => {
-        saveSessionResponse(res);
-        userLoggedIn(true);
+        dispatch(saveSessionResponse(res));
+        dispatch(userLogged(true));
         setSessionLoading(false);
-        setDistributedMode(res.distributedMode || false);
+        dispatch(globalSetDistributedSetup(res.distributedMode || false));
         // check for tenants presence, that indicates we are in operator mode
         if (res.operator) {
-          consoleOperatorMode(true);
+          dispatch(operatorMode(true));
           document.title = "MinIO Operator";
         }
       })
       .catch(() => setSessionLoading(false));
-  }, [
-    saveSessionResponse,
-    consoleOperatorMode,
-    userLoggedIn,
-    setDistributedMode,
-  ]);
+  }, [dispatch]);
 
   const [, invokeSRInfoApi] = useApi(
     (res: any) => {
-      const {
-        sites: siteList = [],
-        name: curSiteName,
-        enabled = false,
-      } = res || {};
+      const { name: curSiteName, enabled = false } = res || {};
+
+      let siteList = res.site;
+      if (!siteList) {
+        siteList = [];
+      }
       const isSiteNameInList = siteList.find((si: ReplicationSite) => {
         return si.name === curSiteName;
       });
@@ -95,42 +84,31 @@ const ProtectedRoute = ({
         siteName: isCurSite ? curSiteName : "",
       };
 
-      setSiteReplicationInfo(siteReplicationDetail);
+      dispatch(setSiteReplicationInfo(siteReplicationDetail));
     },
     (err: ErrorResponseHandler) => {
-      setErrorSnackMessage(err);
+      // we will fail this call silently, but show it on the console
+      console.error(`Error loading site replication status`, err);
     }
   );
 
   useEffect(() => {
-    if (loggedIn && !sessionLoading) {
+    if (userLoggedIn && !sessionLoading && !isOperatorMode) {
       invokeSRInfoApi("GET", `api/v1/admin/site-replication`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loggedIn, sessionLoading]);
+  }, [userLoggedIn, sessionLoading]);
 
-  // if we still trying to retrieve user session render nothing
+  // if we're still trying to retrieve user session render nothing
   if (sessionLoading) {
     return null;
   }
   // redirect user to the right page based on session status
-  return loggedIn ? (
+  return userLoggedIn ? (
     <Component />
   ) : (
     <Redirect to={{ pathname: `${baseUrl}login` }} />
   );
 };
 
-const mapState = (state: AppState) => ({
-  loggedIn: state.system.loggedIn,
-});
-
-const connector = connect(mapState, {
-  userLoggedIn,
-  consoleOperatorMode,
-  saveSessionResponse,
-  setDistributedMode,
-  setSiteReplicationInfo,
-});
-
-export default connector(ProtectedRoute);
+export default ProtectedRoute;

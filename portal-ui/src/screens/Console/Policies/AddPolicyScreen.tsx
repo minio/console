@@ -23,7 +23,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../../src/history";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -31,17 +31,16 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import BackLink from "../../../common/BackLink";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AddAccessRuleIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
-import { setErrorSnackMessage } from "../../../../src/actions";
 import FormLayout from "../Common/FormLayout";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IAddPolicyProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -63,10 +62,9 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const AddPolicyScreen = ({
-  classes,
-  setErrorSnackMessage,
-}: IAddPolicyProps) => {
+const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
+  const dispatch = useDispatch();
+
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>("");
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
@@ -88,7 +86,7 @@ const AddPolicyScreen = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
   };
 
@@ -186,10 +184,4 @@ const AddPolicyScreen = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddPolicyScreen));
+export default withStyles(styles)(AddPolicyScreen);

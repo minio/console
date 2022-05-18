@@ -16,10 +16,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import {
-  HelpIconFilled,
-  UsersIcon,
   ChangeAccessPolicyIcon,
   GroupsIcon,
+  HelpIconFilled,
+  UsersIcon,
 } from "../../../icons";
 
 const FeatureItem = ({
@@ -81,7 +81,6 @@ const UsersHelpBox = () => {
         <HelpIconFilled />
         <div>Learn more about the Users feature</div>
       </Box>
-     
 
       <Box
         sx={{
@@ -91,32 +90,38 @@ const UsersHelpBox = () => {
       >
         <FeatureItem icon={<UsersIcon />} description={`Create Users`} />
         <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        A MinIO user consists of a unique access key (username) and
-        corresponding secret key (password). Clients must authenticate their
-        identity by specifying both a valid access key (username) and the
-        corresponding secret key (password) of an existing MinIO user.
-        <br />       
-      </Box>
+          A MinIO user consists of a unique access key (username) and
+          corresponding secret key (password). Clients must authenticate their
+          identity by specifying both a valid access key (username) and the
+          corresponding secret key (password) of an existing MinIO user.
+          <br />
+        </Box>
         <FeatureItem icon={<GroupsIcon />} description={`Manage Groups`} />
         <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        Groups provide a simplified method for managing shared permissions among users with common access patterns and workloads. 
-        <br />
-        <br />
-        Users inherit access permissions to data and resources through the groups they belong to.
-        <br />
-      </Box>
+          Groups provide a simplified method for managing shared permissions
+          among users with common access patterns and workloads.
+          <br />
+          <br />
+          Users inherit access permissions to data and resources through the
+          groups they belong to.
+          <br />
+        </Box>
         <FeatureItem
           icon={<ChangeAccessPolicyIcon />}
           description={`Assign Policies`}
         />
-         <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-         MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access. Each policy describes one or more actions and conditions that outline the permissions of a user or group of users.
-        <br />
-        <br />
-        Each user can access only those resources and operations which are explicitly granted by the built-in role. MinIO denies access to any other resource or action by default.
-        <br />
-       
-      </Box>
+        <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
+          MinIO uses Policy-Based Access Control (PBAC) to define the authorized
+          actions and resources to which an authenticated user has access. Each
+          policy describes one or more actions and conditions that outline the
+          permissions of a user or group of users.
+          <br />
+          <br />
+          Each user can access only those resources and operations which are
+          explicitly granted by the built-in role. MinIO denies access to any
+          other resource or action by default.
+          <br />
+        </Box>
       </Box>
     </Box>
   );

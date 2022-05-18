@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { withStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -28,20 +28,17 @@ import {
   buttonsStyles,
   containerForHeader,
   hrClass,
-  tableStyles,
-  spacingUtils,
-  textStyleUtils,
-  objectBrowserExtras,
   objectBrowserCommon,
+  objectBrowserExtras,
+  spacingUtils,
+  tableStyles,
+  textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
 import { download } from "../utils";
 import api from "../../../../../../common/api";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../../../actions";
+
 import {
   decodeURLString,
   encodeURLString,
@@ -49,16 +46,6 @@ import {
 } from "../../../../../../common/utils";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
-import {
-  cancelObjectInList,
-  completeObject,
-  failObject,
-  setLoadingObjectInfo,
-  setLoadingVersions,
-  setNewObject,
-  setSelectedVersion,
-  updateProgress,
-} from "../../../../ObjectBrowser/actions";
 
 import { AppState } from "../../../../../../store";
 import {
@@ -75,6 +62,21 @@ import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteSelectedVersions from "./DeleteSelectedVersions";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  makeid,
+  storeCallForObjectWithID,
+} from "../../../../ObjectBrowser/transferManager";
+import {
+  cancelObjectInList,
+  completeObject,
+  failObject,
+  setLoadingObjectInfo,
+  setLoadingVersions,
+  setNewObject,
+  setSelectedVersion,
+  updateProgress,
+} from "../../../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -136,22 +138,8 @@ const styles = (theme: Theme) =>
 
 interface IVersionsNavigatorProps {
   classes: any;
-  distributedSetup: boolean;
   internalPaths: string;
   bucketName: string;
-  searchVersions: string;
-  loadingVersions: boolean;
-  selectedVersion: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  setNewObject: typeof setNewObject;
-  updateProgress: typeof updateProgress;
-  completeObject: typeof completeObject;
-  setSelectedVersion: typeof setSelectedVersion;
-  setLoadingVersions: typeof setLoadingVersions;
-  setLoadingObjectInfo: typeof setLoadingObjectInfo;
-  failObject: typeof failObject;
-  cancelObjectInList: typeof cancelObjectInList;
 }
 
 const emptyFile: IFileInfo = {
@@ -168,22 +156,24 @@ const emptyFile: IFileInfo = {
 
 const VersionsNavigator = ({
   classes,
-  distributedSetup,
-  setErrorSnackMessage,
-  setNewObject,
-  updateProgress,
-  searchVersions,
-  loadingVersions,
-  selectedVersion,
-  completeObject,
   internalPaths,
   bucketName,
-  setSelectedVersion,
-  setLoadingVersions,
-  setLoadingObjectInfo,
-  failObject,
-  cancelObjectInList,
 }: IVersionsNavigatorProps) => {
+  const dispatch = useDispatch();
+
+  const searchVersions = useSelector(
+    (state: AppState) => state.objectBrowser.searchVersions
+  );
+  const loadingVersions = useSelector(
+    (state: AppState) => state.objectBrowser.loadingVersions
+  );
+  const selectedVersion = useSelector(
+    (state: AppState) => state.objectBrowser.selectedVersion
+  );
+
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
@@ -206,9 +196,9 @@ const VersionsNavigator = ({
 
   useEffect(() => {
     if (!loadingVersions && !actualInfo) {
-      setLoadingVersions(true);
+      dispatch(setLoadingVersions(true));
     }
-  }, [loadingVersions, actualInfo, setLoadingVersions]);
+  }, [loadingVersions, actualInfo, dispatch]);
 
   useEffect(() => {
     if (loadingVersions && internalPaths !== "") {
@@ -231,21 +221,14 @@ const VersionsNavigator = ({
             setVersions([]);
           }
 
-          setLoadingVersions(false);
+          dispatch(setLoadingVersions(false));
         })
-        .catch((error: ErrorResponseHandler) => {
-          setErrorSnackMessage(error);
-          setLoadingVersions(false);
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setErrorSnackMessage(err));
+          dispatch(setLoadingVersions(false));
         });
     }
-  }, [
-    setLoadingVersions,
-    loadingVersions,
-    bucketName,
-    internalPaths,
-    setErrorSnackMessage,
-    distributedSetup,
-  ]);
+  }, [loadingVersions, bucketName, internalPaths, dispatch, distributedSetup]);
 
   const shareObject = () => {
     setShareFileModalOpen(true);
@@ -268,31 +251,39 @@ const VersionsNavigator = ({
       object.version_id,
       parseInt(object.size || "0"),
       (progress) => {
-        updateProgress(identityDownload, progress);
+        dispatch(
+          updateProgress({
+            instanceID: identityDownload,
+            progress: progress,
+          })
+        );
       },
       () => {
-        completeObject(identityDownload);
+        dispatch(completeObject(identityDownload));
       },
       () => {
-        failObject(identityDownload);
+        dispatch(failObject(identityDownload));
       },
       () => {
-        cancelObjectInList(identityDownload);
+        dispatch(cancelObjectInList(identityDownload));
       }
     );
-
-    setNewObject({
-      bucketName,
-      done: false,
-      instanceID: identityDownload,
-      percentage: 0,
-      prefix: object.name,
-      type: "download",
-      waitingForFile: true,
-      failed: false,
-      cancelled: false,
-      call: downloadCall,
-    });
+    const ID = makeid(8);
+    storeCallForObjectWithID(ID, downloadCall);
+    dispatch(
+      setNewObject({
+        ID,
+        bucketName,
+        done: false,
+        instanceID: identityDownload,
+        percentage: 0,
+        prefix: object.name,
+        type: "download",
+        waitingForFile: true,
+        failed: false,
+        cancelled: false,
+      })
+    );
 
     downloadCall.send();
   };
@@ -317,7 +308,7 @@ const VersionsNavigator = ({
   };
 
   const onGlobalClick = (item: IFileInfo) => {
-    setSelectedVersion(item.version_id || "");
+    dispatch(setSelectedVersion(item.version_id || ""));
   };
 
   const filteredRecords = versions.filter((version) => {
@@ -332,8 +323,8 @@ const VersionsNavigator = ({
     setRestoreVersion("");
 
     if (reloadObjectData) {
-      setLoadingVersions(true);
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingVersions(true));
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
@@ -341,9 +332,9 @@ const VersionsNavigator = ({
     setDeleteNonCurrentOpen(false);
 
     if (reloadAfterDelete) {
-      setLoadingVersions(true);
-      setSelectedVersion("");
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingVersions(true));
+      dispatch(setSelectedVersion(""));
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
@@ -351,9 +342,9 @@ const VersionsNavigator = ({
     setDelSelectedVOpen(false);
 
     if (reloadOnComplete) {
-      setLoadingVersions(true);
-      setSelectedVersion("");
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingVersions(true));
+      dispatch(setSelectedVersion(""));
+      dispatch(setLoadingObjectInfo(true));
       setSelectedItems([]);
     }
   };
@@ -613,26 +604,4 @@ const VersionsNavigator = ({
   );
 };
 
-const mapStateToProps = ({ system, objectBrowser }: AppState) => ({
-  distributedSetup: get(system, "distributedSetup", false),
-  searchVersions: objectBrowser.searchVersions,
-  loadingVersions: objectBrowser.loadingVersions,
-  selectedVersion: objectBrowser.selectedVersion,
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  setNewObject,
-  updateProgress,
-  completeObject,
-  setSelectedVersion,
-  setLoadingVersions,
-  setLoadingObjectInfo,
-  failObject,
-  cancelObjectInList,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(withStyles(styles)(VersionsNavigator));
+export default withStyles(styles)(VersionsNavigator);

@@ -14,49 +14,36 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { applyMiddleware, combineReducers, compose, createStore } from "redux";
-import thunk from "redux-thunk";
-import { systemReducer } from "./reducer";
-import { traceReducer } from "./screens/Console/Trace/reducers";
+import systemReducer from "./systemSlice";
+import traceReducer from "./screens/Console/Trace/traceSlice";
 import { logReducer } from "./screens/Console/Logs/reducers";
-import { healthInfoReducer } from "./screens/Console/HealthInfo/reducers";
+import healthInfoReducer from "./screens/Console/HealthInfo/healthInfoSlice";
 import { watchReducer } from "./screens/Console/Watch/reducers";
-import { consoleReducer } from "./screens/Console/reducer";
-import { bucketsReducer } from "./screens/Console/Buckets/reducers";
-import { objectBrowserReducer } from "./screens/Console/ObjectBrowser/reducers";
-import { tenantsReducer } from "./screens/Console/Tenants/reducer";
-import { directCSIReducer } from "./screens/Console/DirectCSI/reducer";
-import { dashboardReducer } from "./screens/Console/Dashboard/reducer";
+import consoleReducer from "./screens/Console/consoleSlice";
+import bucketsReducer from "./screens/Console/Buckets/bucketsSlice";
+import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserSlice";
+import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
+import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
+import { configureStore } from "@reduxjs/toolkit";
 
-const globalReducer = combineReducers({
-  system: systemReducer,
-  trace: traceReducer,
-  logs: logReducer,
-  watch: watchReducer,
-  console: consoleReducer,
-  buckets: bucketsReducer,
-  objectBrowser: objectBrowserReducer,
-  healthInfo: healthInfoReducer,
-  tenants: tenantsReducer,
-  directCSI: directCSIReducer,
-  dashboard: dashboardReducer,
+export const store = configureStore({
+  reducer: {
+    system: systemReducer,
+    trace: traceReducer,
+    logs: logReducer,
+    watch: watchReducer,
+    console: consoleReducer,
+    buckets: bucketsReducer,
+    objectBrowser: objectBrowserReducer,
+    healthInfo: healthInfoReducer,
+    tenants: tenantsReducer,
+    dashboard: dashboardReducer,
+  },
 });
 
-declare global {
-  interface Window {
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
-  }
-}
+export type AppState = ReturnType<typeof store.getState>;
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch;
 
-export type AppState = ReturnType<typeof globalReducer>;
-
-export const store = createStore(
-  globalReducer,
-  composeEnhancers(applyMiddleware(thunk))
-);
-
-export default function configureStore() {
-  return store;
-}
+export default store;

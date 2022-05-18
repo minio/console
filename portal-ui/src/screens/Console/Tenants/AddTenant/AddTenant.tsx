@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 
@@ -33,19 +33,12 @@ import { generatePoolName, getBytes } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import {
-  ErrorResponseHandler,
-  ITenantCreator,
-  ITolerationModel,
-} from "../../../../common/types";
+import { ErrorResponseHandler, ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
-import { setErrorSnackMessage } from "../../../../actions";
 import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import { AppState } from "../../../../store";
-import { ICertificatesItems, IFieldStore } from "../types";
-import { resetAddTenantForm, updateAddField } from "../actions";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
 import Security from "./Steps/Security";
@@ -65,19 +58,11 @@ import {
 } from "./Steps/TenantResources/utils";
 import HelpBox from "../../../../common/HelpBox";
 import { StorageIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { resetAddTenantForm } from "../tenantsSlice";
 
 interface IAddTenantProps {
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  resetAddTenantForm: typeof resetAddTenantForm;
-  updateAddField: typeof updateAddField;
-  fields: IFieldStore;
-  certificates: ICertificatesItems;
-  selectedStorageClass: string;
-  namespace: string;
-  validPages: string[];
   classes: any;
-  features?: string[];
-  tolerations: ITolerationModel[];
 }
 
 const styles = (theme: Theme) =>
@@ -90,18 +75,32 @@ const styles = (theme: Theme) =>
     ...settingsCommon,
   });
 
-const AddTenant = ({
-  classes,
-  fields,
-  certificates,
-  selectedStorageClass,
-  namespace,
-  validPages,
-  setErrorSnackMessage,
-  resetAddTenantForm,
-  features,
-  tolerations,
-}: IAddTenantProps) => {
+const AddTenant = ({ classes }: IAddTenantProps) => {
+  const dispatch = useDispatch();
+
+  const namespace = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.nameTenant.namespace
+  );
+  const validPages = useSelector(
+    (state: AppState) => state.tenants.createTenant.validPages
+  );
+  const fields = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields
+  );
+  const certificates = useSelector(
+    (state: AppState) => state.tenants.createTenant.certificates
+  );
+  const selectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+  );
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+  const tolerations = useSelector(
+    (state: AppState) => state.tenants.createTenant.tolerations
+  );
+
   // Modals
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [createdAccount, setCreatedAccount] =
@@ -715,7 +714,7 @@ const AddTenant = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -726,7 +725,7 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
-      resetAddTenantForm();
+      dispatch(resetAddTenantForm());
       history.push("/tenants");
     },
   };
@@ -810,7 +809,7 @@ const AddTenant = ({
   let filteredWizardSteps = wizardSteps;
 
   const closeCredentialsModal = () => {
-    resetAddTenantForm();
+    dispatch(resetAddTenantForm());
     history.push("/tenants");
   };
 
@@ -831,7 +830,9 @@ const AddTenant = ({
           <BackLink
             to={"/tenants"}
             label={"Tenants"}
-            executeOnClick={resetAddTenantForm}
+            executeOnClick={() => {
+              dispatch(resetAddTenantForm());
+            }}
           />
         }
       />
@@ -873,21 +874,4 @@ const AddTenant = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  namespace: state.tenants.createTenant.fields.nameTenant.namespace,
-  validPages: state.tenants.createTenant.validPages,
-  fields: state.tenants.createTenant.fields,
-  certificates: state.tenants.createTenant.certificates,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  features: state.console.session.features,
-  tolerations: state.tenants.createTenant.tolerations,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  updateAddField,
-  resetAddTenantForm,
-});
-
-export default withStyles(styles)(connector(AddTenant));
+export default withStyles(styles)(AddTenant);

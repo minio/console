@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Button } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -24,17 +24,14 @@ import Grid from "@mui/material/Grid";
 import {
   actionsTray,
   buttonsStyles,
+  detailsPanel,
   spacingUtils,
   textStyleUtils,
-  detailsPanel,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "../ObjectDetails/types";
 import { download, extensionPreview } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../../../actions";
+
 import {
   decodeURLString,
   encodeURLString,
@@ -43,29 +40,21 @@ import {
   niceDaysInt,
 } from "../../../../../../common/utils";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
-import {
-  cancelObjectInList,
-  completeObject,
-  failObject,
-  setLoadingObjectInfo,
-  setLoadingVersions,
-  setNewObject,
-  setSelectedVersion,
-  setVersionsModeEnabled,
-  updateProgress,
-} from "../../../../ObjectBrowser/actions";
+
 import { AppState } from "../../../../../../store";
 import {
+  DeleteIcon,
+  DownloadIcon,
   LegalHoldIcon,
   MetadataIcon,
   ObjectInfoIcon,
   PreviewIcon,
   RetentionIcon,
+  ShareIcon,
   TagsIcon,
   VersionsIcon,
 } from "../../../../../../icons";
 import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
-import { ShareIcon, DownloadIcon, DeleteIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
@@ -82,6 +71,22 @@ import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
 import Loader from "../../../../Common/Loader/Loader";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  makeid,
+  storeCallForObjectWithID,
+} from "../../../../ObjectBrowser/transferManager";
+import {
+  cancelObjectInList,
+  completeObject,
+  failObject,
+  setLoadingObjectInfo,
+  setLoadingVersions,
+  setNewObject,
+  setSelectedVersion,
+  setVersionsModeEnabled,
+  updateProgress,
+} from "../../../../ObjectBrowser/objectBrowserSlice";
 
 const styles = () =>
   createStyles({
@@ -117,33 +122,6 @@ const styles = () =>
     ...detailsPanel,
   });
 
-interface IObjectDetailPanelProps {
-  classes: any;
-  internalPaths: string;
-  bucketName: string;
-  rewindEnabled: boolean;
-  rewindDate: any;
-  bucketToRewind: string;
-  distributedSetup: boolean;
-  versioning: boolean;
-  locking: boolean;
-  versionsMode: boolean;
-  selectedVersion: string;
-  loadingObjectInfo: boolean;
-  onClosePanel: (hardRefresh: boolean) => void;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  setNewObject: typeof setNewObject;
-  updateProgress: typeof updateProgress;
-  completeObject: typeof completeObject;
-  setVersionsModeEnabled: typeof setVersionsModeEnabled;
-  setLoadingObjectInfo: typeof setLoadingObjectInfo;
-  setLoadingVersions: typeof setLoadingVersions;
-  setSelectedVersion: typeof setSelectedVersion;
-  failObject: typeof failObject;
-  cancelObjectInList: typeof cancelObjectInList;
-}
-
 const emptyFile: IFileInfo = {
   is_latest: true,
   last_modified: "",
@@ -156,28 +134,39 @@ const emptyFile: IFileInfo = {
   version_id: null,
 };
 
+interface IObjectDetailPanelProps {
+  classes: any;
+  internalPaths: string;
+  bucketName: string;
+  versioning: boolean;
+  locking: boolean;
+  onClosePanel: (hardRefresh: boolean) => void;
+}
+
 const ObjectDetailPanel = ({
   classes,
   internalPaths,
   bucketName,
-  distributedSetup,
   versioning,
   locking,
-  setErrorSnackMessage,
-  setNewObject,
-  updateProgress,
-  completeObject,
-  versionsMode,
-  selectedVersion,
+
   onClosePanel,
-  setVersionsModeEnabled,
-  loadingObjectInfo,
-  setLoadingObjectInfo,
-  setLoadingVersions,
-  setSelectedVersion,
-  failObject,
-  cancelObjectInList,
 }: IObjectDetailPanelProps) => {
+  const dispatch = useDispatch();
+
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
+  const versionsMode = useSelector(
+    (state: AppState) => state.objectBrowser.versionsMode
+  );
+  const selectedVersion = useSelector(
+    (state: AppState) => state.objectBrowser.selectedVersion
+  );
+  const loadingObjectInfo = useSelector(
+    (state: AppState) => state.objectBrowser.loadingObjectInfo
+  );
+
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
@@ -247,21 +236,20 @@ const ObjectDetailPanel = ({
             setVersions([]);
           }
 
-          setLoadingObjectInfo(false);
+          dispatch(setLoadingObjectInfo(false));
         })
         .catch((error: ErrorResponseHandler) => {
-          setErrorSnackMessage(error);
-          setLoadingObjectInfo(false);
+          dispatch(setErrorSnackMessage(error));
+          dispatch(setLoadingObjectInfo(false));
         });
     }
   }, [
     loadingObjectInfo,
     bucketName,
     internalPaths,
-    setErrorSnackMessage,
+    dispatch,
     distributedSetup,
     selectedVersion,
-    setLoadingObjectInfo,
   ]);
 
   let tagKeys: string[] = [];
@@ -277,7 +265,7 @@ const ObjectDetailPanel = ({
   const closeRetentionModal = (updateInfo: boolean) => {
     setRetentionModalOpen(false);
     if (updateInfo) {
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
@@ -301,31 +289,39 @@ const ObjectDetailPanel = ({
       object.version_id,
       parseInt(object.size || "0"),
       (progress) => {
-        updateProgress(identityDownload, progress);
+        dispatch(
+          updateProgress({
+            instanceID: identityDownload,
+            progress: progress,
+          })
+        );
       },
       () => {
-        completeObject(identityDownload);
+        dispatch(completeObject(identityDownload));
       },
       () => {
-        failObject(identityDownload);
+        dispatch(failObject(identityDownload));
       },
       () => {
-        cancelObjectInList(identityDownload);
+        dispatch(cancelObjectInList(identityDownload));
       }
     );
-
-    setNewObject({
-      bucketName,
-      done: false,
-      instanceID: identityDownload,
-      percentage: 0,
-      prefix: object.name,
-      type: "download",
-      waitingForFile: true,
-      failed: false,
-      cancelled: false,
-      call: downloadCall,
-    });
+    const ID = makeid(8);
+    storeCallForObjectWithID(ID, downloadCall);
+    dispatch(
+      setNewObject({
+        ID,
+        bucketName,
+        done: false,
+        instanceID: identityDownload,
+        percentage: 0,
+        prefix: object.name,
+        type: "download",
+        waitingForFile: true,
+        failed: false,
+        cancelled: false,
+      })
+    );
 
     downloadCall.send();
   };
@@ -336,30 +332,30 @@ const ObjectDetailPanel = ({
     if (closeAndReload && selectedVersion === "") {
       onClosePanel(true);
     } else {
-      setLoadingVersions(true);
-      setSelectedVersion("");
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingVersions(true));
+      dispatch(setSelectedVersion(""));
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
   const closeAddTagModal = (reloadObjectData: boolean) => {
     setTagModalOpen(false);
     if (reloadObjectData) {
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
   const closeInspectModal = (reloadObjectData: boolean) => {
     setInspectModalOpen(false);
     if (reloadObjectData) {
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
   const closeLegalholdModal = (reload: boolean) => {
     setLegalholdOpen(false);
     if (reload) {
-      setLoadingObjectInfo(true);
+      dispatch(setLoadingObjectInfo(true));
     }
   };
 
@@ -475,7 +471,12 @@ const ObjectDetailPanel = ({
     },
     {
       action: () => {
-        setVersionsModeEnabled(!versionsMode, objectName);
+        dispatch(
+          setVersionsModeEnabled({
+            status: !versionsMode,
+            objectName: objectName,
+          })
+        );
       },
       label: versionsMode ? "Hide Object Versions" : "Display Object Versions",
       icon: <VersionsIcon />,
@@ -735,30 +736,4 @@ const ObjectDetailPanel = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser, system }: AppState) => ({
-  rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
-  rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
-  bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
-  distributedSetup: get(system, "distributedSetup", false),
-  versionsMode: get(objectBrowser, "versionsMode", false),
-  selectedVersion: get(objectBrowser, "selectedVersion", ""),
-  loadingObjectInfo: get(objectBrowser, "loadingObjectInfo", false),
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  setNewObject,
-  updateProgress,
-  completeObject,
-  setVersionsModeEnabled,
-  setLoadingObjectInfo,
-  setLoadingVersions,
-  setSelectedVersion,
-  failObject,
-  cancelObjectInList,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(withStyles(styles)(ObjectDetailPanel));
+export default withStyles(styles)(ObjectDetailPanel);

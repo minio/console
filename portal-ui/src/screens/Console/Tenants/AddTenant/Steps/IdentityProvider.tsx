@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,7 +28,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { isPageValid, updateAddField } from "../../actions";
+
 import {
   commonFormValidation,
   IValidation,
@@ -40,31 +40,10 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "../../../../../icons/RemoveIcon";
+import { isPageValid, updateAddField } from "../../tenantsSlice";
 
 interface IIdentityProviderProps {
   classes: any;
-  idpSelection: string;
-  accessKeys: string[];
-  secretKeys: string[];
-  openIDConfigurationURL: string;
-  openIDClientID: string;
-  openIDSecretID: string;
-  openIDCallbackURL: string;
-  openIDClaimName: string;
-  openIDScopes: string;
-  ADURL: string;
-  ADSkipTLS: boolean;
-  ADServerInsecure: boolean;
-  ADGroupSearchBaseDN: string;
-  ADGroupSearchFilter: string;
-  ADUserDNs: string[];
-  ADLookupBindDN: string;
-  ADLookupBindPassword: string;
-  ADUserDNSearchBaseDN: string;
-  ADUserDNSearchFilter: string;
-  ADServerStartTLS: boolean;
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
 }
 
 const styles = (theme: Theme) =>
@@ -119,38 +98,103 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const IdentityProvider = ({
-  classes,
-  idpSelection,
-  accessKeys,
-  secretKeys,
-  openIDConfigurationURL,
-  openIDClientID,
-  openIDSecretID,
-  openIDCallbackURL,
-  openIDClaimName,
-  openIDScopes,
-  ADURL,
-  ADSkipTLS,
-  ADServerInsecure,
-  ADGroupSearchBaseDN,
-  ADGroupSearchFilter,
-  ADUserDNs,
-  ADLookupBindDN,
-  ADLookupBindPassword,
-  ADUserDNSearchBaseDN,
-  ADUserDNSearchFilter,
-  ADServerStartTLS,
-  updateAddField,
-  isPageValid,
-}: IIdentityProviderProps) => {
+const IdentityProvider = ({ classes }: IIdentityProviderProps) => {
+  const dispatch = useDispatch();
+
+  const idpSelection = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.idpSelection
+  );
+  const accessKeys = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.accessKeys
+  );
+  const secretKeys = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.secretKeys
+  );
+  const openIDConfigurationURL = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.openIDConfigurationURL
+  );
+  const openIDClientID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.openIDClientID
+  );
+  const openIDSecretID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.openIDSecretID
+  );
+  const openIDCallbackURL = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.openIDCallbackURL
+  );
+  const openIDClaimName = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.openIDClaimName
+  );
+  const openIDScopes = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.openIDScopes
+  );
+  const ADURL = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADURL
+  );
+  const ADSkipTLS = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADSkipTLS
+  );
+  const ADServerInsecure = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADServerInsecure
+  );
+  const ADGroupSearchBaseDN = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADGroupSearchBaseDN
+  );
+  const ADGroupSearchFilter = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADGroupSearchFilter
+  );
+  const ADUserDNs = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADUserDNs
+  );
+  const ADLookupBindDN = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADLookupBindDN
+  );
+  const ADLookupBindPassword = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADLookupBindPassword
+  );
+  const ADUserDNSearchBaseDN = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADUserDNSearchBaseDN
+  );
+  const ADUserDNSearchFilter = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADUserDNSearchFilter
+  );
+  const ADServerStartTLS = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.identityProvider.ADServerStartTLS
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("identityProvider", field, value);
+      dispatch(
+        updateAddField({
+          pageName: "identityProvider",
+          field: field,
+          value: value,
+        })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
   const updateUserField = (index: number, value: string) => {
     const newUserField = [...accessKeys];
@@ -248,7 +292,12 @@ const IdentityProvider = ({
 
     const commonVal = commonFormValidation(customIDPValidation);
 
-    isPageValid("identityProvider", Object.keys(commonVal).length === 0);
+    dispatch(
+      isPageValid({
+        pageName: "identityProvider",
+        valid: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
   }, [
@@ -262,7 +311,7 @@ const IdentityProvider = ({
     ADGroupSearchBaseDN,
     ADGroupSearchFilter,
     ADUserDNs,
-    isPageValid,
+    dispatch,
     openIDConfigurationURL,
     openIDClaimName,
   ]);
@@ -688,45 +737,4 @@ const IdentityProvider = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  idpSelection: state.tenants.createTenant.fields.identityProvider.idpSelection,
-  accessKeys: state.tenants.createTenant.fields.identityProvider.accessKeys,
-  secretKeys: state.tenants.createTenant.fields.identityProvider.secretKeys,
-  openIDConfigurationURL:
-    state.tenants.createTenant.fields.identityProvider.openIDConfigurationURL,
-  openIDClientID:
-    state.tenants.createTenant.fields.identityProvider.openIDClientID,
-  openIDSecretID:
-    state.tenants.createTenant.fields.identityProvider.openIDSecretID,
-  openIDCallbackURL:
-    state.tenants.createTenant.fields.identityProvider.openIDCallbackURL,
-  openIDClaimName:
-    state.tenants.createTenant.fields.identityProvider.openIDClaimName,
-  openIDScopes: state.tenants.createTenant.fields.identityProvider.openIDScopes,
-  ADURL: state.tenants.createTenant.fields.identityProvider.ADURL,
-  ADSkipTLS: state.tenants.createTenant.fields.identityProvider.ADSkipTLS,
-  ADServerInsecure:
-    state.tenants.createTenant.fields.identityProvider.ADServerInsecure,
-  ADGroupSearchBaseDN:
-    state.tenants.createTenant.fields.identityProvider.ADGroupSearchBaseDN,
-  ADGroupSearchFilter:
-    state.tenants.createTenant.fields.identityProvider.ADGroupSearchFilter,
-  ADUserDNs: state.tenants.createTenant.fields.identityProvider.ADUserDNs,
-  ADLookupBindDN:
-    state.tenants.createTenant.fields.identityProvider.ADLookupBindDN,
-  ADLookupBindPassword:
-    state.tenants.createTenant.fields.identityProvider.ADLookupBindPassword,
-  ADUserDNSearchBaseDN:
-    state.tenants.createTenant.fields.identityProvider.ADUserDNSearchBaseDN,
-  ADUserDNSearchFilter:
-    state.tenants.createTenant.fields.identityProvider.ADUserDNSearchFilter,
-  ADServerStartTLS:
-    state.tenants.createTenant.fields.identityProvider.ADServerStartTLS,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-});
-
-export default withStyles(styles)(connector(IdentityProvider));
+export default withStyles(styles)(IdentityProvider);

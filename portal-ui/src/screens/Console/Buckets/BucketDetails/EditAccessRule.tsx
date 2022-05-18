@@ -24,19 +24,20 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { AppState } from "../../../../store";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { AddAccessRuleIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
 });
 
-const connector = connect(mapState, { setErrorSnackMessage });
+const connector = connect(mapState, null);
 
 interface IEditAccessRule {
   classes: any;
@@ -61,6 +62,7 @@ const EditAccessRule = ({
   toEdit,
   initial,
 }: IEditAccessRule) => {
+  const dispatch = useDispatch();
   const [selectedAccess, setSelectedAccess] = useState<any>(initial);
 
   const accessOptions = [
@@ -83,7 +85,7 @@ const EditAccessRule = ({
         onClose();
       })
       .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
         onClose();
       });
   };
