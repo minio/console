@@ -17,7 +17,7 @@
 import React, { Fragment, useState } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Fab, Grid, LinearProgress } from "@mui/material";
+import { Grid, LinearProgress } from "@mui/material";
 import { BucketObjectItem } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
 import { encodeURLString } from "../../../../../../common/utils";
