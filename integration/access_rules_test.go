@@ -95,13 +95,14 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 	}
 }
 
-func Test_GetAccessRulesAPI(t *testing.T) {
+func Test_DeleteAccessRuleAPI(t *testing.T) {
 	assert := assert.New(t)
 
-	AddBucket("testaccessruleget", false, false, nil, nil)
+	AddBucket("testaccessruledelete", false, false, nil, nil)
 
 	type args struct {
-		bucket string
+		prefix string
+		access string
 	}
 	tests := []struct {
 		name           string
@@ -110,19 +111,11 @@ func Test_GetAccessRulesAPI(t *testing.T) {
 		expectedError  error
 	}{
 		{
-			name: "Get Access Rule - Valid",
+			name: "Delete Access Rule - Valid",
 			args: args{
-				bucket: "testaccessruleget",
+				prefix: "/test/",
 			},
 			expectedStatus: 200,
-			expectedError:  nil,
-		},
-		{
-			name: "Get Access Rule - Invalid",
-			args: args{
-				bucket: "testaccessruleget2",
-			},
-			expectedStatus: 404,
 			expectedError:  nil,
 		},
 	}
@@ -133,8 +126,14 @@ func Test_GetAccessRulesAPI(t *testing.T) {
 				Timeout: 3 * time.Second,
 			}
 
+			requestDataPolicy := map[string]interface{}{}
+			requestDataPolicy["prefix"] = tt.args.prefix
+			requestDataPolicy["access"] = tt.args.access
+
+			requestDataJSON, _ := json.Marshal(requestDataPolicy)
+			requestDataBody := bytes.NewReader(requestDataJSON)
 			request, err := http.NewRequest(
-				"GET", fmt.Sprintf("http://localhost:9090/api/v1/bucket/%s/access-rules", tt.args.bucket), nil)
+				"DELETE", "http://localhost:9090/api/v1/bucket/testaccessruledelete/access-rules", requestDataBody)
 			if err != nil {
 				log.Println(err)
 				return
