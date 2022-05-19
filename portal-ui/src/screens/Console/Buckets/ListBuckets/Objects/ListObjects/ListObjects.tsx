@@ -50,9 +50,12 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { Badge, Typography } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-
-import { download, extensionPreview, sortListObjects } from "../utils";
-
+import {
+  download,
+  extensionPreview,
+  permissionItems,
+  sortListObjects,
+} from "../utils";
 import {
   BucketInfo,
   BucketObjectLocking,
@@ -87,6 +90,7 @@ import ActionsListSection from "./ActionsListSection";
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
@@ -304,6 +308,9 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   );
   const bucketInfo = useSelector(
     (state: AppState) => state.buckets.bucketDetails.bucketInfo
+  );
+  const allowResources = useSelector(
+    (state: AppState) => state.console.session.allowResources
   );
 
   const [records, setRecords] = useState<BucketObjectItem[]>([]);
@@ -673,8 +680,19 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
             }
           })
           .catch((err: ErrorResponseHandler) => {
+            const permitItems = permissionItems(
+              bucketName,
+              pathPrefix,
+              allowResources || []
+            );
+
+            if (!permitItems || permitItems.length === 0) {
+              dispatch(setErrorSnackMessage(err));
+            } else {
+              setRecords(permitItems);
+            }
+
             dispatch(setLoadingObjectsList(false));
-            dispatch(setErrorSnackMessage(err));
           });
       } else {
         dispatch(setLoadingObjectsList(false));
@@ -692,6 +710,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     showDeleted,
     displayListObjects,
     bucketToRewind,
+    allowResources,
   ]);
 
   // bucket info

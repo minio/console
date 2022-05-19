@@ -54,7 +54,6 @@ import {
   SelectMultipleIcon,
   VersionsIcon,
 } from "../../../../../../icons";
-import VirtualizedList from "../../../../Common/VirtualizedList/VirtualizedList";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import PreviewFileModal from "../Preview/PreviewFileModal";
@@ -77,6 +76,7 @@ import {
   setSelectedVersion,
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
+import { List, ListRowProps } from "react-virtualized";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -400,24 +400,32 @@ const VersionsNavigator = ({
     setSelectedItems(cloneState);
   };
 
-  const renderVersion = (elementIndex: number) => {
-    const item = filteredRecords[elementIndex];
-    const versOrd = versions.length - versions.indexOf(item);
-
+  const rowRenderer = ({
+    key, // Unique key within array of rows
+    index, // Index of row within collection
+    isScrolling, // The List is currently being scrolled
+    isVisible, // This row is visible within the List (eg it is not an overscanned row)
+    style, // Style object to be applied to row (to position it)
+  }: ListRowProps) => {
+    const versOrd = versions.length - index;
     return (
       <FileVersionItem
+        style={style}
+        key={key}
         fileName={actualInfo?.name || ""}
-        versionInfo={item}
+        versionInfo={filteredRecords[index]}
         index={versOrd}
         onDownload={onDownloadItem}
         onRestore={onRestoreItem}
         onShare={onShareItem}
         onPreview={onPreviewItem}
         globalClick={onGlobalClick}
-        isSelected={selectedVersion === item.version_id}
+        isSelected={selectedVersion === filteredRecords[index].version_id}
         checkable={selectEnabled}
         onCheck={onCheckVersion}
-        isChecked={selectedItems.includes(item.version_id || "")}
+        isChecked={selectedItems.includes(
+          filteredRecords[index].version_id || ""
+        )}
       />
     );
   };
@@ -590,10 +598,19 @@ const VersionsNavigator = ({
             </Grid>
             <Grid item xs={12} className={classes.versionsVirtualPanel}>
               {actualInfo.version_id && actualInfo.version_id !== "null" && (
-                <VirtualizedList
-                  rowRenderFunction={renderVersion}
-                  totalItems={filteredRecords.length}
-                  defaultHeight={108}
+                <List
+                  style={{
+                    width: "100%",
+                  }}
+                  containerStyle={{
+                    width: "100%",
+                    maxWidth: "100%",
+                  }}
+                  width={1}
+                  height={800}
+                  rowCount={filteredRecords.length}
+                  rowHeight={108}
+                  rowRenderer={rowRenderer}
                 />
               )}
             </Grid>
