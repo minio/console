@@ -15,13 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -33,6 +31,8 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { BucketEncryptionIcon } from "../../../../icons";
+import { useDispatch } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,7 +47,6 @@ interface IEnableBucketEncryptionProps {
   encryptionCfg: BucketEncryptionInfo | null;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const EnableBucketEncryption = ({
@@ -56,8 +55,8 @@ const EnableBucketEncryption = ({
   encryptionCfg,
   selectedBucket,
   closeModalAndRefresh,
-  setModalErrorSnackMessage,
 }: IEnableBucketEncryptionProps) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
   const [encryptionType, setEncryptionType] = useState<string>("disabled");
@@ -87,7 +86,7 @@ const EnableBucketEncryption = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     } else {
       api
@@ -101,7 +100,7 @@ const EnableBucketEncryption = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
         });
     }
   };
@@ -196,8 +195,4 @@ const EnableBucketEncryption = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(EnableBucketEncryption));
+export default withStyles(styles)(EnableBucketEncryption);

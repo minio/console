@@ -16,15 +16,12 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { AddIcon, ClustersIcon, RemoveIcon } from "../../../../icons";
-import { ReplicationSite } from "./SiteReplication";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
 import { Box, Button, LinearProgress } from "@mui/material";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import useApi from "../../Common/Hooks/useApi";
-import { connect } from "react-redux";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
-import { ErrorResponseHandler } from "../../../../common/types";
+import { useDispatch } from "react-redux";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
@@ -32,6 +29,10 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import HelpBox from "../../../../common/HelpBox";
 import history from "../../../../history";
 import SectionTitle from "../../Common/SectionTitle";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 
 type SiteInputRow = {
   name: string;
@@ -53,15 +54,8 @@ const isValidEndPoint = (ep: string) => {
     return "Invalid Endpoint";
   }
 };
-const AddReplicationSites = ({
-  setErrorSnackMessage,
-  setSnackBarMessage,
-}: {
-  existingSites: ReplicationSite[];
-  onClose: () => void;
-  setErrorSnackMessage: (err: ErrorResponseHandler) => void;
-  setSnackBarMessage: (msg: string) => void;
-}) => {
+const AddReplicationSites = () => {
+  const dispatch = useDispatch();
   const [existingSites, setExistingSites] = useState<SiteInputRow[]>([]);
 
   const [accessKey, setAccessKey] = useState<string>("");
@@ -130,19 +124,21 @@ const AddReplicationSites = ({
   const [isAdding, invokeSiteAddApi] = useApi(
     (res: any) => {
       if (res.success) {
-        setSnackBarMessage(res.status);
+        dispatch(setSnackBarMessage(res.status));
         resetForm();
         getSites();
         history.push(IAM_PAGES.SITE_REPLICATION);
       } else {
-        setErrorSnackMessage({
-          errorMessage: "Error",
-          detailedError: res.status,
-        });
+        dispatch(
+          setErrorSnackMessage({
+            errorMessage: "Error",
+            detailedError: res.status,
+          })
+        );
       }
     },
     (err: any) => {
-      setErrorSnackMessage(err);
+      dispatch(setErrorSnackMessage(err));
     }
   );
 
@@ -612,8 +608,4 @@ const AddReplicationSites = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-});
-export default connector(AddReplicationSites);
+export default AddReplicationSites;

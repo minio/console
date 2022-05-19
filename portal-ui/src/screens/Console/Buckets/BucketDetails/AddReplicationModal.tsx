@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,7 +28,7 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketReplicationRule, BulkReplicationResponse } from "../types";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -40,13 +39,15 @@ import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import { BucketReplicationIcon } from "../../../../icons";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import { useDispatch } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IReplicationModal {
   open: boolean;
   closeModalAndRefresh: () => any;
   classes: any;
   bucketName: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
+
   setReplicationRules: BucketReplicationRule[];
 }
 
@@ -82,9 +83,10 @@ const AddReplicationModal = ({
   closeModalAndRefresh,
   classes,
   bucketName,
-  setModalErrorSnackMessage,
+
   setReplicationRules,
 }: IReplicationModal) => {
+  const dispatch = useDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("1");
   const [accessKey, setAccessKey] = useState<string>("");
@@ -185,7 +187,7 @@ const AddReplicationModal = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -469,8 +471,4 @@ const AddReplicationModal = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(AddReplicationModal));
+export default withStyles(styles)(AddReplicationModal);

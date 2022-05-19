@@ -16,13 +16,13 @@
 
 import {
   AzureTierIcon,
+  AzureTierIconXs,
   GoogleTierIcon,
+  GoogleTierIconXs,
   MinIOTierIcon,
   MinIOTierIconXs,
   S3TierIcon,
-  GoogleTierIconXs,
   S3TierIconXs,
-  AzureTierIconXs,
 } from "../../../../icons";
 
 export const minioServiceName = "minio";

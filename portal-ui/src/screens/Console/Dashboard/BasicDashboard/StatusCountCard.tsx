@@ -119,7 +119,8 @@ export const StatusCountCard = ({
                   },
                 }}
               >
-                <CircleIcon /> <div className="stat-text">{okStatusText}</div>
+                <CircleIcon />
+                <div className="stat-text">{okStatusText}</div>
               </Box>
             </Box>
 

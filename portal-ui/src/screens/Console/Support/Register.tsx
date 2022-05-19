@@ -54,8 +54,8 @@ import {
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
 } from "../../../common/SecureComponent/permissions";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../actions";
+import { useDispatch, useSelector } from "react-redux";
+
 import SettingsIcon from "../../../icons/SettingsIcon";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { AppState } from "../../../store";
@@ -63,10 +63,10 @@ import { AppState } from "../../../store";
 import RegisterHelpBox from "./RegisterHelpBox";
 import RegistrationStatusBanner from "./RegistrationStatusBanner";
 import BackLink from "../../../common/BackLink";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IRegister {
   classes: any;
-  displayErrorMessage: typeof setErrorSnackMessage;
   operatorMode: boolean;
 }
 
@@ -151,11 +151,11 @@ const FormTitle = ({ icon = null, title }: { icon?: any; title: any }) => {
   );
 };
 
-const Register = ({
-  classes,
-  displayErrorMessage,
-  operatorMode,
-}: IRegister) => {
+const Register = ({ classes }: IRegister) => {
+  const dispatch = useDispatch();
+  const operatorMode = useSelector(
+    (state: AppState) => state.system.operatorMode
+  );
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");
   const [subnetEmail, setSubnetEmail] = useState<string>("");
@@ -213,7 +213,7 @@ const Register = ({
         })
         .catch((err: ErrorResponseHandler) => {
           if (err.errorMessage !== "License not found") {
-            displayErrorMessage(err);
+            dispatch(setErrorSnackMessage(err));
           }
           setClusterRegistered(false);
           setLoadingLicenseInfo(false);
@@ -221,7 +221,7 @@ const Register = ({
     } else {
       setLoadingLicenseInfo(false);
     }
-  }, [loadingLicenseInfo, getSubnetInfo, displayErrorMessage]);
+  }, [loadingLicenseInfo, getSubnetInfo, dispatch]);
 
   const fetchSubnetRegToken = () => {
     if (loading || subnetRegToken) {
@@ -238,7 +238,7 @@ const Register = ({
       })
       .catch((err: ErrorResponseHandler) => {
         console.log(err);
-        displayErrorMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setLoading(false);
       });
   };
@@ -256,7 +256,7 @@ const Register = ({
         fetchLicenseInfo();
       })
       .catch((err: ErrorResponseHandler) => {
-        displayErrorMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setLoading(false);
       });
   };
@@ -300,7 +300,7 @@ const Register = ({
         }
       })
       .catch((err: ErrorResponseHandler) => {
-        displayErrorMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setLoading(false);
         setSubnetOTP("");
       });
@@ -334,7 +334,7 @@ const Register = ({
         }
       })
       .catch((err: ErrorResponseHandler) => {
-        displayErrorMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setLoading(false);
         clearForm();
       });
@@ -990,12 +990,4 @@ const Register = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  operatorMode: state.system.operatorMode,
-});
-
-const connector = connect(mapState, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(Register));
+export default withStyles(styles)(Register);

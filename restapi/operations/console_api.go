@@ -1531,7 +1531,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user"] = user.NewGetUserInfo(o.context, o.UserGetUserInfoHandler)
+	o.handlers["GET"]["/user/{name}"] = user.NewGetUserInfo(o.context, o.UserGetUserInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1539,7 +1539,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/group"] = group.NewGroupInfo(o.context, o.GroupGroupInfoHandler)
+	o.handlers["GET"]["/group/{name}"] = group.NewGroupInfo(o.context, o.GroupGroupInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1643,7 +1643,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policy"] = policy.NewPolicyInfo(o.context, o.PolicyPolicyInfoHandler)
+	o.handlers["GET"]["/policy/{name}"] = policy.NewPolicyInfo(o.context, o.PolicyPolicyInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1683,15 +1683,15 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/group"] = group.NewRemoveGroup(o.context, o.GroupRemoveGroupHandler)
+	o.handlers["DELETE"]["/group/{name}"] = group.NewRemoveGroup(o.context, o.GroupRemoveGroupHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/policy"] = policy.NewRemovePolicy(o.context, o.PolicyRemovePolicyHandler)
+	o.handlers["DELETE"]["/policy/{name}"] = policy.NewRemovePolicy(o.context, o.PolicyRemovePolicyHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/user"] = user.NewRemoveUser(o.context, o.UserRemoveUserHandler)
+	o.handlers["DELETE"]["/user/{name}"] = user.NewRemoveUser(o.context, o.UserRemoveUserHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1787,7 +1787,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/group"] = group.NewUpdateGroup(o.context, o.GroupUpdateGroupHandler)
+	o.handlers["PUT"]["/group/{name}"] = group.NewUpdateGroup(o.context, o.GroupUpdateGroupHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -1795,11 +1795,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/user/groups"] = user.NewUpdateUserGroups(o.context, o.UserUpdateUserGroupsHandler)
+	o.handlers["PUT"]["/user/{name}/groups"] = user.NewUpdateUserGroups(o.context, o.UserUpdateUserGroupsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/user"] = user.NewUpdateUserInfo(o.context, o.UserUpdateUserInfoHandler)
+	o.handlers["PUT"]["/user/{name}"] = user.NewUpdateUserInfo(o.context, o.UserUpdateUserInfoHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

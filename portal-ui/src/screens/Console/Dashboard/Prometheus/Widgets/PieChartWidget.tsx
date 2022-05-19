@@ -15,20 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { IPieChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import { IDashboardPanel } from "../types";
 import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import get from "lodash/get";
 import api from "../../../../../common/api";
 import Loader from "../../../Common/Loader/Loader";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPieChartWidget {
   classes: any;
@@ -37,7 +38,7 @@ interface IPieChartWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-  displayErrorMessage: any;
+
   apiPrefix: string;
 }
 
@@ -73,9 +74,10 @@ const PieChartWidget = ({
   timeStart,
   timeEnd,
   propLoading,
-  displayErrorMessage,
+
   apiPrefix,
 }: IPieChartWidget) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [dataInner, setDataInner] = useState<object[]>([]);
   const [dataOuter, setDataOuter] = useState<object[]>([]);
@@ -116,11 +118,11 @@ const PieChartWidget = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, panelItem, timeEnd, timeStart, dispatch, apiPrefix]);
 
   const pieChartConfiguration = result
     ? (result.widgetConfiguration as IPieChartConfiguration)
@@ -237,8 +239,4 @@ const PieChartWidget = ({
   );
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(PieChartWidget));
+export default withStyles(styles)(PieChartWidget);

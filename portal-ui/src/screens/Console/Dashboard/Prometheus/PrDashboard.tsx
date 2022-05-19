@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 
 import { Theme } from "@mui/material/styles";
@@ -30,7 +30,6 @@ import { IDashboardPanel } from "./types";
 import { getWidgetsWithValue, panelsConfiguration } from "./utils";
 import { TabPanel } from "../../../shared/tabs";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { setErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
 
 import TabSelector from "../../Common/TabSelector/TabSelector";
@@ -48,13 +47,11 @@ import {
 } from "./Widgets/LayoutUtil";
 import MergedWidgetsRenderer from "./Widgets/MergedWidgetsRenderer";
 import PageLayout from "../../Common/Layout/PageLayout";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IPrDashboard {
   classes?: any;
-  displayErrorMessage: typeof setErrorSnackMessage;
   apiPrefix?: string;
-  zoomOpen: boolean;
-  zoomWidget: null | IDashboardPanel;
 }
 
 const styles = (theme: Theme) =>
@@ -69,12 +66,15 @@ const styles = (theme: Theme) =>
     },
   });
 
-const PrDashboard = ({
-  displayErrorMessage,
-  apiPrefix = "admin",
-  zoomOpen,
-  zoomWidget,
-}: IPrDashboard) => {
+const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
+  const dispatch = useDispatch();
+  const zoomOpen = useSelector(
+    (state: AppState) => state.dashboard.zoom.openZoom
+  );
+  const zoomWidget = useSelector(
+    (state: AppState) => state.dashboard.zoom.widgetRender
+  );
+
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -110,20 +110,22 @@ const PrDashboard = ({
           const widgetsWithValue = getWidgetsWithValue(res.widgets);
           setPanelInformation(widgetsWithValue);
         } else {
-          displayErrorMessage({
-            errorMessage:
-              "Widget information could not be retrieved at this time. Please try again",
-            detailedError: "",
-          });
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage:
+                "Widget information could not be retrieved at this time. Please try again",
+              detailedError: "",
+            })
+          );
         }
 
         setLoading(false);
       })
       .catch((err: ErrorResponseHandler) => {
-        displayErrorMessage(err);
+        dispatch(setErrorSnackMessage(err));
         setLoading(false);
       });
-  }, [timeStart, timeEnd, displayErrorMessage, apiPrefix]);
+  }, [timeStart, timeEnd, dispatch, apiPrefix]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -150,7 +152,6 @@ const PrDashboard = ({
                 timeEnd={timeEnd}
                 loading={loading}
                 apiPrefix={apiPrefix}
-                displayErrorMessage={displayErrorMessage}
               />
             ) : (
               componentToUse(panelInfo, timeStart, timeEnd, loading, apiPrefix)
@@ -257,13 +258,4 @@ const PrDashboard = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  zoomOpen: state.dashboard.zoom.openZoom,
-  zoomWidget: state.dashboard.zoom.widgetRender,
-});
-
-const connector = connect(mapState, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(PrDashboard));
+export default withStyles(styles)(PrDashboard);

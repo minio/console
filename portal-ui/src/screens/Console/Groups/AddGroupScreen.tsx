@@ -31,17 +31,17 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
 import BackLink from "../../../common/BackLink";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { CreateGroupIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
-import { setErrorSnackMessage } from "../../../../src/actions";
+
 import FormLayout from "../Common/FormLayout";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IAddGroupProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -63,7 +63,8 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const AddGroupScreen = ({ classes, setErrorSnackMessage }: IAddGroupProps) => {
+const AddGroupScreen = ({ classes }: IAddGroupProps) => {
+  const dispatch = useDispatch();
   const [groupName, setGroupName] = useState<string>("");
   const [saving, isSaving] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -87,13 +88,13 @@ const AddGroupScreen = ({ classes, setErrorSnackMessage }: IAddGroupProps) => {
           })
           .catch((err: ErrorResponseHandler) => {
             isSaving(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
       };
 
       saveRecord();
     }
-  }, [saving, groupName, selectedUsers, setErrorSnackMessage]);
+  }, [saving, groupName, selectedUsers, dispatch]);
 
   //Fetch Actions
   const setSaving = (event: React.FormEvent) => {
@@ -174,10 +175,4 @@ const AddGroupScreen = ({ classes, setErrorSnackMessage }: IAddGroupProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddGroupScreen));
+export default withStyles(styles)(AddGroupScreen);

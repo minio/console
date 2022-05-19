@@ -699,6 +699,7 @@ const TableWrapper = ({
                                 inputProps={{
                                   "aria-label": "secondary checkbox",
                                 }}
+                                className="TableCheckbox"
                                 checked={isSelected}
                                 onChange={onSelect}
                                 onClick={(e) => {

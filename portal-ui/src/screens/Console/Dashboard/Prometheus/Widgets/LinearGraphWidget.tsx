@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Area,
   AreaChart,
@@ -32,7 +32,7 @@ import withStyles from "@mui/styles/withStyles";
 import { ILinearGraphConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "../types";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
@@ -40,6 +40,7 @@ import LineChartTooltip from "./tooltips/LineChartTooltip";
 import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -48,7 +49,7 @@ interface ILinearGraphWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-  displayErrorMessage: any;
+
   apiPrefix: string;
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
@@ -94,7 +95,7 @@ const styles = (theme: Theme) =>
 const LinearGraphWidget = ({
   classes,
   title,
-  displayErrorMessage,
+
   timeStart,
   timeEnd,
   propLoading,
@@ -106,6 +107,7 @@ const LinearGraphWidget = ({
   xAxisFormatter = (item: string) => item,
   zoomActivated = false,
 }: ILinearGraphWidget) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
   const [dataMax, setDataMax] = useState<number>(0);
@@ -163,11 +165,11 @@ const LinearGraphWidget = ({
           setDataMax(maxVal);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, panelItem, timeEnd, timeStart, dispatch, apiPrefix]);
 
   let intervalCount = Math.floor(data.length / 5);
 
@@ -344,8 +346,4 @@ const LinearGraphWidget = ({
   );
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(LinearGraphWidget));
+export default withStyles(styles)(LinearGraphWidget);

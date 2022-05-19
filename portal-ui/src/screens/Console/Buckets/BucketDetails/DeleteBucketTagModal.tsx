@@ -15,19 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage } from "../../../../actions";
-import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeleteBucketTagModal {
   deleteOpen: boolean;
@@ -35,7 +33,6 @@ interface IDeleteBucketTagModal {
   bucketName: string;
   selectedTag: string[];
   onCloseAndUpdate: (refresh: boolean) => void;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
@@ -50,13 +47,14 @@ const DeleteBucketTagModal = ({
   selectedTag,
   onCloseAndUpdate,
   bucketName,
-  setErrorSnackMessage,
   classes,
 }: IDeleteBucketTagModal) => {
+  const dispatch = useDispatch();
   const [tagKey, tagLabel] = selectedTag;
 
   const onDelSuccess = () => onCloseAndUpdate(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => onCloseAndUpdate(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -96,14 +94,4 @@ const DeleteBucketTagModal = ({
   );
 };
 
-const mapStateToProps = ({ system }: AppState) => ({
-  distributedSetup: get(system, "distributedSetup", false),
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default withStyles(styles)(connector(DeleteBucketTagModal));
+export default withStyles(styles)(DeleteBucketTagModal);

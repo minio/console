@@ -15,7 +15,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -31,7 +31,7 @@ import { Button, LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
@@ -51,23 +51,18 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../common/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
 import { AppState } from "../../../store";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import PolicyView from "./PolicyView";
+import { decodeURLString, encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
-
-interface IPolicyDetailsProps {
-  classes: any;
-  match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  features: string[] | null;
-}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -97,19 +92,26 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PolicyDetails = ({
-  classes,
-  match,
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  features,
-}: IPolicyDetailsProps) => {
+interface IPolicyDetailsProps {
+  classes: any;
+  match: any;
+}
+
+const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
+  const dispatch = useDispatch();
+
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+
   const [policy, setPolicy] = useState<Policy | null>(null);
   const [policyStatements, setPolicyStatements] = useState<IAMStatement[]>([]);
   const [userList, setUserList] = useState<string[]>([]);
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [policyName, setPolicyName] = useState<string>(match.params[0]);
+
+  const policyName = decodeURLString(match.params["policyName"]);
+
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [filterUsers, setFilterUsers] = useState<string>("");
@@ -160,11 +162,11 @@ const PolicyDetails = ({
         })
         .then((_) => {
           setAddLoading(false);
-          setSnackBarMessage("Policy successfully updated");
+          dispatch(setSnackBarMessage("Policy successfully updated"));
         })
         .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     } else {
       setAddLoading(false);
@@ -178,14 +180,14 @@ const PolicyDetails = ({
           api
             .invoke(
               "GET",
-              `/api/v1/policies/${encodeURIComponent(policyName)}/users`
+              `/api/v1/policies/${encodeURLString(policyName)}/users`
             )
             .then((result: any) => {
               setUserList(result);
               setLoadingUsers(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setLoadingUsers(false);
             });
         } else {
@@ -200,14 +202,14 @@ const PolicyDetails = ({
           api
             .invoke(
               "GET",
-              `/api/v1/policies/${encodeURIComponent(policyName)}/groups`
+              `/api/v1/policies/${encodeURLString(policyName)}/groups`
             )
             .then((result: any) => {
               setGroupList(result);
               setLoadingGroups(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setLoadingGroups(false);
             });
         } else {
@@ -219,10 +221,7 @@ const PolicyDetails = ({
       if (loadingPolicy) {
         if (displayPolicy) {
           api
-            .invoke(
-              "GET",
-              `/api/v1/policy?name=${encodeURIComponent(policyName)}`
-            )
+            .invoke("GET", `/api/v1/policy/${encodeURLString(policyName)}`)
             .then((result: any) => {
               if (result) {
                 setPolicy(result);
@@ -237,7 +236,7 @@ const PolicyDetails = ({
               setLoadingPolicy(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setLoadingPolicy(false);
             });
         } else {
@@ -256,7 +255,6 @@ const PolicyDetails = ({
     loadingPolicy,
     loadingUsers,
     loadingGroups,
-    setErrorSnackMessage,
     setUserList,
     setGroupList,
     setPolicyDefinition,
@@ -267,11 +265,11 @@ const PolicyDetails = ({
     displayGroups,
     displayPolicy,
     ldapIsEnabled,
+    dispatch,
   ]);
 
   const resetForm = () => {
-    setPolicyName("");
-    setPolicyDefinition("");
+    setPolicyDefinition("{}");
   };
 
   const validSave = policyName.trim() !== "";
@@ -286,7 +284,7 @@ const PolicyDetails = ({
   };
 
   const userViewAction = (user: any) => {
-    history.push(`${IAM_PAGES.USERS}/${user}`);
+    history.push(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
   };
   const userTableActions = [
     {
@@ -301,7 +299,7 @@ const PolicyDetails = ({
   );
 
   const groupViewAction = (group: any) => {
-    history.push(`${IAM_PAGES.GROUPS}/${group}`);
+    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
   };
 
   const groupTableActions = [
@@ -384,74 +382,7 @@ const PolicyDetails = ({
               <Fragment>
                 <div className={classes.sectionTitle}>Policy Summary</div>
                 <Paper className={classes.paperContainer}>
-                  <form
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                      saveRecord(e);
-                    }}
-                  >
-                    <Grid container>
-                      <Grid item xs={8}>
-                        <h4>Statements</h4>
-                      </Grid>
-                      <Grid item xs={4} />
-
-                      <Fragment>
-                        {policyStatements.map((stmt, i) => {
-                          return (
-                            <Grid
-                              item
-                              xs={12}
-                              className={classes.statement}
-                              key={`s-${i}`}
-                            >
-                              <Grid container>
-                                <Grid item xs={2} className={classes.labelCol}>
-                                  Effect
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <Fragment>{stmt.Effect}</Fragment>
-                                </Grid>
-                                <Grid
-                                  item
-                                  xs={2}
-                                  className={classes.labelCol}
-                                />
-                                <Grid item xs={4} />
-                                <Grid item xs={2} className={classes.labelCol}>
-                                  Actions
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <ul>
-                                    {stmt.Action &&
-                                      stmt.Action.map((act, actIndex) => (
-                                        <li key={`${i}-r-${actIndex}`}>
-                                          {act}
-                                        </li>
-                                      ))}
-                                  </ul>
-                                </Grid>
-                                <Grid item xs={2} className={classes.labelCol}>
-                                  Resources
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <ul>
-                                    {stmt.Resource &&
-                                      stmt.Resource.map((res, resIndex) => (
-                                        <li key={`${i}-r-${resIndex}`}>
-                                          {res}
-                                        </li>
-                                      ))}
-                                  </ul>
-                                </Grid>
-                              </Grid>
-                            </Grid>
-                          );
-                        })}
-                      </Fragment>
-                    </Grid>
-                  </form>
+                  <PolicyView policyStatements={policyStatements} />
                 </Paper>
               </Fragment>
             ),
@@ -608,13 +539,4 @@ const PolicyDetails = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-});
-
-export default withStyles(styles)(connector(PolicyDetails));
+export default withStyles(styles)(PolicyDetails);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,20 +28,19 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { ITenant } from "../ListTenants/types";
-import { setErrorSnackMessage } from "../../../../actions";
+import { ITenant, ITenantMonitoringStruct } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import EditTenantMonitoringModal from "./EditTenantMonitoringModal";
 
 import api from "../../../../common/api";
 import { EditIcon } from "../../../../icons";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { ITenantMonitoringStruct } from "../ListTenants/types";
 import KeyPairView from "./KeyPairView";
 import { niceBytes } from "../../../../common/utils";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import Loader from "../../Common/Loader/Loader";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantMonitoring {
   classes: any;
@@ -67,6 +66,7 @@ const TenantMonitoring = ({
   tenant,
   loadingTenant,
 }: ITenantMonitoring) => {
+  const dispatch = useDispatch();
   const [prometheusMonitoringEnabled, setPrometheusMonitoringEnabled] =
     useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
@@ -97,7 +97,7 @@ const TenantMonitoring = ({
           setRefreshMonitoringInfo(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setRefreshMonitoringInfo(false);
         });
     }
@@ -122,7 +122,7 @@ const TenantMonitoring = ({
         setRefreshMonitoringInfo(true);
       })
       .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
   };
 
@@ -346,10 +346,4 @@ const TenantMonitoring = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(TenantMonitoring));
+export default withStyles(styles)(TenantMonitoring);

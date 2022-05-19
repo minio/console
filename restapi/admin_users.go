@@ -22,6 +22,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
@@ -249,13 +251,17 @@ func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserP
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
-	if session.AccountAccessKey == params.Name {
+	userName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	if session.AccountAccessKey == userName {
 		return ErrorWithContext(ctx, ErrAvoidSelfAccountDelete)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	if err := removeUser(ctx, adminClient, params.Name); err != nil {
+	if err := removeUser(ctx, adminClient, userName); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
@@ -283,7 +289,12 @@ func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoPa
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	user, err := getUserInfo(ctx, adminClient, params.Name)
+	userName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	user, err := getUserInfo(ctx, adminClient, userName)
 	if err != nil {
 		// User doesn't exist, return 404
 		if madmin.ToErrorResponse(err).Code == "XMinioAdminNoSuchUser" {
@@ -318,7 +329,7 @@ func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoPa
 	}
 
 	userInformation := &models.User{
-		AccessKey: params.Name,
+		AccessKey: userName,
 		MemberOf:  user.MemberOf,
 		Policy:    policies,
 		Status:    string(user.Status),
@@ -429,7 +440,12 @@ func getUpdateUserGroupsResponse(session *models.Principal, params userApi.Updat
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
+	userName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	user, err := updateUserGroups(ctx, adminClient, userName, params.Body.Groups)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -464,16 +480,18 @@ func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserI
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-
-	name := params.Name
+	userName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
 	status := *params.Body.Status
 	groups := params.Body.Groups
 
-	if err := setUserStatus(ctx, adminClient, name, status); err != nil {
+	if err := setUserStatus(ctx, adminClient, userName, status); err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	userElem, errUG := updateUserGroups(ctx, adminClient, name, groups)
+	userElem, errUG := updateUserGroups(ctx, adminClient, userName, groups)
 
 	if errUG != nil {
 		return nil, ErrorWithContext(ctx, errUG)

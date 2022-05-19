@@ -97,6 +97,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIGetMaxAllocatableMemHandler: operator_api.GetMaxAllocatableMemHandlerFunc(func(params operator_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetMaxAllocatableMem has not yet been implemented")
 		}),
+		OperatorAPIGetPVCDescribeHandler: operator_api.GetPVCDescribeHandlerFunc(func(params operator_api.GetPVCDescribeParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.GetPVCDescribe has not yet been implemented")
+		}),
 		OperatorAPIGetPVCEventsHandler: operator_api.GetPVCEventsHandlerFunc(func(params operator_api.GetPVCEventsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetPVCEvents has not yet been implemented")
 		}),
@@ -294,6 +297,8 @@ type OperatorAPI struct {
 	OperatorAPIGetAllocatableResourcesHandler operator_api.GetAllocatableResourcesHandler
 	// OperatorAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	OperatorAPIGetMaxAllocatableMemHandler operator_api.GetMaxAllocatableMemHandler
+	// OperatorAPIGetPVCDescribeHandler sets the operation handler for the get p v c describe operation
+	OperatorAPIGetPVCDescribeHandler operator_api.GetPVCDescribeHandler
 	// OperatorAPIGetPVCEventsHandler sets the operation handler for the get p v c events operation
 	OperatorAPIGetPVCEventsHandler operator_api.GetPVCEventsHandler
 	// OperatorAPIGetParityHandler sets the operation handler for the get parity operation
@@ -491,6 +496,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetMaxAllocatableMemHandler")
+	}
+	if o.OperatorAPIGetPVCDescribeHandler == nil {
+		unregistered = append(unregistered, "operator_api.GetPVCDescribeHandler")
 	}
 	if o.OperatorAPIGetPVCEventsHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetPVCEventsHandler")
@@ -760,6 +768,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/cluster/max-allocatable-memory"] = operator_api.NewGetMaxAllocatableMem(o.context, o.OperatorAPIGetMaxAllocatableMemHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/describe"] = operator_api.NewGetPVCDescribe(o.context, o.OperatorAPIGetPVCDescribeHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

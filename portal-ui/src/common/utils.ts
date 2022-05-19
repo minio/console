@@ -674,7 +674,10 @@ export const representationNumber = (number: number | undefined) => {
   return `${returnValue}${unit}`;
 };
 
-export const encodeFileName = (name: string) => {
+export const encodeURLString = (name: string | null) => {
+  if (!name) {
+    return "";
+  }
   try {
     return btoa(unescape(encodeURIComponent(name)));
   } catch (err) {
@@ -682,7 +685,7 @@ export const encodeFileName = (name: string) => {
   }
 };
 
-export const decodeFileName = (text: string) => {
+export const decodeURLString = (text: string) => {
   try {
     return decodeURIComponent(escape(window.atob(text)));
   } catch (err) {

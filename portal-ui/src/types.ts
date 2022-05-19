@@ -27,6 +27,7 @@ export interface SRInfoStateType {
   curSite: boolean;
   siteName: string;
 }
+
 export interface SystemState {
   loggedIn: boolean;
   operatorMode: boolean;
@@ -81,6 +82,7 @@ interface ServerIsLoading {
   type: typeof SERVER_IS_LOADING;
   isLoading: boolean;
 }
+
 interface SetLoadingProgress {
   type: typeof SET_LOADING_PROGRESS;
   loadingProgress: number;

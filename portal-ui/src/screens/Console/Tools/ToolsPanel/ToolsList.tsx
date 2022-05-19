@@ -34,9 +34,9 @@ import {
   HealIcon,
   LogsIcon,
   SearchIcon,
+  SpeedtestIcon,
   TraceIcon,
   WatchIcon,
-  SpeedtestIcon,
 } from "../../../../icons";
 import {
   CONSOLE_UI_RESOURCE,

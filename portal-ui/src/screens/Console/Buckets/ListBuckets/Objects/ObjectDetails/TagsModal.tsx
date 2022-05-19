@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { setModalErrorSnackMessage } from "../../../../../../actions";
+
 import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -43,14 +43,13 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import { SecureComponent } from "../../../../../../common/SecureComponent";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface ITagModal {
   modalOpen: boolean;
   bucketName: string;
   actualInfo: IFileInfo;
   onCloseAndUpdate: (refresh: boolean) => void;
-  distributedSetup: boolean;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   classes: any;
 }
 
@@ -96,11 +95,13 @@ const AddTagModal = ({
   modalOpen,
   onCloseAndUpdate,
   bucketName,
-  distributedSetup,
   actualInfo,
-  setModalErrorSnackMessage,
   classes,
 }: ITagModal) => {
+  const dispatch = useDispatch();
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
@@ -108,7 +109,7 @@ const AddTagModal = ({
   const [deleteKey, setDeleteKey] = useState<string>("");
   const [deleteLabel, setDeleteLabel] = useState<string>("");
 
-  const selectedObject = encodeFileName(actualInfo.name);
+  const selectedObject = encodeURLString(actualInfo.name);
   const currentTags = actualInfo.tags;
   const currTagKeys = Object.keys(currentTags || {});
 
@@ -140,7 +141,7 @@ const AddTagModal = ({
         setIsSending(false);
       })
       .catch((error: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(error);
+        dispatch(setModalErrorSnackMessage(error));
         setIsSending(false);
       });
   };
@@ -162,7 +163,7 @@ const AddTagModal = ({
         setIsSending(false);
       })
       .catch((error: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(error);
+        dispatch(setModalErrorSnackMessage(error));
         setIsSending(false);
       });
   };
@@ -365,14 +366,4 @@ const AddTagModal = ({
   );
 };
 
-const mapStateToProps = ({ system }: AppState) => ({
-  distributedSetup: get(system, "distributedSetup", false),
-});
-
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddTagModal));
+export default withStyles(styles)(AddTagModal);

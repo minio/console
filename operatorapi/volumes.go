@@ -77,6 +77,14 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 
 		return operator_api.NewGetPVCEventsOK().WithPayload(payload)
 	})
+
+	api.OperatorAPIGetPVCDescribeHandler = operator_api.GetPVCDescribeHandlerFunc(func(params operator_api.GetPVCDescribeParams, session *models.Principal) middleware.Responder {
+		payload, err := getPVCDescribeResponse(session, params)
+		if err != nil {
+			return operator_api.NewGetPVCDescribeDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetPVCDescribeOK().WithPayload(payload)
+	})
 }
 
 func getPVCsResponse(session *models.Principal, params operator_api.ListPVCsParams) (*models.ListPVCsResponse, *models.Error) {
@@ -259,4 +267,48 @@ func getTenantCSResponse(session *models.Principal, params operator_api.ListTena
 		Status:                     messages,
 	}
 	return retval, nil
+}
+
+func getPVCDescribeResponse(session *models.Principal, params operator_api.GetPVCDescribeParams) (*models.DescribePVCWrapper, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, errors.ErrorWithContext(ctx, err)
+	}
+	pvc, err := clientset.CoreV1().PersistentVolumeClaims(params.Namespace).Get(ctx, params.PVCName, metav1.GetOptions{})
+	if err != nil {
+		return nil, errors.ErrorWithContext(ctx, err)
+	}
+	accessModes := []string{}
+	for _, a := range pvc.Status.AccessModes {
+		accessModes = append(accessModes, string(a))
+	}
+	return &models.DescribePVCWrapper{
+		Name:         pvc.Name,
+		Namespace:    pvc.Namespace,
+		StorageClass: *pvc.Spec.StorageClassName,
+		Status:       string(pvc.Status.Phase),
+		Volume:       pvc.Spec.VolumeName,
+		Labels:       castLabels(pvc.Labels),
+		Annotations:  castAnnotations(pvc.Annotations),
+		Finalizers:   pvc.Finalizers,
+		Capacity:     pvc.Status.Capacity.Storage().String(),
+		AccessModes:  accessModes,
+		VolumeMode:   string(*pvc.Spec.VolumeMode),
+	}, nil
+}
+
+func castLabels(labelsToCast map[string]string) (labels []*models.Label) {
+	for k, v := range labelsToCast {
+		labels = append(labels, &models.Label{Key: k, Value: v})
+	}
+	return labels
+}
+
+func castAnnotations(annotationsToCast map[string]string) (annotations []*models.Annotation) {
+	for k, v := range annotationsToCast {
+		annotations = append(annotations, &models.Annotation{Key: k, Value: v})
+	}
+	return annotations
 }

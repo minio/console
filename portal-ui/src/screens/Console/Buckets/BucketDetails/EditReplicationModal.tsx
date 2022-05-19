@@ -31,12 +31,13 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketReplicationRule } from "../types";
-import { connect } from "react-redux";
-import { setModalErrorSnackMessage } from "../../../../actions";
+import { useDispatch } from "react-redux";
+
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IEditReplicationModal {
   closeModalAndRefresh: (refresh: boolean) => void;
@@ -44,7 +45,6 @@ interface IEditReplicationModal {
   classes: any;
   bucketName: string;
   ruleID: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -73,8 +73,8 @@ const EditReplicationModal = ({
   classes,
   bucketName,
   ruleID,
-  setModalErrorSnackMessage,
 }: IEditReplicationModal) => {
+  const dispatch = useDispatch();
   const [editLoading, setEditLoading] = useState<boolean>(true);
   const [saveEdit, setSaveEdit] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("1");
@@ -111,11 +111,11 @@ const EditReplicationModal = ({
           setEditLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
           setEditLoading(false);
         });
     }
-  }, [editLoading, setModalErrorSnackMessage, bucketName, ruleID]);
+  }, [editLoading, dispatch, bucketName, ruleID]);
 
   useEffect(() => {
     if (saveEdit) {
@@ -143,7 +143,7 @@ const EditReplicationModal = ({
           closeModalAndRefresh(true);
         })
         .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
           setSaveEdit(false);
         });
     }
@@ -162,7 +162,7 @@ const EditReplicationModal = ({
     metadataSync,
     targetStorageClass,
     closeModalAndRefresh,
-    setModalErrorSnackMessage,
+    dispatch,
   ]);
 
   return (
@@ -345,8 +345,5 @@ const EditReplicationModal = ({
     </ModalWrapper>
   );
 };
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
 
-export default withStyles(styles)(connector(EditReplicationModal));
+export default withStyles(styles)(EditReplicationModal);

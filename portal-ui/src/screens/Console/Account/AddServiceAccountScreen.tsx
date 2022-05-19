@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -23,8 +23,12 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, Box } from "@mui/material";
-import { PasswordKeyIcon, ServiceAccountCredentialsIcon } from "../../../icons";
+import { Box, Button } from "@mui/material";
+import {
+  IAMPoliciesIcon,
+  PasswordKeyIcon,
+  ServiceAccountCredentialsIcon,
+} from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -34,22 +38,21 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import BackLink from "../../../common/BackLink";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import { connect } from "react-redux";
-import { IAMPoliciesIcon } from "../../../icons";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { setErrorSnackMessage } from "../../../../src/actions";
+
 import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from "../../../screens/Console/Tenants/utils";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IAddServiceAccountProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -71,10 +74,8 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const AddServiceAccount = ({
-  classes,
-  setErrorSnackMessage,
-}: IAddServiceAccountProps) => {
+const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
+  const dispatch = useDispatch();
   const [addSending, setAddSending] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
   const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
@@ -104,17 +105,10 @@ const AddServiceAccount = ({
 
         .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [
-    addSending,
-    setAddSending,
-    setErrorSnackMessage,
-    policyJSON,
-    accessKey,
-    secretKey,
-  ]);
+  }, [addSending, setAddSending, dispatch, policyJSON, accessKey, secretKey]);
 
   useEffect(() => {
     if (isRestrictedByPolicy) {
@@ -313,10 +307,4 @@ const AddServiceAccount = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddServiceAccount));
+export default withStyles(styles)(AddServiceAccount);

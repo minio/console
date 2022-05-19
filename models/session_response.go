@@ -25,6 +25,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -36,6 +37,9 @@ import (
 //
 // swagger:model sessionResponse
 type SessionResponse struct {
+
+	// allow resources
+	AllowResources []*PermissionResource `json:"allowResources"`
 
 	// distributed mode
 	DistributedMode bool `json:"distributedMode,omitempty"`
@@ -58,6 +62,10 @@ type SessionResponse struct {
 func (m *SessionResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAllowResources(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
@@ -65,6 +73,32 @@ func (m *SessionResponse) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *SessionResponse) validateAllowResources(formats strfmt.Registry) error {
+	if swag.IsZero(m.AllowResources) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.AllowResources); i++ {
+		if swag.IsZero(m.AllowResources[i]) { // not required
+			continue
+		}
+
+		if m.AllowResources[i] != nil {
+			if err := m.AllowResources[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("allowResources" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("allowResources" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -107,8 +141,37 @@ func (m *SessionResponse) validateStatus(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this session response based on context it is used
+// ContextValidate validate this session response based on the context it is used
 func (m *SessionResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAllowResources(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SessionResponse) contextValidateAllowResources(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.AllowResources); i++ {
+
+		if m.AllowResources[i] != nil {
+			if err := m.AllowResources[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("allowResources" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("allowResources" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

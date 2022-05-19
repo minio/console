@@ -15,21 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
 import { AppState } from "../../../../../../store";
-import {
-  setEditPoolField,
-  isEditPoolPageValid,
-  setEditPoolKeyValuePairs,
-  setEditPoolTolerationInfo,
-  addNewEditPoolToleration,
-  removeEditPoolToleration,
-} from "../../../actions";
-import { setModalErrorSnackMessage } from "../../../../../../actions";
+
 import {
   modalBasic,
   wizardCommon,
@@ -38,10 +30,7 @@ import {
   commonFormValidation,
   IValidation,
 } from "../../../../../../utils/validationFunctions";
-import {
-  ErrorResponseHandler,
-  ITolerationModel,
-} from "../../../../../../common/types";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import { LabelKeyPair } from "../../../types";
 import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -51,21 +40,18 @@ import AddIcon from "../../../../../../icons/AddIcon";
 import RemoveIcon from "../../../../../../icons/RemoveIcon";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import TolerationSelector from "../../../../Common/TolerationSelector/TolerationSelector";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  addNewEditPoolToleration,
+  isEditPoolPageValid,
+  removeEditPoolToleration,
+  setEditPoolField,
+  setEditPoolKeyValuePairs,
+  setEditPoolTolerationInfo,
+} from "../../../tenantsSlice";
 
 interface IAffinityProps {
   classes: any;
-  podAffinity: string;
-  nodeSelectorLabels: string;
-  withPodAntiAffinity: boolean;
-  keyValuePairs: LabelKeyPair[];
-  tolerations: ITolerationModel[];
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
-  setEditPoolField: typeof setEditPoolField;
-  isEditPoolPageValid: typeof isEditPoolPageValid;
-  setEditPoolKeyValuePairs: typeof setEditPoolKeyValuePairs;
-  setEditPoolTolerationInfo: typeof setEditPoolTolerationInfo;
-  removeEditPoolToleration: typeof removeEditPoolToleration;
-  addNewEditPoolToleration: typeof addNewEditPoolToleration;
 }
 
 const styles = (theme: Theme) =>
@@ -129,21 +115,27 @@ interface OptionPair {
   value: string;
 }
 
-const Affinity = ({
-  classes,
-  podAffinity,
-  nodeSelectorLabels,
-  withPodAntiAffinity,
-  setModalErrorSnackMessage,
-  keyValuePairs,
-  setEditPoolField,
-  isEditPoolPageValid,
-  setEditPoolKeyValuePairs,
-  setEditPoolTolerationInfo,
-  addNewEditPoolToleration,
-  removeEditPoolToleration,
-  tolerations,
-}: IAffinityProps) => {
+const Affinity = ({ classes }: IAffinityProps) => {
+  const dispatch = useDispatch();
+
+  const podAffinity = useSelector(
+    (state: AppState) => state.tenants.editPool.fields.affinity.podAffinity
+  );
+  const nodeSelectorLabels = useSelector(
+    (state: AppState) =>
+      state.tenants.editPool.fields.affinity.nodeSelectorLabels
+  );
+  const withPodAntiAffinity = useSelector(
+    (state: AppState) =>
+      state.tenants.editPool.fields.affinity.withPodAntiAffinity
+  );
+  const keyValuePairs = useSelector(
+    (state: AppState) => state.tenants.editPool.fields.nodeSelectorPairs
+  );
+  const tolerations = useSelector(
+    (state: AppState) => state.tenants.editPool.fields.tolerations
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [keyValueMap, setKeyValueMap] = useState<{ [key: string]: string[] }>(
@@ -154,9 +146,15 @@ const Affinity = ({
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      setEditPoolField("affinity", field, value);
+      dispatch(
+        setEditPoolField({
+          page: "affinity",
+          field: field,
+          value: value,
+        })
+      );
     },
-    [setEditPoolField]
+    [dispatch]
   );
 
   useEffect(() => {
@@ -177,11 +175,11 @@ const Affinity = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
           setKeyValueMap({});
         });
     }
-  }, [setModalErrorSnackMessage, loading]);
+  }, [dispatch, loading]);
 
   useEffect(() => {
     if (keyValuePairs) {
@@ -236,15 +234,25 @@ const Affinity = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isEditPoolPageValid("affinity", Object.keys(commonVal).length === 0);
+    dispatch(
+      isEditPoolPageValid({
+        page: "affinity",
+        status: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
-  }, [isEditPoolPageValid, podAffinity, nodeSelectorLabels]);
+  }, [dispatch, podAffinity, nodeSelectorLabels]);
 
   const updateToleration = (index: number, field: string, value: any) => {
     const alterToleration = { ...tolerations[index], [field]: value };
 
-    setEditPoolTolerationInfo(index, alterToleration);
+    dispatch(
+      setEditPoolTolerationInfo({
+        index: index,
+        tolerationValue: alterToleration,
+      })
+    );
   };
 
   return (
@@ -321,7 +329,7 @@ const Affinity = ({
 
                               arrCp[i].key = e.target.value as string;
                               arrCp[i].value = keyValueMap[newKey][0];
-                              setEditPoolKeyValuePairs(arrCp);
+                              dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             id="select-access-policy"
                             name="select-access-policy"
@@ -342,7 +350,7 @@ const Affinity = ({
                                 keyValuePairs
                               );
                               arrCp[i].key = e.target.value;
-                              setEditPoolKeyValuePairs(arrCp);
+                              dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
                             placeholder={"Key"}
@@ -358,7 +366,7 @@ const Affinity = ({
                                 keyValuePairs
                               );
                               arrCp[i].value = e.target.value as string;
-                              setEditPoolKeyValuePairs(arrCp);
+                              dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             id="select-access-policy"
                             name="select-access-policy"
@@ -385,7 +393,7 @@ const Affinity = ({
                                 keyValuePairs
                               );
                               arrCp[i].value = e.target.value;
-                              setEditPoolKeyValuePairs(arrCp);
+                              dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
                             placeholder={"value"}
@@ -407,7 +415,7 @@ const Affinity = ({
                                 arrCp.push({ key: "", value: "" });
                               }
 
-                              setEditPoolKeyValuePairs(arrCp);
+                              dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                           >
                             <AddIcon />
@@ -421,7 +429,7 @@ const Affinity = ({
                                 const arrCp = keyValuePairs.filter(
                                   (item, index) => index !== i
                                 );
-                                setEditPoolKeyValuePairs(arrCp);
+                                dispatch(setEditPoolKeyValuePairs(arrCp));
                               }}
                             >
                               <RemoveIcon />
@@ -480,7 +488,9 @@ const Affinity = ({
                     <div className={classes.overlayAction}>
                       <IconButton
                         size={"small"}
-                        onClick={addNewEditPoolToleration}
+                        onClick={() => {
+                          dispatch(addNewEditPoolToleration());
+                        }}
                         disabled={i !== tolerations.length - 1}
                       >
                         <AddIcon />
@@ -490,7 +500,9 @@ const Affinity = ({
                     <div className={classes.overlayAction}>
                       <IconButton
                         size={"small"}
-                        onClick={() => removeEditPoolToleration(i)}
+                        onClick={() => {
+                          dispatch(removeEditPoolToleration(i));
+                        }}
                         disabled={tolerations.length <= 1}
                       >
                         <RemoveIcon />
@@ -506,26 +518,4 @@ const Affinity = ({
   );
 };
 
-const mapState = (state: AppState) => {
-  const editPool = state.tenants.editPool;
-
-  return {
-    podAffinity: editPool.fields.affinity.podAffinity,
-    nodeSelectorLabels: editPool.fields.affinity.nodeSelectorLabels,
-    withPodAntiAffinity: editPool.fields.affinity.withPodAntiAffinity,
-    keyValuePairs: editPool.fields.nodeSelectorPairs,
-    tolerations: editPool.fields.tolerations,
-  };
-};
-
-const connector = connect(mapState, {
-  setModalErrorSnackMessage,
-  setEditPoolField,
-  isEditPoolPageValid,
-  setEditPoolKeyValuePairs,
-  setEditPoolTolerationInfo,
-  addNewEditPoolToleration,
-  removeEditPoolToleration,
-});
-
-export default withStyles(styles)(connector(Affinity));
+export default withStyles(styles)(Affinity);

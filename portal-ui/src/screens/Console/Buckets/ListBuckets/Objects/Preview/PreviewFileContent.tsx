@@ -20,7 +20,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid, LinearProgress } from "@mui/material";
 import { BucketObjectItem } from "../ListObjects/types";
 import { extensionPreview } from "../utils";
-import { encodeFileName } from "../../../../../../common/utils";
+import { encodeURLString } from "../../../../../../common/utils";
 import clsx from "clsx";
 
 const styles = () =>
@@ -75,7 +75,7 @@ const PreviewFile = ({
   let path = "";
 
   if (object) {
-    const encodedPath = encodeFileName(object.name);
+    const encodedPath = encodeURLString(object.name);
     let basename = document.baseURI.replace(window.location.origin, "");
     path = `${window.location.origin}${basename}api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
     if (object.version_id) {
@@ -96,59 +96,74 @@ const PreviewFile = ({
           <LinearProgress />
         </Grid>
       )}
-      {objectType === "video" && (
-        <video
-          style={{ width: "100%", height: "auto" }}
-          autoPlay={true}
-          controls={true}
-          muted={false}
-          playsInline={true}
-          onPlay={iframeLoaded}
-        >
-          <source src={path} type="video/mp4" />
-        </video>
-      )}
-      {objectType === "audio" && (
-        <audio
-          style={{ width: "100%", height: "auto" }}
-          autoPlay={true}
-          controls={true}
-          muted={false}
-          playsInline={true}
-          onPlay={iframeLoaded}
-        >
-          <source src={path} type="audio/mpeg" />
-        </audio>
-      )}
-      {objectType === "image" && (
-        <img
-          style={{ width: "100%", height: "auto" }}
-          src={path}
-          alt={"preview"}
-          onLoad={iframeLoaded}
-        />
-      )}
-      {objectType !== "video" &&
-        objectType !== "audio" &&
-        objectType !== "image" && (
-          <div
-            className={clsx(classes.iframeBase, {
-              [classes.iframeHidden]: loading,
-            })}
+      <div style={{ textAlign: "center" }}>
+        {objectType === "video" && (
+          <video
+            style={{
+              width: "auto",
+              height: "auto",
+              maxWidth: "calc(100vw - 100px)",
+              maxHeight: "calc(100vh - 200px)",
+            }}
+            autoPlay={true}
+            controls={true}
+            muted={false}
+            playsInline={true}
+            onPlay={iframeLoaded}
           >
-            <iframe
-              src={path}
-              title="File Preview"
-              allowTransparency
-              className={`${classes.iframeContainer} ${
-                isFullscreen ? "fullHeight" : objectType
-              }`}
-              onLoad={iframeLoaded}
-            >
-              File couldn't be loaded. Please try Download instead
-            </iframe>
-          </div>
+            <source src={path} type="video/mp4" />
+          </video>
         )}
+        {objectType === "audio" && (
+          <audio
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
+            autoPlay={true}
+            controls={true}
+            muted={false}
+            playsInline={true}
+            onPlay={iframeLoaded}
+          >
+            <source src={path} type="audio/mpeg" />
+          </audio>
+        )}
+        {objectType === "image" && (
+          <img
+            style={{
+              width: "auto",
+              height: "auto",
+              maxWidth: "100vw",
+              maxHeight: "100vh",
+            }}
+            src={path}
+            alt={"preview"}
+            onLoad={iframeLoaded}
+          />
+        )}
+        {objectType !== "video" &&
+          objectType !== "audio" &&
+          objectType !== "image" && (
+            <div
+              className={clsx(classes.iframeBase, {
+                [classes.iframeHidden]: loading,
+              })}
+            >
+              <iframe
+                src={path}
+                title="File Preview"
+                allowTransparency
+                className={`${classes.iframeContainer} ${
+                  isFullscreen ? "fullHeight" : objectType
+                }`}
+                onLoad={iframeLoaded}
+              >
+                File couldn't be loaded. Please try Download instead
+              </iframe>
+            </div>
+          )}
+      </div>
     </Fragment>
   );
 };

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
@@ -24,7 +24,6 @@ import withStyles from "@mui/styles/withStyles";
 import { Button } from "@mui/material";
 
 import api from "../../../common/api";
-import { serverNeedsRestart, setErrorSnackMessage } from "../../../actions";
 import {
   notificationEndpointsFields,
   notifyMysql,
@@ -46,6 +45,10 @@ import withSuspense from "../Common/Components/withSuspense";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../systemSlice";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -105,18 +108,15 @@ const styles = (theme: Theme) =>
 interface IAddNotificationEndpointProps {
   match: any;
   saveAndRefresh: any;
-  serverNeedsRestart: typeof serverNeedsRestart;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
 const AddNotificationEndpoint = ({
   match,
   saveAndRefresh,
-  serverNeedsRestart,
   classes,
-  setErrorSnackMessage,
 }: IAddNotificationEndpointProps) => {
+  const dispatch = useDispatch();
   //Local States
   const [valuesArr, setValueArr] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
@@ -132,22 +132,15 @@ const AddNotificationEndpoint = ({
         .invoke("PUT", `/api/v1/configs/${service}`, payload)
         .then(() => {
           setSaving(false);
-          serverNeedsRestart(true);
+          dispatch(setServerNeedsRestart(true));
           history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [
-    saving,
-    serverNeedsRestart,
-    service,
-    valuesArr,
-    saveAndRefresh,
-    setErrorSnackMessage,
-  ]);
+  }, [saving, service, valuesArr, saveAndRefresh, dispatch]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
@@ -249,11 +242,4 @@ const AddNotificationEndpoint = ({
   );
 };
 
-const mapDispatchToProps = {
-  serverNeedsRestart,
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(withStyles(styles)(AddNotificationEndpoint));
+export default withStyles(styles)(AddNotificationEndpoint);

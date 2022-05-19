@@ -14,8 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, Suspense, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Theme } from "@mui/material/styles";
+import debounce from "lodash/debounce";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
@@ -23,16 +30,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
 import history from "../../history";
 import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../store";
-import {
-  serverIsLoading,
-  serverNeedsRestart,
-  setMenuOpen,
-  setSnackBarMessage,
-} from "../../actions";
-import { ISessionResponse } from "./types";
-import { snackBarMessage } from "../../types";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../common/types";
 
@@ -52,6 +51,12 @@ import { IRouteRule } from "./Menu/types";
 import LoadingComponent from "../../common/LoadingComponent";
 import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
 import ComponentsScreen from "./Common/ComponentsScreen";
+import {
+  menuOpen,
+  serverIsLoading,
+  setServerNeedsRestart,
+  setSnackBarMessage,
+} from "../../systemSlice";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -170,58 +175,72 @@ const styles = (theme: Theme) =>
   });
 
 interface IConsoleProps {
-  open: boolean;
-  needsRestart: boolean;
-  isServerLoading: boolean;
   classes: any;
-  setMenuOpen: typeof setMenuOpen;
-  serverNeedsRestart: typeof serverNeedsRestart;
-  serverIsLoading: typeof serverIsLoading;
-  session: ISessionResponse;
-  loadingProgress: number;
-  snackBarMessage: snackBarMessage;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  operatorMode: boolean;
-  distributedSetup: boolean;
-  features: string[] | null;
 }
 
-const Console = ({
-  classes,
-  open,
-  needsRestart,
-  isServerLoading,
-  serverNeedsRestart,
-  serverIsLoading,
-  session,
-  loadingProgress,
-  snackBarMessage,
-  setSnackBarMessage,
-  operatorMode,
-  distributedSetup,
-  features,
-}: IConsoleProps) => {
+const Console = ({ classes }: IConsoleProps) => {
+  const dispatch = useDispatch();
+  const open = useSelector((state: AppState) => state.system.sidebarOpen);
+  const session = useSelector((state: AppState) => state.console.session);
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
+  const operatorMode = useSelector(
+    (state: AppState) => state.system.operatorMode
+  );
+  const snackBarMessage = useSelector(
+    (state: AppState) => state.system.snackBar
+  );
+  const needsRestart = useSelector(
+    (state: AppState) => state.system.serverNeedsRestart
+  );
+  const isServerLoading = useSelector(
+    (state: AppState) => state.system.serverIsLoading
+  );
+  const loadingProgress = useSelector(
+    (state: AppState) => state.system.loadingProgress
+  );
+
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
   const restartServer = () => {
-    serverIsLoading(true);
+    dispatch(serverIsLoading(true));
     api
       .invoke("POST", "/api/v1/service/restart", {})
       .then((res) => {
         console.log("success restarting service");
-        serverIsLoading(false);
-        serverNeedsRestart(false);
+        dispatch(serverIsLoading(false));
+        dispatch(setServerNeedsRestart(false));
       })
       .catch((err: ErrorResponseHandler) => {
         if (err.errorMessage === "Error 502") {
-          serverNeedsRestart(false);
+          dispatch(setServerNeedsRestart(false));
         }
-        serverIsLoading(false);
+        dispatch(serverIsLoading(false));
         console.log("failure restarting service");
         console.error(err);
       });
   };
+
+  // Layout effect to be executed after last re-render for resizing only
+  useLayoutEffect(() => {
+    // Debounce to not execute constantly
+    const debounceSize = debounce(() => {
+      if (open && window.innerWidth <= 800) {
+        dispatch(menuOpen(false));
+      }
+    }, 300);
+
+    // Added event listener for window resize
+    window.addEventListener("resize", debounceSize);
+
+    // We remove the listener on component unmount
+    return () => window.removeEventListener("resize", debounceSize);
+  });
 
   const consoleAdminRoutes: IRouteRule[] = [
     {
@@ -563,7 +582,7 @@ const Console = ({
 
   const closeSnackBar = () => {
     setOpenSnackbar(false);
-    setSnackBarMessage("");
+    dispatch(setSnackBarMessage(""));
   };
 
   useEffect(() => {
@@ -685,23 +704,4 @@ const Console = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  open: state.system.sidebarOpen,
-  needsRestart: state.system.serverNeedsRestart,
-  isServerLoading: state.system.serverIsLoading,
-  session: state.console.session,
-  loadingProgress: state.system.loadingProgress,
-  snackBarMessage: state.system.snackBar,
-  operatorMode: state.system.operatorMode,
-  distributedSetup: state.system.distributedSetup,
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, {
-  setMenuOpen,
-  serverNeedsRestart,
-  serverIsLoading,
-  setSnackBarMessage,
-});
-
-export default withStyles(styles)(connector(Console));
+export default withStyles(styles)(Console);

@@ -266,7 +266,7 @@ func (c mcClient) deleteAllReplicationRules(ctx context.Context) *probe.Error {
 }
 
 func (c mcClient) setVersioning(ctx context.Context, status string) *probe.Error {
-	return c.client.SetVersion(ctx, status)
+	return c.client.SetVersion(ctx, status, []string{}, false)
 }
 
 func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,10 +27,7 @@ import {
   TrashIcon,
   UsersIcon,
 } from "../../../icons";
-import {
-  setErrorSnackMessage,
-  setModalErrorSnackMessage,
-} from "../../../actions";
+
 import {
   actionsTray,
   containerForHeader,
@@ -47,7 +44,7 @@ import SetUserPolicies from "./SetUserPolicies";
 import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
-import DeleteUserString from "./DeleteUserString";
+import DeleteUserModal from "./DeleteUserModal";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -56,6 +53,8 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import BackLink from "../../../common/BackLink";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { decodeURLString, encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -80,7 +79,6 @@ const styles = (theme: Theme) =>
 interface IUserDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 interface IGroupItem {
@@ -88,6 +86,8 @@ interface IGroupItem {
 }
 
 const UserDetails = ({ classes, match }: IUserDetailsProps) => {
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
@@ -101,8 +101,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
-
-  const userName = match.params["userName"];
+  const userName = decodeURLString(match.params["userName"]);
 
   const changeUserPassword = () => {
     setChangeUserPasswordModalOpen(true);
@@ -118,7 +117,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     }
     setLoading(true);
     api
-      .invoke("GET", `/api/v1/user?name=${encodeURIComponent(userName)}`)
+      .invoke("GET", `/api/v1/user/${encodeURLString(userName)}`)
       .then((res) => {
         setAddLoading(false);
         const memberOf = res.memberOf || [];
@@ -144,9 +143,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
-  }, [userName]);
+  }, [userName, dispatch]);
 
   const saveRecord = (isEnabled: boolean) => {
     if (addLoading) {
@@ -154,7 +153,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     }
     setAddLoading(true);
     api
-      .invoke("PUT", `/api/v1/user?name=${encodeURIComponent(userName)}`, {
+      .invoke("PUT", `/api/v1/user/${encodeURLString(userName)}`, {
         status: isEnabled ? "enabled" : "disabled",
         groups: selectedGroups,
       })
@@ -163,7 +162,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -210,7 +209,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         />
       )}
       {deleteOpen && (
-        <DeleteUserString
+        <DeleteUserModal
           deleteOpen={deleteOpen}
           userName={userName}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
@@ -348,7 +347,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                           type: "view",
                           onClick: (policy: IPolicyItem) => {
                             history.push(
-                              `${IAM_PAGES.POLICIES}/${policy.policy}`
+                              `${IAM_PAGES.POLICIES}/${encodeURLString(
+                                policy.policy
+                              )}`
                             );
                           },
                         },
@@ -370,10 +371,4 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(UserDetails));
+export default withStyles(styles)(UserDetails);
