@@ -3686,6 +3686,10 @@ definitions:
           type: array
           items:
             type: string
+      allowResources:
+        type: array
+        items:
+          $ref: "#/definitions/permissionResource"
 
   widgetResult:
     type: object
@@ -4778,3 +4782,15 @@ definitions:
         type: string
       latest_version:
         type: string
+
+  permissionResource:
+    type: object
+    properties:
+      resource:
+        type: string
+      conditionOperator:
+        type: string
+      prefixes:
+        type: array
+        items:
+          type: string

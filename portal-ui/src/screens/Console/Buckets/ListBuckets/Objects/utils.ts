@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "./ListObjects/types";
+import { IAllowResources } from "../../../types";
 
 export const download = (
   bucketName: string,
@@ -160,4 +161,101 @@ export const sortListObjects = (fieldSort: string) => {
       return (a: BucketObjectItem, b: BucketObjectItem) =>
         (a.size || -1) - (b.size || -1);
   }
+};
+
+export const permissionItems = (
+  bucketName: string,
+  currentPath: string,
+  permissionsArray: IAllowResources[]
+): BucketObjectItem[] | null => {
+  if (permissionsArray.length === 0) {
+    return null;
+  }
+
+  // We get permissions applied to the current bucket
+  const filteredPermissionsForBucket = permissionsArray.filter(
+    (permissionItem) =>
+      permissionItem.resource.endsWith(`:${bucketName}`) ||
+      permissionItem.resource.includes(`:${bucketName}/`)
+  );
+
+  // No permissions for this bucket. we can throw the error message at this point
+  if (filteredPermissionsForBucket.length === 0) {
+    return null;
+  }
+
+  const returnElements: BucketObjectItem[] = [];
+
+  // We split current path
+  const splitCurrentPath = currentPath.split("/");
+
+  filteredPermissionsForBucket.forEach((permissionElement) => {
+    // We review paths in resource address
+
+    // We split ARN & get the last item to check the URL
+    const splitARN = permissionElement.resource.split(":");
+    const url = splitARN.pop() || "";
+
+    // We split the paths of the URL & compare against current location to see if there are more items to include. In case current level is a wildcard or is the last one, we omit this validation
+
+    const splitURL = url.split("/");
+
+    // splitURL has more items than bucket name, we can continue validating
+    if (splitURL.length > 1) {
+      splitURL.every((currentElementInPath, index) => {
+        // It is a wildcard element. We can stor the verification as value should be included (?)
+        if (currentElementInPath === "*") {
+          return false;
+        }
+
+        // Element is not included in the path. The user is trying to browse something else.
+        if (
+          splitCurrentPath[index] &&
+          splitCurrentPath[index] !== currentElementInPath
+        ) {
+          return false;
+        }
+
+        // This element is not included by index in the current paths list. We add it so user can browse into it
+        if (!splitCurrentPath[index]) {
+          returnElements.push({
+            name: `${currentElementInPath}/`,
+            size: 0,
+            last_modified: new Date(),
+            version_id: "",
+          });
+        }
+
+        return true;
+      });
+    }
+
+    // We review prefixes in allow resources for StringEquals variant only.
+    if (permissionElement.conditionOperator === "StringEquals" || permissionElement.conditionOperator === "StringLike") {
+      permissionElement.prefixes.forEach((prefixItem) => {
+        // Prefix Item is not empty?
+        if (prefixItem !== "") {
+          const splitItems = prefixItem.split("/");
+
+          splitItems.every((splitElement, index) => {
+            if (!splitElement.includes("*")) {
+              if (splitElement !== splitURL[index]) {
+                returnElements.push({
+                  name: `${splitElement}/`,
+                  size: 0,
+                  last_modified: new Date(),
+                  version_id: "",
+                });
+                return false;
+              }
+              return true;
+            }
+            return false;
+          });
+        }
+      });
+    }
+  });
+
+  return returnElements;
 };

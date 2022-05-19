@@ -39,6 +39,10 @@ import (
 	authApi "github.com/minio/console/restapi/operations/auth"
 )
 
+type Conditions struct {
+	S3Prefix []string `json:"s3:prefix"`
+}
+
 func registerSessionHandlers(api *operations.ConsoleAPI) {
 	// session check
 	api.AuthSessionCheckHandler = authApi.SessionCheckHandlerFunc(func(params authApi.SessionCheckParams, session *models.Principal) middleware.Responder {
@@ -138,10 +142,15 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		ConsoleResourceName: defaultActions,
 	}
 	deniedActions := map[string]minioIAMPolicy.ActionSet{}
+
+	var allowResources []*models.PermissionResource
+
 	for _, statement := range policy.Statements {
 		for _, resource := range statement.Resources.ToSlice() {
 			resourceName := resource.String()
 			statementActions := statement.Actions.ToSlice()
+			var prefixes []string
+
 			if statement.Effect == "Allow" {
 				// check if val are denied before adding them to the map
 				var allowedActions []minioIAMPolicy.Action
@@ -163,6 +172,30 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 				} else {
 					mergedActions := append(defaultActions.ToSlice(), allowedActions...)
 					permissions[resourceName] = minioIAMPolicy.NewActionSet(mergedActions...)
+				}
+
+				// Allow Permissions request
+				conditions, err := statement.Conditions.MarshalJSON()
+				if err != nil {
+					return nil, ErrorWithContext(ctx, err)
+				}
+
+				var wrapper map[string]Conditions
+
+				if err := json.Unmarshal(conditions, &wrapper); err != nil {
+					return nil, ErrorWithContext(ctx, err)
+				}
+
+				for condition, elements := range wrapper {
+					prefixes = elements.S3Prefix
+
+					resourceElement := models.PermissionResource{
+						Resource:          resourceName,
+						Prefixes:          prefixes,
+						ConditionOperator: condition,
+					}
+
+					allowResources = append(allowResources, &resourceElement)
 				}
 			} else {
 				// Add new banned actions to the map
@@ -210,6 +243,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		Operator:        false,
 		DistributedMode: erasure,
 		Permissions:     resourcePermissions,
+		AllowResources:  allowResources,
 	}
 	return sessionResp, nil
 }
