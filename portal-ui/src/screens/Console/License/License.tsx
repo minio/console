@@ -66,7 +66,7 @@ const styles = (theme: Theme) =>
       fontSize: 16,
       fontWeight: "bold",
       "& ul": {
-        marginLeft: "-25px",
+        marginLeft: "-8px",
         listStyleType: "square",
         color: "#1C5A8D",
         fontSize: "16px",
