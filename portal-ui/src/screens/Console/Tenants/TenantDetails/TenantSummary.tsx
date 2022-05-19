@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -25,7 +25,6 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Box, Grid } from "@mui/material";
-import { ITenant } from "../ListTenants/types";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
 import AButton from "../../Common/AButton/AButton";
@@ -36,21 +35,12 @@ import SectionTitle from "../../Common/SectionTitle";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { EditIcon } from "../../../../icons";
 import EditDomains from "./EditDomains";
-import { setTenantDetailsLoad } from "../actions";
+import { setTenantDetailsLoad } from "../tenantsSlice";
+import { ITenant } from "../ListTenants/types";
 
 interface ITenantsSummary {
   classes: any;
   match: any;
-  tenant: ITenant | null;
-  logEnabled: boolean;
-  monitoringEnabled: boolean;
-  encryptionEnabled: boolean;
-  minioTLS: boolean;
-  consoleTLS: boolean;
-  consoleEnabled: boolean;
-  adEnabled: boolean;
-  oidcEnabled: boolean;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -127,14 +117,20 @@ const healthStatusToClass = (health_status: string = "red", classes: any) => {
     : classes.greyState;
 };
 
-const StorageSummary = ({ tenant, classes }: Partial<ITenantsSummary>) => {
+const StorageSummary = ({
+  tenant,
+  classes,
+}: {
+  tenant: ITenant | null;
+  classes: any;
+}) => {
   if (!tenant) {
     return null;
   }
 
   return (
     <SummaryUsageBar
-      tenant={tenant}
+      tenant={tenant!}
       label={"Storage"}
       error={""}
       loading={false}
@@ -185,18 +181,31 @@ const featureItemStyleProps = {
     },
   },
 };
-const TenantSummary = ({
-  classes,
-  match,
-  tenant,
-  logEnabled,
-  monitoringEnabled,
-  encryptionEnabled,
-  minioTLS,
-  adEnabled,
-  oidcEnabled,
-  setTenantDetailsLoad,
-}: ITenantsSummary) => {
+const TenantSummary = ({ classes, match }: ITenantsSummary) => {
+  const dispatch = useDispatch();
+
+  const tenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.tenantInfo
+  );
+  const logEnabled = useSelector((state: AppState) =>
+    get(state.tenants.tenantDetails.tenantInfo, "logEnabled", false)
+  );
+  const monitoringEnabled = useSelector((state: AppState) =>
+    get(state.tenants.tenantDetails.tenantInfo, "monitoringEnabled", false)
+  );
+  const encryptionEnabled = useSelector((state: AppState) =>
+    get(state.tenants.tenantDetails.tenantInfo, "encryptionEnabled", false)
+  );
+  const minioTLS = useSelector((state: AppState) =>
+    get(state.tenants.tenantDetails.tenantInfo, "minioTLS", false)
+  );
+  const adEnabled = useSelector((state: AppState) =>
+    get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false)
+  );
+  const oidcEnabled = useSelector((state: AppState) =>
+    get(state.tenants.tenantDetails.tenantInfo, "idpOidcEnabled", false)
+  );
+
   const [poolCount, setPoolCount] = useState<number>(0);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
@@ -218,7 +227,7 @@ const TenantSummary = ({
     setEditDomainsOpen(false);
 
     if (refresh) {
-      setTenantDetailsLoad(true);
+      dispatch(setTenantDetailsLoad(true));
     }
   };
 
@@ -487,35 +496,4 @@ const TenantSummary = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  tenant: state.tenants.tenantDetails.tenantInfo,
-  logEnabled: get(state.tenants.tenantDetails.tenantInfo, "logEnabled", false),
-  monitoringEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "monitoringEnabled",
-    false
-  ),
-  encryptionEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "encryptionEnabled",
-    false
-  ),
-  minioTLS: get(state.tenants.tenantDetails.tenantInfo, "minioTLS", false),
-  consoleTLS: get(state.tenants.tenantDetails.tenantInfo, "consoleTLS", false),
-  consoleEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "consoleEnabled",
-    false
-  ),
-  adEnabled: get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false),
-  oidcEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "idpOidcEnabled",
-    false
-  ),
-});
-
-const connector = connect(mapState, { setTenantDetailsLoad });
-
-export default withStyles(styles)(connector(TenantSummary));
+export default withStyles(styles)(TenantSummary);

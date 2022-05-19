@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { Button, Grid, IconButton } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
@@ -25,7 +25,6 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   ErrorResponseHandler,
   IDomainsRequest,
@@ -34,6 +33,7 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../../common/api";
 import RemoveIcon from "../../../../icons/RemoveIcon";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IEditDomains {
   open: boolean;
@@ -41,7 +41,6 @@ interface IEditDomains {
   namespace: string;
   idTenant: string;
   domains: IDomainsRequest | null;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   classes: any;
 }
 
@@ -73,9 +72,9 @@ const EditDomains = ({
   namespace,
   idTenant,
   domains,
-  setModalErrorSnackMessage,
   classes,
 }: IEditDomains) => {
+  const dispatch = useDispatch();
   const [isSending, setIsSending] = useState<boolean>(false);
   const [consoleDomain, setConsoleDomain] = useState<string>("");
   const [minioDomains, setMinioDomains] = useState<string[]>([""]);
@@ -149,7 +148,7 @@ const EditDomains = ({
         closeModalAndRefresh(true);
       })
       .catch((error: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(error);
+        dispatch(setModalErrorSnackMessage(error));
         setIsSending(false);
       });
   };
@@ -309,8 +308,5 @@ const EditDomains = ({
     </ModalWrapper>
   );
 };
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
 
-export default withStyles(styles)(connector(EditDomains));
+export default withStyles(styles)(EditDomains);

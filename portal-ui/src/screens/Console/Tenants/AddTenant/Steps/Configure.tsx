@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,12 +25,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import {
-  addNewMinIODomain,
-  isPageValid,
-  removeMinIODomain,
-  updateAddField,
-} from "../../actions";
+
 import { AppState } from "../../../../../store";
 import { clearValidationError } from "../../utils";
 import {
@@ -39,23 +34,17 @@ import {
 } from "../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { ISecurityContext } from "../../types";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "../../../../../icons/RemoveIcon";
+import {
+  addNewMinIODomain,
+  isPageValid,
+  removeMinIODomain,
+  updateAddField,
+} from "../../tenantsSlice";
 
 interface IConfigureProps {
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  addNewMinIODomain: typeof addNewMinIODomain;
-  removeMinIODomain: typeof removeMinIODomain;
   classes: any;
-  exposeMinIO: boolean;
-  exposeConsole: boolean;
-  tenantCustom: boolean;
-  setDomains: boolean;
-  consoleDomain: string;
-  minioDomains: string[];
-  tenantSecurityContext: ISecurityContext;
 }
 
 const styles = (theme: Theme) =>
@@ -112,28 +101,46 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const Configure = ({
-  classes,
-  exposeMinIO,
-  exposeConsole,
-  tenantCustom,
-  updateAddField,
-  setDomains,
-  consoleDomain,
-  minioDomains,
-  isPageValid,
-  tenantSecurityContext,
-  addNewMinIODomain,
-  removeMinIODomain,
-}: IConfigureProps) => {
+const Configure = ({ classes }: IConfigureProps) => {
+  const dispatch = useDispatch();
+
+  const exposeMinIO = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.configure.exposeMinIO
+  );
+  const exposeConsole = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.exposeConsole
+  );
+  const setDomains = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.configure.setDomains
+  );
+  const consoleDomain = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.consoleDomain
+  );
+  const minioDomains = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.minioDomains
+  );
+  const tenantCustom = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.tenantCustom
+  );
+  const tenantSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.tenantSecurityContext
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("configure", field, value);
+      dispatch(
+        updateAddField({ pageName: "configure", field: field, value: value })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   // Validation
@@ -202,11 +209,16 @@ const Configure = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isPageValid("configure", Object.keys(commonVal).length === 0);
+    dispatch(
+      isPageValid({
+        pageName: "configure",
+        valid: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
   }, [
-    isPageValid,
+    dispatch,
     tenantCustom,
     tenantSecurityContext,
     setDomains,
@@ -337,7 +349,7 @@ const Configure = ({
                         <div className={classes.overlayAction}>
                           <IconButton
                             size={"small"}
-                            onClick={addNewMinIODomain}
+                            onClick={() => dispatch(addNewMinIODomain())}
                             disabled={index !== minioDomains.length - 1}
                           >
                             <AddIcon />
@@ -347,7 +359,7 @@ const Configure = ({
                         <div className={classes.overlayAction}>
                           <IconButton
                             size={"small"}
-                            onClick={() => removeMinIODomain(index)}
+                            onClick={() => dispatch(removeMinIODomain(index))}
                             disabled={minioDomains.length <= 1}
                           >
                             <RemoveIcon />
@@ -481,22 +493,4 @@ const Configure = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  exposeMinIO: state.tenants.createTenant.fields.configure.exposeMinIO,
-  exposeConsole: state.tenants.createTenant.fields.configure.exposeConsole,
-  setDomains: state.tenants.createTenant.fields.configure.setDomains,
-  consoleDomain: state.tenants.createTenant.fields.configure.consoleDomain,
-  minioDomains: state.tenants.createTenant.fields.configure.minioDomains,
-  tenantCustom: state.tenants.createTenant.fields.configure.tenantCustom,
-  tenantSecurityContext:
-    state.tenants.createTenant.fields.configure.tenantSecurityContext,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-  addNewMinIODomain,
-  removeMinIODomain,
-});
-
-export default withStyles(styles)(connector(Configure));
+export default withStyles(styles)(Configure);

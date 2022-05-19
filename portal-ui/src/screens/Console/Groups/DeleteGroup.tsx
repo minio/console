@@ -15,31 +15,32 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IDeleteGroup {
   selectedGroups: string[];
   deleteOpen: boolean;
   closeDeleteModalAndRefresh: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteGroup = ({
   selectedGroups,
   deleteOpen,
   closeDeleteModalAndRefresh,
-  setErrorSnackMessage,
 }: IDeleteGroup) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) => {
-    setErrorSnackMessage(err);
-    closeDeleteModalAndRefresh(true);
+    dispatch(setErrorSnackMessage(err));
+    closeDeleteModalAndRefresh(false);
   };
   const onClose = () => closeDeleteModalAndRefresh(false);
 
@@ -50,7 +51,7 @@ const DeleteGroup = ({
   }
   const onDeleteGroups = () => {
     for (let group of selectedGroups) {
-      invokeDeleteApi("DELETE", `/api/v1/group?name=${encodeURI(group)}`);
+      invokeDeleteApi("DELETE", `/api/v1/group/${encodeURLString(group)}`);
     }
   };
 
@@ -80,10 +81,4 @@ const DeleteGroup = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteGroup);
+export default DeleteGroup;

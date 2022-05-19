@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -28,12 +28,14 @@ import {
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
-import { setModalErrorSnackMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "./PolicySelectors";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import { encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 interface ISetPolicyProps {
   classes: any;
@@ -41,7 +43,6 @@ interface ISetPolicyProps {
   selectedUser: User | null;
   selectedGroup: string | null;
   open: boolean;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -63,9 +64,9 @@ const SetPolicy = ({
   closeModalAndRefresh,
   selectedUser,
   selectedGroup,
-  setModalErrorSnackMessage,
   open,
 }: ISetPolicyProps) => {
+  const dispatch = useDispatch();
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
@@ -97,21 +98,21 @@ const SetPolicy = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
   const fetchGroupInformation = () => {
     if (selectedGroup) {
       api
-        .invoke("GET", `/api/v1/group?name=${encodeURI(selectedGroup)}`)
+        .invoke("GET", `/api/v1/group/${encodeURLString(selectedGroup)}`)
         .then((res: any) => {
           const groupPolicy: String = get(res, "policy", "");
           setActualPolicy(groupPolicy.split(","));
           setSelectedPolicy(groupPolicy.split(","));
         })
         .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
           setLoading(false);
         });
     }
@@ -196,10 +197,4 @@ const SetPolicy = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(SetPolicy));
+export default withStyles(styles)(SetPolicy);

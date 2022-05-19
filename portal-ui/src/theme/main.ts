@@ -132,6 +132,7 @@ declare module "@mui/material/styles" {
       link: string;
     };
   }
+
   // allow configuration using `createTheme`
   interface ThemeOptions {
     colors?: {

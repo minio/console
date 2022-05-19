@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,7 +25,6 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { isPoolPageValid, setPoolField } from "../../../actions";
 import { AppState } from "../../../../../../store";
 import { clearValidationError } from "../../../utils";
 import {
@@ -34,14 +33,10 @@ import {
 } from "../../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { ISecurityContext } from "../../../types";
+import { isPoolPageValid, setPoolField } from "../../../tenantsSlice";
 
 interface IConfigureProps {
-  setPoolField: typeof setPoolField;
-  isPoolPageValid: typeof isPoolPageValid;
   classes: any;
-  securityContextEnabled: boolean;
-  securityContext: ISecurityContext;
 }
 
 const styles = (theme: Theme) =>
@@ -82,21 +77,32 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const PoolConfiguration = ({
-  classes,
-  setPoolField,
-  securityContextEnabled,
-  isPoolPageValid,
-  securityContext,
-}: IConfigureProps) => {
+const PoolConfiguration = ({ classes }: IConfigureProps) => {
+  const dispatch = useDispatch();
+
+  const securityContextEnabled = useSelector(
+    (state: AppState) =>
+      state.tenants.addPool.fields.configuration.securityContextEnabled
+  );
+  const securityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.addPool.fields.configuration.securityContext
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      setPoolField("configuration", field, value);
+      dispatch(
+        setPoolField({
+          page: "configuration",
+          field: field,
+          value: value,
+        })
+      );
     },
-    [setPoolField]
+    [dispatch]
   );
 
   // Validation
@@ -137,10 +143,15 @@ const PoolConfiguration = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isPoolPageValid("configure", Object.keys(commonVal).length === 0);
+    dispatch(
+      isPoolPageValid({
+        page: "configure",
+        status: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
-  }, [isPoolPageValid, securityContextEnabled, securityContext]);
+  }, [dispatch, securityContextEnabled, securityContext]);
 
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
@@ -271,18 +282,4 @@ const PoolConfiguration = ({
   );
 };
 
-const mapState = (state: AppState) => {
-  const configuration = state.tenants.addPool.fields.configuration;
-
-  return {
-    securityContextEnabled: configuration.securityContextEnabled,
-    securityContext: configuration.securityContext,
-  };
-};
-
-const connector = connect(mapState, {
-  setPoolField,
-  isPoolPageValid,
-});
-
-export default withStyles(styles)(connector(PoolConfiguration));
+export default withStyles(styles)(PoolConfiguration);

@@ -18,12 +18,8 @@ import React, { Fragment, useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
-import { connect } from "react-redux";
-import {
-  setTraceStarted,
-  traceMessageReceived,
-  traceResetMessages,
-} from "./actions";
+import { useDispatch, useSelector } from "react-redux";
+
 import { TraceMessage } from "./types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -46,6 +42,11 @@ import PageLayout from "../Common/Layout/PageLayout";
 import { FilterIcon } from "../../../icons";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import {
+  setTraceStarted,
+  traceMessageReceived,
+  traceResetMessages,
+} from "./traceSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -109,25 +110,18 @@ const styles = (theme: Theme) =>
 
 interface ITrace {
   classes: any;
-  traceMessageReceived: typeof traceMessageReceived;
-  traceResetMessages: typeof traceResetMessages;
-  setTraceStarted: typeof setTraceStarted;
-  messages: TraceMessage[];
-  namespace: string;
-  tenant: string;
-  traceStarted: boolean;
 }
 
 var c: any = null;
 
-const Trace = ({
-  classes,
-  traceMessageReceived,
-  traceResetMessages,
-  setTraceStarted,
-  traceStarted,
-  messages,
-}: ITrace) => {
+const Trace = ({ classes }: ITrace) => {
+  const dispatch = useDispatch();
+
+  const messages = useSelector((state: AppState) => state.trace.messages);
+  const traceStarted = useSelector(
+    (state: AppState) => state.trace.traceStarted
+  );
+
   const [statusCode, setStatusCode] = useState<string>("");
   const [method, setMethod] = useState<string>("");
   const [func, setFunc] = useState<string>("");
@@ -143,7 +137,7 @@ const Trace = ({
   const [toggleFilter, setToggleFilter] = useState<boolean>(false);
 
   const startTrace = () => {
-    traceResetMessages();
+    dispatch(traceResetMessages());
     const url = new URL(window.location.toString());
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
@@ -172,7 +166,7 @@ const Trace = ({
     if (c !== null) {
       c.onopen = () => {
         console.log("WebSocket Client Connected");
-        setTraceStarted(true);
+        dispatch(setTraceStarted(true));
         c.send("ok");
         interval = setInterval(() => {
           c.send("ok");
@@ -182,12 +176,12 @@ const Trace = ({
         let m: TraceMessage = JSON.parse(message.data.toString());
         m.ptime = moment(m.time, "YYYY-MM-DD HH:mm:s.SSSS +0000 UTC").toDate();
         m.key = Math.random();
-        traceMessageReceived(m);
+        dispatch(traceMessageReceived(m));
       };
       c.onclose = () => {
         clearInterval(interval);
         console.log("connection closed by server");
-        setTraceStarted(false);
+        dispatch(setTraceStarted(false));
       };
       return () => {
         c.close(1000);
@@ -200,7 +194,7 @@ const Trace = ({
 
   const stopTrace = () => {
     c.close(1000);
-    setTraceStarted(false);
+    dispatch(setTraceStarted(false));
   };
 
   return (
@@ -624,15 +618,4 @@ const Trace = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  messages: state.trace.messages,
-  traceStarted: state.trace.traceStarted,
-});
-
-const connector = connect(mapState, {
-  traceMessageReceived: traceMessageReceived,
-  traceResetMessages: traceResetMessages,
-  setTraceStarted,
-});
-
-export default connector(withStyles(styles)(Trace));
+export default withStyles(styles)(Trace);

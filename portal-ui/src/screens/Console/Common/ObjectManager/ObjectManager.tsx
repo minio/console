@@ -16,23 +16,17 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Tooltip, IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { AppState } from "../../../../store";
-import { IFileItem } from "../../ObjectBrowser/types";
-import { deleteFromList, cleanList } from "../../ObjectBrowser/actions";
 import { RemoveAllIcon } from "../../../../icons";
 import ObjectHandled from "./ObjectHandled";
-
-interface IObjectManager {
-  objects: IFileItem[];
-  classes: any;
-  managerOpen: boolean;
-  deleteFromList: typeof deleteFromList;
-  cleanList: typeof cleanList;
-}
+import {
+  cleanList,
+  deleteFromList,
+} from "../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -87,13 +81,19 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ObjectManager = ({
-  objects,
-  classes,
-  managerOpen,
-  deleteFromList,
-  cleanList,
-}: IObjectManager) => {
+interface IObjectManager {
+  classes: any;
+}
+
+const ObjectManager = ({ classes }: IObjectManager) => {
+  const dispatch = useDispatch();
+
+  const objects = useSelector(
+    (state: AppState) => state.objectBrowser.objectManager.objectsToManage
+  );
+  const managerOpen = useSelector(
+    (state: AppState) => state.objectBrowser.objectManager.managerOpen
+  );
   return (
     <Fragment>
       {managerOpen && (
@@ -107,7 +107,7 @@ const ObjectManager = ({
               <IconButton
                 aria-label={"Clear Completed List"}
                 size={"small"}
-                onClick={cleanList}
+                onClick={() => dispatch(cleanList())}
                 className={classes.cleanButton}
               >
                 <RemoveAllIcon />
@@ -120,7 +120,9 @@ const ObjectManager = ({
               <ObjectHandled
                 objectToDisplay={object}
                 key={`object-handled-${object.instanceID}`}
-                deleteFromList={deleteFromList}
+                deleteFromList={(instanceID) =>
+                  dispatch(deleteFromList(instanceID))
+                }
               />
             ))}
           </div>
@@ -130,11 +132,4 @@ const ObjectManager = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  objects: state.objectBrowser.objectManager.objectsToManage,
-  managerOpen: state.objectBrowser.objectManager.managerOpen,
-});
-
-const connector = connect(mapState, { deleteFromList, cleanList });
-
-export default withStyles(styles)(connector(ObjectManager));
+export default withStyles(styles)(ObjectManager);

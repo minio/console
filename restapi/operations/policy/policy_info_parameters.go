@@ -26,10 +26,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
 )
 
 // NewPolicyInfoParams creates a new PolicyInfoParams object
@@ -51,7 +49,7 @@ type PolicyInfoParams struct {
 
 	/*
 	  Required: true
-	  In: query
+	  In: path
 	*/
 	Name string
 }
@@ -65,10 +63,8 @@ func (o *PolicyInfoParams) BindRequest(r *http.Request, route *middleware.Matche
 
 	o.HTTPRequest = r
 
-	qs := runtime.Values(r.URL.Query())
-
-	qName, qhkName, _ := qs.GetOK("name")
-	if err := o.bindName(qName, qhkName, route.Formats); err != nil {
+	rName, rhkName, _ := route.Params.GetOK("name")
+	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -77,22 +73,15 @@ func (o *PolicyInfoParams) BindRequest(r *http.Request, route *middleware.Matche
 	return nil
 }
 
-// bindName binds and validates parameter Name from query.
+// bindName binds and validates parameter Name from path.
 func (o *PolicyInfoParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("name", "query", rawData)
-	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
 	// Required: true
-	// AllowEmptyValue: false
-
-	if err := validate.RequiredString("name", "query", raw); err != nil {
-		return err
-	}
+	// Parameter is provided by construction from the route
 	o.Name = raw
 
 	return nil

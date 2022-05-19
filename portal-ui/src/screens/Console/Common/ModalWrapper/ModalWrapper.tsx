@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import Snackbar from "@mui/material/Snackbar";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
@@ -26,10 +26,9 @@ import {
   snackBarCommon,
 } from "../FormComponents/common/styleLibrary";
 import { AppState } from "../../../../store";
-import { snackBarMessage } from "../../../../types";
-import { setModalSnackMessage } from "../../../../actions";
 import CloseIcon from "@mui/icons-material/Close";
 import MainError from "../MainError/MainError";
+import { setModalSnackMessage } from "../../../../systemSlice";
 
 interface IModalProps {
   classes: any;
@@ -38,9 +37,7 @@ interface IModalProps {
   title: string | React.ReactNode;
   children: any;
   wideLimit?: boolean;
-  modalSnackMessage?: snackBarMessage;
   noContentPadding?: boolean;
-  setModalSnackMessage: typeof setModalSnackMessage;
   titleIcon?: React.ReactNode;
 }
 
@@ -65,16 +62,19 @@ const ModalWrapper = ({
   children,
   classes,
   wideLimit = true,
-  modalSnackMessage,
   noContentPadding,
-  setModalSnackMessage,
   titleIcon = null,
 }: IModalProps) => {
+  const dispatch = useDispatch();
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
+  const modalSnackMessage = useSelector(
+    (state: AppState) => state.system.modalSnackBar
+  );
+
   useEffect(() => {
-    setModalSnackMessage("");
-  }, [setModalSnackMessage]);
+    dispatch(setModalSnackMessage(""));
+  }, [dispatch]);
 
   useEffect(() => {
     if (modalSnackMessage) {
@@ -91,7 +91,7 @@ const ModalWrapper = ({
 
   const closeSnackBar = () => {
     setOpenSnackbar(false);
-    setModalSnackMessage("");
+    dispatch(setModalSnackMessage(""));
   };
 
   const customSize = wideLimit
@@ -171,12 +171,4 @@ const ModalWrapper = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  modalSnackMessage: state.system.modalSnackBar,
-});
-
-const connector = connect(mapState, {
-  setModalSnackMessage,
-});
-
-export default withStyles(styles)(connector(ModalWrapper));
+export default withStyles(styles)(ModalWrapper);

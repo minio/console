@@ -16,13 +16,12 @@
 
 import hasPermission from "../accessControl";
 import { store } from "../../../store";
-import { SESSION_RESPONSE } from "../../../screens/Console/actions";
 import { IAM_PAGES, IAM_PAGES_PERMISSIONS, IAM_SCOPES } from "../permissions";
+import { saveSessionResponse } from "../../../screens/Console/consoleSlice";
 
 const setPolicy1 = () => {
-  store.dispatch({
-    type: SESSION_RESPONSE,
-    message: {
+  store.dispatch(
+    saveSessionResponse({
       distributedMode: true,
       features: ["log-search"],
       permissions: {
@@ -50,13 +49,12 @@ const setPolicy1 = () => {
       },
       operator: false,
       status: "ok",
-    },
-  });
+    })
+  );
 };
 const setPolicy2 = () => {
-  store.dispatch({
-    type: SESSION_RESPONSE,
-    message: {
+  store.dispatch(
+    saveSessionResponse({
       distributedMode: true,
       operator: false,
       features: [],
@@ -93,13 +91,12 @@ const setPolicy2 = () => {
         "console-ui": ["admin:CreateServiceAccount", "admin:CreateUser"],
       },
       status: "ok",
-    },
-  });
+    })
+  );
 };
 const setPolicy3 = () => {
-  store.dispatch({
-    type: SESSION_RESPONSE,
-    message: {
+  store.dispatch(
+    saveSessionResponse({
       distributedMode: true,
       features: [],
       permissions: {
@@ -112,14 +109,13 @@ const setPolicy3 = () => {
       },
       status: "ok",
       operator: false,
-    },
-  });
+    })
+  );
 };
 
 const setPolicy4 = () => {
-  store.dispatch({
-    type: SESSION_RESPONSE,
-    message: {
+  store.dispatch(
+    saveSessionResponse({
       distributedMode: true,
       features: [],
       permissions: {
@@ -129,8 +125,8 @@ const setPolicy4 = () => {
       },
       status: "ok",
       operator: false,
-    },
-  });
+    })
+  );
 };
 
 test("Upload button disabled", () => {

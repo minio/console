@@ -15,16 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../../common/types";
 import Loader from "../../../Common/Loader/Loader";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface ISimpleWidget {
   classes: any;
@@ -34,7 +35,7 @@ interface ISimpleWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-  displayErrorMessage: any;
+
   apiPrefix: string;
   renderFn?: undefined | null | ((arg: Record<string, any>) => any);
 }
@@ -70,10 +71,10 @@ const SimpleWidget = ({
   timeStart,
   timeEnd,
   propLoading,
-  displayErrorMessage,
   apiPrefix,
   renderFn,
 }: ISimpleWidget) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
 
@@ -110,11 +111,11 @@ const SimpleWidget = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, panelItem, timeEnd, timeStart, dispatch, apiPrefix]);
 
   if (renderFn) {
     return renderFn({
@@ -144,7 +145,7 @@ const SimpleWidget = ({
 };
 
 const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
+  setErrorSnackMessage: setErrorSnackMessage,
 });
 
 export default withStyles(styles)(connector(SimpleWidget));

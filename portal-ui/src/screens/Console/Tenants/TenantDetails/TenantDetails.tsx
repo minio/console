@@ -15,20 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
-import {
-  setTenantDetailsLoad,
-  setTenantInfo,
-  setTenantName,
-  setTenantTab,
-} from "../actions";
+
 import { ITenant } from "../ListTenants/types";
 import {
   containerForHeader,
@@ -52,6 +46,15 @@ import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import { tenantIsOnline } from "../ListTenants/utils";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
+import {
+  setTenantDetailsLoad,
+  setTenantInfo,
+  setTenantName,
+} from "../tenantsSlice";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -89,17 +92,6 @@ interface ITenantDetailsProps {
   classes: any;
   match: any;
   history: any;
-  loadingTenant: boolean;
-  currentTab: string;
-  selectedTenant: string;
-  tenantInfo: ITenant | null;
-  selectedNamespace: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
-  setTenantName: typeof setTenantName;
-  setTenantInfo: typeof setTenantInfo;
-  setTenantTab: typeof setTenantTab;
 }
 
 const styles = (theme: Theme) =>
@@ -173,20 +165,22 @@ const styles = (theme: Theme) =>
     },
   });
 
-const TenantDetails = ({
-  classes,
-  match,
-  history,
-  loadingTenant,
-  selectedTenant,
-  tenantInfo,
-  selectedNamespace,
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  setTenantDetailsLoad,
-  setTenantName,
-  setTenantInfo,
-}: ITenantDetailsProps) => {
+const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
+  const dispatch = useDispatch();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+  );
+  const selectedTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.currentTenant
+  );
+  const selectedNamespace = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.currentNamespace
+  );
+  const tenantInfo = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.tenantInfo
+  );
+
   const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
@@ -199,17 +193,20 @@ const TenantDetails = ({
         tenantName !== selectedTenant ||
         tenantNamespace !== selectedNamespace
       ) {
-        setTenantName(tenantName, tenantNamespace);
-        setTenantDetailsLoad(true);
+        dispatch(
+          setTenantName({
+            name: tenantName,
+            namespace: tenantNamespace,
+          })
+        );
+        dispatch(setTenantDetailsLoad(true));
       }
     }
   }, [
     loadingTenant,
     selectedTenant,
     selectedNamespace,
-    setTenantDetailsLoad,
-    setTenantInfo,
-    setTenantName,
+    dispatch,
     tenantName,
     tenantNamespace,
   ]);
@@ -246,22 +243,15 @@ const TenantDetails = ({
           res.total_instances = totalInstances;
           res.total_volumes = totalVolumes;
 
-          setTenantInfo(res);
-          setTenantDetailsLoad(false);
+          dispatch(setTenantInfo(res));
+          dispatch(setTenantDetailsLoad(false));
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setTenantDetailsLoad(false);
+          dispatch(setErrorSnackMessage(err));
+          dispatch(setTenantDetailsLoad(false));
         });
     }
-  }, [
-    loadingTenant,
-    tenantNamespace,
-    tenantName,
-    setTenantInfo,
-    setTenantDetailsLoad,
-    setErrorSnackMessage,
-  ]);
+  }, [loadingTenant, tenantNamespace, tenantName, dispatch]);
 
   const path = get(match, "path", "/");
   const splitSections = path.split("/");
@@ -283,7 +273,7 @@ const TenantDetails = ({
 
   const closeYAMLModalAndRefresh = () => {
     setYamlScreenOpen(false);
-    setTenantDetailsLoad(true);
+    dispatch(setTenantDetailsLoad(true));
   };
 
   const getRoutePath = (newValue: string) => {
@@ -298,7 +288,7 @@ const TenantDetails = ({
     setDeleteOpen(false);
 
     if (reloadData) {
-      setSnackBarMessage("Tenant Deleted");
+      dispatch(setSnackBarMessage("Tenant Deleted"));
       history.push(`/tenants`);
     }
   };
@@ -425,7 +415,7 @@ const TenantDetails = ({
                   variant="outlined"
                   aria-label="Refresh List"
                   onClick={() => {
-                    setTenantDetailsLoad(true);
+                    dispatch(setTenantDetailsLoad(true));
                   }}
                 >
                   <span>Refresh</span> <RefreshIcon />
@@ -618,19 +608,4 @@ const TenantDetails = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  selectedNamespace: state.tenants.tenantDetails.currentNamespace,
-  tenantInfo: state.tenants.tenantDetails.tenantInfo,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  setTenantDetailsLoad,
-  setTenantName,
-  setTenantInfo,
-});
-
-export default withStyles(styles)(connector(TenantDetails));
+export default withStyles(styles)(TenantDetails);

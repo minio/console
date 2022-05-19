@@ -15,13 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Paper } from "@mui/material";
 import { AppState } from "../../../../store";
-import { setErrorSnackMessage } from "../../../../actions";
 import { ISessionResponse } from "../../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
@@ -40,12 +39,13 @@ import { BucketInfo } from "../types";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
@@ -80,11 +80,10 @@ const mapState = (state: AppState) => ({
   bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
-const connector = connect(mapState, { setErrorSnackMessage });
+const connector = connect(mapState, null);
 
 interface IAccessRuleProps {
   session: ISessionResponse;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
   match: any;
   loadingBucket: boolean;
@@ -94,10 +93,10 @@ interface IAccessRuleProps {
 const AccessRule = ({
   classes,
   match,
-  setErrorSnackMessage,
   loadingBucket,
   bucketInfo,
 }: IAccessRuleProps) => {
+  const dispatch = useDispatch();
   const [loadingAccessRules, setLoadingAccessRules] = useState<boolean>(true);
   const [accessRules, setAccessRules] = useState([]);
   const [addAccessRuleOpen, setAddAccessRuleOpen] = useState<boolean>(false);
@@ -158,19 +157,14 @@ const AccessRule = ({
             setLoadingAccessRules(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setLoadingAccessRules(false);
           });
       } else {
         setLoadingAccessRules(false);
       }
     }
-  }, [
-    loadingAccessRules,
-    setErrorSnackMessage,
-    displayAccessRules,
-    bucketName,
-  ]);
+  }, [loadingAccessRules, dispatch, displayAccessRules, bucketName]);
 
   const closeAddAccessRuleModal = () => {
     setAddAccessRuleOpen(false);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,6 +25,14 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
+
+import { AppState } from "../../../../../store";
+import { KeyPair } from "../../ListTenants/utils";
+import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
+import AddIcon from "../../../../../icons/AddIcon";
+import RemoveIcon from "../../../../../icons/RemoveIcon";
+import SectionTitle from "../../../Common/SectionTitle";
 import {
   addCaCertificate,
   addFileToCaCertificates,
@@ -34,30 +42,10 @@ import {
   deleteKeyPair,
   isPageValid,
   updateAddField,
-} from "../../actions";
-import { AppState } from "../../../../../store";
-import { KeyPair } from "../../ListTenants/utils";
-import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
-import AddIcon from "../../../../../icons/AddIcon";
-import RemoveIcon from "../../../../../icons/RemoveIcon";
-import SectionTitle from "../../../Common/SectionTitle";
+} from "../../tenantsSlice";
 
 interface ISecurityProps {
   classes: any;
-  enableTLS: boolean;
-  enableAutoCert: boolean;
-  enableCustomCerts: boolean;
-  minioCertificates: KeyPair[];
-  caCertificates: KeyPair[];
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  addFileToCaCertificates: typeof addFileToCaCertificates;
-  deleteCaCertificate: typeof deleteCaCertificate;
-  addCaCertificate: typeof addCaCertificate;
-  addKeyPair: typeof addKeyPair;
-  addFileToKeyPair: typeof addFileToKeyPair;
-  deleteKeyPair: typeof deleteKeyPair;
 }
 
 const styles = (theme: Theme) =>
@@ -128,47 +116,55 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const Security = ({
-  classes,
-  enableTLS,
-  enableAutoCert,
-  enableCustomCerts,
-  minioCertificates,
-  caCertificates,
-  updateAddField,
-  isPageValid,
-  addFileToCaCertificates,
-  deleteCaCertificate,
-  addCaCertificate,
-  addKeyPair,
-  addFileToKeyPair,
-  deleteKeyPair,
-}: ISecurityProps) => {
+const Security = ({ classes }: ISecurityProps) => {
+  const dispatch = useDispatch();
+
+  const enableTLS = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.security.enableTLS
+  );
+  const enableAutoCert = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.security.enableAutoCert
+  );
+  const enableCustomCerts = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.security.enableCustomCerts
+  );
+  const minioCertificates = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.certificates.minioCertificates
+  );
+  const caCertificates = useSelector(
+    (state: AppState) => state.tenants.createTenant.certificates.caCertificates
+  );
+
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("security", field, value);
+      dispatch(
+        updateAddField({ pageName: "security", field: field, value: value })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   // Validation
 
   useEffect(() => {
     if (!enableTLS) {
-      isPageValid("security", true);
+      dispatch(isPageValid({ pageName: "security", valid: true }));
       return;
     }
     if (enableAutoCert) {
-      isPageValid("security", true);
+      dispatch(isPageValid({ pageName: "security", valid: true }));
       return;
     }
     if (enableCustomCerts) {
-      isPageValid("security", true);
+      dispatch(isPageValid({ pageName: "security", valid: true }));
       return;
     }
-    isPageValid("security", false);
-  }, [enableTLS, enableAutoCert, enableCustomCerts, isPageValid]);
+    dispatch(isPageValid({ pageName: "security", valid: false }));
+  }, [enableTLS, enableAutoCert, enableCustomCerts, dispatch]);
 
   return (
     <Paper className={classes.paperWrapper}>
@@ -242,11 +238,13 @@ const Security = ({
                       <Grid item xs={10} className={classes.fileItem}>
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            addFileToKeyPair(
-                              keyPair.id,
-                              "cert",
-                              fileName,
-                              encodedValue
+                            dispatch(
+                              addFileToKeyPair({
+                                id: keyPair.id,
+                                key: "cert",
+                                fileName: fileName,
+                                value: encodedValue,
+                              })
                             );
                           }}
                           accept=".cer,.crt,.cert,.pem"
@@ -257,11 +255,13 @@ const Security = ({
                         />
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            addFileToKeyPair(
-                              keyPair.id,
-                              "key",
-                              fileName,
-                              encodedValue
+                            dispatch(
+                              addFileToKeyPair({
+                                id: keyPair.id,
+                                key: "key",
+                                fileName: fileName,
+                                value: encodedValue,
+                              })
                             );
                           }}
                           accept=".key,.pem"
@@ -274,7 +274,12 @@ const Security = ({
 
                       <Grid item xs={2} className={classes.rowActions}>
                         <div className={classes.overlayAction}>
-                          <IconButton size={"small"} onClick={addKeyPair}>
+                          <IconButton
+                            size={"small"}
+                            onClick={() => {
+                              dispatch(addKeyPair());
+                            }}
+                          >
                             <AddIcon />
                           </IconButton>
                         </div>
@@ -282,7 +287,7 @@ const Security = ({
                           <IconButton
                             size={"small"}
                             onClick={() => {
-                              deleteKeyPair(keyPair.id);
+                              dispatch(deleteKeyPair(keyPair.id));
                             }}
                           >
                             <RemoveIcon />
@@ -306,11 +311,13 @@ const Security = ({
                       <Grid item xs={6}>
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            addFileToCaCertificates(
-                              keyPair.id,
-                              "cert",
-                              fileName,
-                              encodedValue
+                            dispatch(
+                              addFileToCaCertificates({
+                                id: keyPair.id,
+                                key: "cert",
+                                fileName: fileName,
+                                value: encodedValue,
+                              })
                             );
                           }}
                           accept=".cer,.crt,.cert,.pem"
@@ -325,7 +332,9 @@ const Security = ({
                           <div className={classes.overlayAction}>
                             <IconButton
                               size={"small"}
-                              onClick={addCaCertificate}
+                              onClick={() => {
+                                dispatch(addCaCertificate());
+                              }}
                             >
                               <AddIcon />
                             </IconButton>
@@ -334,7 +343,7 @@ const Security = ({
                             <IconButton
                               size={"small"}
                               onClick={() => {
-                                deleteCaCertificate(keyPair.id);
+                                dispatch(deleteCaCertificate(keyPair.id));
                               }}
                             >
                               <RemoveIcon />
@@ -354,24 +363,4 @@ const Security = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  enableTLS: state.tenants.createTenant.fields.security.enableTLS,
-  enableAutoCert: state.tenants.createTenant.fields.security.enableAutoCert,
-  enableCustomCerts:
-    state.tenants.createTenant.fields.security.enableCustomCerts,
-  minioCertificates: state.tenants.createTenant.certificates.minioCertificates,
-  caCertificates: state.tenants.createTenant.certificates.caCertificates,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-  addFileToCaCertificates,
-  deleteCaCertificate,
-  addCaCertificate,
-  addKeyPair,
-  addFileToKeyPair,
-  deleteKeyPair,
-});
-
-export default withStyles(styles)(connector(Security));
+export default withStyles(styles)(Security);

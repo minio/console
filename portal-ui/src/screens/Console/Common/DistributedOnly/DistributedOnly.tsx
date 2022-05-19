@@ -46,7 +46,7 @@ const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
                 },
               }}
             >
-              <div>This feature is not available for a single-disk setup. </div>
+              <div>This feature is not available for a single-disk setup.</div>
 
               <div>
                 Please deploy a server in{" "}

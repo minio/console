@@ -90,6 +90,7 @@ export interface ObjectManager {
 
 export interface IFileItem {
   type: "download" | "upload";
+  ID: string;
   instanceID: string;
   bucketName: string;
   prefix: string;
@@ -98,7 +99,6 @@ export interface IFileItem {
   waitingForFile: boolean;
   failed: boolean;
   cancelled: boolean;
-  call?: XMLHttpRequest;
 }
 
 interface RewindSetEnabled {

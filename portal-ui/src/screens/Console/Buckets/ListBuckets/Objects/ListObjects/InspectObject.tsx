@@ -15,12 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
-import { setErrorSnackMessage } from "../../../../../../actions";
 import {
-  decodeFileName,
+  decodeURLString,
   deleteCookie,
+  encodeURLString,
   getCookieValue,
   performDownload,
 } from "../../../../../../common/utils";
@@ -39,6 +39,7 @@ import {
 import { PasswordKeyIcon } from "../../../../../../icons";
 import { Box, DialogContentText } from "@mui/material";
 import KeyRevealer from "../../../../Tools/KeyRevealer";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,7 +54,6 @@ interface IInspectObjectProps {
   inspectOpen: boolean;
   inspectPath: string;
   volumeName: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const InspectObject = ({
@@ -62,8 +62,8 @@ const InspectObject = ({
   inspectOpen,
   inspectPath,
   volumeName,
-  setErrorSnackMessage,
 }: IInspectObjectProps) => {
+  const dispatch = useDispatch();
   const onClose = () => closeInspectModalAndRefresh(false);
   const [isEncrypt, setIsEncrypt] = useState<boolean>(true);
   const [decryptionKey, setDecryptionKey] = useState<string>("");
@@ -77,8 +77,8 @@ const InspectObject = ({
   };
 
   const performInspect = async () => {
-    const file = encodeURIComponent(inspectPath + "/xl.meta");
-    const volume = encodeURIComponent(volumeName);
+    const file = encodeURLString(inspectPath + "/xl.meta");
+    const volume = encodeURLString(volumeName);
 
     const urlOfInspectApi = `/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
 
@@ -87,10 +87,12 @@ const InspectObject = ({
         if (!res.ok) {
           const resErr: any = await res.json();
 
-          setErrorSnackMessage({
-            errorMessage: resErr.message,
-            detailedError: resErr.code,
-          });
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: resErr.message,
+              detailedError: resErr.code,
+            })
+          );
         }
         const blob: Blob = await res.blob();
 
@@ -107,7 +109,7 @@ const InspectObject = ({
         setDecryptionKey(decryptKey);
       })
       .catch((err) => {
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
   };
 
@@ -137,7 +139,7 @@ const InspectObject = ({
               onSubmit(e);
             }}
           >
-            Would you like to encrypt <b>{decodeFileName(inspectPath)}</b>?{" "}
+            Would you like to encrypt <b>{decodeURLString(inspectPath)}</b>?{" "}
             <br />
             <FormSwitchWrapper
               label={"Encrypt"}
@@ -187,10 +189,4 @@ const InspectObject = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(InspectObject));
+export default withStyles(styles)(InspectObject);

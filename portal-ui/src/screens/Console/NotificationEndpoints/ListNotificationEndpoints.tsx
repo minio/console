@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -31,7 +31,7 @@ import {
 import { notificationTransform } from "./utils";
 import { AddIcon, LambdaIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { setErrorSnackMessage } from "../../../actions";
+
 import {
   actionsTray,
   containerForHeader,
@@ -49,10 +49,10 @@ import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IListNotificationEndpoints {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -79,10 +79,8 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ListNotificationEndpoints = ({
-  classes,
-  setErrorSnackMessage,
-}: IListNotificationEndpoints) => {
+const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
+  const dispatch = useDispatch();
   //Local States
   const [records, setRecords] = useState<TransformedEndpointItem[]>([]);
   const [filter, setFilter] = useState<string>("");
@@ -104,13 +102,13 @@ const ListNotificationEndpoints = ({
             setIsLoading(false);
           })
           .catch((err: ErrorResponseHandler) => {
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
             setIsLoading(false);
           });
       };
       fetchRecords();
     }
-  }, [isLoading, setErrorSnackMessage]);
+  }, [isLoading, dispatch]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -267,10 +265,4 @@ const ListNotificationEndpoints = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(ListNotificationEndpoints));
+export default withStyles(styles)(ListNotificationEndpoints);

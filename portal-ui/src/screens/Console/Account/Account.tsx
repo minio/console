@@ -15,19 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
+
 import {
   AccountIcon,
   AddIcon,
-  PasswordKeyIcon,
   DeleteIcon,
+  PasswordKeyIcon,
 } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -47,14 +47,16 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
   CONSOLE_UI_RESOURCE,
-  IAM_SCOPES,
   IAM_PAGES,
+  IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
+import { AppState } from "../../../store";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -76,14 +78,11 @@ const styles = (theme: Theme) =>
 interface IServiceAccountsProps {
   classes: any;
   history: any;
-  displayErrorMessage: typeof setErrorSnackMessage;
+  features: any;
 }
 
-const Account = ({
-  classes,
-  displayErrorMessage,
-  history,
-}: IServiceAccountsProps) => {
+const Account = ({ classes, history, features }: IServiceAccountsProps) => {
+  const dispatch = useDispatch();
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
@@ -96,6 +95,8 @@ const Account = ({
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
+
+  const userIDP = (features && features.includes("external-idp")) || false;
 
   useEffect(() => {
     fetchRecords();
@@ -112,11 +113,11 @@ const Account = ({
           setRecords(serviceAccounts);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, setLoading, setRecords, displayErrorMessage]);
+  }, [loading, setLoading, setRecords, dispatch]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -133,7 +134,7 @@ const Account = ({
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
     if (refresh) {
-      setSnackBarMessage(`Service accounts deleted successfully.`);
+      dispatch(setSnackBarMessage(`Service accounts deleted successfully.`));
       setSelectedSAs([]);
       setLoading(true);
     }
@@ -240,7 +241,7 @@ const Account = ({
                 icon={<PasswordKeyIcon />}
                 color={"primary"}
                 variant={"outlined"}
-                disabled={selectedSAs.length === 0}
+                disabled={userIDP}
               />
             </SecureComponent>
             <RBIconButton
@@ -301,8 +302,10 @@ const Account = ({
   );
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
+const mapState = (state: AppState) => ({
+  features: state.console.session.features,
 });
+
+const connector = connect(mapState, null);
 
 export default withStyles(styles)(connector(Account));

@@ -2617,7 +2617,7 @@ func init() {
         }
       }
     },
-    "/group": {
+    "/group/{name}": {
       "get": {
         "tags": [
           "Group"
@@ -2628,7 +2628,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -2657,7 +2657,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -2694,7 +2694,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3139,7 +3139,7 @@ func init() {
         }
       }
     },
-    "/policy": {
+    "/policy/{name}": {
       "get": {
         "tags": [
           "Policy"
@@ -3150,7 +3150,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3179,7 +3179,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3843,7 +3843,30 @@ func init() {
         }
       }
     },
-    "/user": {
+    "/user/policy": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies for logged in user",
+        "operationId": "GetUserPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/{name}": {
       "get": {
         "tags": [
           "User"
@@ -3854,7 +3877,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3883,7 +3906,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -3920,7 +3943,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3937,7 +3960,7 @@ func init() {
         }
       }
     },
-    "/user/groups": {
+    "/user/{name}/groups": {
       "put": {
         "tags": [
           "User"
@@ -3948,7 +3971,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -3965,29 +3988,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/user/policy": {
-      "get": {
-        "tags": [
-          "Policy"
-        ],
-        "summary": "returns policies for logged in user",
-        "operationId": "GetUserPolicy",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "string"
             }
           },
           "default": {
@@ -5803,6 +5803,23 @@ func init() {
         }
       }
     },
+    "permissionResource": {
+      "type": "object",
+      "properties": {
+        "conditionOperator": {
+          "type": "string"
+        },
+        "prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "string"
+        }
+      }
+    },
     "policy": {
       "type": "object",
       "properties": {
@@ -6173,6 +6190,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "allowResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionResource"
+          }
+        },
         "distributedMode": {
           "type": "boolean"
         },
@@ -9565,7 +9588,7 @@ func init() {
         }
       }
     },
-    "/group": {
+    "/group/{name}": {
       "get": {
         "tags": [
           "Group"
@@ -9576,7 +9599,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -9605,7 +9628,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -9642,7 +9665,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -10087,7 +10110,7 @@ func init() {
         }
       }
     },
-    "/policy": {
+    "/policy/{name}": {
       "get": {
         "tags": [
           "Policy"
@@ -10098,7 +10121,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -10127,7 +10150,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -10791,7 +10814,30 @@ func init() {
         }
       }
     },
-    "/user": {
+    "/user/policy": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies for logged in user",
+        "operationId": "GetUserPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/{name}": {
       "get": {
         "tags": [
           "User"
@@ -10802,7 +10848,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -10831,7 +10877,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -10868,7 +10914,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -10885,7 +10931,7 @@ func init() {
         }
       }
     },
-    "/user/groups": {
+    "/user/{name}/groups": {
       "put": {
         "tags": [
           "User"
@@ -10896,7 +10942,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -10913,29 +10959,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/user/policy": {
-      "get": {
-        "tags": [
-          "Policy"
-        ],
-        "summary": "returns policies for logged in user",
-        "operationId": "GetUserPolicy",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "string"
             }
           },
           "default": {
@@ -12877,6 +12900,23 @@ func init() {
         }
       }
     },
+    "permissionResource": {
+      "type": "object",
+      "properties": {
+        "conditionOperator": {
+          "type": "string"
+        },
+        "prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "string"
+        }
+      }
+    },
     "policy": {
       "type": "object",
       "properties": {
@@ -13247,6 +13287,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "allowResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionResource"
+          }
+        },
         "distributedMode": {
           "type": "boolean"
         },

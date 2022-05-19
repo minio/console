@@ -23,14 +23,14 @@ import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Link } from "react-router-dom";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import PodLogs from "./PodLogs";
 import PodEvents from "./PodEvents";
+import PodDescribe from "./PodDescribe";
 
 interface IPodDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -89,7 +89,8 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
             scrollButtons="auto"
           >
             <Tab label="Events" {...a11yProps(0)} />
-            <Tab label="Logs" {...a11yProps(1)} />
+            <Tab label="Describe" {...a11yProps(1)} />
+            <Tab label="Logs" {...a11yProps(2)} />
           </Tabs>
         </Grid>
         {curTab === 0 && (
@@ -101,6 +102,14 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
           />
         )}
         {curTab === 1 && (
+          <PodDescribe
+            tenant={tenantName}
+            namespace={tenantNamespace}
+            podName={podName}
+            propLoading={loading}
+          />
+        )}
+        {curTab === 2 && (
           <PodLogs
             tenant={tenantName}
             namespace={tenantNamespace}

@@ -26,6 +26,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import withSuspense from "../../../Common/Components/withSuspense";
 import Loader from "../../../Common/Loader/Loader";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 const AddBucketTagModal = withSuspense(
   React.lazy(() => import("../AddBucketTagModal"))
@@ -35,11 +37,12 @@ const DeleteBucketTagModal = withSuspense(
 );
 
 type BucketTagProps = {
-  setErrorSnackMessage: (err: ErrorResponseHandler) => void;
   bucketName: string;
 };
 
-const BucketTags = ({ setErrorSnackMessage, bucketName }: BucketTagProps) => {
+const BucketTags = ({ bucketName }: BucketTagProps) => {
+  const dispatch = useDispatch();
+
   const [tags, setTags] = useState<any>(null);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
   const [tagKeys, setTagKeys] = useState<string[]>([]);
@@ -67,14 +70,14 @@ const BucketTags = ({ setErrorSnackMessage, bucketName }: BucketTagProps) => {
   };
 
   const onTagLoaded = (res: Bucket) => {
-    if (res != null && res?.details != null) {
+    if (res != null && res?.details != null && "tags" in res?.details) {
       setTags(res?.details?.tags);
       setTagKeys(Object.keys(res?.details?.tags));
     }
   };
 
   const onTagLoadFailed = (err: ErrorResponseHandler) => {
-    setErrorSnackMessage(err);
+    dispatch(setErrorSnackMessage(err));
   };
 
   const [isLoading, invokeTagsApi] = useApi(onTagLoaded, onTagLoadFailed);

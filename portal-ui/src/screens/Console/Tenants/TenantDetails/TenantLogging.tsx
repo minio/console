@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -33,7 +33,6 @@ import { ITenant, ITenantLogsStruct } from "../ListTenants/types";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { EditIcon } from "../../../../icons";
-import { setErrorSnackMessage } from "../../../../actions";
 import EditTenantLogsModal from "./EditTenantLogsModal";
 import KeyPairView from "./KeyPairView";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
@@ -41,6 +40,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { niceBytes } from "../../../../common/utils";
 import Loader from "../../Common/Loader/Loader";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantLogs {
   classes: any;
@@ -66,6 +66,7 @@ const TenantLogging = ({
   tenant,
   loadingTenant,
 }: ITenantLogs) => {
+  const dispatch = useDispatch();
   const [loadingTenantLogs, setLoadingTenantLogs] = useState<boolean>(true);
   const [logInfo, setLogInfo] = useState<ITenantLogsStruct>();
   const [edit, setEdit] = useState<boolean>(false);
@@ -91,13 +92,22 @@ const TenantLogging = ({
           setLoadingTenantLogs(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage({
-            errorMessage: "Error getting tenant logs",
-            detailedError: err.detailedError,
-          });
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Error getting tenant logs",
+              detailedError: err.detailedError,
+            })
+          );
         });
     }
-  }, [tenantName, tenantNamespace, loadingTenantLogs, setDisabled, disabled]);
+  }, [
+    tenantName,
+    tenantNamespace,
+    loadingTenantLogs,
+    setDisabled,
+    disabled,
+    dispatch,
+  ]);
 
   const onCloseEditAndRefresh = () => {
     setDisableDialogOpen(false);
@@ -128,10 +138,12 @@ const TenantLogging = ({
               setDisabled(true);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage({
-                errorMessage: "Error disabling logging",
-                detailedError: err.detailedError,
-              });
+              dispatch(
+                setErrorSnackMessage({
+                  errorMessage: "Error disabling logging",
+                  detailedError: err.detailedError,
+                })
+              );
             });
           onCloseEditAndRefresh();
         }}
@@ -157,10 +169,12 @@ const TenantLogging = ({
               setPreDisabled(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage({
-                errorMessage: "Error enabling logging",
-                detailedError: err.detailedError,
-              });
+              dispatch(
+                setErrorSnackMessage({
+                  errorMessage: "Error enabling logging",
+                  detailedError: err.detailedError,
+                })
+              );
             });
           onCloseEnableAndRefresh();
         }}

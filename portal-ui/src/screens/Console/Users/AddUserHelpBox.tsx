@@ -16,10 +16,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import {
-  HelpIconFilled,
-  UsersIcon,
   ChangeAccessPolicyIcon,
   GroupsIcon,
+  HelpIconFilled,
+  UsersIcon,
 } from "../../../icons";
 
 const FeatureItem = ({

@@ -14,27 +14,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../../../screens/Console/Common/Hooks/useApi";
 import ConfirmDialog from "../../../screens/Console/Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
+import { setErrorSnackMessage } from "../../../systemSlice";
+
 interface IDeleteMultiSAsProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedSAs: string[];
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
+
 const DeleteMultipleSAs = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedSAs,
-  setErrorSnackMessage,
 }: IDeleteMultiSAsProps) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
   if (!selectedSAs) {
@@ -65,9 +67,5 @@ const DeleteMultipleSAs = ({
     />
   );
 };
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-const connector = connect(null, mapDispatchToProps);
 
-export default connector(DeleteMultipleSAs);
+export default DeleteMultipleSAs;

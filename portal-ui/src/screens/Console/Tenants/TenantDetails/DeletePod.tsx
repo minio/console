@@ -19,30 +19,31 @@ import { DialogContentText } from "@mui/material";
 import { IPodListElement } from "../ListTenants/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../actions";
+import { useDispatch } from "react-redux";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IDeletePod {
   deleteOpen: boolean;
   selectedPod: IPodListElement;
   closeDeleteModalAndRefresh: (refreshList: boolean) => any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeletePod = ({
   deleteOpen,
   selectedPod,
   closeDeleteModalAndRefresh,
-  setErrorSnackMessage,
 }: IDeletePod) => {
+  const dispatch = useDispatch();
   const [retypePod, setRetypePod] = useState("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -93,8 +94,4 @@ const DeletePod = ({
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage,
-});
-
-export default connector(DeletePod);
+export default DeletePod;

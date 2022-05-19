@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,10 +30,12 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangePasswordRequest } from "../Buckets/types";
-import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import { ChangePasswordIcon } from "../../../icons";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,36 +49,42 @@ interface IChangePasswordProps {
   classes: any;
   open: boolean;
   closeModal: () => void;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const ChangePassword = ({
   classes,
   open,
   closeModal,
-  setModalErrorSnackMessage,
 }: IChangePasswordProps) => {
+  const dispatch = useDispatch();
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
 
   const changePassword = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (newPassword !== reNewPassword) {
-      setModalErrorSnackMessage({
-        errorMessage: "New passwords don't match",
-        detailedError: "",
-      });
+      dispatch(
+        setModalErrorSnackMessage({
+          errorMessage: "New passwords don't match",
+          detailedError: "",
+        })
+      );
       return;
     }
 
     if (newPassword.length < 8) {
-      setModalErrorSnackMessage({
-        errorMessage: "Passwords must be at least 8 characters long",
-        detailedError: "",
-      });
+      dispatch(
+        setModalErrorSnackMessage({
+          errorMessage: "Passwords must be at least 8 characters long",
+          detailedError: "",
+        })
+      );
       return;
     }
 
@@ -104,13 +112,13 @@ const ChangePassword = ({
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
   return open ? (
     <ModalWrapper
-      title="Change Password"
+      title={`Change Password for ${userLoggedIn}`}
       modalOpen={open}
       onClose={() => {
         setNewPassword("");
@@ -120,6 +128,10 @@ const ChangePassword = ({
       }}
       titleIcon={<ChangePasswordIcon />}
     >
+      <div>
+        This will change your Console password. Please note your new password
+        down, as it will be required to log into Console after this session.
+      </div>
       <form
         noValidate
         autoComplete="off"
@@ -137,8 +149,12 @@ const ChangePassword = ({
                   setCurrentPassword(event.target.value);
                 }}
                 label="Current Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={currentPassword}
+                overlayAction={() => setShowPassword(!showPassword)}
+                overlayIcon={
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -149,8 +165,12 @@ const ChangePassword = ({
                   setNewPassword(event.target.value);
                 }}
                 label="New Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={newPassword}
+                overlayAction={() => setShowPassword(!showPassword)}
+                overlayIcon={
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -161,8 +181,12 @@ const ChangePassword = ({
                   setReNewPassword(event.target.value);
                 }}
                 label="Type New Password Again"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={reNewPassword}
+                overlayAction={() => setShowPassword(!showPassword)}
+                overlayIcon={
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+                }
               />
             </Grid>
           </Grid>
@@ -194,8 +218,4 @@ const ChangePassword = ({
   ) : null;
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(ChangePassword));
+export default withStyles(styles)(ChangePassword);

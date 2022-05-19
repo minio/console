@@ -21,6 +21,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/minio/console/pkg/utils"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/madmin-go"
 
@@ -117,7 +118,12 @@ func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoPa
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	groupDesc, err := groupInfo(ctx, adminClient, params.Name)
+	groupName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	groupDesc, err := groupInfo(ctx, adminClient, groupName)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -202,10 +208,16 @@ func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGro
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
-	// createad a MinIO Admin Client interface implementation
+	// Create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
+
+	groupName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+
+	if err := removeGroup(ctx, adminClient, groupName); err != nil {
 		minioError := madmin.ToErrorResponse(err)
 		err2 := ErrorWithContext(ctx, err)
 		if minioError.Code == "XMinioAdminNoSuchGroup" {
@@ -280,7 +292,11 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 		return nil, ErrorWithContext(ctx, ErrGroupBodyNotInRequest)
 	}
 	expectedGroupUpdate := params.Body
-	groupName := params.Name
+
+	groupName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {

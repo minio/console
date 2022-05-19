@@ -18,7 +18,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import Routes from "./Routes";
-import configureStore from "./store";
+import { store } from "./store";
 import * as serviceWorker from "./serviceWorker";
 import {
   StyledEngineProvider,
@@ -127,7 +127,7 @@ const GlobalCss = withStyles({
 })(() => null);
 
 ReactDOM.render(
-  <Provider store={configureStore()}>
+  <Provider store={store}>
     <GlobalCss />
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>

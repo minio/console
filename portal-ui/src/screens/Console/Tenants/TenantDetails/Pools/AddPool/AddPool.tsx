@@ -25,7 +25,7 @@ import {
 import Grid from "@mui/material/Grid";
 import { generatePoolName, niceBytes } from "../../../../../../common/utils";
 import { LinearProgress } from "@mui/material";
-import { IAddPoolRequest, ITenant } from "../../../ListTenants/types";
+import { IAddPoolRequest } from "../../../ListTenants/types";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
@@ -34,45 +34,22 @@ import history from "../../../../../../history";
 import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import TenantsIcon from "../../../../../../icons/TenantsIcon";
-import {
-  isPoolPageValid,
-  resetPoolForm,
-  setPoolField,
-  setTenantDetailsLoad,
-} from "../../../actions";
+
 import { AppState } from "../../../../../../store";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PoolConfiguration from "./PoolConfiguration";
 import PoolPodPlacement from "./PoolPodPlacement";
-import {
-  ErrorResponseHandler,
-  ITolerationModel,
-} from "../../../../../../common/types";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import { getDefaultAffinity, getNodeSelector } from "../../utils";
 import api from "../../../../../../common/api";
-import { ISecurityContext } from "../../../types";
 import BackLink from "../../../../../../common/BackLink";
-import { setErrorSnackMessage } from "../../../../../../actions";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { resetPoolForm, setTenantDetailsLoad } from "../../../tenantsSlice";
 
 interface IAddPoolProps {
-  tenant: ITenant | null;
   classes: any;
   open: boolean;
   match: any;
-  selectedStorageClass: string;
-  validPages: string[];
-  numberOfNodes: number;
-  volumeSize: number;
-  volumesPerServer: number;
-  affinityType: string;
-  nodeSelectorLabels: string;
-  withPodAntiAffinity: boolean;
-  securityContextEnabled: boolean;
-  tolerations: ITolerationModel[];
-  securityContext: ISecurityContext;
-  resetPoolForm: typeof resetPoolForm;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -104,24 +81,50 @@ const styles = (theme: Theme) =>
 
 const requiredPages = ["setup", "affinity", "configure"];
 
-const AddPool = ({
-  tenant,
-  classes,
-  resetPoolForm,
-  selectedStorageClass,
-  validPages,
-  numberOfNodes,
-  volumeSize,
-  affinityType,
-  nodeSelectorLabels,
-  withPodAntiAffinity,
-  tolerations,
-  securityContextEnabled,
-  securityContext,
-  volumesPerServer,
-  setTenantDetailsLoad,
-  setErrorSnackMessage,
-}: IAddPoolProps) => {
+const AddPool = ({ classes, open, match }: IAddPoolProps) => {
+  const dispatch = useDispatch();
+
+  const tenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.tenantInfo
+  );
+  const selectedStorageClass = useSelector(
+    (state: AppState) => state.tenants.addPool.fields.setup.storageClass
+  );
+  const validPages = useSelector(
+    (state: AppState) => state.tenants.addPool.validPages
+  );
+  const numberOfNodes = useSelector(
+    (state: AppState) => state.tenants.addPool.fields.setup.numberOfNodes
+  );
+  const volumeSize = useSelector(
+    (state: AppState) => state.tenants.addPool.fields.setup.volumeSize
+  );
+  const volumesPerServer = useSelector(
+    (state: AppState) => state.tenants.addPool.fields.setup.volumesPerServer
+  );
+  const affinityType = useSelector(
+    (state: AppState) => state.tenants.addPool.fields.affinity.podAffinity
+  );
+  const nodeSelectorLabels = useSelector(
+    (state: AppState) =>
+      state.tenants.addPool.fields.affinity.nodeSelectorLabels
+  );
+  const withPodAntiAffinity = useSelector(
+    (state: AppState) =>
+      state.tenants.addPool.fields.affinity.withPodAntiAffinity
+  );
+  const tolerations = useSelector(
+    (state: AppState) => state.tenants.addPool.fields.tolerations
+  );
+  const securityContextEnabled = useSelector(
+    (state: AppState) =>
+      state.tenants.addPool.fields.configuration.securityContextEnabled
+  );
+  const securityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.addPool.fields.configuration.securityContext
+  );
+
   const [addSending, setAddSending] = useState<boolean>(false);
 
   const poolsURL = `/namespaces/${tenant?.namespace || ""}/tenants/${
@@ -178,20 +181,18 @@ const AddPool = ({
         )
         .then(() => {
           setAddSending(false);
-          resetPoolForm();
-          setTenantDetailsLoad(true);
+          dispatch(resetPoolForm());
+          dispatch(setTenantDetailsLoad(true));
           history.push(poolsURL);
         })
         .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
   }, [
     addSending,
     poolsURL,
-    resetPoolForm,
-    setTenantDetailsLoad,
     affinityType,
     nodeSelectorLabels,
     numberOfNodes,
@@ -203,7 +204,7 @@ const AddPool = ({
     volumeSize,
     volumesPerServer,
     withPodAntiAffinity,
-    setErrorSnackMessage,
+    dispatch,
   ]);
 
   const cancelButton = {
@@ -211,7 +212,7 @@ const AddPool = ({
     type: "other",
     enabled: true,
     action: () => {
-      resetPoolForm();
+      dispatch(resetPoolForm());
       history.push(poolsURL);
     },
   };
@@ -286,31 +287,4 @@ const AddPool = ({
   );
 };
 
-const mapState = (state: AppState) => {
-  const addPool = state.tenants.addPool;
-  return {
-    tenant: state.tenants.tenantDetails.tenantInfo,
-    selectedStorageClass: addPool.fields.setup.storageClass,
-    validPages: addPool.validPages,
-    storageClasses: addPool.storageClasses,
-    numberOfNodes: addPool.fields.setup.numberOfNodes,
-    volumeSize: addPool.fields.setup.volumeSize,
-    volumesPerServer: addPool.fields.setup.volumesPerServer,
-    affinityType: addPool.fields.affinity.podAffinity,
-    nodeSelectorLabels: addPool.fields.affinity.nodeSelectorLabels,
-    withPodAntiAffinity: addPool.fields.affinity.withPodAntiAffinity,
-    tolerations: addPool.fields.tolerations,
-    securityContextEnabled: addPool.fields.configuration.securityContextEnabled,
-    securityContext: addPool.fields.configuration.securityContext,
-  };
-};
-
-const connector = connect(mapState, {
-  resetPoolForm,
-  setPoolField,
-  isPoolPageValid,
-  setErrorSnackMessage,
-  setTenantDetailsLoad,
-});
-
-export default withStyles(styles)(connector(AddPool));
+export default withStyles(styles)(AddPool);

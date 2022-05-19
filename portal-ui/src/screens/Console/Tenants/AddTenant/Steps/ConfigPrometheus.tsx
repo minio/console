@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,7 +25,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { isPageValid, updateAddField } from "../../actions";
+
 import { AppState } from "../../../../../store";
 import { clearValidationError } from "../../utils";
 import {
@@ -35,25 +35,12 @@ import {
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { ISecurityContext } from "../../types";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SectionH1 from "../../../Common/SectionH1";
+import { isPageValid, updateAddField } from "../../tenantsSlice";
 
 interface IConfigureProps {
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  storageClasses: any;
   classes: any;
-  prometheusEnabled: boolean;
-  prometheusVolumeSize: string;
-  prometheusSizeFactor: string;
-  prometheusSelectedStorageClass: string;
-  prometheusImage: string;
-  prometheusSidecarImage: string;
-  prometheusInitImage: string;
-  selectedStorageClass: string;
-  tenantSecurityContext: ISecurityContext;
-  prometheusSecurityContext: ISecurityContext;
 }
 
 const styles = (theme: Theme) =>
@@ -94,22 +81,49 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const ConfigPrometheus = ({
-  classes,
-  storageClasses,
-  prometheusEnabled,
-  prometheusVolumeSize,
-  prometheusSizeFactor,
-  prometheusSelectedStorageClass,
-  prometheusImage,
-  prometheusSidecarImage,
-  prometheusInitImage,
-  updateAddField,
-  isPageValid,
-  selectedStorageClass,
-  tenantSecurityContext,
-  prometheusSecurityContext,
-}: IConfigureProps) => {
+const ConfigPrometheus = ({ classes }: IConfigureProps) => {
+  const dispatch = useDispatch();
+
+  const storageClasses = useSelector(
+    (state: AppState) => state.tenants.createTenant.storageClasses
+  );
+  const prometheusEnabled = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusEnabled
+  );
+  const prometheusVolumeSize = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusVolumeSize
+  );
+  const prometheusSelectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass
+  );
+  const prometheusImage = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusImage
+  );
+  const prometheusSidecarImage = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusSidecarImage
+  );
+  const prometheusInitImage = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusInitImage
+  );
+  const selectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+  );
+  const tenantSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.tenantSecurityContext
+  );
+  const prometheusSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.configure.prometheusSecurityContext
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const configureSTClasses = [
@@ -120,9 +134,11 @@ const ConfigPrometheus = ({
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("configure", field, value);
+      dispatch(
+        updateAddField({ pageName: "configure", field: field, value: value })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   // Validation
@@ -179,14 +195,19 @@ const ConfigPrometheus = ({
 
     const commonVal = commonFormValidation(customAccountValidation);
 
-    isPageValid("configure", Object.keys(commonVal).length === 0);
+    dispatch(
+      isPageValid({
+        pageName: "configure",
+        valid: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
   }, [
     prometheusImage,
     prometheusSidecarImage,
     prometheusInitImage,
-    isPageValid,
+    dispatch,
     prometheusEnabled,
     prometheusSelectedStorageClass,
     prometheusVolumeSize,
@@ -404,32 +425,4 @@ const ConfigPrometheus = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  storageClasses: state.tenants.createTenant.storageClasses,
-  prometheusEnabled:
-    state.tenants.createTenant.fields.configure.prometheusEnabled,
-  prometheusVolumeSize:
-    state.tenants.createTenant.fields.configure.prometheusVolumeSize,
-  prometheusSizeFactor:
-    state.tenants.createTenant.fields.configure.prometheusSizeFactor,
-  prometheusSelectedStorageClass:
-    state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass,
-  prometheusImage: state.tenants.createTenant.fields.configure.prometheusImage,
-  prometheusSidecarImage:
-    state.tenants.createTenant.fields.configure.prometheusSidecarImage,
-  prometheusInitImage:
-    state.tenants.createTenant.fields.configure.prometheusInitImage,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  tenantSecurityContext:
-    state.tenants.createTenant.fields.configure.tenantSecurityContext,
-  prometheusSecurityContext:
-    state.tenants.createTenant.fields.configure.prometheusSecurityContext,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-});
-
-export default withStyles(styles)(connector(ConfigPrometheus));
+export default withStyles(styles)(ConfigPrometheus);

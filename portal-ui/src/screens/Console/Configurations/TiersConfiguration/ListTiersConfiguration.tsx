@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -31,7 +31,7 @@ import {
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
-import { setErrorSnackMessage } from "../../../../actions";
+
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -55,6 +55,7 @@ import {
 import { SecureComponent } from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -63,8 +64,6 @@ const UpdateTierCredentialsModal = withSuspense(
 interface IListTiersConfig {
   classes: any;
   history: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  distributedSetup: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -95,12 +94,11 @@ const styles = (theme: Theme) =>
     ...tableStyles,
   });
 
-const ListTiersConfiguration = ({
-  classes,
-  history,
-  setErrorSnackMessage,
-  distributedSetup,
-}: IListTiersConfig) => {
+const ListTiersConfiguration = ({ classes, history }: IListTiersConfig) => {
+  const dispatch = useDispatch();
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -121,7 +119,7 @@ const ListTiersConfiguration = ({
               setIsLoading(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setIsLoading(false);
             });
         };
@@ -130,7 +128,7 @@ const ListTiersConfiguration = ({
         setIsLoading(false);
       }
     }
-  }, [isLoading, setErrorSnackMessage, distributedSetup]);
+  }, [isLoading, dispatch, distributedSetup]);
 
   const filteredRecords = records.filter((b: ITierElement) => {
     if (filter === "") {
@@ -460,14 +458,4 @@ const ListTiersConfiguration = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  distributedSetup: state.system.distributedSetup,
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
-
-export default withStyles(styles)(connector(ListTiersConfiguration));
+export default withStyles(styles)(ListTiersConfiguration);
