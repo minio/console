@@ -22,16 +22,17 @@ import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { SubnetInfo } from "./types";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Tooltip } from "@mui/material";
+import { Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { HelpIconFilled, LicenseDocIcon, OpenSourceIcon } from "../../../icons";
+import { LicenseDocIcon } from "../../../icons";
 import {
-  COMMUNITY_PLAN_FEATURES,
-  ENTERPRISE_PLAN_FEATURES,
-  FEATURE_ITEMS,
   LICENSE_PLANS,
-  PAID_PLANS,
+  FEATURE_ITEMS,
+  COMMUNITY_PLAN_FEATURES,
   STANDARD_PLAN_FEATURES,
+  ENTERPRISE_PLAN_FEATURES,
+  PAID_PLANS,
+  getRenderValue,
 } from "./utils";
 
 const styles = (theme: Theme) => createStyles({});
@@ -58,7 +59,6 @@ const PlanHeader = ({
   isXsViewActive: boolean;
   title: string;
   price?: string;
-  tooltipText?: string;
   onClick: any;
   children: any;
 }) => {
@@ -78,7 +78,6 @@ const PlanHeader = ({
         alignItems: "flex-start",
         justifyContent: "center",
         flexFlow: "column",
-        paddingLeft: "26px",
         borderLeft: "1px solid #eaeaea",
         "& .plan-header": {
           display: "flex",
@@ -90,7 +89,7 @@ const PlanHeader = ({
         "& .title-block": {
           paddingTop: "20px",
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           flexFlow: "column",
           width: "100%",
 
@@ -114,15 +113,6 @@ const PlanHeader = ({
           },
         },
 
-        "& .price-line": {
-          fontSize: "16px",
-          fontWeight: 600,
-        },
-        "& .minimum-cost": {
-          fontSize: "14px",
-          fontWeight: 400,
-          marginBottom: "5px",
-        },
         "& .open-source": {
           fontSize: "14px",
           display: "flex",
@@ -184,17 +174,19 @@ const FeatureTitleRowCmp = (props: { featureLabel: any }) => {
 
 const PricingFeatureItem = (props: {
   featureLabel: any;
-  label?: string;
-  detail?: string;
+  label?: any;
+  detail?: any;
   xsLabel?: string;
+  style?: any;
 }) => {
   return (
-    <Box className="feature-item">
+    <Box className="feature-item" style={props.style}>
       <Box className="feature-item-info">
         <div className="xs-only">{props.featureLabel} </div>
         <Box className="plan-feature">
-          <div>{props.label || ""}</div>
-          {props.detail ? <div>{props.detail}</div> : null}
+          <div>{getRenderValue(props.label || "")}</div>
+          {getRenderValue(props.detail)}
+
           <div className="xs-only">{props.xsLabel} </div>
         </Box>
       </Box>
@@ -227,9 +219,6 @@ const LicensePlans = ({
   let isXsViewEnterprise = xsPlanView === LICENSE_PLANS.ENTERPRISE;
 
   const getCommunityPlanHeader = () => {
-    const tooltipText =
-      "Designed for developers who are building open source applications in compliance with the AGPL v3 license and are able to support themselves. The community version of MinIO has all the functionality of the Standard and Enterprise editions.";
-
     return (
       <PlanHeader
         isActive={isCommunityPlan}
@@ -240,28 +229,16 @@ const LicensePlans = ({
         <Box className="title-block">
           <Box className="title-main">
             <div className="title">Community</div>
-            <Tooltip title={tooltipText} placement="top-start">
-              <div className="tool-tip">
-                <HelpIconFilled />
-              </div>
-            </Tooltip>
           </Box>
           <div className="cur-plan-text">
             {isCommunityPlan ? "Current Plan" : ""}
           </div>
         </Box>
-        <div className="open-source">
-          <OpenSourceIcon />
-          Open Source
-        </div>
       </PlanHeader>
     );
   };
 
   const getStandardPlanHeader = () => {
-    const tooltipText =
-      "Designed for customers who require a commercial license and can mostly self-support but want the peace of mind that comes with the MinIO Subscription Network’s suite of operational capabilities and direct-to-engineer interaction. The Standard version is fully featured but with SLA limitations. ";
-
     return (
       <PlanHeader
         isActive={isStandardPlan}
@@ -272,26 +249,16 @@ const LicensePlans = ({
         <Box className="title-block">
           <Box className="title-main">
             <div className="title">Standard</div>
-            <Tooltip title={tooltipText} placement="top-start">
-              <div className="tool-tip">
-                <HelpIconFilled />
-              </div>
-            </Tooltip>
           </Box>
           <div className="cur-plan-text">
             {isStandardPlan ? "Current Plan" : ""}
           </div>
         </Box>
-        <div className="price-line">$10 per TiB per month</div>
-        <div className="minimum-cost">(Minimum of 100TiB)</div>
       </PlanHeader>
     );
   };
 
   const getEnterpriseHeader = () => {
-    const tooltipText =
-      "Designed for mission critical environments where both a license and strict SLAs are required. The Enterprise version is fully featured but comes with additional capabilities. ";
-
     return (
       <PlanHeader
         isActive={isEnterprisePlan}
@@ -302,18 +269,11 @@ const LicensePlans = ({
         <Box className="title-block">
           <Box className="title-main">
             <div className="title">Enterprise</div>
-            <Tooltip title={tooltipText} placement="top-start">
-              <div className="tool-tip">
-                <HelpIconFilled />
-              </div>
-            </Tooltip>
           </Box>
           <div className="cur-plan-text">
             {isEnterprisePlan ? "Current Plan" : ""}
           </div>
         </Box>
-        <div className="price-line">$20 per TiB per month</div>
-        <div className="minimum-cost">(Minimum of 100TiB)</div>
       </PlanHeader>
     );
   };
@@ -444,7 +404,7 @@ const LicensePlans = ({
               borderLeft: "1px solid #eaeaea",
             },
             "& .plan-header": {
-              height: "153px",
+              height: "99px",
               borderBottom: "1px solid #eaeaea",
             },
             "& .feature-title": {
@@ -472,20 +432,13 @@ const LicensePlans = ({
             "& .feature-item": {
               display: "flex",
               flexFlow: "column",
-              alignItems: "flex-start",
+              alignItems: "center",
               justifyContent: "center",
               minHeight: "60px",
-              padding: "5px",
+              padding: "0 15px 0 15px",
               borderBottom: "1px solid #eaeaea",
               borderLeft: " 1px solid #eaeaea",
-              paddingLeft: "26px",
               fontSize: "14px",
-
-              "@media (max-width: 900px)": {
-                maxHeight: "30px",
-                overflow: "hidden",
-              },
-
               "& .link-text": {
                 color: "#2781B0",
               },
@@ -500,8 +453,9 @@ const LicensePlans = ({
               flex: 1,
               display: "flex",
               flexFlow: "column",
-              alignItems: "flex-start",
+              alignItems: "center",
               justifyContent: "space-around",
+              textAlign: "center",
 
               "@media (max-width: 600px)": {
                 display: "flex",
@@ -515,7 +469,7 @@ const LicensePlans = ({
                 },
                 "& .plan-feature": {
                   flex: 1,
-                  textAlign: "right",
+                  textAlign: "center",
                   paddingRight: "10px",
                 },
               },
@@ -619,13 +573,13 @@ const LicensePlans = ({
                       textTransform: "uppercase",
                     }}
                   >
-                    <div>{fi.desc} </div>
+                    <div>{getRenderValue(fi.desc)} </div>
                   </Box>
                 );
               }
               return (
-                <Box key={fi.desc} className="feature-name">
-                  <div>{fi.desc} </div>
+                <Box key={fi.desc} className="feature-name" style={fi.style}>
+                  <div>{getRenderValue(fi.desc)} </div>
                 </Box>
               );
             })}
@@ -685,6 +639,7 @@ const LicensePlans = ({
                     label={fi.label}
                     detail={fi.detail}
                     xsLabel={fi.xsLabel}
+                    style={fi.style}
                   />
                 );
               })}
@@ -723,6 +678,7 @@ const LicensePlans = ({
                   label={fi.label}
                   detail={fi.detail}
                   xsLabel={fi.xsLabel}
+                  style={fi.style}
                 />
               );
             })}
@@ -761,7 +717,7 @@ const LicensePlans = ({
                 return (
                   <Box className="feature-item">
                     <Box className="feature-item-info">
-                      <div className="xs-only"></div>
+                      <div className="xs-only"> </div>
                       <Box className="plan-feature">
                         <CheckCircleIcon />
                       </Box>
@@ -775,6 +731,7 @@ const LicensePlans = ({
                   featureLabel={featureLabel}
                   label={fi.label}
                   detail={fi.detail}
+                  style={fi.style}
                 />
               );
             })}
