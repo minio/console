@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
-
+import { Redirect, useLocation } from "react-router-dom";
 import api from "./common/api";
 import { ISessionResponse } from "./screens/Console/types";
 import useApi from "./screens/Console/Common/Hooks/useApi";
@@ -47,6 +46,13 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
 
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
+
+  const { pathname = "" } = useLocation();
+
+  const StorePathAndRedirect = () => {
+    localStorage.setItem("redirect-path", pathname);
+    return <Redirect to={{ pathname: `${baseUrl}login` }} />;
+  };
 
   useEffect(() => {
     api
@@ -104,11 +110,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
     return null;
   }
   // redirect user to the right page based on session status
-  return userLoggedIn ? (
-    <Component />
-  ) : (
-    <Redirect to={{ pathname: `${baseUrl}login` }} />
-  );
+  return userLoggedIn ? <Component /> : <StorePathAndRedirect />;
 };
 
 export default ProtectedRoute;
