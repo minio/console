@@ -47,6 +47,8 @@ interface IFileVersionItem {
   onPreview: (versionInfo: IFileInfo) => void;
   globalClick: (versionInfo: IFileInfo) => void;
   classes: any;
+  key: any;
+  style: any;
 }
 
 const styles = (theme: Theme) =>
@@ -175,6 +177,8 @@ const FileVersionItem = ({
   onPreview,
   globalClick,
   index,
+  key,
+  style,
 }: IFileVersionItem) => {
   const disableButtons = versionInfo.is_delete_marker;
 
@@ -219,6 +223,8 @@ const FileVersionItem = ({
       onClick={() => {
         globalClick(versionInfo);
       }}
+      key={key}
+      style={style}
     >
       <Grid
         item
