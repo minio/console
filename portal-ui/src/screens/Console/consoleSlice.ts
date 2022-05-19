@@ -28,6 +28,7 @@ const initialState: ConsoleState = {
     features: [],
     distributedMode: false,
     permissions: {},
+    allowResources: null,
   },
 };
 
