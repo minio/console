@@ -231,7 +231,10 @@ export const permissionItems = (
     }
 
     // We review prefixes in allow resources for StringEquals variant only.
-    if (permissionElement.conditionOperator === "StringEquals" || permissionElement.conditionOperator === "StringLike") {
+    if (
+      permissionElement.conditionOperator === "StringEquals" ||
+      permissionElement.conditionOperator === "StringLike"
+    ) {
       permissionElement.prefixes.forEach((prefixItem) => {
         // Prefix Item is not empty?
         if (prefixItem !== "") {
