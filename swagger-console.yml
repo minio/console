@@ -1481,6 +1481,30 @@ paths:
       tags:
         - User
 
+  /users/service-accounts:
+    post:
+      summary: Check number of service accounts for each user specified
+      operationId: CheckUserServiceAccounts
+      parameters:
+        - name: selectedUsers
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/userServiceAccountSummary"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - User
+
   /user/{name}:
     get:
       summary: Get User Info
@@ -2866,6 +2890,15 @@ definitions:
       - CUSTOM
     default: PRIVATE
 
+  userServiceAccountItem:
+    type: object
+    properties:
+      userName:
+        type: string
+      numSAs:
+        type: integer
+        format: int64  
+
   bucket:
     type: object
     required:
@@ -2947,6 +2980,17 @@ definitions:
         type: integer
         format: int64
         title: number of buckets accessible to the user
+
+  userServiceAccountSummary:
+    type: object
+    properties:
+      userServiceAccountList:
+        type: array
+        items:
+          $ref: "#/definitions/userServiceAccountItem"
+        title: list of users with number of service accounts
+      hasSA:
+        type: boolean
 
   listObjectsResponse:
     type: object
@@ -4597,6 +4641,16 @@ definitions:
         type: string
 
   deleteFile:
+    type: object
+    properties:
+      path:
+        type: string
+      versionID:
+        type: string
+      recursive:
+        type: boolean
+
+        userSAs:
     type: object
     properties:
       path:

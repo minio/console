@@ -132,6 +132,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		SystemCheckMinIOVersionHandler: system.CheckMinIOVersionHandlerFunc(func(params system.CheckMinIOVersionParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.CheckMinIOVersion has not yet been implemented")
 		}),
+		UserCheckUserServiceAccountsHandler: user.CheckUserServiceAccountsHandlerFunc(func(params user.CheckUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.CheckUserServiceAccounts has not yet been implemented")
+		}),
 		ConfigurationConfigInfoHandler: configuration.ConfigInfoHandlerFunc(func(params configuration.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation configuration.ConfigInfo has not yet been implemented")
 		}),
@@ -540,6 +543,8 @@ type ConsoleAPI struct {
 	AccountChangeUserPasswordHandler account.ChangeUserPasswordHandler
 	// SystemCheckMinIOVersionHandler sets the operation handler for the check min i o version operation
 	SystemCheckMinIOVersionHandler system.CheckMinIOVersionHandler
+	// UserCheckUserServiceAccountsHandler sets the operation handler for the check user service accounts operation
+	UserCheckUserServiceAccountsHandler user.CheckUserServiceAccountsHandler
 	// ConfigurationConfigInfoHandler sets the operation handler for the config info operation
 	ConfigurationConfigInfoHandler configuration.ConfigInfoHandler
 	// UserCreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
@@ -889,6 +894,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.SystemCheckMinIOVersionHandler == nil {
 		unregistered = append(unregistered, "system.CheckMinIOVersionHandler")
+	}
+	if o.UserCheckUserServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "user.CheckUserServiceAccountsHandler")
 	}
 	if o.ConfigurationConfigInfoHandler == nil {
 		unregistered = append(unregistered, "configuration.ConfigInfoHandler")
@@ -1376,6 +1384,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/check-version"] = system.NewCheckMinIOVersion(o.context, o.SystemCheckMinIOVersionHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/users/service-accounts"] = user.NewCheckUserServiceAccounts(o.context, o.UserCheckUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
