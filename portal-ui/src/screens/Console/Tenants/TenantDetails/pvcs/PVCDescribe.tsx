@@ -75,7 +75,6 @@ const HeaderSection = ({ title }: { title: string }) => {
       >
       <h3>{title}</h3>
     </Box>
-    
   );
 };
 

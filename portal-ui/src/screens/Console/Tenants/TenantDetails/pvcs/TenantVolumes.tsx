@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-  const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
+const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
   const [curTab, setCurTab] = useState<number>(0);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
