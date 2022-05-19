@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,8 +30,7 @@ import {
   pageContentStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setErrorSnackMessage } from "../../../../actions";
-import { setBucketDetailsLoad, setBucketInfo } from "../actions";
+
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
@@ -45,14 +44,15 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../../common/BackLink";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { TrashIcon } from "../../../../icons";
-import { SRInfoStateType } from "../../../../types";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setBucketDetailsLoad, setBucketInfo } from "../bucketsSlice";
 
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
@@ -102,27 +102,24 @@ interface IBucketDetailsProps {
   classes: any;
   match: any;
   history: any;
-  distributedSetup: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setBucketDetailsLoad: typeof setBucketDetailsLoad;
-  loadingBucket: boolean;
-  setBucketInfo: typeof setBucketInfo;
-  bucketInfo: BucketInfo | null;
-  siteReplicationInfo: SRInfoStateType;
 }
 
-const BucketDetails = ({
-  classes,
-  match,
-  history,
-  setErrorSnackMessage,
-  distributedSetup,
-  setBucketDetailsLoad,
-  loadingBucket,
-  setBucketInfo,
-  bucketInfo,
-  siteReplicationInfo,
-}: IBucketDetailsProps) => {
+const BucketDetails = ({ classes, match, history }: IBucketDetailsProps) => {
+  const dispatch = useDispatch();
+
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
+  const loadingBucket = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.loadingBucket
+  );
+  const bucketInfo = useSelector(
+    (state: AppState) => state.buckets.bucketDetails.bucketInfo
+  );
+  const siteReplicationInfo = useSelector(
+    (state: AppState) => state.system.siteReplicationInfo
+  );
+
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const bucketName = match.params["bucketName"];
@@ -138,31 +135,25 @@ const BucketDetails = ({
 
   useEffect(() => {
     if (!iniLoad) {
-      setBucketDetailsLoad(true);
+      dispatch(setBucketDetailsLoad(true));
       setIniLoad(true);
     }
-  }, [iniLoad, setBucketDetailsLoad, setIniLoad]);
+  }, [iniLoad, dispatch, setIniLoad]);
 
   useEffect(() => {
     if (loadingBucket) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}`)
         .then((res: BucketInfo) => {
-          setBucketDetailsLoad(false);
-          setBucketInfo(res);
+          dispatch(setBucketDetailsLoad(false));
+          dispatch(setBucketInfo(res));
         })
         .catch((err: ErrorResponseHandler) => {
-          setBucketDetailsLoad(false);
-          setErrorSnackMessage(err);
+          dispatch(setBucketDetailsLoad(false));
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [
-    bucketName,
-    loadingBucket,
-    setBucketDetailsLoad,
-    setBucketInfo,
-    setErrorSnackMessage,
-  ]);
+  }, [bucketName, loadingBucket, dispatch]);
 
   let topLevelRoute = `/buckets/${bucketName}`;
   const defaultRoute = "/admin/summary";
@@ -274,7 +265,7 @@ const BucketDetails = ({
                 </SecureComponent>
                 <RBIconButton
                   onClick={() => {
-                    setBucketDetailsLoad(true);
+                    dispatch(setBucketDetailsLoad(true));
                   }}
                   text={`Refresh`}
                   icon={<RefreshIcon />}
@@ -419,19 +410,4 @@ const BucketDetails = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  selectedTab: state.buckets.bucketDetails.selectedTab,
-  distributedSetup: state.system.distributedSetup,
-  loadingBucket: state.buckets.bucketDetails.loadingBucket,
-  bucketInfo: state.buckets.bucketDetails.bucketInfo,
-  siteReplicationInfo: state.system.siteReplicationInfo,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  setBucketDetailsLoad,
-  setBucketInfo,
-});
-
-export default withStyles(styles)(connector(BucketDetails));
+export default withStyles(styles)(BucketDetails);

@@ -34,7 +34,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import PolicySelectors from "../Policies/PolicySelectors";
 import BackLink from "../../../common/BackLink";
 import GroupsSelectors from "./GroupsSelectors";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { User } from "./types";
 
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -43,14 +43,12 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 
-import { setErrorSnackMessage } from "../../../../src/actions";
-
 import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IAddUserProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   selectedUser: User | null;
 }
 
@@ -73,7 +71,8 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const AddUser = ({ classes, setErrorSnackMessage }: IAddUserProps) => {
+const AddUser = ({ classes }: IAddUserProps) => {
+  const dispatch = useDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -87,10 +86,12 @@ const AddUser = ({ classes, setErrorSnackMessage }: IAddUserProps) => {
     event.preventDefault();
 
     if (secretKey.length < 8) {
-      setErrorSnackMessage({
-        errorMessage: "Passwords must be at least 8 characters long",
-        detailedError: "",
-      });
+      dispatch(
+        setErrorSnackMessage({
+          errorMessage: "Passwords must be at least 8 characters long",
+          detailedError: "",
+        })
+      );
       setAddLoading(false);
       return;
     }
@@ -112,7 +113,7 @@ const AddUser = ({ classes, setErrorSnackMessage }: IAddUserProps) => {
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setErrorSnackMessage(err);
+        dispatch(setErrorSnackMessage(err));
       });
   };
 
@@ -232,10 +233,4 @@ const AddUser = ({ classes, setErrorSnackMessage }: IAddUserProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddUser));
+export default withStyles(styles)(AddUser);

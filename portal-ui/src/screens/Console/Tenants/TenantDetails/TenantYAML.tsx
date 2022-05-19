@@ -15,14 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../../common/api";
-import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   fieldBasic,
   modalStyleUtils,
@@ -31,6 +30,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { EditYamlIcon } from "../../../../icons";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,7 +63,6 @@ interface ITenantYAMLProps {
   closeModalAndRefresh: (refresh: boolean) => void;
   tenant: string;
   namespace: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const TenantYAML = ({
@@ -72,8 +71,8 @@ const TenantYAML = ({
   closeModalAndRefresh,
   tenant,
   namespace,
-  setModalErrorSnackMessage,
 }: ITenantYAMLProps) => {
+  const dispatch = useDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [tenantYaml, setTenantYaml] = useState<string>("");
@@ -111,9 +110,9 @@ const TenantYAML = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
-  }, [tenant, namespace, setModalErrorSnackMessage]);
+  }, [tenant, namespace, dispatch]);
 
   useEffect(() => {}, []);
 
@@ -186,10 +185,4 @@ const TenantYAML = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(TenantYAML));
+export default withStyles(styles)(TenantYAML);

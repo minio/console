@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ITenant } from "../ListTenants/types";
 import {
   ICertificateInfo,
   ISecurityContext,
@@ -33,10 +32,8 @@ import {
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import React, { Fragment, useEffect, useState } from "react";
-import { setErrorSnackMessage } from "../../../../actions";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../../../store";
-import { setTenantDetailsLoad } from "../actions";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 
@@ -57,13 +54,10 @@ import {
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 import SectionTitle from "../../Common/SectionTitle";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantEncryption {
   classes: any;
-  loadingTenant: boolean;
-  tenant: ITenant | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -90,11 +84,13 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const TenantEncryption = ({
-  classes,
-  tenant,
-  setErrorSnackMessage,
-}: ITenantEncryption) => {
+const TenantEncryption = ({ classes }: ITenantEncryption) => {
+  const dispatch = useDispatch();
+
+  const tenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.tenantInfo
+  );
+
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
   const [encryptionType, setEncryptionType] = useState<string>("vault");
   const [replicas, setReplicas] = useState<string>("2");
@@ -632,7 +628,7 @@ const TenantEncryption = ({
           .catch((err: ErrorResponseHandler) => {
             setUpdatingEncryption(false);
             setConfirmOpen(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
       }
     } else {
@@ -650,7 +646,7 @@ const TenantEncryption = ({
           })
           .catch((err: ErrorResponseHandler) => {
             setUpdatingEncryption(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
       }
     }
@@ -1783,17 +1779,4 @@ const TenantEncryption = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  tenant: state.tenants.tenantDetails.tenantInfo,
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-  setTenantDetailsLoad,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
-
-export default withStyles(styles)(connector(TenantEncryption));
+export default withStyles(styles)(TenantEncryption);

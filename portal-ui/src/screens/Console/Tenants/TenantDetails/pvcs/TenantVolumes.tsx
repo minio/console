@@ -23,18 +23,19 @@ import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Link } from "react-router-dom";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import api from "../../../../../common/api";
 import { IEvent } from "../../ListTenants/types";
 import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import EventsList from "../events/EventsList";
 import PVCDescribe from "./PVCDescribe";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPVCDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -46,12 +47,9 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantVolumes = ({
-  classes,
-  match,
-  setErrorSnackMessage,
-}: IPVCDetailsProps) => {
+  const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
   const [curTab, setCurTab] = useState<number>(0);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const tenantNamespace = match.params["tenantNamespace"];
   const tenantName = match.params["tenantName"];
@@ -75,11 +73,12 @@ const TenantVolumes = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, PVCName, tenantNamespace, tenantName, setErrorSnackMessage]);
+  }, [loading, PVCName, tenantNamespace, tenantName, dispatch]);
+
   return (
     <Fragment>
       <Grid item xs={12}>

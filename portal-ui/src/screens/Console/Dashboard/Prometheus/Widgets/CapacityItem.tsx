@@ -20,12 +20,13 @@ import { Box } from "@mui/material";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../../actions";
+import { useDispatch } from "react-redux";
+
 import { niceBytes } from "../../../../../common/utils";
 import { Cell, Pie, PieChart } from "recharts";
 import { ReportedUsageIcon } from "../../../../../icons";
 import Loader from "../../../Common/Loader/Loader";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 const CapacityItem = ({
   value,
@@ -33,15 +34,14 @@ const CapacityItem = ({
   timeEnd,
   propLoading,
   apiPrefix,
-  displayErrorMessage,
 }: {
   value: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
   apiPrefix: string;
-  displayErrorMessage: any;
 }) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [dataInner, setDataInner] = useState<Record<string, any>>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
@@ -79,11 +79,11 @@ const CapacityItem = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, value, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, value, timeEnd, timeStart, dispatch, apiPrefix]);
 
   const [middleLabel, unitValue] = (result?.innerLabel || "").split(" ");
 
@@ -235,8 +235,4 @@ const CapacityItem = ({
   );
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
-});
-
-export default connector(CapacityItem);
+export default CapacityItem;

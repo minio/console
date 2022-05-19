@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,56 +30,19 @@ import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { setErrorSnackMessage } from "../../../../../actions";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import { AppState } from "../../../../../store";
 import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
-
-interface IPVCDescribeProps {
-  tenant: string;
-  namespace: string;
-  pvcName: string;
-  propLoading: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  loadingTenant: boolean;
-}
-
-interface Annotation {
-  key: string;
-  value: string;
-}
-
-interface Label {
-  key: string;
-  value: string;
-}
-
-interface DescribeResponse {
-  annotations: Annotation[];
-  labels: Label[];
-  name: string;
-  namespace: string;
-  status: string;
-  storageClass: string;
-  capacity: string;
-  accessModes: string[];
-  finalizers: string[];
-  volume: string;
-  volumeMode: string;
-}
-
-interface IPVCDescribeSummaryProps {
-  describeInfo: DescribeResponse;
-}
-
-interface IPVCDescribeAnnotationsProps {
-  annotations: Annotation[];
-}
-
-interface IPVCDescribeLabelsProps {
-  labels: Label[];
-}
+import {
+  IPVCDescribeProps,
+  DescribeResponse,
+  IPVCDescribeSummaryProps,
+  IPVCDescribeAnnotationsProps,
+  IPVCDescribeLabelsProps
+} from "./pvcTypes";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -118,7 +81,7 @@ const HeaderSection = ({ title }: { title: string }) => {
 
 const PVCDescribeSummary = ({describeInfo}: IPVCDescribeSummaryProps) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <HeaderSection title={"Summary"} />
         <Box sx={{ ...twoColCssGridLayoutConfig }}>
           <LabelValuePair label={"Name"} value={describeInfo.name} />
@@ -131,33 +94,33 @@ const PVCDescribeSummary = ({describeInfo}: IPVCDescribeSummaryProps) => {
           <LabelValuePair label={"Volume"} value={describeInfo.volume} />
           <LabelValuePair label={"Volume Mode"} value={describeInfo.volumeMode} />
         </Box>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
 const PVCDescribeAnnotations = ({annotations}: IPVCDescribeAnnotationsProps) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <HeaderSection title={"Annotations"} />
         <Box>
           {annotations.map((annotation, index) => (
             <Chip style={{ margin: "0.5%" }} label={`${annotation.key}: ${annotation.value}`} key={index} />
           ))}
         </Box>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
 const PVCDescribeLabels = ({labels}: IPVCDescribeLabelsProps) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <HeaderSection title={"Labels"} />
         <Box>
           {labels.map((label, index) => (
             <Chip style={{ margin: "0.5%" }} label={`${label.key}: ${label.value}`} key={index} />
           ))}
         </Box>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
@@ -166,24 +129,17 @@ const PVCDescribe = ({
   namespace,
   pvcName,
   propLoading,
-  setErrorSnackMessage,
-  loadingTenant,
 }: IPVCDescribeProps) => {
   const [describeInfo, setDescribeInfo] = useState<DescribeResponse>();
   const [loading, setLoading] = useState<boolean>(true);
   const [curTab, setCurTab] = useState<number>(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (propLoading) {
       setLoading(true);
     }
   }, [propLoading]);
-
-  useEffect(() => {
-    if (loadingTenant) {
-      setLoading(true);
-    }
-  }, [loadingTenant]);
 
   useEffect(() => {
     if (loading) {
@@ -197,11 +153,11 @@ const PVCDescribe = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, pvcName, namespace, tenant, setErrorSnackMessage]);
+  }, [loading, pvcName, namespace, tenant, dispatch]);
 
   const renderTabComponent = (index: number, info: DescribeResponse) => {
     switch (index) {
@@ -216,7 +172,7 @@ const PVCDescribe = ({
     }
   };
   return (
-    <React.Fragment>
+    <Fragment>
       {describeInfo && (<Grid item xs={12}>
         <Tabs
             value={curTab}
@@ -234,7 +190,7 @@ const PVCDescribe = ({
         </Tabs>
         {renderTabComponent(curTab, describeInfo)}
       </Grid>)}
-    </React.Fragment>
+    </Fragment>
   );
 };
 const mapState = (state: AppState) => ({

@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { connect } from "react-redux";
-import get from "lodash/get";
+import { useDispatch, useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
 import withStyles from "@mui/styles/withStyles";
@@ -24,41 +23,23 @@ import createStyles from "@mui/styles/createStyles";
 import { Theme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { Button, IconButton, Tooltip } from "@mui/material";
-import { ObjectBrowserState } from "./types";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
-import { BackCaretIcon, CopyIcon, NewPathIcon  } from "../../../icons";
+import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
-import { setVersionsModeEnabled } from "./actions";
 import history from "../../../history";
 import withSuspense from "../Common/Components/withSuspense";
-import { setSnackBarMessage } from "../../../actions";
+import { setSnackBarMessage } from "../../../systemSlice";
+import { AppState } from "../../../store";
+import { setVersionsModeEnabled } from "./objectBrowserSlice";
 
 const CreatePathModal = withSuspense(
   React.lazy(
     () => import("../Buckets/ListBuckets/Objects/ListObjects/CreatePathModal")
   )
 );
-
-interface ObjectBrowserReducer {
-  objectBrowser: ObjectBrowserState;
-}
-
-interface IObjectBrowser {
-  classes: any;
-  bucketName: string;
-  internalPaths: string;
-  rewindEnabled?: boolean;
-  versionsMode: boolean;
-  versionedFile: string;
-  hidePathButton?: boolean;
-  existingFiles: BucketObjectItem[];
-  additionalOptions?: React.ReactNode;
-  setVersionsModeEnabled: typeof setVersionsModeEnabled;
-  setSnackBarMessage: typeof setSnackBarMessage;
-}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,19 +49,35 @@ const styles = (theme: Theme) =>
     },
   });
 
+interface IObjectBrowser {
+  classes: any;
+  bucketName: string;
+  internalPaths: string;
+  hidePathButton?: boolean;
+  existingFiles: BucketObjectItem[];
+  additionalOptions?: React.ReactNode;
+}
+
 const BrowserBreadcrumbs = ({
   classes,
   bucketName,
   internalPaths,
-  rewindEnabled,
   existingFiles,
-  versionsMode,
-  versionedFile,
   hidePathButton,
-  setVersionsModeEnabled,
   additionalOptions,
-  setSnackBarMessage,
 }: IObjectBrowser) => {
+  const dispatch = useDispatch();
+
+  const rewindEnabled = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+  );
+  const versionsMode = useSelector(
+    (state: AppState) => state.objectBrowser.versionsMode
+  );
+  const versionedFile = useSelector(
+    (state: AppState) => state.objectBrowser.versionedFile
+  );
+
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
   let paths = internalPaths;
@@ -111,7 +108,9 @@ const BrowserBreadcrumbs = ({
           <Link
             to={route}
             onClick={() => {
-              setVersionsModeEnabled(false);
+              dispatch(
+                setVersionsModeEnabled({ status: false, objectName: "" })
+              );
             }}
           >
             {objectItem}
@@ -139,7 +138,7 @@ const BrowserBreadcrumbs = ({
       <Link
         to={`/buckets/${bucketName}/browse`}
         onClick={() => {
-          setVersionsModeEnabled(false);
+          dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
         }}
       >
         {bucketName}
@@ -155,7 +154,7 @@ const BrowserBreadcrumbs = ({
 
   const goBackFunction = () => {
     if (versionsMode) {
-      setVersionsModeEnabled(false);
+      dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
     } else {
       history.goBack();
     }
@@ -200,7 +199,7 @@ const BrowserBreadcrumbs = ({
               focusRipple={false}
               variant={"outlined"}
               onClick={() => {
-                setSnackBarMessage("Path copied to clipboard")
+                dispatch(setSnackBarMessage("Path copied to clipboard"));
               }}
               sx={{
                 marginRight: "3px",
@@ -262,17 +261,4 @@ const BrowserBreadcrumbs = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
-  rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
-  versionsMode: get(objectBrowser, "versionsMode", false),
-  versionedFile: get(objectBrowser, "versionedFile", ""),
-});
-
-const mapDispatchToProps = {
-  setVersionsModeEnabled,
-  setSnackBarMessage,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default withStyles(styles)(connector(BrowserBreadcrumbs));
+export default withStyles(styles)(BrowserBreadcrumbs);

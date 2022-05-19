@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -23,7 +23,7 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { Policy, PolicyList } from "./types";
 import { AddIcon, IAMPoliciesIcon } from "../../../icons";
-import { setErrorSnackMessage } from "../../../actions";
+
 import {
   actionsTray,
   containerForHeader,
@@ -51,6 +51,7 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -67,10 +68,11 @@ const styles = (theme: Theme) =>
 
 interface IPoliciesProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
+const ListPolicies = ({ classes }: IPoliciesProps) => {
+  const dispatch = useDispatch();
+
   const [records, setRecords] = useState<Policy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -117,13 +119,13 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
           })
           .catch((err: ErrorResponseHandler) => {
             setLoading(false);
-            setErrorSnackMessage(err);
+            dispatch(setErrorSnackMessage(err));
           });
       } else {
         setLoading(false);
       }
     }
-  }, [loading, setLoading, setRecords, setErrorSnackMessage, displayPolicies]);
+  }, [loading, setLoading, setRecords, dispatch, displayPolicies]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -256,10 +258,4 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(ListPolicies));
+export default withStyles(styles)(ListPolicies);

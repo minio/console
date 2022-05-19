@@ -15,14 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Button } from "@mui/material";
-import { setErrorSnackMessage } from "../../../../actions";
 import {
   fileInputStyles,
   formFieldStyles,
@@ -46,6 +45,7 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 import RegionSelectWrapper from "./RegionSelectWrapper";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,7 +73,6 @@ const styles = (theme: Theme) =>
   });
 
 interface IAddNotificationEndpointProps {
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
   match: any;
   history: any;
@@ -81,10 +80,10 @@ interface IAddNotificationEndpointProps {
 
 const AddTierConfiguration = ({
   classes,
-  setErrorSnackMessage,
   match,
   history,
 }: IAddNotificationEndpointProps) => {
+  const dispatch = useDispatch();
   //Local States
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -191,7 +190,7 @@ const AddTierConfiguration = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
   }, [
@@ -207,7 +206,7 @@ const AddTierConfiguration = ({
     region,
     saving,
     secretKey,
-    setErrorSnackMessage,
+    dispatch,
     storageClass,
     type,
   ]);
@@ -533,10 +532,4 @@ const AddTierConfiguration = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(AddTierConfiguration));
+export default withStyles(styles)(AddTierConfiguration);

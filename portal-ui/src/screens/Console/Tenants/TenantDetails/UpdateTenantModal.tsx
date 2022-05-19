@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, Fragment, useEffect, useCallback } from "react";
-import { connect } from "react-redux";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -24,19 +24,18 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../common/api";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IUpdateTenantModal {
   open: boolean;
   closeModalAndRefresh: (update: boolean) => any;
   namespace: string;
   idTenant: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   classes: any;
 }
 
@@ -54,9 +53,9 @@ const UpdateTenantModal = ({
   closeModalAndRefresh,
   namespace,
   idTenant,
-  setModalErrorSnackMessage,
   classes,
 }: IUpdateTenantModal) => {
+  const dispatch = useDispatch();
   const [isSending, setIsSending] = useState<boolean>(false);
   const [minioImage, setMinioImage] = useState<string>("");
   const [imageRegistry, setImageRegistry] = useState<boolean>(false);
@@ -130,7 +129,7 @@ const UpdateTenantModal = ({
         closeModalAndRefresh(true);
       })
       .catch((error: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(error);
+        dispatch(setModalErrorSnackMessage(error));
         setIsSending(false);
       });
   };
@@ -246,8 +245,4 @@ const UpdateTenantModal = ({
   );
 };
 
-const connector = connect(null, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(UpdateTenantModal));
+export default withStyles(styles)(UpdateTenantModal);

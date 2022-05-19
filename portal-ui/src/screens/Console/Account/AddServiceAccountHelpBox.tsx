@@ -17,9 +17,9 @@ import React from "react";
 import { Box } from "@mui/material";
 import {
   HelpIconFilled,
-  ServiceAccountIcon,
-  PasswordKeyIcon,
   IAMPoliciesIcon,
+  PasswordKeyIcon,
+  ServiceAccountIcon,
 } from "../../../icons";
 
 const FeatureItem = ({

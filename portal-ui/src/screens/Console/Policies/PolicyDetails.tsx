@@ -15,7 +15,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -31,7 +31,7 @@ import { Button, LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
@@ -51,8 +51,8 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../common/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
@@ -60,16 +60,9 @@ import { AppState } from "../../../store";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import PolicyView from "./PolicyView";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
-
-interface IPolicyDetailsProps {
-  classes: any;
-  match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
-  setSnackBarMessage: typeof setSnackBarMessage;
-  features: string[] | null;
-}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -81,7 +74,7 @@ const styles = (theme: Theme) =>
       height: "100%",
     },
     paperContainer: {
-      padding: "15px 15px 15px 15px",
+      padding: "15px 15px 15px 50px",
       minHeight: "450px",
     },
     statement: {
@@ -99,13 +92,18 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PolicyDetails = ({
-  classes,
-  match,
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  features,
-}: IPolicyDetailsProps) => {
+interface IPolicyDetailsProps {
+  classes: any;
+  match: any;
+}
+
+const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
+  const dispatch = useDispatch();
+
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+
   const [policy, setPolicy] = useState<Policy | null>(null);
   const [policyStatements, setPolicyStatements] = useState<IAMStatement[]>([]);
   const [userList, setUserList] = useState<string[]>([]);
@@ -164,11 +162,11 @@ const PolicyDetails = ({
         })
         .then((_) => {
           setAddLoading(false);
-          setSnackBarMessage("Policy successfully updated");
+          dispatch(setSnackBarMessage("Policy successfully updated"));
         })
         .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     } else {
       setAddLoading(false);
@@ -189,7 +187,7 @@ const PolicyDetails = ({
               setLoadingUsers(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setLoadingUsers(false);
             });
         } else {
@@ -211,7 +209,7 @@ const PolicyDetails = ({
               setLoadingGroups(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setLoadingGroups(false);
             });
         } else {
@@ -238,7 +236,7 @@ const PolicyDetails = ({
               setLoadingPolicy(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               setLoadingPolicy(false);
             });
         } else {
@@ -257,7 +255,6 @@ const PolicyDetails = ({
     loadingPolicy,
     loadingUsers,
     loadingGroups,
-    setErrorSnackMessage,
     setUserList,
     setGroupList,
     setPolicyDefinition,
@@ -268,10 +265,11 @@ const PolicyDetails = ({
     displayGroups,
     displayPolicy,
     ldapIsEnabled,
+    dispatch,
   ]);
 
   const resetForm = () => {
-    setPolicyDefinition("");
+    setPolicyDefinition("{}");
   };
 
   const validSave = policyName.trim() !== "";
@@ -541,13 +539,4 @@ const PolicyDetails = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-});
-
-export default withStyles(styles)(connector(PolicyDetails));
+export default withStyles(styles)(PolicyDetails);

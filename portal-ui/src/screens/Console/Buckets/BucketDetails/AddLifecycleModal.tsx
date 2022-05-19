@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,7 +30,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { setModalErrorSnackMessage } from "../../../../actions";
+
 import {
   ITierElement,
   ITierResponse,
@@ -53,14 +53,13 @@ import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMe
 import { BucketVersioning } from "../types";
 import { AppState } from "../../../../store";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IReplicationModal {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => any;
   classes: any;
   bucketName: string;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
-  distributedSetup: boolean;
 }
 
 export interface ITiersDropDown {
@@ -99,9 +98,11 @@ const AddLifecycleModal = ({
   closeModalAndRefresh,
   classes,
   bucketName,
-  setModalErrorSnackMessage,
-  distributedSetup,
 }: IReplicationModal) => {
+  const dispatch = useDispatch();
+  const distributedSetup = useSelector(
+    (state: AppState) => state.system.distributedSetup
+  );
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [tiersList, setTiersList] = useState<ITiersDropDown[]>([]);
   const [addLoading, setAddLoading] = useState(false);
@@ -168,16 +169,11 @@ const AddLifecycleModal = ({
           setLoadingVersioning(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
           setLoadingVersioning(false);
         });
     }
-  }, [
-    loadingVersioning,
-    setModalErrorSnackMessage,
-    bucketName,
-    distributedSetup,
-  ]);
+  }, [loadingVersioning, dispatch, bucketName, distributedSetup]);
 
   const addRecord = () => {
     let rules = {};
@@ -230,7 +226,7 @@ const AddLifecycleModal = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -440,12 +436,4 @@ const AddLifecycleModal = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  distributedSetup: state.system.distributedSetup,
-});
-
-const connector = connect(mapState, {
-  setModalErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(AddLifecycleModal));
+export default withStyles(styles)(AddLifecycleModal);

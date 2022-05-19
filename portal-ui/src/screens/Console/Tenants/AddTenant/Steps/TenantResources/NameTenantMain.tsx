@@ -21,7 +21,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,19 +33,11 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../../../../actions";
-import {
-  isPageValid,
-  setLimitSize,
-  setStorageType,
-  setStorageClassesList,
-  updateAddField,
-} from "../../../actions";
+
 import {
   getLimitSizes,
   IQuotaElement,
   IQuotas,
-  Opts,
 } from "../../../ListTenants/utils";
 import { AppState } from "../../../../../../store";
 import { commonFormValidation } from "../../../../../../utils/validationFunctions";
@@ -60,6 +52,14 @@ import SizePreview from "../SizePreview";
 import TenantSize from "./TenantSize";
 import { Paper, SelectChangeEvent } from "@mui/material";
 import { IMkEnvs, mkPanelConfigurations } from "./utils";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  isPageValid,
+  setLimitSize,
+  setStorageClassesList,
+  setStorageType,
+  updateAddField,
+} from "../../../tenantsSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,37 +77,33 @@ const styles = (theme: Theme) =>
 
 interface INameTenantMainScreen {
   classes: any;
-  storageClasses: Opts[];
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  setStorageClassesList: typeof setStorageClassesList;
-  setLimitSize: typeof setLimitSize;
-  tenantName: string;
-  namespace: string;
-  selectedStorageClass: string;
-  selectedStorageType: string;
   formToRender?: IMkEnvs;
-  features?: string[];
-  setStorageType: typeof setStorageType;
 }
 
-const NameTenantMain = ({
-  classes,
-  storageClasses,
-  tenantName,
-  namespace,
-  selectedStorageClass,
-  selectedStorageType,
-  formToRender = IMkEnvs.default,
-  updateAddField,
-  setStorageClassesList,
-  setLimitSize,
-  isPageValid,
-  setModalErrorSnackMessage,
-  features,
-  setStorageType,
-}: INameTenantMainScreen) => {
+const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
+  const dispatch = useDispatch();
+
+  const tenantName = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.nameTenant.tenantName
+  );
+  const namespace = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.nameTenant.namespace
+  );
+  const selectedStorageClass = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+  );
+  const selectedStorageType = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.nameTenant.selectedStorageType
+  );
+  const storageClasses = useSelector(
+    (state: AppState) => state.tenants.createTenant.storageClasses
+  );
+  const features = useSelector(
+    (state: AppState) => state.console.session.features
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
   const [loadingNamespaceInfo, setLoadingNamespaceInfo] =
@@ -118,9 +114,11 @@ const NameTenantMain = ({
   // Common
   const updateField = useCallback(
     (field: string, value: string) => {
-      updateAddField("nameTenant", field, value);
+      dispatch(
+        updateAddField({ pageName: "nameTenant", field: field, value: value })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   // Storage classes retrieval
@@ -147,7 +145,7 @@ const NameTenantMain = ({
           )
           .then((res: IQuotas) => {
             const elements: IQuotaElement[] = get(res, "elements", []);
-            setLimitSize(getLimitSizes(res));
+            dispatch(setLimitSize(getLimitSizes(res)));
 
             const newStorage = elements.map((storageClass: any) => {
               const name = get(storageClass, "name", "").split(
@@ -157,7 +155,7 @@ const NameTenantMain = ({
               return { label: name, value: name };
             });
 
-            setStorageClassesList(newStorage);
+            dispatch(setStorageClassesList(newStorage));
 
             const stExists = newStorage.findIndex(
               (storageClass) => storageClass.value === selectedStorageClass
@@ -167,7 +165,7 @@ const NameTenantMain = ({
               updateField("selectedStorageClass", newStorage[0].value);
             } else if (newStorage.length === 0) {
               updateField("selectedStorageClass", "");
-              setStorageClassesList([]);
+              dispatch(setStorageClassesList([]));
             }
             setLoadingNamespaceInfo(false);
           })
@@ -175,24 +173,19 @@ const NameTenantMain = ({
             setLoadingNamespaceInfo(false);
             setShowCreateButton(true);
             updateField("selectedStorageClass", "");
-            setStorageClassesList([]);
+            dispatch(setStorageClassesList([]));
             console.error("Namespace error: ", err);
           });
       })
       .catch((err: ErrorResponseHandler) => {
-        setModalErrorSnackMessage({
-          errorMessage: "Error validating if namespace already has tenants",
-          detailedError: err.detailedError,
-        });
+        dispatch(
+          setModalErrorSnackMessage({
+            errorMessage: "Error validating if namespace already has tenants",
+            detailedError: err.detailedError,
+          })
+        );
       });
-  }, [
-    namespace,
-    setLimitSize,
-    setModalErrorSnackMessage,
-    setStorageClassesList,
-    updateField,
-    selectedStorageClass,
-  ]);
+  }, [namespace, dispatch, updateField, selectedStorageClass]);
 
   const debounceNamespace = useMemo(
     () => debounce(getNamespaceInformation, 500),
@@ -250,14 +243,14 @@ const NameTenantMain = ({
       ((formToRender === IMkEnvs.default && storageClasses.length > 0) ||
         (formToRender !== IMkEnvs.default && selectedStorageType !== ""));
 
-    isPageValid("nameTenant", isValid);
+    dispatch(isPageValid({ pageName: "nameTenant", valid: isValid }));
 
     setValidationErrors(commonValidation);
   }, [
     storageClasses,
     namespace,
     tenantName,
-    isPageValid,
+    dispatch,
     emptyNamespace,
     loadingNamespaceInfo,
     selectedStorageType,
@@ -355,7 +348,10 @@ const NameTenantMain = ({
                     id="storage_type"
                     name="storage_type"
                     onChange={(e: SelectChangeEvent<string>) => {
-                      setStorageType(e.target.value as string, features);
+                      setStorageType({
+                        storageType: e.target.value as string,
+                        features: features,
+                      });
                     }}
                     label={get(
                       mkPanelConfigurations,
@@ -393,24 +389,4 @@ const NameTenantMain = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  tenantName: state.tenants.createTenant.fields.nameTenant.tenantName,
-  namespace: state.tenants.createTenant.fields.nameTenant.namespace,
-  selectedStorageClass:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
-  selectedStorageType:
-    state.tenants.createTenant.fields.nameTenant.selectedStorageType,
-  storageClasses: state.tenants.createTenant.storageClasses,
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, {
-  setModalErrorSnackMessage,
-  updateAddField,
-  setStorageClassesList,
-  setLimitSize,
-  isPageValid,
-  setStorageType,
-});
-
-export default withStyles(styles)(connector(NameTenantMain));
+export default withStyles(styles)(NameTenantMain);

@@ -15,20 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { LinearProgress, Box } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import {
   AddIcon,
-  GroupsIcon,
-  UsersIcon,
   DeleteIcon,
+  GroupsIcon,
   IAMPoliciesIcon,
+  UsersIcon,
 } from "../../../icons";
-import { setErrorSnackMessage } from "../../../actions";
+
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
 import {
@@ -58,6 +57,8 @@ import {
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { encodeURLString } from "../../../common/utils";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../systemSlice";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -67,7 +68,6 @@ const SetPolicy = withSuspense(
 interface IGroupsProps {
   classes: any;
   openGroupModal: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   history: any;
 }
 
@@ -85,7 +85,8 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
+const Groups = ({ classes, history }: IGroupsProps) => {
+  const dispatch = useDispatch();
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
   const [records, setRecords] = useState<any[]>([]);
@@ -146,7 +147,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
               isLoading(false);
             })
             .catch((err: ErrorResponseHandler) => {
-              setErrorSnackMessage(err);
+              dispatch(setErrorSnackMessage(err));
               isLoading(false);
             });
         };
@@ -155,7 +156,7 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
         isLoading(false);
       }
     }
-  }, [loading, setErrorSnackMessage, displayGroups]);
+  }, [loading, dispatch, displayGroups]);
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -384,10 +385,4 @@ const Groups = ({ classes, setErrorSnackMessage, history }: IGroupsProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(Groups));
+export default withStyles(styles)(Groups);

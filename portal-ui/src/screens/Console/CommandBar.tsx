@@ -14,6 +14,7 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActionId,
   ActionImpl,
@@ -22,10 +23,10 @@ import {
   KBarPositioner,
   KBarResults,
   KBarSearch,
+  KBarState,
+  useKBar,
   useMatches,
   useRegisterActions,
-  useKBar,
-  KBarState,
 } from "kbar";
 import { Action } from "kbar/lib/types";
 import { Theme } from "@mui/material/styles";
@@ -36,7 +37,6 @@ import { MenuExpandedIcon } from "../../icons/SidebarMenus";
 import { AppState } from "../../store";
 import { connect } from "react-redux";
 import useApi from "./Common/Hooks/useApi";
-import { useCallback, useEffect, useState } from "react";
 import { Bucket, BucketList } from "./Buckets/types";
 
 const useStyles = makeStyles((theme: Theme) => ({

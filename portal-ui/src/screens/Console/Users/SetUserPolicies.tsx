@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -23,11 +23,11 @@ import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "../Users/types";
-import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "../Policies/PolicySelectors";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 interface ISetUserPoliciesProps {
   classes: any;
@@ -35,7 +35,6 @@ interface ISetUserPoliciesProps {
   selectedUser: string;
   currentPolicies: IPolicyItem[];
   open: boolean;
-  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -52,9 +51,9 @@ const SetUserPolicies = ({
   closeModalAndRefresh,
   selectedUser,
   currentPolicies,
-  setModalErrorSnackMessage,
   open,
 }: ISetUserPoliciesProps) => {
+  const dispatch = useDispatch();
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
@@ -78,7 +77,7 @@ const SetUserPolicies = ({
       })
       .catch((err: ErrorResponseHandler) => {
         setLoading(false);
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   };
 
@@ -142,10 +141,4 @@ const SetUserPolicies = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(SetUserPolicies));
+export default withStyles(styles)(SetUserPolicies);

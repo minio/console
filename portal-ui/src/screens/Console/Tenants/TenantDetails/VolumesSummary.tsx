@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,25 +27,21 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IStoragePVCs } from "../../Storage/types";
-import { setErrorSnackMessage } from "../../../../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../../icons/SearchIcon";
 import { IPodListElement } from "../ListTenants/types";
 import withSuspense from "../../Common/Components/withSuspense";
-import { setTenantDetailsLoad } from "../actions";
 import { AppState } from "../../../../store";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 const DeletePVC = withSuspense(React.lazy(() => import("./DeletePVC")));
 
 interface ITenantVolumesProps {
   classes: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
   history: any;
   match: any;
-  loadingTenant: boolean;
-  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -55,13 +51,13 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantVolumes = ({
-  classes,
-  setErrorSnackMessage,
-  history,
-  match,
-  loadingTenant,
-}: ITenantVolumesProps) => {
+const TenantVolumes = ({ classes, history, match }: ITenantVolumesProps) => {
+  const dispatch = useDispatch();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+  );
+
   const [records, setRecords] = useState<IStoragePVCs[]>([]);
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -85,10 +81,10 @@ const TenantVolumes = ({
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [loading, setErrorSnackMessage, tenantName, tenantNamespace]);
+  }, [loading, dispatch, tenantName, tenantNamespace]);
 
   const confirmDeletePVC = (pvcItem: IStoragePVCs) => {
     const delPvc = {
@@ -191,14 +187,4 @@ const TenantVolumes = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-});
-
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(mapState, mapDispatchToProps);
-
-export default withStyles(styles)(connector(TenantVolumes));
+export default withStyles(styles)(TenantVolumes);

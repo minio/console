@@ -14,23 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, Fragment } from "react";
-import { connect } from "react-redux";
+import React, { Fragment, useState } from "react";
 import { DialogContentText } from "@mui/material";
-import { setErrorSnackMessage } from "../../../../../../actions";
+
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import { decodeURLString } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { useDispatch } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedObject: string;
   selectedBucket: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
+
   versioning: boolean;
   selectedVersion?: string;
 }
@@ -40,12 +41,14 @@ const DeleteObject = ({
   deleteOpen,
   selectedBucket,
   selectedObject,
-  setErrorSnackMessage,
+
   versioning,
   selectedVersion = "",
 }: IDeleteObjectProps) => {
+  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -113,10 +116,4 @@ const DeleteObject = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteObject);
+export default DeleteObject;

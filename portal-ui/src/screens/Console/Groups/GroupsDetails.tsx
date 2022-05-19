@@ -8,19 +8,16 @@ import {
   spacingUtils,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
-import {
-  setErrorSnackMessage,
-  setModalErrorSnackMessage,
-} from "../../../actions";
-import { connect } from "react-redux";
+
+import { useDispatch } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import {
+  AddIcon,
+  GroupsIcon,
   IAMPoliciesIcon,
   TrashIcon,
-  GroupsIcon,
-  AddIcon,
 } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import history from "../../../history";
@@ -40,12 +37,13 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import {
-  SecureComponent,
   hasPermission,
+  SecureComponent,
 } from "../../../common/SecureComponent";
 import GroupDetailsHeader from "./GroupDetailsHeader";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -95,7 +93,6 @@ const styles = (theme: Theme) =>
 interface IGroupDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 type GroupInfo = {
@@ -111,6 +108,7 @@ export const formatPolicy = (policy: string = ""): string[] => {
 };
 
 const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
+  const dispatch = useDispatch();
   const [groupDetails, setGroupDetails] = useState<GroupInfo>({});
 
   /*Modals*/
@@ -150,7 +148,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
           setGroupDetails(res);
         })
         .catch((err) => {
-          setModalErrorSnackMessage(err);
+          dispatch(setModalErrorSnackMessage(err));
           setGroupDetails({});
         });
     }
@@ -167,7 +165,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
         fetchGroupInfo();
       })
       .catch((err: ErrorResponseHandler) => {
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   }
 
@@ -390,10 +388,4 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default withStyles(styles)(connector(GroupsDetails));
+export default withStyles(styles)(GroupsDetails);

@@ -14,24 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { setErrorSnackMessage } from "../../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import { decodeURLString } from "../../../../../../common/utils";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { setErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface IDeleteNonCurrentProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedObject: string;
   selectedBucket: string;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteNonCurrentVersions = ({
@@ -39,8 +38,8 @@ const DeleteNonCurrentVersions = ({
   deleteOpen,
   selectedBucket,
   selectedObject,
-  setErrorSnackMessage,
 }: IDeleteNonCurrentProps) => {
+  const dispatch = useDispatch();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [typeConfirm, setTypeConfirm] = useState<string>("");
 
@@ -55,14 +54,14 @@ const DeleteNonCurrentVersions = ({
           closeDeleteModalAndRefresh(true);
         })
         .catch((error: ErrorResponseHandler) => {
-          setErrorSnackMessage(error);
+          dispatch(setErrorSnackMessage(error));
           setDeleteLoading(false);
         });
     }
   }, [
     deleteLoading,
     closeDeleteModalAndRefresh,
-    setErrorSnackMessage,
+    dispatch,
     selectedObject,
     selectedBucket,
   ]);
@@ -109,10 +108,4 @@ const DeleteNonCurrentVersions = ({
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteNonCurrentVersions);
+export default DeleteNonCurrentVersions;

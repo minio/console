@@ -15,21 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {
-  addFileClientCert,
-  addFileGemaltoCa,
-  addFileServerCert,
-  addFileVaultCa,
-  addFileVaultCert,
-  isPageValid,
-  updateAddField,
-} from "../../actions";
+
 import {
   createTenantCommon,
   formFieldStyles,
@@ -46,62 +38,19 @@ import {
   commonFormValidation,
   IValidation,
 } from "../../../../../utils/validationFunctions";
-import { KeyPair } from "../../ListTenants/utils";
-import { ISecurityContext } from "../../types";
 import SectionH1 from "../../../Common/SectionH1";
+import {
+  addFileClientCert,
+  addFileGemaltoCa,
+  addFileServerCert,
+  addFileVaultCa,
+  addFileVaultCert,
+  isPageValid,
+  updateAddField,
+} from "../../tenantsSlice";
 
 interface IEncryptionProps {
   classes: any;
-  updateAddField: typeof updateAddField;
-  isPageValid: typeof isPageValid;
-  addFileServerCert: typeof addFileServerCert;
-  addFileClientCert: typeof addFileClientCert;
-  addFileVaultCert: typeof addFileVaultCert;
-  addFileVaultCa: typeof addFileVaultCa;
-  addFileGemaltoCa: typeof addFileGemaltoCa;
-  enableEncryption: boolean;
-  encryptionType: string;
-  gemaltoEndpoint: string;
-  gemaltoToken: string;
-  gemaltoDomain: string;
-  gemaltoRetry: string;
-  awsEndpoint: string;
-  awsRegion: string;
-  awsKMSKey: string;
-  awsAccessKey: string;
-  awsSecretKey: string;
-  awsToken: string;
-  vaultEndpoint: string;
-  vaultEngine: string;
-  vaultNamespace: string;
-  vaultPrefix: string;
-  vaultAppRoleEngine: string;
-  vaultId: string;
-  vaultSecret: string;
-  vaultRetry: string;
-  vaultPing: string;
-  azureEndpoint: string;
-  azureTenantID: string;
-  azureClientID: string;
-  azureClientSecret: string;
-  gcpProjectID: string;
-  gcpEndpoint: string;
-  gcpClientEmail: string;
-  gcpClientID: string;
-  gcpPrivateKeyID: string;
-  gcpPrivateKey: string;
-  enableCustomCertsForKES: boolean;
-  enableAutoCert: boolean;
-  enableTLS: boolean;
-  enableCustomCerts: boolean;
-  minioCertificates: KeyPair[];
-  serverCertificate: KeyPair;
-  clientCertificate: KeyPair;
-  vaultCertificate: KeyPair;
-  vaultCA: KeyPair;
-  gemaltoCA: KeyPair;
-  kesSecurityContext: ISecurityContext;
-  replicas: string;
 }
 
 const styles = (theme: Theme) =>
@@ -130,59 +79,172 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const Encryption = ({
-  classes,
-  updateAddField,
-  isPageValid,
-  addFileServerCert,
-  addFileClientCert,
-  addFileVaultCert,
-  addFileVaultCa,
-  addFileGemaltoCa,
-  enableEncryption,
-  enableCustomCerts,
-  encryptionType,
-  gemaltoEndpoint,
-  gemaltoToken,
-  gemaltoDomain,
-  gemaltoRetry,
-  awsEndpoint,
-  awsRegion,
-  awsKMSKey,
-  awsAccessKey,
-  awsSecretKey,
-  awsToken,
-  vaultEndpoint,
-  vaultEngine,
-  vaultNamespace,
-  vaultPrefix,
-  vaultAppRoleEngine,
-  vaultId,
-  vaultSecret,
-  vaultRetry,
-  vaultPing,
-  azureEndpoint,
-  azureTenantID,
-  azureClientID,
-  azureClientSecret,
-  gcpProjectID,
-  gcpEndpoint,
-  gcpClientEmail,
-  gcpClientID,
-  gcpPrivateKeyID,
-  gcpPrivateKey,
-  enableCustomCertsForKES,
-  enableAutoCert,
-  enableTLS,
-  minioCertificates,
-  serverCertificate,
-  clientCertificate,
-  vaultCertificate,
-  vaultCA,
-  gemaltoCA,
-  kesSecurityContext,
-  replicas,
-}: IEncryptionProps) => {
+const Encryption = ({ classes }: IEncryptionProps) => {
+  const dispatch = useDispatch();
+
+  const replicas = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.replicas
+  );
+  const enableEncryption = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.enableEncryption
+  );
+  const encryptionType = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.encryptionType
+  );
+  const gemaltoEndpoint = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gemaltoEndpoint
+  );
+  const gemaltoToken = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gemaltoToken
+  );
+  const gemaltoDomain = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gemaltoDomain
+  );
+  const gemaltoRetry = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gemaltoRetry
+  );
+  const awsEndpoint = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.awsEndpoint
+  );
+  const awsRegion = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.awsRegion
+  );
+  const awsKMSKey = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.awsKMSKey
+  );
+  const awsAccessKey = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.awsAccessKey
+  );
+  const awsSecretKey = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.awsSecretKey
+  );
+  const awsToken = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.awsToken
+  );
+  const vaultEndpoint = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.vaultEndpoint
+  );
+  const vaultEngine = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.vaultEngine
+  );
+  const vaultNamespace = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.vaultNamespace
+  );
+  const vaultPrefix = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.vaultPrefix
+  );
+  const vaultAppRoleEngine = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.vaultAppRoleEngine
+  );
+  const vaultId = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.vaultId
+  );
+  const vaultSecret = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.vaultSecret
+  );
+  const vaultRetry = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.vaultRetry
+  );
+  const vaultPing = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.encryption.vaultPing
+  );
+  const azureEndpoint = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.azureEndpoint
+  );
+  const azureTenantID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.azureTenantID
+  );
+  const azureClientID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.azureClientID
+  );
+  const azureClientSecret = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.azureClientSecret
+  );
+  const gcpProjectID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gcpProjectID
+  );
+  const gcpEndpoint = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gcpEndpoint
+  );
+  const gcpClientEmail = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gcpClientEmail
+  );
+  const gcpClientID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gcpClientID
+  );
+  const gcpPrivateKeyID = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gcpPrivateKeyID
+  );
+  const gcpPrivateKey = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.gcpPrivateKey
+  );
+  const enableCustomCertsForKES = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.enableCustomCertsForKES
+  );
+  const enableAutoCert = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.security.enableAutoCert
+  );
+  const enableTLS = useSelector(
+    (state: AppState) => state.tenants.createTenant.fields.security.enableTLS
+  );
+  const minioCertificates = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.certificates.minioCertificates
+  );
+  const serverCertificate = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.certificates.serverCertificate
+  );
+  const clientCertificate = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.certificates.clientCertificate
+  );
+  const vaultCertificate = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.certificates.vaultCertificate
+  );
+  const vaultCA = useSelector(
+    (state: AppState) => state.tenants.createTenant.certificates.vaultCA
+  );
+  const gemaltoCA = useSelector(
+    (state: AppState) => state.tenants.createTenant.certificates.gemaltoCA
+  );
+  const enableCustomCerts = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.security.enableCustomCerts
+  );
+  const kesSecurityContext = useSelector(
+    (state: AppState) =>
+      state.tenants.createTenant.fields.encryption.kesSecurityContext
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   let encryptionAvailable = false;
@@ -200,9 +262,11 @@ const Encryption = ({
   // Common
   const updateField = useCallback(
     (field: string, value: any) => {
-      updateAddField("encryption", field, value);
+      dispatch(
+        updateAddField({ pageName: "encryption", field: field, value: value })
+      );
     },
-    [updateAddField]
+    [dispatch]
   );
 
   const cleanValidation = (fieldName: string) => {
@@ -396,7 +460,12 @@ const Encryption = ({
 
     const commonVal = commonFormValidation(encryptionValidation);
 
-    isPageValid("encryption", Object.keys(commonVal).length === 0);
+    dispatch(
+      isPageValid({
+        pageName: "encryption",
+        valid: Object.keys(commonVal).length === 0,
+      })
+    );
 
     setValidationErrors(commonVal);
   }, [
@@ -426,7 +495,7 @@ const Encryption = ({
     azureTenantID,
     azureClientID,
     azureClientSecret,
-    isPageValid,
+    dispatch,
     enableAutoCert,
     enableCustomCerts,
     serverCertificate.encoded_key,
@@ -616,7 +685,13 @@ const Encryption = ({
                     </legend>
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
-                        addFileVaultCert("key", fileName, encodedValue);
+                        dispatch(
+                          addFileVaultCert({
+                            key: "key",
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
                         cleanValidation("vault_key");
                       }}
                       accept=".key,.pem"
@@ -627,7 +702,13 @@ const Encryption = ({
                     />
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
-                        addFileVaultCert("cert", fileName, encodedValue);
+                        dispatch(
+                          addFileVaultCert({
+                            key: "cert",
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
                         cleanValidation("vault_cert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -638,7 +719,12 @@ const Encryption = ({
                     />
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
-                        addFileVaultCa(fileName, encodedValue);
+                        dispatch(
+                          addFileVaultCa({
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
                         cleanValidation("vault_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -989,7 +1075,12 @@ const Encryption = ({
 
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
-                        addFileGemaltoCa(fileName, encodedValue);
+                        dispatch(
+                          addFileGemaltoCa({
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
                         cleanValidation("gemalto_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1031,7 +1122,13 @@ const Encryption = ({
                       </legend>
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
-                          addFileServerCert("key", fileName, encodedValue);
+                          dispatch(
+                            addFileServerCert({
+                              key: "key",
+                              fileName: fileName,
+                              value: encodedValue,
+                            })
+                          );
                           cleanValidation("serverKey");
                         }}
                         accept=".key,.pem"
@@ -1044,7 +1141,13 @@ const Encryption = ({
                       />
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
-                          addFileServerCert("cert", fileName, encodedValue);
+                          dispatch(
+                            addFileServerCert({
+                              key: "cert",
+                              fileName: fileName,
+                              value: encodedValue,
+                            })
+                          );
                           cleanValidation("serverCert");
                         }}
                         accept=".cer,.crt,.cert,.pem"
@@ -1066,7 +1169,13 @@ const Encryption = ({
                       </legend>
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
-                          addFileClientCert("key", fileName, encodedValue);
+                          dispatch(
+                            addFileClientCert({
+                              key: "key",
+                              fileName: fileName,
+                              value: encodedValue,
+                            })
+                          );
                           cleanValidation("clientKey");
                         }}
                         accept=".key,.pem"
@@ -1079,7 +1188,13 @@ const Encryption = ({
                       />
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
-                          addFileClientCert("cert", fileName, encodedValue);
+                          dispatch(
+                            addFileClientCert({
+                              key: "cert",
+                              fileName: fileName,
+                              value: encodedValue,
+                            })
+                          );
                           cleanValidation("clientCert");
                         }}
                         accept=".cer,.crt,.cert,.pem"
@@ -1226,66 +1341,4 @@ const Encryption = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  replicas: state.tenants.createTenant.fields.encryption.replicas,
-  enableEncryption:
-    state.tenants.createTenant.fields.encryption.enableEncryption,
-  encryptionType: state.tenants.createTenant.fields.encryption.encryptionType,
-  gemaltoEndpoint: state.tenants.createTenant.fields.encryption.gemaltoEndpoint,
-  gemaltoToken: state.tenants.createTenant.fields.encryption.gemaltoToken,
-  gemaltoDomain: state.tenants.createTenant.fields.encryption.gemaltoDomain,
-  gemaltoRetry: state.tenants.createTenant.fields.encryption.gemaltoRetry,
-  awsEndpoint: state.tenants.createTenant.fields.encryption.awsEndpoint,
-  awsRegion: state.tenants.createTenant.fields.encryption.awsRegion,
-  awsKMSKey: state.tenants.createTenant.fields.encryption.awsKMSKey,
-  awsAccessKey: state.tenants.createTenant.fields.encryption.awsAccessKey,
-  awsSecretKey: state.tenants.createTenant.fields.encryption.awsSecretKey,
-  awsToken: state.tenants.createTenant.fields.encryption.awsToken,
-  vaultEndpoint: state.tenants.createTenant.fields.encryption.vaultEndpoint,
-  vaultEngine: state.tenants.createTenant.fields.encryption.vaultEngine,
-  vaultNamespace: state.tenants.createTenant.fields.encryption.vaultNamespace,
-  vaultPrefix: state.tenants.createTenant.fields.encryption.vaultPrefix,
-  vaultAppRoleEngine:
-    state.tenants.createTenant.fields.encryption.vaultAppRoleEngine,
-  vaultId: state.tenants.createTenant.fields.encryption.vaultId,
-  vaultSecret: state.tenants.createTenant.fields.encryption.vaultSecret,
-  vaultRetry: state.tenants.createTenant.fields.encryption.vaultRetry,
-  vaultPing: state.tenants.createTenant.fields.encryption.vaultPing,
-  azureEndpoint: state.tenants.createTenant.fields.encryption.azureEndpoint,
-  azureTenantID: state.tenants.createTenant.fields.encryption.azureTenantID,
-  azureClientID: state.tenants.createTenant.fields.encryption.azureClientID,
-  azureClientSecret:
-    state.tenants.createTenant.fields.encryption.azureClientSecret,
-  gcpProjectID: state.tenants.createTenant.fields.encryption.gcpProjectID,
-  gcpEndpoint: state.tenants.createTenant.fields.encryption.gcpEndpoint,
-  gcpClientEmail: state.tenants.createTenant.fields.encryption.gcpClientEmail,
-  gcpClientID: state.tenants.createTenant.fields.encryption.gcpClientID,
-  gcpPrivateKeyID: state.tenants.createTenant.fields.encryption.gcpPrivateKeyID,
-  gcpPrivateKey: state.tenants.createTenant.fields.encryption.gcpPrivateKey,
-  enableCustomCertsForKES:
-    state.tenants.createTenant.fields.encryption.enableCustomCertsForKES,
-  enableAutoCert: state.tenants.createTenant.fields.security.enableAutoCert,
-  enableTLS: state.tenants.createTenant.fields.security.enableTLS,
-  minioCertificates: state.tenants.createTenant.certificates.minioCertificates,
-  serverCertificate: state.tenants.createTenant.certificates.serverCertificate,
-  clientCertificate: state.tenants.createTenant.certificates.clientCertificate,
-  vaultCertificate: state.tenants.createTenant.certificates.vaultCertificate,
-  vaultCA: state.tenants.createTenant.certificates.vaultCA,
-  gemaltoCA: state.tenants.createTenant.certificates.gemaltoCA,
-  enableCustomCerts:
-    state.tenants.createTenant.fields.security.enableCustomCerts,
-  kesSecurityContext:
-    state.tenants.createTenant.fields.encryption.kesSecurityContext,
-});
-
-const connector = connect(mapState, {
-  updateAddField,
-  isPageValid,
-  addFileServerCert,
-  addFileClientCert,
-  addFileVaultCert,
-  addFileVaultCa,
-  addFileGemaltoCa,
-});
-
-export default withStyles(styles)(connector(Encryption));
+export default withStyles(styles)(Encryption);

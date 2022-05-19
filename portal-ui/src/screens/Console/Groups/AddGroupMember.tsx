@@ -6,8 +6,8 @@ import Grid from "@mui/material/Grid";
 import { Button } from "@mui/material";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
-import { setModalErrorSnackMessage } from "../../../actions";
-import { connect } from "react-redux";
+
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -18,6 +18,7 @@ import {
 import withStyles from "@mui/styles/withStyles";
 import { AddMembersToGroupIcon } from "../../../icons";
 import { encodeURLString } from "../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
 
 type UserPickerModalProps = {
   classes?: any;
@@ -52,6 +53,7 @@ const AddGroupMember = ({
   open,
   onClose,
 }: UserPickerModalProps) => {
+  const dispatch = useDispatch();
   const [selectedUsers, setSelectedUsers] = useState(preSelectedUsers);
 
   function addMembersToGroup() {
@@ -66,7 +68,7 @@ const AddGroupMember = ({
       })
       .catch((err: ErrorResponseHandler) => {
         onClose();
-        setModalErrorSnackMessage(err);
+        dispatch(setModalErrorSnackMessage(err));
       });
   }
 
@@ -118,9 +120,4 @@ const AddGroupMember = ({
   );
 };
 
-const mapDispatchToProps = {
-  setModalErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-export default withStyles(styles)(connector(AddGroupMember));
+export default withStyles(styles)(AddGroupMember);

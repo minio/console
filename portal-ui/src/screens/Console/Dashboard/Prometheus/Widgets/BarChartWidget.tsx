@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Bar,
   BarChart,
@@ -32,15 +32,15 @@ import withStyles from "@mui/styles/withStyles";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
-import { setErrorSnackMessage } from "../../../../../actions";
+
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
-import { openZoomPage } from "../../actions";
 import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IBarChartWidget {
   classes: any;
@@ -49,10 +49,8 @@ interface IBarChartWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-  displayErrorMessage: any;
   apiPrefix: string;
   zoomActivated?: boolean;
-  openZoomPage: typeof openZoomPage;
 }
 
 const styles = (theme: Theme) =>
@@ -89,10 +87,10 @@ const BarChartWidget = ({
   timeStart,
   timeEnd,
   propLoading,
-  displayErrorMessage,
   apiPrefix,
   zoomActivated = false,
 }: IBarChartWidget) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
@@ -131,11 +129,11 @@ const BarChartWidget = ({
           setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          displayErrorMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+  }, [loading, panelItem, timeEnd, timeStart, dispatch, apiPrefix]);
 
   const barChartConfiguration = result
     ? (result.widgetConfiguration as IBarChartConfiguration[])
@@ -236,9 +234,4 @@ const BarChartWidget = ({
   );
 };
 
-const connector = connect(null, {
-  displayErrorMessage: setErrorSnackMessage,
-  openZoomPage: openZoomPage,
-});
-
-export default withStyles(styles)(connector(BarChartWidget));
+export default withStyles(styles)(BarChartWidget);

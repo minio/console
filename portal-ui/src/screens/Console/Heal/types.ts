@@ -57,8 +57,9 @@ export interface HealStatus {
 
 // colorH used to save health's percentage per color
 export interface colorH {
-  [Green: string]: number;
   Yellow: number;
   Red: number;
   Grey: number;
+
+  [Green: string]: number;
 }
