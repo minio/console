@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { setErrorSnackMessage } from "../../../systemSlice";
@@ -131,7 +131,7 @@ const DeleteUser = ({
         <DialogContentText>  
           
         {hasSA ? 
-        <>
+        <Fragment>
           <WarningMessage 
             label = "Click on a user to view the full listing of asociated Service Accounts. All Service Accounts associated with a user will be deleted along with the user. Are you sure you want to continue?"
             title =  "Warning: One or more users selected has associated Service Accounts. "
@@ -148,11 +148,11 @@ const DeleteUser = ({
             idField="userName"
             customPaperHeight="250"
           />
-        </>
-        : <>
+        </Fragment>
+        :  <Fragment>
             {noSAtext}
             {renderUsers}
-          </>
+          </Fragment>
         }
         </DialogContentText>
       }
