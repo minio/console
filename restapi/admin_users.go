@@ -718,7 +718,7 @@ func getCheckUserSAResponse(session *models.Principal, params userApi.CheckUserS
 	adminClient := AdminClient{Client: mAdmin}
 
 	var userServiceAccountList []*models.UserServiceAccountItem
-	var hasSA bool = false
+	var hasSA = false
 	for _, user := range params.SelectedUsers {
 		listServAccs, err := adminClient.listServiceAccounts(ctx, user)
 		if err != nil {
