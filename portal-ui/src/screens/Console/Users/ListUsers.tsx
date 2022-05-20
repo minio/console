@@ -53,7 +53,6 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import DeleteUserConfirmationModal from "./DeleteUserConfirmationModal";
 
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
@@ -181,7 +180,7 @@ const ListUsers = ({ classes, history }: IUsersProps) => {
   return (
     <Fragment>
       {deleteOpen && (
-        <DeleteUserConfirmationModal
+        <DeleteUser
           deleteOpen={deleteOpen}
           selectedUsers={checkedUsers}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
