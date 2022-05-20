@@ -38,6 +38,7 @@ type K8sClientI interface {
 	deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 	createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
 	updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
+	getPVC(ctx context.Context, namespace string, pvcName string, opts metav1.GetOptions) (*v1.PersistentVolumeClaim, error)
 }
 
 // Interface implementation
@@ -81,4 +82,8 @@ func (c *k8sClient) getNamespace(ctx context.Context, name string, opts metav1.G
 
 func (c *k8sClient) getStorageClasses(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error) {
 	return c.client.StorageV1().StorageClasses().List(ctx, opts)
+}
+
+func (c *k8sClient) getPVC(ctx context.Context, namespace string, pvcName string, opts metav1.GetOptions) (*v1.PersistentVolumeClaim, error) {
+	return c.client.CoreV1().PersistentVolumeClaims(namespace).Get(ctx, pvcName, opts)
 }
