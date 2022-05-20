@@ -126,50 +126,40 @@ func TestMain(m *testing.M) {
 	go func() {
 		fmt.Println("start server")
 		srv, err := initConsoleServer()
+		fmt.Println("Server has been started at this point")
 		if err != nil {
+			fmt.Println("There is an error in console server: ", err)
 			log.Println(err)
 			log.Println("init fail")
 			return
 		}
+		fmt.Println("Start serving with Serve() function")
 		srv.Serve()
+		fmt.Println("After Serve() function")
 	}()
 
 	fmt.Println("sleeping")
 	time.Sleep(2 * time.Second)
+	fmt.Println("after 2 seconds sleep")
 
+	fmt.Println("creating the client")
 	client := &http.Client{
 		Timeout: 2 * time.Second,
 	}
 
-	// kubectl to get token
-	app := "kubectl"
-	arg0 := "get"
-	arg1 := "serviceaccount"
-	arg2 := "console-sa"
-	arg3 := "--namespace"
-	arg4 := "minio-operator"
-	arg5 := "-o"
-	arg6 := "jsonpath=\"{.secrets[0].name}\""
-	cmd := exec.Command(app, arg0, arg1, arg2, arg3, arg4, arg5, arg6)
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return
-	}
-	secret := out.String() // "console-sa-token-kxdw2" <-- secret
+	// SA_TOKEN=$(kubectl -n minio-operator  get secret console-sa-secret -o jsonpath="{.data.token}" | base64 --decode)
+	fmt.Println("Where we have the secret already: ")
 	app2 := "kubectl"
 	argu0 := "--namespace"
 	argu1 := "minio-operator"
 	argu2 := "get"
 	argu3 := "secret"
-	argu4 := secret[1 : len(secret)-1]
+	argu4 := "console-sa-secret"
 	argu5 := "-o"
 	argu6 := "jsonpath=\"{.data.token}\""
+	fmt.Println("Prior executing second command to get the token")
 	cmd2 := exec.Command(app2, argu0, argu1, argu2, argu3, argu4, argu5, argu6)
+	fmt.Println("after executing second command to get the token")
 	var out2 bytes.Buffer
 	var stderr2 bytes.Buffer
 	cmd2.Stdout = &out2
@@ -181,9 +171,14 @@ func TestMain(m *testing.M) {
 	}
 	secret2 := out2.String()
 	secret3 := decodeBase64(secret2[1 : len(secret2)-1])
+	if secret3 == "" {
+		fmt.Println("jwt cannot be empty string")
+		os.Exit(-1)
+	}
 	requestData := map[string]string{
 		"jwt": secret3,
 	}
+	fmt.Println("requestData: ", requestData)
 
 	requestDataJSON, _ := json.Marshal(requestData)
 
