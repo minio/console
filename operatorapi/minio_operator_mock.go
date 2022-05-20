@@ -16,7 +16,28 @@
 
 package operatorapi
 
+import (
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
 type (
 	opClientMock   struct{}
 	httpClientMock struct{}
 )
+
+func createMockPVC(pvcMockName, pvcMockNamespace string) *v1.PersistentVolumeClaim {
+	var mockVolumeMode v1.PersistentVolumeMode = "mockVolumeMode"
+	mockStorage := "mockStorage"
+
+	return &v1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      pvcMockName,
+			Namespace: pvcMockNamespace,
+		},
+		Spec: v1.PersistentVolumeClaimSpec{
+			StorageClassName: &mockStorage,
+			VolumeMode:       &mockVolumeMode,
+		},
+	}
+}
