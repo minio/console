@@ -66,6 +66,14 @@ function main() {
     check_tenant_status tenant-lite storage-lite
 
     kubectl proxy &
+
+    # Beginning  Kubernetes 1.24 ----> Service Account Token Secrets are not 
+    # automatically generated, to generate them manually, users must manually
+    # create the secret, for our examples where we lead people to get the JWT
+    # from the console-sa service account, they additionally need to manually
+    # generate the secret via
+    kubectl apply -f "${SCRIPT_DIR}/console-sa-secret.yaml"
+
 }
 
 main "$@"
