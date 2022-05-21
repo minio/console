@@ -194,15 +194,15 @@ export const permissionItems = (
 
     // We split ARN & get the last item to check the URL
     const splitARN = permissionElement.resource.split(":");
-    const url = splitARN.pop() || "";
+    const urlARN = splitARN.pop() || "";
 
     // We split the paths of the URL & compare against current location to see if there are more items to include. In case current level is a wildcard or is the last one, we omit this validation
 
-    const splitURL = url.split("/");
+    const splitURLARN = urlARN.split("/");
 
     // splitURL has more items than bucket name, we can continue validating
-    if (splitURL.length > 1) {
-      splitURL.every((currentElementInPath, index) => {
+    if (splitURLARN.length > 1) {
+      splitURLARN.every((currentElementInPath, index) => {
         // It is a wildcard element. We can stor the verification as value should be included (?)
         if (currentElementInPath === "*") {
           return false;
@@ -240,17 +240,25 @@ export const permissionItems = (
         if (prefixItem !== "") {
           const splitItems = prefixItem.split("/");
 
+          let pathToRouteElements: string[] = [];
+
           splitItems.every((splitElement, index) => {
-            if (!splitElement.includes("*")) {
-              if (splitElement !== splitURL[index]) {
+            if (!splitElement.includes("*") && splitElement !== "") {
+              if (splitElement !== splitCurrentPath[index]) {
                 returnElements.push({
-                  name: `${splitElement}/`,
+                  name: `${pathToRouteElements.join("/")}${
+                    pathToRouteElements.length > 0 ? "/" : ""
+                  }${splitElement}/`,
                   size: 0,
                   last_modified: new Date(),
                   version_id: "",
                 });
                 return false;
               }
+              if (splitElement !== "") {
+                pathToRouteElements.push(splitElement);
+              }
+
               return true;
             }
             return false;

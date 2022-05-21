@@ -71,7 +71,6 @@ import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
 import Loader from "../../../../Common/Loader/Loader";
-import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import {
   makeid,
   storeCallForObjectWithID,
@@ -239,7 +238,7 @@ const ObjectDetailPanel = ({
           dispatch(setLoadingObjectInfo(false));
         })
         .catch((error: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(error));
+          console.error("Error loading object details", error);
           dispatch(setLoadingObjectInfo(false));
         });
     }
