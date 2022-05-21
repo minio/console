@@ -222,6 +222,10 @@ test:
 	@echo "execute test and get coverage"
 	@(cd restapi && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage.out)
 
+test-unit-test-operator:
+	@echo "execute unit test and get coverage for operatorapi"
+	@(cd operatorapi && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage-unit-test-operatorapi.out)
+
 test-pkg:
 	@echo "execute test and get coverage"
 	@(cd pkg && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage-pkg.out)
