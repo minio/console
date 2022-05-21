@@ -195,7 +195,7 @@ export const objectBrowserSlice = createSlice({
         ? state.selectedInternalPaths
         : null;
     },
-    setSelectedObjectView: (state, action: PayloadAction<string>) => {
+    setSelectedObjectView: (state, action: PayloadAction<string | null>) => {
       state.selectedInternalPaths = action.payload;
     },
     setSimplePathHandler: (state, action: PayloadAction<string>) => {
