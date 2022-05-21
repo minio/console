@@ -36,6 +36,8 @@ remove_users() {
   mc admin user remove minio inspect-not-allowed-"$TIMESTAMP"
   mc admin user remove minio prefix-policy-ui-crash-"$TIMESTAMP"
   mc admin user remove minio delete-object-with-prefix-"$TIMESTAMP"
+  mc admin user remove minio conditions-"$TIMESTAMP"
+  mc admin user remove minio conditions-2-"$TIMESTAMP"
 }
 
 remove_policies() {
@@ -59,11 +61,14 @@ remove_policies() {
   mc admin policy remove minio inspect-not-allowed-"$TIMESTAMP"
   mc admin policy remove minio fix-prefix-policy-ui-crash-"$TIMESTAMP"
   mc admin policy remove minio delete-object-with-prefix-"$TIMESTAMP"
+  mc admin policy remove conditions-policy-"$TIMESTAMP"
+  mc admin policy remove conditions-policy-2-"$TIMESTAMP"
 }
 
 remove_buckets() {
   mc rm minio/testcafe/write/test.txt && mc rm minio/testcafe
   mc rm minio/test/test.txt && mc rm minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc rm minio/test/digitalinsights/test.txt && mc rm minio/test
+  mc rm minio/testcondition/test.txt && mc rm minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc rm minio/testcondition/firstlevel/test.txt && mc rm minio/testcondition/firstlevel/secondlevel/test.txt && mc rm minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt && mc rm minio/testcondition
 }
 
 cleanup() {
