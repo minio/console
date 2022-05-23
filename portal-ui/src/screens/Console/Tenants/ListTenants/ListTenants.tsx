@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Grid from "@mui/material/Grid";
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -46,6 +46,7 @@ import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton"
 import SearchBox from "../../Common/SearchBox";
 import PageLayout from "../../Common/Layout/PageLayout";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -85,16 +86,36 @@ const styles = (theme: Theme) =>
     tenantsList: {
       height: "calc(100vh - 195px)",
     },
+    sortByContainer: {
+      display: "flex",
+      justifyContent: "flex-end",
+      marginBottom: 10,
+    },
+    innerSort: {
+      maxWidth: 200,
+      width: "95%",
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    sortByLabel: {
+      whiteSpace: "nowrap",
+      fontSize: 14,
+      color: "#838383",
+      fontWeight: "bold",
+      marginRight: 10,
+    },
   });
 
 const ListTenants = ({ classes }: ITenantsList) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
-  const [records, setRecords] = useState<any[]>([]);
+  const [records, setRecords] = useState<ITenant[]>([]);
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [createdAccount, setCreatedAccount] =
     useState<NewServiceAccount | null>(null);
+  const [sortValue, setSortValue] = useState<string>("name");
 
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
@@ -110,6 +131,67 @@ const ListTenants = ({ classes }: ITenantsList) => {
       } else {
         return false;
       }
+    }
+  });
+
+  filteredRecords.sort((a, b) => {
+    switch (sortValue) {
+      case "capacity":
+        if (!a.capacity || !b.capacity) {
+          return 0;
+        }
+
+        if (a.capacity > b.capacity) {
+          return 1;
+        }
+
+        if (a.capacity < b.capacity) {
+          return -1;
+        }
+
+        return 0;
+      case "usage":
+        if (!a.capacity_usage || !b.capacity_usage) {
+          return 0;
+        }
+
+        if (a.capacity_usage > b.capacity_usage) {
+          return 1;
+        }
+
+        if (a.capacity_usage < b.capacity_usage) {
+          return -1;
+        }
+
+        return 0;
+      case "active_status":
+        if (a.health_status === "red" && b.health_status !== "red") {
+          return 1;
+        }
+
+        if (a.health_status !== "red" && b.health_status === "red") {
+          return -1;
+        }
+
+        return 0;
+      case "failing_status":
+        if (a.health_status === "green" && b.health_status !== "green") {
+          return 1;
+        }
+
+        if (a.health_status !== "green" && b.health_status === "green") {
+          return -1;
+        }
+
+        return 0;
+      default:
+        if (a.name > b.name) {
+          return 1;
+        }
+        if (a.name < b.name) {
+          return -1;
+        }
+        return 0;
     }
   });
 
@@ -216,10 +298,45 @@ const ListTenants = ({ classes }: ITenantsList) => {
           {!isLoading && (
             <Fragment>
               {filteredRecords.length !== 0 && (
-                <VirtualizedList
-                  rowRenderFunction={renderItemLine}
-                  totalItems={filteredRecords.length}
-                />
+                <Fragment>
+                  <Grid item xs={12} className={classes.sortByContainer}>
+                    <div className={classes.innerSort}>
+                      <span className={classes.sortByLabel}>Sort by</span>
+                      <SelectWrapper
+                        id={"sort-by"}
+                        label={""}
+                        value={sortValue}
+                        onChange={(e: SelectChangeEvent<string>) => {
+                          setSortValue(e.target.value as string);
+                        }}
+                        name={"sort-by"}
+                        options={[
+                          { label: "Name", value: "name" },
+                          {
+                            label: "Capacity",
+                            value: "capacity",
+                          },
+                          {
+                            label: "Usage",
+                            value: "usage",
+                          },
+                          {
+                            label: "Active Status",
+                            value: "active_status",
+                          },
+                          {
+                            label: "Failing Status",
+                            value: "failing_status",
+                          },
+                        ]}
+                      />
+                    </div>
+                  </Grid>
+                  <VirtualizedList
+                    rowRenderFunction={renderItemLine}
+                    totalItems={filteredRecords.length}
+                  />
+                </Fragment>
               )}
               {filteredRecords.length === 0 && (
                 <Grid
