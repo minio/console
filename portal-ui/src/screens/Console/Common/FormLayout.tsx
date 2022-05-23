@@ -22,6 +22,7 @@ type Props = {
   title: string;
   icon: React.ReactNode;
   helpbox?: React.ReactNode;
+  children: React.ReactNode;
 };
 
 const FormLayout: React.FC<Props> = ({ children, title, helpbox, icon }) => {
