@@ -14,36 +14,64 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState, Fragment } from "react";
+import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
+import { setErrorSnackMessage } from "../../../systemSlice";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ErrorResponseHandler } from "../../../common/types";
 import { ConfirmDeleteIcon } from "../../../icons";
 import { encodeURLString } from "../../../common/utils";
-import { setErrorSnackMessage } from "../../../systemSlice";
-
+import WarningMessage from "../Common/WarningMessage/WarningMessage";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import api from "../../../common/api";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import Loader from "../Common/Loader/Loader";
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedUsers: string[] | null;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
+  history: any;
 }
 
 const DeleteUser = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedUsers,
+  setErrorSnackMessage,
+  history,
 }: IDeleteUserProps) => {
-  const dispatch = useDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
+  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [loadingSA, setLoadingSA] = useState<boolean>(true);
+  const [hasSA, setHasSA] = useState<boolean>(false);
+  const [userSAList, setUserSAList] = useState<userSACount[]>([]);
 
   const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
+ 
+   useEffect(() => {  
+
+     if(selectedUsers) {  
+      api
+      .invoke("POST", `/api/v1/users/service-accounts`, selectedUsers)
+      .then((res) => {  
+        setUserSAList(res.userServiceAccountList) ;      
+        if (res.hasSA) {
+          setHasSA(true)
+        }           
+        setLoadingSA(false);
+      })
+      .catch((err: ErrorResponseHandler) => {
+        setErrorSnackMessage(err);
+        setLoadingSA(false);
+      });   
+     } 
+   }, [selectedUsers, setErrorSnackMessage]);
 
   if (!selectedUsers) {
     return null;
@@ -52,7 +80,18 @@ const DeleteUser = ({
     <div key={user}>
       <b>{user}</b>
     </div>
-  ));
+  ));  
+  const viewAction = (selectionElement: any): void => {
+    history.push(
+      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`
+    );
+  };
+  const tableActions = [
+    {
+      type: "view",
+      onClick: viewAction,
+    },
+  ];
 
   const onConfirmDelete = () => {
     for (let user of selectedUsers) {
@@ -68,7 +107,18 @@ const DeleteUser = ({
     }
   };
 
+  interface userSACount {
+    userName: string;
+    numSAs: number;
+  } 
+
+  const noSAtext = "Are you sure you want to delete the following " + selectedUsers.length+" "+
+  "user"+ (selectedUsers.length > 1 ? "s?" : "?")
+
   return (
+    loadingSA ? 
+    <Loader />
+    :
     <ConfirmDialog
       title={`Delete User${selectedUsers.length > 1 ? "s" : ""}`}
       confirmText={"Delete"}
@@ -78,14 +128,42 @@ const DeleteUser = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
-          Are you sure you want to delete the following {selectedUsers.length}{" "}
-          user{selectedUsers.length > 1 ? "s?" : "?"}
-          <b>{renderUsers}</b>
+        <DialogContentText>  
+          
+        {hasSA ? 
+        <Fragment>
+          <WarningMessage 
+            label = "Click on a user to view the full listing of asociated Service Accounts. All Service Accounts associated with a user will be deleted along with the user. Are you sure you want to continue?"
+            title =  "Warning: One or more users selected has associated Service Accounts. "
+          />
+          <TableWrapper 
+            itemActions={tableActions}
+            columns={[
+              { label: "Username", elementKey: "userName" },
+              { label: "# Associated Service Accounts", elementKey: "numSAs" },
+            ]}
+            isLoading={loadingSA}
+            records={userSAList}
+            entityName="User Service Accounts"
+            idField="userName"
+            customPaperHeight="250"
+          />
+        </Fragment>
+        :  <Fragment>
+            {noSAtext}
+            {renderUsers}
+          </Fragment>
+        }
         </DialogContentText>
       }
     />
   );
 };
 
-export default DeleteUser;
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(DeleteUser);

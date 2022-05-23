@@ -186,6 +186,7 @@ const ListUsers = ({ classes, history }: IUsersProps) => {
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
+          history={history}
         />
       )}
       {addGroupOpen && (
