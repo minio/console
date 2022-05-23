@@ -4203,6 +4203,42 @@ func init() {
           }
         }
       }
+    },
+    "/users/service-accounts": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Check number of service accounts for each user specified",
+        "operationId": "CheckUserServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedUsers",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userServiceAccountSummary"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -6898,6 +6934,33 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "userServiceAccountItem": {
+      "type": "object",
+      "properties": {
+        "numSAs": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userName": {
+          "type": "string"
+        }
+      }
+    },
+    "userServiceAccountSummary": {
+      "type": "object",
+      "properties": {
+        "hasSA": {
+          "type": "boolean"
+        },
+        "userServiceAccountList": {
+          "type": "array",
+          "title": "list of users with number of service accounts",
+          "items": {
+            "$ref": "#/definitions/userServiceAccountItem"
+          }
         }
       }
     },
@@ -11174,6 +11237,42 @@ func init() {
           }
         }
       }
+    },
+    "/users/service-accounts": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Check number of service accounts for each user specified",
+        "operationId": "CheckUserServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedUsers",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userServiceAccountSummary"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -13995,6 +14094,33 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "userServiceAccountItem": {
+      "type": "object",
+      "properties": {
+        "numSAs": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userName": {
+          "type": "string"
+        }
+      }
+    },
+    "userServiceAccountSummary": {
+      "type": "object",
+      "properties": {
+        "hasSA": {
+          "type": "boolean"
+        },
+        "userServiceAccountList": {
+          "type": "array",
+          "title": "list of users with number of service accounts",
+          "items": {
+            "$ref": "#/definitions/userServiceAccountItem"
+          }
         }
       }
     },
