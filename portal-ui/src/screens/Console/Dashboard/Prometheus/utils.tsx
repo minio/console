@@ -579,14 +579,14 @@ export const widgetDetailsToPanel = (
         const values = chartSeries.map((elementValue: any) => {
           const values = get(elementValue, "values", []);
           const metricKeyItem = Object.keys(elementValue.metric);
-
           const sortResult = values.sort(
-            (value1: any[], value2: any[]) => value1[0] - value2[0]
+            (value1: any[], value2: any[]) =>
+              parseInt(value1[0][1]) - parseInt(value2[0][1])
           );
 
           const metricName = elementValue.metric[metricKeyItem[0]];
           const value = sortResult[sortResult.length - 1];
-          return { name: metricName, value: parseInt(value) };
+          return { name: metricName, value: parseInt(value[1]) };
         });
 
         const innerLabel = panelItem.labelDisplayFunction
