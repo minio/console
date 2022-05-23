@@ -1609,8 +1609,8 @@ paths:
         - Policy
   /user/{name}/policies:
     get:
-      summary: returns policies for specified user
-      operationId: GetAUserPolicy
+      summary: returns policies assigned for a specified user
+      operationId: GetSAUserPolicy
       parameters:
         - name: name
           in: path
@@ -4856,7 +4856,6 @@ definitions:
         type: string
       latest_version:
         type: string
-<<<<<<< HEAD
 
   permissionResource:
     type: object
@@ -4869,10 +4868,8 @@ definitions:
         type: array
         items:
           type: string
-=======
   aUserPolicyResponse:
     type: object
     properties:
       policy:
         type: string
->>>>>>> Created api to generate single JSON including all user permissions to populate AddUserServiceAccount policy restrictor

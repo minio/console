@@ -207,9 +207,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketEnableBucketEncryptionHandler: bucket.EnableBucketEncryptionHandlerFunc(func(params bucket.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.EnableBucketEncryption has not yet been implemented")
 		}),
-		PolicyGetAUserPolicyHandler: policy.GetAUserPolicyHandlerFunc(func(params policy.GetAUserPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation policy.GetAUserPolicy has not yet been implemented")
-		}),
 		BucketGetBucketEncryptionInfoHandler: bucket.GetBucketEncryptionInfoHandlerFunc(func(params bucket.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketEncryptionInfo has not yet been implemented")
 		}),
@@ -239,6 +236,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
+		}),
+		PolicyGetSAUserPolicyHandler: policy.GetSAUserPolicyHandlerFunc(func(params policy.GetSAUserPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.GetSAUserPolicy has not yet been implemented")
 		}),
 		ServiceAccountGetServiceAccountPolicyHandler: service_account.GetServiceAccountPolicyHandlerFunc(func(params service_account.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation service_account.GetServiceAccountPolicy has not yet been implemented")
@@ -596,8 +596,6 @@ type ConsoleAPI struct {
 	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
 	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
 	BucketEnableBucketEncryptionHandler bucket.EnableBucketEncryptionHandler
-	// PolicyGetAUserPolicyHandler sets the operation handler for the get a user policy operation
-	PolicyGetAUserPolicyHandler policy.GetAUserPolicyHandler
 	// BucketGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
 	BucketGetBucketEncryptionInfoHandler bucket.GetBucketEncryptionInfoHandler
 	// BucketGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
@@ -618,6 +616,8 @@ type ConsoleAPI struct {
 	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
+	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
+	PolicyGetSAUserPolicyHandler policy.GetSAUserPolicyHandler
 	// ServiceAccountGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
 	ServiceAccountGetServiceAccountPolicyHandler service_account.GetServiceAccountPolicyHandler
 	// SiteReplicationGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
@@ -975,9 +975,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.BucketEnableBucketEncryptionHandler == nil {
 		unregistered = append(unregistered, "bucket.EnableBucketEncryptionHandler")
 	}
-	if o.PolicyGetAUserPolicyHandler == nil {
-		unregistered = append(unregistered, "policy.GetAUserPolicyHandler")
-	}
 	if o.BucketGetBucketEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketEncryptionInfoHandler")
 	}
@@ -1007,6 +1004,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
+	}
+	if o.PolicyGetSAUserPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.GetSAUserPolicyHandler")
 	}
 	if o.ServiceAccountGetServiceAccountPolicyHandler == nil {
 		unregistered = append(unregistered, "service_account.GetServiceAccountPolicyHandler")
@@ -1495,10 +1495,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user/{name}/policies"] = policy.NewGetAUserPolicy(o.context, o.PolicyGetAUserPolicyHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = bucket.NewGetBucketEncryptionInfo(o.context, o.BucketGetBucketEncryptionInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1536,6 +1532,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/metadata"] = object.NewGetObjectMetadata(o.context, o.ObjectGetObjectMetadataHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/user/{name}/policies"] = policy.NewGetSAUserPolicy(o.context, o.PolicyGetSAUserPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

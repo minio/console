@@ -30,14 +30,14 @@ import (
 	"github.com/minio/console/models"
 )
 
-// GetAUserPolicyOKCode is the HTTP code returned for type GetAUserPolicyOK
-const GetAUserPolicyOKCode int = 200
+// GetSAUserPolicyOKCode is the HTTP code returned for type GetSAUserPolicyOK
+const GetSAUserPolicyOKCode int = 200
 
-/*GetAUserPolicyOK A successful response.
+/*GetSAUserPolicyOK A successful response.
 
-swagger:response getAUserPolicyOK
+swagger:response getSAUserPolicyOK
 */
-type GetAUserPolicyOK struct {
+type GetSAUserPolicyOK struct {
 
 	/*
 	  In: Body
@@ -45,25 +45,25 @@ type GetAUserPolicyOK struct {
 	Payload *models.AUserPolicyResponse `json:"body,omitempty"`
 }
 
-// NewGetAUserPolicyOK creates GetAUserPolicyOK with default headers values
-func NewGetAUserPolicyOK() *GetAUserPolicyOK {
+// NewGetSAUserPolicyOK creates GetSAUserPolicyOK with default headers values
+func NewGetSAUserPolicyOK() *GetSAUserPolicyOK {
 
-	return &GetAUserPolicyOK{}
+	return &GetSAUserPolicyOK{}
 }
 
-// WithPayload adds the payload to the get a user policy o k response
-func (o *GetAUserPolicyOK) WithPayload(payload *models.AUserPolicyResponse) *GetAUserPolicyOK {
+// WithPayload adds the payload to the get s a user policy o k response
+func (o *GetSAUserPolicyOK) WithPayload(payload *models.AUserPolicyResponse) *GetSAUserPolicyOK {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the get a user policy o k response
-func (o *GetAUserPolicyOK) SetPayload(payload *models.AUserPolicyResponse) {
+// SetPayload sets the payload to the get s a user policy o k response
+func (o *GetSAUserPolicyOK) SetPayload(payload *models.AUserPolicyResponse) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *GetAUserPolicyOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *GetSAUserPolicyOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
 	if o.Payload != nil {
@@ -74,11 +74,11 @@ func (o *GetAUserPolicyOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*GetAUserPolicyDefault Generic error response.
+/*GetSAUserPolicyDefault Generic error response.
 
-swagger:response getAUserPolicyDefault
+swagger:response getSAUserPolicyDefault
 */
-type GetAUserPolicyDefault struct {
+type GetSAUserPolicyDefault struct {
 	_statusCode int
 
 	/*
@@ -87,41 +87,41 @@ type GetAUserPolicyDefault struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewGetAUserPolicyDefault creates GetAUserPolicyDefault with default headers values
-func NewGetAUserPolicyDefault(code int) *GetAUserPolicyDefault {
+// NewGetSAUserPolicyDefault creates GetSAUserPolicyDefault with default headers values
+func NewGetSAUserPolicyDefault(code int) *GetSAUserPolicyDefault {
 	if code <= 0 {
 		code = 500
 	}
 
-	return &GetAUserPolicyDefault{
+	return &GetSAUserPolicyDefault{
 		_statusCode: code,
 	}
 }
 
-// WithStatusCode adds the status to the get a user policy default response
-func (o *GetAUserPolicyDefault) WithStatusCode(code int) *GetAUserPolicyDefault {
+// WithStatusCode adds the status to the get s a user policy default response
+func (o *GetSAUserPolicyDefault) WithStatusCode(code int) *GetSAUserPolicyDefault {
 	o._statusCode = code
 	return o
 }
 
-// SetStatusCode sets the status to the get a user policy default response
-func (o *GetAUserPolicyDefault) SetStatusCode(code int) {
+// SetStatusCode sets the status to the get s a user policy default response
+func (o *GetSAUserPolicyDefault) SetStatusCode(code int) {
 	o._statusCode = code
 }
 
-// WithPayload adds the payload to the get a user policy default response
-func (o *GetAUserPolicyDefault) WithPayload(payload *models.Error) *GetAUserPolicyDefault {
+// WithPayload adds the payload to the get s a user policy default response
+func (o *GetSAUserPolicyDefault) WithPayload(payload *models.Error) *GetSAUserPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the get a user policy default response
-func (o *GetAUserPolicyDefault) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the get s a user policy default response
+func (o *GetSAUserPolicyDefault) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *GetAUserPolicyDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *GetSAUserPolicyDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

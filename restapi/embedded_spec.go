@@ -4004,8 +4004,8 @@ func init() {
         "tags": [
           "Policy"
         ],
-        "summary": "returns policies for specified user",
-        "operationId": "GetAUserPolicy",
+        "summary": "returns policies assigned for a specified user",
+        "operationId": "GetSAUserPolicy",
         "parameters": [
           {
             "type": "string",
@@ -11077,8 +11077,8 @@ func init() {
         "tags": [
           "Policy"
         ],
-        "summary": "returns policies for specified user",
-        "operationId": "GetAUserPolicy",
+        "summary": "returns policies assigned for a specified user",
+        "operationId": "GetSAUserPolicy",
         "parameters": [
           {
             "type": "string",

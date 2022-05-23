@@ -135,12 +135,12 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		return policyApi.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
 	})
 	// Gets policies for specified user
-	api.PolicyGetAUserPolicyHandler = policyApi.GetAUserPolicyHandlerFunc(func(params policyApi.GetAUserPolicyParams, session *models.Principal) middleware.Responder {
-		userPolicyResponse, err := getAUserPolicyResponse(session, params)
+	api.PolicyGetSAUserPolicyHandler = policyApi.GetSAUserPolicyHandlerFunc(func(params policyApi.GetSAUserPolicyParams, session *models.Principal) middleware.Responder {
+		userPolicyResponse, err := getSAUserPolicyResponse(session, params)
 		if err != nil {
-			return policyApi.NewGetAUserPolicyDefault(int(err.Code)).WithPayload(err)
+			return policyApi.NewGetSAUserPolicyDefault(int(err.Code)).WithPayload(err)
 		}
-		return policyApi.NewGetAUserPolicyOK().WithPayload(userPolicyResponse)
+		return policyApi.NewGetSAUserPolicyOK().WithPayload(userPolicyResponse)
 	})
 }
 
@@ -375,7 +375,7 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 	return string(rawPolicy), nil
 }
 
-func getAUserPolicyResponse(session *models.Principal, params policyApi.GetAUserPolicyParams) (*models.AUserPolicyResponse, *models.Error) {
+func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUserPolicyParams) (*models.AUserPolicyResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// serialize output

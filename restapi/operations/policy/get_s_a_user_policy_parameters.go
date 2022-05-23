@@ -30,19 +30,19 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewGetAUserPolicyParams creates a new GetAUserPolicyParams object
+// NewGetSAUserPolicyParams creates a new GetSAUserPolicyParams object
 //
 // There are no default values defined in the spec.
-func NewGetAUserPolicyParams() GetAUserPolicyParams {
+func NewGetSAUserPolicyParams() GetSAUserPolicyParams {
 
-	return GetAUserPolicyParams{}
+	return GetSAUserPolicyParams{}
 }
 
-// GetAUserPolicyParams contains all the bound params for the get a user policy operation
+// GetSAUserPolicyParams contains all the bound params for the get s a user policy operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters GetAUserPolicy
-type GetAUserPolicyParams struct {
+// swagger:parameters GetSAUserPolicy
+type GetSAUserPolicyParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -57,8 +57,8 @@ type GetAUserPolicyParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewGetAUserPolicyParams() beforehand.
-func (o *GetAUserPolicyParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewGetSAUserPolicyParams() beforehand.
+func (o *GetSAUserPolicyParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -74,7 +74,7 @@ func (o *GetAUserPolicyParams) BindRequest(r *http.Request, route *middleware.Ma
 }
 
 // bindName binds and validates parameter Name from path.
-func (o *GetAUserPolicyParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetSAUserPolicyParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// GetAUserPolicyHandlerFunc turns a function with the right signature into a get a user policy handler
-type GetAUserPolicyHandlerFunc func(GetAUserPolicyParams, *models.Principal) middleware.Responder
+// GetSAUserPolicyHandlerFunc turns a function with the right signature into a get s a user policy handler
+type GetSAUserPolicyHandlerFunc func(GetSAUserPolicyParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetAUserPolicyHandlerFunc) Handle(params GetAUserPolicyParams, principal *models.Principal) middleware.Responder {
+func (fn GetSAUserPolicyHandlerFunc) Handle(params GetSAUserPolicyParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// GetAUserPolicyHandler interface for that can handle valid get a user policy params
-type GetAUserPolicyHandler interface {
-	Handle(GetAUserPolicyParams, *models.Principal) middleware.Responder
+// GetSAUserPolicyHandler interface for that can handle valid get s a user policy params
+type GetSAUserPolicyHandler interface {
+	Handle(GetSAUserPolicyParams, *models.Principal) middleware.Responder
 }
 
-// NewGetAUserPolicy creates a new http.Handler for the get a user policy operation
-func NewGetAUserPolicy(ctx *middleware.Context, handler GetAUserPolicyHandler) *GetAUserPolicy {
-	return &GetAUserPolicy{Context: ctx, Handler: handler}
+// NewGetSAUserPolicy creates a new http.Handler for the get s a user policy operation
+func NewGetSAUserPolicy(ctx *middleware.Context, handler GetSAUserPolicyHandler) *GetSAUserPolicy {
+	return &GetSAUserPolicy{Context: ctx, Handler: handler}
 }
 
-/* GetAUserPolicy swagger:route GET /user/{name}/policies Policy getAUserPolicy
+/* GetSAUserPolicy swagger:route GET /user/{name}/policies Policy getSAUserPolicy
 
-returns policies for specified user
+returns policies assigned for a specified user
 
 */
-type GetAUserPolicy struct {
+type GetSAUserPolicy struct {
 	Context *middleware.Context
-	Handler GetAUserPolicyHandler
+	Handler GetSAUserPolicyHandler
 }
 
-func (o *GetAUserPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *GetSAUserPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewGetAUserPolicyParams()
+	var Params = NewGetSAUserPolicyParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
