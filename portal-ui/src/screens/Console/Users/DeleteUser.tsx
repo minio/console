@@ -53,25 +53,24 @@ const DeleteUser = ({
   const [userSAList, setUserSAList] = useState<userSACount[]>([]);
 
   const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
- 
-   useEffect(() => {  
 
-     if(selectedUsers) {  
+  useEffect(() => {
+    if (selectedUsers) {
       api
-      .invoke("POST", `/api/v1/users/service-accounts`, selectedUsers)
-      .then((res) => {  
-        setUserSAList(res.userServiceAccountList) ;      
-        if (res.hasSA) {
-          setHasSA(true)
-        }           
-        setLoadingSA(false);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setErrorSnackMessage(err);
-        setLoadingSA(false);
-      });   
-     } 
-   }, [selectedUsers, setErrorSnackMessage]);
+        .invoke("POST", `/api/v1/users/service-accounts`, selectedUsers)
+        .then((res) => {
+          setUserSAList(res.userServiceAccountList);
+          if (res.hasSA) {
+            setHasSA(true);
+          }
+          setLoadingSA(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setErrorSnackMessage(err);
+          setLoadingSA(false);
+        });
+    }
+  }, [selectedUsers, setErrorSnackMessage]);
 
   if (!selectedUsers) {
     return null;
@@ -80,7 +79,7 @@ const DeleteUser = ({
     <div key={user}>
       <b>{user}</b>
     </div>
-  ));  
+  ));
   const viewAction = (selectionElement: any): void => {
     history.push(
       `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`
@@ -110,15 +109,18 @@ const DeleteUser = ({
   interface userSACount {
     userName: string;
     numSAs: number;
-  } 
+  }
 
-  const noSAtext = "Are you sure you want to delete the following " + selectedUsers.length+" "+
-  "user"+ (selectedUsers.length > 1 ? "s?" : "?")
+  const noSAtext =
+    "Are you sure you want to delete the following " +
+    selectedUsers.length +
+    " " +
+    "user" +
+    (selectedUsers.length > 1 ? "s?" : "?");
 
-  return (
-    loadingSA ? 
+  return loadingSA ? (
     <Loader />
-    :
+  ) : (
     <ConfirmDialog
       title={`Delete User${selectedUsers.length > 1 ? "s" : ""}`}
       confirmText={"Delete"}
@@ -128,32 +130,35 @@ const DeleteUser = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>  
-          
-        {hasSA ? 
-        <Fragment>
-          <WarningMessage 
-            label = "Click on a user to view the full listing of asociated Service Accounts. All Service Accounts associated with a user will be deleted along with the user. Are you sure you want to continue?"
-            title =  "Warning: One or more users selected has associated Service Accounts. "
-          />
-          <TableWrapper 
-            itemActions={tableActions}
-            columns={[
-              { label: "Username", elementKey: "userName" },
-              { label: "# Associated Service Accounts", elementKey: "numSAs" },
-            ]}
-            isLoading={loadingSA}
-            records={userSAList}
-            entityName="User Service Accounts"
-            idField="userName"
-            customPaperHeight="250"
-          />
-        </Fragment>
-        :  <Fragment>
-            {noSAtext}
-            {renderUsers}
-          </Fragment>
-        }
+        <DialogContentText>
+          {hasSA ? (
+            <Fragment>
+              <WarningMessage
+                label="Click on a user to view the full listing of asociated Service Accounts. All Service Accounts associated with a user will be deleted along with the user. Are you sure you want to continue?"
+                title="Warning: One or more users selected has associated Service Accounts. "
+              />
+              <TableWrapper
+                itemActions={tableActions}
+                columns={[
+                  { label: "Username", elementKey: "userName" },
+                  {
+                    label: "# Associated Service Accounts",
+                    elementKey: "numSAs",
+                  },
+                ]}
+                isLoading={loadingSA}
+                records={userSAList}
+                entityName="User Service Accounts"
+                idField="userName"
+                customPaperHeight="250"
+              />
+            </Fragment>
+          ) : (
+            <Fragment>
+              {noSAtext}
+              {renderUsers}
+            </Fragment>
+          )}
         </DialogContentText>
       }
     />
