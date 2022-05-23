@@ -1086,7 +1086,7 @@ export const tenantSlice = createSlice({
       }>
     ) => {
       state.tenantDetails.currentTenant = action.payload.name;
-      state.tenantDetails.currentTenant = action.payload.namespace;
+      state.tenantDetails.currentNamespace = action.payload.namespace;
     },
     setTenantInfo: (state, action: PayloadAction<ITenant | null>) => {
       if (action.payload) {

@@ -270,13 +270,18 @@ func getTenantCSResponse(session *models.Principal, params operator_api.ListTena
 }
 
 func getPVCDescribeResponse(session *models.Principal, params operator_api.GetPVCDescribeParams) (*models.DescribePVCWrapper, *models.Error) {
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}
-	pvc, err := clientset.CoreV1().PersistentVolumeClaims(params.Namespace).Get(ctx, params.PVCName, metav1.GetOptions{})
+	k8sClient := k8sClient{client: clientSet}
+	return getPVCDescribe(ctx, params.Namespace, params.PVCName, &k8sClient)
+}
+
+func getPVCDescribe(ctx context.Context, namespace string, pvcName string, clientSet K8sClientI) (*models.DescribePVCWrapper, *models.Error) {
+	pvc, err := clientSet.getPVC(ctx, namespace, pvcName, metav1.GetOptions{})
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}

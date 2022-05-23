@@ -250,3 +250,25 @@ export const deleteObjectWithPrefixOnly = Role(
   },
   { preserveUrl: true }
 );
+
+export const conditions1 = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "conditions-" + unixTimestamp)
+      .typeText("#secretKey", "conditions1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);
+
+export const conditions2 = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "conditions-2-" + unixTimestamp)
+      .typeText("#secretKey", "conditions1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);

@@ -496,7 +496,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
 
     if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
       dispatch(setObjectDetailsView(false));
-      dispatch(setSelectedObjectView(""));
+      dispatch(setSelectedObjectView(null));
       dispatch(
         setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
       );
@@ -1113,7 +1113,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
       elements = elements.filter((element) => element !== value);
     }
     setSelectedObjects(elements);
-    dispatch(setSelectedObjectView(""));
+    dispatch(setSelectedObjectView(null));
 
     return elements;
   };
@@ -1140,7 +1140,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   }
 
   const selectAllItems = () => {
-    dispatch(setSelectedObjectView(""));
+    dispatch(setSelectedObjectView(null));
 
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
@@ -1171,7 +1171,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   }
 
   const onClosePanel = (forceRefresh: boolean) => {
-    dispatch(setSelectedObjectView(""));
+    dispatch(setSelectedObjectView(null));
     dispatch(setVersionsModeEnabled({ status: false }));
     if (detailsOpen && selectedInternalPaths !== null) {
       // We change URL to be the contained folder
