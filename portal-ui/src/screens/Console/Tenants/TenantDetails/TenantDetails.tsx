@@ -359,6 +359,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
             actions={
               <div>
                 <BoxIconButton
+                  id={"delete-tenant"}
                   tooltip={"Delete"}
                   variant="outlined"
                   aria-label="Delete"
