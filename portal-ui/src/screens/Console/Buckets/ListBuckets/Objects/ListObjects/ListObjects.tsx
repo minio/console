@@ -1014,8 +1014,9 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     [bucketName, dispatch, simplePath]
   );
 
+
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles: any[]) => {
       if (acceptedFiles && acceptedFiles.length > 0) {
         let newFolderPath: string = acceptedFiles[0].path;
         uploadObject(acceptedFiles, newFolderPath);
