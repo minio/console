@@ -27,7 +27,7 @@ import WarnIcon from "../../../../icons/WarnIcon";
 import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
 
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import { encodeURLString } from "../../../../common/utils";
+
 
 const styles = (theme: Theme) =>
   createStyles({
