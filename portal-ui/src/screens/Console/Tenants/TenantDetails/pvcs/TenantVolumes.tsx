@@ -20,6 +20,8 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { Link } from "react-router-dom";
 
 import api from "../../../../../common/api";
@@ -27,6 +29,7 @@ import { IEvent } from "../../ListTenants/types";
 import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import EventsList from "../events/EventsList";
+import PVCDescribe from "./PVCDescribe";
 import { useDispatch } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 
@@ -45,6 +48,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
+  const [curTab, setCurTab] = useState<number>(0);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const tenantNamespace = match.params["tenantNamespace"];
@@ -89,8 +93,36 @@ const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
         </h1>
       </Grid>
       <Grid container>
-        <h1 className={classes.sectionTitle}>Events</h1>
-        <EventsList events={events} loading={loading} />
+        <Grid item xs={12}>
+          <Tabs
+              value={curTab}
+              onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+                setCurTab(newValue);
+              }}
+              indicatorColor="primary"
+              textColor="primary"
+              aria-label="cluster-tabs"
+              variant="scrollable"
+              scrollButtons="auto">
+
+              <Tab label="Events" id="simple-tab-0"/>
+              <Tab label="Describe" id="simple-tab-0"/>
+          </Tabs>
+        </Grid>
+        {curTab === 0 && (
+          <React.Fragment>
+            <h1 className={classes.sectionTitle}>Events</h1>
+            <EventsList events={events} loading={loading} />
+          </React.Fragment>
+        )}
+        {curTab === 1 && (
+          <PVCDescribe
+            tenant={tenantName}
+            namespace={tenantNamespace}
+            pvcName={PVCName}
+            propLoading={loading}
+          />
+        )}
       </Grid>
     </Fragment>
   );
