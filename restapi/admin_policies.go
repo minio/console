@@ -397,7 +397,7 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	user, err := getUserInfo(ctx, userAdminClient, string(userName))
+	user, err := getUserInfo(ctx, userAdminClient, userName)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
