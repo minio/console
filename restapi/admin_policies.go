@@ -405,19 +405,19 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 	if len(user.PolicyName) > 0 {
 		userPolicies = strings.Split(user.PolicyName, ",")
 	}
-	if len(user.MemberOf) > 0 {
-		for _, group := range user.MemberOf {
-			groupDesc, err := groupInfo(ctx, userAdminClient, group)
-			if err != nil {
-				return nil, ErrorWithContext(ctx, err)
-			}
-			if groupDesc.Policy != "" {
-				userPolicies = append(userPolicies, strings.Split(groupDesc.Policy, ",")...)
-			}
+
+	for _, group := range user.MemberOf {
+		groupDesc, err := groupInfo(ctx, userAdminClient, group)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		if groupDesc.Policy != "" {
+			userPolicies = append(userPolicies, strings.Split(groupDesc.Policy, ",")...)
 		}
 	}
+
 	allKeys := make(map[string]bool)
-	userPolicyList := []string{}
+	var userPolicyList []string
 
 	for _, item := range userPolicies {
 		if _, value := allKeys[item]; !value {
@@ -439,12 +439,15 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 		Version:    "2012-10-17",
 		Statements: userStatements,
 	}
-	parsedPolicy, err := parsePolicy("tempname", &combinedPolicy)
+
+	stringPolicy, err := json.Marshal(combinedPolicy)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+	parsedPolicy := string(stringPolicy)
+
 	getUserPoliciesResponse := &models.AUserPolicyResponse{
-		Policy: parsedPolicy.Policy,
+		Policy: parsedPolicy,
 	}
 
 	return getUserPoliciesResponse, nil
