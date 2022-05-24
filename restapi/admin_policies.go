@@ -19,7 +19,6 @@ package restapi
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"sort"
@@ -393,12 +392,12 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 	}
 	userAdminClient := AdminClient{Client: mAdminClient}
 
-	decoded, err := base64.StdEncoding.DecodeString(params.Name)
+	userName, err := utils.DecodeBase64(params.Name)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	user, err := getUserInfo(ctx, userAdminClient, string(decoded))
+	user, err := getUserInfo(ctx, userAdminClient, string(userName))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
