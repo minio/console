@@ -15,17 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
 import clsx from "clsx";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { SubnetInfo } from "./types";
-import { AppState } from "../../../store";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import LicenseModal from "./LicenseModal";
@@ -46,14 +44,10 @@ import LicensePlans from "./LicensePlans";
 import { Link } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
 import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
+import makeStyles from "@mui/styles/makeStyles";
+import { selOpMode } from "../../../systemSlice";
 
-const mapState = (state: AppState) => ({
-  operatorMode: state.system.operatorMode,
-});
-
-const connector = connect(mapState, null);
-
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     pageTitle: {
       backgroundColor: "rgb(250,250,252)",
@@ -120,14 +114,12 @@ const styles = (theme: Theme) =>
         marginRight: 15,
       },
     },
-  });
+  })
+);
 
-interface ILicenseProps {
-  classes: any;
-  operatorMode: boolean;
-}
-
-const License = ({ classes, operatorMode }: ILicenseProps) => {
+const License = () => {
+  const classes = useStyles();
+  const operatorMode = useSelector(selOpMode);
   const [activateProductModal, setActivateProductModal] =
     useState<boolean>(false);
 
@@ -454,4 +446,4 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
   );
 };
 
-export default connector(withStyles(styles)(License));
+export default License;

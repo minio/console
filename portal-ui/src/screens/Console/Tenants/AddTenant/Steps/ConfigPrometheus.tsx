@@ -37,7 +37,7 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SectionH1 from "../../../Common/SectionH1";
-import { isPageValid, updateAddField } from "../../tenantsSlice";
+import { isPageValid, updateAddField } from "../createTenantSlice";
 
 interface IConfigureProps {
   classes: any;
@@ -85,43 +85,40 @@ const ConfigPrometheus = ({ classes }: IConfigureProps) => {
   const dispatch = useDispatch();
 
   const storageClasses = useSelector(
-    (state: AppState) => state.tenants.createTenant.storageClasses
+    (state: AppState) => state.createTenant.storageClasses
   );
   const prometheusEnabled = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusEnabled
+    (state: AppState) => state.createTenant.fields.configure.prometheusEnabled
   );
   const prometheusVolumeSize = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusVolumeSize
+      state.createTenant.fields.configure.prometheusVolumeSize
   );
   const prometheusSelectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass
+      state.createTenant.fields.configure.prometheusSelectedStorageClass
   );
   const prometheusImage = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusImage
+    (state: AppState) => state.createTenant.fields.configure.prometheusImage
   );
   const prometheusSidecarImage = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusSidecarImage
+      state.createTenant.fields.configure.prometheusSidecarImage
   );
   const prometheusInitImage = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusInitImage
+    (state: AppState) => state.createTenant.fields.configure.prometheusInitImage
   );
   const selectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+      state.createTenant.fields.nameTenant.selectedStorageClass
   );
   const tenantSecurityContext = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.tenantSecurityContext
+      state.createTenant.fields.configure.tenantSecurityContext
   );
   const prometheusSecurityContext = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusSecurityContext
+      state.createTenant.fields.configure.prometheusSecurityContext
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

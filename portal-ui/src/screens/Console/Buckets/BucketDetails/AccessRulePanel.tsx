@@ -15,13 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Paper } from "@mui/material";
-import { AppState } from "../../../../store";
-import { ISessionResponse } from "../../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
@@ -35,7 +32,6 @@ import {
   searchField,
   tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { BucketInfo } from "../types";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
@@ -46,6 +42,8 @@ import {
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import makeStyles from "@mui/styles/makeStyles";
+import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
@@ -57,7 +55,7 @@ const EditAccessRuleModal = withSuspense(
   React.lazy(() => import("./EditAccessRule"))
 );
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     "@global": {
       ".rowLine:hover  .iconFileElm": {
@@ -72,31 +70,19 @@ const styles = (theme: Theme) =>
     ...searchField,
     ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
-  });
-
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  loadingBucket: state.buckets.bucketDetails.loadingBucket,
-  bucketInfo: state.buckets.bucketDetails.bucketInfo,
-});
-
-const connector = connect(mapState, null);
+  })
+);
 
 interface IAccessRuleProps {
-  session: ISessionResponse;
-  classes: any;
   match: any;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
 }
 
-const AccessRule = ({
-  classes,
-  match,
-  loadingBucket,
-  bucketInfo,
-}: IAccessRuleProps) => {
+const AccessRule = ({ match }: IAccessRuleProps) => {
   const dispatch = useDispatch();
+  const classes = useStyles();
+
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+
   const [loadingAccessRules, setLoadingAccessRules] = useState<boolean>(true);
   const [accessRules, setAccessRules] = useState([]);
   const [addAccessRuleOpen, setAddAccessRuleOpen] = useState<boolean>(false);
@@ -254,4 +240,4 @@ const AccessRule = ({
   );
 };
 
-export default withStyles(styles)(connector(AccessRule));
+export default AccessRule;

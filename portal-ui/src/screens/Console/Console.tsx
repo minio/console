@@ -53,10 +53,13 @@ import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
 import ComponentsScreen from "./Common/ComponentsScreen";
 import {
   menuOpen,
+  selDistSet,
+  selOpMode,
   serverIsLoading,
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../systemSlice";
+import { selFeatures, selSession } from "./consoleSlice";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -181,16 +184,10 @@ interface IConsoleProps {
 const Console = ({ classes }: IConsoleProps) => {
   const dispatch = useDispatch();
   const open = useSelector((state: AppState) => state.system.sidebarOpen);
-  const session = useSelector((state: AppState) => state.console.session);
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
-  const operatorMode = useSelector(
-    (state: AppState) => state.system.operatorMode
-  );
+  const session = useSelector(selSession);
+  const features = useSelector(selFeatures);
+  const distributedSetup = useSelector(selDistSet);
+  const operatorMode = useSelector(selOpMode);
   const snackBarMessage = useSelector(
     (state: AppState) => state.system.snackBar
   );

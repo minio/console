@@ -33,7 +33,7 @@ import {
 } from "../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { isPageValid, updateAddField } from "../../tenantsSlice";
+import { isPageValid, updateAddField } from "../createTenantSlice";
 
 interface IImagesProps {
   classes: any;
@@ -50,84 +50,75 @@ const Images = ({ classes }: IImagesProps) => {
   const dispatch = useDispatch();
 
   const customImage = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.configure.customImage
+    (state: AppState) => state.createTenant.fields.configure.customImage
   );
   const imageName = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.configure.imageName
+    (state: AppState) => state.createTenant.fields.configure.imageName
   );
   const customDockerhub = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.customDockerhub
+    (state: AppState) => state.createTenant.fields.configure.customDockerhub
   );
   const imageRegistry = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.imageRegistry
+    (state: AppState) => state.createTenant.fields.configure.imageRegistry
   );
   const imageRegistryUsername = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.imageRegistryUsername
+      state.createTenant.fields.configure.imageRegistryUsername
   );
   const imageRegistryPassword = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.imageRegistryPassword
+      state.createTenant.fields.configure.imageRegistryPassword
   );
 
   const prometheusCustom = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusEnabled
+    (state: AppState) => state.createTenant.fields.configure.prometheusEnabled
   );
   const tenantCustom = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.tenantCustom
+    (state: AppState) => state.createTenant.fields.configure.tenantCustom
   );
   const logSearchCustom = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchEnabled
+    (state: AppState) => state.createTenant.fields.configure.logSearchEnabled
   );
   const logSearchVolumeSize = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchVolumeSize
+    (state: AppState) => state.createTenant.fields.configure.logSearchVolumeSize
   );
 
   const prometheusVolumeSize = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusVolumeSize
+      state.createTenant.fields.configure.prometheusVolumeSize
   );
 
   const logSearchSelectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass
+      state.createTenant.fields.configure.logSearchSelectedStorageClass
   );
   const logSearchImage = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchImage
+    (state: AppState) => state.createTenant.fields.configure.logSearchImage
   );
   const kesImage = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.configure.kesImage
+    (state: AppState) => state.createTenant.fields.configure.kesImage
   );
   const logSearchPostgresImage = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchPostgresImage
+      state.createTenant.fields.configure.logSearchPostgresImage
   );
   const logSearchPostgresInitImage = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchPostgresInitImage
+      state.createTenant.fields.configure.logSearchPostgresInitImage
   );
   const prometheusSelectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass
+      state.createTenant.fields.configure.prometheusSelectedStorageClass
   );
   const prometheusImage = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusImage
+    (state: AppState) => state.createTenant.fields.configure.prometheusImage
   );
   const prometheusSidecarImage = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusSidecarImage
+      state.createTenant.fields.configure.prometheusSidecarImage
   );
   const prometheusInitImage = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.prometheusInitImage
+    (state: AppState) => state.createTenant.fields.configure.prometheusInitImage
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

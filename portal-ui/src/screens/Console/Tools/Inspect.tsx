@@ -38,10 +38,9 @@ import {
   performDownload,
 } from "../../../common/utils";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import { AppState } from "../../../store";
 import { InspectMenuIcon } from "../../../icons/SidebarMenus";
 import KeyRevealer from "./KeyRevealer";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -93,9 +92,7 @@ const ExampleBlock = ({
 
 const Inspect = ({ classes }: { classes: any }) => {
   const dispatch = useDispatch();
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const [volumeName, setVolumeName] = useState<string>("");
   const [inspectPath, setInspectPath] = useState<string>("");
   const [isEncrypt, setIsEncrypt] = useState<boolean>(true);

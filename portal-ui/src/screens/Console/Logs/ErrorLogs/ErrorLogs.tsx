@@ -18,7 +18,7 @@ import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   FormControl,
@@ -32,11 +32,7 @@ import moment from "moment/moment";
 import { ErrorResponseHandler } from "../../../../../src/common/types";
 import api from "../../../../../src/common/api";
 import { AppState } from "../../../../store";
-import {
-  logMessageReceived,
-  logResetMessages,
-  setLogsStarted,
-} from "../actions";
+
 import { LogMessage } from "../types";
 import { wsProtocol } from "../../../../utils/wsUtils";
 import {
@@ -54,8 +50,14 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import LogLine from "./LogLine";
+import {
+  logMessageReceived,
+  logResetMessages,
+  setLogsStarted,
+} from "../logsSlice";
+import makeStyles from "@mui/styles/makeStyles";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     logList: {
       background: "#fff",
@@ -86,7 +88,8 @@ const styles = (theme: Theme) =>
     ...logsCommon,
     ...inlineCheckboxes,
     ...containerForHeader(theme.spacing(4)),
-  });
+  })
+);
 
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
@@ -102,25 +105,15 @@ const SelectStyled = withStyles((theme: Theme) =>
   })
 )(InputBase);
 
-interface ILogs {
-  classes: any;
-  logMessageReceived: typeof logMessageReceived;
-  logResetMessages: typeof logResetMessages;
-  setLogsStarted: typeof setLogsStarted;
-  messages: LogMessage[];
-  logsStarted: boolean;
-}
-
 var c: any = null;
 
-const ErrorLogs = ({
-  classes,
-  logMessageReceived,
-  logResetMessages,
-  setLogsStarted,
-  messages,
-  logsStarted,
-}: ILogs) => {
+const ErrorLogs = () => {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+
+  const messages = useSelector((state: AppState) => state.logs.logMessages);
+  const logsStarted = useSelector((state: AppState) => state.logs.logsStarted);
+
   const [filter, setFilter] = useState<string>("");
   const [nodes, setNodes] = useState<string[]>([""]);
   const [selectedNode, setSelectedNode] = useState<string>("all");
@@ -131,7 +124,7 @@ const ErrorLogs = ({
   const [loadingNodes, setLoadingNodes] = useState<boolean>(false);
 
   const startLogs = () => {
-    logResetMessages();
+    dispatch(logResetMessages());
     const url = new URL(window.location.toString());
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
@@ -152,7 +145,7 @@ const ErrorLogs = ({
     if (c !== null) {
       c.onopen = () => {
         console.log("WebSocket Client Connected");
-        setLogsStarted(true);
+        dispatch(setLogsStarted(true));
         c.send("ok");
         interval = setInterval(() => {
           c.send("ok");
@@ -169,18 +162,18 @@ const ErrorLogs = ({
           userAgents.push(m.userAgent);
           setUserAgents(userAgents);
         }
-        logMessageReceived(m);
+        dispatch(logMessageReceived(m));
       };
       c.onclose = () => {
         clearInterval(interval);
         console.log("connection closed by server");
-        setLogsStarted(false);
+        dispatch(setLogsStarted(false));
       };
       return () => {
         c.close(1000);
         clearInterval(interval);
         console.log("closing websockets");
-        setLogsStarted(false);
+        dispatch(setLogsStarted(false));
       };
     }
   };
@@ -188,7 +181,7 @@ const ErrorLogs = ({
   const stopLogs = () => {
     if (c !== null && c !== undefined) {
       c.close(1000);
-      setLogsStarted(false);
+      dispatch(setLogsStarted(false));
     }
   };
 
@@ -397,16 +390,5 @@ const ErrorLogs = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  messages: state.logs.logMessages,
-  logsStarted: state.logs.logsStarted,
-});
-
-const connector = connect(mapState, {
-  logMessageReceived: logMessageReceived,
-  logResetMessages: logResetMessages,
-  setLogsStarted,
-});
-
 //export default withStyles(styles)(connector(ErrorLogs));
-export default connector(withStyles(styles)(ErrorLogs));
+export default ErrorLogs;

@@ -16,15 +16,17 @@
 
 import systemReducer from "./systemSlice";
 import traceReducer from "./screens/Console/Trace/traceSlice";
-import { logReducer } from "./screens/Console/Logs/reducers";
+import logReducer from "./screens/Console/Logs/logsSlice";
 import healthInfoReducer from "./screens/Console/HealthInfo/healthInfoSlice";
-import { watchReducer } from "./screens/Console/Watch/reducers";
+import watchReducer from "./screens/Console/Watch/watchSlice";
 import consoleReducer from "./screens/Console/consoleSlice";
 import bucketsReducer from "./screens/Console/Buckets/bucketsSlice";
+import bucketDetailsReducer from "./screens/Console/Buckets/BucketDetails/bucketDetailsSlice";
 import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserSlice";
 import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
 import { configureStore } from "@reduxjs/toolkit";
+import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenantSlice";
 
 export const store = configureStore({
   reducer: {
@@ -34,10 +36,13 @@ export const store = configureStore({
     watch: watchReducer,
     console: consoleReducer,
     buckets: bucketsReducer,
+    bucketDetails: bucketDetailsReducer,
     objectBrowser: objectBrowserReducer,
     healthInfo: healthInfoReducer,
-    tenants: tenantsReducer,
     dashboard: dashboardReducer,
+    // Operator Reducers
+    tenants: tenantsReducer,
+    createTenant: createTenantReducer,
   },
 });
 

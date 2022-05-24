@@ -22,7 +22,6 @@ import { LinearProgress } from "@mui/material";
 
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import {
   modalBasic,
   settingsCommon,
@@ -59,13 +58,11 @@ import {
 import HelpBox from "../../../../common/HelpBox";
 import { StorageIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import { resetAddTenantForm } from "../tenantsSlice";
+import { selFeatures } from "../../consoleSlice";
+import makeStyles from "@mui/styles/makeStyles";
+import { resetAddTenantForm } from "./createTenantSlice";
 
-interface IAddTenantProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     pageBox: {
       border: "1px solid #EAEAEA",
@@ -73,32 +70,30 @@ const styles = (theme: Theme) =>
     ...modalBasic,
     ...wizardCommon,
     ...settingsCommon,
-  });
+  })
+);
 
-const AddTenant = ({ classes }: IAddTenantProps) => {
+const AddTenant = () => {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const namespace = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.nameTenant.namespace
+    (state: AppState) => state.createTenant.fields.nameTenant.namespace
   );
   const validPages = useSelector(
-    (state: AppState) => state.tenants.createTenant.validPages
+    (state: AppState) => state.createTenant.validPages
   );
-  const fields = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields
-  );
+  const fields = useSelector((state: AppState) => state.createTenant.fields);
   const certificates = useSelector(
-    (state: AppState) => state.tenants.createTenant.certificates
+    (state: AppState) => state.createTenant.certificates
   );
   const selectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+      state.createTenant.fields.nameTenant.selectedStorageClass
   );
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
   const tolerations = useSelector(
-    (state: AppState) => state.tenants.createTenant.tolerations
+    (state: AppState) => state.createTenant.tolerations
   );
 
   // Modals
@@ -874,4 +869,4 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
   );
 };
 
-export default withStyles(styles)(AddTenant);
+export default AddTenant;

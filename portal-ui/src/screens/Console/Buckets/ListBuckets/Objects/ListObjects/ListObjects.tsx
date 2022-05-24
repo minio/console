@@ -95,7 +95,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../systemSlice";
-import { setBucketDetailsLoad, setBucketInfo } from "../../../bucketsSlice";
+
 import {
   makeid,
   storeCallForObjectWithID,
@@ -119,6 +119,12 @@ import {
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import makeStyles from "@mui/styles/makeStyles";
+import {
+  selBucketDetailsInfo,
+  selBucketDetailsLoading,
+  setBucketDetailsLoad,
+  setBucketInfo,
+} from "../../../BucketDetails/bucketDetailsSlice";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -303,12 +309,8 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     (state: AppState) => state.objectBrowser.simplePath
   );
 
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
-  const bucketInfo = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.bucketInfo
-  );
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+  const bucketInfo = useSelector(selBucketDetailsInfo);
   const allowResources = useSelector(
     (state: AppState) => state.console.session.allowResources
   );
@@ -921,14 +923,14 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
                     errorMessage = "something went wrong";
                   }
                 }
-                dispatch(dispatch(failObject(identity)));
+                dispatch(failObject(identity));
                 reject({ status: xhr.status, message: errorMessage });
               }
             };
 
             xhr.upload.addEventListener("error", (event) => {
               reject(errorMessage);
-              dispatch(dispatch(failObject(identity)));
+              dispatch(failObject(identity));
               return;
             });
 
@@ -1013,7 +1015,6 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     },
     [bucketName, dispatch, simplePath]
   );
-
 
   const onDrop = useCallback(
     (acceptedFiles: any[]) => {

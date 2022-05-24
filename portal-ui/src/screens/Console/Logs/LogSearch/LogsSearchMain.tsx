@@ -29,8 +29,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import { niceBytes, nsToSeconds } from "../../../../common/utils";
-
-import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
@@ -49,6 +47,7 @@ import { SecureComponent } from "../../../../common/SecureComponent";
 import { SearchIcon } from "../../../../icons";
 import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { selFeatures } from "../../consoleSlice";
 
 interface ILogSearchProps {
   classes: any;
@@ -122,9 +121,7 @@ const styles = (theme: Theme) =>
 
 const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const dispatch = useDispatch();
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [timeStart, setTimeStart] = useState<any>(null);

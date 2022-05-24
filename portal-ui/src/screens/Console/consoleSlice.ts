@@ -16,6 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ISessionResponse } from "./types";
+import { AppState } from "../../store";
 
 export interface ConsoleState {
   session: ISessionResponse;
@@ -46,5 +47,7 @@ export const consoleSlice = createSlice({
 });
 
 export const { saveSessionResponse, resetSession } = consoleSlice.actions;
+export const selSession = (state: AppState) => state.console.session;
+export const selFeatures = (state: AppState) => state.console.session.features;
 
 export default consoleSlice.reducer;
