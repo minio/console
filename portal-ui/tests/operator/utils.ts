@@ -16,10 +16,11 @@
 
 import { Selector, t } from 'testcafe';
 
+const host: string = "http://localhost:9090";
 
 export const loginToOperator = async () => {
     await t
-        .navigateTo("http://localhost:9090/login")
+        .navigateTo(`${host}/login`)
         .typeText("#jwt", "anyrandompasswordwillwork")
         .click("#do-login");
 }
@@ -30,12 +31,12 @@ export const createTenant = async (tenantName: string) => {
     await checkTenantExists(tenantName);
 }
     
-export const createTenantWithoutAuditLog = async (tenantName) => {
+export const createTenantWithoutAuditLog = async (tenantName: string) => {
     await fillTenantInformation(tenantName);
     await t
-    .click("#wizard-step-audit-log")
-    .click("#enableLogging")
-    .click("#wizard-button-Create");
+        .click("#wizard-step-audit-log")
+        .click("#enableLogging")
+        .click("#wizard-button-Create");
     await checkTenantExists(tenantName);
 }
     
@@ -49,7 +50,7 @@ const fillTenantInformation = async (tenantName: string) => {
         .wait(1000);
 }
 
-const checkTenantExists = async (tenantName) => {
+const checkTenantExists = async (tenantName: string) => {
     await t
         .wait(1000)
         .click("#close")
@@ -68,8 +69,36 @@ export const deleteTenant = async (tenantName: string) => {
         .notOk();
 }
 
-
-const goToTenant = async (tenantName) => {
+export const goToTenant = async (tenantName: string) => {
     await t.click(Selector(`#list-tenant-${tenantName}`))
 }
 
+export const goToVolumesInTenant = async (tenantName: string) => {
+    const path: string = `${host}/namespaces/${tenantName}/tenants/${tenantName}/volumes`;
+    await redirectToPath(path);
+}
+
+export const goToPodsInTenant = async (tenantName: string) => {
+    await t.click(`#list-tenant-${tenantName}`);
+    await t.click(Selector(`a[href$="/pods"]`))
+}
+
+export const goToPodInTenant = async (tenantName: string) => {
+    await goToPodsInTenant(tenantName);
+    await t.click(Selector("div.ReactVirtualized__Table__row").child(0));
+}
+
+export const goToPodSection = async (index: number) => {
+    await t
+        .expect(Selector(`#simple-tab-${index}`).exists)
+        .ok()
+        .click(Selector(`#simple-tab-${index}`));
+}
+
+export const redirectToTenantsList = async () => {
+    await redirectToPath(`${host}/tenants`);
+}
+
+export const redirectToPath = async (path: string) => {
+    await t.navigateTo(path);
+}
