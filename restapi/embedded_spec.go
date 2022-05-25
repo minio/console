@@ -3999,6 +3999,37 @@ func init() {
         }
       }
     },
+    "/user/{name}/policies": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies assigned for a specified user",
+        "operationId": "GetSAUserPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/aUserPolicyResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
@@ -4246,6 +4277,14 @@ func init() {
       "type": "object",
       "properties": {
         "regToken": {
+          "type": "string"
+        }
+      }
+    },
+    "aUserPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "policy": {
           "type": "string"
         }
       }
@@ -11033,6 +11072,37 @@ func init() {
         }
       }
     },
+    "/user/{name}/policies": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies assigned for a specified user",
+        "operationId": "GetSAUserPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/aUserPolicyResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
@@ -11407,6 +11477,14 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "aUserPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string"
         }
       }
     },

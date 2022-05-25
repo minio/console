@@ -674,7 +674,6 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Valid",
 			args: args{
-
 				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("policylistgroups")) + "/groups",
 			},
 			expectedStatus: 200,
@@ -777,6 +776,73 @@ func Test_DeletePolicyAPI(t *testing.T) {
 
 			request, err := http.NewRequest(
 				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", tt.args.api), nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
+			}
+		})
+	}
+}
+
+func Test_GetAUserPolicyAPI(t *testing.T) {
+	assert := assert.New(t)
+	// Create a User with a Policy to use for testing
+	groups := []string{}
+	policies := []string{"readwrite"}
+	_, err := AddUser("getuserpolicyuser", "secretKey", groups, policies)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// encode usernames to pass to api
+	bName := []byte("getuserpolicyuser")
+	fName := []byte("failname")
+	encodedName := base64.URLEncoding.EncodeToString(bName)
+	encodedFailName := base64.URLEncoding.EncodeToString(fName)
+
+	type args struct {
+		api string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Get User Policy - Invalid",
+			args: args{
+				api: "/user/" + encodedFailName + "/policies",
+			},
+			expectedStatus: 401,
+			expectedError:  nil,
+		},
+		{
+			name: "Get User Policy - Valid",
+			args: args{
+				api: "/user/" + encodedName + "/policies",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1%s", tt.args.api), nil)
 			if err != nil {
 				log.Println(err)
 				return
