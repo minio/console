@@ -47,12 +47,12 @@ test("Test describe section for PODs in new tenant", async (t) => {
   await loginToOperator();
   await createTenant(tenantName);
   await t.wait(15000) // wait for PODs to be created
-  await testPVCDescribe(tenantName);
+  await testPODDescribe(tenantName);
   await redirectToTenantsList();
   await deleteTenant(tenantName);
 });
 
-const testPVCDescribe = async (tenantName: string) => {
+const testPODDescribe = async (tenantName: string) => {
   await goToPodInTenant(tenantName);
   await goToPodSection(1);
   await checkPVCSDescribeHasSections();
