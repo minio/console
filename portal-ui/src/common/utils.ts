@@ -696,3 +696,4 @@ export const getCookieValue = (cookieName: string) => {
       ?.pop() || ""
   );
 };
+
