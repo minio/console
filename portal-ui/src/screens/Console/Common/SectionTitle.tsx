@@ -21,6 +21,7 @@ type Props = {
   separator?: boolean;
   actions?: React.ReactNode;
   icon?: React.ReactNode;
+  children: string;
 };
 
 const SectionTitle: React.FC<Props> = ({
