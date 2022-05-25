@@ -17,7 +17,9 @@
 import React from "react";
 import { Box } from "@mui/material";
 
-type Props = {};
+type Props = {
+  children: React.ReactNode;
+};
 
 const ContentBox: React.FC<Props> = ({ children }) => {
   return (
