@@ -96,7 +96,7 @@ const MenuItem = ({
   );
 
   const selectMenuHandler = useCallback(
-    (e) => {
+    (e: any) => {
       onExpand(page.id);
       setSelectedMenuItem(page.id);
       page.onClick && page.onClick(e);

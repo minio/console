@@ -178,7 +178,7 @@ const AddServiceAccount = ({ classes, match }: IAddServiceAccountProps) => {
           >
             <Box>
               <SectionTitle icon={<ServiceAccountCredentialsIcon />}>
-                Create Service Account for {userName}
+                {`Create Service Account for ${userName}`}
               </SectionTitle>
               <form
                 noValidate
