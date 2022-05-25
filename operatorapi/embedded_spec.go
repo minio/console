@@ -608,7 +608,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/csrElement"
+              "$ref": "#/definitions/csrElements"
             }
           },
           "default": {
@@ -2384,6 +2384,17 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "csrElements": {
+      "type": "object",
+      "properties": {
+        "csrElement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/csrElement"
+          }
         }
       }
     },
@@ -5201,7 +5212,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/csrElement"
+              "$ref": "#/definitions/csrElements"
             }
           },
           "default": {
@@ -7820,6 +7831,17 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "csrElements": {
+      "type": "object",
+      "properties": {
+        "csrElement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/csrElement"
+          }
         }
       }
     },
