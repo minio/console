@@ -149,7 +149,7 @@ const AddNotificationEndpoint = ({
   };
 
   const onValueChange = useCallback(
-    (newValue) => {
+    (newValue: IElementValue[]) => {
       setValueArr(newValue);
     },
     [setValueArr]

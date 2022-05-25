@@ -16,7 +16,9 @@
 
 import React from "react";
 
-type Props = {};
+type Props = {
+  children: string;
+};
 
 const SectionH1: React.FC<Props> = ({ children }) => {
   return (
