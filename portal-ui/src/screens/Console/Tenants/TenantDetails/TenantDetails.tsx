@@ -559,6 +559,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
               label: "Pods",
               value: "pods",
               component: Link,
+              id: "tenant-pod-tab",
               to: getRoutePath("pods"),
             },
           }}
