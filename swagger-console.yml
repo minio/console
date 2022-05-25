@@ -1607,6 +1607,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - Policy
+  /user/{name}/policies:
+    get:
+      summary: returns policies assigned for a specified user
+      operationId: GetSAUserPolicy
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/aUserPolicyResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Policy
   /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user
@@ -4848,3 +4868,8 @@ definitions:
         type: array
         items:
           type: string
+  aUserPolicyResponse:
+    type: object
+    properties:
+      policy:
+        type: string
