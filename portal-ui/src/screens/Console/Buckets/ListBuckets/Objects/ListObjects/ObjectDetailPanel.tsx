@@ -92,6 +92,12 @@ const styles = () =>
     ObjectDetailsTitle: {
       display: "flex",
       alignItems: "center",
+      "& .min-icon": {
+        width: 26,
+        height: 26,
+        minWidth: 26,
+        minHeight: 26,
+      }
     },
     objectNameContainer: {
       whiteSpace: "nowrap",
@@ -627,7 +633,7 @@ const ObjectDetailPanel = ({
           <Box className={classes.detailContainer}>
             <strong>Name:</strong>
             <br />
-            {objectName}
+            <div style={{ overflowWrap: "break-word" }}>{objectName}</div>
           </Box>
           {selectedVersion !== "" && (
             <Box className={classes.detailContainer}>
