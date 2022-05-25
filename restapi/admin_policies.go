@@ -25,9 +25,9 @@ import (
 	"strings"
 
 	"github.com/minio/console/pkg/utils"
-
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	policyApi "github.com/minio/console/restapi/operations/policy"
+	s3 "github.com/minio/minio-go/v7"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -169,7 +169,12 @@ func getSetAccessRuleWithBucketResponse(session *models.Principal, params bucket
 	}
 	errorVal := client.SetAccess(ctx, prefixAccess.Access, false)
 	if errorVal != nil {
-		return false, ErrorWithContext(ctx, errorVal.Cause)
+		returnError := ErrorWithContext(ctx, errorVal.Cause)
+		minioError := s3.ToErrorResponse(errorVal.Cause)
+		if minioError.Code == "NoSuchBucket" {
+			returnError.Code = 404
+		}
+		return false, returnError
 	}
 	return true, nil
 }

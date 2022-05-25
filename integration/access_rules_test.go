@@ -34,6 +34,7 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 	AddBucket("testaccessruleadd", false, false, nil, nil)
 
 	type args struct {
+		bucket string
 		prefix string
 		access string
 	}
@@ -46,6 +47,7 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 		{
 			name: "Create Access Rule - Valid",
 			args: args{
+				bucket: "testaccessruleadd",
 				prefix: "/test/",
 				access: "readonly",
 			},
@@ -53,12 +55,23 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 			expectedError:  nil,
 		},
 		{
-			name: "Create Group - Invalid",
+			name: "Add Access Rule - Invalid",
 			args: args{
+				bucket: "testaccessruleadd",
 				prefix: "/test/",
 				access: "readonl",
 			},
 			expectedStatus: 500,
+			expectedError:  nil,
+		},
+		{
+			name: "Add Access Rule - Invalid Bucket",
+			args: args{
+				bucket: "fakebucket",
+				prefix: "/test/",
+				access: "readonl",
+			},
+			expectedStatus: 404,
 			expectedError:  nil,
 		},
 	}
@@ -76,7 +89,57 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 			requestDataJSON, _ := json.Marshal(requestDataPolicy)
 			requestDataBody := bytes.NewReader(requestDataJSON)
 			request, err := http.NewRequest(
-				"PUT", "http://localhost:9090/api/v1/bucket/testaccessruleadd/access-rules", requestDataBody)
+				"PUT", fmt.Sprintf("http://localhost:9090/api/v1/bucket/%s/access-rules", tt.args.bucket), requestDataBody)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
+			}
+		})
+	}
+}
+
+func Test_GetAccessRulesAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddBucket("testaccessruleget", false, false, nil, nil)
+
+	type args struct {
+		bucket string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Get Access Rule - Valid",
+			args: args{
+				bucket: "testaccessruleget",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			request, err := http.NewRequest(
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1/bucket/%s/access-rules", tt.args.bucket), nil)
 			if err != nil {
 				log.Println(err)
 				return
