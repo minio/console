@@ -15,17 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import get from "lodash/get";
 import NameTenantMain from "./NameTenantMain";
 import { IMkEnvs, resourcesConfigurations } from "./utils";
-import { AppState } from "../../../../../../store";
+import { selFeatures } from "../../../../consoleSlice";
 
-interface ITenantResources {
-  features?: string[];
-}
-
-const TenantResources = ({ features }: ITenantResources) => {
+const TenantResources = () => {
+  const features = useSelector(selFeatures);
   const [formRender, setFormRender] = useState<IMkEnvs | null>(null);
 
   useEffect(() => {
@@ -55,10 +52,4 @@ const TenantResources = ({ features }: ITenantResources) => {
   return <NameTenantMain formToRender={formRender} />;
 };
 
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, null);
-
-export default connector(TenantResources);
+export default TenantResources;

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,12 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  LOG_MESSAGE_RECEIVED,
-  LOG_RESET_MESSAGES,
-  LOG_SET_STARTED,
-  LogActionTypes,
-} from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LogMessage } from "./types";
 
 export interface LogState {
@@ -32,47 +27,40 @@ const initialState: LogState = {
   logsStarted: false,
 };
 
-export function logReducer(
-  state = initialState,
-  action: LogActionTypes
-): LogState {
-  switch (action.type) {
-    case LOG_MESSAGE_RECEIVED:
-      // if it's a simple ConsoleMsg, append it to the current ConsoleMsg in the
-      // state if any
-      let msgs = [...state.logMessages];
+export const logsSlice = createSlice({
+  name: "logs",
+  initialState,
+  reducers: {
+    logMessageReceived: (state, action: PayloadAction<LogMessage>) => {
+      let msgs = state.logMessages;
 
       if (
         msgs.length > 0 &&
-        action.message.time.getFullYear() === 1 &&
-        action.message.ConsoleMsg !== ""
+        action.payload.time.getFullYear() === 1 &&
+        action.payload.ConsoleMsg !== ""
       ) {
         for (let m in msgs) {
           if (msgs[m].time.getFullYear() === 1) {
             msgs[
               m
-            ].ConsoleMsg = `${msgs[m].ConsoleMsg}\n${action.message.ConsoleMsg}`;
+            ].ConsoleMsg = `${msgs[m].ConsoleMsg}\n${action.payload.ConsoleMsg}`;
           }
         }
       } else {
-        msgs.push(action.message);
+        msgs.push(action.payload);
       }
+      state.logMessages = msgs;
+    },
+    logResetMessages: (state) => {
+      state.logMessages = [];
+    },
+    setLogsStarted: (state, action: PayloadAction<boolean>) => {
+      state.logsStarted = action.payload;
+    },
+  },
+});
 
-      return {
-        ...state,
-        logMessages: msgs,
-      };
-    case LOG_RESET_MESSAGES:
-      return {
-        ...state,
-        logMessages: [],
-      };
-    case LOG_SET_STARTED:
-      return {
-        ...state,
-        logsStarted: action.status,
-      };
-    default:
-      return state;
-  }
-}
+export const { logMessageReceived, logResetMessages, setLogsStarted } =
+  logsSlice.actions;
+
+export default logsSlice.reducer;

@@ -36,7 +36,7 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SectionH1 from "../../../Common/SectionH1";
-import { isPageValid, updateAddField } from "../../tenantsSlice";
+import { isPageValid, updateAddField } from "../createTenantSlice";
 
 interface IConfigureProps {
   classes: any;
@@ -85,48 +85,44 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
   const dispatch = useDispatch();
 
   const storageClasses = useSelector(
-    (state: AppState) => state.tenants.createTenant.storageClasses
+    (state: AppState) => state.createTenant.storageClasses
   );
   const logSearchEnabled = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchEnabled
+    (state: AppState) => state.createTenant.fields.configure.logSearchEnabled
   );
   const logSearchVolumeSize = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchVolumeSize
+    (state: AppState) => state.createTenant.fields.configure.logSearchVolumeSize
   );
   const logSearchSelectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass
+      state.createTenant.fields.configure.logSearchSelectedStorageClass
   );
   const logSearchImage = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchImage
+    (state: AppState) => state.createTenant.fields.configure.logSearchImage
   );
   const logSearchPostgresImage = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchPostgresImage
+      state.createTenant.fields.configure.logSearchPostgresImage
   );
   const logSearchPostgresInitImage = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchPostgresInitImage
+      state.createTenant.fields.configure.logSearchPostgresInitImage
   );
   const selectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+      state.createTenant.fields.nameTenant.selectedStorageClass
   );
   const tenantSecurityContext = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.tenantSecurityContext
+      state.createTenant.fields.configure.tenantSecurityContext
   );
   const logSearchSecurityContext = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.logSearchSecurityContext
+      state.createTenant.fields.configure.logSearchSecurityContext
   );
   const logSearchPostgresSecurityContext = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure
-        .logSearchPostgresSecurityContext
+      state.createTenant.fields.configure.logSearchPostgresSecurityContext
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

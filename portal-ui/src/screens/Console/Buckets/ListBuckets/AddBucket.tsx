@@ -41,7 +41,11 @@ import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMe
 import FormLayout from "../../Common/FormLayout";
 import HelpBox from "../../../../common/HelpBox";
 import SectionTitle from "../../Common/SectionTitle";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  selDistSet,
+  selSiteRep,
+  setErrorSnackMessage,
+} from "../../../../systemSlice";
 import {
   addBucketEnableObjectLocking,
   addBucketName,
@@ -141,12 +145,8 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
   const retentionValidity = useSelector(
     (state: AppState) => state.buckets.addBucketRetentionValidity
   );
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
-  const siteReplicationInfo = useSelector(
-    (state: AppState) => state.system.siteReplicationInfo
-  );
+  const distributedSetup = useSelector(selDistSet);
+  const siteReplicationInfo = useSelector(selSiteRep);
 
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [sendEnabled, setSendEnabled] = useState<boolean>(false);

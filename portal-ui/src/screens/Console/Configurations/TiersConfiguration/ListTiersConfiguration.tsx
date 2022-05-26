@@ -45,7 +45,6 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import { AppState } from "../../../../store";
 import DistributedOnly from "../../Common/DistributedOnly/DistributedOnly";
 import {
   CONSOLE_UI_RESOURCE,
@@ -55,7 +54,7 @@ import {
 import { SecureComponent } from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -96,9 +95,7 @@ const styles = (theme: Theme) =>
 
 const ListTiersConfiguration = ({ classes, history }: IListTiersConfig) => {
   const dispatch = useDispatch();
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);

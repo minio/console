@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BucketInfo } from "./types";
 
 export interface BucketsState {
   open: boolean;
@@ -30,13 +29,6 @@ export interface BucketsState {
   addBucketRetentionMode: string;
   addBucketRetentionUnit: string;
   addBucketRetentionValidity: number;
-  bucketDetails: BucketDetailsState;
-}
-
-export interface BucketDetailsState {
-  selectedTab: string;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
 }
 
 const initialState: BucketsState = {
@@ -52,11 +44,6 @@ const initialState: BucketsState = {
   addBucketRetentionMode: "compliance",
   addBucketRetentionUnit: "days",
   addBucketRetentionValidity: 180,
-  bucketDetails: {
-    selectedTab: "summary",
-    loadingBucket: false,
-    bucketInfo: null,
-  },
 };
 
 export const bucketsSlice = createSlice({
@@ -99,9 +86,7 @@ export const bucketsSlice = createSlice({
     addBucketRetentionValidity: (state, action: PayloadAction<number>) => {
       state.addBucketRetentionValidity = action.payload;
     },
-    setBucketDetailsTab: (state, action: PayloadAction<string>) => {
-      state.bucketDetails.selectedTab = action.payload;
-    },
+
     addBucketReset: (state) => {
       state.addBucketName = "";
       state.addBucketVersioningEnabled = false;
@@ -114,12 +99,6 @@ export const bucketsSlice = createSlice({
       state.addBucketRetentionMode = "compliance";
       state.addBucketRetentionUnit = "days";
       state.addBucketRetentionValidity = 180;
-    },
-    setBucketDetailsLoad: (state, action: PayloadAction<boolean>) => {
-      state.bucketDetails.loadingBucket = action.payload;
-    },
-    setBucketInfo: (state, action: PayloadAction<BucketInfo | null>) => {
-      state.bucketDetails.bucketInfo = action.payload;
     },
   },
 });
@@ -138,9 +117,6 @@ export const {
   addBucketRetentionMode,
   addBucketRetentionUnit,
   addBucketRetentionValidity,
-  setBucketDetailsTab,
-  setBucketDetailsLoad,
-  setBucketInfo,
 } = bucketsSlice.actions;
 
 export default bucketsSlice.reducer;

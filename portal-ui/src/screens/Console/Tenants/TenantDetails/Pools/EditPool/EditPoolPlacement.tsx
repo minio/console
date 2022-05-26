@@ -322,13 +322,12 @@ const Affinity = ({ classes }: IAffinityProps) => {
                           <SelectWrapper
                             onChange={(e: SelectChangeEvent<string>) => {
                               const newKey = e.target.value as string;
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-
-                              arrCp[i].key = e.target.value as string;
-                              arrCp[i].value = keyValueMap[newKey][0];
+                              const newLKP: LabelKeyPair = {
+                                key: newKey,
+                                value: keyValueMap[newKey][0],
+                              };
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = newLKP;
                               dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             id="select-access-policy"
@@ -345,11 +344,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
                             name={`nodeselector-${i.toString()}`}
                             value={kvp.key}
                             onChange={(e) => {
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-                              arrCp[i].key = e.target.value;
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = {
+                                key: arrCp[i].key,
+                                value: e.target.value as string,
+                              };
                               dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
@@ -361,11 +360,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
                         {keyOptions.length > 0 && (
                           <SelectWrapper
                             onChange={(e: SelectChangeEvent<string>) => {
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-                              arrCp[i].value = e.target.value as string;
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = {
+                                key: arrCp[i].key,
+                                value: e.target.value as string,
+                              };
                               dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             id="select-access-policy"
@@ -388,11 +387,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
                             name={`nodeselector-${i.toString()}`}
                             value={kvp.value}
                             onChange={(e) => {
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-                              arrCp[i].value = e.target.value;
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = {
+                                key: arrCp[i].key,
+                                value: e.target.value as string,
+                              };
                               dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
@@ -405,7 +404,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                           <IconButton
                             size={"small"}
                             onClick={() => {
-                              const arrCp = Object.assign([], keyValuePairs);
+                              const arrCp = [...keyValuePairs];
                               if (keyOptions.length > 0) {
                                 arrCp.push({
                                   key: keyOptions[0].value,

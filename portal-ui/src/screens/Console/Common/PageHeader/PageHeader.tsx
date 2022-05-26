@@ -28,6 +28,8 @@ import ConsoleLogo from "../../../../icons/ConsoleLogo";
 import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
 import { Box } from "@mui/material";
 import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
+import { selFeatures } from "../../consoleSlice";
+import { selOpMode } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -104,15 +106,11 @@ const PageHeader = ({
   const sidebarOpen = useSelector(
     (state: AppState) => state.system.sidebarOpen
   );
-  const operatorMode = useSelector(
-    (state: AppState) => state.system.operatorMode
-  );
+  const operatorMode = useSelector(selOpMode);
   const managerObjects = useSelector(
     (state: AppState) => state.objectBrowser.objectManager.objectsToManage
   );
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
   const managerOpen = useSelector(
     (state: AppState) => state.objectBrowser.objectManager.managerOpen
   );

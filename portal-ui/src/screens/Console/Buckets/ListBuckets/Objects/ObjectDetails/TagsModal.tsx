@@ -21,8 +21,6 @@ import { Box, Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-
-import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
@@ -43,7 +41,10 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import { SecureComponent } from "../../../../../../common/SecureComponent";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
-import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  selDistSet,
+  setModalErrorSnackMessage,
+} from "../../../../../../systemSlice";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -99,9 +100,7 @@ const AddTagModal = ({
   classes,
 }: ITagModal) => {
   const dispatch = useDispatch();
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);

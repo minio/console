@@ -51,9 +51,8 @@ import {
 import { LifecycleConfigIcon } from "../../../../icons";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { BucketVersioning } from "../types";
-import { AppState } from "../../../../store";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { selDistSet, setModalErrorSnackMessage } from "../../../../systemSlice";
 
 interface IReplicationModal {
   open: boolean;
@@ -100,9 +99,7 @@ const AddLifecycleModal = ({
   bucketName,
 }: IReplicationModal) => {
   const dispatch = useDispatch();
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [tiersList, setTiersList] = useState<ITiersDropDown[]>([]);
   const [addLoading, setAddLoading] = useState(false);

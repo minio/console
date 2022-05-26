@@ -59,7 +59,8 @@ import {
   setStorageClassesList,
   setStorageType,
   updateAddField,
-} from "../../../tenantsSlice";
+} from "../../createTenantSlice";
+import { selFeatures } from "../../../../consoleSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,25 +85,23 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   const dispatch = useDispatch();
 
   const tenantName = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.nameTenant.tenantName
+    (state: AppState) => state.createTenant.fields.nameTenant.tenantName
   );
   const namespace = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.nameTenant.namespace
+    (state: AppState) => state.createTenant.fields.nameTenant.namespace
   );
   const selectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+      state.createTenant.fields.nameTenant.selectedStorageClass
   );
   const selectedStorageType = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.nameTenant.selectedStorageType
+      state.createTenant.fields.nameTenant.selectedStorageType
   );
   const storageClasses = useSelector(
-    (state: AppState) => state.tenants.createTenant.storageClasses
+    (state: AppState) => state.createTenant.storageClasses
   );
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
 
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);

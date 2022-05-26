@@ -24,12 +24,11 @@ import {
   TextField,
 } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../store";
-import { watchMessageReceived, watchResetMessages } from "./actions";
 import { Bucket, BucketList, EventInfo } from "./types";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -44,8 +43,10 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
+import makeStyles from "@mui/styles/makeStyles";
+import { watchMessageReceived, watchResetMessages } from "./watchSlice";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     searchPrefix: {
       flexGrow: 1,
@@ -62,7 +63,8 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
-  });
+  })
+);
 
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
@@ -83,19 +85,12 @@ const SelectStyled = withStyles((theme: Theme) =>
   })
 )(InputBase);
 
-interface IWatch {
-  classes: any;
-  watchMessageReceived: typeof watchMessageReceived;
-  watchResetMessages: typeof watchResetMessages;
-  messages: EventInfo[];
-}
+const Watch = () => {
+  const dispatch = useDispatch();
+  const classes = useStyles();
 
-const Watch = ({
-  classes,
-  watchMessageReceived,
-  watchResetMessages,
-  messages,
-}: IWatch) => {
+  const messages = useSelector((state: AppState) => state.watch.messages);
+
   const [start, setStart] = useState(false);
   const [bucketName, setBucketName] = useState("Select Bucket");
   const [prefix, setPrefix] = useState("");
@@ -121,7 +116,7 @@ const Watch = ({
   }, []);
 
   useEffect(() => {
-    watchResetMessages();
+    dispatch(watchResetMessages());
     // begin watch if bucketName in bucketList and start pressed
     if (start && bucketList.some((bucket) => bucket.name === bucketName)) {
       const url = new URL(window.location.toString());
@@ -150,7 +145,7 @@ const Watch = ({
           let m: EventInfo = JSON.parse(message.data.toString());
           m.Time = new Date(m.Time.toString());
           m.key = Math.random();
-          watchMessageReceived(m);
+          dispatch(watchMessageReceived(m));
         };
         c.onclose = () => {
           clearInterval(interval);
@@ -169,15 +164,7 @@ const Watch = ({
       // reset start status
       setStart(false);
     }
-  }, [
-    watchMessageReceived,
-    start,
-    bucketList,
-    bucketName,
-    prefix,
-    suffix,
-    watchResetMessages,
-  ]);
+  }, [dispatch, start, bucketList, bucketName, prefix, suffix]);
 
   const bucketNames = bucketList.map((bucketName) => ({
     label: bucketName.name,
@@ -296,13 +283,4 @@ const Watch = ({
   );
 };
 
-const mapState = (state: AppState) => ({
-  messages: state.watch.messages,
-});
-
-const connector = connect(mapState, {
-  watchMessageReceived: watchMessageReceived,
-  watchResetMessages: watchResetMessages,
-});
-
-export default connector(withStyles(styles)(Watch));
+export default Watch;

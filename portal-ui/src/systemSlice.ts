@@ -16,6 +16,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { snackBarMessage, SRInfoStateType } from "./types";
 import { ErrorResponseHandler } from "./common/types";
+import { AppState } from "./store";
 
 // determine whether we have the sidebar state stored on localstorage
 const initSideBarOpen = localStorage.getItem("sidebarOpen")
@@ -153,5 +154,9 @@ export const {
   globalSetDistributedSetup,
   setSiteReplicationInfo,
 } = systemSlice.actions;
+
+export const selDistSet = (state: AppState) => state.system.distributedSetup;
+export const selSiteRep = (state: AppState) => state.system.siteReplicationInfo;
+export const selOpMode = (state: AppState) => state.system.operatorMode;
 
 export default systemSlice.reducer;

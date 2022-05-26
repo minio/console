@@ -15,10 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
@@ -55,14 +54,15 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
-import { AppState } from "../../../store";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
+import makeStyles from "@mui/styles/makeStyles";
+import { selFeatures } from "../consoleSlice";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
 );
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...searchField,
@@ -73,16 +73,18 @@ const styles = (theme: Theme) =>
     },
     ...tableStyles,
     ...containerForHeader(theme.spacing(4)),
-  });
+  })
+);
 
 interface IServiceAccountsProps {
-  classes: any;
   history: any;
-  features: any;
 }
 
-const Account = ({ classes, history, features }: IServiceAccountsProps) => {
+const Account = ({ history }: IServiceAccountsProps) => {
   const dispatch = useDispatch();
+  const classes = useStyles();
+  const features = useSelector(selFeatures);
+
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
@@ -302,10 +304,4 @@ const Account = ({ classes, history, features }: IServiceAccountsProps) => {
   );
 };
 
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, null);
-
-export default withStyles(styles)(connector(Account));
+export default Account;

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  WATCH_MESSAGE_RECEIVED,
-  WATCH_RESET_MESSAGES,
-  WatchActionTypes,
-} from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EventInfo } from "./types";
 
 export interface WatchState {
@@ -29,22 +25,19 @@ const initialState: WatchState = {
   messages: [],
 };
 
-export function watchReducer(
-  state = initialState,
-  action: WatchActionTypes
-): WatchState {
-  switch (action.type) {
-    case WATCH_MESSAGE_RECEIVED:
-      return {
-        ...state,
-        messages: [...state.messages, action.message],
-      };
-    case WATCH_RESET_MESSAGES:
-      return {
-        ...state,
-        messages: [],
-      };
-    default:
-      return state;
-  }
-}
+export const watchSlice = createSlice({
+  name: "trace",
+  initialState,
+  reducers: {
+    watchMessageReceived: (state, action: PayloadAction<EventInfo>) => {
+      state.messages.push(action.payload);
+    },
+    watchResetMessages: (state) => {
+      state.messages = [];
+    },
+  },
+});
+
+export const { watchResetMessages, watchMessageReceived } = watchSlice.actions;
+
+export default watchSlice.reducer;

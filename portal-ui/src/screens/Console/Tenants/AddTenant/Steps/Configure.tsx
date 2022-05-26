@@ -41,7 +41,7 @@ import {
   isPageValid,
   removeMinIODomain,
   updateAddField,
-} from "../../tenantsSlice";
+} from "../createTenantSlice";
 
 interface IConfigureProps {
   classes: any;
@@ -105,30 +105,26 @@ const Configure = ({ classes }: IConfigureProps) => {
   const dispatch = useDispatch();
 
   const exposeMinIO = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.configure.exposeMinIO
+    (state: AppState) => state.createTenant.fields.configure.exposeMinIO
   );
   const exposeConsole = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.exposeConsole
+    (state: AppState) => state.createTenant.fields.configure.exposeConsole
   );
   const setDomains = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.configure.setDomains
+    (state: AppState) => state.createTenant.fields.configure.setDomains
   );
   const consoleDomain = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.consoleDomain
+    (state: AppState) => state.createTenant.fields.configure.consoleDomain
   );
   const minioDomains = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.minioDomains
+    (state: AppState) => state.createTenant.fields.configure.minioDomains
   );
   const tenantCustom = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.configure.tenantCustom
+    (state: AppState) => state.createTenant.fields.configure.tenantCustom
   );
   const tenantSecurityContext = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.configure.tenantSecurityContext
+      state.createTenant.fields.configure.tenantSecurityContext
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
