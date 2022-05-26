@@ -3,6 +3,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 
+interface IIconWithLabel {
+  classes: any;
+  icon: JSX.Element;
+  strings: string[];
+}
+
 const styles = (theme: Theme) =>
   createStyles({
     fileName: {
@@ -12,6 +18,8 @@ const styles = (theme: Theme) =>
         width: 16,
         height: 16,
         marginRight: 4,
+        minWidth: 16,
+        minHeight: 16,
       },
     },
     fileNameText: {
@@ -21,16 +29,12 @@ const styles = (theme: Theme) =>
     },
   });
 
-const IconWithLabel = (props: {
-  classes: any;
-  icon: JSX.Element;
-  strings: string[];
-}) => {
+const IconWithLabel = ({ classes, icon, strings }: IIconWithLabel) => {
   return (
-    <div className={props.classes.fileName}>
-      {props.icon}
-      <span className={props.classes.fileNameText}>
-        {props.strings[props.strings.length - 1]}
+    <div className={classes.fileName}>
+      {icon}
+      <span className={classes.fileNameText}>
+        {strings[strings.length - 1]}
       </span>
     </div>
   );

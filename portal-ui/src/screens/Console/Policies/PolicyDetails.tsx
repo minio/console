@@ -56,11 +56,11 @@ import {
 } from "../../../common/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
-import { AppState } from "../../../store";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import PolicyView from "./PolicyView";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
+import { selFeatures } from "../consoleSlice";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -100,9 +100,7 @@ interface IPolicyDetailsProps {
 const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
   const dispatch = useDispatch();
 
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
 
   const [policy, setPolicy] = useState<Policy | null>(null);
   const [policyStatements, setPolicyStatements] = useState<IAMStatement[]>([]);

@@ -24,8 +24,6 @@ import Grid from "@mui/material/Grid";
 import AddIcon from "../../../../icons/AddIcon";
 import LambdaIcon from "../../../../icons/LambdaIcon";
 import { BucketEvent, BucketEventList } from "../types";
-
-import { AppState } from "../../../../store";
 import {
   actionsTray,
   searchField,
@@ -45,6 +43,7 @@ import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -66,9 +65,7 @@ interface IBucketEventsProps {
 const BucketEventsPanel = ({ classes, match }: IBucketEventsProps) => {
   const dispatch = useDispatch();
 
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
+  const loadingBucket = useSelector(selBucketDetailsLoading);
 
   const [addEventScreenOpen, setAddEventScreenOpen] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);

@@ -30,8 +30,6 @@ import {
   pageContentStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-
-import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 
@@ -51,8 +49,17 @@ import {
 import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { TrashIcon } from "../../../../icons";
-import { setErrorSnackMessage } from "../../../../systemSlice";
-import { setBucketDetailsLoad, setBucketInfo } from "../bucketsSlice";
+import {
+  selDistSet,
+  selSiteRep,
+  setErrorSnackMessage,
+} from "../../../../systemSlice";
+import {
+  selBucketDetailsInfo,
+  selBucketDetailsLoading,
+  setBucketDetailsLoad,
+  setBucketInfo,
+} from "./bucketDetailsSlice";
 
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
@@ -107,18 +114,10 @@ interface IBucketDetailsProps {
 const BucketDetails = ({ classes, match, history }: IBucketDetailsProps) => {
   const dispatch = useDispatch();
 
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
-  const bucketInfo = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.bucketInfo
-  );
-  const siteReplicationInfo = useSelector(
-    (state: AppState) => state.system.siteReplicationInfo
-  );
+  const distributedSetup = useSelector(selDistSet);
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+  const bucketInfo = useSelector(selBucketDetailsInfo);
+  const siteReplicationInfo = useSelector(selSiteRep);
 
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);

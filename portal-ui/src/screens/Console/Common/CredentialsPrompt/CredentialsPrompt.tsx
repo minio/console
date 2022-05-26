@@ -27,7 +27,7 @@ import WarnIcon from "../../../../icons/WarnIcon";
 import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
 
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import { encodeURLString } from "../../../../common/utils";
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,7 +77,7 @@ const download = (filename: string, text: string) => {
   let element = document.createElement("a");
   element.setAttribute(
     "href",
-    "data:text/plain;charset=utf-8," + encodeURLString(text)
+    "data:text/plain;charset=utf-8," + text
   );
   element.setAttribute("download", filename);
 

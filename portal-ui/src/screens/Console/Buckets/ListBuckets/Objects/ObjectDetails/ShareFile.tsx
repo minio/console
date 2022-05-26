@@ -29,7 +29,6 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 
 import { IFileInfo } from "./types";
-import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
@@ -39,6 +38,7 @@ import { encodeURLString } from "../../../../../../common/utils";
 import { ShareIcon } from "../../../../../../icons";
 import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import {
+  selDistSet,
   setModalErrorSnackMessage,
   setModalSnackMessage,
 } from "../../../../../../systemSlice";
@@ -95,9 +95,7 @@ const ShareFile = ({
   dataObject,
 }: IShareFileProps) => {
   const dispatch = useDispatch();
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);

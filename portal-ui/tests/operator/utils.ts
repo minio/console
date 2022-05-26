@@ -16,7 +16,7 @@
 
 import { Selector, t } from 'testcafe';
 
-const host: string = "http://localhost:9090";
+const host: string = "http://localhost:5005";
 
 export const loginToOperator = async () => {
     await t
@@ -119,4 +119,3 @@ export const redirectToTenantsList = async () => {
 export const redirectToPath = async (path: string) => {
     await t.navigateTo(path);
 }
-

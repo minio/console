@@ -32,8 +32,8 @@ import api from "../../../common/api";
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import { validRoutes } from "../valid-routes";
-import { menuOpen, userLogged } from "../../../systemSlice";
-import { resetSession } from "../consoleSlice";
+import { menuOpen, selOpMode, userLogged } from "../../../systemSlice";
+import { resetSession, selFeatures } from "../consoleSlice";
 
 const drawerWidth = 250;
 
@@ -91,16 +91,12 @@ interface IMenuProps {
 const Menu = ({ classes }: IMenuProps) => {
   const dispatch = useDispatch();
 
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
 
   const sidebarOpen = useSelector(
     (state: AppState) => state.system.sidebarOpen
   );
-  const operatorMode = useSelector(
-    (state: AppState) => state.system.operatorMode
-  );
+  const operatorMode = useSelector(selOpMode);
 
   const logout = () => {
     const deleteSession = () => {

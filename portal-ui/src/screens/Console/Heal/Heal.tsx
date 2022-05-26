@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { HorizontalBar } from "react-chartjs-2";
 import {
   Button,
@@ -44,7 +44,6 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import { AppState } from "../../../store";
 import { ErrorResponseHandler } from "../../../common/types";
 import { HealIcon } from "../../../icons";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
@@ -53,8 +52,10 @@ import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
 import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
+import { selDistSet } from "../../../systemSlice";
+import makeStyles from "@mui/styles/makeStyles";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     graphContainer: {
       backgroundColor: "#fff",
@@ -96,12 +97,8 @@ const styles = (theme: Theme) =>
     ...inlineCheckboxes,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
-  });
-
-interface IHeal {
-  classes: any;
-  distributedSetup: boolean;
-}
+  })
+);
 
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
@@ -118,7 +115,10 @@ const SelectStyled = withStyles((theme: Theme) =>
   })
 )(InputBase);
 
-const Heal = ({ classes, distributedSetup }: IHeal) => {
+const Heal = () => {
+  const classes = useStyles();
+  const distributedSetup = useSelector(selDistSet);
+
   const [start, setStart] = useState(false);
   const [bucketName, setBucketName] = useState("");
   const [bucketList, setBucketList] = useState<Bucket[]>([]);
@@ -389,10 +389,4 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
   );
 };
 
-const mapState = (state: AppState) => ({
-  distributedSetup: state.system.distributedSetup,
-});
-
-const connector = connect(mapState, null);
-
-export default connector(withStyles(styles)(Heal));
+export default Heal;

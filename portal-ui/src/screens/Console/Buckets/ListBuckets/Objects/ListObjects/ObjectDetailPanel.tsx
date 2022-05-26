@@ -71,6 +71,7 @@ import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
 import Loader from "../../../../Common/Loader/Loader";
+import { selDistSet } from "../../../../../../systemSlice";
 import {
   makeid,
   storeCallForObjectWithID,
@@ -92,6 +93,12 @@ const styles = () =>
     ObjectDetailsTitle: {
       display: "flex",
       alignItems: "center",
+      "& .min-icon": {
+        width: 26,
+        height: 26,
+        minWidth: 26,
+        minHeight: 26,
+      }
     },
     objectNameContainer: {
       whiteSpace: "nowrap",
@@ -153,9 +160,7 @@ const ObjectDetailPanel = ({
 }: IObjectDetailPanelProps) => {
   const dispatch = useDispatch();
 
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
   );
@@ -627,7 +632,7 @@ const ObjectDetailPanel = ({
           <Box className={classes.detailContainer}>
             <strong>Name:</strong>
             <br />
-            {objectName}
+            <div style={{ overflowWrap: "break-word" }}>{objectName}</div>
           </Box>
           {selectedVersion !== "" && (
             <Box className={classes.detailContainer}>

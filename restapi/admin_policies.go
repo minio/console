@@ -25,9 +25,9 @@ import (
 	"strings"
 
 	"github.com/minio/console/pkg/utils"
-
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	policyApi "github.com/minio/console/restapi/operations/policy"
+	s3 "github.com/minio/minio-go/v7"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -133,6 +133,14 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return policyApi.NewGetUserPolicyOK().WithPayload(userPolicyResponse)
 	})
+	// Gets policies for specified user
+	api.PolicyGetSAUserPolicyHandler = policyApi.GetSAUserPolicyHandlerFunc(func(params policyApi.GetSAUserPolicyParams, session *models.Principal) middleware.Responder {
+		userPolicyResponse, err := getSAUserPolicyResponse(session, params)
+		if err != nil {
+			return policyApi.NewGetSAUserPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return policyApi.NewGetSAUserPolicyOK().WithPayload(userPolicyResponse)
+	})
 }
 
 func getListAccessRulesWithBucketResponse(session *models.Principal, params bucketApi.ListAccessRulesWithBucketParams) (*models.ListAccessRulesResponse, *models.Error) {
@@ -161,7 +169,12 @@ func getSetAccessRuleWithBucketResponse(session *models.Principal, params bucket
 	}
 	errorVal := client.SetAccess(ctx, prefixAccess.Access, false)
 	if errorVal != nil {
-		return false, ErrorWithContext(ctx, errorVal.Cause)
+		returnError := ErrorWithContext(ctx, errorVal.Cause)
+		minioError := s3.ToErrorResponse(errorVal.Cause)
+		if minioError.Code == "NoSuchBucket" {
+			returnError.Code = 404
+		}
+		return false, returnError
 	}
 	return true, nil
 }
@@ -363,8 +376,86 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 		return "nil", ErrorWithContext(ctx, err)
 	}
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
-
 	return string(rawPolicy), nil
+}
+
+func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUserPolicyParams) (*models.AUserPolicyResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	// serialize output
+	if session == nil {
+		return nil, ErrorWithContext(ctx, ErrPolicyNotFound)
+	}
+	// initialize admin client
+	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+		STSAccessKeyID:     session.STSAccessKeyID,
+		STSSecretAccessKey: session.STSSecretAccessKey,
+		STSSessionToken:    session.STSSessionToken,
+	})
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	userAdminClient := AdminClient{Client: mAdminClient}
+
+	userName, err := utils.DecodeBase64(params.Name)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	user, err := getUserInfo(ctx, userAdminClient, userName)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	var userPolicies []string
+	if len(user.PolicyName) > 0 {
+		userPolicies = strings.Split(user.PolicyName, ",")
+	}
+
+	for _, group := range user.MemberOf {
+		groupDesc, err := groupInfo(ctx, userAdminClient, group)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		if groupDesc.Policy != "" {
+			userPolicies = append(userPolicies, strings.Split(groupDesc.Policy, ",")...)
+		}
+	}
+
+	allKeys := make(map[string]bool)
+	var userPolicyList []string
+
+	for _, item := range userPolicies {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			userPolicyList = append(userPolicyList, item)
+		}
+	}
+	var userStatements []iampolicy.Statement
+
+	for _, pol := range userPolicyList {
+		policy, err := getPolicyStatements(ctx, userAdminClient, pol)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		userStatements = append(userStatements, policy...)
+	}
+
+	combinedPolicy := iampolicy.Policy{
+		Version:    "2012-10-17",
+		Statements: userStatements,
+	}
+
+	stringPolicy, err := json.Marshal(combinedPolicy)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	parsedPolicy := string(stringPolicy)
+
+	getUserPoliciesResponse := &models.AUserPolicyResponse{
+		Policy: parsedPolicy,
+	}
+
+	return getUserPoliciesResponse, nil
 }
 
 func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.ListGroupsForPolicyParams) ([]string, *models.Error) {
@@ -508,6 +599,17 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 		return nil, err
 	}
 	return policy, nil
+}
+
+// getPolicy Statements calls MinIO server to retrieve information of a canned policy.
+// and returns the associated Statements
+func getPolicyStatements(ctx context.Context, client MinioAdmin, name string) ([]iampolicy.Statement, error) {
+	policyRaw, err := client.getPolicy(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return policyRaw.Statements, nil
 }
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output

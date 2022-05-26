@@ -34,10 +34,11 @@ import makeStyles from "@mui/styles/makeStyles";
 import { routesAsKbarActions } from "./kbar-actions";
 import { Box } from "@mui/material";
 import { MenuExpandedIcon } from "../../icons/SidebarMenus";
-import { AppState } from "../../store";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import useApi from "./Common/Hooks/useApi";
 import { Bucket, BucketList } from "./Buckets/types";
+import { selFeatures } from "./consoleSlice";
+import { selOpMode } from "../../systemSlice";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -124,13 +125,10 @@ const KBarStateChangeMonitor = ({
   return null;
 };
 
-const CommandBar = ({
-  features = [],
-  operatorMode = false,
-}: {
-  operatorMode?: boolean;
-  features?: string[] | null;
-}) => {
+const CommandBar = () => {
+  const operatorMode = useSelector(selOpMode);
+  const features = useSelector(selFeatures);
+
   const [buckets, setBuckets] = useState<Bucket[]>([]);
 
   const [, invokeListBucketsApi] = useApi(
@@ -319,11 +317,4 @@ const ResultItem = React.forwardRef(
   }
 );
 
-const mapState = (state: AppState) => ({
-  operatorMode: state.system.operatorMode,
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, null);
-
-export default connector(CommandBar);
+export default CommandBar;
