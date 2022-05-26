@@ -16,7 +16,7 @@
 
 import { Selector, t } from 'testcafe';
 
-const host: string = "http://localhost:5005";
+const host: string = "http://localhost:9090";
 
 export const loginToOperator = async () => {
     await t
