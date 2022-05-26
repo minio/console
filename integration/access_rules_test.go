@@ -157,3 +157,60 @@ func Test_GetAccessRulesAPI(t *testing.T) {
 		})
 	}
 }
+
+func Test_DeleteAccessRuleAPI(t *testing.T) {
+	assert := assert.New(t)
+
+	AddBucket("testaccessruledelete", false, false, nil, nil)
+
+	type args struct {
+		prefix string
+		access string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  error
+	}{
+		{
+			name: "Delete Access Rule - Valid",
+			args: args{
+				prefix: "/test/",
+			},
+			expectedStatus: 200,
+			expectedError:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := &http.Client{
+				Timeout: 3 * time.Second,
+			}
+
+			requestDataPolicy := map[string]interface{}{}
+			requestDataPolicy["prefix"] = tt.args.prefix
+			requestDataPolicy["access"] = tt.args.access
+
+			requestDataJSON, _ := json.Marshal(requestDataPolicy)
+			requestDataBody := bytes.NewReader(requestDataJSON)
+			request, err := http.NewRequest(
+				"DELETE", "http://localhost:9090/api/v1/bucket/testaccessruledelete/access-rules", requestDataBody)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+			request.Header.Add("Content-Type", "application/json")
+			response, err := client.Do(request)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if response != nil {
+				assert.Equal(tt.expectedStatus, response.StatusCode, "Status Code is incorrect")
+			}
+		})
+	}
+}
