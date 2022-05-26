@@ -22,7 +22,9 @@ import {
   deleteTenant,
   redirectToTenantsList,
   goToPodInTenant,
-  goToPodSection
+  goToPodSection,
+  goToPvcInTenant,
+  goToPvcSection
 } from './utils';
 
 fixture("For user with default permissions").page("http://localhost:9090");
@@ -46,7 +48,7 @@ test("Test describe section for PODs in new tenant", async (t) => {
   const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
   await loginToOperator();
   await createTenant(tenantName);
-  await t.wait(15000) // wait for PODs to be created
+  await t.wait(20000) // wait for PODs to be created
   await testPODDescribe(tenantName);
   await redirectToTenantsList();
   await deleteTenant(tenantName);
@@ -55,10 +57,10 @@ test("Test describe section for PODs in new tenant", async (t) => {
 const testPODDescribe = async (tenantName: string) => {
   await goToPodInTenant(tenantName);
   await goToPodSection(1);
-  await checkPVCSDescribeHasSections();
+  await checkPodDescribeHasSections();
 }
 
-const checkPVCSDescribeHasSections = async () => {
+const checkPodDescribeHasSections = async () => {
   await t
     .expect(Selector("#pod-describe-summary").exists).ok()
     .expect(Selector("#pod-describe-annotations").exists).ok()
@@ -67,4 +69,27 @@ const checkPVCSDescribeHasSections = async () => {
     .expect(Selector("#pod-describe-tolerations").exists).ok()
     .expect(Selector("#pod-describe-volumes").exists).ok()
     .expect(Selector("#pod-describe-containers").exists).ok();
+}
+
+test("Test describe section for PVCs in new tenant", async (t) => {
+  const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
+  await loginToOperator();
+  await createTenant(tenantName);
+  await t.wait(20000) // wait for PVCs to be created
+  await testPvcDescribe(tenantName);
+  await redirectToTenantsList();
+  await deleteTenant(tenantName);
+});
+
+const testPvcDescribe = async (tenantName: string) => {
+  await goToPvcInTenant(tenantName);
+  await goToPvcSection(1);
+  await checkPvcDescribeHasSections();
+}
+
+const checkPvcDescribeHasSections = async () => {
+  await t
+    .expect(Selector("#pvc-describe-summary").exists).ok()
+    .expect(Selector("#pvc-describe-annotations").exists).ok()
+    .expect(Selector("#pvc-describe-labels").exists).ok()
 }
