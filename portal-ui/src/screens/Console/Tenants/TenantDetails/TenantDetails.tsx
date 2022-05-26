@@ -63,6 +63,7 @@ const PoolsSummary = withSuspense(React.lazy(() => import("./PoolsSummary")));
 const PodsSummary = withSuspense(React.lazy(() => import("./PodsSummary")));
 const TenantLogging = withSuspense(React.lazy(() => import("./TenantLogging")));
 const TenantEvents = withSuspense(React.lazy(() => import("./TenantEvents")));
+const TenantCSR = withSuspense(React.lazy(() => import("./TenantCSR")));
 const VolumesSummary = withSuspense(
   React.lazy(() => import("./VolumesSummary"))
 );
@@ -494,6 +495,10 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
                     component={TenantEvents}
                   />
                   <Route
+                    path={IAM_PAGES.NAMESPACE_TENANT_CSR}
+                    component={TenantCSR}
+                  />
+                  <Route
                     path={IAM_PAGES.NAMESPACE_TENANT}
                     component={() => (
                       <Redirect
@@ -603,6 +608,14 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
               component: Link,
               to: getRoutePath("license"),
             },
+          }}
+          {{
+            tabConfig: {
+              label: "Certificate Signing Request",
+              value: "csr",
+              component: Link,
+              to: getRoutePath("csr"),
+            }
           }}
         </VerticalTabs>
       </PageLayout>
