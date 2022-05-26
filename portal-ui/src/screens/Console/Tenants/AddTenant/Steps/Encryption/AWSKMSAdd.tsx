@@ -48,12 +48,6 @@ const AWSKMSAdd = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const enableEncryption = useSelector(
-    (state: AppState) => state.createTenant.fields.encryption.enableEncryption
-  );
-  const encryptionType = useSelector(
-    (state: AppState) => state.createTenant.fields.encryption.encryptionType
-  );
   const awsEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsEndpoint
   );
@@ -78,33 +72,29 @@ const AWSKMSAdd = () => {
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
-    if (enableEncryption) {
-      if (encryptionType === "aws") {
-        encryptionValidation = [
-          ...encryptionValidation,
-          {
-            fieldKey: "aws_endpoint",
-            required: true,
-            value: awsEndpoint,
-          },
-          {
-            fieldKey: "aws_region",
-            required: true,
-            value: awsRegion,
-          },
-          {
-            fieldKey: "aws_accessKey",
-            required: true,
-            value: awsAccessKey,
-          },
-          {
-            fieldKey: "aws_secretKey",
-            required: true,
-            value: awsSecretKey,
-          },
-        ];
-      }
-    }
+    encryptionValidation = [
+      ...encryptionValidation,
+      {
+        fieldKey: "aws_endpoint",
+        required: true,
+        value: awsEndpoint,
+      },
+      {
+        fieldKey: "aws_region",
+        required: true,
+        value: awsRegion,
+      },
+      {
+        fieldKey: "aws_accessKey",
+        required: true,
+        value: awsAccessKey,
+      },
+      {
+        fieldKey: "aws_secretKey",
+        required: true,
+        value: awsSecretKey,
+      },
+    ];
 
     const commonVal = commonFormValidation(encryptionValidation);
 
@@ -116,15 +106,7 @@ const AWSKMSAdd = () => {
     );
 
     setValidationErrors(commonVal);
-  }, [
-    enableEncryption,
-    encryptionType,
-    awsEndpoint,
-    awsRegion,
-    awsSecretKey,
-    awsAccessKey,
-    dispatch,
-  ]);
+  }, [awsEndpoint, awsRegion, awsSecretKey, awsAccessKey, dispatch]);
 
   // Common
   const updateField = useCallback(

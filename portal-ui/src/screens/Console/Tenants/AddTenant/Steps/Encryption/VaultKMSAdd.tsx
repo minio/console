@@ -55,13 +55,6 @@ const VaultKMSAdd = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const enableEncryption = useSelector(
-    (state: AppState) => state.createTenant.fields.encryption.enableEncryption
-  );
-  const encryptionType = useSelector(
-    (state: AppState) => state.createTenant.fields.encryption.encryptionType
-  );
-
   const vaultEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.vaultEndpoint
   );
@@ -102,42 +95,38 @@ const VaultKMSAdd = () => {
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
-    if (enableEncryption) {
-      if (encryptionType === "vault") {
-        encryptionValidation = [
-          ...encryptionValidation,
-          {
-            fieldKey: "vault_endpoint",
-            required: true,
-            value: vaultEndpoint,
-          },
-          {
-            fieldKey: "vault_id",
-            required: true,
-            value: vaultId,
-          },
-          {
-            fieldKey: "vault_secret",
-            required: true,
-            value: vaultSecret,
-          },
-          {
-            fieldKey: "vault_ping",
-            required: false,
-            value: vaultPing,
-            customValidation: parseInt(vaultPing) < 0,
-            customValidationMessage: "Value needs to be 0 or greater",
-          },
-          {
-            fieldKey: "vault_retry",
-            required: false,
-            value: vaultRetry,
-            customValidation: parseInt(vaultRetry) < 0,
-            customValidationMessage: "Value needs to be 0 or greater",
-          },
-        ];
-      }
-    }
+    encryptionValidation = [
+      ...encryptionValidation,
+      {
+        fieldKey: "vault_endpoint",
+        required: true,
+        value: vaultEndpoint,
+      },
+      {
+        fieldKey: "vault_id",
+        required: true,
+        value: vaultId,
+      },
+      {
+        fieldKey: "vault_secret",
+        required: true,
+        value: vaultSecret,
+      },
+      {
+        fieldKey: "vault_ping",
+        required: false,
+        value: vaultPing,
+        customValidation: parseInt(vaultPing) < 0,
+        customValidationMessage: "Value needs to be 0 or greater",
+      },
+      {
+        fieldKey: "vault_retry",
+        required: false,
+        value: vaultRetry,
+        customValidation: parseInt(vaultRetry) < 0,
+        customValidationMessage: "Value needs to be 0 or greater",
+      },
+    ];
 
     const commonVal = commonFormValidation(encryptionValidation);
 
@@ -150,8 +139,6 @@ const VaultKMSAdd = () => {
 
     setValidationErrors(commonVal);
   }, [
-    enableEncryption,
-    encryptionType,
     vaultEndpoint,
     vaultEngine,
     vaultId,
