@@ -35,11 +35,14 @@ import { getBytesNumber } from "../../../../common/utils";
 import { CertificateFile, FileValue, KeyFileValue } from "../tenantsSlice";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import { createTenantAsync } from "./thunks/createTenantThunk";
+import { commonFormValidation } from "../../../../utils/validationFunctions";
+import { flipValidPageInState } from "./sliceUtils";
 
 export interface ICreateTenant {
   addingTenant: boolean;
   page: number;
   validPages: string[];
+  validationErrors: { [key: string]: string };
   storageClasses: Opts[];
   limitSize: any;
   fields: IFieldStore;
@@ -64,6 +67,7 @@ const initialState: ICreateTenant = {
     "security",
     "encryption",
   ],
+  validationErrors: {},
   storageClasses: [],
   limitSize: {},
   fields: {
@@ -391,7 +395,6 @@ export const createTenantSlice = createSlice({
       }>
     ) => {
       let originValidPages = state.validPages;
-
       if (action.payload.valid) {
         if (!originValidPages.includes(action.payload.pageName)) {
           originValidPages.push(action.payload.pageName);
@@ -402,7 +405,6 @@ export const createTenantSlice = createSlice({
         const newSetOfPages = originValidPages.filter(
           (elm) => elm !== action.payload.pageName
         );
-
         state.validPages = [...newSetOfPages];
       }
     },
@@ -680,6 +682,7 @@ export const createTenantSlice = createSlice({
           "security",
           "encryption",
         ],
+        validationErrors: {},
         storageClasses: [],
         limitSize: {},
         fields: {
@@ -1069,6 +1072,29 @@ export const createTenantSlice = createSlice({
     setIDP: (state, action: PayloadAction<string>) => {
       state.fields.identityProvider.idpSelection = action.payload;
     },
+    setTenantName: (state, action: PayloadAction<string>) => {
+      state.fields.nameTenant.tenantName = action.payload;
+      delete state.validationErrors["tenant-name"];
+
+      const commonValidation = commonFormValidation([
+        {
+          fieldKey: "tenant-name",
+          required: true,
+          pattern: /^[a-z0-9-]{3,63}$/,
+          customPatternMessage:
+            "Name only can contain lowercase letters, numbers and '-'. Min. Length: 3",
+          value: action.payload,
+        },
+      ]);
+
+      let isValid = false;
+      if ("tenant-name" in commonValidation) {
+        isValid = true;
+        state.validationErrors["tenant-name"] = commonValidation["tenant-name"];
+      }
+
+      flipValidPageInState(state, "nameTenant", isValid);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -1125,6 +1151,7 @@ export const {
   addIDPADUsrAtIndex,
   removeIDPADUsrAtIndex,
   setIDP,
+  setTenantName,
 } = createTenantSlice.actions;
 
 export default createTenantSlice.reducer;
