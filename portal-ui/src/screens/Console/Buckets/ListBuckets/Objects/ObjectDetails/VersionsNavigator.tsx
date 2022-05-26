@@ -599,6 +599,7 @@ const VersionsNavigator = ({
             </Grid>
             <Grid item xs={12} className={classes.versionsVirtualPanel}>
               {actualInfo.version_id && actualInfo.version_id !== "null" && (
+                  // @ts-ignore
                 <List
                   style={{
                     width: "100%",

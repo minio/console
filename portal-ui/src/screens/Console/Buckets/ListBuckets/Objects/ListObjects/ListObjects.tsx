@@ -1016,6 +1016,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     [bucketName, dispatch, simplePath]
   );
 
+
   const onDrop = useCallback(
     (acceptedFiles: any[]) => {
       if (acceptedFiles && acceptedFiles.length > 0) {

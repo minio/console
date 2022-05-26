@@ -19,6 +19,7 @@ import { Button } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import clsx from "clsx";
 
 type ObjectActionButtonProps = {
   disabled?: boolean;
@@ -67,8 +68,11 @@ const ObjectActionButton = ({
       {...restProps}
       disabled={disabled}
       onClick={onClick}
-      className={classes.root}
+      className={clsx(classes.root, "noDefaultHeight")}
       startIcon={icon}
+      sx={{
+        height: "initial"
+      }}
     >
       <span className={"buttonItem"}>{label}</span>
     </Button>
