@@ -103,6 +103,9 @@ const WizardPage = ({
       >
         <div className={classes.buttonInnerContainer}>
           {page.buttons.map((btn) => {
+            if (btn.componentRender) {
+              return btn.componentRender;
+            }
             return (
               <Button
                 id={"wizard-button-" + btn.label}

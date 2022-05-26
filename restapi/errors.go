@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	ErrDefault                          = errors.New("an errors occurred, please try again")
+	ErrDefault                          = errors.New("an error occurred, please try again")
 	ErrInvalidLogin                     = errors.New("invalid Login")
 	ErrForbidden                        = errors.New("403 Forbidden")
 	ErrFileTooLarge                     = errors.New("413 File too Large")

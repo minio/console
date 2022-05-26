@@ -33,8 +33,11 @@ import {
 } from "./Steps/TenantResources/utils";
 import { getBytesNumber } from "../../../../common/utils";
 import { CertificateFile, FileValue, KeyFileValue } from "../tenantsSlice";
+import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
+import { createTenantAsync } from "./thunks/createTenantThunk";
 
 export interface ICreateTenant {
+  addingTenant: boolean;
   page: number;
   validPages: string[];
   storageClasses: Opts[];
@@ -43,9 +46,13 @@ export interface ICreateTenant {
   certificates: ICertificatesItems;
   nodeSelectorPairs: LabelKeyPair[];
   tolerations: ITolerationModel[];
+  // after creation states
+  createdAccount: NewServiceAccount | null;
+  showNewCredentials: boolean;
 }
 
 const initialState: ICreateTenant = {
+  addingTenant: false,
   page: 0,
   // We can assume all the other pages are valid with default configuration except for 'nameTenant'
   // because the user still have to choose a namespace and a name for the tenant
@@ -340,6 +347,8 @@ const initialState: ICreateTenant = {
       operator: ITolerationOperator.Equal,
     },
   ],
+  createdAccount: null,
+  showNewCredentials: false,
 };
 
 export const createTenantSlice = createSlice({
@@ -659,6 +668,7 @@ export const createTenantSlice = createSlice({
     },
     resetAddTenantForm: (state) => {
       state = {
+        addingTenant: false,
         page: 0,
         // We can assume all the other pages are valid with default configuration except for 'nameTenant'
         // because the user still have to choose a namespace and a name for the tenant
@@ -953,6 +963,8 @@ export const createTenantSlice = createSlice({
             operator: ITolerationOperator.Equal,
           },
         ],
+        createdAccount: null,
+        showNewCredentials: false,
       };
     },
     setKeyValuePairs: (state, action: PayloadAction<LabelKeyPair[]>) => {
@@ -1057,6 +1069,22 @@ export const createTenantSlice = createSlice({
     setIDP: (state, action: PayloadAction<string>) => {
       state.fields.identityProvider.idpSelection = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createTenantAsync.pending, (state, action) => {
+        state.addingTenant = true;
+        state.createdAccount = null;
+        state.showNewCredentials = false;
+      })
+      .addCase(createTenantAsync.rejected, (state, action) => {
+        state.addingTenant = false;
+      })
+      .addCase(createTenantAsync.fulfilled, (state, action) => {
+        state.addingTenant = false;
+        state.createdAccount = action.payload;
+        state.showNewCredentials = true;
+      });
   },
 });
 
