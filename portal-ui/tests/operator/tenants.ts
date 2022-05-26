@@ -48,7 +48,7 @@ test("Test describe section for PODs in new tenant", async (t) => {
   const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
   await loginToOperator();
   await createTenant(tenantName);
-  await t.wait(15000) // wait for PODs to be created
+  await t.wait(20000) // wait for PODs to be created
   await testPODDescribe(tenantName);
   await redirectToTenantsList();
   await deleteTenant(tenantName);
@@ -75,7 +75,7 @@ test("Test describe section for PVCs in new tenant", async (t) => {
   const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
   await loginToOperator();
   await createTenant(tenantName);
-  await t.wait(15000) // wait for PVCs to be created
+  await t.wait(20000) // wait for PVCs to be created
   await testPvcDescribe(tenantName);
   await redirectToTenantsList();
   await deleteTenant(tenantName);
