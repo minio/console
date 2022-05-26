@@ -557,6 +557,11 @@ const Console = ({ classes }: IConsoleProps) => {
       forceDisplay: true,
     },
     {
+      component: TenantDetails,
+      path: IAM_PAGES.NAMESPACE_TENANT_CSR,
+      forceDisplay: true,
+    },
+    {
       component: License,
       path: IAM_PAGES.LICENSE,
       forceDisplay: true,
