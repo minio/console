@@ -3999,6 +3999,37 @@ func init() {
         }
       }
     },
+    "/user/{name}/policies": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies assigned for a specified user",
+        "operationId": "GetSAUserPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/aUserPolicyResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
@@ -4203,6 +4234,42 @@ func init() {
           }
         }
       }
+    },
+    "/users/service-accounts": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Check number of service accounts for each user specified",
+        "operationId": "CheckUserServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedUsers",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userServiceAccountSummary"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4210,6 +4277,14 @@ func init() {
       "type": "object",
       "properties": {
         "regToken": {
+          "type": "string"
+        }
+      }
+    },
+    "aUserPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "policy": {
           "type": "string"
         }
       }
@@ -6898,6 +6973,33 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "userServiceAccountItem": {
+      "type": "object",
+      "properties": {
+        "numSAs": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userName": {
+          "type": "string"
+        }
+      }
+    },
+    "userServiceAccountSummary": {
+      "type": "object",
+      "properties": {
+        "hasSA": {
+          "type": "boolean"
+        },
+        "userServiceAccountList": {
+          "type": "array",
+          "title": "list of users with number of service accounts",
+          "items": {
+            "$ref": "#/definitions/userServiceAccountItem"
+          }
         }
       }
     },
@@ -10970,6 +11072,37 @@ func init() {
         }
       }
     },
+    "/user/{name}/policies": {
+      "get": {
+        "tags": [
+          "Policy"
+        ],
+        "summary": "returns policies assigned for a specified user",
+        "operationId": "GetSAUserPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/aUserPolicyResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/user/{name}/service-account-credentials": {
       "post": {
         "tags": [
@@ -11174,6 +11307,42 @@ func init() {
           }
         }
       }
+    },
+    "/users/service-accounts": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Check number of service accounts for each user specified",
+        "operationId": "CheckUserServiceAccounts",
+        "parameters": [
+          {
+            "name": "selectedUsers",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userServiceAccountSummary"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -11308,6 +11477,14 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "aUserPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string"
         }
       }
     },
@@ -13995,6 +14172,33 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "userServiceAccountItem": {
+      "type": "object",
+      "properties": {
+        "numSAs": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userName": {
+          "type": "string"
+        }
+      }
+    },
+    "userServiceAccountSummary": {
+      "type": "object",
+      "properties": {
+        "hasSA": {
+          "type": "boolean"
+        },
+        "userServiceAccountList": {
+          "type": "array",
+          "title": "list of users with number of service accounts",
+          "items": {
+            "$ref": "#/definitions/userServiceAccountItem"
+          }
         }
       }
     },

@@ -17,7 +17,6 @@
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 
 import {
@@ -44,15 +43,9 @@ import {
   IAM_PAGES_PERMISSIONS,
 } from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
-import { AppState } from "../../../../store";
-import { connect } from "react-redux";
+import makeStyles from "@mui/styles/makeStyles";
 
-interface IConfigurationOptions {
-  classes: any;
-  features: string[];
-}
-
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     settingsOptionsContainer: {
       display: "flex" as const,
@@ -67,9 +60,11 @@ const styles = (theme: Theme) =>
     ...searchField,
     ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
-  });
+  })
+);
 
-const ToolsList = ({ classes, features }: IConfigurationOptions) => {
+const ToolsList = () => {
+  const classes = useStyles();
   const configurationElements: IElement[] = [
     {
       icon: <LogsIcon />,
@@ -159,10 +154,4 @@ const ToolsList = ({ classes, features }: IConfigurationOptions) => {
   );
 };
 
-const mapState = (state: AppState) => ({
-  features: state.console.session.features,
-});
-
-const connector = connect(mapState, null);
-
-export default connector(withStyles(styles)(ToolsList));
+export default ToolsList;

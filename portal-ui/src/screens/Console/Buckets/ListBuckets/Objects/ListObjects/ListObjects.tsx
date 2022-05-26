@@ -95,7 +95,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../systemSlice";
-import { setBucketDetailsLoad, setBucketInfo } from "../../../bucketsSlice";
+
 import {
   makeid,
   storeCallForObjectWithID,
@@ -119,6 +119,12 @@ import {
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import makeStyles from "@mui/styles/makeStyles";
+import {
+  selBucketDetailsInfo,
+  selBucketDetailsLoading,
+  setBucketDetailsLoad,
+  setBucketInfo,
+} from "../../../BucketDetails/bucketDetailsSlice";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -303,12 +309,8 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     (state: AppState) => state.objectBrowser.simplePath
   );
 
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
-  const bucketInfo = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.bucketInfo
-  );
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+  const bucketInfo = useSelector(selBucketDetailsInfo);
   const allowResources = useSelector(
     (state: AppState) => state.console.session.allowResources
   );
@@ -496,7 +498,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
 
     if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
       dispatch(setObjectDetailsView(false));
-      dispatch(setSelectedObjectView(""));
+      dispatch(setSelectedObjectView(null));
       dispatch(
         setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
       );
@@ -921,14 +923,14 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
                     errorMessage = "something went wrong";
                   }
                 }
-                dispatch(dispatch(failObject(identity)));
+                dispatch(failObject(identity));
                 reject({ status: xhr.status, message: errorMessage });
               }
             };
 
             xhr.upload.addEventListener("error", (event) => {
               reject(errorMessage);
-              dispatch(dispatch(failObject(identity)));
+              dispatch(failObject(identity));
               return;
             });
 
@@ -1015,7 +1017,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   );
 
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles: any[]) => {
       if (acceptedFiles && acceptedFiles.length > 0) {
         let newFolderPath: string = acceptedFiles[0].path;
         uploadObject(acceptedFiles, newFolderPath);
@@ -1113,7 +1115,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
       elements = elements.filter((element) => element !== value);
     }
     setSelectedObjects(elements);
-    dispatch(setSelectedObjectView(""));
+    dispatch(setSelectedObjectView(null));
 
     return elements;
   };
@@ -1140,7 +1142,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   }
 
   const selectAllItems = () => {
-    dispatch(setSelectedObjectView(""));
+    dispatch(setSelectedObjectView(null));
 
     if (selectedObjects.length === payload.length) {
       setSelectedObjects([]);
@@ -1171,7 +1173,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   }
 
   const onClosePanel = (forceRefresh: boolean) => {
-    dispatch(setSelectedObjectView(""));
+    dispatch(setSelectedObjectView(null));
     dispatch(setVersionsModeEnabled({ status: false }));
     if (detailsOpen && selectedInternalPaths !== null) {
       // We change URL to be the contained folder

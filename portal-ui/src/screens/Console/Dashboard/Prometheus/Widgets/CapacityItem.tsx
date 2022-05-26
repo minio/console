@@ -87,19 +87,19 @@ const CapacityItem = ({
 
   const [middleLabel, unitValue] = (result?.innerLabel || "").split(" ");
 
-  const usedValueObj = dataInner[0];
-  const { value: usedValue = 0 } = usedValueObj || { value: 0 };
+  const usableValueObj = dataInner[0];
+  const { value: usableValue = 0 } = usableValueObj || { value: 0 };
 
   const plotValues = [
     {
-      value: parseInt(usedValue) * 5, //just for display
+      value: parseInt(usableValue),
       color: "#D6D6D6",
-      label: "Free Space",
+      label: "Usable Space",
     },
     {
-      value: parseInt(usedValue),
+      value: parseInt(usableValue),
       color: "#073052",
-      label: "Used Space",
+      label: "Usable Space",
     },
   ];
   return (
@@ -150,7 +150,7 @@ const CapacityItem = ({
             fontSize: 12,
           }}
         >
-          {niceBytes(usedValue)}
+          {niceBytes(usableValue)}
           <br />
           <Box
             sx={{
@@ -162,7 +162,7 @@ const CapacityItem = ({
               textAlign: "center",
             }}
           >
-            Reported usage
+            Current Usable Capacity
           </Box>
         </Box>
         <PieChart width={110} height={110}>

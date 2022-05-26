@@ -31,7 +31,6 @@ import {
   BucketReplicationRule,
 } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { AppState } from "../../../../store";
 import {
   hasPermission,
   SecureComponent,
@@ -46,6 +45,7 @@ import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import EditReplicationModal from "./EditReplicationModal";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -74,9 +74,7 @@ const BucketReplicationPanel = ({
 }: IBucketReplicationProps) => {
   const dispatch = useDispatch();
 
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
+  const loadingBucket = useSelector(selBucketDetailsLoading);
 
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [replicationRules, setReplicationRules] = useState<

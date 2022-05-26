@@ -59,14 +59,10 @@ export const niceBytesInt = (n: number, showK8sUnits: boolean = false) => {
   while (n >= 1024 && ++l) {
     n = n / 1024;
   }
-  //include a decimal point and a tenths-place digit if presenting
-  //less than ten of KB or greater units
+  // include a decimal point and a tenths-place digit if presenting
+  // less than ten of KB or greater units
   const k8sUnitsN = ["B", ...k8sUnits];
-  return (
-    n.toFixed(n < 10 && l > 0 ? 1 : 0) +
-    " " +
-    (showK8sUnits ? k8sUnitsN[l] : units[l])
-  );
+  return n.toFixed(1) + " " + (showK8sUnits ? k8sUnitsN[l] : units[l]);
 };
 
 export const setCookie = (name: string, val: string) => {
@@ -561,22 +557,13 @@ export const getTimeFromTimestamp = (
   fullDate: boolean = false
 ) => {
   const timestampToInt = parseInt(timestamp);
-
   if (isNaN(timestampToInt)) {
     return "";
   }
   const dateObject = new Date(timestampToInt * 1000);
 
   if (fullDate) {
-    return `${dateObject.getFullYear()}-${String(
-      dateObject.getMonth() + 1
-    ).padStart(2, "0")}-${String(dateObject.getDay()).padStart(
-      2,
-      "0"
-    )} ${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
-      2,
-      "0"
-    )}:${String(dateObject.getSeconds()).padStart(2, "0")}`;
+    return dateObject.toLocaleString();
   }
   return `${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
     2,
@@ -709,3 +696,4 @@ export const getCookieValue = (cookieName: string) => {
       ?.pop() || ""
   );
 };
+

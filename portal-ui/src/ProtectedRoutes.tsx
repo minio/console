@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   globalSetDistributedSetup,
   operatorMode,
+  selOpMode,
   setSiteReplicationInfo,
   userLogged,
 } from "./systemSlice";
@@ -40,9 +41,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const dispatch = useDispatch();
 
-  const isOperatorMode = useSelector(
-    (state: AppState) => state.system.operatorMode
-  );
+  const isOperatorMode = useSelector(selOpMode);
 
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);

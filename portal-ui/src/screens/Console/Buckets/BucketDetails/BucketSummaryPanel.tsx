@@ -21,7 +21,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Grid } from "@mui/material";
 import get from "lodash/get";
-import { AppState } from "../../../../store";
 import {
   BucketEncryptionInfo,
   BucketObjectLocking,
@@ -54,8 +53,12 @@ import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
 import ReportedUsage from "./SummaryItems/ReportedUsage";
 import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";
 import SectionTitle from "../../Common/SectionTitle";
-import { setErrorSnackMessage } from "../../../../systemSlice";
-import { setBucketDetailsLoad } from "../bucketsSlice";
+import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  selBucketDetailsInfo,
+  selBucketDetailsLoading,
+  setBucketDetailsLoad,
+} from "./bucketDetailsSlice";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -96,16 +99,10 @@ interface IBucketSummaryProps {
 const BucketSummary = ({ classes, match }: IBucketSummaryProps) => {
   const dispatch = useDispatch();
 
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
-  const bucketInfo = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.bucketInfo
-  );
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+  const bucketInfo = useSelector(selBucketDetailsInfo);
 
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
 
   const [encryptionCfg, setEncryptionCfg] =
     useState<BucketEncryptionInfo | null>(null);

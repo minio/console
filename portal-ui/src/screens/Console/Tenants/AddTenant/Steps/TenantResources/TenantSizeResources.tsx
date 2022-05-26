@@ -33,7 +33,7 @@ import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/I
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { floor } from "lodash";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { isPageValid, updateAddField } from "../../../tenantsSlice";
+import { isPageValid, updateAddField } from "../../createTenantSlice";
 
 interface ITenantSizeResourcesProps {
   classes: any;
@@ -66,62 +66,59 @@ ITenantSizeResourcesProps) => {
   const dispatch = useDispatch();
 
   const nodes = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.tenantSize.nodes
+    (state: AppState) => state.createTenant.fields.tenantSize.nodes
   );
 
   const resourcesSize = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesSize
+    (state: AppState) => state.createTenant.fields.tenantSize.resourcesSize
   );
   const selectedStorageClass = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.nameTenant.selectedStorageClass
+      state.createTenant.fields.nameTenant.selectedStorageClass
   );
   const maxCPUsUse = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.tenantSize.maxCPUsUse
+    (state: AppState) => state.createTenant.fields.tenantSize.maxCPUsUse
   );
   const maxMemorySize = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.maxMemorySize
+    (state: AppState) => state.createTenant.fields.tenantSize.maxMemorySize
   );
 
   const resourcesSpecifyLimit = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesSpecifyLimit
+      state.createTenant.fields.tenantSize.resourcesSpecifyLimit
   );
 
   const resourcesCPURequestError = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesCPURequestError
+      state.createTenant.fields.tenantSize.resourcesCPURequestError
   );
   const resourcesCPURequest = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesCPURequest
+      state.createTenant.fields.tenantSize.resourcesCPURequest
   );
   const resourcesCPULimitError = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesCPULimitError
+      state.createTenant.fields.tenantSize.resourcesCPULimitError
   );
   const resourcesCPULimit = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesCPULimit
+    (state: AppState) => state.createTenant.fields.tenantSize.resourcesCPULimit
   );
 
   const resourcesMemoryRequestError = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequestError
+      state.createTenant.fields.tenantSize.resourcesMemoryRequestError
   );
   const resourcesMemoryRequest = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesMemoryRequest
+      state.createTenant.fields.tenantSize.resourcesMemoryRequest
   );
   const resourcesMemoryLimitError = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesMemoryLimitError
+      state.createTenant.fields.tenantSize.resourcesMemoryLimitError
   );
   const resourcesMemoryLimit = useSelector(
     (state: AppState) =>
-      state.tenants.createTenant.fields.tenantSize.resourcesMemoryLimit
+      state.createTenant.fields.tenantSize.resourcesMemoryLimit
   );
 
   // Common

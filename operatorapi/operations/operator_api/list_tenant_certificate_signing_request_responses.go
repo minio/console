@@ -42,7 +42,7 @@ type ListTenantCertificateSigningRequestOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.CsrElement `json:"body,omitempty"`
+	Payload *models.CsrElements `json:"body,omitempty"`
 }
 
 // NewListTenantCertificateSigningRequestOK creates ListTenantCertificateSigningRequestOK with default headers values
@@ -52,13 +52,13 @@ func NewListTenantCertificateSigningRequestOK() *ListTenantCertificateSigningReq
 }
 
 // WithPayload adds the payload to the list tenant certificate signing request o k response
-func (o *ListTenantCertificateSigningRequestOK) WithPayload(payload *models.CsrElement) *ListTenantCertificateSigningRequestOK {
+func (o *ListTenantCertificateSigningRequestOK) WithPayload(payload *models.CsrElements) *ListTenantCertificateSigningRequestOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list tenant certificate signing request o k response
-func (o *ListTenantCertificateSigningRequestOK) SetPayload(payload *models.CsrElement) {
+func (o *ListTenantCertificateSigningRequestOK) SetPayload(payload *models.CsrElements) {
 	o.Payload = payload
 }
 

@@ -120,6 +120,14 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 		}
 		return accountApi.NewChangeUserPasswordCreated()
 	})
+	// Check number of Service Accounts for listed users
+	api.UserCheckUserServiceAccountsHandler = userApi.CheckUserServiceAccountsHandlerFunc(func(params userApi.CheckUserServiceAccountsParams, session *models.Principal) middleware.Responder {
+		userSAList, err := getCheckUserSAResponse(session, params)
+		if err != nil {
+			return userApi.NewCheckUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+		}
+		return userApi.NewCheckUserServiceAccountsOK().WithPayload(userSAList)
+	})
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
@@ -696,4 +704,41 @@ func getChangeUserPasswordResponse(session *models.Principal, params accountApi.
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
+}
+
+func getCheckUserSAResponse(session *models.Principal, params userApi.CheckUserServiceAccountsParams) (*models.UserServiceAccountSummary, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := AdminClient{Client: mAdmin}
+
+	var userServiceAccountList []*models.UserServiceAccountItem
+	hasSA := false
+	for _, user := range params.SelectedUsers {
+		listServAccs, err := adminClient.listServiceAccounts(ctx, user)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		numSAs := int64(len(listServAccs.Accounts))
+		if numSAs > 0 {
+			hasSA = true
+		}
+		userAccountItem := &models.UserServiceAccountItem{
+			UserName: user,
+			NumSAs:   numSAs,
+		}
+		userServiceAccountList = append(userServiceAccountList, userAccountItem)
+	}
+
+	userAccountList := &models.UserServiceAccountSummary{
+		UserServiceAccountList: userServiceAccountList,
+		HasSA:                  hasSA,
+	}
+
+	return userAccountList, nil
 }

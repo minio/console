@@ -28,6 +28,8 @@ remove_users() {
   mc admin user remove minio inspect-allowed-$TIMESTAMP
   mc admin user remove minio inspect-not-allowed-$TIMESTAMP
   mc admin user remove minio prefix-policy-ui-crash-$TIMESTAMP
+  mc admin user remove minio conditions-$TIMESTAMP
+  mc admin user remove minio conditions-2-$TIMESTAMP
 }
 
 remove_policies() {
@@ -50,6 +52,8 @@ remove_policies() {
   mc admin policy remove minio inspect-allowed-$TIMESTAMP
   mc admin policy remove minio inspect-not-allowed-$TIMESTAMPmc
   mc admin policy remove minio fix-prefix-policy-ui-crash-$TIMESTAMP
+  mc admin policy remove minio conditions-policy-$TIMESTAMP
+  mc admin policy remove minio conditions-policy-2-$TIMESTAMP
 }
 
 __init__() {

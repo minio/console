@@ -58,12 +58,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import SettingsIcon from "../../../icons/SettingsIcon";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { AppState } from "../../../store";
 
 import RegisterHelpBox from "./RegisterHelpBox";
 import RegistrationStatusBanner from "./RegistrationStatusBanner";
 import BackLink from "../../../common/BackLink";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { selOpMode, setErrorSnackMessage } from "../../../systemSlice";
 
 interface IRegister {
   classes: any;
@@ -153,9 +152,7 @@ const FormTitle = ({ icon = null, title }: { icon?: any; title: any }) => {
 
 const Register = ({ classes }: IRegister) => {
   const dispatch = useDispatch();
-  const operatorMode = useSelector(
-    (state: AppState) => state.system.operatorMode
-  );
+  const operatorMode = useSelector(selOpMode);
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");
   const [subnetEmail, setSubnetEmail] = useState<string>("");

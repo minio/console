@@ -42,7 +42,7 @@ import {
   deleteKeyPair,
   isPageValid,
   updateAddField,
-} from "../../tenantsSlice";
+} from "../createTenantSlice";
 
 interface ISecurityProps {
   classes: any;
@@ -120,22 +120,19 @@ const Security = ({ classes }: ISecurityProps) => {
   const dispatch = useDispatch();
 
   const enableTLS = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.security.enableTLS
+    (state: AppState) => state.createTenant.fields.security.enableTLS
   );
   const enableAutoCert = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.security.enableAutoCert
+    (state: AppState) => state.createTenant.fields.security.enableAutoCert
   );
   const enableCustomCerts = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.security.enableCustomCerts
+    (state: AppState) => state.createTenant.fields.security.enableCustomCerts
   );
   const minioCertificates = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.certificates.minioCertificates
+    (state: AppState) => state.createTenant.certificates.minioCertificates
   );
   const caCertificates = useSelector(
-    (state: AppState) => state.tenants.createTenant.certificates.caCertificates
+    (state: AppState) => state.createTenant.certificates.caCertificates
   );
 
   // Common

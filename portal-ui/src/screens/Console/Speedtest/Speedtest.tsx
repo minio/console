@@ -15,12 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import moment from "moment/moment";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import {
@@ -32,7 +31,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { wsProtocol } from "../../../utils/wsUtils";
 import { SpeedTestResponse } from "./types";
-import { AppState } from "../../../store";
 import { SpeedtestIcon } from "../../../icons";
 import {
   CONSOLE_UI_RESOURCE,
@@ -48,13 +46,10 @@ import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import HelpBox from "../../../common/HelpBox";
 import WarnIcon from "../../../icons/WarnIcon";
 import Loader from "../Common/Loader/Loader";
+import { selDistSet } from "../../../systemSlice";
+import makeStyles from "@mui/styles/makeStyles";
 
-interface ISpeedtest {
-  classes: any;
-  distributedSetup: boolean;
-}
-
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     advancedContent: {
       backgroundColor: "#FBFAFA",
@@ -79,9 +74,12 @@ const styles = (theme: Theme) =>
     ...searchField,
     ...formFieldStyles,
     ...containerForHeader(theme.spacing(4)),
-  });
+  })
+);
 
-const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
+const Speedtest = () => {
+  const distributedSetup = useSelector(selDistSet);
+  const classes = useStyles();
   const [start, setStart] = useState<boolean>(false);
 
   const [currStatus, setCurrStatus] = useState<SpeedTestResponse[] | null>(
@@ -311,10 +309,4 @@ const Speedtest = ({ classes, distributedSetup }: ISpeedtest) => {
   );
 };
 
-const mapState = (state: AppState) => ({
-  distributedSetup: state.system.distributedSetup,
-});
-
-const connector = connect(mapState, null);
-
-export default connector(withStyles(styles)(Speedtest));
+export default Speedtest;

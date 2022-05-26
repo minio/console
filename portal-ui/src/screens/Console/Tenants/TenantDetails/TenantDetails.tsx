@@ -359,6 +359,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
             actions={
               <div>
                 <BoxIconButton
+                  id={"delete-tenant"}
                   tooltip={"Delete"}
                   variant="outlined"
                   aria-label="Delete"
@@ -558,6 +559,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
               label: "Pods",
               value: "pods",
               component: Link,
+              id: "tenant-pod-tab",
               to: getRoutePath("pods"),
             },
           }}

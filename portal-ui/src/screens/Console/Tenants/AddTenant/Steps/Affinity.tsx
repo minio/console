@@ -48,7 +48,7 @@ import {
   setKeyValuePairs,
   setTolerationInfo,
   updateAddField,
-} from "../../tenantsSlice";
+} from "../createTenantSlice";
 
 interface IAffinityProps {
   classes: any;
@@ -119,21 +119,19 @@ const Affinity = ({ classes }: IAffinityProps) => {
   const dispatch = useDispatch();
 
   const podAffinity = useSelector(
-    (state: AppState) => state.tenants.createTenant.fields.affinity.podAffinity
+    (state: AppState) => state.createTenant.fields.affinity.podAffinity
   );
   const nodeSelectorLabels = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.affinity.nodeSelectorLabels
+    (state: AppState) => state.createTenant.fields.affinity.nodeSelectorLabels
   );
   const withPodAntiAffinity = useSelector(
-    (state: AppState) =>
-      state.tenants.createTenant.fields.affinity.withPodAntiAffinity
+    (state: AppState) => state.createTenant.fields.affinity.withPodAntiAffinity
   );
   const keyValuePairs = useSelector(
-    (state: AppState) => state.tenants.createTenant.nodeSelectorPairs
+    (state: AppState) => state.createTenant.nodeSelectorPairs
   );
   const tolerations = useSelector(
-    (state: AppState) => state.tenants.createTenant.tolerations
+    (state: AppState) => state.createTenant.tolerations
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -325,13 +323,12 @@ const Affinity = ({ classes }: IAffinityProps) => {
                           <SelectWrapper
                             onChange={(e: SelectChangeEvent<string>) => {
                               const newKey = e.target.value as string;
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-
-                              arrCp[i].key = e.target.value as string;
-                              arrCp[i].value = keyValueMap[newKey][0];
+                              const newLKP: LabelKeyPair = {
+                                key: newKey,
+                                value: keyValueMap[newKey][0],
+                              };
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = newLKP;
                               dispatch(setKeyValuePairs(arrCp));
                             }}
                             id="select-access-policy"
@@ -348,11 +345,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
                             name={`nodeselector-${i.toString()}`}
                             value={kvp.key}
                             onChange={(e) => {
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-                              arrCp[i].key = e.target.value;
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = {
+                                key: arrCp[i].key,
+                                value: e.target.value as string,
+                              };
                               dispatch(setKeyValuePairs(arrCp));
                             }}
                             index={i}
@@ -364,11 +361,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
                         {keyOptions.length > 0 && (
                           <SelectWrapper
                             onChange={(e: SelectChangeEvent<string>) => {
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-                              arrCp[i].value = e.target.value as string;
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = {
+                                key: arrCp[i].key,
+                                value: e.target.value as string,
+                              };
                               dispatch(setKeyValuePairs(arrCp));
                             }}
                             id="select-access-policy"
@@ -391,11 +388,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
                             name={`nodeselector-${i.toString()}`}
                             value={kvp.value}
                             onChange={(e) => {
-                              const arrCp: LabelKeyPair[] = Object.assign(
-                                [],
-                                keyValuePairs
-                              );
-                              arrCp[i].value = e.target.value;
+                              const arrCp: LabelKeyPair[] = [...keyValuePairs];
+                              arrCp[i] = {
+                                key: arrCp[i].key,
+                                value: e.target.value as string,
+                              };
                               dispatch(setKeyValuePairs(arrCp));
                             }}
                             index={i}
@@ -408,7 +405,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                           <IconButton
                             size={"small"}
                             onClick={() => {
-                              const arrCp = Object.assign([], keyValuePairs);
+                              const arrCp = [...keyValuePairs];
                               if (keyOptions.length > 0) {
                                 arrCp.push({
                                   key: keyOptions[0].value,

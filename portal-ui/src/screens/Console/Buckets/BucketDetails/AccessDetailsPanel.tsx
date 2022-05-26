@@ -15,21 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Paper } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { AppState } from "../../../../store";
 
 import { TabPanel } from "../../../shared/tabs";
 import { Policy } from "../../Policies/types";
-import { ISessionResponse } from "../../types";
 import { User } from "../../Users/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import history from "../../../../history";
-import { BucketInfo } from "../types";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
@@ -43,17 +40,10 @@ import {
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { tableStyles } from "../../Common/FormComponents/common/styleLibrary";
-import withStyles from "@mui/styles/withStyles";
 import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-  loadingBucket: state.buckets.bucketDetails.loadingBucket,
-  bucketInfo: state.buckets.bucketDetails.bucketInfo,
-});
-
-const connector = connect(mapState, null);
+import makeStyles from "@mui/styles/makeStyles";
+import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 
 function a11yProps(index: any) {
   return {
@@ -63,25 +53,20 @@ function a11yProps(index: any) {
 }
 
 interface IAccessDetailsProps {
-  session: ISessionResponse;
-
-  classes: any;
   match: any;
-  loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
 }
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...tableStyles,
-  });
-const AccessDetails = ({
-  match,
-
-  loadingBucket,
-  classes,
-}: IAccessDetailsProps) => {
+  })
+);
+const AccessDetails = ({ match }: IAccessDetailsProps) => {
   const dispatch = useDispatch();
+  const classes = useStyles();
+
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
   const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
@@ -241,4 +226,4 @@ const AccessDetails = ({
   );
 };
 
-export default withStyles(styles)(connector(AccessDetails));
+export default AccessDetails;

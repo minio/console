@@ -27,8 +27,6 @@ import {
   actionsTray,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-
-import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
@@ -43,6 +41,7 @@ import {
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
+import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,9 +61,7 @@ const BucketLifecyclePanel = ({
   classes,
   match,
 }: IBucketLifecyclePanelProps) => {
-  const loadingBucket = useSelector(
-    (state: AppState) => state.buckets.bucketDetails.loadingBucket
-  );
+  const loadingBucket = useSelector(selBucketDetailsLoading);
 
   const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);

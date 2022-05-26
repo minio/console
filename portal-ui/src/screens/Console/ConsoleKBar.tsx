@@ -16,14 +16,12 @@
 import * as React from "react";
 import { KBarProvider } from "kbar";
 import Console from "./Console";
-import { AppState } from "../../store";
 import { useSelector } from "react-redux";
 import CommandBar from "./CommandBar";
+import { selFeatures } from "./consoleSlice";
 
 const ConsoleKBar = () => {
-  const features = useSelector(
-    (state: AppState) => state.console.session.features
-  );
+  const features = useSelector(selFeatures);
   // if we are hiding the menu also disable the k-bar so just return console
   if (features?.includes("hide-menu")) {
     return <Console />;

@@ -132,6 +132,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		SystemCheckMinIOVersionHandler: system.CheckMinIOVersionHandlerFunc(func(params system.CheckMinIOVersionParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.CheckMinIOVersion has not yet been implemented")
 		}),
+		UserCheckUserServiceAccountsHandler: user.CheckUserServiceAccountsHandlerFunc(func(params user.CheckUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user.CheckUserServiceAccounts has not yet been implemented")
+		}),
 		ConfigurationConfigInfoHandler: configuration.ConfigInfoHandlerFunc(func(params configuration.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation configuration.ConfigInfo has not yet been implemented")
 		}),
@@ -233,6 +236,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
+		}),
+		PolicyGetSAUserPolicyHandler: policy.GetSAUserPolicyHandlerFunc(func(params policy.GetSAUserPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation policy.GetSAUserPolicy has not yet been implemented")
 		}),
 		ServiceAccountGetServiceAccountPolicyHandler: service_account.GetServiceAccountPolicyHandlerFunc(func(params service_account.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation service_account.GetServiceAccountPolicy has not yet been implemented")
@@ -540,6 +546,8 @@ type ConsoleAPI struct {
 	AccountChangeUserPasswordHandler account.ChangeUserPasswordHandler
 	// SystemCheckMinIOVersionHandler sets the operation handler for the check min i o version operation
 	SystemCheckMinIOVersionHandler system.CheckMinIOVersionHandler
+	// UserCheckUserServiceAccountsHandler sets the operation handler for the check user service accounts operation
+	UserCheckUserServiceAccountsHandler user.CheckUserServiceAccountsHandler
 	// ConfigurationConfigInfoHandler sets the operation handler for the config info operation
 	ConfigurationConfigInfoHandler configuration.ConfigInfoHandler
 	// UserCreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
@@ -608,6 +616,8 @@ type ConsoleAPI struct {
 	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
+	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
+	PolicyGetSAUserPolicyHandler policy.GetSAUserPolicyHandler
 	// ServiceAccountGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
 	ServiceAccountGetServiceAccountPolicyHandler service_account.GetServiceAccountPolicyHandler
 	// SiteReplicationGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
@@ -890,6 +900,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.SystemCheckMinIOVersionHandler == nil {
 		unregistered = append(unregistered, "system.CheckMinIOVersionHandler")
 	}
+	if o.UserCheckUserServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "user.CheckUserServiceAccountsHandler")
+	}
 	if o.ConfigurationConfigInfoHandler == nil {
 		unregistered = append(unregistered, "configuration.ConfigInfoHandler")
 	}
@@ -991,6 +1004,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
+	}
+	if o.PolicyGetSAUserPolicyHandler == nil {
+		unregistered = append(unregistered, "policy.GetSAUserPolicyHandler")
 	}
 	if o.ServiceAccountGetServiceAccountPolicyHandler == nil {
 		unregistered = append(unregistered, "service_account.GetServiceAccountPolicyHandler")
@@ -1376,6 +1392,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/check-version"] = system.NewCheckMinIOVersion(o.context, o.SystemCheckMinIOVersionHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/users/service-accounts"] = user.NewCheckUserServiceAccounts(o.context, o.UserCheckUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1512,6 +1532,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/metadata"] = object.NewGetObjectMetadata(o.context, o.ObjectGetObjectMetadataHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/user/{name}/policies"] = policy.NewGetSAUserPolicy(o.context, o.PolicyGetSAUserPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

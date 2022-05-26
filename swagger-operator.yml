@@ -327,7 +327,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/csrElement"
+            $ref: "#/definitions/csrElements"
         default:
           description: Generic error response.
           schema:
@@ -1633,6 +1633,14 @@ definitions:
         type: string
       password:
         type: string
+
+  csrElements:
+    type: object
+    properties:
+      csrElement:
+        type: array
+        items:
+          $ref: "#/definitions/csrElement"
 
   csrElement:
     type: object

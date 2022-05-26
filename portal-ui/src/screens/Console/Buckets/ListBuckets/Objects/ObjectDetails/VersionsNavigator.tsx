@@ -61,7 +61,10 @@ import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteSelectedVersions from "./DeleteSelectedVersions";
-import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  selDistSet,
+  setErrorSnackMessage,
+} from "../../../../../../systemSlice";
 import {
   makeid,
   storeCallForObjectWithID,
@@ -171,9 +174,7 @@ const VersionsNavigator = ({
     (state: AppState) => state.objectBrowser.selectedVersion
   );
 
-  const distributedSetup = useSelector(
-    (state: AppState) => state.system.distributedSetup
-  );
+  const distributedSetup = useSelector(selDistSet);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);

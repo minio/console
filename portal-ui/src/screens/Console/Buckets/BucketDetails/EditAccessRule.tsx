@@ -24,20 +24,12 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
-
-import { AppState } from "../../../../store";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { AddAccessRuleIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-
-const mapState = (state: AppState) => ({
-  session: state.console.session,
-});
-
-const connector = connect(mapState, null);
 
 interface IEditAccessRule {
   classes: any;
@@ -136,4 +128,4 @@ const EditAccessRule = ({
   );
 };
 
-export default withStyles(styles)(connector(EditAccessRule));
+export default withStyles(styles)(EditAccessRule);
