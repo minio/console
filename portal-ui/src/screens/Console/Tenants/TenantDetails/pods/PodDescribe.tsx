@@ -478,13 +478,13 @@ const PodDescribe = ({
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab id="pod-describe-summary"label="Summary" />
-            <Tab id="pod-describe-annotations"label="Annotations" />
-            <Tab id="pod-describe-labels"label="Labels" />
-            <Tab id="pod-describe-conditions"label="Conditions" />
-            <Tab id="pod-describe-tolerations"label="Tolerations" />
-            <Tab id="pod-describe-volumes"label="Volumes" />
-            <Tab id="pod-describe-containers"label="Containers" />
+            <Tab id="pod-describe-summary" label="Summary" />
+            <Tab id="pod-describe-annotations" label="Annotations" />
+            <Tab id="pod-describe-labels" label=" Labels" />
+            <Tab id="pod-describe-conditions" label="Conditions" />
+            <Tab id="pod-describe-tolerations" label="Tolerations" />
+            <Tab id="pod-describe-volumes" label="Volumes" />
+            <Tab id="pod-describe-containers" label="Containers" />
           </Tabs>
           {renderTabComponent(curTab, describeInfo)}
         </Grid>

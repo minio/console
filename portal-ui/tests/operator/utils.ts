@@ -80,7 +80,7 @@ export const goToVolumesInTenant = async (tenantName: string) => {
 
 export const goToPodsInTenant = async (tenantName: string) => {
     await t.click(`#list-tenant-${tenantName}`);
-    await t.click(Selector(`a[href$="/pods"]`))
+    await t.click(Selector(`a[href$="/pods"]`));
 }
 
 export const goToPodInTenant = async (tenantName: string) => {
@@ -89,6 +89,23 @@ export const goToPodInTenant = async (tenantName: string) => {
 }
 
 export const goToPodSection = async (index: number) => {
+    await t
+        .expect(Selector(`#simple-tab-${index}`).exists)
+        .ok()
+        .click(Selector(`#simple-tab-${index}`));
+}
+
+export const goToPvcsInTenant = async (tenantName: string) => {
+    await t.click(`#list-tenant-${tenantName}`);
+    await t.click(Selector(`a[href$="/volumes"]`));
+}
+
+export const goToPvcInTenant = async (tenantName: string) => {
+    await goToPvcsInTenant(tenantName);
+    await t.click(Selector("div.ReactVirtualized__Table__row").child(0));
+}
+
+export const goToPvcSection = async (index: number) => {
     await t
         .expect(Selector(`#simple-tab-${index}`).exists)
         .ok()

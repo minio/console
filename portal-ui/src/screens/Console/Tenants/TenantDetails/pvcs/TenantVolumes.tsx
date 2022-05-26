@@ -106,7 +106,7 @@ const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
               scrollButtons="auto">
 
               <Tab label="Events" id="simple-tab-0"/>
-              <Tab label="Describe" id="simple-tab-0"/>
+              <Tab label="Describe" id="simple-tab-1"/>
           </Tabs>
         </Grid>
         {curTab === 0 && (

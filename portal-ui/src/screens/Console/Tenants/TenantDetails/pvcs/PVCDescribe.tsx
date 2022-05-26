@@ -183,9 +183,9 @@ const PVCDescribe = ({
             aria-label="cluster-tabs"
             variant="scrollable"
             scrollButtons="auto">
-            <Tab label="Summary" />
-            <Tab label="Annotations" />
-            <Tab label="Labels" />
+            <Tab id="pvc-describe-summary" label="Summary" />
+            <Tab id="pvc-describe-annotations" label="Annotations" />
+            <Tab id="pvc-describe-labels" label="Labels" />
         </Tabs>
         {renderTabComponent(curTab, describeInfo)}
       </Grid>)}
