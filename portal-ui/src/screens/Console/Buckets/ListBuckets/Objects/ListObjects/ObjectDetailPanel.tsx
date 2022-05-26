@@ -98,7 +98,7 @@ const styles = () =>
         height: 26,
         minWidth: 26,
         minHeight: 26,
-      }
+      },
     },
     objectNameContainer: {
       whiteSpace: "nowrap",

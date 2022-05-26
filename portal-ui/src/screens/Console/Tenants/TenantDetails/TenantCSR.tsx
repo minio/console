@@ -15,17 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-import {useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import {
-    setErrorSnackMessage,
-} from "../../../../systemSlice";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 import {
   actionsTray,
   containerForHeader,
-  searchField, tableStyles,
+  searchField,
+  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -45,22 +44,22 @@ interface ITenantCSRProps {
 }
 
 const styles = (theme: Theme) =>
-    createStyles({
-      tableWrapper: {
-        height: "450px",
-      },
-      ...actionsTray,
-      ...searchField,
-      ...tableStyles,
-      ...containerForHeader(theme.spacing(4)),
-    });
+  createStyles({
+    tableWrapper: {
+      height: "450px",
+    },
+    ...actionsTray,
+    ...searchField,
+    ...tableStyles,
+    ...containerForHeader(theme.spacing(4)),
+  });
 
 const TenantCSR = ({
-                        classes,
-                        match,
-                        loadingTenant,
-                        setErrorSnackMessage,
-                      }: ITenantCSRProps) => {
+  classes,
+  match,
+  loadingTenant,
+  setErrorSnackMessage,
+}: ITenantCSRProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -77,54 +76,69 @@ const TenantCSR = ({
   useEffect(() => {
     if (loading) {
       api
-          .invoke(
-              "GET",
-              `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/csr`
-          )
-          .then((res) => {
-              for (var _i = 0; _i < res.csrElement.length; _i++) {
-                  var entry = res.csrElement[_i];
-                  csrStatus.push(entry.status)
-                  csrName.push(entry.name)
-                  csrAnnotations.push(entry.annotations)
-              }
-              setLoading(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-              dispatch(setErrorSnackMessage(err));
-          });
+        .invoke(
+          "GET",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/csr`
+        )
+        .then((res) => {
+          for (var _i = 0; _i < res.csrElement.length; _i++) {
+            var entry = res.csrElement[_i];
+            csrStatus.push(entry.status);
+            csrName.push(entry.name);
+            csrAnnotations.push(entry.annotations);
+          }
+          setLoading(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setErrorSnackMessage(err));
+        });
     }
-  }, [loading, tenantNamespace, tenantName, setErrorSnackMessage, csrAnnotations, csrName, csrStatus, dispatch]);
+  }, [
+    loading,
+    tenantNamespace,
+    tenantName,
+    setErrorSnackMessage,
+    csrAnnotations,
+    csrName,
+    csrStatus,
+    dispatch,
+  ]);
 
   return (
-      <Fragment>
-        <h1 className={classes.sectionTitle}>Certificate Signing Requests</h1>
-          <TableContainer component={Paper}>
-              <Table aria-label="collapsible table">
-                  <TableHead>
-                      <TableRow>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Status</TableCell>
-                          <TableCell>Annotation</TableCell>
-                          <TableCell />
-                      </TableRow>
-                  </TableHead>
-                  <TableBody>
-                      <TableRow>
-                          <TableCell>
-                              {csrName.map((csrName)=><p>{csrName}</p>)}
-                          </TableCell>
-                          <TableCell>
-                              {csrStatus.map((csrStatus)=><p>{csrStatus}</p>)}
-                          </TableCell>
-                          <TableCell>
-                            {csrAnnotations.map((csrAnnotations)=><p>{csrAnnotations}</p>)}
-                          </TableCell>
-                      </TableRow>
-                  </TableBody>
-              </Table>
-          </TableContainer>
-      </Fragment>
+    <Fragment>
+      <h1 className={classes.sectionTitle}>Certificate Signing Requests</h1>
+      <TableContainer component={Paper}>
+        <Table aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Annotation</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>
+                {csrName.map((csrName) => (
+                  <p>{csrName}</p>
+                ))}
+              </TableCell>
+              <TableCell>
+                {csrStatus.map((csrStatus) => (
+                  <p>{csrStatus}</p>
+                ))}
+              </TableCell>
+              <TableCell>
+                {csrAnnotations.map((csrAnnotations) => (
+                  <p>{csrAnnotations}</p>
+                ))}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Fragment>
   );
 };
 

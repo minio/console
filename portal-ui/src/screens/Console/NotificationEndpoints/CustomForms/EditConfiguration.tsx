@@ -131,7 +131,7 @@ const EditConfiguration = ({
   };
 
   const onValueChange = useCallback(
-    (newValue:IElementValue[]) => {
+    (newValue: IElementValue[]) => {
       setValueObj(newValue);
     },
     [setValueObj]
