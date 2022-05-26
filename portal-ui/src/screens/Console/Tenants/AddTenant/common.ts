@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,35 +13,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-export interface IWizardButton {
-  label?: string;
-  type?: string;
-  action?: (nextFunction: (to: string | number) => void) => void;
-  enabled?: boolean;
-  toPage?: number;
-  componentRender?: React.ReactNode;
-}
-
-export interface IWizardElement {
-  label: string;
-  componentRender: any;
-  buttons: IWizardButton[];
-  advancedOnly?: boolean;
-  loadingStep?: boolean;
-}
-
-export interface IWizardMain {
-  classes: any;
-  loadingStep?: boolean;
-  wizardSteps: IWizardElement[];
-  forModal?: boolean;
-}
-
-export interface IWizardPage {
-  classes: any;
-  page: IWizardElement;
-  pageChange: (to: string | number) => void;
-  loadingStep?: boolean;
-  forModal?: boolean;
-}
+export const requiredPages = [
+  "nameTenant",
+  "tenantSize",
+  "configure",
+  "affinity",
+  "identityProvider",
+  "security",
+  "encryption",
+];

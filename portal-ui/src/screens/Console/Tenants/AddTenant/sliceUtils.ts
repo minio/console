@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,34 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IWizardButton {
-  label?: string;
-  type?: string;
-  action?: (nextFunction: (to: string | number) => void) => void;
-  enabled?: boolean;
-  toPage?: number;
-  componentRender?: React.ReactNode;
-}
+import { ICreateTenant } from "./createTenantSlice";
+import { Draft } from "@reduxjs/toolkit";
 
-export interface IWizardElement {
-  label: string;
-  componentRender: any;
-  buttons: IWizardButton[];
-  advancedOnly?: boolean;
-  loadingStep?: boolean;
-}
+export const flipValidPageInState = (
+  state: Draft<ICreateTenant>,
+  pageName: string,
+  valid: boolean
+) => {
+  let originValidPages = state.validPages;
+  if (valid) {
+    if (!originValidPages.includes(pageName)) {
+      originValidPages.push(pageName);
 
-export interface IWizardMain {
-  classes: any;
-  loadingStep?: boolean;
-  wizardSteps: IWizardElement[];
-  forModal?: boolean;
-}
-
-export interface IWizardPage {
-  classes: any;
-  page: IWizardElement;
-  pageChange: (to: string | number) => void;
-  loadingStep?: boolean;
-  forModal?: boolean;
-}
+      state.validPages = [...originValidPages];
+    }
+  } else {
+    const newSetOfPages = originValidPages.filter((elm) => elm !== pageName);
+    state.validPages = [...newSetOfPages];
+  }
+};

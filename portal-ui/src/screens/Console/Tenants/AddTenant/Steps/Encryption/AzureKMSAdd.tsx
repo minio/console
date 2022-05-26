@@ -48,13 +48,6 @@ const AzureKMSAdd = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const enableEncryption = useSelector(
-    (state: AppState) => state.createTenant.fields.encryption.enableEncryption
-  );
-  const encryptionType = useSelector(
-    (state: AppState) => state.createTenant.fields.encryption.encryptionType
-  );
-
   const azureEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.azureEndpoint
   );
@@ -74,33 +67,29 @@ const AzureKMSAdd = () => {
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
-    if (enableEncryption) {
-      if (encryptionType === "azure") {
-        encryptionValidation = [
-          ...encryptionValidation,
-          {
-            fieldKey: "azure_endpoint",
-            required: true,
-            value: azureEndpoint,
-          },
-          {
-            fieldKey: "azure_tenant_id",
-            required: true,
-            value: azureTenantID,
-          },
-          {
-            fieldKey: "azure_client_id",
-            required: true,
-            value: azureClientID,
-          },
-          {
-            fieldKey: "azure_client_secret",
-            required: true,
-            value: azureClientSecret,
-          },
-        ];
-      }
-    }
+    encryptionValidation = [
+      ...encryptionValidation,
+      {
+        fieldKey: "azure_endpoint",
+        required: true,
+        value: azureEndpoint,
+      },
+      {
+        fieldKey: "azure_tenant_id",
+        required: true,
+        value: azureTenantID,
+      },
+      {
+        fieldKey: "azure_client_id",
+        required: true,
+        value: azureClientID,
+      },
+      {
+        fieldKey: "azure_client_secret",
+        required: true,
+        value: azureClientSecret,
+      },
+    ];
 
     const commonVal = commonFormValidation(encryptionValidation);
 
@@ -113,8 +102,6 @@ const AzureKMSAdd = () => {
 
     setValidationErrors(commonVal);
   }, [
-    enableEncryption,
-    encryptionType,
     azureEndpoint,
     azureTenantID,
     azureClientID,

@@ -58,6 +58,7 @@ import {
   setLimitSize,
   setStorageClassesList,
   setStorageType,
+  setTenantName,
   updateAddField,
 } from "../../createTenantSlice";
 import { selFeatures } from "../../../../consoleSlice";
@@ -76,6 +77,31 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
+const NameTenantField = () => {
+  const dispatch = useDispatch();
+  const tenantName = useSelector(
+    (state: AppState) => state.createTenant.fields.nameTenant.tenantName
+  );
+
+  const tenantNameError = useSelector(
+    (state: AppState) => state.createTenant.validationErrors["tenant-name"]
+  );
+
+  return (
+    <InputBoxWrapper
+      id="tenant-name"
+      name="tenant-name"
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setTenantName(e.target.value));
+      }}
+      label="Name"
+      value={tenantName}
+      required
+      error={tenantNameError || ""}
+    />
+  );
+};
+
 interface INameTenantMainScreen {
   classes: any;
   formToRender?: IMkEnvs;
@@ -84,9 +110,6 @@ interface INameTenantMainScreen {
 const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   const dispatch = useDispatch();
 
-  const tenantName = useSelector(
-    (state: AppState) => state.createTenant.fields.nameTenant.tenantName
-  );
   const namespace = useSelector(
     (state: AppState) => state.createTenant.fields.nameTenant.namespace
   );
@@ -220,14 +243,6 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
 
     const commonValidation = commonFormValidation([
       {
-        fieldKey: "tenant-name",
-        required: true,
-        pattern: /^[a-z0-9-]{3,63}$/,
-        customPatternMessage:
-          "Name only can contain lowercase letters, numbers and '-'. Min. Length: 3",
-        value: tenantName,
-      },
-      {
         fieldKey: "namespace",
         required: true,
         value: namespace,
@@ -237,7 +252,6 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
     ]);
 
     const isValid =
-      !("tenant-name" in commonValidation) &&
       !("namespace" in commonValidation) &&
       ((formToRender === IMkEnvs.default && storageClasses.length > 0) ||
         (formToRender !== IMkEnvs.default && selectedStorageType !== ""));
@@ -248,7 +262,6 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   }, [
     storageClasses,
     namespace,
-    tenantName,
     dispatch,
     emptyNamespace,
     loadingNamespaceInfo,
@@ -293,18 +306,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
                   </span>
                 </div>
                 <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="tenant-name"
-                    name="tenant-name"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      updateField("tenantName", e.target.value);
-                      frmValidationCleanup("tenant-name");
-                    }}
-                    label="Name"
-                    value={tenantName}
-                    required
-                    error={validationErrors["tenant-name"] || ""}
-                  />
+                  <NameTenantField />
                 </div>
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>

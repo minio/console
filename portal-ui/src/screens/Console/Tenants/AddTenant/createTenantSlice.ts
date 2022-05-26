@@ -33,19 +33,29 @@ import {
 } from "./Steps/TenantResources/utils";
 import { getBytesNumber } from "../../../../common/utils";
 import { CertificateFile, FileValue, KeyFileValue } from "../tenantsSlice";
+import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
+import { createTenantAsync } from "./thunks/createTenantThunk";
+import { commonFormValidation } from "../../../../utils/validationFunctions";
+import { flipValidPageInState } from "./sliceUtils";
 
 export interface ICreateTenant {
+  addingTenant: boolean;
   page: number;
   validPages: string[];
+  validationErrors: { [key: string]: string };
   storageClasses: Opts[];
   limitSize: any;
   fields: IFieldStore;
   certificates: ICertificatesItems;
   nodeSelectorPairs: LabelKeyPair[];
   tolerations: ITolerationModel[];
+  // after creation states
+  createdAccount: NewServiceAccount | null;
+  showNewCredentials: boolean;
 }
 
 const initialState: ICreateTenant = {
+  addingTenant: false,
   page: 0,
   // We can assume all the other pages are valid with default configuration except for 'nameTenant'
   // because the user still have to choose a namespace and a name for the tenant
@@ -57,6 +67,7 @@ const initialState: ICreateTenant = {
     "security",
     "encryption",
   ],
+  validationErrors: {},
   storageClasses: [],
   limitSize: {},
   fields: {
@@ -340,6 +351,8 @@ const initialState: ICreateTenant = {
       operator: ITolerationOperator.Equal,
     },
   ],
+  createdAccount: null,
+  showNewCredentials: false,
 };
 
 export const createTenantSlice = createSlice({
@@ -382,7 +395,6 @@ export const createTenantSlice = createSlice({
       }>
     ) => {
       let originValidPages = state.validPages;
-
       if (action.payload.valid) {
         if (!originValidPages.includes(action.payload.pageName)) {
           originValidPages.push(action.payload.pageName);
@@ -393,7 +405,6 @@ export const createTenantSlice = createSlice({
         const newSetOfPages = originValidPages.filter(
           (elm) => elm !== action.payload.pageName
         );
-
         state.validPages = [...newSetOfPages];
       }
     },
@@ -658,302 +669,304 @@ export const createTenantSlice = createSlice({
       };
     },
     resetAddTenantForm: (state) => {
-      state = {
-        page: 0,
-        // We can assume all the other pages are valid with default configuration except for 'nameTenant'
-        // because the user still have to choose a namespace and a name for the tenant
-        validPages: [
-          "tenantSize",
-          "configure",
-          "affinity",
-          "identityProvider",
-          "security",
-          "encryption",
-        ],
-        storageClasses: [],
-        limitSize: {},
-        fields: {
-          nameTenant: {
-            tenantName: "",
-            namespace: "",
-            selectedStorageClass: "",
-            selectedStorageType: "",
+      state.addingTenant = false;
+      state.page = 0;
+      // We can assume all the other pages are valid with default configuration except for 'nameTenant'
+      // because the user still have to choose a namespace and a name for the tenant
+      state.validPages = [
+        "tenantSize",
+        "configure",
+        "affinity",
+        "identityProvider",
+        "security",
+        "encryption",
+      ];
+      state.validationErrors = {};
+      state.storageClasses = [];
+      state.limitSize = {};
+      state.fields = {
+        nameTenant: {
+          tenantName: "",
+          namespace: "",
+          selectedStorageClass: "",
+          selectedStorageType: "",
+        },
+        configure: {
+          customImage: false,
+          imageName: "",
+          customDockerhub: false,
+          imageRegistry: "",
+          imageRegistryUsername: "",
+          imageRegistryPassword: "",
+          exposeMinIO: true,
+          exposeConsole: true,
+          tenantCustom: false,
+          logSearchEnabled: true,
+          prometheusEnabled: true,
+          logSearchVolumeSize: "5",
+          logSearchSizeFactor: "Gi",
+          logSearchSelectedStorageClass: "default",
+          logSearchImage: "",
+          kesImage: "",
+          logSearchPostgresImage: "",
+          logSearchPostgresInitImage: "",
+          prometheusVolumeSize: "5",
+          prometheusSizeFactor: "Gi",
+          prometheusSelectedStorageClass: "default",
+          prometheusImage: "",
+          prometheusSidecarImage: "",
+          prometheusInitImage: "",
+          setDomains: false,
+          consoleDomain: "",
+          minioDomains: [""],
+          tenantSecurityContext: {
+            runAsUser: "1000",
+            runAsGroup: "1000",
+            fsGroup: "1000",
+            runAsNonRoot: true,
           },
-          configure: {
-            customImage: false,
-            imageName: "",
-            customDockerhub: false,
-            imageRegistry: "",
-            imageRegistryUsername: "",
-            imageRegistryPassword: "",
-            exposeMinIO: true,
-            exposeConsole: true,
-            tenantCustom: false,
-            logSearchEnabled: true,
-            prometheusEnabled: true,
-            logSearchVolumeSize: "5",
-            logSearchSizeFactor: "Gi",
-            logSearchSelectedStorageClass: "default",
-            logSearchImage: "",
-            kesImage: "",
-            logSearchPostgresImage: "",
-            logSearchPostgresInitImage: "",
-            prometheusVolumeSize: "5",
-            prometheusSizeFactor: "Gi",
-            prometheusSelectedStorageClass: "default",
-            prometheusImage: "",
-            prometheusSidecarImage: "",
-            prometheusInitImage: "",
-            setDomains: false,
-            consoleDomain: "",
-            minioDomains: [""],
-            tenantSecurityContext: {
-              runAsUser: "1000",
-              runAsGroup: "1000",
-              fsGroup: "1000",
-              runAsNonRoot: true,
-            },
-            logSearchSecurityContext: {
-              runAsUser: "1000",
-              runAsGroup: "1000",
-              fsGroup: "1000",
-              runAsNonRoot: true,
-            },
-            logSearchPostgresSecurityContext: {
-              runAsUser: "999",
-              runAsGroup: "999",
-              fsGroup: "999",
-              runAsNonRoot: true,
-            },
-            prometheusSecurityContext: {
-              runAsUser: "1000",
-              runAsGroup: "1000",
-              fsGroup: "1000",
-              runAsNonRoot: true,
-            },
+          logSearchSecurityContext: {
+            runAsUser: "1000",
+            runAsGroup: "1000",
+            fsGroup: "1000",
+            runAsNonRoot: true,
           },
-          identityProvider: {
-            idpSelection: "Built-in",
-            accessKeys: [getRandomString(16)],
-            secretKeys: [getRandomString(32)],
-            openIDConfigurationURL: "",
-            openIDClientID: "",
-            openIDSecretID: "",
-            openIDCallbackURL: "",
-            openIDClaimName: "",
-            openIDScopes: "",
-            ADURL: "",
-            ADSkipTLS: false,
-            ADServerInsecure: false,
-            ADGroupSearchBaseDN: "",
-            ADGroupSearchFilter: "",
-            ADUserDNs: [""],
-            ADLookupBindDN: "",
-            ADLookupBindPassword: "",
-            ADUserDNSearchBaseDN: "",
-            ADUserDNSearchFilter: "",
-            ADServerStartTLS: false,
+          logSearchPostgresSecurityContext: {
+            runAsUser: "999",
+            runAsGroup: "999",
+            fsGroup: "999",
+            runAsNonRoot: true,
           },
-          security: {
-            enableAutoCert: true,
-            enableCustomCerts: false,
-            enableTLS: true,
-          },
-          encryption: {
-            enableEncryption: false,
-            encryptionType: "vault",
-            gemaltoEndpoint: "",
-            gemaltoToken: "",
-            gemaltoDomain: "",
-            gemaltoRetry: "0",
-            awsEndpoint: "",
-            awsRegion: "",
-            awsKMSKey: "",
-            awsAccessKey: "",
-            awsSecretKey: "",
-            awsToken: "",
-            vaultEndpoint: "",
-            vaultEngine: "",
-            vaultNamespace: "",
-            vaultPrefix: "",
-            vaultAppRoleEngine: "",
-            vaultId: "",
-            vaultSecret: "",
-            vaultRetry: "0",
-            vaultPing: "0",
-            azureEndpoint: "",
-            azureTenantID: "",
-            azureClientID: "",
-            azureClientSecret: "",
-            gcpProjectID: "",
-            gcpEndpoint: "",
-            gcpClientEmail: "",
-            gcpClientID: "",
-            gcpPrivateKeyID: "",
-            gcpPrivateKey: "",
-            enableCustomCertsForKES: false,
-            replicas: "1",
-            kesSecurityContext: {
-              runAsUser: "1000",
-              runAsGroup: "1000",
-              fsGroup: "1000",
-              runAsNonRoot: true,
-            },
-          },
-          tenantSize: {
-            volumeSize: "1024",
-            sizeFactor: "Gi",
-            drivesPerServer: "4",
-            nodes: "4",
-            memoryNode: "2",
-            ecParity: "",
-            ecParityChoices: [],
-            cleanECChoices: [],
-            untouchedECField: true,
-            distribution: {
-              error: "",
-              nodes: 0,
-              persistentVolumes: 0,
-              disks: 0,
-            },
-            ecParityCalc: {
-              error: 0,
-              defaultEC: "",
-              erasureCodeSet: 0,
-              maxEC: "",
-              rawCapacity: "0",
-              storageFactors: [],
-            },
-            limitSize: {},
-            cpuToUse: "0",
-            // resource request
-            resourcesSpecifyLimit: false,
-            resourcesCPURequestError: "",
-            resourcesCPURequest: "",
-            resourcesCPULimitError: "",
-            resourcesCPULimit: "",
-            resourcesMemoryRequestError: "",
-            resourcesMemoryRequest: "",
-            resourcesMemoryLimitError: "",
-            resourcesMemoryLimit: "",
-            resourcesSize: {
-              error: "",
-              memoryRequest: 0,
-              memoryLimit: 0,
-              cpuRequest: 0,
-              cpuLimit: 0,
-            },
-            maxAllocatableResources: {
-              min_allocatable_mem: 0,
-              min_allocatable_cpu: 0,
-              cpu_priority: {
-                max_allocatable_cpu: 0,
-                max_allocatable_mem: 0,
-              },
-              mem_priority: {
-                max_allocatable_cpu: 0,
-                max_allocatable_mem: 0,
-              },
-            },
-            maxCPUsUse: "0",
-            maxMemorySize: "0",
-            integrationSelection: {
-              driveSize: { driveSize: "0", sizeUnit: "B" },
-              CPU: 0,
-              typeSelection: "",
-              memory: 0,
-              drivesPerServer: 0,
-              storageClass: "",
-            },
-          },
-          affinity: {
-            nodeSelectorLabels: "",
-            podAffinity: "default",
-            withPodAntiAffinity: true,
+          prometheusSecurityContext: {
+            runAsUser: "1000",
+            runAsGroup: "1000",
+            fsGroup: "1000",
+            runAsNonRoot: true,
           },
         },
-        certificates: {
-          minioCertificates: [
-            {
-              id: Date.now().toString(),
-              key: "",
-              cert: "",
-              encoded_key: "",
-              encoded_cert: "",
-            },
-          ],
-          caCertificates: [
-            {
-              id: Date.now().toString(),
-              key: "",
-              cert: "",
-              encoded_key: "",
-              encoded_cert: "",
-            },
-          ],
-          consoleCaCertificates: [
-            {
-              id: Date.now().toString(),
-              key: "",
-              cert: "",
-              encoded_key: "",
-              encoded_cert: "",
-            },
-          ],
-          consoleCertificate: {
-            id: "console_cert_pair",
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-          serverCertificate: {
-            id: "encryptionServerCertificate",
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-          clientCertificate: {
-            id: "encryptionClientCertificate",
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-          vaultCertificate: {
-            id: "encryptionVaultCertificate",
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-          vaultCA: {
-            id: "encryptionVaultCA",
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-          gemaltoCA: {
-            id: "encryptionGemaltoCA",
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
+        identityProvider: {
+          idpSelection: "Built-in",
+          accessKeys: [getRandomString(16)],
+          secretKeys: [getRandomString(32)],
+          openIDConfigurationURL: "",
+          openIDClientID: "",
+          openIDSecretID: "",
+          openIDCallbackURL: "",
+          openIDClaimName: "",
+          openIDScopes: "",
+          ADURL: "",
+          ADSkipTLS: false,
+          ADServerInsecure: false,
+          ADGroupSearchBaseDN: "",
+          ADGroupSearchFilter: "",
+          ADUserDNs: [""],
+          ADLookupBindDN: "",
+          ADLookupBindPassword: "",
+          ADUserDNSearchBaseDN: "",
+          ADUserDNSearchFilter: "",
+          ADServerStartTLS: false,
+        },
+        security: {
+          enableAutoCert: true,
+          enableCustomCerts: false,
+          enableTLS: true,
+        },
+        encryption: {
+          enableEncryption: false,
+          encryptionType: "vault",
+          gemaltoEndpoint: "",
+          gemaltoToken: "",
+          gemaltoDomain: "",
+          gemaltoRetry: "0",
+          awsEndpoint: "",
+          awsRegion: "",
+          awsKMSKey: "",
+          awsAccessKey: "",
+          awsSecretKey: "",
+          awsToken: "",
+          vaultEndpoint: "",
+          vaultEngine: "",
+          vaultNamespace: "",
+          vaultPrefix: "",
+          vaultAppRoleEngine: "",
+          vaultId: "",
+          vaultSecret: "",
+          vaultRetry: "0",
+          vaultPing: "0",
+          azureEndpoint: "",
+          azureTenantID: "",
+          azureClientID: "",
+          azureClientSecret: "",
+          gcpProjectID: "",
+          gcpEndpoint: "",
+          gcpClientEmail: "",
+          gcpClientID: "",
+          gcpPrivateKeyID: "",
+          gcpPrivateKey: "",
+          enableCustomCertsForKES: false,
+          replicas: "1",
+          kesSecurityContext: {
+            runAsUser: "1000",
+            runAsGroup: "1000",
+            fsGroup: "1000",
+            runAsNonRoot: true,
           },
         },
-        nodeSelectorPairs: [{ key: "", value: "" }],
-        tolerations: [
-          {
-            key: "",
-            tolerationSeconds: { seconds: 0 },
-            value: "",
-            effect: ITolerationEffect.NoSchedule,
-            operator: ITolerationOperator.Equal,
+        tenantSize: {
+          volumeSize: "1024",
+          sizeFactor: "Gi",
+          drivesPerServer: "4",
+          nodes: "4",
+          memoryNode: "2",
+          ecParity: "",
+          ecParityChoices: [],
+          cleanECChoices: [],
+          untouchedECField: true,
+          distribution: {
+            error: "",
+            nodes: 0,
+            persistentVolumes: 0,
+            disks: 0,
           },
-        ],
+          ecParityCalc: {
+            error: 0,
+            defaultEC: "",
+            erasureCodeSet: 0,
+            maxEC: "",
+            rawCapacity: "0",
+            storageFactors: [],
+          },
+          limitSize: {},
+          cpuToUse: "0",
+          // resource request
+          resourcesSpecifyLimit: false,
+          resourcesCPURequestError: "",
+          resourcesCPURequest: "",
+          resourcesCPULimitError: "",
+          resourcesCPULimit: "",
+          resourcesMemoryRequestError: "",
+          resourcesMemoryRequest: "",
+          resourcesMemoryLimitError: "",
+          resourcesMemoryLimit: "",
+          resourcesSize: {
+            error: "",
+            memoryRequest: 0,
+            memoryLimit: 0,
+            cpuRequest: 0,
+            cpuLimit: 0,
+          },
+          maxAllocatableResources: {
+            min_allocatable_mem: 0,
+            min_allocatable_cpu: 0,
+            cpu_priority: {
+              max_allocatable_cpu: 0,
+              max_allocatable_mem: 0,
+            },
+            mem_priority: {
+              max_allocatable_cpu: 0,
+              max_allocatable_mem: 0,
+            },
+          },
+          maxCPUsUse: "0",
+          maxMemorySize: "0",
+          integrationSelection: {
+            driveSize: { driveSize: "0", sizeUnit: "B" },
+            CPU: 0,
+            typeSelection: "",
+            memory: 0,
+            drivesPerServer: 0,
+            storageClass: "",
+          },
+        },
+        affinity: {
+          nodeSelectorLabels: "",
+          podAffinity: "default",
+          withPodAntiAffinity: true,
+        },
       };
+      state.certificates = {
+        minioCertificates: [
+          {
+            id: Date.now().toString(),
+            key: "",
+            cert: "",
+            encoded_key: "",
+            encoded_cert: "",
+          },
+        ],
+        caCertificates: [
+          {
+            id: Date.now().toString(),
+            key: "",
+            cert: "",
+            encoded_key: "",
+            encoded_cert: "",
+          },
+        ],
+        consoleCaCertificates: [
+          {
+            id: Date.now().toString(),
+            key: "",
+            cert: "",
+            encoded_key: "",
+            encoded_cert: "",
+          },
+        ],
+        consoleCertificate: {
+          id: "console_cert_pair",
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+        serverCertificate: {
+          id: "encryptionServerCertificate",
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+        clientCertificate: {
+          id: "encryptionClientCertificate",
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+        vaultCertificate: {
+          id: "encryptionVaultCertificate",
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+        vaultCA: {
+          id: "encryptionVaultCA",
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+        gemaltoCA: {
+          id: "encryptionGemaltoCA",
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+      };
+      state.nodeSelectorPairs = [{ key: "", value: "" }];
+      state.tolerations = [
+        {
+          key: "",
+          tolerationSeconds: { seconds: 0 },
+          value: "",
+          effect: ITolerationEffect.NoSchedule,
+          operator: ITolerationOperator.Equal,
+        },
+      ];
+      state.createdAccount = null;
+      state.showNewCredentials = false;
     },
     setKeyValuePairs: (state, action: PayloadAction<LabelKeyPair[]>) => {
       state.nodeSelectorPairs = action.payload;
@@ -1057,6 +1070,45 @@ export const createTenantSlice = createSlice({
     setIDP: (state, action: PayloadAction<string>) => {
       state.fields.identityProvider.idpSelection = action.payload;
     },
+    setTenantName: (state, action: PayloadAction<string>) => {
+      state.fields.nameTenant.tenantName = action.payload;
+      delete state.validationErrors["tenant-name"];
+
+      const commonValidation = commonFormValidation([
+        {
+          fieldKey: "tenant-name",
+          required: true,
+          pattern: /^[a-z0-9-]{3,63}$/,
+          customPatternMessage:
+            "Name only can contain lowercase letters, numbers and '-'. Min. Length: 3",
+          value: action.payload,
+        },
+      ]);
+
+      let isValid = false;
+      if ("tenant-name" in commonValidation) {
+        isValid = true;
+        state.validationErrors["tenant-name"] = commonValidation["tenant-name"];
+      }
+
+      flipValidPageInState(state, "nameTenant", isValid);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createTenantAsync.pending, (state, action) => {
+        state.addingTenant = true;
+        state.createdAccount = null;
+        state.showNewCredentials = false;
+      })
+      .addCase(createTenantAsync.rejected, (state, action) => {
+        state.addingTenant = false;
+      })
+      .addCase(createTenantAsync.fulfilled, (state, action) => {
+        state.addingTenant = false;
+        state.createdAccount = action.payload;
+        state.showNewCredentials = true;
+      });
   },
 });
 
@@ -1097,6 +1149,7 @@ export const {
   addIDPADUsrAtIndex,
   removeIDPADUsrAtIndex,
   setIDP,
+  setTenantName,
 } = createTenantSlice.actions;
 
 export default createTenantSlice.reducer;
