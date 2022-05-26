@@ -41,7 +41,7 @@ import {
   DescribeResponse,
   IPVCDescribeSummaryProps,
   IPVCDescribeAnnotationsProps,
-  IPVCDescribeLabelsProps
+  IPVCDescribeLabelsProps,
 } from "./pvcTypes";
 
 const styles = (theme: Theme) =>
@@ -72,53 +72,72 @@ const HeaderSection = ({ title }: { title: string }) => {
         margin: 0,
         marginBottom: "20px",
       }}
-      >
+    >
       <h3>{title}</h3>
     </Box>
   );
 };
 
-const PVCDescribeSummary = ({describeInfo}: IPVCDescribeSummaryProps) => {
+const PVCDescribeSummary = ({ describeInfo }: IPVCDescribeSummaryProps) => {
   return (
     <Fragment>
       <HeaderSection title={"Summary"} />
-        <Box sx={{ ...twoColCssGridLayoutConfig }}>
-          <LabelValuePair label={"Name"} value={describeInfo.name} />
-          <LabelValuePair label={"Namespace"} value={describeInfo.namespace} />
-          <LabelValuePair label={"Capacity"} value={describeInfo.capacity} />
-          <LabelValuePair label={"Status"} value={describeInfo.status} />
-          <LabelValuePair label={"Storage Class"} value={describeInfo.storageClass} />
-          <LabelValuePair label={"Access Modes"} value={describeInfo.accessModes.join(", ")} />
-          <LabelValuePair label={"Finalizers"} value={describeInfo.finalizers.join(", ")} />
-          <LabelValuePair label={"Volume"} value={describeInfo.volume} />
-          <LabelValuePair label={"Volume Mode"} value={describeInfo.volumeMode} />
-        </Box>
+      <Box sx={{ ...twoColCssGridLayoutConfig }}>
+        <LabelValuePair label={"Name"} value={describeInfo.name} />
+        <LabelValuePair label={"Namespace"} value={describeInfo.namespace} />
+        <LabelValuePair label={"Capacity"} value={describeInfo.capacity} />
+        <LabelValuePair label={"Status"} value={describeInfo.status} />
+        <LabelValuePair
+          label={"Storage Class"}
+          value={describeInfo.storageClass}
+        />
+        <LabelValuePair
+          label={"Access Modes"}
+          value={describeInfo.accessModes.join(", ")}
+        />
+        <LabelValuePair
+          label={"Finalizers"}
+          value={describeInfo.finalizers.join(", ")}
+        />
+        <LabelValuePair label={"Volume"} value={describeInfo.volume} />
+        <LabelValuePair label={"Volume Mode"} value={describeInfo.volumeMode} />
+      </Box>
     </Fragment>
   );
 };
 
-const PVCDescribeAnnotations = ({annotations}: IPVCDescribeAnnotationsProps) => {
+const PVCDescribeAnnotations = ({
+  annotations,
+}: IPVCDescribeAnnotationsProps) => {
   return (
     <Fragment>
       <HeaderSection title={"Annotations"} />
-        <Box>
-          {annotations.map((annotation, index) => (
-            <Chip style={{ margin: "0.5%" }} label={`${annotation.key}: ${annotation.value}`} key={index} />
-          ))}
-        </Box>
+      <Box>
+        {annotations.map((annotation, index) => (
+          <Chip
+            style={{ margin: "0.5%" }}
+            label={`${annotation.key}: ${annotation.value}`}
+            key={index}
+          />
+        ))}
+      </Box>
     </Fragment>
   );
 };
 
-const PVCDescribeLabels = ({labels}: IPVCDescribeLabelsProps) => {
+const PVCDescribeLabels = ({ labels }: IPVCDescribeLabelsProps) => {
   return (
     <Fragment>
       <HeaderSection title={"Labels"} />
-        <Box>
-          {labels.map((label, index) => (
-            <Chip style={{ margin: "0.5%" }} label={`${label.key}: ${label.value}`} key={index} />
-          ))}
-        </Box>
+      <Box>
+        {labels.map((label, index) => (
+          <Chip
+            style={{ margin: "0.5%" }}
+            label={`${label.key}: ${label.value}`}
+            key={index}
+          />
+        ))}
+      </Box>
     </Fragment>
   );
 };
@@ -161,19 +180,20 @@ const PVCDescribe = ({
   const renderTabComponent = (index: number, info: DescribeResponse) => {
     switch (index) {
       case 0:
-        return <PVCDescribeSummary describeInfo={info} />
+        return <PVCDescribeSummary describeInfo={info} />;
       case 1:
-        return <PVCDescribeAnnotations annotations={info.annotations} />
+        return <PVCDescribeAnnotations annotations={info.annotations} />;
       case 2:
-        return <PVCDescribeLabels labels={info.labels} />
+        return <PVCDescribeLabels labels={info.labels} />;
       default:
         break;
     }
   };
   return (
     <Fragment>
-      {describeInfo && (<Grid item xs={12}>
-        <Tabs
+      {describeInfo && (
+        <Grid item xs={12}>
+          <Tabs
             value={curTab}
             onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
               setCurTab(newValue);
@@ -182,13 +202,15 @@ const PVCDescribe = ({
             textColor="primary"
             aria-label="cluster-tabs"
             variant="scrollable"
-            scrollButtons="auto">
+            scrollButtons="auto"
+          >
             <Tab id="pvc-describe-summary" label="Summary" />
             <Tab id="pvc-describe-annotations" label="Annotations" />
             <Tab id="pvc-describe-labels" label="Labels" />
-        </Tabs>
-        {renderTabComponent(curTab, describeInfo)}
-      </Grid>)}
+          </Tabs>
+          {renderTabComponent(curTab, describeInfo)}
+        </Grid>
+      )}
     </Fragment>
   );
 };

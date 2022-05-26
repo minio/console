@@ -210,8 +210,7 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/logging",
   NAMESPACE_TENANT_EVENTS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/events",
-  NAMESPACE_TENANT_CSR:
-      "/namespaces/:tenantNamespace/tenants/:tenantName/csr",
+  NAMESPACE_TENANT_CSR: "/namespaces/:tenantNamespace/tenants/:tenantName/csr",
 };
 
 // roles

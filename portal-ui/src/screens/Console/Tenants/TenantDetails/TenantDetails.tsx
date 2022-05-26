@@ -615,7 +615,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
               value: "csr",
               component: Link,
               to: getRoutePath("csr"),
-            }
+            },
           }}
         </VerticalTabs>
       </PageLayout>

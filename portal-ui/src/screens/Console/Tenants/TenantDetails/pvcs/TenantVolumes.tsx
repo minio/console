@@ -95,18 +95,18 @@ const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
       <Grid container>
         <Grid item xs={12}>
           <Tabs
-              value={curTab}
-              onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                setCurTab(newValue);
-              }}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="cluster-tabs"
-              variant="scrollable"
-              scrollButtons="auto">
-
-              <Tab label="Events" id="simple-tab-0"/>
-              <Tab label="Describe" id="simple-tab-1"/>
+            value={curTab}
+            onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+              setCurTab(newValue);
+            }}
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="cluster-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            <Tab label="Events" id="simple-tab-0" />
+            <Tab label="Describe" id="simple-tab-1" />
           </Tabs>
         </Grid>
         {curTab === 0 && (
