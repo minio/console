@@ -192,3 +192,6 @@ export { default as EditTagIcon } from "./EditTagIcon";
 export { default as LinkIcon } from "./LinkIcon";
 export { default as AlertIcon } from "./AlertIcon";
 export { default as InfoIcon } from "./InfoIcon";
+export { default as ConsoleAgpl } from "./ConsoleAgpl";
+export { default as ConsoleStandard } from "./ConsoleStandard";
+export { default as ConsoleEnterprise } from "./ConsoleEnterprise";

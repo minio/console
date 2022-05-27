@@ -138,7 +138,6 @@ const Menu = ({ classes }: IMenuProps) => {
         onToggle={(nextState) => {
           dispatch(menuOpen(nextState));
         }}
-        isOperatorMode={operatorMode}
         isOpen={sidebarOpen}
       />
 
