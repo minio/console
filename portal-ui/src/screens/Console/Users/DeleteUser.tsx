@@ -84,6 +84,7 @@ const DeleteUser = ({
     history.push(
       `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`
     );
+    onClose();
   };
   const tableActions = [
     {
