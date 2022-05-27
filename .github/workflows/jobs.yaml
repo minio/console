@@ -1510,16 +1510,18 @@ jobs:
           echo ${{ github.repository }}
           echo ${{ github.event.number }}
           echo ${{ github.run_id }}
-          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/
-          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/
+          # mc cp can fail due to lack of space: mc: <ERROR> Failed to copy `all.out`.
+          # Storage backend has reached its minimum free disk threshold. Please delete a few objects to proceed.
+          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
           go tool cover -html=all.out -o coverage.html
-          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/
-          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/
+          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          threshold=50.5
+          threshold=50.6
           echo "Result:"
           echo "$result%"
           if (( $(echo "$result >= $threshold" |bc -l) )); then
