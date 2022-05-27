@@ -103,6 +103,8 @@ const DeleteUser = ({
         closeDeleteModalAndRefresh(true);
       } else {
         invokeDeleteApi("DELETE", `/api/v1/user/${encodeURLString(user)}`);
+        closeDeleteModalAndRefresh(true);
+        history.push(`${IAM_PAGES.USERS}`)
       }
     }
   };
