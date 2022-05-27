@@ -44,7 +44,7 @@ import SetUserPolicies from "./SetUserPolicies";
 import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
-import DeleteUserModal from "./DeleteUserModal";
+import DeleteUser from "./DeleteUser";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -182,7 +182,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink label={"User"} to={IAM_PAGES.USERS} />
+            <BackLink label={"Users"} to={IAM_PAGES.USERS} />
           </Fragment>
         }
         actions={<React.Fragment></React.Fragment>}
@@ -209,12 +209,13 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         />
       )}
       {deleteOpen && (
-        <DeleteUserModal
+        <DeleteUser
           deleteOpen={deleteOpen}
-          userName={userName}
+          selectedUsers={[userName]}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
+          history={history}
         />
       )}
       {changeUserPasswordModalOpen && (
