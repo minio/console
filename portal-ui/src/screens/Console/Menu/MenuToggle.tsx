@@ -14,21 +14,52 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import OperatorLogo from "../../../icons/OperatorLogo";
-import ConsoleLogo from "../../../icons/ConsoleLogo";
 import { VersionIcon } from "../../../icons";
 import { Box, IconButton } from "@mui/material";
 import { ChevronLeft } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
+import LicensedConsoleLogo from "../Common/Components/LicensedConsoleLogo";
+import { useDispatch, useSelector } from "react-redux";
+import useApi from "../Common/Hooks/useApi";
+import { setLicenseInfo } from "../../../systemSlice";
+import { AppState } from "../../../store";
 
 type MenuToggleProps = {
   isOpen: boolean;
-  isOperatorMode: boolean;
   onToggle: (nextState: boolean) => void;
 };
-const MenuToggle = ({ isOpen, isOperatorMode, onToggle }: MenuToggleProps) => {
+const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
   const stateClsName = isOpen ? "wide" : "mini";
+
+  const dispatch = useDispatch();
+
+  const licenseInfo = useSelector(
+    (state: AppState) => state?.system?.licenseInfo
+  );
+  const operatorMode = useSelector(
+    (state: AppState) => state.system.operatorMode
+  );
+
+  const [isLicenseLoading, invokeLicenseInfoApi] = useApi(
+    (res: any) => {
+      dispatch(setLicenseInfo(res));
+    },
+    () => {
+      dispatch(setLicenseInfo(null));
+    }
+  );
+
+  //Get License info from SUBNET
+  useEffect(() => {
+    if (!operatorMode) {
+      invokeLicenseInfoApi("GET", `/api/v1/subnet/info`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const { plan = "" } = licenseInfo || {};
 
   return (
     <Box
@@ -38,7 +69,7 @@ const MenuToggle = ({ isOpen, isOperatorMode, onToggle }: MenuToggleProps) => {
         marginTop: "28px",
         marginRight: "8px",
         display: "flex",
-        minHeight: "36px",
+        height: "36px",
 
         "&.mini": {
           flexFlow: "column",
@@ -69,7 +100,11 @@ const MenuToggle = ({ isOpen, isOperatorMode, onToggle }: MenuToggleProps) => {
     >
       {isOpen ? (
         <div className={`logo ${stateClsName}`}>
-          {isOperatorMode ? <OperatorLogo /> : <ConsoleLogo />}
+          {operatorMode ? (
+            <OperatorLogo />
+          ) : (
+            <LicensedConsoleLogo plan={plan} isLoading={isLicenseLoading} />
+          )}
         </div>
       ) : (
         <div className={`logo ${stateClsName}`}>
@@ -82,6 +117,8 @@ const MenuToggle = ({ isOpen, isOperatorMode, onToggle }: MenuToggleProps) => {
       <IconButton
         className={`${stateClsName}`}
         sx={{
+          height: "30px",
+          width: "30px",
           "&.mini": {
             marginBottom: "10px",
             "&:hover": {
@@ -95,6 +132,8 @@ const MenuToggle = ({ isOpen, isOperatorMode, onToggle }: MenuToggleProps) => {
           },
           "& svg": {
             fill: "#ffffff",
+            height: "18px",
+            width: "18px",
           },
         }}
         onClick={() => {
