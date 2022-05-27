@@ -17,6 +17,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { snackBarMessage, SRInfoStateType } from "./types";
 import { ErrorResponseHandler } from "./common/types";
 import { AppState } from "./store";
+import { SubnetInfo } from "./screens/Console/License/types";
 
 // determine whether we have the sidebar state stored on localstorage
 const initSideBarOpen = localStorage.getItem("sidebarOpen")
@@ -38,6 +39,7 @@ export interface SystemState {
   serverDiagnosticStatus: string;
   distributedSetup: boolean;
   siteReplicationInfo: SRInfoStateType;
+  licenseInfo: null | SubnetInfo;
 }
 
 const initialState: SystemState = {
@@ -63,6 +65,7 @@ const initialState: SystemState = {
   },
   serverDiagnosticStatus: "",
   distributedSetup: false,
+  licenseInfo: null,
 };
 
 export const systemSlice = createSlice({
@@ -135,6 +138,9 @@ export const systemSlice = createSlice({
     setSiteReplicationInfo: (state, action: PayloadAction<SRInfoStateType>) => {
       state.siteReplicationInfo = action.payload;
     },
+    setLicenseInfo: (state, action: PayloadAction<SubnetInfo | null>) => {
+      state.licenseInfo = action.payload;
+    },
   },
 });
 
@@ -153,6 +159,7 @@ export const {
   setServerDiagStat,
   globalSetDistributedSetup,
   setSiteReplicationInfo,
+  setLicenseInfo,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

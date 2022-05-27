@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 
 import { ErrorResponseHandler } from "./common/types";
+import { SubnetInfo } from "./screens/Console/License/types";
 
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export interface snackBarMessage {
@@ -57,6 +58,7 @@ export const SET_SNACK_MODAL_MESSAGE = "SET_SNACK_MODAL_MESSAGE";
 export const SET_MODAL_ERROR_MESSAGE = "SET_MODAL_ERROR_MESSAGE";
 export const GLOBAL_SET_DISTRIBUTED_SETUP = "GLOBAL/SET_DISTRIBUTED_SETUP";
 export const SET_SITE_REPLICATION_INFO = "SET_SITE_REPLICATION_INFO";
+export const SET_LICENSE_INFO = "SET_LICENSE_INFO";
 
 interface UserLoggedAction {
   type: typeof USER_LOGGED;
@@ -123,6 +125,11 @@ interface SetSiteReplicationInfo {
   siteReplicationInfo: SRInfoStateType;
 }
 
+interface SetLicenseInfo {
+  type: typeof SET_LICENSE_INFO;
+  licenseInfo: SubnetInfo;
+}
+
 export type SystemActionTypes =
   | UserLoggedAction
   | OperatorModeAction
@@ -136,4 +143,5 @@ export type SystemActionTypes =
   | SetModalSnackMessage
   | SetModalErrorMessage
   | SetDistributedSetup
-  | SetSiteReplicationInfo;
+  | SetSiteReplicationInfo
+  | SetLicenseInfo;
