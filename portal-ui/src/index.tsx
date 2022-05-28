@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import Routes from "./Routes";
 import { store } from "./store";
@@ -44,6 +44,7 @@ const GlobalCss = withStyles({
     body: {
       height: "100vh",
       width: "100vw",
+      fontFamily: "Lato, sans-serif",
     },
     "#root": {
       height: "100%",
@@ -63,7 +64,7 @@ const GlobalCss = withStyles({
       },
     },
     // You should target [class*="MuiButton-root"] instead if you nest themes.
-    ".MuiButton-root": {
+    ".MuiButton-root:not(.noDefaultHeight)": {
       height: 38,
     },
     ".MuiButton-contained": {
@@ -126,16 +127,21 @@ const GlobalCss = withStyles({
   },
 })(() => null);
 
-ReactDOM.render(
-  <Provider store={store}>
-    <GlobalCss />
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <Routes />
-      </ThemeProvider>
-    </StyledEngineProvider>
-  </Provider>,
-  document.getElementById("root")
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <GlobalCss />
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Routes />
+        </ThemeProvider>
+      </StyledEngineProvider>
+    </Provider>
+  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

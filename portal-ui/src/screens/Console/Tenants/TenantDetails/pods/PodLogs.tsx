@@ -179,6 +179,7 @@ const PodLogs = ({
 
   function cellRenderer({ columnIndex, key, parent, index, style }: any) {
     return (
+      // @ts-ignore
       <CellMeasurer
         cache={cache}
         columnIndex={columnIndex}
@@ -226,8 +227,10 @@ const PodLogs = ({
         <Paper>
           <div className={classes.logList}>
             {logLines.length >= 1 && (
+              // @ts-ignore
               <AutoSizer>
                 {({ width, height }) => (
+                  // @ts-ignore
                   <List
                     rowHeight={(item) => cache.rowHeight(item)}
                     overscanRowCount={15}

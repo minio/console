@@ -27,8 +27,6 @@ const styles = (theme: Theme) =>
       padding: 8,
       marginLeft: 8,
       borderWidth: 1,
-      borderColor: "#696969",
-      color: "#696969",
       borderStyle: "solid",
       borderRadius: 3,
       "& .min-icon": {
@@ -44,6 +42,9 @@ const styles = (theme: Theme) =>
         color: "#EBEBEB",
         borderColor: "#EBEBEB",
       },
+      "& > span:not(.BaseBadge-root)": {
+        paddingRight: 8,
+      }
     },
     contained: {
       borderColor: theme.palette.primary.main,

@@ -54,7 +54,7 @@ const styles = (theme: Theme) =>
 
 const langHighlight: Record<string, any> = {
   json,
-  yaml: () => StreamLanguage.define(yaml),
+  yaml: () => StreamLanguage.define(yaml as any),
 };
 
 const lightTheme = EditorView.theme(

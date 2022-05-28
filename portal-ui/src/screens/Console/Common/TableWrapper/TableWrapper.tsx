@@ -330,6 +330,7 @@ const generateColumnsMap = (
     const disableSort = column.enableSort ? !column.enableSort : true;
 
     return (
+      // @ts-ignore
       <Column
         key={`col-tb-${index.toString()}`}
         dataKey={column.elementKey!}
@@ -581,6 +582,7 @@ const TableWrapper = ({
           </div>
         )}
         {records && !isLoading && records.length > 0 ? (
+          // @ts-ignore
           <InfiniteLoader
             isRowLoaded={({ index }) => !!records[index]}
             loadMoreRows={
@@ -595,6 +597,7 @@ const TableWrapper = ({
             }
           >
             {({ onRowsRendered, registerChild }) => (
+              // @ts-ignore
               <AutoSizer>
                 {({ width, height }: any) => {
                   const optionsWidth = calculateOptionsSize(
@@ -611,6 +614,7 @@ const TableWrapper = ({
                       itemActions[0].type !== "view")
                   );
                   return (
+                    // @ts-ignore
                     <Table
                       ref={registerChild}
                       disableHeader={false}
@@ -659,6 +663,7 @@ const TableWrapper = ({
                       }}
                     >
                       {hasSelect && (
+                        // @ts-ignore
                         <Column
                           headerRenderer={() => (
                             <Fragment>
@@ -742,6 +747,7 @@ const TableWrapper = ({
                         sortConfig ? sortConfig.currentDirection : undefined
                       )}
                       {hasOptions && (
+                        // @ts-ignore
                         <Column
                           dataKey={idField}
                           width={optionsWidth}
