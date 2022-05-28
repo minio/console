@@ -60,6 +60,10 @@ function main() {
 	install_operator
 	install_tenants
 	check_tenant_status tenant-lite storage-lite
+
+	# prometheus claim is bound, so that we can list claims on the tests.
+	while [[ $(kubectl get pvc storage-lite-prometheus-storage-lite-prometheus-0 -n tenant-lite -o 'jsonpath={..status.phase}') != "Bound" ]]; do echo "waiting for PVCA status" && sleep 1 && kubectl get pvc -A; done
+
 	kubectl proxy &
 	# Beginning  Kubernetes 1.24 ----> Service Account Token Secrets are not 
 	# automatically generated, to generate them manually, users must manually
