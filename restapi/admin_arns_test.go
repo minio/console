@@ -19,9 +19,13 @@ package restapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
+	"github.com/go-openapi/loads"
+	"github.com/minio/console/restapi/operations"
 	"github.com/minio/madmin-go"
+
 	asrt "github.com/stretchr/testify/assert"
 )
 
@@ -51,4 +55,20 @@ func TestArnsList(t *testing.T) {
 	arnsList, err = getArns(ctx, adminClient)
 	assert.Nil(arnsList, "arn list was not returned nil")
 	assert.NotNil(err, "An error should have been returned")
+}
+
+func TestRegisterAdminArnsHandlers(t *testing.T) {
+	assert := asrt.New(t)
+	swaggerSpec, err := loads.Embedded(SwaggerJSON, FlatSwaggerJSON)
+	if err != nil {
+		assert.Fail("Error")
+	}
+	api := operations.NewConsoleAPI(swaggerSpec)
+	api.SystemArnListHandler = nil
+	registerAdminArnsHandlers(api)
+	if api.SystemArnListHandler == nil {
+		assert.Fail("Assignment should happen")
+	} else {
+		fmt.Println("Function got assigned: ", api.SystemArnListHandler)
+	}
 }
