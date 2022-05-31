@@ -32,7 +32,6 @@ import {
   IWizardButton,
   IWizardElement,
 } from "../../Common/GenericWizard/types";
-import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import { AppState } from "../../../../store";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
@@ -57,6 +56,7 @@ import { selFeatures } from "../../consoleSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { resetAddTenantForm } from "./createTenantSlice";
 import CreateTenantButton from "./CreateTenantButton";
+import NewTenantCredentials from "./NewTenantCredentials";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,14 +74,6 @@ const AddTenant = () => {
   const classes = useStyles();
 
   const features = useSelector(selFeatures);
-
-  // Modals
-  const showNewCredentials = useSelector(
-    (state: AppState) => state.createTenant.showNewCredentials
-  );
-  const createdAccount = useSelector(
-    (state: AppState) => state.createTenant.createdAccount
-  );
 
   // Fields
   const addSending = useSelector(
@@ -181,23 +173,9 @@ const AddTenant = () => {
 
   let filteredWizardSteps = wizardSteps;
 
-  const closeCredentialsModal = () => {
-    dispatch(resetAddTenantForm());
-    history.push("/tenants");
-  };
-
   return (
     <Fragment>
-      {showNewCredentials && (
-        <CredentialsPrompt
-          newServiceAccount={createdAccount}
-          open={showNewCredentials}
-          closeModal={() => {
-            closeCredentialsModal();
-          }}
-          entity="Tenant"
-        />
-      )}
+      <NewTenantCredentials />
       <PageHeader
         label={
           <BackLink
