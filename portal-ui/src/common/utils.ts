@@ -16,6 +16,7 @@
 
 import storage from "local-storage-fallback";
 import {
+  IBytesCalc,
   ICapacity,
   IErasureCodeCalc,
   IStorageDistribution,
@@ -576,7 +577,7 @@ export const calculateBytes = (
   showDecimals = false,
   roundFloor = true,
   k8sUnit = false
-) => {
+): IBytesCalc => {
   let bytes;
 
   if (typeof x === "string") {
@@ -695,4 +696,16 @@ export const getCookieValue = (cookieName: string) => {
       .match("(^|;)\\s*" + cookieName + "\\s*=\\s*([^;]+)")
       ?.pop() || ""
   );
+};
+
+export const capacityColors = (usedSpace: number, maxSpace: number) => {
+  const percCalculate = (usedSpace * 100) / maxSpace;
+
+  if (percCalculate >= 90) {
+    return "#C83B51";
+  } else if (percCalculate >= 70) {
+    return "#FFAB0F";
+  }
+
+  return "#07193E";
 };

@@ -19,7 +19,11 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IDriveInfo } from "../types";
-import { niceBytes, niceBytesInt } from "../../../../common/utils";
+import {
+  capacityColors,
+  niceBytes,
+  niceBytesInt,
+} from "../../../../common/utils";
 import { Box } from "@mui/material";
 import { Cell, Pie, PieChart } from "recharts";
 import { CircleIcon } from "../../../../icons";
@@ -48,11 +52,13 @@ const driveStatusColor = (health_status: string) => {
 };
 
 const DriveInfoItem = ({ drive }: ICardProps) => {
+  const freeSpace = drive.totalSpace - drive.usedSpace;
+
   const plotValues = [
-    { value: drive.totalSpace, color: "#D6D6D6", label: "Free Space" },
+    { value: freeSpace, color: "#D6D6D6", label: "Free Space" },
     {
       value: drive.usedSpace,
-      color: "#073052",
+      color: capacityColors(drive.usedSpace, drive.totalSpace),
       label: "Used Space",
     },
   ];

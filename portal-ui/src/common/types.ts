@@ -456,3 +456,8 @@ export interface IRetentionConfig {
   unit: string;
   validity: number;
 }
+
+export interface IBytesCalc {
+  total: number;
+  unit: string;
+}
