@@ -43,7 +43,7 @@ import {
   isEditPoolPageValid,
   setEditPoolField,
   setEditPoolStorageClasses,
-} from "../../../tenantsSlice";
+} from "./editPoolSlice";
 
 interface IPoolResourcesProps {
   classes: any;
@@ -58,7 +58,7 @@ const styles = (theme: Theme) =>
       margin: "auto",
       justifyContent: "center",
       "& div": {
-        width: 150,
+        width: 200,
         "@media (max-width: 900px)": {
           flexFlow: "column",
         },
@@ -90,19 +90,19 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
     (state: AppState) => state.tenants.tenantDetails.tenantInfo
   );
   const storageClasses = useSelector(
-    (state: AppState) => state.tenants.editPool.storageClasses
+    (state: AppState) => state.editPool.storageClasses
   );
   const numberOfNodes = useSelector((state: AppState) =>
-    state.tenants.editPool.fields.setup.numberOfNodes.toString()
+    state.editPool.fields.setup.numberOfNodes.toString()
   );
   const storageClass = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.setup.storageClass
+    (state: AppState) => state.editPool.fields.setup.storageClass
   );
   const volumeSize = useSelector((state: AppState) =>
-    state.tenants.editPool.fields.setup.volumeSize.toString()
+    state.editPool.fields.setup.volumeSize.toString()
   );
   const volumesPerServer = useSelector((state: AppState) =>
-    state.tenants.editPool.fields.setup.volumesPerServer.toString()
+    state.editPool.fields.setup.volumesPerServer.toString()
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

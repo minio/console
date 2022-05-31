@@ -48,7 +48,7 @@ import {
   setEditPoolField,
   setEditPoolKeyValuePairs,
   setEditPoolTolerationInfo,
-} from "../../../tenantsSlice";
+} from "./editPoolSlice";
 
 interface IAffinityProps {
   classes: any;
@@ -119,21 +119,19 @@ const Affinity = ({ classes }: IAffinityProps) => {
   const dispatch = useDispatch();
 
   const podAffinity = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.affinity.podAffinity
+    (state: AppState) => state.editPool.fields.affinity.podAffinity
   );
   const nodeSelectorLabels = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.affinity.nodeSelectorLabels
+    (state: AppState) => state.editPool.fields.affinity.nodeSelectorLabels
   );
   const withPodAntiAffinity = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.affinity.withPodAntiAffinity
+    (state: AppState) => state.editPool.fields.affinity.withPodAntiAffinity
   );
   const keyValuePairs = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.nodeSelectorPairs
+    (state: AppState) => state.editPool.fields.nodeSelectorPairs
   );
   const tolerations = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.tolerations
+    (state: AppState) => state.editPool.fields.tolerations
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
