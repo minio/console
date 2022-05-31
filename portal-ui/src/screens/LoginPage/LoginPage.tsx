@@ -213,15 +213,6 @@ const styles = (theme: Theme) =>
     linearPredef: {
       height: 10,
     },
-
-    loaderAlignment: {
-      display: "flex",
-      width: "100%",
-      height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    },
     retryButton: {
       alignSelf: "flex-end",
     },
@@ -562,7 +553,7 @@ const Login = ({ classes }: ILoginProps) => {
     }
     default:
       loginComponent = (
-        <div className={classes.loaderAlignment}>
+        <div style={{ textAlign: "center" }}>
           {loadingFetchConfiguration ? (
             <Loader className={classes.loadingLoginStrategy} />
           ) : (
