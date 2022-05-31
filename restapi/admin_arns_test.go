@@ -20,7 +20,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 	"testing"
+
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations/system"
 
 	"github.com/go-openapi/loads"
 	"github.com/minio/console/restapi/operations"
@@ -71,4 +77,21 @@ func TestRegisterAdminArnsHandlers(t *testing.T) {
 	} else {
 		fmt.Println("Function got assigned: ", api.SystemArnListHandler)
 	}
+
+	// To test error case in registerAdminArnsHandlers
+	request, _ := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/buckets/",
+		nil,
+	)
+	ArnListParamsStruct := system.ArnListParams{
+		HTTPRequest: request,
+	}
+	modelsPrincipal := models.Principal{
+		STSAccessKeyID: "accesskey",
+	}
+	var value middleware.Responder = api.SystemArnListHandler.Handle(ArnListParamsStruct, &modelsPrincipal)
+	str := fmt.Sprintf("%#v", value)
+	fmt.Println("value: ", str)
+	assert.Equal(strings.Contains(str, "_statusCode:500"), true)
 }
