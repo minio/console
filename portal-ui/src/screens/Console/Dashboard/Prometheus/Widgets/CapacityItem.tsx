@@ -22,7 +22,11 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { useDispatch } from "react-redux";
 
-import { niceBytes } from "../../../../../common/utils";
+import {
+  calculateBytes,
+  capacityColors,
+  niceBytesInt,
+} from "../../../../../common/utils";
 import { Cell, Pie, PieChart } from "recharts";
 import { ReportedUsageIcon } from "../../../../../icons";
 import Loader from "../../../Common/Loader/Loader";
@@ -43,8 +47,10 @@ const CapacityItem = ({
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
-  const [dataInner, setDataInner] = useState<Record<string, any>>([]);
-  const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  const [totalUsableFree, setTotalUsableFree] = useState<number>(0);
+  const [totalUsed, setTotalUsed] = useState<number>(0);
+  const [totalUsable, setTotalUsable] = useState<number>(0);
 
   useEffect(() => {
     if (propLoading) {
@@ -73,8 +79,30 @@ const CapacityItem = ({
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, value);
-          setDataInner(widgetsWithValue.data);
-          setResult(widgetsWithValue);
+
+          let tUsable = 0;
+          let tUsed = 0;
+          let tFree = 0;
+
+          widgetsWithValue.data.forEach((eachArray: any[]) => {
+            eachArray.forEach((itemSum) => {
+              switch (itemSum.legend) {
+                case "Total Usable":
+                  tUsable += itemSum.value;
+                  break;
+                case "Used Space":
+                  tUsed += itemSum.value;
+                  break;
+                case "Usable Free":
+                  tFree += itemSum.value;
+                  break;
+              }
+            });
+          });
+
+          setTotalUsableFree(tFree);
+          setTotalUsed(tUsed);
+          setTotalUsable(tUsable);
 
           setLoading(false);
         })
@@ -85,21 +113,18 @@ const CapacityItem = ({
     }
   }, [loading, value, timeEnd, timeStart, dispatch, apiPrefix]);
 
-  const [middleLabel, unitValue] = (result?.innerLabel || "").split(" ");
-
-  const usableValueObj = dataInner[0];
-  const { value: usableValue = 0 } = usableValueObj || { value: 0 };
+  const usedConvert = calculateBytes(totalUsed, true, false);
 
   const plotValues = [
     {
-      value: parseInt(usableValue),
+      value: totalUsableFree,
       color: "#D6D6D6",
-      label: "Usable Space",
+      label: "Usable Available Space",
     },
     {
-      value: parseInt(usableValue),
-      color: "#073052",
-      label: "Usable Space",
+      value: totalUsed,
+      color: capacityColors(totalUsed, totalUsable),
+      label: "Used Space",
     },
   ];
   return (
@@ -150,7 +175,7 @@ const CapacityItem = ({
             fontSize: 12,
           }}
         >
-          {niceBytes(usableValue)}
+          {niceBytesInt(totalUsableFree)}
           <br />
           <Box
             sx={{
@@ -193,25 +218,51 @@ const CapacityItem = ({
           },
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            "& .value": {
-              fontSize: "50px",
-              fontFamily: "Lato",
-              fontWeight: 600,
-            },
-            "& .unit": {
+        <Box>
+          <Box
+            sx={{
               color: "#5E5E5E",
-              fontSize: "18px",
-              marginLeft: "12px",
-              marginTop: "10px",
-            },
-          }}
-        >
-          <div className="value">{middleLabel}</div>{" "}
-          <div className="unit">{unitValue}</div>
+              fontWeight: "bold",
+              fontSize: "14px",
+            }}
+          >
+            Used:
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              "& .value": {
+                fontSize: "50px",
+                fontFamily: "Lato",
+                fontWeight: 600,
+                alignSelf: "flex-end",
+                lineHeight: 1,
+              },
+              "& .unit": {
+                color: "#5E5E5E",
+                fontWeight: "bold",
+                fontSize: "14px",
+                marginLeft: "12px",
+                alignSelf: "flex-end",
+              },
+            }}
+          >
+            <div className="value">{usedConvert.total}</div>
+            <div className="unit">{usedConvert.unit}</div>
+          </Box>
+          <Box
+            sx={{
+              marginTop: "5px",
+              "& .value": {
+                color: "#5E5E5E",
+                fontWeight: "bold",
+                fontSize: "14px",
+                textAlign: "right",
+              },
+            }}
+          >
+            <div className="value">Of: {niceBytesInt(totalUsable)}</div>
+          </Box>
         </Box>
 
         <Box
