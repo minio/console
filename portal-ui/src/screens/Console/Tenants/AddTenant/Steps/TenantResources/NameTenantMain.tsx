@@ -14,54 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import debounce from "lodash/debounce";
 import Grid from "@mui/material/Grid";
 import {
   formFieldStyles,
   modalBasic,
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-
-import {
-  getLimitSizes,
-  IQuotaElement,
-  IQuotas,
-} from "../../../ListTenants/utils";
 import { AppState } from "../../../../../../store";
-import { commonFormValidation } from "../../../../../../utils/validationFunctions";
-import { clearValidationError } from "../../../utils";
-import { ErrorResponseHandler } from "../../../../../../common/types";
-import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import AddIcon from "../../../../../../icons/AddIcon";
-import AddNamespaceModal from "../helpers/AddNamespaceModal";
 import SizePreview from "../SizePreview";
 import TenantSize from "./TenantSize";
 import { Paper, SelectChangeEvent } from "@mui/material";
 import { IMkEnvs, mkPanelConfigurations } from "./utils";
-import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 import {
   isPageValid,
-  setLimitSize,
-  setStorageClassesList,
   setStorageType,
   setTenantName,
   updateAddField,
 } from "../../createTenantSlice";
 import { selFeatures } from "../../../../consoleSlice";
+import NamespaceSelector from "./NamespaceSelector";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -110,9 +89,6 @@ interface INameTenantMainScreen {
 const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   const dispatch = useDispatch();
 
-  const namespace = useSelector(
-    (state: AppState) => state.createTenant.fields.nameTenant.namespace
-  );
   const selectedStorageClass = useSelector(
     (state: AppState) =>
       state.createTenant.fields.nameTenant.selectedStorageClass
@@ -126,13 +102,6 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   );
   const features = useSelector(selFeatures);
 
-  const [validationErrors, setValidationErrors] = useState<any>({});
-  const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
-  const [loadingNamespaceInfo, setLoadingNamespaceInfo] =
-    useState<boolean>(false);
-  const [showCreateButton, setShowCreateButton] = useState<boolean>(false);
-  const [openAddNSConfirm, setOpenAddNSConfirm] = useState<boolean>(false);
-
   // Common
   const updateField = useCallback(
     (field: string, value: string) => {
@@ -143,157 +112,17 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
     [dispatch]
   );
 
-  // Storage classes retrieval
-  const getNamespaceInformation = useCallback(() => {
-    setShowCreateButton(false);
-    // Empty tenantValidation
-    api
-      .invoke("GET", `/api/v1/namespaces/${namespace}/tenants`)
-      .then((res: any[]) => {
-        const tenantsList = get(res, "tenants", []);
-
-        if (tenantsList && tenantsList.length > 0) {
-          setEmptyNamespace(false);
-          setLoadingNamespaceInfo(false);
-          return;
-        }
-        setEmptyNamespace(true);
-
-        // Storagequotas retrieval
-        api
-          .invoke(
-            "GET",
-            `/api/v1/namespaces/${namespace}/resourcequotas/${namespace}-storagequota`
-          )
-          .then((res: IQuotas) => {
-            const elements: IQuotaElement[] = get(res, "elements", []);
-            dispatch(setLimitSize(getLimitSizes(res)));
-
-            const newStorage = elements.map((storageClass: any) => {
-              const name = get(storageClass, "name", "").split(
-                ".storageclass.storage.k8s.io/requests.storage"
-              )[0];
-
-              return { label: name, value: name };
-            });
-
-            dispatch(setStorageClassesList(newStorage));
-
-            const stExists = newStorage.findIndex(
-              (storageClass) => storageClass.value === selectedStorageClass
-            );
-
-            if (newStorage.length > 0 && stExists === -1) {
-              updateField("selectedStorageClass", newStorage[0].value);
-            } else if (newStorage.length === 0) {
-              updateField("selectedStorageClass", "");
-              dispatch(setStorageClassesList([]));
-            }
-            setLoadingNamespaceInfo(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setLoadingNamespaceInfo(false);
-            setShowCreateButton(true);
-            updateField("selectedStorageClass", "");
-            dispatch(setStorageClassesList([]));
-            console.error("Namespace error: ", err);
-          });
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(
-          setModalErrorSnackMessage({
-            errorMessage: "Error validating if namespace already has tenants",
-            detailedError: err.detailedError,
-          })
-        );
-      });
-  }, [namespace, dispatch, updateField, selectedStorageClass]);
-
-  const debounceNamespace = useMemo(
-    () => debounce(getNamespaceInformation, 500),
-    [getNamespaceInformation]
-  );
-
-  useEffect(() => {
-    if (namespace !== "") {
-      debounceNamespace();
-      setLoadingNamespaceInfo(true);
-
-      // Cancel previous debounce calls during useEffect cleanup.
-      return debounceNamespace.cancel;
-    }
-  }, [debounceNamespace, namespace]);
-
   // Validation
   useEffect(() => {
-    let customNamespaceError = false;
-    let errorMessage = "";
-
-    if (!emptyNamespace && !loadingNamespaceInfo) {
-      customNamespaceError = true;
-      errorMessage = "You can only create one tenant per namespace";
-    } else if (
-      storageClasses.length < 1 &&
-      emptyNamespace &&
-      !loadingNamespaceInfo
-    ) {
-      customNamespaceError = true;
-      errorMessage = "Please enter a valid namespace";
-    }
-
-    const commonValidation = commonFormValidation([
-      {
-        fieldKey: "namespace",
-        required: true,
-        value: namespace,
-        customValidation: customNamespaceError,
-        customValidationMessage: errorMessage,
-      },
-    ]);
-
     const isValid =
-      !("namespace" in commonValidation) &&
-      ((formToRender === IMkEnvs.default && storageClasses.length > 0) ||
-        (formToRender !== IMkEnvs.default && selectedStorageType !== ""));
+      (formToRender === IMkEnvs.default && storageClasses.length > 0) ||
+      (formToRender !== IMkEnvs.default && selectedStorageType !== "");
 
     dispatch(isPageValid({ pageName: "nameTenant", valid: isValid }));
-
-    setValidationErrors(commonValidation);
-  }, [
-    storageClasses,
-    namespace,
-    dispatch,
-    emptyNamespace,
-    loadingNamespaceInfo,
-    selectedStorageType,
-    formToRender,
-  ]);
-
-  const frmValidationCleanup = (fieldName: string) => {
-    setValidationErrors(clearValidationError(validationErrors, fieldName));
-  };
-
-  const addNamespace = () => {
-    setOpenAddNSConfirm(true);
-  };
-
-  const closeAddNamespace = (refresh: boolean) => {
-    setOpenAddNSConfirm(false);
-
-    if (refresh) {
-      debounceNamespace();
-    }
-  };
+  }, [storageClasses, dispatch, selectedStorageType, formToRender]);
 
   return (
     <Fragment>
-      {openAddNSConfirm && (
-        <AddNamespaceModal
-          addNamespaceOpen={openAddNSConfirm}
-          closeAddNamespaceModalAndRefresh={closeAddNamespace}
-          namespace={namespace}
-        />
-      )}
       <Grid container>
         <Grid item xs={8} md={9}>
           <Paper className={classes.paperWrapper} sx={{ minHeight: 550 }}>
@@ -310,21 +139,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
                 </div>
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
-                  id="namespace"
-                  name="namespace"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("namespace", e.target.value);
-                    frmValidationCleanup("namespace");
-                  }}
-                  label="Namespace"
-                  value={namespace}
-                  error={validationErrors["namespace"] || ""}
-                  overlayId={"add-namespace"}
-                  overlayIcon={showCreateButton ? <AddIcon /> : null}
-                  overlayAction={addNamespace}
-                  required
-                />
+                <NamespaceSelector formToRender={formToRender} />
               </Grid>
               {formToRender === IMkEnvs.default ? (
                 <Grid item xs={12} className={classes.formFieldRow}>

@@ -15,7 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { KeyPair, Opts } from "../ListTenants/utils";
+import {
+  getLimitSizes,
+  IQuotaElement,
+  KeyPair,
+  Opts,
+} from "../ListTenants/utils";
 import {
   ITolerationEffect,
   ITolerationModel,
@@ -37,6 +42,11 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import { createTenantAsync } from "./thunks/createTenantThunk";
 import { commonFormValidation } from "../../../../utils/validationFunctions";
 import { flipValidPageInState } from "./sliceUtils";
+import {
+  createNamespaceAsync,
+  namespaceResourcesAsync,
+  validateNamespaceAsync,
+} from "./thunks/namespaceThunks";
 
 export interface ICreateTenant {
   addingTenant: boolean;
@@ -52,6 +62,12 @@ export interface ICreateTenant {
   // after creation states
   createdAccount: NewServiceAccount | null;
   showNewCredentials: boolean;
+  //namespace logic
+  emptyNamespace: boolean;
+  loadingNamespaceInfo: boolean;
+  showNSCreateButton: boolean;
+  addNSOpen: boolean;
+  addNSLoading: boolean;
 }
 
 const initialState: ICreateTenant = {
@@ -353,6 +369,11 @@ const initialState: ICreateTenant = {
   ],
   createdAccount: null,
   showNewCredentials: false,
+  emptyNamespace: true,
+  loadingNamespaceInfo: false,
+  showNSCreateButton: false,
+  addNSOpen: false,
+  addNSLoading: false,
 };
 
 export const createTenantSlice = createSlice({
@@ -668,306 +689,7 @@ export const createTenantSlice = createSlice({
         encoded_cert: action.payload.value,
       };
     },
-    resetAddTenantForm: (state) => {
-      state.addingTenant = false;
-      state.page = 0;
-      // We can assume all the other pages are valid with default configuration except for 'nameTenant'
-      // because the user still have to choose a namespace and a name for the tenant
-      state.validPages = [
-        "tenantSize",
-        "configure",
-        "affinity",
-        "identityProvider",
-        "security",
-        "encryption",
-      ];
-      state.validationErrors = {};
-      state.storageClasses = [];
-      state.limitSize = {};
-      state.fields = {
-        nameTenant: {
-          tenantName: "",
-          namespace: "",
-          selectedStorageClass: "",
-          selectedStorageType: "",
-        },
-        configure: {
-          customImage: false,
-          imageName: "",
-          customDockerhub: false,
-          imageRegistry: "",
-          imageRegistryUsername: "",
-          imageRegistryPassword: "",
-          exposeMinIO: true,
-          exposeConsole: true,
-          tenantCustom: false,
-          logSearchEnabled: true,
-          prometheusEnabled: true,
-          logSearchVolumeSize: "5",
-          logSearchSizeFactor: "Gi",
-          logSearchSelectedStorageClass: "default",
-          logSearchImage: "",
-          kesImage: "",
-          logSearchPostgresImage: "",
-          logSearchPostgresInitImage: "",
-          prometheusVolumeSize: "5",
-          prometheusSizeFactor: "Gi",
-          prometheusSelectedStorageClass: "default",
-          prometheusImage: "",
-          prometheusSidecarImage: "",
-          prometheusInitImage: "",
-          setDomains: false,
-          consoleDomain: "",
-          minioDomains: [""],
-          tenantSecurityContext: {
-            runAsUser: "1000",
-            runAsGroup: "1000",
-            fsGroup: "1000",
-            runAsNonRoot: true,
-          },
-          logSearchSecurityContext: {
-            runAsUser: "1000",
-            runAsGroup: "1000",
-            fsGroup: "1000",
-            runAsNonRoot: true,
-          },
-          logSearchPostgresSecurityContext: {
-            runAsUser: "999",
-            runAsGroup: "999",
-            fsGroup: "999",
-            runAsNonRoot: true,
-          },
-          prometheusSecurityContext: {
-            runAsUser: "1000",
-            runAsGroup: "1000",
-            fsGroup: "1000",
-            runAsNonRoot: true,
-          },
-        },
-        identityProvider: {
-          idpSelection: "Built-in",
-          accessKeys: [getRandomString(16)],
-          secretKeys: [getRandomString(32)],
-          openIDConfigurationURL: "",
-          openIDClientID: "",
-          openIDSecretID: "",
-          openIDCallbackURL: "",
-          openIDClaimName: "",
-          openIDScopes: "",
-          ADURL: "",
-          ADSkipTLS: false,
-          ADServerInsecure: false,
-          ADGroupSearchBaseDN: "",
-          ADGroupSearchFilter: "",
-          ADUserDNs: [""],
-          ADLookupBindDN: "",
-          ADLookupBindPassword: "",
-          ADUserDNSearchBaseDN: "",
-          ADUserDNSearchFilter: "",
-          ADServerStartTLS: false,
-        },
-        security: {
-          enableAutoCert: true,
-          enableCustomCerts: false,
-          enableTLS: true,
-        },
-        encryption: {
-          enableEncryption: false,
-          encryptionType: "vault",
-          gemaltoEndpoint: "",
-          gemaltoToken: "",
-          gemaltoDomain: "",
-          gemaltoRetry: "0",
-          awsEndpoint: "",
-          awsRegion: "",
-          awsKMSKey: "",
-          awsAccessKey: "",
-          awsSecretKey: "",
-          awsToken: "",
-          vaultEndpoint: "",
-          vaultEngine: "",
-          vaultNamespace: "",
-          vaultPrefix: "",
-          vaultAppRoleEngine: "",
-          vaultId: "",
-          vaultSecret: "",
-          vaultRetry: "0",
-          vaultPing: "0",
-          azureEndpoint: "",
-          azureTenantID: "",
-          azureClientID: "",
-          azureClientSecret: "",
-          gcpProjectID: "",
-          gcpEndpoint: "",
-          gcpClientEmail: "",
-          gcpClientID: "",
-          gcpPrivateKeyID: "",
-          gcpPrivateKey: "",
-          enableCustomCertsForKES: false,
-          replicas: "1",
-          kesSecurityContext: {
-            runAsUser: "1000",
-            runAsGroup: "1000",
-            fsGroup: "1000",
-            runAsNonRoot: true,
-          },
-        },
-        tenantSize: {
-          volumeSize: "1024",
-          sizeFactor: "Gi",
-          drivesPerServer: "4",
-          nodes: "4",
-          memoryNode: "2",
-          ecParity: "",
-          ecParityChoices: [],
-          cleanECChoices: [],
-          untouchedECField: true,
-          distribution: {
-            error: "",
-            nodes: 0,
-            persistentVolumes: 0,
-            disks: 0,
-          },
-          ecParityCalc: {
-            error: 0,
-            defaultEC: "",
-            erasureCodeSet: 0,
-            maxEC: "",
-            rawCapacity: "0",
-            storageFactors: [],
-          },
-          limitSize: {},
-          cpuToUse: "0",
-          // resource request
-          resourcesSpecifyLimit: false,
-          resourcesCPURequestError: "",
-          resourcesCPURequest: "",
-          resourcesCPULimitError: "",
-          resourcesCPULimit: "",
-          resourcesMemoryRequestError: "",
-          resourcesMemoryRequest: "",
-          resourcesMemoryLimitError: "",
-          resourcesMemoryLimit: "",
-          resourcesSize: {
-            error: "",
-            memoryRequest: 0,
-            memoryLimit: 0,
-            cpuRequest: 0,
-            cpuLimit: 0,
-          },
-          maxAllocatableResources: {
-            min_allocatable_mem: 0,
-            min_allocatable_cpu: 0,
-            cpu_priority: {
-              max_allocatable_cpu: 0,
-              max_allocatable_mem: 0,
-            },
-            mem_priority: {
-              max_allocatable_cpu: 0,
-              max_allocatable_mem: 0,
-            },
-          },
-          maxCPUsUse: "0",
-          maxMemorySize: "0",
-          integrationSelection: {
-            driveSize: { driveSize: "0", sizeUnit: "B" },
-            CPU: 0,
-            typeSelection: "",
-            memory: 0,
-            drivesPerServer: 0,
-            storageClass: "",
-          },
-        },
-        affinity: {
-          nodeSelectorLabels: "",
-          podAffinity: "default",
-          withPodAntiAffinity: true,
-        },
-      };
-      state.certificates = {
-        minioCertificates: [
-          {
-            id: Date.now().toString(),
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-        ],
-        caCertificates: [
-          {
-            id: Date.now().toString(),
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-        ],
-        consoleCaCertificates: [
-          {
-            id: Date.now().toString(),
-            key: "",
-            cert: "",
-            encoded_key: "",
-            encoded_cert: "",
-          },
-        ],
-        consoleCertificate: {
-          id: "console_cert_pair",
-          key: "",
-          cert: "",
-          encoded_key: "",
-          encoded_cert: "",
-        },
-        serverCertificate: {
-          id: "encryptionServerCertificate",
-          key: "",
-          cert: "",
-          encoded_key: "",
-          encoded_cert: "",
-        },
-        clientCertificate: {
-          id: "encryptionClientCertificate",
-          key: "",
-          cert: "",
-          encoded_key: "",
-          encoded_cert: "",
-        },
-        vaultCertificate: {
-          id: "encryptionVaultCertificate",
-          key: "",
-          cert: "",
-          encoded_key: "",
-          encoded_cert: "",
-        },
-        vaultCA: {
-          id: "encryptionVaultCA",
-          key: "",
-          cert: "",
-          encoded_key: "",
-          encoded_cert: "",
-        },
-        gemaltoCA: {
-          id: "encryptionGemaltoCA",
-          key: "",
-          cert: "",
-          encoded_key: "",
-          encoded_cert: "",
-        },
-      };
-      state.nodeSelectorPairs = [{ key: "", value: "" }];
-      state.tolerations = [
-        {
-          key: "",
-          tolerationSeconds: { seconds: 0 },
-          value: "",
-          effect: ITolerationEffect.NoSchedule,
-          operator: ITolerationOperator.Equal,
-        },
-      ];
-      state.createdAccount = null;
-      state.showNewCredentials = false;
-    },
+    resetAddTenantForm: () => initialState,
     setKeyValuePairs: (state, action: PayloadAction<LabelKeyPair[]>) => {
       state.nodeSelectorPairs = action.payload;
     },
@@ -1093,6 +815,49 @@ export const createTenantSlice = createSlice({
 
       flipValidPageInState(state, "nameTenant", isValid);
     },
+    setNamespace: (state, action: PayloadAction<string>) => {
+      state.fields.nameTenant.namespace = action.payload;
+      delete state.validationErrors["namespace"];
+
+      let customNamespaceError = false;
+      let errorMessage = "";
+
+      if (
+        state.storageClasses.length < 1 &&
+        state.emptyNamespace &&
+        !state.loadingNamespaceInfo
+      ) {
+        customNamespaceError = true;
+        errorMessage = "Please enter a valid namespace";
+      }
+
+      const commonValidation = commonFormValidation([
+        {
+          fieldKey: "namespace",
+          required: true,
+          value: action.payload,
+          customValidation: customNamespaceError,
+          customValidationMessage: errorMessage,
+        },
+      ]);
+
+      let isValid = false;
+      if ("namespace" in commonValidation) {
+        isValid = true;
+        state.validationErrors["namespace"] = commonValidation["namespace"];
+      }
+
+      flipValidPageInState(state, "nameTenant", isValid);
+    },
+    showNSCreate: (state, action: PayloadAction<boolean>) => {
+      state.showNSCreateButton = action.payload;
+    },
+    openAddNSModal: (state) => {
+      state.addNSOpen = true;
+    },
+    closeAddNSModal: (state) => {
+      state.addNSOpen = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -1108,6 +873,73 @@ export const createTenantSlice = createSlice({
         state.addingTenant = false;
         state.createdAccount = action.payload;
         state.showNewCredentials = true;
+      })
+      .addCase(validateNamespaceAsync.pending, (state, action) => {
+        state.loadingNamespaceInfo = true;
+        state.showNSCreateButton = false;
+        delete state.validationErrors["namespace"];
+      })
+      .addCase(validateNamespaceAsync.rejected, (state, action) => {
+        state.loadingNamespaceInfo = false;
+        state.showNSCreateButton = true;
+      })
+      .addCase(validateNamespaceAsync.fulfilled, (state, action) => {
+        state.showNSCreateButton = false;
+        state.emptyNamespace = action.payload;
+        if (!state.emptyNamespace) {
+          state.validationErrors["namespace"] =
+            "You can only create one tenant per namespace";
+        }
+      })
+      .addCase(namespaceResourcesAsync.pending, (state, action) => {
+        state.loadingNamespaceInfo = true;
+      })
+      .addCase(namespaceResourcesAsync.rejected, (state, action) => {
+        state.loadingNamespaceInfo = false;
+        state.showNSCreateButton = true;
+        state.fields.nameTenant.selectedStorageClass = "";
+        state.storageClasses = [];
+
+        state.validationErrors["namespace"] = "Please enter a valid namespace";
+      })
+      .addCase(namespaceResourcesAsync.fulfilled, (state, action) => {
+        state.loadingNamespaceInfo = false;
+
+        const elements: IQuotaElement[] = get(action.payload, "elements", []);
+        state.limitSize = getLimitSizes(action.payload!);
+
+        const newStorage = elements.map((storageClass: any) => {
+          const name = get(storageClass, "name", "").split(
+            ".storageclass.storage.k8s.io/requests.storage"
+          )[0];
+
+          return { label: name, value: name };
+        });
+
+        state.storageClasses = newStorage;
+
+        const stExists = newStorage.findIndex(
+          (storageClass) =>
+            storageClass.value === state.fields.nameTenant.selectedStorageClass
+        );
+
+        if (newStorage.length > 0 && stExists === -1) {
+          state.fields.nameTenant.selectedStorageClass = newStorage[0].value;
+        } else if (newStorage.length === 0) {
+          state.fields.nameTenant.selectedStorageClass = "";
+          state.storageClasses = [];
+        }
+      })
+      .addCase(createNamespaceAsync.pending, (state, action) => {
+        state.addNSLoading = true;
+      })
+      .addCase(createNamespaceAsync.rejected, (state, action) => {
+        state.addNSLoading = false;
+      })
+      .addCase(createNamespaceAsync.fulfilled, (state, action) => {
+        state.addNSLoading = false;
+        state.addNSOpen = false;
+        delete state.validationErrors["namespace"];
       });
   },
 });
@@ -1150,6 +982,10 @@ export const {
   removeIDPADUsrAtIndex,
   setIDP,
   setTenantName,
+  setNamespace,
+  showNSCreate,
+  openAddNSModal,
+  closeAddNSModal,
 } = createTenantSlice.actions;
 
 export default createTenantSlice.reducer;
