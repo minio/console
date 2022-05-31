@@ -78,10 +78,8 @@ const checkPodDescribeHasSections = async () => {
 };
 
 test("Test describe section for PVCs in new tenant", async (t) => {
-  const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
+  const tenantName = `storage-lite`;
   await loginToOperator();
-  await createTenant(tenantName);
-  await t.wait(20000); // wait for PVCs to be created
   await testPvcDescribe(tenantName);
   await redirectToTenantsList();
   await deleteTenant(tenantName);
