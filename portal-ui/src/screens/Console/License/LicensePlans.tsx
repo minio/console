@@ -24,7 +24,12 @@ import { SubnetInfo } from "./types";
 import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { LicenseDocIcon } from "../../../icons";
+import {
+  ConsoleAgpl,
+  ConsoleEnterprise,
+  ConsoleStandard,
+  LicenseDocIcon,
+} from "../../../icons";
 import {
   LICENSE_PLANS,
   FEATURE_ITEMS,
@@ -87,29 +92,23 @@ const PlanHeader = ({
         },
 
         "& .title-block": {
-          paddingTop: "20px",
           display: "flex",
           alignItems: "center",
           flexFlow: "column",
           width: "100%",
-
-          marginTop: "auto",
-          marginBottom: "auto",
           "& .title-main": {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flex: 1,
           },
-          "& .min-icon": {
-            marginLeft: "13px",
-            height: "13px",
-            width: "13px",
-          },
-
-          "& .title": {
-            fontSize: "22px",
-            fontWeight: 600,
+          "& .iconContainer": {
+            "& .min-icon": {
+              minWidth: 140,
+              width: "100%",
+              maxHeight: 55,
+              height: "100%",
+            },
           },
         },
 
@@ -143,9 +142,25 @@ const PlanHeader = ({
         "&.active, &.active.xs-active": {
           borderTop: "3px solid #2781B0",
           color: "#ffffff",
+          position: "relative",
 
           "& .min-icon": {
             fill: "#ffffff",
+          },
+
+          "&:before": {
+            content: "' '",
+            position: "absolute",
+            width: "100%",
+            height: "15px",
+            backgroundColor: "#2781B0",
+            display: "block",
+            top: -16,
+          },
+          "& .iconContainer": {
+            "& .min-icon": {
+              marginTop: "-12px",
+            },
           },
         },
         "&.active": {
@@ -228,11 +243,10 @@ const LicensePlans = ({
       >
         <Box className="title-block">
           <Box className="title-main">
-            <div className="title">Community</div>
+            <div className="iconContainer">
+              <ConsoleAgpl />
+            </div>
           </Box>
-          <div className="cur-plan-text">
-            {isCommunityPlan ? "Current Plan" : ""}
-          </div>
         </Box>
       </PlanHeader>
     );
@@ -248,11 +262,10 @@ const LicensePlans = ({
       >
         <Box className="title-block">
           <Box className="title-main">
-            <div className="title">Standard</div>
+            <div className="iconContainer">
+              <ConsoleStandard />
+            </div>
           </Box>
-          <div className="cur-plan-text">
-            {isStandardPlan ? "Current Plan" : ""}
-          </div>
         </Box>
       </PlanHeader>
     );
@@ -268,11 +281,10 @@ const LicensePlans = ({
       >
         <Box className="title-block">
           <Box className="title-main">
-            <div className="title">Enterprise</div>
+            <div className="iconContainer">
+              <ConsoleEnterprise />
+            </div>
           </Box>
-          <div className="cur-plan-text">
-            {isEnterprisePlan ? "Current Plan" : ""}
-          </div>
         </Box>
       </PlanHeader>
     );
@@ -293,6 +305,8 @@ const LicensePlans = ({
         target="_blank"
         rel="noopener noreferrer"
         sx={{
+          marginTop: "12px",
+          width: "80%",
           "&.MuiButton-contained": {
             padding: 0,
             paddingLeft: "8px",
@@ -339,8 +353,6 @@ const LicensePlans = ({
           border: "1px solid #eaeaea",
           borderTop: "0px",
           marginBottom: "45px",
-          overflow: "auto",
-          overflowY: "hidden",
           "&::-webkit-scrollbar": {
             width: "5px",
             height: "5px",
@@ -400,7 +412,7 @@ const LicensePlans = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              padding: "5px 0px 5px 0px",
+              padding: "5px 0px 25px 0px",
               borderLeft: "1px solid #eaeaea",
             },
             "& .plan-header": {
@@ -490,15 +502,6 @@ const LicensePlans = ({
 
               "& .feature-title": {
                 background: "#F7F7F7",
-              },
-
-              "& .title-main": {
-                position: "relative",
-                top: "-17px",
-              },
-              "& .cur-plan-text": {
-                position: "relative",
-                top: "-17px",
               },
             },
           }}
@@ -717,7 +720,7 @@ const LicensePlans = ({
                 return (
                   <Box className="feature-item">
                     <Box className="feature-item-info">
-                      <div className="xs-only"> </div>
+                      <div className="xs-only"></div>
                       <Box className="plan-feature">
                         <CheckCircleIcon />
                       </Box>
