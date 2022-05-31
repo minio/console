@@ -44,7 +44,7 @@ const styles = (theme: Theme) =>
       },
       "& > span:not(.BaseBadge-root)": {
         paddingRight: 8,
-      }
+      },
     },
     contained: {
       borderColor: theme.palette.primary.main,
