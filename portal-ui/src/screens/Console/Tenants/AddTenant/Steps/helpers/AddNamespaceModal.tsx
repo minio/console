@@ -14,24 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import {
   deleteDialogStyles,
   modalBasic,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-
-import { ErrorResponseHandler } from "../../../../../../common/types";
-import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../../../icons";
-import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { AppState } from "../../../../../../store";
+import { closeAddNSModal } from "../../createTenantSlice";
+import makeStyles from "@mui/styles/makeStyles";
+import { createNamespaceAsync } from "../../thunks/namespaceThunks";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     wrapText: {
       maxWidth: "200px",
@@ -40,50 +39,22 @@ const styles = (theme: Theme) =>
     },
     ...modalBasic,
     ...deleteDialogStyles,
-  });
+  })
+);
 
-interface IAddNamespace {
-  classes: any;
-  namespace: string;
-  addNamespaceOpen: boolean;
-  closeAddNamespaceModalAndRefresh: (reloadNamespaceData: boolean) => void;
-}
-
-const AddNamespaceModal = ({
-  classes,
-  namespace,
-  addNamespaceOpen,
-  closeAddNamespaceModalAndRefresh,
-}: IAddNamespace) => {
+const AddNamespaceModal = () => {
   const dispatch = useDispatch();
-  const [addNamespaceLoading, setAddNamespaceLoading] =
-    useState<boolean>(false);
+  const classes = useStyles();
 
-  useEffect(() => {
-    if (addNamespaceLoading) {
-      api
-        .invoke("POST", "/api/v1/namespace", {
-          name: namespace,
-        })
-        .then((res) => {
-          setAddNamespaceLoading(false);
-          closeAddNamespaceModalAndRefresh(true);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setAddNamespaceLoading(false);
-          dispatch(setErrorSnackMessage(err));
-        });
-    }
-  }, [
-    addNamespaceLoading,
-    closeAddNamespaceModalAndRefresh,
-    namespace,
-    dispatch,
-  ]);
-
-  const addNamespace = () => {
-    setAddNamespaceLoading(true);
-  };
+  const namespace = useSelector(
+    (state: AppState) => state.createTenant.fields.nameTenant.namespace
+  );
+  const addNamespaceLoading = useSelector(
+    (state: AppState) => state.createTenant.addNSLoading
+  );
+  const addNamespaceOpen = useSelector(
+    (state: AppState) => state.createTenant.addNSOpen
+  );
 
   return (
     <ConfirmDialog
@@ -96,9 +67,11 @@ const AddNamespaceModal = ({
       isOpen={addNamespaceOpen}
       titleIcon={<ConfirmModalIcon />}
       isLoading={addNamespaceLoading}
-      onConfirm={addNamespace}
+      onConfirm={() => {
+        dispatch(createNamespaceAsync());
+      }}
       onClose={() => {
-        closeAddNamespaceModalAndRefresh(false);
+        dispatch(closeAddNSModal());
       }}
       confirmationContent={
         <React.Fragment>
@@ -114,4 +87,4 @@ const AddNamespaceModal = ({
   );
 };
 
-export default withStyles(styles)(AddNamespaceModal);
+export default AddNamespaceModal;
