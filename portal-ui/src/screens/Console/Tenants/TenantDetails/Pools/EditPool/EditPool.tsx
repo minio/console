@@ -40,7 +40,7 @@ import {
 
 import { AppState } from "../../../../../../store";
 import { resetEditPoolForm, setInitialPoolDetails } from "./editPoolSlice";
-import { editPoolAsync } from "./thunks/editPoolAsync";
+import EditPoolButton from "./EditPoolButton";
 
 interface IEditPoolProps {
   classes: any;
@@ -75,8 +75,6 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const requiredPages = ["setup", "affinity", "configure"];
-
 const EditPool = ({ classes, open }: IEditPoolProps) => {
   const dispatch = useDispatch();
 
@@ -85,12 +83,6 @@ const EditPool = ({ classes, open }: IEditPoolProps) => {
   );
   const selectedPool = useSelector(
     (state: AppState) => state.tenants.tenantDetails.selectedPool
-  );
-  const selectedStorageClass = useSelector(
-    (state: AppState) => state.editPool.fields.setup.storageClass
-  );
-  const validPages = useSelector(
-    (state: AppState) => state.editPool.validPages
   );
 
   const editSending = useSelector(
@@ -126,15 +118,7 @@ const EditPool = ({ classes, open }: IEditPoolProps) => {
   };
 
   const createButton = {
-    label: "Update",
-    type: "submit",
-    enabled:
-      !editSending &&
-      selectedStorageClass !== "" &&
-      requiredPages.every((v) => validPages.includes(v)),
-    action: () => {
-      dispatch(editPoolAsync());
-    },
+    componentRender: <EditPoolButton />,
   };
 
   const wizardSteps: IWizardElement[] = [
