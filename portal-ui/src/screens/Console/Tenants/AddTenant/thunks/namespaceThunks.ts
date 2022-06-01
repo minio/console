@@ -89,7 +89,7 @@ export const createNamespaceAsync = createAsyncThunk(
       .invoke("POST", "/api/v1/namespace", {
         name: namespace,
       })
-      .then((res) => {
+      .then((_) => {
         // revalidate the name to have the storage classes populated
         dispatch(validateNamespaceAsync());
         return true;
