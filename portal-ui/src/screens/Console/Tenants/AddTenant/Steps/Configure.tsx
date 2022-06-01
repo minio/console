@@ -260,7 +260,7 @@ const Configure = ({ classes }: IConfigureProps) => {
 
             updateField("exposeMinIO", checked);
           }}
-          label={"Expose MiniO Service"}
+          label={"Expose MinIO Service"}
         />
       </Grid>
       <Grid item xs={12} className={classes.configSectionItem}>
