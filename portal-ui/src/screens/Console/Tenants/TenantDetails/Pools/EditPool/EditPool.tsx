@@ -14,16 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
-import api from "../../../../../../common/api";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import TenantsIcon from "../../../../../../icons/TenantsIcon";
 import BackLink from "../../../../../../common/BackLink";
@@ -33,30 +31,18 @@ import EditPoolPlacement from "./EditPoolPlacement";
 import history from "../../../../../../history";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
 import { LinearProgress } from "@mui/material";
-import { generatePoolName, niceBytes } from "../../../../../../common/utils";
+import { niceBytes } from "../../../../../../common/utils";
 import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IEditPoolItem, IEditPoolRequest } from "../../../ListTenants/types";
 
 import { AppState } from "../../../../../../store";
-import { ErrorResponseHandler } from "../../../../../../common/types";
-import { getDefaultAffinity, getNodeSelector } from "../../utils";
-import { setErrorSnackMessage } from "../../../../../../systemSlice";
-import {
-  resetPoolForm,
-  setInitialPoolDetails,
-  setTenantDetailsLoad,
-} from "../../../tenantsSlice";
+import { resetEditPoolForm, setInitialPoolDetails } from "./editPoolSlice";
+import EditPoolButton from "./EditPoolButton";
+import makeStyles from "@mui/styles/makeStyles";
 
-interface IEditPoolProps {
-  classes: any;
-  open: boolean;
-  match: any;
-}
-
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     bottomContainer: {
       display: "flex",
@@ -81,12 +67,12 @@ const styles = (theme: Theme) =>
     },
     ...formFieldStyles,
     ...modalStyleUtils,
-  });
+  })
+);
 
-const requiredPages = ["setup", "affinity", "configure"];
-
-const EditPool = ({ classes, open }: IEditPoolProps) => {
+const EditPool = () => {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const tenant = useSelector(
     (state: AppState) => state.tenants.tenantDetails.tenantInfo
@@ -94,46 +80,10 @@ const EditPool = ({ classes, open }: IEditPoolProps) => {
   const selectedPool = useSelector(
     (state: AppState) => state.tenants.tenantDetails.selectedPool
   );
-  const selectedStorageClass = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.setup.storageClass
-  );
-  const validPages = useSelector(
-    (state: AppState) => state.tenants.editPool.validPages
-  );
-  const numberOfNodes = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.setup.numberOfNodes
-  );
-  const volumeSize = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.setup.volumeSize
-  );
-  const volumesPerServer = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.setup.volumesPerServer
-  );
-  const affinityType = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.affinity.podAffinity
-  );
-  const nodeSelectorLabels = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.affinity.nodeSelectorLabels
-  );
-  const withPodAntiAffinity = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.affinity.withPodAntiAffinity
-  );
-  const tolerations = useSelector(
-    (state: AppState) => state.tenants.editPool.fields.tolerations
-  );
-  const securityContextEnabled = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.configuration.securityContextEnabled
-  );
 
-  const securityContext = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.configuration.securityContext
+  const editSending = useSelector(
+    (state: AppState) => state.editPool.editSending
   );
-
-  const [editSending, setEditSending] = useState<boolean>(false);
 
   const poolsURL = `/namespaces/${tenant?.namespace || ""}/tenants/${
     tenant?.name || ""
@@ -153,131 +103,18 @@ const EditPool = ({ classes, open }: IEditPoolProps) => {
     }
   }, [selectedPool, dispatch, tenant]);
 
-  useEffect(() => {
-    if (editSending && tenant) {
-      const poolName = generatePoolName(tenant.pools);
-
-      let affinityObject = {};
-
-      switch (affinityType) {
-        case "default":
-          affinityObject = {
-            affinity: getDefaultAffinity(tenant.name, poolName),
-          };
-          break;
-        case "nodeSelector":
-          affinityObject = {
-            affinity: getNodeSelector(
-              nodeSelectorLabels,
-              withPodAntiAffinity,
-              tenant.name,
-              poolName
-            ),
-          };
-          break;
-      }
-
-      const tolerationValues = tolerations.filter(
-        (toleration) => toleration.key.trim() !== ""
-      );
-
-      const cleanPools = tenant.pools
-        .filter((pool) => pool.name !== selectedPool)
-        .map((pool) => {
-          let securityContextOption = null;
-
-          if (pool.securityContext) {
-            if (
-              !!pool.securityContext.runAsUser ||
-              !!pool.securityContext.runAsGroup ||
-              !!pool.securityContext.fsGroup
-            ) {
-              securityContextOption = { ...pool.securityContext };
-            }
-          }
-
-          const request: IEditPoolItem = {
-            ...pool,
-            securityContext: securityContextOption,
-          };
-
-          return request;
-        });
-
-      const data: IEditPoolRequest = {
-        pools: [
-          ...cleanPools,
-          {
-            name: selectedPool || poolName,
-            servers: numberOfNodes,
-            volumes_per_server: volumesPerServer,
-            volume_configuration: {
-              size: volumeSize * 1073741824,
-              storage_class_name: selectedStorageClass,
-              labels: null,
-            },
-            tolerations: tolerationValues,
-            securityContext: securityContextEnabled ? securityContext : null,
-            ...affinityObject,
-          },
-        ],
-      };
-
-      api
-        .invoke(
-          "PUT",
-          `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/pools`,
-          data
-        )
-        .then(() => {
-          setEditSending(false);
-          dispatch(resetPoolForm());
-          dispatch(setTenantDetailsLoad(true));
-          history.push(poolsURL);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setEditSending(false);
-          dispatch(setErrorSnackMessage(err));
-        });
-    }
-  }, [
-    selectedPool,
-    dispatch,
-    editSending,
-    poolsURL,
-    affinityType,
-    nodeSelectorLabels,
-    numberOfNodes,
-    securityContext,
-    securityContextEnabled,
-    selectedStorageClass,
-    tenant,
-    tolerations,
-    volumeSize,
-    volumesPerServer,
-    withPodAntiAffinity,
-  ]);
-
   const cancelButton = {
     label: "Cancel",
     type: "other",
     enabled: true,
     action: () => {
-      dispatch(resetPoolForm());
+      dispatch(resetEditPoolForm());
       history.push(poolsURL);
     },
   };
 
   const createButton = {
-    label: "Update",
-    type: "submit",
-    enabled:
-      !editSending &&
-      selectedStorageClass !== "" &&
-      requiredPages.every((v) => validPages.includes(v)),
-    action: () => {
-      setEditSending(true);
-    },
+    componentRender: <EditPoolButton />,
   };
 
   const wizardSteps: IWizardElement[] = [
@@ -339,4 +176,4 @@ const EditPool = ({ classes, open }: IEditPoolProps) => {
   );
 };
 
-export default withStyles(styles)(EditPool);
+export default EditPool;

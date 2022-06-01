@@ -34,7 +34,7 @@ import {
 } from "../../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { isEditPoolPageValid, setEditPoolField } from "../../../tenantsSlice";
+import { isEditPoolPageValid, setEditPoolField } from "./editPoolSlice";
 
 interface IConfigureProps {
   classes: any;
@@ -83,11 +83,10 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
 
   const securityContextEnabled = useSelector(
     (state: AppState) =>
-      state.tenants.editPool.fields.configuration.securityContextEnabled
+      state.editPool.fields.configuration.securityContextEnabled
   );
   const securityContext = useSelector(
-    (state: AppState) =>
-      state.tenants.editPool.fields.configuration.securityContext
+    (state: AppState) => state.editPool.fields.configuration.securityContext
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

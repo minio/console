@@ -27,6 +27,7 @@ import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenantSlice";
+import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
 
 export const store = configureStore({
   reducer: {
@@ -43,12 +44,12 @@ export const store = configureStore({
     // Operator Reducers
     tenants: tenantsReducer,
     createTenant: createTenantReducer,
+    editPool: editPoolReducer,
   },
 });
 
 export type AppState = ReturnType<typeof store.getState>;
 
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 
 export default store;

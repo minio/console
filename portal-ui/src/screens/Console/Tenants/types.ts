@@ -291,7 +291,6 @@ export interface ITenantDetails {
 export interface ITenantState {
   tenantDetails: ITenantDetails;
   addPool: IAddPool;
-  editPool: IEditPool;
 }
 
 export interface ILabelKeyPair {
@@ -337,29 +336,6 @@ export interface IAddPool {
   storageClasses: Opts[];
   limitSize: any;
   fields: IAddPoolFields;
-}
-
-export interface IEditPoolSetup {
-  numberOfNodes: number;
-  volumeSize: number;
-  volumesPerServer: number;
-  storageClass: string;
-}
-
-export interface IEditPoolFields {
-  setup: IEditPoolSetup;
-  affinity: ITenantAffinity;
-  configuration: IPoolConfiguration;
-  tolerations: ITolerationModel[];
-  nodeSelectorPairs: LabelKeyPair[];
-}
-
-export interface IEditPool {
-  editPoolLoading: boolean;
-  validPages: string[];
-  storageClasses: Opts[];
-  limitSize: any;
-  fields: IEditPoolFields;
 }
 
 export interface ITenantIdentityProviderResponse {
