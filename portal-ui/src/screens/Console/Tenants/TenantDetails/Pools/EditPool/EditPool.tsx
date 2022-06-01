@@ -18,7 +18,6 @@ import React, { Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import PageLayout from "../../../../Common/Layout/PageLayout";
@@ -41,14 +40,9 @@ import {
 import { AppState } from "../../../../../../store";
 import { resetEditPoolForm, setInitialPoolDetails } from "./editPoolSlice";
 import EditPoolButton from "./EditPoolButton";
+import makeStyles from "@mui/styles/makeStyles";
 
-interface IEditPoolProps {
-  classes: any;
-  open: boolean;
-  match: any;
-}
-
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     bottomContainer: {
       display: "flex",
@@ -73,10 +67,12 @@ const styles = (theme: Theme) =>
     },
     ...formFieldStyles,
     ...modalStyleUtils,
-  });
+  })
+);
 
-const EditPool = ({ classes, open }: IEditPoolProps) => {
+const EditPool = () => {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const tenant = useSelector(
     (state: AppState) => state.tenants.tenantDetails.tenantInfo
@@ -180,4 +176,4 @@ const EditPool = ({ classes, open }: IEditPoolProps) => {
   );
 };
 
-export default withStyles(styles)(EditPool);
+export default EditPool;
