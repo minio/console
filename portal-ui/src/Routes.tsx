@@ -17,7 +17,6 @@
 import React, { Suspense } from "react";
 import { Route, Router, Switch } from "react-router-dom";
 import history from "./history";
-import { hot } from "react-hot-loader/root";
 import ProtectedRoute from "./ProtectedRoutes";
 import LoadingComponent from "./common/LoadingComponent";
 import AppConsole from "./screens/Console/ConsoleKBar";
@@ -70,4 +69,4 @@ const Routes = () => {
   );
 };
 
-export default hot(Routes);
+export default Routes;
