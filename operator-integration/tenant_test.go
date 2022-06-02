@@ -673,3 +673,57 @@ func TestGetMultipleCSRs(t *testing.T) {
 		assert.Equal(strings.Contains(finalResponse, element), true)
 	}
 }
+
+func ListPVCsForTenant(nameSpace string, tenant string) (*http.Response, error) {
+	/*
+		URL: /namespaces/{namespace}/tenants/{tenant}/pvcs
+		HTTP Verb: GET
+	*/
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/namespaces/"+nameSpace+"/tenants/"+tenant+"/pvcs/", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestListPVCsForTenant(t *testing.T) {
+	/*
+		Function to list and verify the Tenant's Persistent Volume Claims
+	*/
+	assert := assert.New(t)
+	namespace := "tenant-lite"
+	tenant := "storage-lite"
+	resp, err := ListPVCsForTenant(namespace, tenant)
+	bodyResponse := resp.Body
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "failed")
+	}
+	bodyBytes, _ := ioutil.ReadAll(bodyResponse)
+	listObjs := models.ListPVCsResponse{}
+	err = json.Unmarshal(bodyBytes, &listObjs)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	var pvcArray [4]string
+	pvcArray[0] = "data0-storage-lite-pool-0-0"
+	pvcArray[1] = "data0-storage-lite-pool-0-1"
+	pvcArray[2] = "data0-storage-lite-pool-0-2"
+	pvcArray[3] = "data0-storage-lite-pool-0-3"
+	for i := 0; i < len(pvcArray); i++ {
+		assert.Equal(strings.Contains(listObjs.Pvcs[i].Name, pvcArray[i]), true)
+	}
+}
