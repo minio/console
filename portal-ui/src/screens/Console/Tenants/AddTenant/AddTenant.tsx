@@ -112,7 +112,7 @@ const AddTenant = () => {
   };
 
   const createButton: IWizardButton = {
-    componentRender: <CreateTenantButton />,
+    componentRender: <CreateTenantButton key={"create-tenant"} />,
   };
 
   const wizardSteps: IWizardElement[] = [
