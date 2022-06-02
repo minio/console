@@ -727,3 +727,71 @@ func TestListPVCsForTenant(t *testing.T) {
 		assert.Equal(strings.Contains(listObjs.Pvcs[i].Name, pvcArray[i]), true)
 	}
 }
+
+func CreateNamespace(nameSpace string) (*http.Response, error) {
+	/*
+		Description: Creates a new Namespace with given information
+		URL: /namespace
+		HTTP Verb: POST
+	*/
+	requestDataAdd := map[string]interface{}{
+		"name": nameSpace,
+	}
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/namespace/",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestCreateNamespace(t *testing.T) {
+	/*
+		Function to Create a Namespace only once.
+	*/
+	assert := assert.New(t)
+	namespace := "new-namespace-thujun2208pm"
+	tests := []struct {
+		name           string
+		nameSpace      string
+		expectedStatus int
+	}{
+		{
+			name:           "Create Namespace for the first time",
+			expectedStatus: 201,
+			nameSpace:      namespace,
+		},
+		{
+			name:           "Create repeated namespace for second time",
+			expectedStatus: 500,
+			nameSpace:      namespace,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resp, err := CreateNamespace(tt.nameSpace)
+			assert.Nil(err)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if resp != nil {
+				assert.Equal(
+					tt.expectedStatus, resp.StatusCode, "failed")
+			} else {
+				assert.Fail("resp cannot be nil")
+			}
+		})
+	}
+}
