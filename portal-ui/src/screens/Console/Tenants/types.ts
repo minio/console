@@ -317,20 +317,16 @@ export interface IPoolConfiguration {
   securityContext: ISecurityContext;
 }
 
-export interface IAddPoolFields {
-  setup: IAddPoolSetup;
-  affinity: ITenantAffinity;
-  configuration: IPoolConfiguration;
-  tolerations: ITolerationModel[];
-  nodeSelectorPairs: LabelKeyPair[];
-}
-
 export interface IAddPool {
   addPoolLoading: boolean;
   validPages: string[];
   storageClasses: Opts[];
   limitSize: any;
-  fields: IAddPoolFields;
+  setup: IAddPoolSetup;
+  affinity: ITenantAffinity;
+  configuration: IPoolConfiguration;
+  tolerations: ITolerationModel[];
+  nodeSelectorPairs: LabelKeyPair[];
 }
 
 export interface ITenantIdentityProviderResponse {

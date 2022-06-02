@@ -19,7 +19,7 @@ import {
   ITolerationModel,
   ITolerationOperator,
 } from "../../../../../../common/types";
-import { IAddPool, IAddPoolFields, LabelKeyPair } from "../../../types";
+import { IAddPool, LabelKeyPair } from "../../../types";
 import { has } from "lodash";
 import get from "lodash/get";
 import { Opts } from "../../../ListTenants/utils";
@@ -29,42 +29,40 @@ const initialState: IAddPool = {
   validPages: ["affinity", "configure"],
   storageClasses: [],
   limitSize: {},
-  fields: {
-    setup: {
-      numberOfNodes: 0,
-      storageClass: "",
-      volumeSize: 0,
-      volumesPerServer: 0,
-    },
-    affinity: {
-      nodeSelectorLabels: "",
-      podAffinity: "default",
-      withPodAntiAffinity: true,
-    },
-    configuration: {
-      securityContextEnabled: false,
-      securityContext: {
-        runAsUser: "1000",
-        runAsGroup: "1000",
-        fsGroup: "1000",
-        runAsNonRoot: true,
-      },
-    },
-    nodeSelectorPairs: [{ key: "", value: "" }],
-    tolerations: [
-      {
-        key: "",
-        tolerationSeconds: { seconds: 0 },
-        value: "",
-        effect: ITolerationEffect.NoSchedule,
-        operator: ITolerationOperator.Equal,
-      },
-    ],
+  setup: {
+    numberOfNodes: 0,
+    storageClass: "",
+    volumeSize: 0,
+    volumesPerServer: 0,
   },
+  affinity: {
+    nodeSelectorLabels: "",
+    podAffinity: "default",
+    withPodAntiAffinity: true,
+  },
+  configuration: {
+    securityContextEnabled: false,
+    securityContext: {
+      runAsUser: "1000",
+      runAsGroup: "1000",
+      fsGroup: "1000",
+      runAsNonRoot: true,
+    },
+  },
+  nodeSelectorPairs: [{ key: "", value: "" }],
+  tolerations: [
+    {
+      key: "",
+      tolerationSeconds: { seconds: 0 },
+      value: "",
+      effect: ITolerationEffect.NoSchedule,
+      operator: ITolerationOperator.Equal,
+    },
+  ],
 };
 
 export const addPoolSlice = createSlice({
-  name: "trace",
+  name: "addPool",
   initialState,
   reducers: {
     setPoolLoading: (state, action: PayloadAction<boolean>) => {
@@ -73,22 +71,23 @@ export const addPoolSlice = createSlice({
     setPoolField: (
       state,
       action: PayloadAction<{
-        page: keyof IAddPoolFields;
+        page:
+          | "setup"
+          | "affinity"
+          | "configuration"
+          | "tolerations"
+          | "nodeSelectorPairs";
         field: string;
         value: any;
       }>
     ) => {
-      if (has(state.fields, `${action.payload.page}.${action.payload.field}`)) {
-        const originPageNameItems = get(
-          state.fields,
-          `${action.payload.page}`,
-          {}
-        );
+      if (has(state, `${action.payload.page}.${action.payload.field}`)) {
+        const originPageNameItems = get(state, `${action.payload.page}`, {});
 
         let newValue: any = {};
         newValue[action.payload.field] = action.payload.value;
 
-        state.fields[action.payload.page] = {
+        state[action.payload.page] = {
           ...originPageNameItems,
           ...newValue,
         };
@@ -121,11 +120,10 @@ export const addPoolSlice = createSlice({
         tolerationValue: ITolerationModel;
       }>
     ) => {
-      state.fields.tolerations[action.payload.index] =
-        action.payload.tolerationValue;
+      state.tolerations[action.payload.index] = action.payload.tolerationValue;
     },
     addNewPoolToleration: (state) => {
-      state.fields.tolerations.push({
+      state.tolerations.push({
         key: "",
         tolerationSeconds: { seconds: 0 },
         value: "",
@@ -134,12 +132,12 @@ export const addPoolSlice = createSlice({
       });
     },
     removePoolToleration: (state, action: PayloadAction<number>) => {
-      state.fields.tolerations = state.fields.tolerations.filter(
+      state.tolerations = state.tolerations.filter(
         (_, index) => index !== action.payload
       );
     },
     setPoolKeyValuePairs: (state, action: PayloadAction<LabelKeyPair[]>) => {
-      state.fields.nodeSelectorPairs = action.payload;
+      state.nodeSelectorPairs = action.payload;
     },
     resetPoolForm: () => initialState,
   },

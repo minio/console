@@ -119,19 +119,19 @@ const Affinity = ({ classes }: IAffinityProps) => {
   const dispatch = useDispatch();
 
   const podAffinity = useSelector(
-    (state: AppState) => state.addPool.fields.affinity.podAffinity
+    (state: AppState) => state.addPool.affinity.podAffinity
   );
   const nodeSelectorLabels = useSelector(
-    (state: AppState) => state.addPool.fields.affinity.nodeSelectorLabels
+    (state: AppState) => state.addPool.affinity.nodeSelectorLabels
   );
   const withPodAntiAffinity = useSelector(
-    (state: AppState) => state.addPool.fields.affinity.withPodAntiAffinity
+    (state: AppState) => state.addPool.affinity.withPodAntiAffinity
   );
   const keyValuePairs = useSelector(
-    (state: AppState) => state.addPool.fields.nodeSelectorPairs
+    (state: AppState) => state.addPool.nodeSelectorPairs
   );
   const tolerations = useSelector(
-    (state: AppState) => state.addPool.fields.tolerations
+    (state: AppState) => state.addPool.tolerations
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

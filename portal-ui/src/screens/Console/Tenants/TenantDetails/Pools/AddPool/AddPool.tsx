@@ -46,6 +46,7 @@ import BackLink from "../../../../../../common/BackLink";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { resetPoolForm } from "./addPoolSlice";
 import { setTenantDetailsLoad } from "../../../tenantsSlice";
+import { getTenantAsync } from "../../../thunks/tenantDetailsAsync";
 
 interface IAddPoolProps {
   classes: any;
@@ -87,36 +88,35 @@ const AddPool = ({ classes, open, match }: IAddPoolProps) => {
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const selectedStorageClass = useSelector(
-    (state: AppState) => state.addPool.fields.setup.storageClass
+    (state: AppState) => state.addPool.setup.storageClass
   );
   const validPages = useSelector((state: AppState) => state.addPool.validPages);
   const numberOfNodes = useSelector(
-    (state: AppState) => state.addPool.fields.setup.numberOfNodes
+    (state: AppState) => state.addPool.setup.numberOfNodes
   );
   const volumeSize = useSelector(
-    (state: AppState) => state.addPool.fields.setup.volumeSize
+    (state: AppState) => state.addPool.setup.volumeSize
   );
   const volumesPerServer = useSelector(
-    (state: AppState) => state.addPool.fields.setup.volumesPerServer
+    (state: AppState) => state.addPool.setup.volumesPerServer
   );
   const affinityType = useSelector(
-    (state: AppState) => state.addPool.fields.affinity.podAffinity
+    (state: AppState) => state.addPool.affinity.podAffinity
   );
   const nodeSelectorLabels = useSelector(
-    (state: AppState) => state.addPool.fields.affinity.nodeSelectorLabels
+    (state: AppState) => state.addPool.affinity.nodeSelectorLabels
   );
   const withPodAntiAffinity = useSelector(
-    (state: AppState) => state.addPool.fields.affinity.withPodAntiAffinity
+    (state: AppState) => state.addPool.affinity.withPodAntiAffinity
   );
   const tolerations = useSelector(
-    (state: AppState) => state.addPool.fields.tolerations
+    (state: AppState) => state.addPool.tolerations
   );
   const securityContextEnabled = useSelector(
-    (state: AppState) =>
-      state.addPool.fields.configuration.securityContextEnabled
+    (state: AppState) => state.addPool.configuration.securityContextEnabled
   );
   const securityContext = useSelector(
-    (state: AppState) => state.addPool.fields.configuration.securityContext
+    (state: AppState) => state.addPool.configuration.securityContext
   );
 
   const [addSending, setAddSending] = useState<boolean>(false);
@@ -176,7 +176,7 @@ const AddPool = ({ classes, open, match }: IAddPoolProps) => {
         .then(() => {
           setAddSending(false);
           dispatch(resetPoolForm());
-          dispatch(setTenantDetailsLoad(true));
+          dispatch(getTenantAsync());
           history.push(poolsURL);
         })
         .catch((err: ErrorResponseHandler) => {

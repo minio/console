@@ -81,11 +81,10 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
   const dispatch = useDispatch();
 
   const securityContextEnabled = useSelector(
-    (state: AppState) =>
-      state.addPool.fields.configuration.securityContextEnabled
+    (state: AppState) => state.addPool.configuration.securityContextEnabled
   );
   const securityContext = useSelector(
-    (state: AppState) => state.addPool.fields.configuration.securityContext
+    (state: AppState) => state.addPool.configuration.securityContext
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

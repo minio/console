@@ -91,16 +91,16 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
     (state: AppState) => state.addPool.storageClasses
   );
   const numberOfNodes = useSelector((state: AppState) =>
-    state.addPool.fields.setup.numberOfNodes.toString()
+    state.addPool.setup.numberOfNodes.toString()
   );
   const storageClass = useSelector(
-    (state: AppState) => state.addPool.fields.setup.storageClass
+    (state: AppState) => state.addPool.setup.storageClass
   );
   const volumeSize = useSelector((state: AppState) =>
-    state.addPool.fields.setup.volumeSize.toString()
+    state.addPool.setup.volumeSize.toString()
   );
   const volumesPerServer = useSelector((state: AppState) =>
-    state.addPool.fields.setup.volumesPerServer.toString()
+    state.addPool.setup.volumesPerServer.toString()
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
