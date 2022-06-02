@@ -20,7 +20,6 @@ import {
   IErasureCodeCalc,
   IGCPConfig,
   IGemaltoCredentials,
-  ITolerationModel,
 } from "../../../common/types";
 import { IResourcesSize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
@@ -315,18 +314,6 @@ export interface IAddPoolSetup {
 export interface IPoolConfiguration {
   securityContextEnabled: boolean;
   securityContext: ISecurityContext;
-}
-
-export interface IAddPool {
-  addPoolLoading: boolean;
-  validPages: string[];
-  storageClasses: Opts[];
-  limitSize: any;
-  setup: IAddPoolSetup;
-  affinity: ITenantAffinity;
-  configuration: IPoolConfiguration;
-  tolerations: ITolerationModel[];
-  nodeSelectorPairs: LabelKeyPair[];
 }
 
 export interface ITenantIdentityProviderResponse {

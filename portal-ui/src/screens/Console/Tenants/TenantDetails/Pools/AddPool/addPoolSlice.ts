@@ -19,13 +19,33 @@ import {
   ITolerationModel,
   ITolerationOperator,
 } from "../../../../../../common/types";
-import { IAddPool, LabelKeyPair } from "../../../types";
+import {
+  IAddPoolSetup,
+  IPoolConfiguration,
+  ITenantAffinity,
+  LabelKeyPair,
+} from "../../../types";
 import { has } from "lodash";
 import get from "lodash/get";
 import { Opts } from "../../../ListTenants/utils";
+import { addPoolAsync } from "./addPoolThunks";
+
+export interface IAddPool {
+  addPoolLoading: boolean;
+  sending: boolean;
+  validPages: string[];
+  storageClasses: Opts[];
+  limitSize: any;
+  setup: IAddPoolSetup;
+  affinity: ITenantAffinity;
+  configuration: IPoolConfiguration;
+  tolerations: ITolerationModel[];
+  nodeSelectorPairs: LabelKeyPair[];
+}
 
 const initialState: IAddPool = {
   addPoolLoading: false,
+  sending: false,
   validPages: ["affinity", "configure"],
   storageClasses: [],
   limitSize: {},
@@ -140,6 +160,18 @@ export const addPoolSlice = createSlice({
       state.nodeSelectorPairs = action.payload;
     },
     resetPoolForm: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(addPoolAsync.pending, (state) => {
+        state.sending = true;
+      })
+      .addCase(addPoolAsync.rejected, (state) => {
+        state.sending = false;
+      })
+      .addCase(addPoolAsync.fulfilled, (state, action) => {
+        state.sending = false;
+      });
   },
 });
 
