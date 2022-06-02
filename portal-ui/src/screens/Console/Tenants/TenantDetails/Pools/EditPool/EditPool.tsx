@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
@@ -28,7 +29,6 @@ import BackLink from "../../../../../../common/BackLink";
 import EditPoolResources from "./EditPoolResources";
 import EditPoolConfiguration from "./EditPoolConfiguration";
 import EditPoolPlacement from "./EditPoolPlacement";
-import history from "../../../../../../history";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
 import { LinearProgress } from "@mui/material";
 import { niceBytes } from "../../../../../../common/utils";
@@ -72,6 +72,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const EditPool = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const classes = useStyles();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
@@ -81,6 +83,9 @@ const EditPool = () => {
 
   const editSending = useSelector(
     (state: AppState) => state.editPool.editSending
+  );
+  const navigateTo = useSelector(
+    (state: AppState) => state.editPool.navigateTo
   );
 
   const poolsURL = `/namespaces/${tenant?.namespace || ""}/tenants/${
@@ -96,10 +101,18 @@ const EditPool = () => {
       if (poolDetails) {
         dispatch(setInitialPoolDetails(poolDetails));
       } else {
-        history.push("/tenants");
+        navigate("/tenants");
       }
     }
-  }, [selectedPool, dispatch, tenant]);
+  }, [selectedPool, dispatch, tenant, navigate]);
+
+  useEffect(() => {
+    if (navigateTo !== "") {
+      const goTo = `${navigateTo}`;
+      dispatch(resetEditPoolForm());
+      navigate(goTo);
+    }
+  }, [navigateTo, navigate, dispatch]);
 
   const cancelButton = {
     label: "Cancel",
@@ -107,7 +120,7 @@ const EditPool = () => {
     enabled: true,
     action: () => {
       dispatch(resetEditPoolForm());
-      history.push(poolsURL);
+      navigate(poolsURL);
     },
   };
 

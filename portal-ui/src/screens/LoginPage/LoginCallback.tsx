@@ -15,11 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { useNavigate } from "react-router-dom";
 import api from "../../common/api";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import history, { baseUrl } from "../../history";
+import { baseUrl } from "../../history";
 import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -110,6 +111,8 @@ interface ILoginCallBackProps {
 }
 
 const LoginCallback = ({ classes }: ILoginCallBackProps) => {
+  const navigate = useNavigate();
+
   const [error, setError] = useState<string>("");
   const [errorDescription, setErrorDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -140,7 +143,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
               localStorage.setItem("redirect-path", "");
             }
             setLoading(false);
-            history.push(targetPath);
+            navigate(targetPath);
           })
           .catch((error) => {
             setError(error.errorMessage);
@@ -149,7 +152,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
           });
       }
     }
-  }, [loading]);
+  }, [loading, navigate]);
   return error !== "" || errorDescription !== "" ? (
     <React.Fragment>
       <Paper className={classes.paper}>

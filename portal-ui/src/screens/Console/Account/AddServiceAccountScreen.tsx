@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -32,7 +33,6 @@ import {
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import history from "../../../../src/history";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
@@ -76,6 +76,8 @@ const styles = (theme: Theme) =>
 
 const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [addSending, setAddSending] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
   const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
@@ -133,7 +135,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
 
   const closeCredentialsModal = () => {
     setNewServiceAccount(null);
-    history.push(`${IAM_PAGES.ACCOUNT}`);
+    navigate(`${IAM_PAGES.ACCOUNT}`);
   };
 
   return (

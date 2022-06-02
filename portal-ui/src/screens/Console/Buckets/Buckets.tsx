@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Suspense } from "react";
-import history from "../../../history";
-import { Redirect, Route, Router, Switch, withRouter } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import NotFoundPage from "../../NotFoundPage";
 import LoadingComponent from "../../../common/LoadingComponent";
@@ -31,70 +30,59 @@ const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket/AddBucket"));
 
 const Buckets = () => {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route
-          path={IAM_PAGES.ADD_BUCKETS}
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <AddBucket />
-            </Suspense>
-          )}
-        />
-        <Route
-          path="/buckets/:bucketName/admin/*"
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <BucketDetails {...routerProps} />
-            </Suspense>
-          )}
-        />
-        <Route
-          path="/buckets/:bucketName/admin"
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <BucketDetails {...routerProps} />
-            </Suspense>
-          )}
-        />
-        <Route
-          path="/buckets/:bucketName/browse/:subpaths+"
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <BrowserHandler {...routerProps} />
-            </Suspense>
-          )}
-        />
-        <Route
-          path="/buckets/:bucketName/browse"
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <BrowserHandler {...routerProps} />
-            </Suspense>
-          )}
-        />
-        <Route
-          path="/buckets/:bucketName"
-          component={() => <Redirect to={`/buckets`} />}
-        />
-        <Route
-          path="/"
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <ListBuckets {...routerProps} />
-            </Suspense>
-          )}
-        />
-        <Route
-          children={(routerProps) => (
-            <Suspense fallback={<LoadingComponent />}>
-              <NotFoundPage />
-            </Suspense>
-          )}
-        />
-      </Switch>
-    </Router>
+    <Routes>
+      <Route
+        path={IAM_PAGES.ADD_BUCKETS}
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <AddBucket />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <ListBuckets />
+          </Suspense>
+        }
+      />
+
+      <Route
+        path=":bucketName/admin/*"
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <BucketDetails />
+          </Suspense>
+        }
+      />
+      <Route
+        path=":bucketName/browse/:subpaths"
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <BrowserHandler />
+          </Suspense>
+        }
+      />
+      <Route
+        path=":bucketName/browse"
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <BrowserHandler />
+          </Suspense>
+        }
+      />
+      <Route element={<Navigate to={`/buckets`} />} path="*" />
+
+      <Route
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <NotFoundPage />
+          </Suspense>
+        }
+      />
+    </Routes>
   );
 };
 
-export default withRouter(Buckets);
+export default Buckets;

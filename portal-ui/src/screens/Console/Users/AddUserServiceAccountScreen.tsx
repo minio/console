@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate, useParams } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -32,7 +33,6 @@ import {
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import history from "../../../../src/history";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import BackLink from "../../../common/BackLink";
@@ -52,7 +52,6 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 
 interface IAddServiceAccountProps {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -74,8 +73,11 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
   });
 
-const AddServiceAccount = ({ classes, match }: IAddServiceAccountProps) => {
+const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
   const dispatch = useDispatch();
+  const params = useParams();
+  const navigate = useNavigate();
+
   const [addSending, setAddSending] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
   const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
@@ -86,7 +88,7 @@ const AddServiceAccount = ({ classes, match }: IAddServiceAccountProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [policyJSON, setPolicyJSON] = useState<string>("");
 
-  const userName = decodeURLString(match.params["userName"]);
+  const userName = decodeURLString(params.userName || "");
 
   useEffect(() => {
     if (addSending) {
@@ -153,7 +155,7 @@ const AddServiceAccount = ({ classes, match }: IAddServiceAccountProps) => {
 
   const closeCredentialsModal = () => {
     setNewServiceAccount(null);
-    history.push(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
+    navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
   };
 
   return (

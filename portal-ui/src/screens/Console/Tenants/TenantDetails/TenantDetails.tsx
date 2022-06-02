@@ -16,11 +16,18 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import {
   containerForHeader,
@@ -82,8 +89,6 @@ const TenantMonitoring = withSuspense(
 
 interface ITenantDetailsProps {
   classes: any;
-  match: any;
-  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -157,8 +162,11 @@ const styles = (theme: Theme) =>
     },
   });
 
-const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
+const TenantDetails = ({ classes }: ITenantDetailsProps) => {
   const dispatch = useDispatch();
+  const params = useParams();
+  const navigate = useNavigate();
+  const { pathname = "" } = useLocation();
 
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
@@ -171,8 +179,8 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
   );
   const tenantInfo = useSelector((state: AppState) => state.tenants.tenantInfo);
 
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
+  const tenantName = params.tenantName || "";
+  const tenantNamespace = params.tenantNamespace || "";
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   // if the current tenant selected is not the one in the redux, reload it
@@ -197,8 +205,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
     tenantNamespace,
   ]);
 
-  const path = get(match, "path", "/");
-  const splitSections = path.split("/");
+  const splitSections = pathname.split("/");
 
   let highlightedTab = splitSections[splitSections.length - 1] || "summary";
   if (highlightedTab === ":podName" || highlightedTab === "pods") {
@@ -212,7 +219,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
   }, [highlightedTab]);
 
   const editYaml = () => {
-    history.push(`${getRoutePath("summary")}/yaml`);
+    navigate(getRoutePath("summary/yaml"));
   };
 
   const getRoutePath = (newValue: string) => {
@@ -228,7 +235,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
 
     if (reloadData) {
       dispatch(setSnackBarMessage("Tenant Deleted"));
-      history.push(`/tenants`);
+      navigate(`/tenants`);
     }
   };
 
@@ -285,7 +292,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
                 <TenantsIcon />
               </Fragment>
             }
-            title={match.params["tenantName"]}
+            title={tenantName}
             subTitle={
               <Fragment>
                 Namespace: {tenantNamespace} / Capacity:{" "}
@@ -332,7 +339,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
                   }}
                   tooltip={"Management Console"}
                   onClick={() => {
-                    history.push(
+                    navigate(
                       `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
                     );
                   }}
@@ -367,86 +374,36 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
           isRouteTabs
           routes={
             <div className={classes.contentSpacer}>
-              <Router history={history}>
-                <Switch>
-                  <Route
-                    path={`${IAM_PAGES.NAMESPACE_TENANT_SUMMARY}/yaml`}
-                    component={TenantYAML}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_SUMMARY}
-                    component={TenantSummary}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_METRICS}
-                    component={TenantMetrics}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_TRACE}
-                    component={TenantTrace}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_IDENTITY_PROVIDER}
-                    component={TenantIdentityProvider}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_SECURITY}
-                    component={TenantSecurity}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_ENCRYPTION}
-                    component={TenantEncryption}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_POOLS}
-                    component={PoolsSummary}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_PODS}
-                    component={PodDetails}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_PODS_LIST}
-                    component={PodsSummary}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_PVCS}
-                    component={TenantVolumes}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_VOLUMES}
-                    component={VolumesSummary}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_LICENSE}
-                    component={TenantLicense}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_MONITORING}
-                    component={TenantMonitoring}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_LOGGING}
-                    component={TenantLogging}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_EVENTS}
-                    component={TenantEvents}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT_CSR}
-                    component={TenantCSR}
-                  />
-                  <Route
-                    path={IAM_PAGES.NAMESPACE_TENANT}
-                    component={() => (
-                      <Redirect
-                        to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/summary`}
-                      />
-                    )}
-                  />
-                </Switch>
-              </Router>
+              <Routes>
+                <Route path={"summary"} element={<TenantSummary />} />
+                <Route path={`summary/yaml`} element={<TenantYAML />} />
+                <Route path={"metrics"} element={<TenantMetrics />} />
+                <Route path={"trace"} element={<TenantTrace />} />
+                <Route
+                  path={"identity-provider"}
+                  element={<TenantIdentityProvider />}
+                />
+                <Route path={"security"} element={<TenantSecurity />} />
+                <Route path={"encryption"} element={<TenantEncryption />} />
+                <Route path={"pools"} element={<PoolsSummary />} />
+                <Route path={"pods/:podName"} element={<PodDetails />} />
+                <Route path={"pods"} element={<PodsSummary />} />
+                <Route path={"pvcs/:PVCName"} element={<TenantVolumes />} />
+                <Route path={"volumes"} element={<VolumesSummary />} />
+                <Route path={"license"} element={<TenantLicense />} />
+                <Route path={"monitoring"} element={<TenantMonitoring />} />
+                <Route path={"logging"} element={<TenantLogging />} />
+                <Route path={"events"} element={<TenantEvents />} />
+                <Route path={"csr"} element={<TenantCSR />} />
+                <Route
+                  path={"/"}
+                  element={
+                    <Navigate
+                      to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/summary`}
+                    />
+                  }
+                />
+              </Routes>
             </div>
           }
         >

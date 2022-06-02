@@ -28,8 +28,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Button, LinearProgress } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
-import history from "../../history";
-import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../store";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
@@ -119,9 +118,7 @@ const Account = React.lazy(() => import("./Account/Account"));
 const AccountCreate = React.lazy(
   () => import("./Account/AddServiceAccountScreen")
 );
-const UserSACreate = React.lazy(
-  () => import("./Users/AddUserServiceAccountScreen")
-);
+
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
 
@@ -183,6 +180,7 @@ interface IConsoleProps {
 
 const Console = ({ classes }: IConsoleProps) => {
   const dispatch = useDispatch();
+  const { pathname = "" } = useLocation();
   const open = useSelector((state: AppState) => state.system.sidebarOpen);
   const session = useSelector(selSession);
   const features = useSelector(selFeatures);
@@ -298,14 +296,6 @@ const Console = ({ classes }: IConsoleProps) => {
     },
     {
       component: Users,
-      path: IAM_PAGES.USERS_VIEW,
-    },
-    {
-      component: Users,
-      path: IAM_PAGES.USER_ADD,
-    },
-    {
-      component: Users,
       path: IAM_PAGES.USERS,
       fsHidden: ldapIsEnabled,
       customPermissionFnc: () =>
@@ -363,31 +353,11 @@ const Console = ({ classes }: IConsoleProps) => {
     },
     {
       component: Tools,
-      path: IAM_PAGES.REGISTER_SUPPORT,
-    },
-    {
-      component: Tools,
-      path: IAM_PAGES.CALL_HOME,
-    },
-    {
-      component: Tools,
-      path: IAM_PAGES.TOOLS_WATCH,
-    },
-    {
-      component: Tools,
-      path: IAM_PAGES.PROFILE,
-    },
-    {
-      component: Tools,
-      path: IAM_PAGES.SUPPORT_INSPECT,
+      path: IAM_PAGES.TOOLS,
     },
     {
       component: ConfigurationOptions,
       path: IAM_PAGES.SETTINGS,
-    },
-    {
-      component: ConfigurationOptions,
-      path: IAM_PAGES.SETTINGS_VIEW,
     },
     {
       component: AddNotificationEndpoint,
@@ -439,11 +409,6 @@ const Console = ({ classes }: IConsoleProps) => {
       forceDisplay: true, // user has implicit access to service-accounts
     },
     {
-      component: UserSACreate,
-      path: IAM_PAGES.USER_SA_ACCOUNT_ADD,
-      forceDisplay: true, // user has implicit access to service-accounts
-    },
-    {
       component: License,
       path: IAM_PAGES.LICENSE,
       forceDisplay: true,
@@ -472,46 +437,6 @@ const Console = ({ classes }: IConsoleProps) => {
       forceDisplay: true,
     },
     {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_PODS,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_PVCS,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: `${IAM_PAGES.NAMESPACE_TENANT_SUMMARY}/yaml`,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_SUMMARY,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_METRICS,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_TRACE,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_PODS_LIST,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_POOLS,
-      forceDisplay: true,
-    },
-    {
       component: AddPool,
       path: IAM_PAGES.NAMESPACE_TENANT_POOLS_ADD,
       forceDisplay: true,
@@ -519,51 +444,6 @@ const Console = ({ classes }: IConsoleProps) => {
     {
       component: EditPool,
       path: IAM_PAGES.NAMESPACE_TENANT_POOLS_EDIT,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_VOLUMES,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_LICENSE,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_IDENTITY_PROVIDER,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_SECURITY,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_ENCRYPTION,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_MONITORING,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_LOGGING,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_EVENTS,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT_CSR,
       forceDisplay: true,
     },
     {
@@ -603,12 +483,10 @@ const Console = ({ classes }: IConsoleProps) => {
     }
   }, [snackBarMessage]);
 
-  const location = useLocation();
-
   let hideMenu = false;
   if (features?.includes("hide-menu")) {
     hideMenu = true;
-  } else if (location.pathname.endsWith("/hop")) {
+  } else if (pathname.endsWith("/hop")) {
     hideMenu = true;
   }
 
@@ -675,35 +553,49 @@ const Console = ({ classes }: IConsoleProps) => {
             <Suspense fallback={<LoadingComponent />}>
               <ObjectManager />
             </Suspense>
-            <Router history={history}>
-              <Switch>
-                {allowedRoutes.map((route: any) => (
-                  <Route
-                    key={route.path}
-                    exact
-                    path={route.path}
-                    children={(routerProps) => (
-                      <Suspense fallback={<LoadingComponent />}>
-                        <route.component {...routerProps} {...route.props} />
-                      </Suspense>
-                    )}
-                  />
-                ))}
-                <Route key={"/icons"} exact path={"/icons"}>
+            <Routes>
+              {allowedRoutes.map((route: any) => (
+                <Route
+                  key={route.path}
+                  path={`${route.path}/*`}
+                  element={
+                    <Suspense fallback={<LoadingComponent />}>
+                      <route.component {...route.props} />
+                    </Suspense>
+                  }
+                />
+              ))}
+              <Route
+                key={"icons"}
+                path={"icons"}
+                element={
                   <Suspense fallback={<LoadingComponent />}>
                     <IconsScreen />
                   </Suspense>
-                </Route>
-                <Route key={"/components"} exact path={"/components"}>
+                }
+              />
+              <Route
+                key={"components"}
+                path={"components"}
+                element={
                   <Suspense fallback={<LoadingComponent />}>
                     <ComponentsScreen />
                   </Suspense>
-                </Route>
-                {allowedRoutes.length > 0 ? (
-                  <Redirect to={allowedRoutes[0].path} />
-                ) : null}
-              </Switch>
-            </Router>
+                }
+              />
+              <Route
+                path={"*"}
+                element={
+                  <Fragment>
+                    {allowedRoutes.length > 0 ? (
+                      <Navigate to={allowedRoutes[0].path} />
+                    ) : (
+                      <Fragment />
+                    )}
+                  </Fragment>
+                }
+              />
+            </Routes>
           </main>
         </div>
       ) : null}

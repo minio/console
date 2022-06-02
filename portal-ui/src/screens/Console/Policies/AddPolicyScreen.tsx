@@ -25,7 +25,6 @@ import {
 import Grid from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import history from "../../../../src/history";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
@@ -38,6 +37,7 @@ import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useNavigate } from "react-router-dom";
 
 interface IAddPolicyProps {
   classes: any;
@@ -64,6 +64,7 @@ const styles = (theme: Theme) =>
 
 const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>("");
@@ -82,7 +83,7 @@ const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
       })
       .then((res) => {
         setAddLoading(false);
-        history.push(`${IAM_PAGES.POLICIES}`);
+        navigate(`${IAM_PAGES.POLICIES}`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);

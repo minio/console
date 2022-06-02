@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { Paper } from "@mui/material";
@@ -73,13 +74,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface IAccessRuleProps {
-  match: any;
-}
-
-const AccessRule = ({ match }: IAccessRuleProps) => {
+const AccessRule = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -93,7 +91,7 @@ const AccessRule = ({ match }: IAccessRuleProps) => {
   const [accessRuleToEdit, setAccessRuleToEdit] = useState<string>("");
   const [initialAccess, setInitialAccess] = useState<string>("");
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayAccessRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_POLICY,

@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { useParams } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -36,8 +37,6 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantEventsProps {
   classes: any;
-  match: any;
-  loadingTenant: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -48,16 +47,18 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantEvents = ({
-  classes,
-  match,
-  loadingTenant,
-}: ITenantEventsProps) => {
+const TenantEvents = ({ classes }: ITenantEventsProps) => {
   const dispatch = useDispatch();
+  const params = useParams();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.loadingTenant
+  );
+
   const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
+  const tenantName = params.tenantName || "";
+  const tenantNamespace = params.tenantNamespace || "";
 
   useEffect(() => {
     if (loadingTenant) {

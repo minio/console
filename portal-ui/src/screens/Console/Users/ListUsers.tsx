@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
@@ -72,11 +73,12 @@ const styles = (theme: Theme) =>
 
 interface IUsersProps {
   classes: any;
-  history: any;
 }
 
-const ListUsers = ({ classes, history }: IUsersProps) => {
+const ListUsers = ({ classes }: IUsersProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [records, setRecords] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -159,7 +161,7 @@ const ListUsers = ({ classes, history }: IUsersProps) => {
   };
 
   const viewAction = (selectionElement: any): void => {
-    history.push(
+    navigate(
       `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.accessKey)}`
     );
   };
@@ -186,7 +188,6 @@ const ListUsers = ({ classes, history }: IUsersProps) => {
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
-          history={history}
         />
       )}
       {addGroupOpen && (
@@ -261,7 +262,7 @@ const ListUsers = ({ classes, history }: IUsersProps) => {
               icon={<AddIcon />}
               color="primary"
               onClick={() => {
-                history.push(`${IAM_PAGES.USER_ADD}`);
+                navigate(`${IAM_PAGES.USER_ADD}`);
               }}
               variant={"contained"}
             />
@@ -399,7 +400,7 @@ const ListUsers = ({ classes, history }: IUsersProps) => {
                           To get started,{" "}
                           <AButton
                             onClick={() => {
-                              history.push(`${IAM_PAGES.USER_ADD}`);
+                              navigate(`${IAM_PAGES.USER_ADD}`);
                             }}
                           >
                             Create a User

@@ -15,20 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { CapacityValues, ITenant, ValueUnit } from "./types";
-
-import Grid from "@mui/material/Grid";
-import history from "../../../../history";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { niceBytes, niceBytesInt } from "../../../../common/utils";
-import InformationItem from "./InformationItem";
-import TenantCapacity from "./TenantCapacity";
-import { DrivesIcon } from "../../../../icons";
+import { CapacityValues, ITenant, ValueUnit } from "./types";
 import { setTenantName } from "../tenantsSlice";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
-import { useDispatch } from "react-redux";
+import { DrivesIcon } from "../../../../icons";
+import { niceBytes, niceBytesInt } from "../../../../common/utils";
+import Grid from "@mui/material/Grid";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import InformationItem from "./InformationItem";
+import TenantCapacity from "./TenantCapacity";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -108,6 +107,8 @@ interface ITenantListItem {
 
 const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const healthStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "red":
@@ -185,7 +186,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
       })
     );
     dispatch(getTenantAsync());
-    history.push(`/namespaces/${tenant.namespace}/tenants/${tenant.name}`);
+    navigate(`/namespaces/${tenant.namespace}/tenants/${tenant.name}`);
   };
 
   return (

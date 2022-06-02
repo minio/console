@@ -23,10 +23,10 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { withRouter } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
 import { BucketObjectItem, BucketObjectItemsList } from "./types";
@@ -268,14 +268,11 @@ function useInterval(callback: any, delay: number) {
 
 const defLoading = <Typography component="h3">Loading...</Typography>;
 
-interface IListObjectsProps {
-  match: any;
-  history: any;
-}
-
-const ListObjects = ({ match, history }: IListObjectsProps) => {
+const ListObjects = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const params = useParams();
+  const navigate = useNavigate();
 
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
@@ -339,8 +336,8 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
-  const internalPaths = get(match.params, "subpaths", "");
-  const bucketName = match.params["bucketName"];
+  const internalPaths = get(params, "subpaths", "");
+  const bucketName = params.bucketName || "";
 
   const fileUpload = useRef<HTMLInputElement>(null);
   const folderUpload = useRef<HTMLInputElement>(null);
@@ -702,7 +699,6 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     }
   }, [
     loading,
-    match,
     dispatch,
     bucketName,
     rewindEnabled,
@@ -815,7 +811,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
     const newPath = `/buckets/${bucketName}/browse${
       idElement ? `/${encodeURLString(idElement)}` : ``
     }`;
-    history.push(newPath);
+    navigate(newPath);
 
     dispatch(setObjectDetailsView(true));
     dispatch(setLoadingVersions(true));
@@ -1190,7 +1186,7 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
         URLItem = `${splitURLS.join("/")}/`;
       }
 
-      history.push(`/buckets/${bucketName}/browse/${encodeURLString(URLItem)}`);
+      navigate(`/buckets/${bucketName}/browse/${encodeURLString(URLItem)}`);
     }
 
     dispatch(setObjectDetailsView(false));
@@ -1548,4 +1544,4 @@ const ListObjects = ({ match, history }: IListObjectsProps) => {
   );
 };
 
-export default withRouter(ListObjects);
+export default ListObjects;

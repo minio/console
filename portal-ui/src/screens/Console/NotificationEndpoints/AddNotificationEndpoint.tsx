@@ -39,7 +39,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 
 import { IElementValue } from "../Configurations/types";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import history from "../../../history";
 
 import withSuspense from "../Common/Components/withSuspense";
 import BackLink from "../../../common/BackLink";
@@ -49,6 +48,7 @@ import {
   setErrorSnackMessage,
   setServerNeedsRestart,
 } from "../../../systemSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -106,21 +106,22 @@ const styles = (theme: Theme) =>
   });
 
 interface IAddNotificationEndpointProps {
-  match: any;
   saveAndRefresh: any;
   classes: any;
 }
 
 const AddNotificationEndpoint = ({
-  match,
   saveAndRefresh,
   classes,
 }: IAddNotificationEndpointProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
+
   //Local States
   const [valuesArr, setValueArr] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-  const service = match.params["service"];
+  const service = params.service || "";
   //Effects
 
   useEffect(() => {
@@ -133,14 +134,14 @@ const AddNotificationEndpoint = ({
         .then(() => {
           setSaving(false);
           dispatch(setServerNeedsRestart(true));
-          history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS);
+          navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
           dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [saving, service, valuesArr, saveAndRefresh, dispatch]);
+  }, [saving, service, valuesArr, saveAndRefresh, dispatch, navigate]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
