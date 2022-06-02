@@ -71,7 +71,7 @@ const ObjectActionButton = ({
       className={clsx(classes.root, "noDefaultHeight")}
       startIcon={icon}
       sx={{
-        height: "initial"
+        height: "initial",
       }}
     >
       <span className={"buttonItem"}>{label}</span>

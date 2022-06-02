@@ -206,19 +206,22 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
         <InputBoxWrapper
           id="number_of_nodes"
           name="number_of_nodes"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const intValue = parseInt(e.target.value);
-
-            if (e.target.validity.valid && !isNaN(intValue)) {
-              setFieldInfo("numberOfNodes", intValue);
-            } else if (isNaN(intValue)) {
-              setFieldInfo("numberOfNodes", 0);
-            }
-          }}
+          onChange={() => {}}
           label="Number of Servers"
           value={numberOfNodes}
           error={validationErrors["number_of_nodes"] || ""}
-          pattern={"[0-9]*"}
+          disabled
+        />
+      </Grid>
+      <Grid item xs={12} className={classes.formFieldRow}>
+        <InputBoxWrapper
+          id="volumes_per_sever"
+          name="volumes_per_sever"
+          onChange={() => {}}
+          label="Volumes per Server"
+          value={volumesPerServer}
+          error={validationErrors["volumes_per_server"] || ""}
+          disabled
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -249,25 +252,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
           }
         />
       </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
-          id="volumes_per_sever"
-          name="volumes_per_sever"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const intValue = parseInt(e.target.value);
 
-            if (e.target.validity.valid && !isNaN(intValue)) {
-              setFieldInfo("volumesPerServer", intValue);
-            } else if (isNaN(intValue)) {
-              setFieldInfo("volumesPerServer", 0);
-            }
-          }}
-          label="Volumes per Server"
-          value={volumesPerServer}
-          error={validationErrors["volumes_per_server"] || ""}
-          pattern={"[0-9]*"}
-        />
-      </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
         <SelectWrapper
           id="storage_class"

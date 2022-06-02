@@ -58,7 +58,7 @@ const VirtualizedList = ({
         itemCount={totalItems}
       >
         {({ onItemsRendered, ref }) => (
-            // @ts-ignore
+          // @ts-ignore
           <AutoSizer>
             {({ width, height }) => {
               return (

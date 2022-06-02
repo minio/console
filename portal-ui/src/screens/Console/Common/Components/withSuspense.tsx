@@ -23,7 +23,7 @@ function withSuspense<P extends string | number | object>(
   function ComponentWithSuspense(props: P) {
     return (
       <Suspense fallback={fallback}>
-        <WrappedComponent {...props as any} />
+        <WrappedComponent {...(props as any)} />
       </Suspense>
     );
   }
