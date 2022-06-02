@@ -908,6 +908,10 @@ export const createTenantSlice = createSlice({
         const elements: IQuotaElement[] = get(action.payload, "elements", []);
         state.limitSize = getLimitSizes(action.payload!);
 
+        if (elements === null || elements.length === 0) {
+          state.validationErrors["namespace"] = "No storage classes available.";
+          return;
+        }
         const newStorage = elements.map((storageClass: any) => {
           const name = get(storageClass, "name", "").split(
             ".storageclass.storage.k8s.io/requests.storage"
@@ -917,7 +921,6 @@ export const createTenantSlice = createSlice({
         });
 
         state.storageClasses = newStorage;
-
         const stExists = newStorage.findIndex(
           (storageClass) =>
             storageClass.value === state.fields.nameTenant.selectedStorageClass

@@ -61,6 +61,9 @@ export const ecListTransform = (
 
 export const getLimitSizes = (resourceQuotas: IQuotas) => {
   const quotas: IQuotaElement[] = get(resourceQuotas, "elements", []);
+  if (quotas === null) {
+    return {};
+  }
 
   const returnQuotas: any = {};
 

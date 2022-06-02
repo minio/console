@@ -59,10 +59,6 @@ const NamespaceSelector = ({ formToRender }: { formToRender?: IMkEnvs }) => {
     }
   }, [debounceNamespace, namespace]);
 
-  const addNamespace = () => {
-    dispatch(openAddNSModal());
-  };
-
   return (
     <Fragment>
       {openAddNSConfirm && <AddNamespaceModal />}
@@ -77,7 +73,9 @@ const NamespaceSelector = ({ formToRender }: { formToRender?: IMkEnvs }) => {
         error={namespaceError || ""}
         overlayId={"add-namespace"}
         overlayIcon={showNSCreateButton ? <AddIcon /> : null}
-        overlayAction={addNamespace}
+        overlayAction={() => {
+          dispatch(openAddNSModal());
+        }}
         required
       />
     </Fragment>
