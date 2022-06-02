@@ -66,11 +66,9 @@ const twoColCssGridLayoutConfig = {
 };
 
 const PoolDetails = ({ history }: IPoolDetails) => {
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const selectedPool = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.selectedPool
+    (state: AppState) => state.tenants.selectedPool
   );
 
   const poolInformation =

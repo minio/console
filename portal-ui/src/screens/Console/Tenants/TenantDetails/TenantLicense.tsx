@@ -50,11 +50,9 @@ const TenantLicense = ({ classes }: ITenantLicense) => {
   const dispatch = useDispatch();
 
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
 
   const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);

@@ -25,28 +25,38 @@ import bucketDetailsReducer from "./screens/Console/Buckets/BucketDetails/bucket
 import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserSlice";
 import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenantSlice";
+import addPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/AddPool/addPoolSlice";
 import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
 
-export const store = configureStore({
-  reducer: {
-    system: systemReducer,
-    trace: traceReducer,
-    logs: logReducer,
-    watch: watchReducer,
-    console: consoleReducer,
-    buckets: bucketsReducer,
-    bucketDetails: bucketDetailsReducer,
-    objectBrowser: objectBrowserReducer,
-    healthInfo: healthInfoReducer,
-    dashboard: dashboardReducer,
-    // Operator Reducers
-    tenants: tenantsReducer,
-    createTenant: createTenantReducer,
-    editPool: editPoolReducer,
-  },
+const rootReducer = combineReducers({
+  system: systemReducer,
+  trace: traceReducer,
+  logs: logReducer,
+  watch: watchReducer,
+  console: consoleReducer,
+  buckets: bucketsReducer,
+  bucketDetails: bucketDetailsReducer,
+  objectBrowser: objectBrowserReducer,
+  healthInfo: healthInfoReducer,
+  dashboard: dashboardReducer,
+  // Operator Reducers
+  tenants: tenantsReducer,
+  createTenant: createTenantReducer,
+  addPool: addPoolReducer,
+  editPool: editPoolReducer,
 });
+
+export const store = configureStore({
+  reducer: rootReducer,
+});
+
+if (process.env.NODE_ENV !== "production" && module.hot) {
+  module.hot.accept(() => {
+    store.replaceReducer(rootReducer);
+  });
+}
 
 export type AppState = ReturnType<typeof store.getState>;
 

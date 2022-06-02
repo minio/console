@@ -31,8 +31,8 @@ export const editPoolAsync = createAsyncThunk(
   async (_, { getState, rejectWithValue, dispatch }) => {
     const state = getState() as AppState;
 
-    const tenant = state.tenants.tenantDetails.tenantInfo;
-    const selectedPool = state.tenants.tenantDetails.selectedPool;
+    const tenant = state.tenants.tenantInfo;
+    const selectedPool = state.tenants.selectedPool;
     const selectedStorageClass = state.editPool.fields.setup.storageClass;
     const numberOfNodes = state.editPool.fields.setup.numberOfNodes;
     const volumeSize = state.editPool.fields.setup.volumeSize;

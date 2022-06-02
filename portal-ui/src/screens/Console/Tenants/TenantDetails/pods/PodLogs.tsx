@@ -92,7 +92,7 @@ const PodLogs = ({
 }: IPodLogsProps) => {
   const dispatch = useDispatch();
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
   const [highlight, setHighlight] = useState<string>("");
   const [logLines, setLogLines] = useState<string[]>([]);

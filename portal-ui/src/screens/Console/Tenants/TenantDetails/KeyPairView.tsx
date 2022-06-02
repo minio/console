@@ -63,33 +63,17 @@ const KeyPairView = ({ classes, records, recordName }: IKeyPairView) => {
 };
 
 const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  tenant: state.tenants.tenantDetails.tenantInfo,
-  logEnabled: get(state.tenants.tenantDetails.tenantInfo, "logEnabled", false),
-  monitoringEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "monitoringEnabled",
-    false
-  ),
-  encryptionEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "encryptionEnabled",
-    false
-  ),
-  minioTLS: get(state.tenants.tenantDetails.tenantInfo, "minioTLS", false),
-  consoleTLS: get(state.tenants.tenantDetails.tenantInfo, "consoleTLS", false),
-  consoleEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "consoleEnabled",
-    false
-  ),
-  adEnabled: get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false),
-  oidcEnabled: get(
-    state.tenants.tenantDetails.tenantInfo,
-    "idpOidcEnabled",
-    false
-  ),
+  loadingTenant: state.tenants.loadingTenant,
+  selectedTenant: state.tenants.currentTenant,
+  tenant: state.tenants.tenantInfo,
+  logEnabled: get(state.tenants.tenantInfo, "logEnabled", false),
+  monitoringEnabled: get(state.tenants.tenantInfo, "monitoringEnabled", false),
+  encryptionEnabled: get(state.tenants.tenantInfo, "encryptionEnabled", false),
+  minioTLS: get(state.tenants.tenantInfo, "minioTLS", false),
+  consoleTLS: get(state.tenants.tenantInfo, "consoleTLS", false),
+  consoleEnabled: get(state.tenants.tenantInfo, "consoleEnabled", false),
+  adEnabled: get(state.tenants.tenantInfo, "idpAdEnabled", false),
+  oidcEnabled: get(state.tenants.tenantInfo, "idpOidcEnabled", false),
 });
 
 const connector = connect(mapState, null);

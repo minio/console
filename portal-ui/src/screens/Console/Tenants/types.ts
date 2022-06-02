@@ -20,7 +20,6 @@ import {
   IErasureCodeCalc,
   IGCPConfig,
   IGemaltoCredentials,
-  ITolerationModel,
 } from "../../../common/types";
 import { IResourcesSize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
@@ -278,7 +277,7 @@ export interface ITenantAffinity {
   withPodAntiAffinity: boolean;
 }
 
-export interface ITenantDetails {
+export interface ITenantState {
   currentTenant: string;
   currentNamespace: string;
   loadingTenant: boolean;
@@ -286,11 +285,6 @@ export interface ITenantDetails {
   currentTab: string;
   poolDetailsOpen: boolean;
   selectedPool: string | null;
-}
-
-export interface ITenantState {
-  tenantDetails: ITenantDetails;
-  addPool: IAddPool;
 }
 
 export interface ILabelKeyPair {
@@ -320,22 +314,6 @@ export interface IAddPoolSetup {
 export interface IPoolConfiguration {
   securityContextEnabled: boolean;
   securityContext: ISecurityContext;
-}
-
-export interface IAddPoolFields {
-  setup: IAddPoolSetup;
-  affinity: ITenantAffinity;
-  configuration: IPoolConfiguration;
-  tolerations: ITolerationModel[];
-  nodeSelectorPairs: LabelKeyPair[];
-}
-
-export interface IAddPool {
-  addPoolLoading: boolean;
-  validPages: string[];
-  storageClasses: Opts[];
-  limitSize: any;
-  fields: IAddPoolFields;
 }
 
 export interface ITenantIdentityProviderResponse {

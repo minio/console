@@ -489,9 +489,9 @@ const TenantLogging = ({
 };
 
 const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
-  selectedTenant: state.tenants.tenantDetails.currentTenant,
-  tenant: state.tenants.tenantDetails.tenantInfo,
+  loadingTenant: state.tenants.loadingTenant,
+  selectedTenant: state.tenants.currentTenant,
+  tenant: state.tenants.tenantInfo,
 });
 
 const connector = connect(mapState, null);

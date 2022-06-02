@@ -86,9 +86,7 @@ const styles = (theme: Theme) =>
 const PoolResources = ({ classes }: IPoolResourcesProps) => {
   const dispatch = useDispatch();
 
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const storageClasses = useSelector(
     (state: AppState) => state.editPool.storageClasses
   );
