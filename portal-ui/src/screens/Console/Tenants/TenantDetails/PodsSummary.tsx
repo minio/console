@@ -53,7 +53,7 @@ const PodsSummary = ({ classes, match, history }: IPodsSummary) => {
   const dispatch = useDispatch();
 
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
 
   const [pods, setPods] = useState<IPodListElement[]>([]);

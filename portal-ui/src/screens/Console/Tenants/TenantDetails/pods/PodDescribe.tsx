@@ -406,7 +406,7 @@ const PodDescribe = ({
 }: IPodEventsProps) => {
   const dispatch = useDispatch();
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
 
   const [describeInfo, setDescribeInfo] = useState<DescribeResponse>();

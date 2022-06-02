@@ -184,26 +184,24 @@ const featureItemStyleProps = {
 const TenantSummary = ({ classes, match }: ITenantsSummary) => {
   const dispatch = useDispatch();
 
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const logEnabled = useSelector((state: AppState) =>
-    get(state.tenants.tenantDetails.tenantInfo, "logEnabled", false)
+    get(state.tenants.tenantInfo, "logEnabled", false)
   );
   const monitoringEnabled = useSelector((state: AppState) =>
-    get(state.tenants.tenantDetails.tenantInfo, "monitoringEnabled", false)
+    get(state.tenants.tenantInfo, "monitoringEnabled", false)
   );
   const encryptionEnabled = useSelector((state: AppState) =>
-    get(state.tenants.tenantDetails.tenantInfo, "encryptionEnabled", false)
+    get(state.tenants.tenantInfo, "encryptionEnabled", false)
   );
   const minioTLS = useSelector((state: AppState) =>
-    get(state.tenants.tenantDetails.tenantInfo, "minioTLS", false)
+    get(state.tenants.tenantInfo, "minioTLS", false)
   );
   const adEnabled = useSelector((state: AppState) =>
-    get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false)
+    get(state.tenants.tenantInfo, "idpAdEnabled", false)
   );
   const oidcEnabled = useSelector((state: AppState) =>
-    get(state.tenants.tenantDetails.tenantInfo, "idpOidcEnabled", false)
+    get(state.tenants.tenantInfo, "idpOidcEnabled", false)
   );
 
   const [poolCount, setPoolCount] = useState<number>(0);

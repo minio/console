@@ -27,8 +27,8 @@ export const getTenantAsync = createAsyncThunk(
   async (_, { getState, rejectWithValue, dispatch }) => {
     const state = getState() as AppState;
 
-    const currentNamespace = state.tenants.tenantDetails.currentNamespace;
-    const currentTenant = state.tenants.tenantDetails.currentTenant;
+    const currentNamespace = state.tenants.currentNamespace;
+    const currentTenant = state.tenants.currentTenant;
 
     return api
       .invoke(

@@ -74,11 +74,9 @@ const EditPool = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const selectedPool = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.selectedPool
+    (state: AppState) => state.tenants.selectedPool
   );
 
   const editSending = useSelector(

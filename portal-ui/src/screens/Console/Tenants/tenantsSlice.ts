@@ -15,15 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IAddPoolFields, ITenantState, LabelKeyPair } from "./types";
-import {
-  ITolerationEffect,
-  ITolerationModel,
-  ITolerationOperator,
-} from "../../../common/types";
-import get from "lodash/get";
-import { has } from "lodash";
-import { Opts } from "./ListTenants/utils";
+import { ITenantState } from "./types";
 import { ITenant } from "./ListTenants/types";
 import { getTenantAsync } from "./thunks/tenantDetailsAsync";
 
@@ -46,53 +38,13 @@ export interface CertificateFile {
 }
 
 const initialState: ITenantState = {
-  tenantDetails: {
-    currentTenant: "",
-    currentNamespace: "",
-    loadingTenant: false,
-    tenantInfo: null,
-    currentTab: "summary",
-    selectedPool: null,
-    poolDetailsOpen: false,
-  },
-  addPool: {
-    addPoolLoading: false,
-    validPages: ["affinity", "configure"],
-    storageClasses: [],
-    limitSize: {},
-    fields: {
-      setup: {
-        numberOfNodes: 0,
-        storageClass: "",
-        volumeSize: 0,
-        volumesPerServer: 0,
-      },
-      affinity: {
-        nodeSelectorLabels: "",
-        podAffinity: "default",
-        withPodAntiAffinity: true,
-      },
-      configuration: {
-        securityContextEnabled: false,
-        securityContext: {
-          runAsUser: "1000",
-          runAsGroup: "1000",
-          fsGroup: "1000",
-          runAsNonRoot: true,
-        },
-      },
-      nodeSelectorPairs: [{ key: "", value: "" }],
-      tolerations: [
-        {
-          key: "",
-          tolerationSeconds: { seconds: 0 },
-          value: "",
-          effect: ITolerationEffect.NoSchedule,
-          operator: ITolerationOperator.Equal,
-        },
-      ],
-    },
-  },
+  currentTenant: "",
+  currentNamespace: "",
+  loadingTenant: false,
+  tenantInfo: null,
+  currentTab: "summary",
+  selectedPool: null,
+  poolDetailsOpen: false,
 };
 
 export const tenantSlice = createSlice({
@@ -100,7 +52,7 @@ export const tenantSlice = createSlice({
   initialState,
   reducers: {
     setTenantDetailsLoad: (state, action: PayloadAction<boolean>) => {
-      state.tenantDetails.loadingTenant = action.payload;
+      state.loadingTenant = action.payload;
     },
     setTenantName: (
       state,
@@ -109,156 +61,36 @@ export const tenantSlice = createSlice({
         namespace: string;
       }>
     ) => {
-      state.tenantDetails.currentTenant = action.payload.name;
-      state.tenantDetails.currentNamespace = action.payload.namespace;
+      state.currentTenant = action.payload.name;
+      state.currentNamespace = action.payload.namespace;
     },
     setTenantInfo: (state, action: PayloadAction<ITenant | null>) => {
       if (action.payload) {
-        state.tenantDetails.tenantInfo = action.payload;
+        state.tenantInfo = action.payload;
       }
     },
     setTenantTab: (state, action: PayloadAction<string>) => {
-      state.tenantDetails.currentTab = action.payload;
+      state.currentTab = action.payload;
     },
 
-    setPoolLoading: (state, action: PayloadAction<boolean>) => {
-      state.addPool.addPoolLoading = action.payload;
-    },
-    setPoolField: (
-      state,
-      action: PayloadAction<{
-        page: keyof IAddPoolFields;
-        field: string;
-        value: any;
-      }>
-    ) => {
-      if (
-        has(
-          state.addPool.fields,
-          `${action.payload.page}.${action.payload.field}`
-        )
-      ) {
-        const originPageNameItems = get(
-          state.addPool.fields,
-          `${action.payload.page}`,
-          {}
-        );
-
-        let newValue: any = {};
-        newValue[action.payload.field] = action.payload.value;
-
-        state.addPool.fields[action.payload.page] = {
-          ...originPageNameItems,
-          ...newValue,
-        };
-      }
-    },
-    isPoolPageValid: (
-      state,
-      action: PayloadAction<{
-        page: string;
-        status: boolean;
-      }>
-    ) => {
-      if (action.payload.status) {
-        if (!state.addPool.validPages.includes(action.payload.page)) {
-          state.addPool.validPages.push(action.payload.page);
-        }
-      } else {
-        state.addPool.validPages = state.addPool.validPages.filter(
-          (elm) => elm !== action.payload.page
-        );
-      }
-    },
-    setPoolStorageClasses: (state, action: PayloadAction<Opts[]>) => {
-      state.addPool.storageClasses = action.payload;
-    },
-    setPoolTolerationInfo: (
-      state,
-      action: PayloadAction<{
-        index: number;
-        tolerationValue: ITolerationModel;
-      }>
-    ) => {
-      state.addPool.fields.tolerations[action.payload.index] =
-        action.payload.tolerationValue;
-    },
-    addNewPoolToleration: (state) => {
-      state.addPool.fields.tolerations.push({
-        key: "",
-        tolerationSeconds: { seconds: 0 },
-        value: "",
-        effect: ITolerationEffect.NoSchedule,
-        operator: ITolerationOperator.Equal,
-      });
-    },
-    removePoolToleration: (state, action: PayloadAction<number>) => {
-      state.addPool.fields.tolerations =
-        state.addPool.fields.tolerations.filter(
-          (_, index) => index !== action.payload
-        );
-    },
-    setPoolKeyValuePairs: (state, action: PayloadAction<LabelKeyPair[]>) => {
-      state.addPool.fields.nodeSelectorPairs = action.payload;
-    },
-    resetPoolForm: (state) => {
-      state.addPool = {
-        addPoolLoading: false,
-        validPages: ["affinity", "configure"],
-        storageClasses: [],
-        limitSize: {},
-        fields: {
-          setup: {
-            numberOfNodes: 0,
-            storageClass: "",
-            volumeSize: 0,
-            volumesPerServer: 0,
-          },
-          affinity: {
-            nodeSelectorLabels: "",
-            podAffinity: "default",
-            withPodAntiAffinity: true,
-          },
-          configuration: {
-            securityContextEnabled: false,
-            securityContext: {
-              runAsUser: "1000",
-              runAsGroup: "1000",
-              fsGroup: "1000",
-              runAsNonRoot: true,
-            },
-          },
-          nodeSelectorPairs: [{ key: "", value: "" }],
-          tolerations: [
-            {
-              key: "",
-              tolerationSeconds: { seconds: 0 },
-              value: "",
-              effect: ITolerationEffect.NoSchedule,
-              operator: ITolerationOperator.Equal,
-            },
-          ],
-        },
-      };
-    },
     setSelectedPool: (state, action: PayloadAction<string | null>) => {
-      state.tenantDetails.selectedPool = action.payload;
+      state.selectedPool = action.payload;
     },
     setOpenPoolDetails: (state, action: PayloadAction<boolean>) => {
-      state.tenantDetails.poolDetailsOpen = action.payload;
+      state.poolDetailsOpen = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getTenantAsync.pending, (state) => {
-        state.tenantDetails.loadingTenant = true;
+        state.loadingTenant = true;
       })
       .addCase(getTenantAsync.rejected, (state) => {
-        state.tenantDetails.loadingTenant = false;
+        state.loadingTenant = false;
       })
       .addCase(getTenantAsync.fulfilled, (state, action) => {
-        state.tenantDetails.loadingTenant = false;
-        state.tenantDetails.tenantInfo = action.payload;
+        state.loadingTenant = false;
+        state.tenantInfo = action.payload;
       });
   },
 });
@@ -269,15 +101,6 @@ export const {
   setTenantName,
   setTenantInfo,
   setTenantTab,
-  setPoolLoading,
-  resetPoolForm,
-  setPoolField,
-  isPoolPageValid,
-  setPoolStorageClasses,
-  setPoolTolerationInfo,
-  addNewPoolToleration,
-  removePoolToleration,
-  setPoolKeyValuePairs,
   setSelectedPool,
   setOpenPoolDetails,
 } = tenantSlice.actions;
