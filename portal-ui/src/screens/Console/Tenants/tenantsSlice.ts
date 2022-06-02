@@ -25,6 +25,7 @@ import get from "lodash/get";
 import { has } from "lodash";
 import { Opts } from "./ListTenants/utils";
 import { ITenant } from "./ListTenants/types";
+import { getTenantAsync } from "./thunks/tenantDetailsAsync";
 
 export interface FileValue {
   fileName: string;
@@ -246,6 +247,19 @@ export const tenantSlice = createSlice({
     setOpenPoolDetails: (state, action: PayloadAction<boolean>) => {
       state.tenantDetails.poolDetailsOpen = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getTenantAsync.pending, (state) => {
+        state.tenantDetails.loadingTenant = true;
+      })
+      .addCase(getTenantAsync.rejected, (state) => {
+        state.tenantDetails.loadingTenant = false;
+      })
+      .addCase(getTenantAsync.fulfilled, (state, action) => {
+        state.tenantDetails.loadingTenant = false;
+        state.tenantDetails.tenantInfo = action.payload;
+      });
   },
 });
 
