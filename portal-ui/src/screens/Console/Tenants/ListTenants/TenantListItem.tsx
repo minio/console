@@ -26,6 +26,9 @@ import { niceBytes, niceBytesInt } from "../../../../common/utils";
 import InformationItem from "./InformationItem";
 import TenantCapacity from "./TenantCapacity";
 import { DrivesIcon } from "../../../../icons";
+import { setTenantName } from "../tenantsSlice";
+import { getTenantAsync } from "../thunks/tenantDetailsAsync";
+import { useDispatch } from "react-redux";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -104,6 +107,7 @@ interface ITenantListItem {
 }
 
 const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
+  const dispatch = useDispatch();
   const healthStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "red":
@@ -174,6 +178,13 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
   }
 
   const openTenantDetails = () => {
+    dispatch(
+      setTenantName({
+        name: tenant.name,
+        namespace: tenant.namespace,
+      })
+    );
+    dispatch(getTenantAsync());
     history.push(`/namespaces/${tenant.namespace}/tenants/${tenant.name}`);
   };
 

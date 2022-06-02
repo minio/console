@@ -22,16 +22,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-
-import { ITenant } from "../ListTenants/types";
 import {
   containerForHeader,
   pageContentStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AppState } from "../../../../store";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { CircleIcon, MinIOTierIconXs, TrashIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
@@ -46,15 +42,10 @@ import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import { tenantIsOnline } from "../ListTenants/utils";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../systemSlice";
-import {
-  setTenantDetailsLoad,
-  setTenantInfo,
-  setTenantName,
-} from "../tenantsSlice";
+import { setSnackBarMessage } from "../../../../systemSlice";
+import { setTenantDetailsLoad, setTenantName } from "../tenantsSlice";
+import { getTenantAsync } from "../thunks/tenantDetailsAsync";
+import { LinearProgress } from "@mui/material";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -188,71 +179,27 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
   const tenantNamespace = match.params["tenantNamespace"];
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
+  // if the current tenant selected is not the one in the redux, reload it
   useEffect(() => {
-    if (!loadingTenant) {
-      if (
-        tenantName !== selectedTenant ||
-        tenantNamespace !== selectedNamespace
-      ) {
-        dispatch(
-          setTenantName({
-            name: tenantName,
-            namespace: tenantNamespace,
-          })
-        );
-        dispatch(setTenantDetailsLoad(true));
-      }
+    if (
+      selectedNamespace !== tenantNamespace ||
+      selectedTenant !== tenantName
+    ) {
+      dispatch(
+        setTenantName({
+          name: tenantName,
+          namespace: tenantNamespace,
+        })
+      );
+      dispatch(getTenantAsync());
     }
   }, [
-    loadingTenant,
     selectedTenant,
     selectedNamespace,
     dispatch,
     tenantName,
     tenantNamespace,
   ]);
-
-  useEffect(() => {
-    if (loadingTenant) {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}`
-        )
-        .then((res: ITenant) => {
-          // add computed fields
-          const resPools = !res.pools ? [] : res.pools;
-
-          let totalInstances = 0;
-          let totalVolumes = 0;
-          let poolNamedIndex = 0;
-          for (let pool of resPools) {
-            const cap =
-              pool.volumes_per_server *
-              pool.servers *
-              pool.volume_configuration.size;
-            pool.label = `pool-${poolNamedIndex}`;
-            if (pool.name === undefined || pool.name === "") {
-              pool.name = pool.label;
-            }
-            pool.capacity = niceBytes(cap + "");
-            pool.volumes = pool.servers * pool.volumes_per_server;
-            totalInstances += pool.servers;
-            totalVolumes += pool.volumes;
-            poolNamedIndex += 1;
-          }
-          res.total_instances = totalInstances;
-          res.total_volumes = totalVolumes;
-
-          dispatch(setTenantInfo(res));
-          dispatch(setTenantDetailsLoad(false));
-        })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
-          dispatch(setTenantDetailsLoad(false));
-        });
-    }
-  }, [loadingTenant, tenantNamespace, tenantName, dispatch]);
 
   const path = get(match, "path", "/");
   const splitSections = path.split("/");
@@ -332,6 +279,11 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
       />
 
       <PageLayout className={classes.pageContainer}>
+        {loadingTenant && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -417,7 +369,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
                   variant="outlined"
                   aria-label="Refresh List"
                   onClick={() => {
-                    dispatch(setTenantDetailsLoad(true));
+                    dispatch(getTenantAsync());
                   }}
                 >
                   <span>Refresh</span> <RefreshIcon />
