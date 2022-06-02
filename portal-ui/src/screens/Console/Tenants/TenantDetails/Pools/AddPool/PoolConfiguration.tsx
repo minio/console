@@ -33,7 +33,7 @@ import {
 } from "../../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { isPoolPageValid, setPoolField } from "../../../tenantsSlice";
+import { isPoolPageValid, setPoolField } from "./addPoolSlice";
 
 interface IConfigureProps {
   classes: any;
@@ -82,11 +82,10 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
 
   const securityContextEnabled = useSelector(
     (state: AppState) =>
-      state.tenants.addPool.fields.configuration.securityContextEnabled
+      state.addPool.fields.configuration.securityContextEnabled
   );
   const securityContext = useSelector(
-    (state: AppState) =>
-      state.tenants.addPool.fields.configuration.securityContext
+    (state: AppState) => state.addPool.fields.configuration.securityContext
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});

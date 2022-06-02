@@ -161,17 +161,15 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
   const dispatch = useDispatch();
 
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
   const selectedTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.currentTenant
+    (state: AppState) => state.tenants.currentTenant
   );
   const selectedNamespace = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.currentNamespace
+    (state: AppState) => state.tenants.currentNamespace
   );
-  const tenantInfo = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenantInfo = useSelector((state: AppState) => state.tenants.tenantInfo);
 
   const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
 

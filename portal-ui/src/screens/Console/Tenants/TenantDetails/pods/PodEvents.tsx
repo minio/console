@@ -63,7 +63,7 @@ const PodEvents = ({
 }: IPodEventsProps) => {
   const dispatch = useDispatch();
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
   const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

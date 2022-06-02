@@ -59,11 +59,9 @@ const PoolsListing = ({
   const dispatch = useDispatch();
 
   const loadingTenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.loadingTenant
+    (state: AppState) => state.tenants.loadingTenant
   );
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
 
   const [pools, setPools] = useState<IPool[]>([]);
   const [filter, setFilter] = useState<string>("");

@@ -44,7 +44,8 @@ import { getDefaultAffinity, getNodeSelector } from "../../utils";
 import api from "../../../../../../common/api";
 import BackLink from "../../../../../../common/BackLink";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
-import { resetPoolForm, setTenantDetailsLoad } from "../../../tenantsSlice";
+import { resetPoolForm } from "./addPoolSlice";
+import { setTenantDetailsLoad } from "../../../tenantsSlice";
 
 interface IAddPoolProps {
   classes: any;
@@ -84,45 +85,38 @@ const requiredPages = ["setup", "affinity", "configure"];
 const AddPool = ({ classes, open, match }: IAddPoolProps) => {
   const dispatch = useDispatch();
 
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const selectedStorageClass = useSelector(
-    (state: AppState) => state.tenants.addPool.fields.setup.storageClass
+    (state: AppState) => state.addPool.fields.setup.storageClass
   );
-  const validPages = useSelector(
-    (state: AppState) => state.tenants.addPool.validPages
-  );
+  const validPages = useSelector((state: AppState) => state.addPool.validPages);
   const numberOfNodes = useSelector(
-    (state: AppState) => state.tenants.addPool.fields.setup.numberOfNodes
+    (state: AppState) => state.addPool.fields.setup.numberOfNodes
   );
   const volumeSize = useSelector(
-    (state: AppState) => state.tenants.addPool.fields.setup.volumeSize
+    (state: AppState) => state.addPool.fields.setup.volumeSize
   );
   const volumesPerServer = useSelector(
-    (state: AppState) => state.tenants.addPool.fields.setup.volumesPerServer
+    (state: AppState) => state.addPool.fields.setup.volumesPerServer
   );
   const affinityType = useSelector(
-    (state: AppState) => state.tenants.addPool.fields.affinity.podAffinity
+    (state: AppState) => state.addPool.fields.affinity.podAffinity
   );
   const nodeSelectorLabels = useSelector(
-    (state: AppState) =>
-      state.tenants.addPool.fields.affinity.nodeSelectorLabels
+    (state: AppState) => state.addPool.fields.affinity.nodeSelectorLabels
   );
   const withPodAntiAffinity = useSelector(
-    (state: AppState) =>
-      state.tenants.addPool.fields.affinity.withPodAntiAffinity
+    (state: AppState) => state.addPool.fields.affinity.withPodAntiAffinity
   );
   const tolerations = useSelector(
-    (state: AppState) => state.tenants.addPool.fields.tolerations
+    (state: AppState) => state.addPool.fields.tolerations
   );
   const securityContextEnabled = useSelector(
     (state: AppState) =>
-      state.tenants.addPool.fields.configuration.securityContextEnabled
+      state.addPool.fields.configuration.securityContextEnabled
   );
   const securityContext = useSelector(
-    (state: AppState) =>
-      state.tenants.addPool.fields.configuration.securityContext
+    (state: AppState) => state.addPool.fields.configuration.securityContext
   );
 
   const [addSending, setAddSending] = useState<boolean>(false);

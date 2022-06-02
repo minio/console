@@ -27,6 +27,7 @@ import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenantSlice";
+import addPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/AddPool/addPoolSlice";
 import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
 
 export const store = configureStore({
@@ -44,6 +45,7 @@ export const store = configureStore({
     // Operator Reducers
     tenants: tenantsReducer,
     createTenant: createTenantReducer,
+    addPool: addPoolReducer,
     editPool: editPoolReducer,
   },
 });

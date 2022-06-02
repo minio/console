@@ -52,10 +52,10 @@ const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
   const dispatch = useDispatch();
 
   const selectedPool = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.selectedPool
+    (state: AppState) => state.tenants.selectedPool
   );
   const poolDetailsOpen = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.poolDetailsOpen
+    (state: AppState) => state.tenants.poolDetailsOpen
   );
 
   return (

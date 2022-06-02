@@ -98,7 +98,7 @@ const TenantEvents = ({
   );
 };
 const mapState = (state: AppState) => ({
-  loadingTenant: state.tenants.tenantDetails.loadingTenant,
+  loadingTenant: state.tenants.loadingTenant,
 });
 const connector = connect(mapState, null);
 

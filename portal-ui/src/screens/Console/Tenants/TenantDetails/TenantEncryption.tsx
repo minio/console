@@ -87,9 +87,7 @@ const styles = (theme: Theme) =>
 const TenantEncryption = ({ classes }: ITenantEncryption) => {
   const dispatch = useDispatch();
 
-  const tenant = useSelector(
-    (state: AppState) => state.tenants.tenantDetails.tenantInfo
-  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
 
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
   const [encryptionType, setEncryptionType] = useState<string>("vault");

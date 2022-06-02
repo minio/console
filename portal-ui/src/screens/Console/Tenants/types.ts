@@ -278,7 +278,7 @@ export interface ITenantAffinity {
   withPodAntiAffinity: boolean;
 }
 
-export interface ITenantDetails {
+export interface ITenantState {
   currentTenant: string;
   currentNamespace: string;
   loadingTenant: boolean;
@@ -286,11 +286,6 @@ export interface ITenantDetails {
   currentTab: string;
   poolDetailsOpen: boolean;
   selectedPool: string | null;
-}
-
-export interface ITenantState {
-  tenantDetails: ITenantDetails;
-  addPool: IAddPool;
 }
 
 export interface ILabelKeyPair {
