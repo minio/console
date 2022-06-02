@@ -138,7 +138,6 @@ const AddPool = () => {
               }
             />
           </Grid>
-
           {sending && (
             <Grid item xs={12}>
               <LinearProgress />
