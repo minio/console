@@ -43,7 +43,7 @@ import withSuspense from "../../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import { tenantIsOnline } from "../ListTenants/utils";
 import { setSnackBarMessage } from "../../../../systemSlice";
-import { setTenantDetailsLoad, setTenantName } from "../tenantsSlice";
+import { setTenantName } from "../tenantsSlice";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
 import { LinearProgress } from "@mui/material";
 
@@ -171,8 +171,6 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
   );
   const tenantInfo = useSelector((state: AppState) => state.tenants.tenantInfo);
 
-  const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
-
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -214,12 +212,7 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
   }, [highlightedTab]);
 
   const editYaml = () => {
-    setYamlScreenOpen(true);
-  };
-
-  const closeYAMLModalAndRefresh = () => {
-    setYamlScreenOpen(false);
-    dispatch(setTenantDetailsLoad(true));
+    history.push(`${getRoutePath("summary")}/yaml`);
   };
 
   const getRoutePath = (newValue: string) => {
@@ -251,14 +244,6 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
 
   return (
     <Fragment>
-      {yamlScreenOpen && (
-        <TenantYAML
-          open={yamlScreenOpen}
-          closeModalAndRefresh={closeYAMLModalAndRefresh}
-          tenant={tenantName}
-          namespace={tenantNamespace}
-        />
-      )}
       {deleteOpen && tenantInfo !== null && (
         <DeleteTenant
           deleteOpen={deleteOpen}
@@ -384,6 +369,10 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
             <div className={classes.contentSpacer}>
               <Router history={history}>
                 <Switch>
+                  <Route
+                    path={`${IAM_PAGES.NAMESPACE_TENANT_SUMMARY}/yaml`}
+                    component={TenantYAML}
+                  />
                   <Route
                     path={IAM_PAGES.NAMESPACE_TENANT_SUMMARY}
                     component={TenantSummary}
@@ -511,16 +500,6 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Pods",
-              value: "pods",
-              component: Link,
-              id: "tenant-pod-tab",
-              to: getRoutePath("pods"),
-            },
-          }}
-
-          {{
-            tabConfig: {
               label: "Monitoring",
               value: "monitoring",
               component: Link,
@@ -535,6 +514,16 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
               to: getRoutePath("logging"),
             },
           }}
+          {{
+            tabConfig: {
+              label: "Pods",
+              value: "pods",
+              component: Link,
+              id: "tenant-pod-tab",
+              to: getRoutePath("pods"),
+            },
+          }}
+
           {{
             tabConfig: {
               label: "Volumes",
@@ -553,18 +542,18 @@ const TenantDetails = ({ classes, match, history }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "License",
-              value: "license",
+              label: "Certificate Requests",
+              value: "csr",
               component: Link,
-              to: getRoutePath("license"),
+              to: getRoutePath("csr"),
             },
           }}
           {{
             tabConfig: {
-              label: "Certificate Signing Request",
-              value: "csr",
+              label: "License",
+              value: "license",
               component: Link,
-              to: getRoutePath("csr"),
+              to: getRoutePath("license"),
             },
           }}
         </VerticalTabs>

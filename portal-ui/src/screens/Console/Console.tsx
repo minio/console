@@ -483,6 +483,11 @@ const Console = ({ classes }: IConsoleProps) => {
     },
     {
       component: TenantDetails,
+      path: `${IAM_PAGES.NAMESPACE_TENANT_SUMMARY}/yaml`,
+      forceDisplay: true,
+    },
+    {
+      component: TenantDetails,
       path: IAM_PAGES.NAMESPACE_TENANT_SUMMARY,
       forceDisplay: true,
     },
