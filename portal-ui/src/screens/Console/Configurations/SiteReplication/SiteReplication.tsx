@@ -104,7 +104,7 @@ const SiteReplication = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const hasSites = !sites?.length;
+  const hasSites = sites?.length;
 
   return (
     <Fragment>
