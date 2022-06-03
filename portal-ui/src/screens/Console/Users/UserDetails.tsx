@@ -52,9 +52,16 @@ import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import BackLink from "../../../common/BackLink";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import {
+  hasPermission,
+} from "../../../common/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -110,6 +117,10 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   const deleteUser = () => {
     setDeleteOpen(true);
   };
+
+  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_GET_GROUP,
+  ]);
 
   const getUserInformation = useCallback(() => {
     if (userName === "") {
@@ -176,6 +187,18 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       getUserInformation();
     }
   };
+
+    const groupViewAction = (group: any) => {
+    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group.group)}`);
+  };
+
+  const groupTableActions = [
+    {
+      type: "view",
+      onClick: groupViewAction,
+     disableButtonFunction: () => !viewGroup,
+    },
+  ];
 
   return (
     <React.Fragment>
@@ -298,7 +321,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   </div>
                   <div className={classes.tableBlock}>
                     <TableWrapper
-                      // itemActions={userTableActions}
+                      itemActions={groupTableActions}
                       columns={[{ label: "Name", elementKey: "group" }]}
                       isLoading={loading}
                       records={currentGroups}

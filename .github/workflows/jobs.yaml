@@ -1368,7 +1368,22 @@ jobs:
           echo "We are going to use the built image on test-integration";
           VERSION="minio/minio:$VERSION";
           echo $VERSION;
-          make test-integration MINIO_VERSION=$VERSION;
+          
+          echo "Create bucket for replication with versioning"
+          echo "Download mc for Ubuntu"
+          wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
+          echo "Change the permissions to execute mc command"
+          chmod +x mc
+          echo "Create the folder to put the all.out file"
+          TARGET_BUCKET=`echo $RANDOM | md5sum | head -c 20; echo;`
+          echo "TARGET_BUCKET: ${TARGET_BUCKET}"
+          ./mc mb --ignore-existing play/${TARGET_BUCKET}/
+          ./mc version enable play/${TARGET_BUCKET}
+          # Via API we are going to test:
+          # mc admin bucket remote add myminio/source https://minioadmin:minioadmin@play.min.io/target --service "replication"
+          # expected output is: Remote ARN = `arn:minio:replication::f5bdb8d7-541d-415e-aaf4-592979484ba9:target`.
+          
+          make test-integration MINIO_VERSION=$VERSION TARGET_BUCKET=$TARGET_BUCKET;
 
       - uses: actions/cache@v2
         id: coverage-cache
@@ -1521,7 +1536,7 @@ jobs:
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          threshold=51.00
+          threshold=51.40
           echo "Result:"
           echo "$result%"
           if (( $(echo "$result >= $threshold" |bc -l) )); then
