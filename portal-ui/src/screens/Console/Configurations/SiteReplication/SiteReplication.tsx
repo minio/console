@@ -81,10 +81,6 @@ const SiteReplication = () => {
     invokeSiteInfoApi("GET", `api/v1/admin/site-replication`);
   };
 
-    const addSite = () => {
-    invokeSiteInfoApi("GET", `api/v1/admin/site-replication`);
-  };
-
   const [isRemoving, invokeSiteRemoveApi] = useApi(
     (res: any) => {
       setIsDeleteAll(false);
@@ -108,7 +104,7 @@ const SiteReplication = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const hasSites = sites?.length;
+  const hasSites = !sites?.length;
 
   return (
     <Fragment>
