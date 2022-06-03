@@ -143,9 +143,6 @@ func TestMain(m *testing.M) {
 	fmt.Println("after 2 seconds sleep")
 
 	fmt.Println("creating the client")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
 
 	// SA_TOKEN=$(kubectl -n minio-operator  get secret console-sa-secret -o jsonpath="{.data.token}" | base64 --decode)
 	fmt.Println("Where we have the secret already: ")
@@ -175,24 +172,8 @@ func TestMain(m *testing.M) {
 		fmt.Println("jwt cannot be empty string")
 		os.Exit(-1)
 	}
-	requestData := map[string]string{
-		"jwt": secret3,
-	}
-	fmt.Println("requestData: ", requestData)
 
-	requestDataJSON, _ := json.Marshal(requestData)
-
-	requestDataBody := bytes.NewReader(requestDataJSON)
-
-	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/login/operator", requestDataBody)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Content-Type", "application/json")
-
-	response, err := client.Do(request)
+	response, err := LoginOperator(secret3)
 	if err != nil {
 		log.Println(err)
 		return
@@ -794,4 +775,32 @@ func TestCreateNamespace(t *testing.T) {
 			}
 		})
 	}
+}
+
+func LoginOperator(jwt string) (*http.Response, error) {
+	/*
+		Description: Login to Operator Console.
+		URL: /login/operator
+		Params in the Body: jwt
+	*/
+	requestData := map[string]string{
+		"jwt": jwt,
+	}
+	fmt.Println("requestData: ", requestData)
+
+	requestDataJSON, _ := json.Marshal(requestData)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/login/operator", requestDataBody)
+	if err != nil {
+		log.Println(err)
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
 }
