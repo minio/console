@@ -39,7 +39,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var token string
+var (
+	token string
+	jwt   string
+)
 
 func inspectHTTPResponse(httpResponse *http.Response) string {
 	/*
@@ -167,13 +170,12 @@ func TestMain(m *testing.M) {
 		return
 	}
 	secret2 := out2.String()
-	secret3 := decodeBase64(secret2[1 : len(secret2)-1])
-	if secret3 == "" {
+	jwt := decodeBase64(secret2[1 : len(secret2)-1])
+	if jwt == "" {
 		fmt.Println("jwt cannot be empty string")
 		os.Exit(-1)
 	}
-
-	response, err := LoginOperator(secret3)
+	response, err := LoginOperator()
 	if err != nil {
 		log.Println(err)
 		return
@@ -777,7 +779,7 @@ func TestCreateNamespace(t *testing.T) {
 	}
 }
 
-func LoginOperator(jwt string) (*http.Response, error) {
+func LoginOperator() (*http.Response, error) {
 	/*
 		Description: Login to Operator Console.
 		URL: /login/operator
@@ -803,4 +805,66 @@ func LoginOperator(jwt string) (*http.Response, error) {
 	}
 	response, err := client.Do(request)
 	return response, err
+}
+
+func LogoutOperator() (*http.Response, error) {
+	/*
+		Description: Logout from Operator.
+		URL: /logout
+	*/
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/logout",
+		nil,
+	)
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestLogout(t *testing.T) {
+	// Vars
+	assert := assert.New(t)
+
+	// 1. Logout
+	response, err := LogoutOperator()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(
+			200,
+			response.StatusCode,
+			inspectHTTPResponse(response),
+		)
+	}
+
+	// 2. Login to recover token
+	response, err = LoginOperator()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		for _, cookie := range response.Cookies() {
+			if cookie.Name == "token" {
+				token = cookie.Value
+				break
+			}
+		}
+	}
+
+	// Verify token
+	if token == "" {
+		assert.Fail("authentication token not found in cookies response")
+	}
 }
