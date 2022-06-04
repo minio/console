@@ -34,6 +34,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
+import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -191,9 +192,9 @@ const BrowserBreadcrumbs = ({
             {listBreadcrumbs}
           </div>
           <CopyToClipboard text={`${bucketName}/${splitPaths.join("/")}`}>
-            <Button
+            <RBIconButton
               id={"copy-path"}
-              startIcon={<CopyIcon />}
+              icon={<CopyIcon />}
               disableTouchRipple
               disableRipple
               focusRipple={false}
@@ -206,17 +207,15 @@ const BrowserBreadcrumbs = ({
                 padding: "0",
                 color: "#969FA8",
                 border: "#969FA8 1px solid",
-                width: "20px",
-                height: "20px",
-                minHeight: "20px",
-                minWidth: "28px",
-                "&.MuiButton-root": {
+                width: "28px",
+                height: "28px",
+
+                "& .MuiButton-root": {
                   height: "28px",
                 },
                 "& .min-icon": {
                   width: "12px",
                   height: "12px",
-                  marginLeft: "12px",
                 },
               }}
             />

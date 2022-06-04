@@ -27,7 +27,7 @@ const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
 const BrowserHandler = React.lazy(
   () => import("./BucketDetails/BrowserHandler")
 );
-const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket"));
+const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket/AddBucket"));
 
 const Buckets = () => {
   return (

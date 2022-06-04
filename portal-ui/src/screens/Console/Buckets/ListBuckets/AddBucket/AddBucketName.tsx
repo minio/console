@@ -15,31 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  ConsoleAgpl,
-  ConsoleEnterprise,
-  ConsoleStandard,
-} from "../../../../icons";
+import { setName } from "./addBucketsSlice";
+import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../../../../../store";
 
-const LicensedConsoleLogo = ({
-  plan,
-  isLoading,
-}: {
-  plan: string;
-  isLoading: boolean;
-}) => {
-  let licenseLogo = null;
-  if (isLoading) {
-    return licenseLogo;
-  } else if (plan === "STANDARD") {
-    licenseLogo = <ConsoleStandard />;
-  } else if (plan === "ENTERPRISE") {
-    licenseLogo = <ConsoleEnterprise />;
-  } else {
-    licenseLogo = <ConsoleAgpl style={{ width: 170 }} />;
-  }
+const AddBucketName = () => {
+  const dispatch = useDispatch();
 
-  return licenseLogo;
+  const bucketName = useSelector((state: AppState) => state.addBucket.name);
+  return (
+    <InputBoxWrapper
+      id="bucket-name"
+      name="bucket-name"
+      autoFocus={true}
+      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setName(event.target.value));
+      }}
+      label="Bucket Name"
+      value={bucketName}
+    />
+  );
 };
 
-export default LicensedConsoleLogo;
+export default AddBucketName;
