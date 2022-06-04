@@ -3638,3 +3638,120 @@ func TestGetBucketRewind(t *testing.T) {
 			200, resp.StatusCode, inspectHTTPResponse(resp))
 	}
 }
+
+func GetRemoteBucket() (*http.Response, error) {
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/remote-buckets",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func AddRemoteBucket(accessKey, secretKey, targetURL, sourceBucket, targetBucket string) (*http.Response, error) {
+	// Needed Parameters for API Call
+	bucketsRelationArray := make([]map[string]interface{}, 1)
+	bucketsRelationIndex0 := map[string]interface{}{
+		"originBucket":      sourceBucket,
+		"destinationBucket": targetBucket,
+	}
+	bucketsRelationArray[0] = bucketsRelationIndex0
+	requestDataAdd := map[string]interface{}{
+		"accessKey":              accessKey,
+		"secretKey":              secretKey,
+		"targetURL":              targetURL,
+		"sourceBucket":           sourceBucket,
+		"targetBucket":           targetBucket,
+		"region":                 "",
+		"bucketsRelation":        bucketsRelationArray,
+		"syncMode":               "async",
+		"bandwidth":              107374182400,
+		"healthCheckPeriod":      60,
+		"prefix":                 "",
+		"tags":                   "",
+		"replicateDeleteMarkers": true,
+		"replicateDeletes":       true,
+		"priority":               1,
+		"storageClass":           "",
+		"replicateMetadata":      true,
+	}
+
+	// Creating the Call by adding the URL and Headers
+	requestDataJSON, _ := json.Marshal(requestDataAdd)
+	requestDataBody := bytes.NewReader(requestDataJSON)
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/remote-buckets",
+		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestAddRemoteBucket(t *testing.T) {
+	// Variables
+	assert := assert.New(t)
+	accessKey := "minioadmin"
+	secretKey := "minioadmin"
+	targetURL := "https://play.min.io"
+	sourceBucket := "source"
+	targetBucket := os.Getenv("THETARGET")
+	fmt.Println("targetBucket: ", targetBucket)
+
+	// 1. Create bucket
+	if !BucketGotAdded("source", true, true, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Add Remote Bucket
+	resp, err := AddRemoteBucket(
+		accessKey,
+		secretKey,
+		targetURL,
+		sourceBucket,
+		targetBucket,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			201, resp.StatusCode, inspectHTTPResponse(resp))
+	}
+
+	// 3. Verify Remote Bucket was created
+	resp, err = GetRemoteBucket()
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, finalResponse)
+	}
+	fmt.Println("finalResponse: ", finalResponse)
+	assert.Equal(strings.Contains(finalResponse, targetBucket), true)
+}
