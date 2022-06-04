@@ -59,9 +59,7 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import {
-  hasPermission,
-} from "../../../common/SecureComponent";
+import { hasPermission } from "../../../common/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -188,7 +186,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     }
   };
 
-    const groupViewAction = (group: any) => {
+  const groupViewAction = (group: any) => {
     history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group.group)}`);
   };
 
@@ -196,7 +194,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     {
       type: "view",
       onClick: groupViewAction,
-     disableButtonFunction: () => !viewGroup,
+      disableButtonFunction: () => !viewGroup,
     },
   ];
 
