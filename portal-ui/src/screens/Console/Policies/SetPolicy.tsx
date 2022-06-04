@@ -76,10 +76,10 @@ const SetPolicy = ({
     let users = null;
     let groups = null;
     if (selectedGroups !== null) {
-      groups = selectedGroups;     
+      groups = selectedGroups;
     } else {
       if (selectedUser !== null) {
-        users = [selectedUser.accessKey] || [" "];       
+        users = [selectedUser.accessKey] || [" "];
       }
     }
 
@@ -120,7 +120,7 @@ const SetPolicy = ({
   const resetSelection = () => {
     setSelectedPolicy(actualPolicy);
   };
- 
+
   useEffect(() => {
     if (open) {
       if (selectedGroups?.length === 1) {
@@ -145,30 +145,29 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
-     
       <Grid container>
-      {(selectedGroups?.length === 1 || selectedUser != null) &&
-      <Fragment>
-         <Grid item xs={12}>
+        {(selectedGroups?.length === 1 || selectedUser != null) && (
+          <Fragment>
+            <Grid item xs={12}>
+              <PredefinedList
+                label={`Selected ${selectedGroups !== null ? "Group" : "User"}`}
+                content={selectedGroups !== null ? selectedGroups[0] : userName}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <PredefinedList
+                label={"Current Policy"}
+                content={actualPolicy.join(", ")}
+              />
+            </Grid>
+          </Fragment>
+        )}
+        {selectedGroups && selectedGroups?.length > 1 && (
           <PredefinedList
-            label={`Selected ${selectedGroups !== null ? "Group" : "User"}`}
-            content={selectedGroups !== null ? selectedGroups[0] : userName}
+            label={"Selected Groups"}
+            content={selectedGroups.join(", ")}
           />
-        </Grid>
-        <Grid item xs={12}>
-          <PredefinedList
-            label={"Current Policy"}
-            content={actualPolicy.join(", ")}
-          />
-        </Grid>
-        </Fragment>
-      }
-      {selectedGroups && selectedGroups?.length > 1 &&
-      <PredefinedList
-      label={"Selected Groups"}
-      content={selectedGroups.join(", ")}
-    />
-      }
+        )}
         <Grid item xs={12}>
           <div className={classes.tableBlock}>
             <PolicySelectors
