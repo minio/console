@@ -36,7 +36,7 @@ const LicensedConsoleLogo = ({
   } else if (plan === "ENTERPRISE") {
     licenseLogo = <ConsoleEnterprise />;
   } else {
-    licenseLogo = <ConsoleAgpl />;
+    licenseLogo = <ConsoleAgpl style={{ width: 170 }} />;
   }
 
   return licenseLogo;
