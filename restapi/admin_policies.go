@@ -687,7 +687,17 @@ func setPolicyMultipleEntities(ctx context.Context, client MinioAdmin, policyNam
 		}
 	}
 	for _, group := range groups {
-		if err := client.setPolicy(ctx, policyName, string(group), true); err != nil {
+		groupDesc, err := groupInfo(ctx, client, string(group))
+		if err != nil {
+			return err
+		}
+		allGroupPolicies := ""
+		if len(groups) > 1 {
+			allGroupPolicies = groupDesc.Policy + "," + policyName
+		} else {
+			allGroupPolicies = policyName
+		}
+		if err := client.setPolicy(ctx, allGroupPolicies, string(group), true); err != nil {
 			return err
 		}
 	}

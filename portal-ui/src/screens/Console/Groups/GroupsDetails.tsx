@@ -347,7 +347,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
       {policyOpen ? (
         <SetPolicy
           open={policyOpen}
-          selectedGroup={groupName}
+          selectedGroups={[groupName]}
           selectedUser={null}
           closeModalAndRefresh={() => {
             setPolicyOpen(false);
