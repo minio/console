@@ -103,7 +103,7 @@ export const bucketsAccessReadWriteInput = Selector(
 ).withText("readwrite");
 export const uploadInput = Selector("input").withAttribute("type", "file");
 export const createPolicyName = Selector("#policy-name");
-export const createPolicyTextfield = Selector(".cm-content");
+export const createPolicyTextfield = Selector(".w-tc-editor-text");
 export const usersAccessKeyInput = Selector("#accesskey-input");
 export const usersSecretKeyInput = Selector("#standard-multiline-static");
 export const groupNameInput = Selector("#group-name");

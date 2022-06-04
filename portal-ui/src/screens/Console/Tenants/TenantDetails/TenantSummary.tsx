@@ -362,7 +362,7 @@ const TenantSummary = ({ classes, match }: ITenantsSummary) => {
                   {tenant?.domains?.minio &&
                     tenant.domains.minio.map((domain) => {
                       return (
-                        <Fragment>
+                        <Fragment key={domain}>
                           <a
                             href={domain}
                             target="_blank"
