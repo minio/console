@@ -31,6 +31,7 @@ import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/Cod
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { AppState } from "../../../../store";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
+import SectionTitle from "../../Common/SectionTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -136,9 +137,11 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
           }}
         >
           <Grid container>
-            <Grid item xs={12} className={classes.codeMirrorContainer}>
+            <Grid item xs={12}>
+              <SectionTitle>Tenant Specification</SectionTitle>
+            </Grid>
+            <Grid item xs={12} style={{ border: "1px solid #eaeaea" }}>
               <CodeMirrorWrapper
-                label={`Tenant Specification`}
                 value={tenantYaml}
                 mode={"yaml"}
                 onBeforeChange={(editor, data, value) => {
@@ -147,7 +150,7 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
                 editorHeight={"550px"}
               />
             </Grid>
-            <Grid item xs={12} className={classes.modalButtonBar}>
+            <Grid item xs={12} style={{ textAlign: "right", paddingTop: 16 }}>
               <Button
                 type="button"
                 variant="outlined"
@@ -166,6 +169,7 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
                 variant="contained"
                 color="primary"
                 disabled={addLoading || !validSave}
+                style={{ marginLeft: 8 }}
               >
                 Save
               </Button>

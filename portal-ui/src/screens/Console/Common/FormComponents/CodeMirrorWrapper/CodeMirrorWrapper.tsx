@@ -71,70 +71,58 @@ const CodeMirrorWrapper = ({
         </InputLabel>
       </Grid>
 
+      <Grid item xs={12} style={{ maxHeight: editorHeight, overflow: "auto" }}>
+        <CodeEditor
+          value={value}
+          language={mode}
+          onChange={(evn) => {
+            onBeforeChange(null, null, evn.target.value);
+          }}
+          padding={15}
+          style={{
+            fontSize: 12,
+            backgroundColor: "#fefefe",
+            fontFamily:
+              "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+          }}
+        />
+      </Grid>
       <Grid
         item
         xs={12}
         sx={{
-          border: "1px solid #eaeaea",
+          borderTop: "1px solid #eaeaea",
+          background: "#f7f7f7",
         }}
       >
-        <Grid
-          item
-          xs={12}
-          style={{ maxHeight: editorHeight, overflow: "auto" }}
-        >
-          <CodeEditor
-            value={value}
-            language={mode}
-            onChange={(evn) => {
-              onBeforeChange(null, null, evn.target.value);
-            }}
-            padding={15}
-            style={{
-              fontSize: 12,
-              backgroundColor: "#fefefe",
-              fontFamily:
-                "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-            }}
-          />
-        </Grid>
-        <Grid
-          item
-          xs={12}
+        <Box
           sx={{
-            borderTop: "1px solid #eaeaea",
-            background: "#f7f7f7",
+            display: "flex",
+            alignItems: "center",
+            padding: "2px",
+            paddingRight: "5px",
+            justifyContent: "flex-end",
+            "& button": {
+              height: "26px",
+              width: "26px",
+              padding: "2px",
+              " .min-icon": {
+                marginLeft: "0",
+              },
+            },
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              padding: "2px",
-              paddingRight: "5px",
-              justifyContent: "flex-end",
-              "& button": {
-                height: "26px",
-                width: "26px",
-                padding: "2px",
-                " .min-icon": {
-                  marginLeft: "0",
-                },
-              },
-            }}
-          >
-            <CopyToClipboard text={value}>
-              <RBIconButton
-                tooltip={"Copy to Clipboard"}
-                onClick={() => {}}
-                text={""}
-                icon={<CopyIcon />}
-                color={"primary"}
-                variant={"outlined"}
-              />
-            </CopyToClipboard>
-          </Box>
-        </Grid>
+          <CopyToClipboard text={value}>
+            <RBIconButton
+              tooltip={"Copy to Clipboard"}
+              onClick={() => {}}
+              text={""}
+              icon={<CopyIcon />}
+              color={"primary"}
+              variant={"outlined"}
+            />
+          </CopyToClipboard>
+        </Box>
       </Grid>
     </React.Fragment>
   );
