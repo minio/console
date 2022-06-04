@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
-import { Box, DialogContentText } from "@mui/material";
+import { Box, DialogContentText, Grid } from "@mui/material";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
 import TrashIcon from "../../../../icons/TrashIcon";
@@ -39,6 +39,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
+import AButton from "../../Common/AButton/AButton";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -174,19 +175,46 @@ const SiteReplication = () => {
           </Box>
         ) : null}
         {!hasSites && !isSiteInfoLoading ? (
-          <Box
-            sx={{
-              padding: "30px",
-              border: "1px solid #eaeaea",
-              marginTop: "15px",
-              marginBottom: "15px",
-              height: "calc( 100vh - 450px )",
-            }}
-          >
-            Site Replication is not configured.
-          </Box>
-        ) : null}
+         <Grid
+                    container
+                    justifyContent={"center"}
+                    alignContent={"center"}
+                    alignItems={"center"}
+                  >
+                    <Grid item xs={8}>
+                      <HelpBox
+                        title={"Site Replication"}
+                        iconComponent={<ClustersIcon />}
+                        help={
+                          <Fragment>
+                           This feature allows multiple independent MinIO sites (or clusters) that are using the same external 
+                           IDentity Provider (IDP) to be configured as replicas. 
+                            <br />
+                            <br />
+                            To get started,{" "}
+                            <AButton 
+                            onClick={() => {history.push(IAM_PAGES.SITE_REPLICATION_ADD);}}>
+                              Add a Replication Site
+                            </AButton>.
 
+                            <br/>
+                            You can learn more at our{" "}
+              <a
+                href="https://github.com/minio/minio/tree/master/docs/site-replication?ref=con"
+                target="_blank"
+                rel="noreferrer"
+              >
+                documentation
+              </a>
+              .
+                          </Fragment>
+                        }
+                      />
+                      </Grid>
+                      </Grid>
+                  
+        ) : null}
+      {hasSites && !isSiteInfoLoading ? (
         <HelpBox
           title={"Site Replication"}
           iconComponent={<ClustersIcon />}
@@ -196,30 +224,21 @@ const SiteReplication = () => {
               that are using the same external IDentity Provider (IDP) to be
               configured as replicas. In this situation the set of replica sites
               are referred to as peer sites or just sites.
-              <br />
-              <Box>
-                <ul>
-                  <li>
-                    Initially, only one of the sites added for replication may
-                    have data. After site-replication is successfully
-                    configured, this data is replicated to the other (initially
-                    empty) sites. Subsequently, objects may be written to any of
-                    the sites, and they will be replicated to all other sites.
-                  </li>
-                  <li>
-                    All sites must have the same deployment credentials (i.e.
-                    MINIO_ROOT_USER, MINIO_ROOT_PASSWORD).
-                  </li>
-                  <li>
-                    All sites must be using the same external IDP(s) if any.
-                  </li>
-                  <li>
-                    For SSE-S3 or SSE-KMS encryption via KMS, all sites must
-                    have access to a central KMS deployment. server.
-                  </li>
-                </ul>
-              </Box>
-              <br />
+              <br /><br />
+              Initially, only one of the sites added for replication may
+              have data. After site-replication is successfully
+              configured, this data is replicated to the other (initially
+              empty) sites. Subsequently, objects may be written to any of
+              the sites, and they will be replicated to all other sites.
+              <br /><br />
+              All sites must have the same deployment credentials (i.e.
+              MINIO_ROOT_USER, MINIO_ROOT_PASSWORD).
+              <br /><br />
+              All sites must be using the same external IDP(s) if any.
+              <br /><br />
+              For SSE-S3 or SSE-KMS encryption via KMS, all sites must
+              have access to a central KMS deployment server. 
+              <br /><br />
               You can learn more at our{" "}
               <a
                 href="https://github.com/minio/minio/tree/master/docs/site-replication?ref=con"
@@ -232,6 +251,7 @@ const SiteReplication = () => {
             </Fragment>
           }
         />
+        ) : null}
 
         {deleteAll ? (
           <ConfirmDialog
