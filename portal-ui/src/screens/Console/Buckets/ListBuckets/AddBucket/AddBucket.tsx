@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,51 +14,43 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
-import api from "../../../../common/api";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
-import { AppState } from "../../../../store";
-import history from "../../../../history";
+import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
+import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
+import { AppState } from "../../../../../store";
 import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "use-debounce";
-import { MakeBucketRequest } from "../types";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { ErrorResponseHandler } from "../../../../common/types";
-import PageHeader from "../../Common/PageHeader/PageHeader";
-import BackLink from "../../../../common/BackLink";
-import { BucketsIcon, InfoIcon } from "../../../../icons";
+import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PageHeader from "../../../Common/PageHeader/PageHeader";
+import BackLink from "../../../../../common/BackLink";
+import { BucketsIcon, InfoIcon } from "../../../../../icons";
 
-import PageLayout from "../../Common/Layout/PageLayout";
-import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import FormLayout from "../../Common/FormLayout";
-import HelpBox from "../../../../common/HelpBox";
-import SectionTitle from "../../Common/SectionTitle";
+import PageLayout from "../../../Common/Layout/PageLayout";
+import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import FormLayout from "../../../Common/FormLayout";
+import HelpBox from "../../../../../common/HelpBox";
+import SectionTitle from "../../../Common/SectionTitle";
+import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
-  selDistSet,
-  selSiteRep,
-  setErrorSnackMessage,
-} from "../../../../systemSlice";
-import {
-  addBucketEnableObjectLocking,
-  addBucketName,
-  addBucketQuota,
-  addBucketQuotaSize,
-  addBucketQuotaType,
-  addBucketQuotaUnit,
-  addBucketRetention,
-  addBucketRetentionMode,
-  addBucketRetentionUnit,
-  addBucketRetentionValidity,
-  addBucketVersioning,
-} from "../bucketsSlice";
+  resetForm,
+  setEnableObjectLocking,
+  setQuota,
+  setQuotaSize,
+  setQuotaUnit,
+  setRetention,
+  setRetentionMode,
+  setRetentionUnit,
+  setRetentionValidity,
+  setVersioning,
+} from "./addBucketsSlice";
+import { addBucketAsync } from "./addBucketThunks";
+import AddBucketName from "./AddBucketName";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -105,171 +97,47 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-interface IAddBucketProps {
+interface IsetProps {
   classes: any;
 }
 
-const AddBucket = ({ classes }: IAddBucketProps) => {
+const AddBucket = ({ classes }: IsetProps) => {
   const dispatch = useDispatch();
 
-  const bucketName = useSelector(
-    (state: AppState) => state.buckets.addBucketName
-  );
   const versioningEnabled = useSelector(
-    (state: AppState) => state.buckets.addBucketVersioningEnabled
+    (state: AppState) => state.addBucket.versioningEnabled
   );
   const lockingEnabled = useSelector(
-    (state: AppState) => state.buckets.addBucketLockingEnabled
+    (state: AppState) => state.addBucket.lockingEnabled
   );
   const quotaEnabled = useSelector(
-    (state: AppState) => state.buckets.addBucketQuotaEnabled
+    (state: AppState) => state.addBucket.quotaEnabled
   );
-  const quotaType = useSelector(
-    (state: AppState) => state.buckets.addBucketQuotaType
-  );
-  const quotaSize = useSelector(
-    (state: AppState) => state.buckets.addBucketQuotaSize
-  );
-  const quotaUnit = useSelector(
-    (state: AppState) => state.buckets.addBucketQuotaUnit
-  );
+  const quotaSize = useSelector((state: AppState) => state.addBucket.quotaSize);
+  const quotaUnit = useSelector((state: AppState) => state.addBucket.quotaUnit);
   const retentionEnabled = useSelector(
-    (state: AppState) => state.buckets.addBucketRetentionEnabled
+    (state: AppState) => state.addBucket.retentionEnabled
   );
   const retentionMode = useSelector(
-    (state: AppState) => state.buckets.addBucketRetentionMode
+    (state: AppState) => state.addBucket.retentionMode
   );
   const retentionUnit = useSelector(
-    (state: AppState) => state.buckets.addBucketRetentionUnit
+    (state: AppState) => state.addBucket.retentionUnit
   );
   const retentionValidity = useSelector(
-    (state: AppState) => state.buckets.addBucketRetentionValidity
+    (state: AppState) => state.addBucket.retentionValidity
+  );
+  const addLoading = useSelector((state: AppState) => state.addBucket.loading);
+  const valid = useSelector((state: AppState) => state.addBucket.valid);
+  const lockingFieldDisabled = useSelector(
+    (state: AppState) => state.addBucket.lockingFieldDisabled
   );
   const distributedSetup = useSelector(selDistSet);
   const siteReplicationInfo = useSelector(selSiteRep);
 
-  const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [sendEnabled, setSendEnabled] = useState<boolean>(false);
-  const [lockingFieldDisabled, setLockingFieldDisabled] =
-    useState<boolean>(false);
-
-  const addRecord = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (addLoading) {
-      return;
-    }
-    setAddLoading(true);
-
-    let request: MakeBucketRequest = {
-      name: bucketName,
-      versioning:
-        distributedSetup && !siteReplicationInfo.enabled
-          ? versioningEnabled
-          : false,
-      locking: distributedSetup ? lockingEnabled : false,
-    };
-
-    if (distributedSetup) {
-      if (quotaEnabled) {
-        const amount = getBytes(quotaSize, quotaUnit, true);
-        request.quota = {
-          enabled: true,
-          quota_type: quotaType,
-          amount: parseInt(amount),
-        };
-      }
-
-      if (retentionEnabled) {
-        request.retention = {
-          mode: retentionMode,
-          unit: retentionUnit,
-          validity: retentionValidity,
-        };
-      }
-    }
-
-    api
-      .invoke("POST", "/api/v1/buckets", request)
-      .then((res) => {
-        setAddLoading(false);
-        const newBucketName = `${bucketName}`;
-        resetForm();
-        history.push(`/buckets/${newBucketName}/browse`);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setAddLoading(false);
-        dispatch(setErrorSnackMessage(err));
-      });
+  const resForm = () => {
+    dispatch(resetForm());
   };
-
-  const [value] = useDebounce(bucketName, 1000);
-
-  useEffect(() => {
-    dispatch(addBucketName(value));
-  }, [value, dispatch]);
-
-  const resetForm = () => {
-    dispatch(addBucketName(""));
-    dispatch(addBucketVersioning(false));
-    dispatch(addBucketEnableObjectLocking(false));
-    dispatch(addBucketQuota(false));
-    dispatch(addBucketQuotaType("hard"));
-    dispatch(addBucketQuotaSize("1"));
-    dispatch(addBucketQuotaUnit("Ti"));
-    dispatch(addBucketRetention(false));
-    dispatch(addBucketRetentionMode("compliance"));
-    dispatch(addBucketRetentionUnit("days"));
-    dispatch(addBucketRetentionValidity(180));
-  };
-
-  useEffect(() => {
-    let valid = false;
-
-    if (bucketName.trim() !== "") {
-      valid = true;
-    }
-
-    if (quotaEnabled && valid) {
-      if (quotaSize.trim() === "" || parseInt(quotaSize) === 0) {
-        valid = false;
-      }
-    }
-
-    if (!versioningEnabled || !retentionEnabled) {
-      dispatch(addBucketRetention(false));
-      dispatch(addBucketRetentionMode("compliance"));
-      dispatch(addBucketRetentionUnit("days"));
-      dispatch(addBucketRetentionValidity(180));
-    }
-
-    if (retentionEnabled) {
-      // if retention is enabled, then objec locking should be enabled as well
-      dispatch(addBucketEnableObjectLocking(true));
-      setLockingFieldDisabled(true);
-    } else {
-      setLockingFieldDisabled(false);
-    }
-
-    if (
-      retentionEnabled &&
-      (Number.isNaN(retentionValidity) || retentionValidity < 1)
-    ) {
-      valid = false;
-    }
-
-    setSendEnabled(valid);
-  }, [
-    bucketName,
-    retentionEnabled,
-    lockingEnabled,
-    quotaType,
-    quotaSize,
-    quotaUnit,
-    quotaEnabled,
-    dispatch,
-    retentionValidity,
-    versioningEnabled,
-  ]);
 
   return (
     <Fragment>
@@ -312,21 +180,13 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
             noValidate
             autoComplete="off"
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-              addRecord(e);
+              e.preventDefault();
+              dispatch(addBucketAsync());
             }}
           >
             <Grid container marginTop={1} spacing={2}>
               <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="bucket-name"
-                  name="bucket-name"
-                  autoFocus={true}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(addBucketName(event.target.value));
-                  }}
-                  label="Bucket Name"
-                  value={bucketName}
-                />
+                <AddBucketName />
               </Grid>
               <Grid item xs={12}>
                 <SectionTitle>Features</SectionTitle>
@@ -368,7 +228,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                   name="versioned"
                   checked={versioningEnabled}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(addBucketVersioning(event.target.checked));
+                    dispatch(setVersioning(event.target.checked));
                   }}
                   label={"Versioning"}
                   disabled={
@@ -386,11 +246,9 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                   disabled={lockingFieldDisabled || !distributedSetup}
                   checked={lockingEnabled}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(
-                      addBucketEnableObjectLocking(event.target.checked)
-                    );
+                    dispatch(setEnableObjectLocking(event.target.checked));
                     if (event.target.checked && !siteReplicationInfo.enabled) {
-                      dispatch(addBucketVersioning(true));
+                      dispatch(setVersioning(true));
                     }
                   }}
                   label={"Object Locking"}
@@ -404,7 +262,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                   name="bucket_quota"
                   checked={quotaEnabled}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(addBucketQuota(event.target.checked));
+                    dispatch(setQuota(event.target.checked));
                   }}
                   label={"Quota"}
                   disabled={!distributedSetup}
@@ -419,7 +277,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                       name="quota_size"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         if (e.target.validity.valid) {
-                          dispatch(addBucketQuotaSize(e.target.value));
+                          dispatch(setQuotaSize(e.target.value));
                         }
                       }}
                       label="Capacity"
@@ -431,7 +289,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                         <InputUnitMenu
                           id={"quota_unit"}
                           onUnitChange={(newValue) => {
-                            dispatch(addBucketQuotaUnit(newValue));
+                            dispatch(setQuotaUnit(newValue));
                           }}
                           unitSelected={quotaUnit}
                           unitsList={k8sScalarUnitsExcluding(["Ki"])}
@@ -450,7 +308,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                     name="bucket_retention"
                     checked={retentionEnabled}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      dispatch(addBucketRetention(event.target.checked));
+                      dispatch(setRetention(event.target.checked));
                     }}
                     label={"Retention"}
                   />
@@ -465,9 +323,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                       name="retention_mode"
                       label="Mode"
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                        dispatch(
-                          addBucketRetentionMode(e.target.value as string)
-                        );
+                        dispatch(setRetentionMode(e.target.value as string));
                       }}
                       selectorOptions={[
                         { value: "compliance", label: "Compliance" },
@@ -481,9 +337,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                       id="retention_validity"
                       name="retention_validity"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        dispatch(
-                          addBucketRetentionValidity(e.target.valueAsNumber)
-                        );
+                        dispatch(setRetentionValidity(e.target.valueAsNumber));
                       }}
                       label="Validity"
                       value={String(retentionValidity)}
@@ -492,7 +346,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                         <InputUnitMenu
                           id={"retention_unit"}
                           onUnitChange={(newValue) => {
-                            dispatch(addBucketRetentionUnit(newValue));
+                            dispatch(setRetentionUnit(newValue));
                           }}
                           unitSelected={retentionUnit}
                           unitsList={[
@@ -512,7 +366,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                 type="button"
                 variant={"outlined"}
                 className={classes.clearButton}
-                onClick={resetForm}
+                onClick={resForm}
               >
                 Clear
               </Button>
@@ -520,7 +374,7 @@ const AddBucket = ({ classes }: IAddBucketProps) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={addLoading || !sendEnabled}
+                disabled={addLoading || valid}
               >
                 Create Bucket
               </Button>
