@@ -210,7 +210,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
             <Grid container>
               <Grid item xs={2}>
                 <TenantCapacity
-                  totalCapacity={tenant.capacity_raw || 0}
+                  totalCapacity={tenant.capacity || 0}
                   usedSpaceVariants={spaceVariants}
                   statusClass={healthStatusToClass(tenant.health_status)}
                 />
