@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -27,10 +27,11 @@ import {
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import { EditYamlIcon } from "../../../../icons";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { AppState } from "../../../../store";
+import { getTenantAsync } from "../thunks/tenantDetailsAsync";
+import SectionTitle from "../../Common/SectionTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,20 +60,17 @@ interface ITenantYAML {
 
 interface ITenantYAMLProps {
   classes: any;
-  open: boolean;
-  closeModalAndRefresh: (refresh: boolean) => void;
-  tenant: string;
-  namespace: string;
+  history: any;
 }
 
-const TenantYAML = ({
-  classes,
-  open,
-  closeModalAndRefresh,
-  tenant,
-  namespace,
-}: ITenantYAMLProps) => {
+const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
   const dispatch = useDispatch();
+
+  const tenant = useSelector((state: AppState) => state.tenants.currentTenant);
+  const namespace = useSelector(
+    (state: AppState) => state.tenants.currentNamespace
+  );
+
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [tenantYaml, setTenantYaml] = useState<string>("");
@@ -91,8 +89,9 @@ const TenantYAML = ({
       })
       .then((res) => {
         setAddLoading(false);
-        closeModalAndRefresh(true);
+        dispatch(getTenantAsync());
         setErrorMessage("");
+        history.push(`/namespaces/${namespace}/tenants/${tenant}/summary`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
@@ -100,7 +99,6 @@ const TenantYAML = ({
       });
   };
 
-  // check the permissions for creating bucket
   useEffect(() => {
     api
       .invoke("GET", `/api/v1/namespaces/${namespace}/tenants/${tenant}/yaml`)
@@ -119,14 +117,7 @@ const TenantYAML = ({
   const validSave = tenantYaml.trim() !== "";
 
   return (
-    <ModalWrapper
-      modalOpen={open}
-      onClose={() => {
-        closeModalAndRefresh(false);
-      }}
-      title={`YAML`}
-      titleIcon={<EditYamlIcon />}
-    >
+    <Fragment>
       {addLoading ||
         (loading && (
           <Grid item xs={12}>
@@ -146,9 +137,11 @@ const TenantYAML = ({
           }}
         >
           <Grid container>
-            <Grid item xs={12} className={classes.codeMirrorContainer}>
+            <Grid item xs={12}>
+              <SectionTitle>Tenant Specification</SectionTitle>
+            </Grid>
+            <Grid item xs={12} style={{ border: "1px solid #eaeaea" }}>
               <CodeMirrorWrapper
-                label={`Tenant Specification`}
                 value={tenantYaml}
                 mode={"yaml"}
                 onBeforeChange={(editor, data, value) => {
@@ -157,14 +150,16 @@ const TenantYAML = ({
                 editorHeight={"550px"}
               />
             </Grid>
-            <Grid item xs={12} className={classes.modalButtonBar}>
+            <Grid item xs={12} style={{ textAlign: "right", paddingTop: 16 }}>
               <Button
                 type="button"
                 variant="outlined"
                 color="primary"
                 disabled={addLoading}
                 onClick={() => {
-                  closeModalAndRefresh(false);
+                  history.push(
+                    `/namespaces/${namespace}/tenants/${tenant}/summary`
+                  );
                 }}
               >
                 Cancel
@@ -174,6 +169,7 @@ const TenantYAML = ({
                 variant="contained"
                 color="primary"
                 disabled={addLoading || !validSave}
+                style={{ marginLeft: 8 }}
               >
                 Save
               </Button>
@@ -181,7 +177,7 @@ const TenantYAML = ({
           </Grid>
         </form>
       )}
-    </ModalWrapper>
+    </Fragment>
   );
 };
 

@@ -68,6 +68,7 @@ const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       textAlign: "right",
+      paddingTop: 16,
     },
     pageContainer: {
       border: "1px solid #EAEAEA",
@@ -473,61 +474,59 @@ const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
             content: (
               <Fragment>
                 <div className={classes.sectionTitle}>Raw Policy</div>
-                <Paper className={classes.paperContainer}>
-                  <form
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                      saveRecord(e);
-                    }}
-                  >
-                    <Grid container>
-                      <Grid item xs={12} className={classes.formScrollable}>
-                        <CodeMirrorWrapper
-                          readOnly={!editPolicy}
-                          value={policyDefinition}
-                          onBeforeChange={(editor, data, value) => {
-                            setPolicyDefinition(value);
-                          }}
-                          editorHeight={"350px"}
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.buttonContainer}>
-                        {!policy && (
-                          <button
-                            type="button"
-                            color="primary"
-                            className={classes.clearButton}
-                            onClick={() => {
-                              resetForm();
-                            }}
-                          >
-                            Clear
-                          </button>
-                        )}
-                        <SecureComponent
-                          scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
-                          resource={CONSOLE_UI_RESOURCE}
-                          errorProps={{ disabled: true }}
-                        >
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            disabled={addLoading || !validSave}
-                          >
-                            Save
-                          </Button>
-                        </SecureComponent>
-                      </Grid>
-                      {addLoading && (
-                        <Grid item xs={12}>
-                          <LinearProgress />
-                        </Grid>
-                      )}
+                <form
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    saveRecord(e);
+                  }}
+                >
+                  <Grid container>
+                    <Grid item xs={12} style={{ border: "1px solid #eaeaea" }}>
+                      <CodeMirrorWrapper
+                        readOnly={!editPolicy}
+                        value={policyDefinition}
+                        onBeforeChange={(editor, data, value) => {
+                          setPolicyDefinition(value);
+                        }}
+                        editorHeight={"350px"}
+                      />
                     </Grid>
-                  </form>
-                </Paper>
+                    <Grid item xs={12} className={classes.buttonContainer}>
+                      {!policy && (
+                        <button
+                          type="button"
+                          color="primary"
+                          className={classes.clearButton}
+                          onClick={() => {
+                            resetForm();
+                          }}
+                        >
+                          Clear
+                        </button>
+                      )}
+                      <SecureComponent
+                        scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
+                        resource={CONSOLE_UI_RESOURCE}
+                        errorProps={{ disabled: true }}
+                      >
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          disabled={addLoading || !validSave}
+                        >
+                          Save
+                        </Button>
+                      </SecureComponent>
+                    </Grid>
+                    {addLoading && (
+                      <Grid item xs={12}>
+                        <LinearProgress />
+                      </Grid>
+                    )}
+                  </Grid>
+                </form>
               </Fragment>
             ),
           }}
