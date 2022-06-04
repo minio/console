@@ -199,7 +199,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
       {policyOpen && (
         <SetPolicy
           open={policyOpen}
-          selectedGroup={checkedGroups[0]}
+          selectedGroups={checkedGroups}
           selectedUser={null}
           closeModalAndRefresh={() => {
             setPolicyOpen(false);
@@ -241,7 +241,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
                 text={"Assign Policy"}
                 icon={<IAMPoliciesIcon />}
                 color="primary"
-                disabled={checkedGroups.length !== 1}
+                disabled={checkedGroups.length < 1}
                 variant={"outlined"}
               />
             </SecureComponent>

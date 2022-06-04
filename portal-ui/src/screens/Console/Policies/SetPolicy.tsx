@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -41,7 +41,7 @@ interface ISetPolicyProps {
   classes: any;
   closeModalAndRefresh: () => void;
   selectedUser: User | null;
-  selectedGroup: string | null;
+  selectedGroups: string[] | null;
   open: boolean;
 }
 
@@ -63,7 +63,7 @@ const SetPolicy = ({
   classes,
   closeModalAndRefresh,
   selectedUser,
-  selectedGroup,
+  selectedGroups,
   open,
 }: ISetPolicyProps) => {
   const dispatch = useDispatch();
@@ -73,24 +73,23 @@ const SetPolicy = ({
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
 
   const setPolicyAction = () => {
-    let entity = "user";
-    let value = null;
-    if (selectedGroup !== null) {
-      entity = "group";
-      value = selectedGroup;
+    let users = null;
+    let groups = null;
+    if (selectedGroups !== null) {
+      groups = selectedGroups;     
     } else {
       if (selectedUser !== null) {
-        value = selectedUser.accessKey;
+        users = [selectedUser.accessKey] || [" "];       
       }
     }
 
     setLoading(true);
 
     api
-      .invoke("PUT", `/api/v1/set-policy`, {
+      .invoke("PUT", `/api/v1/set-policy-multi`, {
         name: selectedPolicy,
-        entityName: value,
-        entityType: entity,
+        groups: groups,
+        users: users,
       })
       .then(() => {
         setLoading(false);
@@ -103,9 +102,9 @@ const SetPolicy = ({
   };
 
   const fetchGroupInformation = () => {
-    if (selectedGroup) {
+    if (selectedGroups?.length === 1) {
       api
-        .invoke("GET", `/api/v1/group/${encodeURLString(selectedGroup)}`)
+        .invoke("GET", `/api/v1/group/${encodeURLString(selectedGroups[0])}`)
         .then((res: any) => {
           const groupPolicy: String = get(res, "policy", "");
           setActualPolicy(groupPolicy.split(","));
@@ -121,10 +120,10 @@ const SetPolicy = ({
   const resetSelection = () => {
     setSelectedPolicy(actualPolicy);
   };
-
+ 
   useEffect(() => {
     if (open) {
-      if (selectedGroup !== null) {
+      if (selectedGroups?.length === 1) {
         fetchGroupInformation();
         return;
       }
@@ -134,7 +133,7 @@ const SetPolicy = ({
       setSelectedPolicy(userPolicy);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, selectedGroup, selectedUser]);
+  }, [open, selectedGroups?.length, selectedUser]);
 
   const userName = get(selectedUser, "accessKey", "");
 
@@ -146,11 +145,14 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
+     
       <Grid container>
-        <Grid item xs={12}>
+      {(selectedGroups?.length === 1 || selectedUser != null) &&
+      <Fragment>
+         <Grid item xs={12}>
           <PredefinedList
-            label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}
-            content={selectedGroup !== null ? selectedGroup : userName}
+            label={`Selected ${selectedGroups !== null ? "Group" : "User"}`}
+            content={selectedGroups !== null ? selectedGroups[0] : userName}
           />
         </Grid>
         <Grid item xs={12}>
@@ -159,6 +161,14 @@ const SetPolicy = ({
             content={actualPolicy.join(", ")}
           />
         </Grid>
+        </Fragment>
+      }
+      {selectedGroups && selectedGroups?.length > 1 &&
+      <PredefinedList
+      label={"Selected Groups"}
+      content={selectedGroups.join(", ")}
+    />
+      }
         <Grid item xs={12}>
           <div className={classes.tableBlock}>
             <PolicySelectors
