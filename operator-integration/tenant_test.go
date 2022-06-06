@@ -868,3 +868,90 @@ func TestLogout(t *testing.T) {
 		assert.Fail("authentication token not found in cookies response")
 	}
 }
+
+func EnableTenantLogging(namespace, tenant string) (*http.Response, error) {
+	/*
+		Description: Enable Tenant Logging
+		HTTP Verb: POST
+	*/
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/namespaces/"+namespace+"/tenants/"+tenant+"/enable-logging",
+		nil,
+	)
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DisableTenantLogging(namespace, tenant string) (*http.Response, error) {
+	/*
+		Description: Disable Tenant Logging
+	*/
+	request, err := http.NewRequest(
+		"POST",
+		"http://localhost:9090/api/v1/namespaces/"+namespace+"/tenants/"+tenant+"/disable-logging",
+		nil,
+	)
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestEnableTenantLogging(t *testing.T) {
+	// Vars
+	assert := assert.New(t)
+	namespace := "tenant-lite"
+	tenant := "storage-lite"
+
+	// Enable tenant logging
+	resp, err := EnableTenantLogging(namespace, tenant)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200,
+			resp.StatusCode,
+			inspectHTTPResponse(resp),
+		)
+	}
+}
+
+func TestDisableTenantLogging(t *testing.T) {
+	// Vars
+	assert := assert.New(t)
+	namespace := "tenant-lite"
+	tenant := "storage-lite"
+
+	// Disable tenant logging
+	resp, err := DisableTenantLogging(namespace, tenant)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200,
+			resp.StatusCode,
+			inspectHTTPResponse(resp),
+		)
+	}
+}
