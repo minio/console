@@ -3657,6 +3657,24 @@ func GetRemoteBucket() (*http.Response, error) {
 	return response, err
 }
 
+func GetRemoteBucketARN(sourceBucket string) (*http.Response, error) {
+	request, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("http://localhost:9090/api/v1/remote-buckets/%s", sourceBucket),
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func AddRemoteBucket(accessKey, secretKey, targetURL, sourceBucket, targetBucket string) (*http.Response, error) {
 	// Needed Parameters for API Call
 	bucketsRelationArray := make([]map[string]interface{}, 1)
@@ -3692,6 +3710,27 @@ func AddRemoteBucket(accessKey, secretKey, targetURL, sourceBucket, targetBucket
 		"POST",
 		"http://localhost:9090/api/v1/remote-buckets",
 		requestDataBody,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+
+	// Performing the call
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func DeleteRemoteBucket(sourceBucket string, arn string) (*http.Response, error) {
+	// Needed Parameters for API Call
+	request, err := http.NewRequest(
+		"DELETE",
+		fmt.Sprintf("http://localhost:9090/api/v1/remote-buckets/%s/%s", sourceBucket, arn),
+		nil,
 	)
 	if err != nil {
 		log.Println(err)
@@ -3754,4 +3793,70 @@ func TestAddRemoteBucket(t *testing.T) {
 	}
 	fmt.Println("finalResponse: ", finalResponse)
 	assert.Equal(strings.Contains(finalResponse, targetBucket), true)
+}
+
+func TestDeleteRemoteBucket(t *testing.T) {
+	// Variables
+	assert := assert.New(t)
+	accessKey := "minioadmin"
+	secretKey := "minioadmin"
+	targetURL := "https://play.min.io"
+	sourceBucket := "deletesource"
+	targetBucket := os.Getenv("THETARGET")
+	fmt.Println("targetBucket: ", targetBucket)
+
+	// 1. Create bucket
+	if !BucketGotAdded("deletesource", true, true, nil, nil, assert, 201) {
+		return
+	}
+
+	// 2. Add Remote Bucket
+	resp, err := AddRemoteBucket(
+		accessKey,
+		secretKey,
+		targetURL,
+		sourceBucket,
+		targetBucket,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			201, resp.StatusCode, inspectHTTPResponse(resp))
+	}
+
+	// 3. Get ARN
+	resp, err = GetRemoteBucketARN(sourceBucket)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	remoteBucket := models.RemoteBucket{}
+	err = json.Unmarshal(bodyBytes, &remoteBucket)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, inspectHTTPResponse(resp))
+	}
+
+	// 4. Delete Remote Bucket
+	resp, err = DeleteRemoteBucket(sourceBucket, *remoteBucket.RemoteARN)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse := inspectHTTPResponse(resp)
+	if resp != nil {
+		assert.Equal(
+			204, resp.StatusCode, finalResponse)
+	}
 }
