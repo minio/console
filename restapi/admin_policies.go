@@ -694,6 +694,8 @@ func setPolicyMultipleEntities(ctx context.Context, client MinioAdmin, policyNam
 		allGroupPolicies := ""
 		if len(groups) > 1 {
 			allGroupPolicies = groupDesc.Policy + "," + policyName
+			s := strings.Split(allGroupPolicies, ",")
+			allGroupPolicies = strings.Join(UniqueKeys(s), ",")
 		} else {
 			allGroupPolicies = policyName
 		}
