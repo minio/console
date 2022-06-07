@@ -172,6 +172,7 @@ func (suite *MarketplaceTestSuite) TestGetMPEmailNoError() {
 	suite.assert.Nil(err)
 	suite.assert.NotEmpty(email)
 }
+
 func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoEmail() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
