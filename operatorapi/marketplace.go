@@ -19,6 +19,7 @@ package operatorapi
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
@@ -31,10 +32,10 @@ import (
 )
 
 var (
-	mpConfigMap        = "mp-config"
+	mpConfigMapDefault = "mp-config"
+	mpConfigMapKey     = "MP_CONFIG_KEY"
 	mpEmail            = "email"
 	emailNotSetMsg     = "Email was not sent in request"
-	emailAlreadySetMsg = "Email is already set, use override flag to force update"
 )
 
 // Add unit tests
@@ -73,9 +74,9 @@ func registerMarketplaceHandlers(api *operations.OperatorAPI) {
 }
 
 func getMPIntegrationResponse(session *models.Principal, params operator_api.GetMPIntegrationParams) (*models.MpIntegration, *models.Error) {
-	// if true { // This block will be removed once service to register emails is deployed
-	// 	return &models.Error{Code: 501}
-	// }
+	if true { // This block will be removed once service to register emails is deployed
+		return nil, &models.Error{Code: 501}
+	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -92,7 +93,7 @@ func getMPIntegrationResponse(session *models.Principal, params operator_api.Get
 }
 
 func getMPEmail(ctx context.Context, clientSet K8sClientI) (string, error) {
-	cm, err := clientSet.getConfigMap(ctx, "default", mpConfigMap, metav1.GetOptions{})
+	cm, err := clientSet.getConfigMap(ctx, "default", getMPConfigMapKey(mpConfigMapKey), metav1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -100,9 +101,9 @@ func getMPEmail(ctx context.Context, clientSet K8sClientI) (string, error) {
 }
 
 func postMPIntegrationResponse(session *models.Principal, params operator_api.PostMPIntegrationParams) *models.Error {
-	// if true { // This block will be removed once service to register emails is deployed
-	// 	return &models.Error{Code: 501}
-	// }
+	if true { // This block will be removed once service to register emails is deployed
+		return &models.Error{Code: 501}
+	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -113,9 +114,9 @@ func postMPIntegrationResponse(session *models.Principal, params operator_api.Po
 }
 
 func patchMPIntegrationResponse(session *models.Principal, params operator_api.PatchMPIntegrationParams) *models.Error {
-	// if true { // This block will be removed once service to register emails is deployed
-	// 	return &models.Error{Code: 501}
-	// }
+	if true { // This block will be removed once service to register emails is deployed
+		return &models.Error{Code: 501}
+	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -150,7 +151,7 @@ func createCM(email string) *corev1.ConfigMap {
 			APIVersion: "v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mpConfigMap,
+			Name:      getMPConfigMapKey(mpConfigMapKey),
 			Namespace: "default",
 		},
 		Data: map[string]string{mpEmail: email},
@@ -158,19 +159,28 @@ func createCM(email string) *corev1.ConfigMap {
 }
 
 func deleteMPIntegrationResponse(session *models.Principal, params operator_api.DeleteMPIntegrationParams) *models.Error {
-	// if true { // This block will be removed once service to register emails is deployed
-	// 	return &models.Error{Code: 501}
-	// }
+	if true { // This block will be removed once service to register emails is deployed
+		return &models.Error{Code: 501}
+	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
-	k8sClient := &k8sClient{client: clientSet}
-	k8sClient.deleteConfigMap(ctx, "default", mpConfigMap, metav1.DeleteOptions{})
-	if err != nil {
+	return deleteMPIntegration(ctx, &k8sClient{client: clientSet})
+}
+
+func deleteMPIntegration(ctx context.Context, clientSet K8sClientI) *models.Error {
+	if err := clientSet.deleteConfigMap(ctx, "default", getMPConfigMapKey(mpConfigMapKey), metav1.DeleteOptions{}); err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
 	return nil
+}
+
+func getMPConfigMapKey(envVar string) string {
+	if mp := os.Getenv(envVar); mp != "" {
+		return mp
+	}
+	return mpConfigMapDefault
 }
