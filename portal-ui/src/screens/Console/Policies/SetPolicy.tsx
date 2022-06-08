@@ -173,7 +173,6 @@ const SetPolicy = ({
           <div className={classes.tableBlock}>
             <PolicySelectors
               selectedPolicy={selectedPolicy}
-              setSelectedPolicy={setSelectedPolicy}
             />
           </div>
         </Grid>

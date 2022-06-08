@@ -28,6 +28,7 @@ import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserS
 import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
 import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenantSlice";
+import createUserReducer from "./screens/Console/Users/AddUsersSlice";
 import addPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/AddPool/addPoolSlice";
 import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
 
@@ -45,6 +46,7 @@ const rootReducer = combineReducers({
   // Operator Reducers
   tenants: tenantsReducer,
   createTenant: createTenantReducer,
+  createUser: createUserReducer,
   addPool: addPoolReducer,
   editPool: editPoolReducer,
 });
