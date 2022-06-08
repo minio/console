@@ -37,12 +37,8 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { tableStyles } from "../../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 
 function a11yProps(index: any) {
@@ -56,14 +52,8 @@ interface IAccessDetailsProps {
   match: any;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...tableStyles,
-  })
-);
 const AccessDetails = ({ match }: IAccessDetailsProps) => {
   const dispatch = useDispatch();
-  const classes = useStyles();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -180,7 +170,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
         {displayPoliciesList && <Tab label="Policies" {...a11yProps(0)} />}
         {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
       </Tabs>
-      <Paper className={classes.tableBlock}>
+      <Paper>
         <TabPanel index={0} value={curTab}>
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
