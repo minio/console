@@ -15,12 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-// import { useSelector } from "react-redux";
-// import { Box } from "@mui/material";
-// import Grid from "@mui/material/Grid";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import SetEmailModal from "./SetEmailModal";
-// import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
 import { selFeatures } from "../consoleSlice";
 import { useDispatch, useSelector } from "react-redux";
