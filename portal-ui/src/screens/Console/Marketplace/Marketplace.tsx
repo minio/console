@@ -1,0 +1,86 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import React, { Fragment, useEffect, useState } from "react";
+// import { useSelector } from "react-redux";
+// import { Box } from "@mui/material";
+// import Grid from "@mui/material/Grid";
+import PageHeader from "../Common/PageHeader/PageHeader";
+import SetEmailModal from "./SetEmailModal";
+// import api from "../../../common/api";
+import PageLayout from "../Common/Layout/PageLayout";
+import { selFeatures } from "../consoleSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResources/utils";
+import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
+import { Redirect } from "react-router";
+import history from "../../../history";
+
+const Marketplace = () => {
+  const dispatch = useDispatch();
+  const features = useSelector(selFeatures);
+  const displayMarketplace = useSelector(selShowMarketplace);
+  const [isMPMode, setMPMode] = useState<boolean>(true);
+
+
+  useEffect(() => {
+    let mpMode = false;
+    if (features && features.length !== 0) {
+      features.forEach((feature) => {
+        if (feature in resourcesConfigurations) {
+          mpMode = true;
+          return;
+        }
+      });
+    }
+    setMPMode(mpMode);
+  }, [features, displayMarketplace]);
+
+  const getTargetPath = () => {
+    let targetPath = "/";
+    if (localStorage.getItem("redirect-path") && localStorage.getItem("redirect-path") !== "") {
+      targetPath = `${localStorage.getItem("redirect-path")}`;
+      localStorage.setItem("redirect-path", "");
+    }
+    return targetPath;
+  }
+
+  const closeModal = () => {
+    dispatch(showMarketplace(false));
+    history.push(getTargetPath());
+  }
+
+  if (!displayMarketplace || !isMPMode) {
+    return <Redirect to={getTargetPath()} />;
+  }
+
+  if (features) {
+    return (
+      <Fragment>
+        <PageHeader label="Operator Marketplace" />
+        <PageLayout>
+        <SetEmailModal
+          open={true}
+          closeModal={closeModal}
+        />
+        </PageLayout>
+      </Fragment>
+    );
+  }
+  return null;
+};
+
+export default Marketplace;
