@@ -65,6 +65,7 @@ const initialState: IEditPool = {
     ],
   },
   editSending: false,
+  navigateTo: "",
 };
 
 export const editPoolSlice = createSlice({
@@ -257,6 +258,9 @@ export const editPoolSlice = createSlice({
       })
       .addCase(editPoolAsync.fulfilled, (state, action) => {
         state.editSending = false;
+        if (action.payload) {
+          state.navigateTo = action.payload;
+        }
       });
   },
 });

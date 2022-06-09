@@ -41,6 +41,7 @@ export interface IAddPool {
   configuration: IPoolConfiguration;
   tolerations: ITolerationModel[];
   nodeSelectorPairs: LabelKeyPair[];
+  navigateTo: string;
 }
 
 const initialState: IAddPool = {
@@ -49,6 +50,7 @@ const initialState: IAddPool = {
   validPages: ["affinity", "configure"],
   storageClasses: [],
   limitSize: {},
+  navigateTo: "",
   setup: {
     numberOfNodes: 0,
     storageClass: "",
@@ -171,6 +173,9 @@ export const addPoolSlice = createSlice({
       })
       .addCase(addPoolAsync.fulfilled, (state, action) => {
         state.sending = false;
+        if (action.payload) {
+          state.navigateTo = action.payload;
+        }
       });
   },
 });

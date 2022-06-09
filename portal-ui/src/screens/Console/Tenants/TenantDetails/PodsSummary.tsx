@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -38,8 +39,6 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IPodsSummary {
   classes: any;
-  match: any;
-  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -49,8 +48,10 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PodsSummary = ({ classes, match, history }: IPodsSummary) => {
+const PodsSummary = ({ classes }: IPodsSummary) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { tenantName, tenantNamespace } = useParams();
 
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
@@ -61,12 +62,12 @@ const PodsSummary = ({ classes, match, history }: IPodsSummary) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPod, setSelectedPod] = useState<any>(null);
   const [filter, setFilter] = useState("");
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
 
   const podViewAction = (pod: IPodListElement) => {
-    history.push(
-      `/namespaces/${tenantNamespace}/tenants/${tenantName}/pods/${pod.name}`
+    navigate(
+      `/namespaces/${tenantNamespace || ""}/tenants/${tenantName || ""}/pods/${
+        pod.name
+      }`
     );
     return;
   };
@@ -103,7 +104,9 @@ const PodsSummary = ({ classes, match, history }: IPodsSummary) => {
       api
         .invoke(
           "GET",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods`
+          `/api/v1/namespaces/${tenantNamespace || ""}/tenants/${
+            tenantName || ""
+          }/pods`
         )
         .then((result: IPodListElement[]) => {
           for (let i = 0; i < result.length; i++) {

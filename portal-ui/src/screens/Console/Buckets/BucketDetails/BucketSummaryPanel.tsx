@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -93,11 +94,11 @@ const twoColCssGridLayoutConfig = {
 
 interface IBucketSummaryProps {
   classes: any;
-  match: any;
 }
 
-const BucketSummary = ({ classes, match }: IBucketSummaryProps) => {
+const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   const dispatch = useDispatch();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
@@ -135,7 +136,7 @@ const BucketSummary = ({ classes, match }: IBucketSummaryProps) => {
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   let accessPolicy = "n/a";
   let policyDefinition = "";

@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -83,11 +84,11 @@ const styles = (theme: Theme) =>
 
 interface IListBucketsProps {
   classes: any;
-  history: any;
 }
 
-const ListBuckets = ({ classes, history }: IListBucketsProps) => {
+const ListBuckets = ({ classes }: IListBucketsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -291,7 +292,7 @@ const ListBuckets = ({ classes, history }: IListBucketsProps) => {
             <RBIconButton
               tooltip={"Create Bucket"}
               onClick={() => {
-                history.push(IAM_PAGES.ADD_BUCKETS);
+                navigate(IAM_PAGES.ADD_BUCKETS);
               }}
               text={"Create Bucket"}
               icon={<AddIcon />}
@@ -356,7 +357,7 @@ const ListBuckets = ({ classes, history }: IListBucketsProps) => {
                           To get started,&nbsp;
                           <AButton
                             onClick={() => {
-                              history.push(IAM_PAGES.ADD_BUCKETS);
+                              navigate(IAM_PAGES.ADD_BUCKETS);
                             }}
                           >
                             Create a Bucket.

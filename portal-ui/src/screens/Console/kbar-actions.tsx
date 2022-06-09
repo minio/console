@@ -15,7 +15,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Action } from "kbar/lib/types";
-import history from "../../history";
 import { BucketsIcon } from "../../icons";
 import { validRoutes } from "./valid-routes";
 import { IAM_PAGES } from "../../common/SecureComponent/permissions";
@@ -24,7 +23,8 @@ import { Bucket } from "./Buckets/types";
 export const routesAsKbarActions = (
   features: string[] | null,
   operatorMode: boolean,
-  buckets: Bucket[]
+  buckets: Bucket[],
+  navigate: (url: string) => void
 ) => {
   const initialActions: Action[] = [];
   const allowedMenuItems = validRoutes(features, operatorMode);
@@ -35,7 +35,7 @@ export const routesAsKbarActions = (
           id: `${childI.id}`,
           name: childI.name,
           section: i.name,
-          perform: () => history.push(`${childI.to}`),
+          perform: () => navigate(`${childI.to}`),
           icon: <childI.icon />,
         };
         initialActions.push(a);
@@ -45,7 +45,7 @@ export const routesAsKbarActions = (
         id: `${i.id}`,
         name: i.name,
         section: "Navigation",
-        perform: () => history.push(`${i.to}`),
+        perform: () => navigate(`${i.to}`),
         icon: <i.icon />,
       };
       initialActions.push(a);
@@ -57,7 +57,7 @@ export const routesAsKbarActions = (
       id: `create-bucket`,
       name: "Create Bucket",
       section: "Buckets",
-      perform: () => history.push(IAM_PAGES.ADD_BUCKETS),
+      perform: () => navigate(IAM_PAGES.ADD_BUCKETS),
       icon: <BucketsIcon />,
     };
     initialActions.push(a);
@@ -69,7 +69,7 @@ export const routesAsKbarActions = (
           name: buck.name,
           section: "List of Buckets",
           perform: () => {
-            history.push(`/buckets/${buck.name}/browse`);
+            navigate(`/buckets/${buck.name}/browse`);
           },
           icon: <BucketsIcon />,
         }),

@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate, useParams } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
@@ -20,7 +21,6 @@ import {
   TrashIcon,
 } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import history from "../../../history";
 import api from "../../../common/api";
 import SetPolicy from "../Policies/SetPolicy";
 import AddGroupMember from "./AddGroupMember";
@@ -92,7 +92,6 @@ const styles = (theme: Theme) =>
 
 interface IGroupDetailsProps {
   classes: any;
-  match: any;
 }
 
 type GroupInfo = {
@@ -107,8 +106,11 @@ export const formatPolicy = (policy: string = ""): string[] => {
   return policy.split(",");
 };
 
-const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
+const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
+
   const [groupDetails, setGroupDetails] = useState<GroupInfo>({});
 
   /*Modals*/
@@ -117,7 +119,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [memberFilter, setMemberFilter] = useState<string>("");
 
-  const groupName = decodeURLString(match.params["groupName"]);
+  const groupName = decodeURLString(params.groupName || "");
 
   const { members = [], policy = "", status: groupEnabled } = groupDetails;
 
@@ -210,9 +212,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
               {
                 type: "view",
                 onClick: (userName) => {
-                  history.push(
-                    `${IAM_PAGES.USERS}/${encodeURLString(userName)}`
-                  );
+                  navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
                 },
               },
             ]}
@@ -250,9 +250,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
             {
               type: "view",
               onClick: (policy) => {
-                history.push(
-                  `${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`
-                );
+                navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`);
               },
             },
           ]}
@@ -378,7 +376,7 @@ const GroupsDetails = ({ classes, match }: IGroupDetailsProps) => {
           closeDeleteModalAndRefresh={(isDelSuccess: boolean) => {
             setDeleteOpen(false);
             if (isDelSuccess) {
-              history.push(IAM_PAGES.GROUPS);
+              navigate(IAM_PAGES.GROUPS);
             }
           }}
         />

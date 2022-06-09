@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { Button, Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -26,7 +27,6 @@ import {
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect, useDispatch } from "react-redux";
-import history from "../../../../../../history";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { BucketObjectItem } from "./types";
@@ -60,6 +60,8 @@ const CreatePathModal = ({
   simplePath,
 }: ICreatePath) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState(bucketName);
@@ -106,7 +108,7 @@ const CreatePathModal = ({
     const newPath = `/buckets/${bucketName}/browse/${encodeURLString(
       `${folderPath}${cleanPathURL}/`
     )}`;
-    history.push(newPath);
+    navigate(newPath);
     onClose();
   };
 

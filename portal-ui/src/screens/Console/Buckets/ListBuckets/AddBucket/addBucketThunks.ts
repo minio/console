@@ -17,7 +17,6 @@
 import { MakeBucketRequest } from "../../types";
 import { getBytes } from "../../../../../common/utils";
 import api from "../../../../../common/api";
-import history from "../../../../../history";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -75,7 +74,7 @@ export const addBucketAsync = createAsyncThunk(
       .then((res) => {
         const newBucketName = `${bucketName}`;
         dispatch(resetForm());
-        history.push(`/buckets/${newBucketName}/browse`);
+        return newBucketName;
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));

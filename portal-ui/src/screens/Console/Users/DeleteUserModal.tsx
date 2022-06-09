@@ -16,10 +16,9 @@
 
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { DialogContentText } from "@mui/material";
-
 import { ErrorResponseHandler } from "../../../common/types";
-import history from "../../../history";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
@@ -39,8 +38,10 @@ const DeleteUserModal = ({
   userName,
 }: IDeleteUserStringProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const onDelSuccess = () => {
-    history.push(IAM_PAGES.USERS);
+    navigate(IAM_PAGES.USERS);
   };
   const onDelError = (err: ErrorResponseHandler) =>
     dispatch(setErrorSnackMessage(err));

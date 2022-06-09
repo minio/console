@@ -16,17 +16,7 @@
 
 import React, { Fragment } from "react";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  containerForHeader,
-  spacingUtils,
-  tableStyles,
-  tenantDetailsStyles,
-  textStyleUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
-
+import { useNavigate } from "react-router-dom";
 import { AppState } from "../../../../../../store";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -35,20 +25,6 @@ import { niceBytesInt } from "../../../../../../common/utils";
 import StackRow from "../../../../Common/UsageBarWrapper/StackRow";
 import RBIconButton from "../../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { EditTenantIcon } from "../../../../../../icons";
-
-interface IPoolDetails {
-  classes: any;
-  history: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...spacingUtils,
-    ...textStyleUtils,
-    ...tenantDetailsStyles,
-    ...tableStyles,
-    ...containerForHeader(theme.spacing(4)),
-  });
 
 const stylingLayout = {
   border: "#EAEAEA 1px solid",
@@ -65,7 +41,9 @@ const twoColCssGridLayoutConfig = {
   padding: "15px",
 };
 
-const PoolDetails = ({ history }: IPoolDetails) => {
+const PoolDetails = () => {
+  const navigate = useNavigate();
+
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const selectedPool = useSelector(
     (state: AppState) => state.tenants.selectedPool
@@ -109,7 +87,7 @@ const PoolDetails = ({ history }: IPoolDetails) => {
           <RBIconButton
             icon={<EditTenantIcon />}
             onClick={() => {
-              history.push(
+              navigate(
                 `/namespaces/${tenant?.namespace || ""}/tenants/${
                   tenant?.name || ""
                 }/edit-pool`
@@ -277,4 +255,4 @@ const PoolDetails = ({ history }: IPoolDetails) => {
   );
 };
 
-export default withStyles(styles)(PoolDetails);
+export default PoolDetails;

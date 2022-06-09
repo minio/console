@@ -16,6 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { servicesList } from "./utils";
@@ -24,7 +25,6 @@ import {
   typesSelection,
 } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import history from "../../../history";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -43,6 +43,7 @@ const styles = (theme: Theme) =>
   });
 
 const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
+  const navigate = useNavigate();
   return (
     <Fragment>
       <PageHeader
@@ -68,7 +69,7 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
                   key={`icon-${item.targetTitle}`}
                   className={classes.lambdaNotif}
                   onClick={() => {
-                    history.push(
+                    navigate(
                       `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
                     );
                   }}
