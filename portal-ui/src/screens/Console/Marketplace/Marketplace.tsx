@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResources/utils";
 import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router-dom";
 
 const Marketplace = () => {
   const dispatch = useDispatch();
@@ -61,7 +61,7 @@ const Marketplace = () => {
   }
 
   if (!displayMarketplace || !isMPMode) {
-    return <Redirect to={getTargetPath()} />;
+    return <Navigate to={{ pathname: getTargetPath() }} />;
   }
 
   if (features) {
