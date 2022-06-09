@@ -19,21 +19,12 @@ import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { Box, LinearProgress } from "@mui/material";
-import clsx from "clsx";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { SubnetInfo } from "./types";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
-import {
-  ArrowRightLink,
-  HelpIconFilled,
-  LicenseIcon,
-  LoginMinIOLogo,
-} from "../../../icons";
+import { ArrowRightLink, HelpIconFilled, LoginMinIOLogo } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -46,6 +37,7 @@ import PageLayout from "../Common/Layout/PageLayout";
 import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 import makeStyles from "@mui/styles/makeStyles";
 import { selOpMode } from "../../../systemSlice";
+import LicenseModal from "./LicenseModal";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -124,7 +116,6 @@ const License = () => {
     useState<boolean>(false);
 
   const [licenseModal, setLicenseModal] = useState<boolean>(false);
-
   const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
   const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
@@ -350,6 +341,10 @@ const License = () => {
           setActivateProductModal={setActivateProductModal}
         />
       </PageLayout>
+      <LicenseModal
+        open={licenseModal}
+        closeModal={() => setLicenseModal(false)}
+      />
     </Fragment>
   );
 };
