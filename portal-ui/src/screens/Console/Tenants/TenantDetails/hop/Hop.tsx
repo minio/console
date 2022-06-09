@@ -16,20 +16,18 @@
 
 import React, { Fragment, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Link } from "react-router-dom";
 import { Box, IconButton } from "@mui/material";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import history from "./../../../../../history";
 import RefreshIcon from "../../../../../icons/RefreshIcon";
 import Loader from "../../../Common/Loader/Loader";
 
 interface IHopSimple {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -64,11 +62,14 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Hop = ({ classes, match }: IHopSimple) => {
+const Hop = ({ classes }: IHopSimple) => {
+  const navigate = useNavigate();
+  const params = useParams();
+
   const [loading, setLoading] = useState<boolean>(true);
 
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
+  const tenantName = params.tenantName || "";
+  const tenantNamespace = params.tenantNamespace || "";
   const consoleFrame = React.useRef<HTMLIFrameElement>(null);
 
   return (
@@ -85,7 +86,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
                 to={`/namespaces/${tenantNamespace}/tenants/${tenantName}`}
                 className={classes.breadcrumLink}
               >
-                {match.params["tenantName"]}
+                {tenantName}
               </Link>
               {` > Management`}
             </Fragment>
@@ -130,7 +131,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
                 aria-label="Refresh List"
                 component="span"
                 onClick={() => {
-                  history.push(
+                  navigate(
                     `/namespaces/${tenantNamespace}/tenants/${tenantName}`
                   );
                 }}

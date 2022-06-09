@@ -15,19 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { AddIcon, ClustersIcon, RemoveIcon } from "../../../../icons";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
 import { Box, Button, LinearProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import useApi from "../../Common/Hooks/useApi";
-import { useDispatch } from "react-redux";
+import { AddIcon, ClustersIcon, RemoveIcon } from "../../../../icons";
+import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import HelpBox from "../../../../common/HelpBox";
-import history from "../../../../history";
 import SectionTitle from "../../Common/SectionTitle";
 import {
   setErrorSnackMessage,
@@ -56,6 +56,8 @@ const isValidEndPoint = (ep: string) => {
 };
 const AddReplicationSites = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [existingSites, setExistingSites] = useState<SiteInputRow[]>([]);
 
   const [accessKey, setAccessKey] = useState<string>("");
@@ -127,7 +129,7 @@ const AddReplicationSites = () => {
         dispatch(setSnackBarMessage(res.status));
         resetForm();
         getSites();
-        history.push(IAM_PAGES.SITE_REPLICATION);
+        navigate(IAM_PAGES.SITE_REPLICATION);
       } else {
         dispatch(
           setErrorSnackMessage({

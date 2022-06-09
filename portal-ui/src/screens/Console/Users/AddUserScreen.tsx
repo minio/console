@@ -28,14 +28,12 @@ import { CreateUserIcon } from "../../../icons";
 
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import history from "../../../../src/history";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 import PolicySelectors from "../Policies/PolicySelectors";
 import BackLink from "../../../common/BackLink";
 import GroupsSelectors from "./GroupsSelectors";
 import { useDispatch } from "react-redux";
-import { User } from "./types";
 
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -46,10 +44,10 @@ import api from "../../../../src/common/api";
 import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useNavigate } from "react-router-dom";
 
 interface IAddUserProps {
   classes: any;
-  selectedUser: User | null;
 }
 
 const styles = (theme: Theme) =>
@@ -73,6 +71,8 @@ const styles = (theme: Theme) =>
 
 const AddUser = ({ classes }: IAddUserProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -109,7 +109,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
       })
       .then((res) => {
         setAddLoading(false);
-        history.push(`${IAM_PAGES.USERS}`);
+        navigate(`${IAM_PAGES.USERS}`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);

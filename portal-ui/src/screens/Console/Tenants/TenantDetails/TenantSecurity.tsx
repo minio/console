@@ -14,11 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ITenant } from "../ListTenants/types";
-import { ICertificateInfo, ITenantSecurityResponse } from "../types";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { Button, DialogContentText } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
+import { ICertificateInfo, ITenantSecurityResponse } from "../types";
 import {
   containerForHeader,
   createTenantCommon,
@@ -28,27 +31,22 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { Button, DialogContentText } from "@mui/material";
+
 import { KeyPair } from "../ListTenants/utils";
-import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
-import api from "../../../../common/api";
-import { connect, useDispatch } from "react-redux";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { AddIcon, ConfirmModalIcon } from "../../../../icons";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
+import api from "../../../../common/api";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import Loader from "../../Common/Loader/Loader";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 import SectionTitle from "../../Common/SectionTitle";
-import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface ITenantSecurity {
   classes: any;
-  loadingTenant: boolean;
-  tenant: ITenant | null;
 }
 
 const styles = (theme: Theme) =>
@@ -78,12 +76,14 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const TenantSecurity = ({
-  classes,
-  tenant,
-  loadingTenant,
-}: ITenantSecurity) => {
+const TenantSecurity = ({ classes }: ITenantSecurity) => {
   const dispatch = useDispatch();
+
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.loadingTenant
+  );
+
   const [isSending, setIsSending] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [enableAutoCert, setEnableAutoCert] = useState<boolean>(false);

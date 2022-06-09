@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import {
   formFieldStyles,
@@ -28,7 +29,6 @@ import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
-import history from "../../../../../../history";
 import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import TenantsIcon from "../../../../../../icons/TenantsIcon";
@@ -72,14 +72,24 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AddPool = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const classes = useStyles();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const sending = useSelector((state: AppState) => state.addPool.sending);
+  const navigateTo = useSelector((state: AppState) => state.addPool.navigateTo);
 
   const poolsURL = `/namespaces/${tenant?.namespace || ""}/tenants/${
     tenant?.name || ""
   }/pools`;
+
+  useEffect(() => {
+    if (navigateTo !== "") {
+      const goTo = `${navigateTo}`;
+      dispatch(resetPoolForm());
+      navigate(goTo);
+    }
+  }, [navigateTo, navigate, dispatch]);
 
   const cancelButton = {
     label: "Cancel",
@@ -87,7 +97,7 @@ const AddPool = () => {
     enabled: true,
     action: () => {
       dispatch(resetPoolForm());
-      history.push(poolsURL);
+      navigate(poolsURL);
     },
   };
 

@@ -16,6 +16,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -34,7 +35,6 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import history from "../../../history";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
@@ -95,11 +95,12 @@ const styles = (theme: Theme) =>
 
 interface IPolicyDetailsProps {
   classes: any;
-  match: any;
 }
 
-const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
+const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
   const features = useSelector(selFeatures);
 
@@ -109,7 +110,7 @@ const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
 
-  const policyName = decodeURLString(match.params["policyName"]);
+  const policyName = decodeURLString(params.policyName || "");
 
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
@@ -279,11 +280,11 @@ const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
-    history.push(IAM_PAGES.POLICIES);
+    navigate(IAM_PAGES.POLICIES);
   };
 
   const userViewAction = (user: any) => {
-    history.push(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
+    navigate(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
   };
   const userTableActions = [
     {
@@ -298,7 +299,7 @@ const PolicyDetails = ({ classes, match }: IPolicyDetailsProps) => {
   );
 
   const groupViewAction = (group: any) => {
-    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
+    navigate(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
   };
 
   const groupTableActions = [

@@ -37,10 +37,10 @@ import { EditIcon } from "../../../../icons";
 import EditDomains from "./EditDomains";
 import { setTenantDetailsLoad } from "../tenantsSlice";
 import { ITenant } from "../ListTenants/types";
+import { useParams } from "react-router-dom";
 
 interface ITenantsSummary {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -181,8 +181,9 @@ const featureItemStyleProps = {
     },
   },
 };
-const TenantSummary = ({ classes, match }: ITenantsSummary) => {
+const TenantSummary = ({ classes }: ITenantsSummary) => {
   const dispatch = useDispatch();
+  const { tenantName, tenantNamespace } = useParams();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const logEnabled = useSelector((state: AppState) =>
@@ -210,9 +211,6 @@ const TenantSummary = ({ classes, match }: ITenantsSummary) => {
   const [updateMinioVersion, setUpdateMinioVersion] = useState<boolean>(false);
   const [editDomainsOpen, setEditDomainsOpen] = useState<boolean>(false);
 
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
-
   useEffect(() => {
     if (tenant) {
       setPoolCount(tenant.pools.length);
@@ -237,16 +235,16 @@ const TenantSummary = ({ classes, match }: ITenantsSummary) => {
           closeModalAndRefresh={() => {
             setUpdateMinioVersion(false);
           }}
-          idTenant={tenantName}
-          namespace={tenantNamespace}
+          idTenant={tenantName || ""}
+          namespace={tenantNamespace || ""}
         />
       )}
 
       {editDomainsOpen && (
         <EditDomains
           open={editDomainsOpen}
-          idTenant={tenantName}
-          namespace={tenantNamespace}
+          idTenant={tenantName || ""}
+          namespace={tenantNamespace || ""}
           domains={tenant?.domains || null}
           closeModalAndRefresh={closeEditDomainsModal}
         />

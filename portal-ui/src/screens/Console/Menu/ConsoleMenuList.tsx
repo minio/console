@@ -16,6 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
+import { useLocation } from "react-router-dom";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
@@ -28,7 +29,6 @@ import {
   menuItemTextStyles,
 } from "./MenuStyleUtils";
 import MenuItem from "./MenuItem";
-import { useLocation } from "react-router-dom";
 
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 

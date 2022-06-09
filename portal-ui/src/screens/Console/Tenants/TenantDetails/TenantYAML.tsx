@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -60,11 +61,11 @@ interface ITenantYAML {
 
 interface ITenantYAMLProps {
   classes: any;
-  history: any;
 }
 
-const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
+const TenantYAML = ({ classes }: ITenantYAMLProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const tenant = useSelector((state: AppState) => state.tenants.currentTenant);
   const namespace = useSelector(
@@ -91,7 +92,7 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
         setAddLoading(false);
         dispatch(getTenantAsync());
         setErrorMessage("");
-        history.push(`/namespaces/${namespace}/tenants/${tenant}/summary`);
+        navigate(`/namespaces/${namespace}/tenants/${tenant}/summary`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
@@ -157,7 +158,7 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
                 color="primary"
                 disabled={addLoading}
                 onClick={() => {
-                  history.push(
+                  navigate(
                     `/namespaces/${namespace}/tenants/${tenant}/summary`
                   );
                 }}

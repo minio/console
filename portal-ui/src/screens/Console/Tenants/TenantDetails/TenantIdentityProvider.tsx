@@ -14,11 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ITenant } from "../ListTenants/types";
-import { ITenantIdentityProviderResponse } from "../types";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { Button, DialogContentText, Typography } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import {
   containerForHeader,
   createTenantCommon,
@@ -28,32 +32,25 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Button, DialogContentText, Typography } from "@mui/material";
-import api from "../../../../common/api";
-import { connect, useDispatch } from "react-redux";
-import { AppState } from "../../../../store";
-import { ErrorResponseHandler } from "../../../../common/types";
-import Loader from "../../Common/Loader/Loader";
-import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { ITenantIdentityProviderResponse } from "../types";
 import { clearValidationError } from "../utils";
 import {
   commonFormValidation,
   IValidation,
 } from "../../../../utils/validationFunctions";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
+import Loader from "../../Common/Loader/Loader";
+import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import api from "../../../../common/api";
 
 interface ITenantIdentityProvider {
   classes: any;
-  loadingTenant: boolean;
-  tenant: ITenant | null;
 }
 
 const styles = (theme: Theme) =>
@@ -83,12 +80,14 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const TenantIdentityProvider = ({
-  classes,
-  tenant,
-  loadingTenant,
-}: ITenantIdentityProvider) => {
+const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
   const dispatch = useDispatch();
+
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.loadingTenant
+  );
+
   const [isSending, setIsSending] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [idpSelection, setIdpSelection] = useState<string>("Built-in");

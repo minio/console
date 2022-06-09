@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,7 +28,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { ITenant, ITenantMonitoringStruct } from "../ListTenants/types";
+import { ITenantMonitoringStruct } from "../ListTenants/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import EditTenantMonitoringModal from "./EditTenantMonitoringModal";
 
@@ -41,12 +41,11 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import Loader from "../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useParams } from "react-router-dom";
+import { AppState } from "../../../../store";
 
 interface ITenantMonitoring {
   classes: any;
-  match: any;
-  tenant: ITenant | null;
-  loadingTenant: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -60,13 +59,15 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantMonitoring = ({
-  classes,
-  match,
-  tenant,
-  loadingTenant,
-}: ITenantMonitoring) => {
+const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const dispatch = useDispatch();
+  const { tenantName, tenantNamespace } = useParams();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.loadingTenant
+  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
+
   const [prometheusMonitoringEnabled, setPrometheusMonitoringEnabled] =
     useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
@@ -75,9 +76,6 @@ const TenantMonitoring = ({
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
   const [refreshMonitoringInfo, setRefreshMonitoringInfo] =
     useState<boolean>(true);
-
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
 
   const onCloseEditAndRefresh = () => {
     setEdit(false);
@@ -89,7 +87,9 @@ const TenantMonitoring = ({
       api
         .invoke(
           "GET",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`
+          `/api/v1/namespaces/${tenantNamespace || ""}/tenants/${
+            tenantName || ""
+          }/monitoring`
         )
         .then((res: ITenantMonitoringStruct) => {
           setPrometheusMonitoringEnabled(res.prometheusEnabled);
@@ -146,8 +146,8 @@ const TenantMonitoring = ({
           annotations={monitoringInfo?.annotations || []}
           nodeSelector={monitoringInfo?.nodeSelector || []}
           serviceAccountName={monitoringInfo?.serviceAccountName || ""}
-          tenantName={tenantName}
-          tenantNamespace={tenantNamespace}
+          tenantName={tenantName || ""}
+          tenantNamespace={tenantNamespace || ""}
           storageClassName={monitoringInfo?.storageClassName || ""}
           cpuRequest={monitoringInfo?.monitoringCPURequest || ""}
           memRequest={monitoringInfo?.monitoringMemRequest || ""}

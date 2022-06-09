@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Redirect, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import api from "./common/api";
 import { ISessionResponse } from "./screens/Console/types";
 import useApi from "./screens/Console/Common/Hooks/useApi";
@@ -50,7 +50,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
 
   const StorePathAndRedirect = () => {
     localStorage.setItem("redirect-path", pathname);
-    return <Redirect to={{ pathname: `${baseUrl}login` }} />;
+    return <Navigate to={{ pathname: `${baseUrl}login` }} />;
   };
 
   useEffect(() => {

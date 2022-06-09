@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -51,6 +51,7 @@ import {
 } from "./addBucketsSlice";
 import { addBucketAsync } from "./addBucketThunks";
 import AddBucketName from "./AddBucketName";
+import { useNavigate } from "react-router-dom";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -103,6 +104,7 @@ interface IsetProps {
 
 const AddBucket = ({ classes }: IsetProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const versioningEnabled = useSelector(
     (state: AppState) => state.addBucket.versioningEnabled
@@ -134,10 +136,21 @@ const AddBucket = ({ classes }: IsetProps) => {
   );
   const distributedSetup = useSelector(selDistSet);
   const siteReplicationInfo = useSelector(selSiteRep);
+  const navigateTo = useSelector(
+    (state: AppState) => state.addBucket.navigateTo
+  );
 
   const resForm = () => {
     dispatch(resetForm());
   };
+
+  useEffect(() => {
+    if (navigateTo !== "") {
+      const goTo = `${navigateTo}`;
+      dispatch(resetForm());
+      navigate(goTo);
+    }
+  }, [navigateTo, navigate, dispatch]);
 
   return (
     <Fragment>

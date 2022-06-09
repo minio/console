@@ -15,7 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -107,12 +114,12 @@ const styles = (theme: Theme) =>
 
 interface IBucketDetailsProps {
   classes: any;
-  match: any;
-  history: any;
 }
 
-const BucketDetails = ({ classes, match, history }: IBucketDetailsProps) => {
+const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
   const distributedSetup = useSelector(selDistSet);
   const loadingBucket = useSelector(selBucketDetailsLoading);
@@ -121,9 +128,9 @@ const BucketDetails = ({ classes, match, history }: IBucketDetailsProps) => {
 
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
-  let selTab = match?.params["0"];
+  let selTab = params["0"] || "";
   selTab = selTab ? selTab : "summary";
 
   const [activeTab, setActiveTab] = useState(selTab);
@@ -178,12 +185,12 @@ const BucketDetails = ({ classes, match, history }: IBucketDetailsProps) => {
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
-      history.push("/buckets");
+      navigate("/buckets");
     }
   };
 
   const openBucketBrowser = () => {
-    history.push(`/buckets/${bucketName}/browse`);
+    navigate(`/buckets/${bucketName}/browse`);
   };
 
   return (
@@ -280,51 +287,31 @@ const BucketDetails = ({ classes, match, history }: IBucketDetailsProps) => {
             isRouteTabs
             routes={
               <div className={classes.contentSpacer}>
-                <Router history={history}>
-                  <Switch>
+                <Routes>
+                  <Route path="summary" element={<BucketSummaryPanel />} />
+                  <Route path="events" element={<BucketEventsPanel />} />
+                  {distributedSetup && (
                     <Route
-                      exact
-                      path="/buckets/:bucketName/admin/summary"
-                      component={BucketSummaryPanel}
+                      path="replication"
+                      element={<BucketReplicationPanel />}
                     />
+                  )}
+                  {distributedSetup && (
                     <Route
-                      exact
-                      path="/buckets/:bucketName/admin/events"
-                      component={BucketEventsPanel}
+                      path="lifecycle"
+                      element={<BucketLifecyclePanel />}
                     />
-                    {distributedSetup && (
-                      <Route
-                        exact
-                        path="/buckets/:bucketName/admin/replication"
-                        component={BucketReplicationPanel}
-                      />
-                    )}
-                    {distributedSetup && (
-                      <Route
-                        exact
-                        path="/buckets/:bucketName/admin/lifecycle"
-                        component={BucketLifecyclePanel}
-                      />
-                    )}
+                  )}
 
-                    <Route
-                      exact
-                      path="/buckets/:bucketName/admin/access"
-                      component={AccessDetailsPanel}
-                    />
-                    <Route
-                      exact
-                      path="/buckets/:bucketName/admin/prefix"
-                      component={AccessRulePanel}
-                    />
-                    <Route
-                      path="/buckets/:bucketName"
-                      component={() => (
-                        <Redirect to={`/buckets/${bucketName}/admin/summary`} />
-                      )}
-                    />
-                  </Switch>
-                </Router>
+                  <Route path="access" element={<AccessDetailsPanel />} />
+                  <Route path="prefix" element={<AccessRulePanel />} />
+                  <Route
+                    path="*"
+                    element={
+                      <Navigate to={`/buckets/${bucketName}/admin/summary`} />
+                    }
+                  />
+                </Routes>
               </div>
             }
           >

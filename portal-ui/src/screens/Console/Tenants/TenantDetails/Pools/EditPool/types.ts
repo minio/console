@@ -44,6 +44,7 @@ export interface IEditPool {
   limitSize: any;
   fields: IEditPoolFields;
   editSending: boolean;
+  navigateTo: string;
 }
 
 export interface PageFieldValue {

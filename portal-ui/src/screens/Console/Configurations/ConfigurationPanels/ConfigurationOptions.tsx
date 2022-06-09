@@ -29,11 +29,9 @@ import {
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
 import { SettingsIcon } from "../../../../icons";
-import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
-import history from "../../../../history";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import PageLayout from "../../Common/Layout/PageLayout";
-import get from "lodash/get";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 
 import withSuspense from "../../Common/Components/withSuspense";
@@ -45,7 +43,6 @@ const ConfigurationForm = withSuspense(
 
 interface IConfigurationOptions {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -68,11 +65,10 @@ const getRoutePath = (path: string) => {
   return `${IAM_PAGES.SETTINGS}/${path}`;
 };
 
-const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
-  const configurationName = get(match, "url", "");
-  let selConfigTab = configurationName.substring(
-    configurationName.lastIndexOf("/") + 1
-  );
+const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
+  const { pathname = "" } = useLocation();
+
+  let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
   selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
 
   return (
@@ -90,21 +86,19 @@ const ConfigurationOptions = ({ classes, match }: IConfigurationOptions) => {
               selectedTab={selConfigTab}
               isRouteTabs
               routes={
-                <Router history={history}>
-                  <Switch>
-                    {configurationElements.map((element) => (
-                      <Route
-                        exact
-                        key={`configItem-${element.configuration_label}`}
-                        path={`${IAM_PAGES.SETTINGS}/${element.configuration_id}`}
-                        component={ConfigurationForm}
-                      />
-                    ))}
-                    <Route exact path={IAM_PAGES.SETTINGS}>
-                      <Redirect to={`${IAM_PAGES.SETTINGS}/region`} />
-                    </Route>
-                  </Switch>
-                </Router>
+                <Routes>
+                  {configurationElements.map((element) => (
+                    <Route
+                      key={`configItem-${element.configuration_label}`}
+                      path={`${element.configuration_id}`}
+                      element={<ConfigurationForm />}
+                    />
+                  ))}
+                  <Route
+                    path={"/"}
+                    element={<Navigate to={`${IAM_PAGES.SETTINGS}/region`} />}
+                  />
+                </Routes>
               }
             >
               {configurationElements.map((element) => {

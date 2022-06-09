@@ -31,6 +31,7 @@ export interface AddBucketState {
   retentionMode: string;
   retentionUnit: string;
   retentionValidity: number;
+  navigateTo: string;
 }
 
 const initialState: AddBucketState = {
@@ -47,6 +48,7 @@ const initialState: AddBucketState = {
   retentionMode: "compliance",
   retentionUnit: "days",
   retentionValidity: 180,
+  navigateTo: "",
 };
 
 export const addBucketsSlice = createSlice({
@@ -138,6 +140,7 @@ export const addBucketsSlice = createSlice({
       })
       .addCase(addBucketAsync.fulfilled, (state, action) => {
         state.loading = false;
+        state.navigateTo = `/buckets/${action.payload}/browse`;
       });
   },
 });

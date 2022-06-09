@@ -66,7 +66,6 @@ import { selOpMode, setErrorSnackMessage } from "../../../systemSlice";
 
 interface IRegister {
   classes: any;
-  operatorMode: boolean;
 }
 
 const styles = (theme: Theme) =>
