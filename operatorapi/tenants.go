@@ -2137,11 +2137,11 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		client: opClientClientSet,
 	}
 
-	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	minInst, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
 	if minInst.Spec.Prometheus != nil {
@@ -2212,6 +2212,16 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if len(minInst.Spec.Prometheus.SideCarImage) != 0 {
 		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
 	}
+	if *minInst.Spec.Prometheus.SecurityContext.FSGroup != 0 {
+		monitoringInfo.FsGroup = strconv.FormatInt(int64(*minInst.Spec.Prometheus.SecurityContext.FSGroup), 10)
+	}
+	if *minInst.Spec.Prometheus.SecurityContext.RunAsGroup != 0 {
+		monitoringInfo.RunAsGroup = strconv.FormatInt(int64(*minInst.Spec.Prometheus.SecurityContext.RunAsGroup), 10)
+	}
+	if *minInst.Spec.Prometheus.SecurityContext.RunAsUser != 0 {
+		monitoringInfo.RunAsUser = strconv.FormatInt(int64(*minInst.Spec.Prometheus.SecurityContext.RunAsUser), 10)
+	}
+	monitoringInfo.RunAsNonRoot = *minInst.Spec.Prometheus.SecurityContext.RunAsNonRoot
 
 	return monitoringInfo, nil
 }
@@ -2306,12 +2316,30 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
 	}
+
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
+
+	fsGroupInt, err := strconv.ParseInt(params.Data.FsGroup, 10, 64)
+	if err != nil {
+		return false, restapi.ErrorWithContext(ctx, err)
+	}
+	minTenant.Spec.Prometheus.SecurityContext.FSGroup = &fsGroupInt
+	runAsGroupInt, err := strconv.ParseInt(params.Data.RunAsGroup, 10, 64)
+	if err != nil {
+		return false, restapi.ErrorWithContext(ctx, err)
+	}
+	minTenant.Spec.Prometheus.SecurityContext.RunAsGroup = &runAsGroupInt
+	runAsUserInt, err := strconv.ParseInt(params.Data.RunAsUser, 10, 64)
+	if err != nil {
+		return false, restapi.ErrorWithContext(ctx, err)
+	}
+	minTenant.Spec.Prometheus.SecurityContext.RunAsUser = &runAsUserInt
+	minTenant.Spec.Prometheus.SecurityContext.RunAsNonRoot = &params.Data.RunAsNonRoot
+
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
 	}
-
 	return true, nil
 }
 

@@ -42,6 +42,9 @@ type TenantMonitoringInfo struct {
 	// disk capacity g b
 	DiskCapacityGB string `json:"diskCapacityGB,omitempty"`
 
+	// fs group
+	FsGroup string `json:"fsGroup,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
 
@@ -62,6 +65,18 @@ type TenantMonitoringInfo struct {
 
 	// prometheus enabled
 	PrometheusEnabled bool `json:"prometheusEnabled,omitempty"`
+
+	// run as group
+	RunAsGroup string `json:"runAsGroup,omitempty"`
+
+	// run as non root
+	RunAsNonRoot bool `json:"runAsNonRoot,omitempty"`
+
+	// run as user
+	RunAsUser string `json:"runAsUser,omitempty"`
+
+	// security context enabled
+	SecurityContextEnabled bool `json:"securityContextEnabled,omitempty"`
 
 	// service account name
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
