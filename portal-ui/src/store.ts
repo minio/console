@@ -31,7 +31,8 @@ import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenan
 import createUserReducer from "./screens/Console/Users/AddUsersSlice";
 import addPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/AddPool/addPoolSlice";
 import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
-import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice";
+import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice"
+import editSecurityContextReducer from "./screens/Console/Tenants/securityContextSlice";
 
 const rootReducer = combineReducers({
   system: systemReducer,
@@ -51,6 +52,7 @@ const rootReducer = combineReducers({
   addPool: addPoolReducer,
   editPool: editPoolReducer,
   editTenantMonitoring: editTenantMonitoringReducer,
+  editSecurityContext: editSecurityContextReducer,
 });
 
 export const store = configureStore({

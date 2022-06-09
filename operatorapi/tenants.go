@@ -658,6 +658,7 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov2.Tenant) (response *models.TenantSecurityResponse, err error) {
 	var minioExternalCertificates []*models.CertificateInfo
 	var minioExternalCaCertificates []*models.CertificateInfo
+	var tenantSecurityContext *models.SecurityContext
 	// Certificates used by MinIO server
 	if minioExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCertSecret); err != nil {
 		return nil, err
@@ -666,12 +667,17 @@ func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov
 	if minioExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCaCertSecret); err != nil {
 		return nil, err
 	}
+	// Security Context used by MinIO server
+	if tenant.Spec.Pools[0].SecurityContext != nil {
+		tenantSecurityContext = convertK8sSCToModelSC(tenant.Spec.Pools[0].SecurityContext)
+	}
 	return &models.TenantSecurityResponse{
 		AutoCert: tenant.AutoCert(),
 		CustomCertificates: &models.TenantSecurityResponseCustomCertificates{
 			Minio:    minioExternalCertificates,
 			MinioCAs: minioExternalCaCertificates,
 		},
+		SecurityContext: tenantSecurityContext,
 	}, nil
 }
 
@@ -1026,6 +1032,12 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		}
 		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificateSecrets...)
 	}
+
+	// set Security Context
+	var newTenantSecurityContext *corev1.PodSecurityContext
+	newTenantSecurityContext, _ = convertModelSCToK8sSC(params.Body.SecurityContext)
+	minInst.Spec.Pools[0].SecurityContext = newTenantSecurityContext
+
 	// Update External Certificates
 	minInst.Spec.ExternalCertSecret = newMinIOExternalCertSecret
 	minInst.Spec.ExternalCaCertSecret = newMinIOExternalCaCertSecret
@@ -1033,6 +1045,7 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	if err != nil {
 		return err
 	}
+
 	// restart all MinIO pods at the same time
 	err = client.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, minInst.Name),
@@ -2094,11 +2107,10 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		client: opClientClientSet,
 	}
 
-	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	minInst, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
 	if minInst.Spec.Prometheus != nil {
@@ -2169,7 +2181,20 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if len(minInst.Spec.Prometheus.SideCarImage) != 0 {
 		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
 	}
-
+	if minInst.Spec.Prometheus.SecurityContext != nil {
+		if minInst.Spec.Prometheus.SecurityContext.FSGroup != nil {
+			monitoringInfo.FsGroup = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.FSGroup, 10)
+		}
+		if minInst.Spec.Prometheus.SecurityContext.RunAsGroup != nil {
+			monitoringInfo.RunAsGroup = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.RunAsGroup, 10)
+		}
+		if minInst.Spec.Prometheus.SecurityContext.RunAsUser != nil {
+			monitoringInfo.RunAsUser = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.RunAsUser, 10)
+		}
+		if minInst.Spec.Prometheus.SecurityContext.RunAsNonRoot != nil {
+			monitoringInfo.RunAsNonRoot = *minInst.Spec.Prometheus.SecurityContext.RunAsNonRoot
+		}
+	}
 	return monitoringInfo, nil
 }
 
@@ -2263,12 +2288,22 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
 	}
+
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
+
+	var tempSC corev1.PodSecurityContext
+	fsGroupInt, _ := strconv.ParseInt(params.Data.FsGroup, 10, 64)
+	tempSC.FSGroup = &fsGroupInt
+	runAsGroupInt, _ := strconv.ParseInt(params.Data.RunAsGroup, 10, 64)
+	tempSC.RunAsGroup = &runAsGroupInt
+	runAsUserInt, _ := strconv.ParseInt(params.Data.RunAsUser, 10, 64)
+	tempSC.RunAsUser = &runAsUserInt
+	tempSC.RunAsNonRoot = &params.Data.RunAsNonRoot
+	minTenant.Spec.Prometheus.SecurityContext = &tempSC
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
 	}
-
 	return true, nil
 }
 

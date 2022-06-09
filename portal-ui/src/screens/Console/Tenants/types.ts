@@ -42,6 +42,7 @@ export interface ICustomCertificates {
 export interface ITenantSecurityResponse {
   autoCert: boolean;
   customCertificates: ICustomCertificates;
+  securityContext: ISecurityContext;
 }
 
 export interface IVaultTLS {
@@ -337,4 +338,12 @@ export interface ITenantIdentityProviderResponse {
     user_dn_search_base_dn: string;
     user_dn_search_filter: string;
   };
+}
+
+export interface IEditSecurityContext {
+  securityContextEnabled: boolean;
+  runAsUser: string;
+  runAsGroup: string;
+  fsGroup: string;
+  runAsNonRoot: boolean;
 }
