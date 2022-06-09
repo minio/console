@@ -127,6 +127,7 @@ type Target struct {
 	Interval     string
 	LegendFormat string
 	Step         int32
+	InitialTime  int64
 }
 
 type ReduceOptions struct {
@@ -294,6 +295,8 @@ var widgets = []Metric{
 			{
 				Expr:         `sum(minio_bucket_usage_total_bytes{$__query}) by (instance)`,
 				LegendFormat: "Used Capacity",
+				InitialTime:  -180,
+				Step:         10,
 			},
 		},
 	},
@@ -1046,7 +1049,15 @@ LabelsWaitLoop:
 				apiType := "query_range"
 				now := time.Now()
 
-				extraParamters := fmt.Sprintf("&start=%d&end=%d", now.Add(-15*time.Minute).Unix(), now.Unix())
+				var initTime int64 = -15
+
+				if target.InitialTime != 0 {
+					initTime = target.InitialTime
+				}
+
+				timeCalculated := time.Duration(initTime * int64(time.Minute))
+
+				extraParamters := fmt.Sprintf("&start=%d&end=%d", now.Add(timeCalculated).Unix(), now.Unix())
 
 				var step int32 = 60
 				if target.Step > 0 {
