@@ -38,8 +38,6 @@ var (
 	emailNotSetMsg     = "Email was not sent in request"
 )
 
-// Add unit tests
-
 func registerMarketplaceHandlers(api *operations.OperatorAPI) {
 	api.OperatorAPIGetMPIntegrationHandler = operator_api.GetMPIntegrationHandlerFunc(func(params operator_api.GetMPIntegrationParams, session *models.Principal) middleware.Responder {
 		payload, err := getMPIntegrationResponse(session, params)
