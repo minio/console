@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -85,8 +86,10 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Groups = ({ classes, history }: IGroupsProps) => {
+const Groups = ({ classes }: IGroupsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
   const [records, setRecords] = useState<any[]>([]);
@@ -171,7 +174,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
   );
 
   const viewAction = (group: any) => {
-    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
+    navigate(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
   };
 
   const tableActions = [
@@ -188,7 +191,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
   ];
 
   return (
-    <React.Fragment>
+    <Fragment>
       {deleteOpen && (
         <DeleteGroup
           deleteOpen={deleteOpen}
@@ -279,7 +282,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
                 color="primary"
                 icon={<AddIcon />}
                 onClick={() => {
-                  history.push(`${IAM_PAGES.GROUPS_ADD}`);
+                  navigate(`${IAM_PAGES.GROUPS_ADD}`);
                 }}
               />
             </SecureComponent>
@@ -365,7 +368,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
                           To get started,{" "}
                           <AButton
                             onClick={() => {
-                              history.push(`${IAM_PAGES.GROUPS_ADD}`);
+                              navigate(`${IAM_PAGES.GROUPS_ADD}`);
                             }}
                           >
                             Create a Group
@@ -381,7 +384,7 @@ const Groups = ({ classes, history }: IGroupsProps) => {
           </Fragment>
         )}
       </PageLayout>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

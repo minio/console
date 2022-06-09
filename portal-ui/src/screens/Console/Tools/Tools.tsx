@@ -15,15 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Route, Router, Switch } from "react-router-dom";
-import history from "../../../history";
-import NotFoundPage from "../../NotFoundPage";
-import ToolsList from "./ToolsPanel/ToolsList";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { Route, Routes } from "react-router-dom";
 import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
 import { SupportMenuIcon } from "../../../icons/SidebarMenus";
 
 import withSuspense from "../Common/Components/withSuspense";
+import NotFoundPage from "../../NotFoundPage";
 
 const Inspect = withSuspense(React.lazy(() => import("./Inspect")));
 const Register = withSuspense(React.lazy(() => import("../Support/Register")));
@@ -31,29 +28,23 @@ const Profile = withSuspense(React.lazy(() => import("../Support/Profile")));
 
 const Tools = () => {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route path={IAM_PAGES.TOOLS} exact component={ToolsList} />
-        <Route path={IAM_PAGES.REGISTER_SUPPORT} exact component={Register} />
-        <Route path={IAM_PAGES.PROFILE} exact component={Profile} />
-        <Route
-          path={IAM_PAGES.CALL_HOME}
-          exact
-          render={() => {
-            return (
-              <FeatureNotAvailablePage
-                icon={<SupportMenuIcon />}
-                pageHeaderText={"Support"}
-                title={"Call Home"}
-                message={<div>This feature is currently not available.</div>}
-              />
-            );
-          }}
-        />
-        <Route path={IAM_PAGES.SUPPORT_INSPECT} exact component={Inspect} />
-        <Route component={NotFoundPage} />
-      </Switch>
-    </Router>
+    <Routes>
+      <Route path={"register"} element={<Register />} />
+      <Route path={"profile"} element={<Profile />} />
+      <Route
+        path={"call-home"}
+        element={
+          <FeatureNotAvailablePage
+            icon={<SupportMenuIcon />}
+            pageHeaderText={"Support"}
+            title={"Call Home"}
+            message={<div>This feature is currently not available.</div>}
+          />
+        }
+      />
+      <Route path={"inspect"} element={<Inspect />} />
+      <Route path={"*"} element={<NotFoundPage />} />
+    </Routes>
   );
 };
 

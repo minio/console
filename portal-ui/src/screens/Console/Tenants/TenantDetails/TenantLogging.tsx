@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -29,7 +29,7 @@ import Grid from "@mui/material/Grid";
 import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import api from "../../../../common/api";
-import { ITenant, ITenantLogsStruct } from "../ListTenants/types";
+import { ITenantLogsStruct } from "../ListTenants/types";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { EditIcon } from "../../../../icons";
@@ -41,12 +41,10 @@ import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton"
 import { niceBytes } from "../../../../common/utils";
 import Loader from "../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useParams } from "react-router-dom";
 
 interface ITenantLogs {
   classes: any;
-  match: any;
-  tenant: ITenant | null;
-  loadingTenant: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -60,13 +58,15 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantLogging = ({
-  classes,
-  match,
-  tenant,
-  loadingTenant,
-}: ITenantLogs) => {
+const TenantLogging = ({ classes }: ITenantLogs) => {
   const dispatch = useDispatch();
+  const params = useParams();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.loadingTenant
+  );
+  const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
+
   const [loadingTenantLogs, setLoadingTenantLogs] = useState<boolean>(true);
   const [logInfo, setLogInfo] = useState<ITenantLogsStruct>();
   const [edit, setEdit] = useState<boolean>(false);
@@ -75,8 +75,8 @@ const TenantLogging = ({
   const [disableDialogOpen, setDisableDialogOpen] = useState<boolean>(false);
   const [enableDialogOpen, setEnableDialogOpen] = useState<boolean>(false);
 
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
+  const tenantName = params.tenantName;
+  const tenantNamespace = params.tenantNamespace;
 
   useEffect(() => {
     if (loadingTenantLogs) {

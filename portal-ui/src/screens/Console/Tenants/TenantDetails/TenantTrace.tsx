@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -22,14 +23,11 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ITenant } from "../ListTenants/types";
 import { LinearProgress } from "@mui/material";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 interface ITenantTrace {
   classes: any;
-  match: any;
-  tenant: ITenant | null;
 }
 
 const styles = (theme: Theme) =>
@@ -44,9 +42,8 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantTrace = ({ classes, match }: ITenantTrace) => {
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
+const TenantTrace = ({ classes }: ITenantTrace) => {
+  const { tenantName, tenantNamespace } = useParams();
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -61,7 +58,9 @@ const TenantTrace = ({ classes, match }: ITenantTrace) => {
       <iframe
         className={classes.iframeStyle}
         title={"metrics"}
-        src={`/api/proxy/${tenantNamespace}/${tenantName}${IAM_PAGES.TOOLS_TRACE}?cp=y`}
+        src={`/api/proxy/${tenantNamespace || ""}/${tenantName || ""}${
+          IAM_PAGES.TOOLS_TRACE
+        }?cp=y`}
         onLoad={() => {
           setLoading(false);
         }}

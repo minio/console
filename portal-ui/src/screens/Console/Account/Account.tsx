@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
@@ -76,12 +77,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface IServiceAccountsProps {
-  history: any;
-}
-
-const Account = ({ history }: IServiceAccountsProps) => {
+const Account = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const classes = useStyles();
   const features = useSelector(selFeatures);
 
@@ -248,7 +247,7 @@ const Account = ({ history }: IServiceAccountsProps) => {
             </SecureComponent>
             <RBIconButton
               onClick={(e) => {
-                history.push(`${IAM_PAGES.ACCOUNT_ADD}`);
+                navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
               }}
               text={`Create service account`}
               icon={<AddIcon />}

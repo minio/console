@@ -17,12 +17,13 @@
 import React, { Fragment } from "react";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import { resetAddTenantForm } from "./createTenantSlice";
-import history from "../../../../history";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../../../store";
+import { useNavigate } from "react-router-dom";
 
 const NewTenantCredentials = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const showNewCredentials = useSelector(
     (state: AppState) => state.createTenant.showNewCredentials
@@ -39,7 +40,7 @@ const NewTenantCredentials = () => {
           open={showNewCredentials}
           closeModal={() => {
             dispatch(resetAddTenantForm());
-            history.push("/tenants");
+            navigate("/tenants");
           }}
           entity="Tenant"
         />

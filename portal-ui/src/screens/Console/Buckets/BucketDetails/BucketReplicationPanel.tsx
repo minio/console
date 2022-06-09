@@ -46,6 +46,7 @@ import RBIconButton from "./SummaryItems/RBIconButton";
 import EditReplicationModal from "./EditReplicationModal";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useParams } from "react-router-dom";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -56,7 +57,6 @@ const DeleteReplicationRule = withSuspense(
 
 interface IBucketReplicationProps {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -68,11 +68,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-const BucketReplicationPanel = ({
-  classes,
-  match,
-}: IBucketReplicationProps) => {
+const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
   const dispatch = useDispatch();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -90,7 +88,7 @@ const BucketReplicationPanel = ({
   const [deleteSelectedRules, setDeleteSelectedRules] =
     useState<boolean>(false);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayReplicationRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,

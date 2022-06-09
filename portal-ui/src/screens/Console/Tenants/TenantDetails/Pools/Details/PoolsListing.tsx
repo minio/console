@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../../../../store";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 import { IPool } from "../../../ListTenants/types";
 import Grid from "@mui/material/Grid";
 import { TextField } from "@mui/material";
@@ -39,7 +39,6 @@ import { setSelectedPool } from "../../../tenantsSlice";
 
 interface IPoolsSummary {
   classes: any;
-  history: any;
   setPoolDetailsView: () => void;
 }
 
@@ -51,12 +50,9 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PoolsListing = ({
-  classes,
-  history,
-  setPoolDetailsView,
-}: IPoolsSummary) => {
+const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
@@ -117,7 +113,7 @@ const PoolsListing = ({
           tooltip={"Expand Tenant"}
           text={"Expand Tenant"}
           onClick={() => {
-            history.push(
+            navigate(
               `/namespaces/${tenant?.namespace || ""}/tenants/${
                 tenant?.name || ""
               }/add-pool`

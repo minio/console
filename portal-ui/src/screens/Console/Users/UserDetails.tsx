@@ -16,6 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -41,7 +42,6 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import ChangeUserGroups from "./ChangeUserGroups";
 import SetUserPolicies from "./SetUserPolicies";
-import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUser from "./DeleteUser";
@@ -83,15 +83,16 @@ const styles = (theme: Theme) =>
 
 interface IUserDetailsProps {
   classes: any;
-  match: any;
 }
 
 interface IGroupItem {
   group: string;
 }
 
-const UserDetails = ({ classes, match }: IUserDetailsProps) => {
+const UserDetails = ({ classes }: IUserDetailsProps) => {
   const dispatch = useDispatch();
+  const params = useParams();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
@@ -106,7 +107,8 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
-  const userName = decodeURLString(match.params["userName"]);
+
+  const userName = decodeURLString(params.userName || "");
 
   const changeUserPassword = () => {
     setChangeUserPasswordModalOpen(true);
@@ -187,7 +189,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   };
 
   const groupViewAction = (group: any) => {
-    history.push(`${IAM_PAGES.GROUPS}/${encodeURLString(group.group)}`);
+    navigate(`${IAM_PAGES.GROUPS}/${encodeURLString(group.group)}`);
   };
 
   const groupTableActions = [
@@ -199,7 +201,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   ];
 
   return (
-    <React.Fragment>
+    <Fragment>
       <PageHeader
         label={
           <Fragment>
@@ -236,7 +238,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
-          history={history}
         />
       )}
       {changeUserPasswordModalOpen && (
@@ -338,7 +339,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <UserServiceAccountsPanel
                   user={userName}
                   hasPolicy={hasPolicy}
-                  history={history}
                 />
               ),
             }}
@@ -347,7 +347,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 label: "Policies",
               },
               content: (
-                <React.Fragment>
+                <Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Policies</PanelTitle>
 
@@ -368,7 +368,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                         {
                           type: "view",
                           onClick: (policy: IPolicyItem) => {
-                            history.push(
+                            navigate(
                               `${IAM_PAGES.POLICIES}/${encodeURLString(
                                 policy.policy
                               )}`
@@ -383,13 +383,13 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                       idField="policy"
                     />
                   </div>
-                </React.Fragment>
+                </Fragment>
               ),
             }}
           </VerticalTabs>
         </Grid>
       </PageLayout>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

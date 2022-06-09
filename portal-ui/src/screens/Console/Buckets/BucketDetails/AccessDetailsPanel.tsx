@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Paper } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -26,7 +27,6 @@ import { User } from "../../Users/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
-import history from "../../../../history";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
@@ -48,12 +48,10 @@ function a11yProps(index: any) {
   };
 }
 
-interface IAccessDetailsProps {
-  match: any;
-}
-
-const AccessDetails = ({ match }: IAccessDetailsProps) => {
+const AccessDetails = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -63,7 +61,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
   const [bucketUsers, setBucketUsers] = useState<User[]>([]);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayPoliciesList = hasPermission(bucketName, [
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
@@ -100,7 +98,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
       type: "view",
       disableButtonFunction: () => !viewPolicy,
       onClick: (policy: any) => {
-        history.push(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
+        navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
       },
     },
   ];
@@ -110,7 +108,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
       type: "view",
       disableButtonFunction: () => !viewUser,
       onClick: (user: any) => {
-        history.push(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
+        navigate(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
       },
     },
   ];

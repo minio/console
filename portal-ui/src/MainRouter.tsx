@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Suspense } from "react";
-import { Route, Router, Switch } from "react-router-dom";
-import history from "./history";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes";
 import LoadingComponent from "./common/LoadingComponent";
 import AppConsole from "./screens/Console/ConsoleKBar";
@@ -26,23 +25,21 @@ const LoginCallback = React.lazy(
   () => import("./screens/LoginPage/LoginCallback")
 );
 
-const Routes = () => {
+const MainRouter = () => {
   return (
-    <Router history={history}>
-      <Switch>
+    <BrowserRouter>
+      <Routes>
         <Route
-          exact
           path="/oauth_callback"
-          children={(routerProps) => (
+          element={
             <Suspense fallback={<LoadingComponent />}>
               <LoginCallback />
             </Suspense>
-          )}
+          }
         />
         <Route
-          exact
           path="/login"
-          children={(routerProps) => (
+          element={
             <div
               style={{
                 backgroundImage: `url('images/background-wave-orig2.svg'), url('images/background.svg')`,
@@ -61,12 +58,15 @@ const Routes = () => {
                 <Login />
               </Suspense>
             </div>
-          )}
+          }
         />
-        <ProtectedRoute Component={AppConsole} />
-      </Switch>
-    </Router>
+        <Route
+          path={"/*"}
+          element={<ProtectedRoute Component={AppConsole} />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
-export default Routes;
+export default MainRouter;

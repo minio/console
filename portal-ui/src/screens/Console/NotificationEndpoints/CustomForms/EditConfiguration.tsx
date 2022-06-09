@@ -16,6 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -58,17 +59,17 @@ const styles = (theme: Theme) =>
 interface IAddNotificationEndpointProps {
   selectedConfiguration: IConfigurationElement;
   classes: any;
-  history: any;
   className?: string;
 }
 
 const EditConfiguration = ({
   selectedConfiguration,
   classes,
-  history,
   className = "",
 }: IAddNotificationEndpointProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
@@ -115,14 +116,14 @@ const EditConfiguration = ({
           setSaving(false);
           dispatch(setServerNeedsRestart(res.restart));
 
-          history.push("/settings");
+          navigate("/settings");
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
           dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [saving, history, dispatch, selectedConfiguration, valuesObj]);
+  }, [saving, dispatch, selectedConfiguration, valuesObj, navigate]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
