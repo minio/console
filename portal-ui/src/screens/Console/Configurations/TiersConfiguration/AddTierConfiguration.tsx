@@ -16,6 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
@@ -74,16 +75,17 @@ const styles = (theme: Theme) =>
 
 interface IAddNotificationEndpointProps {
   classes: any;
-  match: any;
   history: any;
 }
 
 const AddTierConfiguration = ({
   classes,
-  match,
   history,
 }: IAddNotificationEndpointProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
+
   //Local States
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -106,7 +108,7 @@ const AddTierConfiguration = ({
 
   const [titleSelection, setTitleSelection] = useState<string>("");
 
-  const type = get(match, "params.service", "s3");
+  const type = get(params, "service", "s3");
 
   // Validations
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
@@ -186,7 +188,7 @@ const AddTierConfiguration = ({
         .then(() => {
           setSaving(false);
 
-          history.push(IAM_PAGES.TIERS);
+          navigate(IAM_PAGES.TIERS);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -209,6 +211,7 @@ const AddTierConfiguration = ({
     dispatch,
     storageClass,
     type,
+    navigate,
   ]);
 
   useEffect(() => {
@@ -497,7 +500,7 @@ const AddTierConfiguration = ({
                     label={"Region"}
                     id="region"
                     name="region"
-                    type={type}
+                    type={type as "azure" | "s3" | "minio" | "gcs"}
                   />
                   {type === s3ServiceName ||
                     (type === minioServiceName && (

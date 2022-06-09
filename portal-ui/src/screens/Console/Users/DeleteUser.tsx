@@ -17,23 +17,24 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import useApi from "../Common/Hooks/useApi";
-import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ErrorResponseHandler } from "../../../common/types";
 import { ConfirmDeleteIcon } from "../../../icons";
 import { encodeURLString } from "../../../common/utils";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import useApi from "../Common/Hooks/useApi";
+import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import Loader from "../Common/Loader/Loader";
+
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedUsers: string[] | null;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-  history: any;
 }
 
 const DeleteUser = ({
@@ -41,8 +42,9 @@ const DeleteUser = ({
   deleteOpen,
   selectedUsers,
   setErrorSnackMessage,
-  history,
 }: IDeleteUserProps) => {
+  const navigate = useNavigate();
+
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
   const onClose = () => closeDeleteModalAndRefresh(false);
@@ -81,7 +83,7 @@ const DeleteUser = ({
     </div>
   ));
   const viewAction = (selectionElement: any): void => {
-    history.push(
+    navigate(
       `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`
     );
     onClose();
@@ -104,7 +106,7 @@ const DeleteUser = ({
       } else {
         invokeDeleteApi("DELETE", `/api/v1/user/${encodeURLString(user)}`);
         closeDeleteModalAndRefresh(true);
-        history.push(`${IAM_PAGES.USERS}`);
+        navigate(`${IAM_PAGES.USERS}`);
       }
     }
   };

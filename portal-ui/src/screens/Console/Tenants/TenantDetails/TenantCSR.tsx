@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
-import { useDispatch } from "react-redux";
+import React, { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,12 +35,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
+import { useParams } from "react-router-dom";
+import { AppState } from "../../../../store";
 
 interface ITenantCSRProps {
   classes: any;
-  match: any;
-  loadingTenant: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -54,19 +53,19 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantCSR = ({
-  classes,
-  match,
-  loadingTenant,
-  setErrorSnackMessage,
-}: ITenantCSRProps) => {
+const TenantCSR = ({ classes }: ITenantCSRProps) => {
+  const dispatch = useDispatch();
+  const { tenantName, tenantNamespace } = useParams();
+
+  const loadingTenant = useSelector(
+    (state: AppState) => state.tenants.loadingTenant
+  );
+
   const [loading, setLoading] = useState<boolean>(true);
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
   const [csrStatus] = useState([""]);
   const [csrName] = useState([""]);
   const [csrAnnotations] = useState([""]);
-  const dispatch = useDispatch();
+
   useEffect(() => {
     if (loadingTenant) {
       setLoading(true);
@@ -78,7 +77,9 @@ const TenantCSR = ({
       api
         .invoke(
           "GET",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/csr`
+          `/api/v1/namespaces/${tenantNamespace || ""}/tenants/${
+            tenantName || ""
+          }/csr`
         )
         .then((res) => {
           for (var _i = 0; _i < res.csrElement.length; _i++) {
@@ -97,7 +98,6 @@ const TenantCSR = ({
     loading,
     tenantNamespace,
     tenantName,
-    setErrorSnackMessage,
     csrAnnotations,
     csrName,
     csrStatus,

@@ -6976,6 +6976,20 @@ func init() {
         }
       }
     },
+    "userSAs": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "recursive": {
+          "type": "boolean"
+        },
+        "versionID": {
+          "type": "string"
+        }
+      }
+    },
     "userServiceAccountItem": {
       "type": "object",
       "properties": {
@@ -14171,6 +14185,20 @@ func init() {
           }
         },
         "status": {
+          "type": "string"
+        }
+      }
+    },
+    "userSAs": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "recursive": {
+          "type": "boolean"
+        },
+        "versionID": {
           "type": "string"
         }
       }

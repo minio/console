@@ -16,6 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   InputAdornment,
@@ -32,7 +33,6 @@ import Grid from "@mui/material/Grid";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
-import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import {
@@ -287,6 +287,7 @@ interface LoginStrategyPayload {
 
 const Login = ({ classes }: ILoginProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [accessKey, setAccessKey] = useState<string>("");
   const [jwt, setJwt] = useState<string>("");
@@ -332,7 +333,7 @@ const Login = ({ classes }: ILoginProps) => {
   }
 
   const redirectAfterLogin = () => {
-    history.push(getTargetPath());
+    navigate(getTargetPath());
   }
 
   const redirectToMarketplace = () => {
@@ -344,7 +345,7 @@ const Login = ({ classes }: ILoginProps) => {
       .catch((err: ErrorResponseHandler) => {
         if (err.statusCode === 404) {
           dispatch(showMarketplace(true));
-          history.push("/marketplace");
+          navigate("/marketplace");
         } else { // Unexpected error, continue with normal flow
           redirectAfterLogin();
         }

@@ -20,13 +20,14 @@ import SetEmailModal from "./SetEmailModal";
 import PageLayout from "../Common/Layout/PageLayout";
 import { selFeatures } from "../consoleSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResources/utils";
 import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
 import { Redirect } from "react-router";
-import history from "../../../history";
 
 const Marketplace = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const features = useSelector(selFeatures);
   const displayMarketplace = useSelector(selShowMarketplace);
   const [isMPMode, setMPMode] = useState<boolean>(true);
@@ -56,7 +57,7 @@ const Marketplace = () => {
 
   const closeModal = () => {
     dispatch(showMarketplace(false));
-    history.push(getTargetPath());
+    navigate(getTargetPath());
   }
 
   if (!displayMarketplace || !isMPMode) {

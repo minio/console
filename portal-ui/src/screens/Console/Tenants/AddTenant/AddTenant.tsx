@@ -39,7 +39,6 @@ import Security from "./Steps/Security";
 import Encryption from "./Steps/Encryption";
 import Affinity from "./Steps/Affinity";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import history from "../../../../history";
 import Images from "./Steps/Images";
 import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
@@ -57,6 +56,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import { resetAddTenantForm } from "./createTenantSlice";
 import CreateTenantButton from "./CreateTenantButton";
 import NewTenantCredentials from "./NewTenantCredentials";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,6 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AddTenant = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const classes = useStyles();
 
   const features = useSelector(selFeatures);
@@ -107,7 +108,7 @@ const AddTenant = () => {
     enabled: true,
     action: () => {
       dispatch(resetAddTenantForm());
-      history.push("/tenants");
+      navigate("/tenants");
     },
   };
 

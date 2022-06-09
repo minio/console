@@ -17,6 +17,7 @@
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { useLocation } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -36,8 +37,6 @@ import { setOpenPoolDetails } from "../tenantsSlice";
 
 interface IPoolsSummary {
   classes: any;
-  history: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -48,8 +47,9 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
+const PoolsSummary = ({ classes }: IPoolsSummary) => {
   const dispatch = useDispatch();
+  const { pathname = "" } = useLocation();
 
   const selectedPool = useSelector(
     (state: AppState) => state.tenants.selectedPool
@@ -67,7 +67,7 @@ const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
               dispatch(setOpenPoolDetails(false));
             }}
             label={"Pools list"}
-            to={match.url}
+            to={pathname}
           />
         </Grid>
       )}
@@ -76,13 +76,12 @@ const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
       </h1>
       <Grid container>
         {poolDetailsOpen ? (
-          <PoolDetails history={history} />
+          <PoolDetails />
         ) : (
           <PoolsListing
             setPoolDetailsView={() => {
               dispatch(setOpenPoolDetails(true));
             }}
-            history={history}
           />
         )}
       </Grid>

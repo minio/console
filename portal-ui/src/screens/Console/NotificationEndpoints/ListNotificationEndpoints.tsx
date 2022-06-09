@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -42,7 +43,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import RefreshIcon from "../../../icons/RefreshIcon";
-import history from "../../../history";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -81,6 +81,7 @@ const styles = (theme: Theme) =>
 
 const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   //Local States
   const [records, setRecords] = useState<TransformedEndpointItem[]>([]);
   const [filter, setFilter] = useState<string>("");
@@ -166,7 +167,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               color="primary"
               icon={<AddIcon />}
               onClick={() => {
-                history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
+                navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
               }}
             />
           </div>
@@ -246,7 +247,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                         To get started,{" "}
                         <AButton
                           onClick={() => {
-                            history.push(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
+                            navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
                           }}
                         >
                           Add a Notification Target

@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -51,7 +52,6 @@ interface IUserServiceAccountsProps {
   classes: any;
   user: string;
   hasPolicy: boolean;
-  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -68,9 +68,9 @@ const UserServiceAccountsPanel = ({
   classes,
   user,
   hasPolicy,
-  history,
 }: IUserServiceAccountsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -253,7 +253,7 @@ const UserServiceAccountsPanel = ({
               color="primary"
               icon={<AddIcon />}
               onClick={() => {
-                history.push(
+                navigate(
                   `/identity/users/new-user-sa/${encodeURLString(user)}`
                 );
               }}

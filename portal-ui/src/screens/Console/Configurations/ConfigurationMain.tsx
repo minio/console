@@ -15,19 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Route, Router, Switch } from "react-router-dom";
-import history from "../../../history";
+import { Route, Routes } from "react-router-dom";
 import ConfigurationOptions from "./ConfigurationPanels/ConfigurationOptions";
 import NotFoundPage from "../../NotFoundPage";
 
 const ConfigurationMain = () => {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route path="/settings" component={ConfigurationOptions} />
-        <Route component={NotFoundPage} />
-      </Switch>
-    </Router>
+    <Routes>
+      <Route path="/settings" element={<ConfigurationOptions />} />
+      <Route element={<NotFoundPage />} />
+    </Routes>
   );
 };
 

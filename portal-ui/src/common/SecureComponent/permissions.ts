@@ -113,9 +113,9 @@ export const IAM_SCOPES = {
 export const IAM_PAGES = {
   /* Buckets */
   BUCKETS: "/buckets",
-  ADD_BUCKETS: "/buckets/add-bucket",
-  BUCKETS_ADMIN_VIEW: "/buckets/:bucketName/admin*",
-  BUCKETS_BROWSE_VIEW: "/buckets/:bucketName/browse*",
+  ADD_BUCKETS: "add-bucket",
+  BUCKETS_ADMIN_VIEW: ":bucketName/admin/*",
+  BUCKETS_BROWSE_VIEW: ":bucketName/browse/*",
   /* Identity */
   IDENTITY: "/identity",
   USERS: "/identity/users",
@@ -123,10 +123,10 @@ export const IAM_PAGES = {
   USER_ADD: "/identity/users/add-user",
   GROUPS: "/identity/groups",
   GROUPS_ADD: "/identity/groups/create-group",
-  GROUPS_VIEW: "/identity/groups/:groupName+",
+  GROUPS_VIEW: "/identity/groups/:groupName",
   ACCOUNT: "/identity/account",
   ACCOUNT_ADD: "/identity/account/new-account",
-  USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName+",
+  USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   /* Access */
   POLICIES: "/access/policies",
