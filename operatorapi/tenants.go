@@ -658,6 +658,7 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov2.Tenant) (response *models.TenantSecurityResponse, err error) {
 	var minioExternalCertificates []*models.CertificateInfo
 	var minioExternalCaCertificates []*models.CertificateInfo
+	var tenantSecurityContext *models.SecurityContext
 	// Certificates used by MinIO server
 	if minioExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCertSecret); err != nil {
 		return nil, err
@@ -666,12 +667,17 @@ func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov
 	if minioExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCaCertSecret); err != nil {
 		return nil, err
 	}
+	// Security Context used by MinIO server
+	if tenant.Spec.Pools[0].SecurityContext != nil {
+		tenantSecurityContext = convertK8sSCToModelSC(tenant.Spec.Pools[0].SecurityContext)
+	}
 	return &models.TenantSecurityResponse{
 		AutoCert: tenant.AutoCert(),
 		CustomCertificates: &models.TenantSecurityResponseCustomCertificates{
 			Minio:    minioExternalCertificates,
 			MinioCAs: minioExternalCaCertificates,
 		},
+		SecurityContext: tenantSecurityContext,
 	}, nil
 }
 
@@ -1026,6 +1032,12 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		}
 		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificateSecrets...)
 	}
+
+	// set Security Context
+	var newTenantSecurityContext *corev1.PodSecurityContext
+	newTenantSecurityContext, _ = convertModelSCToK8sSC(params.Body.SecurityContext)
+	minInst.Spec.Pools[0].SecurityContext = newTenantSecurityContext
+
 	// Update External Certificates
 	minInst.Spec.ExternalCertSecret = newMinIOExternalCertSecret
 	minInst.Spec.ExternalCaCertSecret = newMinIOExternalCaCertSecret
@@ -1033,6 +1045,7 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	if err != nil {
 		return err
 	}
+
 	// restart all MinIO pods at the same time
 	err = client.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, minInst.Name),

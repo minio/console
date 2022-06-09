@@ -1491,6 +1491,9 @@ definitions:
             type: array
             items:
               $ref: "#/definitions/certificateInfo"
+      securityContext:
+        type: object
+        $ref: "#/definitions/securityContext"
 
   updateTenantSecurityRequest:
     type: object
@@ -1512,7 +1515,10 @@ definitions:
             type: array
             items:
               type: string
-
+      securityContext:
+        type: object
+        $ref: "#/definitions/securityContext"
+        
   certificateInfo:
     type: object
     properties:

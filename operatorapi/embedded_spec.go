@@ -4274,6 +4274,9 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
+        "fsGroup": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },
@@ -4381,6 +4384,10 @@ func init() {
               }
             }
           }
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         }
       }
     },
@@ -4556,6 +4563,10 @@ func init() {
               }
             }
           }
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         }
       }
     },
@@ -9655,6 +9666,9 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
+        "fsGroup": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },
@@ -9762,6 +9776,10 @@ func init() {
               }
             }
           }
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         }
       }
     },
@@ -9937,6 +9955,10 @@ func init() {
               }
             }
           }
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         }
       }
     },
