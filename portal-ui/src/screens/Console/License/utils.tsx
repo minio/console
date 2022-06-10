@@ -48,18 +48,16 @@ const FeatureLink = ({ text, anchor }: { text: string; anchor: string }) => {
 
 export const FEATURE_ITEMS: FeatureItem[] = [
   {
-    label: " ",
+    label: "License ",
     isHeader: true,
-  },
-  {
-    desc: "License",
-    isHeader: false,
   },
   {
     label: "",
     isHeader: false,
     style: {
-      height: "324px",
+      height: "360px",
+      verticalAlign: "top",
+      alignItems: "start",
     },
   },
   {
@@ -123,11 +121,9 @@ export const COMMUNITY_PLAN_FEATURES = [
   {
     label: "Community",
     isHeader: true,
-  },
-  {
-    id: "com_license",
-    label: "GNU AGPL v3",
-    isOssLicenseLink: true,
+    style: {
+      borderBottom: 0,
+    },
   },
   {
     label: () => {
@@ -152,7 +148,8 @@ export const COMMUNITY_PLAN_FEATURES = [
     },
     isHeader: false,
     style: {
-      height: "324px",
+      height: "360px",
+      borderBottom: 0,
     },
   },
   {
@@ -173,7 +170,7 @@ export const COMMUNITY_PLAN_FEATURES = [
   {
     id: "com_support",
     label: "Community:",
-    detail: "Public Slack Channel + Github Issues",
+    detail: "Slack + Github",
   },
   {
     id: "com_security",
@@ -209,21 +206,9 @@ export const STANDARD_PLAN_FEATURES = [
   {
     label: "Standard",
     isHeader: true,
-  },
-  {
-    label: () => {
-      return (
-        <a
-          href="https://subnet.min.io/terms-and-conditions/standard?ref=con"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={"link-text"}
-        >
-          Commercial
-        </a>
-      );
+    style: {
+      borderBottom: 0,
     },
-    isHeader: false,
   },
   {
     isHeader: false,
@@ -240,8 +225,8 @@ export const STANDARD_PLAN_FEATURES = [
             mostly self-support but want the peace of mind that comes with the
             MinIO Subscription Network’s suite of operational capabilities and
             direct-to-engineer interaction. The Standard version is fully
-            featured but with SLA limitations. To learn more about the MinIO
-            Subscription Network click
+            featured but with SLA limitations. <br /> <br /> To learn more about
+            the MinIO Subscription Network
           </span>{" "}
           <a
             href="https://min.io/product/subnet?ref=con"
@@ -249,14 +234,15 @@ export const STANDARD_PLAN_FEATURES = [
             target="_blank"
             rel="noopener noreferrer"
           >
-            here
+            click here
           </a>
           .
         </Box>
       );
     },
     style: {
-      height: "324px",
+      height: "360px",
+      borderBottom: 0,
     },
   },
   {
@@ -335,21 +321,9 @@ export const ENTERPRISE_PLAN_FEATURES = [
   {
     label: "Enterprise",
     isHeader: true,
-  },
-  {
-    label: () => {
-      return (
-        <a
-          href="https://subnet.min.io/terms-and-conditions/enterprise?ref=con"
-          className={"link-text"}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Commercial
-        </a>
-      );
+    style: {
+      borderBottom: 0,
     },
-    isHeader: false,
   },
   {
     isHeader: false,
@@ -364,8 +338,8 @@ export const ENTERPRISE_PLAN_FEATURES = [
           <span>
             Designed for mission critical environments where both a license and
             strict SLAs are required. The Enterprise version is fully featured
-            but comes with additional capabilities. To learn more about the
-            MinIO Subscription Network click
+            but comes with additional capabilities. <br /> <br /> To learn more
+            about the MinIO Subscription Network
           </span>{" "}
           <a
             href="https://min.io/product/subnet?ref=con"
@@ -373,14 +347,15 @@ export const ENTERPRISE_PLAN_FEATURES = [
             target="_blank"
             rel="noopener noreferrer"
           >
-            here
+            click here
           </a>
           .
         </Box>
       );
     },
     style: {
-      height: "324px",
+      height: "360px",
+      borderBottom: 0,
     },
   },
   {

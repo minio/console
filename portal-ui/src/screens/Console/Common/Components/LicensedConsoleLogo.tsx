@@ -16,9 +16,9 @@
 
 import React from "react";
 import {
-  ConsoleAgpl,
-  ConsoleEnterprise,
-  ConsoleStandard,
+  AGPLV3LightLogo,
+  EnterpriseLightLogo,
+  StandardLightLogo,
 } from "../../../../icons";
 
 const LicensedConsoleLogo = ({
@@ -32,11 +32,11 @@ const LicensedConsoleLogo = ({
   if (isLoading) {
     return licenseLogo;
   } else if (plan === "STANDARD") {
-    licenseLogo = <ConsoleStandard />;
+    licenseLogo = <StandardLightLogo style={{ width: 88 }} />;
   } else if (plan === "ENTERPRISE") {
-    licenseLogo = <ConsoleEnterprise />;
+    licenseLogo = <EnterpriseLightLogo style={{ width: 100 }} />;
   } else {
-    licenseLogo = <ConsoleAgpl style={{ width: 170 }} />;
+    licenseLogo = <AGPLV3LightLogo style={{ width: 60 }} />;
   }
 
   return licenseLogo;
