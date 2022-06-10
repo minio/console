@@ -17,15 +17,15 @@
 import React, { Fragment } from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setUserName } from "./AddUsersSlice";
-import { useDispatch, useSelector } from "react-redux";
-import {AppState} from "../../../store";
+import { useSelector } from "react-redux";
+import {AppState, useAppDispatch} from "../../../store";
 
 interface IAddUserProps2 {
     classes: any;
 }
 
 const UserSelector = ({ classes }: IAddUserProps2 ) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const userName = useSelector(
         (state: AppState) => state.createUser.userName
     )
