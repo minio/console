@@ -2212,13 +2212,13 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
 	}
 	if *minInst.Spec.Prometheus.SecurityContext.FSGroup != 0 {
-		monitoringInfo.FsGroup = strconv.FormatInt(int64(*minInst.Spec.Prometheus.SecurityContext.FSGroup), 10)
+		monitoringInfo.FsGroup = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.FSGroup, 10)
 	}
 	if *minInst.Spec.Prometheus.SecurityContext.RunAsGroup != 0 {
-		monitoringInfo.RunAsGroup = strconv.FormatInt(int64(*minInst.Spec.Prometheus.SecurityContext.RunAsGroup), 10)
+		monitoringInfo.RunAsGroup = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.RunAsGroup, 10)
 	}
 	if *minInst.Spec.Prometheus.SecurityContext.RunAsUser != 0 {
-		monitoringInfo.RunAsUser = strconv.FormatInt(int64(*minInst.Spec.Prometheus.SecurityContext.RunAsUser), 10)
+		monitoringInfo.RunAsUser = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.RunAsUser, 10)
 	}
 	monitoringInfo.RunAsNonRoot = *minInst.Spec.Prometheus.SecurityContext.RunAsNonRoot
 
