@@ -110,7 +110,6 @@ const SetUserPolicies = ({
         <Grid item xs={12}>
           <PolicySelectors
             selectedPolicy={selectedPolicy}
-            setSelectedPolicy={setSelectedPolicy}
           />
         </Grid>
       </Grid>

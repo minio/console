@@ -14,13 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import UserSelector from "./UserSelector";
+import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import {createUserAsync, resetFormAsync} from "./thunk/AddUsersThunk";
 import {
-  formFieldStyles,
-  modalStyleUtils,
+    formFieldStyles,
+    modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
@@ -37,200 +39,180 @@ import GroupsSelectors from "./GroupsSelectors";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
-import api from "../../../../src/common/api";
-
+import { useNavigate } from "react-router-dom";
 import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
-
+import { useSelector} from "react-redux";
+import {AppState} from "../../../store";
+import {
+    setSelectedGroups,
+    setAddLoading,
+    setShowPassword,
+    setSecretKey,
+    setSendEnabled,
+} from "./AddUsersSlice";
 interface IAddUserProps {
-  classes: any;
+    classes: any;
 }
 
 const styles = (theme: Theme) =>
-  createStyles({
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      margin: "auto",
-      justifyContent: "center",
-      "& div": {
-        width: 150,
-        "@media (max-width: 900px)": {
-          flexFlow: "column",
+    createStyles({
+        bottomContainer: {
+            display: "flex",
+            flexGrow: 1,
+            alignItems: "center",
+            margin: "auto",
+            justifyContent: "center",
+            "& div": {
+                width: 150,
+                "@media (max-width: 900px)": {
+                    flexFlow: "column",
+                },
+            },
         },
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
+        ...formFieldStyles,
+        ...modalStyleUtils,
+    });
 
 const AddUser = ({ classes }: IAddUserProps) => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const showPassword = useSelector(
+        (state: AppState) => state.createUser.showPassword
+    )
+    const selectedPolicies = useSelector(
+        (state: AppState) => state.createUser.selectedPolicies
+    )
+    const selectedGroups = useSelector(
+        (state: AppState) => state.createUser.selectedGroups
+    )
+    const secretKey = useSelector(
+        (state: AppState) => state.createUser.secretKey
+    )
+    const addLoading = useSelector(
+        (state: AppState) => state.createUser.addLoading
+    )
+    const sendEnabled = useSelector(
+        (state: AppState) => state.createUser.sendEnabled
+    )
+    const navigate = useNavigate();
+    dispatch(setSendEnabled());
+    const saveRecord = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (secretKey.length < 8) {
+            dispatch(
+                setErrorSnackMessage({
+                    errorMessage: "Passwords must be at least 8 characters long",
+                    detailedError: "",
+                })
+            );
+            dispatch(setAddLoading(false));
+            return;
+        }
+        if (addLoading) {
+            return;
+        }
+        dispatch(setAddLoading(true));
+        dispatch(createUserAsync())
+            .unwrap() // <-- async Thunk returns a promise, that can be 'unwrapped')
+            .then(() => navigate(`${IAM_PAGES.USERS}`))
+    };
 
-  const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
-  const [selectedPolicies, setSelectedPolicies] = useState<string[]>([]);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+    return (
+        <Fragment>
+            <Grid item xs={12}>
+                <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
+                <PageLayout>
+                    <FormLayout
+                        title={"Create User"}
+                        icon={<CreateUserIcon />}
+                        helpbox={<AddUserHelpBox />}
+                    >
+                        <form
+                            noValidate
+                            autoComplete="off"
+                            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                                saveRecord(e);
+                            }}
+                        >
+                            <Grid item xs={12}>
+                                <div className={classes.formFieldRow}>
+                                    <UserSelector classes={classes} />
+                                </div>
+                                <div className={classes.formFieldRow}>
+                                    <InputBoxWrapper
+                                        className={classes.spacerBottom}
+                                        classes={{
+                                            inputLabel: classes.sizedLabel,
+                                        }}
+                                        id="standard-multiline-static"
+                                        name="standard-multiline-static"
+                                        label="Password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={secretKey}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            dispatch(setSecretKey(e.target.value));
+                                        }}
+                                        autoComplete="current-password"
+                                        overlayIcon={
+                                            showPassword ? (
+                                                <VisibilityOffIcon />
+                                            ) : (
+                                                <RemoveRedEyeIcon />
+                                            )
+                                        }
+                                        overlayAction={() => dispatch(setShowPassword(!showPassword))}
+                                    />
+                                </div>
+                                <Grid container item spacing="20">
+                                    <Grid item xs={12}>
+                                        <PolicySelectors
+                                            selectedPolicy={selectedPolicies}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <GroupsSelectors
+                                            selectedGroups={selectedGroups}
+                                            setSelectedGroups={(elements: string[]) => {
+                                                dispatch(setSelectedGroups(elements));
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
+                                {addLoading && (
+                                    <Grid item xs={12}>
+                                        <LinearProgress />
+                                    </Grid>
+                                )}
+                            </Grid>
+                            <Grid item xs={12} className={classes.modalButtonBar}>
+                                <Button
+                                    type="button"
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={(e) => {
+                                        dispatch(resetFormAsync());
+                                    }}
+                                >
+                                    Clear
+                                </Button>
 
-  const sendEnabled = accessKey.trim() !== "";
-
-  const saveRecord = (event: React.FormEvent) => {
-    event.preventDefault();
-
-    if (secretKey.length < 8) {
-      dispatch(
-        setErrorSnackMessage({
-          errorMessage: "Passwords must be at least 8 characters long",
-          detailedError: "",
-        })
-      );
-      setAddLoading(false);
-      return;
-    }
-
-    if (addLoading) {
-      return;
-    }
-    setAddLoading(true);
-    api
-      .invoke("POST", "/api/v1/users", {
-        accessKey,
-        secretKey,
-        groups: selectedGroups,
-        policies: selectedPolicies,
-      })
-      .then((res) => {
-        setAddLoading(false);
-        navigate(`${IAM_PAGES.USERS}`);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setAddLoading(false);
-        dispatch(setErrorSnackMessage(err));
-      });
-  };
-
-  const resetForm = () => {
-    setSelectedGroups([]);
-    setAccessKey("");
-    setSecretKey("");
-    setSelectedPolicies([]);
-    setShowPassword(false);
-  };
-
-  return (
-    <Fragment>
-      <Grid item xs={12}>
-        <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
-        <PageLayout>
-          <FormLayout
-            title={"Create User"}
-            icon={<CreateUserIcon />}
-            helpbox={<AddUserHelpBox />}
-          >
-            <form
-              noValidate
-              autoComplete="off"
-              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                saveRecord(e);
-              }}
-            >
-              <Grid item xs={12}>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    className={classes.spacerBottom}
-                    classes={{
-                      inputLabel: classes.sizedLabel,
-                    }}
-                    id="accesskey-input"
-                    name="accesskey-input"
-                    label="User Name"
-                    value={accessKey}
-                    autoFocus={true}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccessKey(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    className={classes.spacerBottom}
-                    classes={{
-                      inputLabel: classes.sizedLabel,
-                    }}
-                    id="standard-multiline-static"
-                    name="standard-multiline-static"
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    value={secretKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSecretKey(e.target.value);
-                    }}
-                    autoComplete="current-password"
-                    overlayIcon={
-                      showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <RemoveRedEyeIcon />
-                      )
-                    }
-                    overlayAction={() => setShowPassword(!showPassword)}
-                  />
-                </div>
-                <Grid container item spacing="20">
-                  <Grid item xs={12}>
-                    <PolicySelectors
-                      selectedPolicy={selectedPolicies}
-                      setSelectedPolicy={setSelectedPolicies}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <GroupsSelectors
-                      selectedGroups={selectedGroups}
-                      setSelectedGroups={(elements: string[]) => {
-                        setSelectedGroups(elements);
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-                {addLoading && (
-                  <Grid item xs={12}>
-                    <LinearProgress />
-                  </Grid>
-                )}
-              </Grid>
-              <Grid item xs={12} className={classes.modalButtonBar}>
-                <Button
-                  type="button"
-                  variant="outlined"
-                  color="primary"
-                  onClick={resetForm}
-                >
-                  Clear
-                </Button>
-
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={addLoading || !sendEnabled}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </form>
-          </FormLayout>
-        </PageLayout>
-      </Grid>
-    </Fragment>
-  );
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={addLoading || !sendEnabled}
+                                >
+                                    Save
+                                </Button>
+                            </Grid>
+                        </form>
+                    </FormLayout>
+                </PageLayout>
+            </Grid>
+        </Fragment>
+    );
 };
 
 export default withStyles(styles)(AddUser);
