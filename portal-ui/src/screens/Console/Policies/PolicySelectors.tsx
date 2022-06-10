@@ -36,11 +36,12 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { setSelectedPolicies } from "../Users/AddUsersSlice";
+
 
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string[];
-  setSelectedPolicy: any;
 }
 
 const styles = (theme: Theme) =>
@@ -77,7 +78,6 @@ const styles = (theme: Theme) =>
 const PolicySelectors = ({
   classes,
   selectedPolicy = [],
-  setSelectedPolicy,
 }: ISelectPolicyProps) => {
   const dispatch = useAppDispatch();
   // Local State
@@ -129,7 +129,7 @@ const PolicySelectors = ({
     // remove empty values
     elements = elements.filter((element) => element !== "");
 
-    setSelectedPolicy(elements);
+    dispatch(setSelectedPolicies(elements));
   };
 
   const filteredRecords = records.filter((elementItem) =>
