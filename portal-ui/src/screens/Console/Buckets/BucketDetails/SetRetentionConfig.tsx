@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -38,6 +38,7 @@ import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/R
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Loader from "../../Common/Loader/Loader";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,7 +61,7 @@ const SetRetentionConfig = ({
   bucketName,
   closeModalAndRefresh,
 }: ISetRetentionConfigProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loadingForm, setLoadingForm] = useState<boolean>(true);
   const [retentionMode, setRetentionMode] = useState<string>("compliance");

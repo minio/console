@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,7 +25,7 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { SubnetInfo } from "../../License/types";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import api from "../../../../common/api";
@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantLicense = ({ classes }: ITenantLicense) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant

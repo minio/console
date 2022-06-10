@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,6 +30,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../common/api";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IUpdateTenantModal {
   open: boolean;
@@ -55,7 +56,7 @@ const UpdateTenantModal = ({
   idTenant,
   classes,
 }: IUpdateTenantModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isSending, setIsSending] = useState<boolean>(false);
   const [minioImage, setMinioImage] = useState<string>("");
   const [imageRegistry, setImageRegistry] = useState<boolean>(false);

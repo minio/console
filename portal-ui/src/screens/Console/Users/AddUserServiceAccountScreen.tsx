@@ -37,7 +37,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import BackLink from "../../../common/BackLink";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import { useDispatch } from "react-redux";
+
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -49,6 +49,7 @@ import { getRandomString } from "../../../screens/Console/Tenants/utils";
 import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -74,7 +75,7 @@ const styles = (theme: Theme) =>
   });
 
 const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
 

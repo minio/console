@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import Grid from "@mui/material/Grid";
 import { Button } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -40,6 +40,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
 import { EventSubscriptionIcon } from "../../../../icons";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -65,7 +66,7 @@ const AddEvent = ({
   selectedBucket,
   closeModalAndRefresh,
 }: IAddEventProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [prefix, setPrefix] = useState<string>("");
   const [suffix, setSuffix] = useState<string>("");

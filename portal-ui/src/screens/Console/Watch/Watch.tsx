@@ -24,11 +24,11 @@ import {
   TextField,
 } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { AppState } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import { Bucket, BucketList, EventInfo } from "./types";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -86,7 +86,7 @@ const SelectStyled = withStyles((theme: Theme) =>
 )(InputBase);
 
 const Watch = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const messages = useSelector((state: AppState) => state.watch.messages);

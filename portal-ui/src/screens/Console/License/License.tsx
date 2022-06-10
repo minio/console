@@ -19,21 +19,12 @@ import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { Box, LinearProgress } from "@mui/material";
-import clsx from "clsx";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { SubnetInfo } from "./types";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
-import {
-  ArrowRightLink,
-  HelpIconFilled,
-  LicenseIcon,
-  LoginMinIOLogo,
-} from "../../../icons";
+import { ArrowRightLink, HelpIconFilled, LoginMinIOLogo } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -46,6 +37,7 @@ import PageLayout from "../Common/Layout/PageLayout";
 import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 import makeStyles from "@mui/styles/makeStyles";
 import { selOpMode } from "../../../systemSlice";
+import LicenseModal from "./LicenseModal";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -124,7 +116,6 @@ const License = () => {
     useState<boolean>(false);
 
   const [licenseModal, setLicenseModal] = useState<boolean>(false);
-
   const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
   const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
@@ -349,99 +340,11 @@ const License = () => {
           currentPlanID={currentPlanID}
           setActivateProductModal={setActivateProductModal}
         />
-
-        <Grid item xs={12}>
-          <Grid
-            container
-            marginTop="35px"
-            sx={{
-              border: "1px solid #eaeaea",
-              padding: "15px",
-            }}
-          >
-            <Grid item xs={12} lg={12}>
-              <Fragment>
-                <LicenseModal
-                  open={licenseModal}
-                  closeModal={() => setLicenseModal(false)}
-                />
-                <Box
-                  sx={{
-                    display: "flex",
-                    marginBottom: "15px",
-                    flexFlow: {
-                      sm: "row",
-                      xs: "column",
-                    },
-                    alignItems: {
-                      xs: "flex-start",
-                      sm: "center",
-                    },
-                  }}
-                >
-                  <Box>
-                    <LicenseIcon />
-                  </Box>
-                  <Box
-                    sx={{
-                      flex: 1,
-                      marginLeft: {
-                        sm: "15px",
-                        xs: "0",
-                      },
-                    }}
-                  >
-                    <div> GNU Affero General Public License</div>
-                    <div className={classes.licDet}>
-                      Version 3. 19 November 2007
-                    </div>
-                  </Box>
-                  <Box>
-                    <img src="/agpl-logo.svg" height={40} alt="agpl" />
-                  </Box>
-                </Box>
-
-                <Grid container>
-                  <Typography>
-                    The GNU Affero General Public License is a free, copyleft
-                    license for software and other kinds of works, specifically
-                    designed to ensure cooperation with the Community in the
-                    case of network server software.
-                  </Typography>
-                  <br />
-                  <Typography>
-                    The licenses for most software and other practical works are
-                    designed to take away your freedom to share and change the
-                    works. By contrast, our General Public Licenses are intended
-                    to guarantee your freedom to share and change all versions
-                    of a program--to make sure it remains free software for all
-                    its users.
-                  </Typography>
-                  <div className={classes.linkMore}>
-                    <Button
-                      variant="text"
-                      color="primary"
-                      size="small"
-                      className={clsx(classes.link, classes.linkButton)}
-                      onClick={() => setLicenseModal(true)}
-                    >
-                      Read more{" "}
-                      <ArrowRightLink
-                        style={{
-                          width: "13px",
-                          height: "8px",
-                          marginLeft: "5px",
-                          marginTop: "3px",
-                        }}
-                      />
-                    </Button>
-                  </div>
-                </Grid>
-              </Fragment>
-            </Grid>
-          </Grid>
-        </Grid>
       </PageLayout>
+      <LicenseModal
+        open={licenseModal}
+        closeModal={() => setLicenseModal(false)}
+      />
     </Fragment>
   );
 };

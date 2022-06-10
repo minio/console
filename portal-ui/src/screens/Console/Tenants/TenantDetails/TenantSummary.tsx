@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,7 +26,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Box, Grid } from "@mui/material";
 import UpdateTenantModal from "./UpdateTenantModal";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import AButton from "../../Common/AButton/AButton";
 import SummaryUsageBar from "../../Common/UsageBarWrapper/SummaryUsageBar";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
@@ -182,7 +182,7 @@ const featureItemStyleProps = {
   },
 };
 const TenantSummary = ({ classes }: ITenantsSummary) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);

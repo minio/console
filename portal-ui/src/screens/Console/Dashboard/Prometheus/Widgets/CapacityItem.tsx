@@ -20,7 +20,6 @@ import { Box } from "@mui/material";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import { useDispatch } from "react-redux";
 
 import {
   calculateBytes,
@@ -31,6 +30,7 @@ import { Cell, Pie, PieChart } from "recharts";
 import { ReportedUsageIcon } from "../../../../../icons";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 const CapacityItem = ({
   value,
@@ -45,10 +45,11 @@ const CapacityItem = ({
   propLoading: boolean;
   apiPrefix: string;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
   const [totalUsableFree, setTotalUsableFree] = useState<number>(0);
+  const [totalUsableFreeRatio, setTotalUsableFreeRatio] = useState<number>(0);
   const [totalUsed, setTotalUsed] = useState<number>(0);
   const [totalUsable, setTotalUsable] = useState<number>(0);
 
@@ -100,7 +101,10 @@ const CapacityItem = ({
             });
           });
 
+          const freeRatio = Math.round((tFree / tUsable) * 100);
+
           setTotalUsableFree(tFree);
+          setTotalUsableFreeRatio(freeRatio);
           setTotalUsed(tUsed);
           setTotalUsable(tUsable);
 
@@ -175,7 +179,7 @@ const CapacityItem = ({
             fontSize: 12,
           }}
         >
-          {niceBytesInt(totalUsableFree)}
+          {`${totalUsableFreeRatio}%`}
           <br />
           <Box
             sx={{
@@ -187,7 +191,7 @@ const CapacityItem = ({
               textAlign: "center",
             }}
           >
-            Current Usable Capacity
+            Free
           </Box>
         </Box>
         <PieChart width={110} height={110}>

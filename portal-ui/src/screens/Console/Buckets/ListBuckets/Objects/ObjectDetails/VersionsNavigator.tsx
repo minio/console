@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { withStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -47,7 +47,7 @@ import {
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import RestoreFileVersion from "./RestoreFileVersion";
 
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   DeleteIcon,
   DeleteNonCurrentIcon,
@@ -162,7 +162,7 @@ const VersionsNavigator = ({
   internalPaths,
   bucketName,
 }: IVersionsNavigatorProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const searchVersions = useSelector(
     (state: AppState) => state.objectBrowser.searchVersions

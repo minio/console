@@ -26,12 +26,12 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface ICreatePath {
@@ -59,7 +59,7 @@ const CreatePathModal = ({
   existingFiles,
   simplePath,
 }: ICreatePath) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [pathUrl, setPathUrl] = useState("");

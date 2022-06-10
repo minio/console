@@ -16,11 +16,11 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IconButton, Tooltip } from "@mui/material";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { RemoveAllIcon } from "../../../../icons";
 import ObjectHandled from "./ObjectHandled";
 import {
@@ -86,7 +86,7 @@ interface IObjectManager {
 }
 
 const ObjectManager = ({ classes }: IObjectManager) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const objects = useSelector(
     (state: AppState) => state.objectBrowser.objectManager.objectsToManage

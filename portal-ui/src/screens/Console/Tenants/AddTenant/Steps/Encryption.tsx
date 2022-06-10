@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,7 +28,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { AppState } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import { clearValidationError } from "../../utils";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -82,7 +82,7 @@ const styles = (theme: Theme) =>
   });
 
 const Encryption = ({ classes }: IEncryptionProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const replicas = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.replicas

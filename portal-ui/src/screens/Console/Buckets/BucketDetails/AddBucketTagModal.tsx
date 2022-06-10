@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -31,6 +31,7 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
 import { AddNewTagIcon } from "../../../../icons";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IBucketTagModal {
   modalOpen: boolean;
@@ -56,7 +57,7 @@ const AddBucketTagModal = ({
 
   classes,
 }: IBucketTagModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);

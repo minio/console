@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import {
   Bar,
   BarChart,
@@ -41,6 +41,7 @@ import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface IBarChartWidget {
   classes: any;
@@ -90,7 +91,7 @@ const BarChartWidget = ({
   apiPrefix,
   zoomActivated = false,
 }: IBarChartWidget) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+
 import withStyles from "@mui/styles/withStyles";
 import {
   decodeURLString,
@@ -40,6 +40,7 @@ import { PasswordKeyIcon } from "../../../../../../icons";
 import { Box, DialogContentText } from "@mui/material";
 import KeyRevealer from "../../../../Tools/KeyRevealer";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,7 +64,7 @@ const InspectObject = ({
   inspectPath,
   volumeName,
 }: IInspectObjectProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onClose = () => closeInspectModalAndRefresh(false);
   const [isEncrypt, setIsEncrypt] = useState<boolean>(true);
   const [decryptionKey, setDecryptionKey] = useState<string>("");

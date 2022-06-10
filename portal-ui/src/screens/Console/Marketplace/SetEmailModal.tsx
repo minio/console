@@ -26,7 +26,7 @@ import { InfoIcon } from "../../../icons";
 import { ErrorResponseHandler } from "../../../common/types";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,7 +45,7 @@ const styles = (theme: Theme) =>
 const reEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onError = (err: ErrorResponseHandler) => {
     dispatch(setErrorSnackMessage(err));

@@ -21,10 +21,10 @@ import { Box, IconButton } from "@mui/material";
 import { ChevronLeft } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LicensedConsoleLogo from "../Common/Components/LicensedConsoleLogo";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import useApi from "../Common/Hooks/useApi";
 import { setLicenseInfo } from "../../../systemSlice";
-import { AppState } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 
 type MenuToggleProps = {
   isOpen: boolean;
@@ -33,7 +33,7 @@ type MenuToggleProps = {
 const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
   const stateClsName = isOpen ? "wide" : "mini";
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const licenseInfo = useSelector(
     (state: AppState) => state?.system?.licenseInfo

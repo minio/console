@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { Grid, Paper } from "@mui/material";
@@ -24,7 +24,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { AppState } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { setIDP } from "../createTenantSlice";
 import IDPActiveDirectory from "./IdentityProvider/IDPActiveDirectory";
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const IdentityProvider = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const idpSelection = useSelector(

@@ -48,8 +48,9 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import SectionTitle from "../Common/SectionTitle";
 import { getRandomString } from "../../../screens/Console/Tenants/utils";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -75,7 +76,7 @@ const styles = (theme: Theme) =>
   });
 
 const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [addSending, setAddSending] = useState<boolean>(false);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { Button, DialogContentText } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
@@ -33,7 +33,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 
 import { KeyPair } from "../ListTenants/utils";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { AddIcon, ConfirmModalIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
@@ -77,7 +77,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantSecurity = ({ classes }: ITenantSecurity) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const loadingTenant = useSelector(

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import get from "lodash/get";
 import PrDashboard from "./Prometheus/PrDashboard";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -31,6 +31,7 @@ import { Usage } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
 import BasicDashboard from "./BasicDashboard/BasicDashboard";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IDashboardSimple {
   classes: any;
@@ -42,7 +43,7 @@ const styles = (theme: Theme) =>
   });
 
 const Dashboard = ({ classes }: IDashboardSimple) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [basicResult, setBasicResult] = useState<Usage | null>(null);
 

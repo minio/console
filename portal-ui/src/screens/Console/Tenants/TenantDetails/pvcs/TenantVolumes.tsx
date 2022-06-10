@@ -30,8 +30,9 @@ import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import EventsList from "../events/EventsList";
 import PVCDescribe from "./PVCDescribe";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface IPVCDetailsProps {
   classes: any;
@@ -47,7 +48,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantVolumes = ({ classes }: IPVCDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { tenantName, PVCName, tenantNamespace } = useParams();
 
   const [curTab, setCurTab] = useState<number>(0);

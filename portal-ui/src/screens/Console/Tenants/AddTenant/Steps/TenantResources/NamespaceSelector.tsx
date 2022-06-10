@@ -18,15 +18,15 @@ import React, { Fragment, useEffect, useMemo } from "react";
 import AddIcon from "../../../../../../icons/AddIcon";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { openAddNSModal, setNamespace } from "../../createTenantSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import AddNamespaceModal from "../helpers/AddNamespaceModal";
 import debounce from "lodash/debounce";
 import { IMkEnvs } from "./utils";
 import { validateNamespaceAsync } from "../../thunks/namespaceThunks";
 
 const NamespaceSelector = ({ formToRender }: { formToRender?: IMkEnvs }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const namespace = useSelector(
     (state: AppState) => state.createTenant.fields.nameTenant.namespace

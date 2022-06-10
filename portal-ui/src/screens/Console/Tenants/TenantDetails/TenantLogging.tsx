@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -30,7 +30,7 @@ import { DialogContentText } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import api from "../../../../common/api";
 import { ITenantLogsStruct } from "../ListTenants/types";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { EditIcon } from "../../../../icons";
 import EditTenantLogsModal from "./EditTenantLogsModal";
@@ -59,7 +59,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantLogging = ({ classes }: ITenantLogs) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
 
   const loadingTenant = useSelector(

@@ -134,7 +134,7 @@ export const COMMUNITY_PLAN_FEATURES = [
       return (
         <Box
           sx={{
-            textAlign: "justify",
+            textAlign: "left",
           }}
         >
           <span>
@@ -232,7 +232,7 @@ export const STANDARD_PLAN_FEATURES = [
         <Box
           sx={{
             marginTop: "-85px",
-            textAlign: "justify",
+            textAlign: "left",
           }}
         >
           <span>
@@ -358,7 +358,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
         <Box
           sx={{
             marginTop: "-135px",
-            textAlign: "justify",
+            textAlign: "left",
           }}
         >
           <span>

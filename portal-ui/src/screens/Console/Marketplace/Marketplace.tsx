@@ -19,14 +19,15 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import SetEmailModal from "./SetEmailModal";
 import PageLayout from "../Common/Layout/PageLayout";
 import { selFeatures } from "../consoleSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResources/utils";
 import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
 import { Navigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store";
 
 const Marketplace = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const features = useSelector(selFeatures);
   const displayMarketplace = useSelector(selShowMarketplace);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
@@ -30,7 +30,7 @@ import {
 import { ErrorResponseHandler } from "../../../../common/types";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
 import SectionTitle from "../../Common/SectionTitle";
 
@@ -64,7 +64,7 @@ interface ITenantYAMLProps {
 }
 
 const TenantYAML = ({ classes }: ITenantYAMLProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const tenant = useSelector((state: AppState) => state.tenants.currentTenant);

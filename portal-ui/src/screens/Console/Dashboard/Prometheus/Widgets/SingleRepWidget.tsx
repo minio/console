@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
-
+import { connect } from "react-redux";
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -26,6 +25,7 @@ import DashboardItemBox from "../../DashboardItemBox";
 import BucketsCountItem from "./BucketsCountItem";
 import ObjectsCountItem from "./ObjectsCountItem";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface ISingleRepWidget {
   title: string;
@@ -48,7 +48,7 @@ const SingleRepWidget = ({
 
   apiPrefix,
 }: ISingleRepWidget) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
 

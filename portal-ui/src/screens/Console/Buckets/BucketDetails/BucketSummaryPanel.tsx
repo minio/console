@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -60,6 +60,7 @@ import {
   selBucketDetailsLoading,
   setBucketDetailsLoad,
 } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -97,7 +98,7 @@ interface IBucketSummaryProps {
 }
 
 const BucketSummary = ({ classes }: IBucketSummaryProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);

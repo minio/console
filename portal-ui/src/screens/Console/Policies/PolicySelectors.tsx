@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,11 +35,13 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
+import { setSelectedPolicies } from "../Users/AddUsersSlice";
+
 
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string[];
-  setSelectedPolicy: any;
 }
 
 const styles = (theme: Theme) =>
@@ -76,9 +78,8 @@ const styles = (theme: Theme) =>
 const PolicySelectors = ({
   classes,
   selectedPolicy = [],
-  setSelectedPolicy,
 }: ISelectPolicyProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   // Local State
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
@@ -128,7 +129,7 @@ const PolicySelectors = ({
     // remove empty values
     elements = elements.filter((element) => element !== "");
 
-    setSelectedPolicy(elements);
+    dispatch(setSelectedPolicies(elements));
   };
 
   const filteredRecords = records.filter((elementItem) =>

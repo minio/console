@@ -25,8 +25,9 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../common/api";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeleteLifecycleRule {
   deleteOpen: boolean;
@@ -46,7 +47,7 @@ const DeleteBucketLifecycleRule = ({
   bucket,
   id,
 }: IDeleteLifecycleRule) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [deletingRule, setDeletingRule] = useState<boolean>(false);
 
   useEffect(() => {

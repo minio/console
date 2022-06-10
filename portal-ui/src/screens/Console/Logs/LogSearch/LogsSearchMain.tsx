@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -48,6 +48,7 @@ import { SearchIcon } from "../../../../icons";
 import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selFeatures } from "../../consoleSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface ILogSearchProps {
   classes: any;
@@ -120,7 +121,7 @@ const styles = (theme: Theme) =>
   });
 
 const LogsSearchMain = ({ classes }: ILogSearchProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const features = useSelector(selFeatures);
 
   const [loading, setLoading] = useState<boolean>(true);

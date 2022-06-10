@@ -25,12 +25,13 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { useDispatch } from "react-redux";
+
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { AddAccessRuleIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IAddAccessRule {
   classes: any;
@@ -51,7 +52,7 @@ const AddAccessRule = ({
   classes,
   bucket,
 }: IAddAccessRule) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [prefix, setPrefix] = useState("");
   const [selectedAccess, setSelectedAccess] = useState<any>("readonly");

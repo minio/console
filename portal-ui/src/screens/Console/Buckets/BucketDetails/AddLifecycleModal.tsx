@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -53,6 +53,7 @@ import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMe
 import { BucketVersioning } from "../types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { selDistSet, setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IReplicationModal {
   open: boolean;
@@ -98,7 +99,7 @@ const AddLifecycleModal = ({
   classes,
   bucketName,
 }: IReplicationModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [tiersList, setTiersList] = useState<ITiersDropDown[]>([]);

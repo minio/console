@@ -26,8 +26,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import withSuspense from "../../../Common/Components/withSuspense";
 import Loader from "../../../Common/Loader/Loader";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 const AddBucketTagModal = withSuspense(
   React.lazy(() => import("../AddBucketTagModal"))
@@ -41,7 +42,7 @@ type BucketTagProps = {
 };
 
 const BucketTags = ({ bucketName }: BucketTagProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [tags, setTags] = useState<any>(null);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);

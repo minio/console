@@ -23,7 +23,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -67,6 +67,7 @@ import {
   setBucketDetailsLoad,
   setBucketInfo,
 } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
@@ -117,7 +118,7 @@ interface IBucketDetailsProps {
 }
 
 const BucketDetails = ({ classes }: IBucketDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

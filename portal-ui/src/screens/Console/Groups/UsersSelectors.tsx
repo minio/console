@@ -34,8 +34,9 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IGroupsProps {
   classes: any;
@@ -83,7 +84,7 @@ const UsersSelectors = ({
   setSelectedUsers,
   editMode = false,
 }: IGroupsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //Local States
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
@@ -28,7 +28,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 
 import PoolsListing from "./Pools/Details/PoolsListing";
 import PoolDetails from "./Pools/Details/PoolDetails";
@@ -48,7 +48,7 @@ const styles = (theme: Theme) =>
   });
 
 const PoolsSummary = ({ classes }: IPoolsSummary) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { pathname = "" } = useLocation();
 
   const selectedPool = useSelector(

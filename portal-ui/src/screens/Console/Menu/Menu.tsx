@@ -15,14 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Drawer } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import clsx from "clsx";
-import { AppState } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
@@ -90,7 +90,7 @@ interface IMenuProps {
 }
 
 const Menu = ({ classes }: IMenuProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const features = useSelector(selFeatures);
