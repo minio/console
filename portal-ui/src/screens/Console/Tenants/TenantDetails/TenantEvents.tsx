@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
@@ -31,7 +31,7 @@ import { IEvent } from "../ListTenants/types";
 import { niceDays } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import EventsList from "./events/EventsList";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 
@@ -48,7 +48,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantEvents = ({ classes }: ITenantEventsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
 
   const loadingTenant = useSelector(

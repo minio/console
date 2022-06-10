@@ -29,7 +29,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import HelpBox from "../../../common/HelpBox";
 import {
   deleteCookie,
@@ -41,6 +41,7 @@ import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import { InspectMenuIcon } from "../../../icons/SidebarMenus";
 import KeyRevealer from "./KeyRevealer";
 import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -91,7 +92,7 @@ const ExampleBlock = ({
 };
 
 const Inspect = ({ classes }: { classes: any }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
   const [volumeName, setVolumeName] = useState<string>("");
   const [inspectPath, setInspectPath] = useState<string>("");

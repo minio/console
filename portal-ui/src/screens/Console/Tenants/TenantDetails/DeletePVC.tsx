@@ -18,13 +18,14 @@ import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
-import { useDispatch } from "react-redux";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { IStoragePVCs } from "../../Storage/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeletePVC {
   deleteOpen: boolean;
@@ -37,7 +38,7 @@ const DeletePVC = ({
   selectedPVC,
   closeDeleteModalAndRefresh,
 }: IDeletePVC) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [retypePVC, setRetypePVC] = useState("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);

@@ -26,7 +26,7 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
 import useApi from "../../Common/Hooks/useApi";
-import { useDispatch } from "react-redux";
+
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -40,6 +40,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,7 +60,7 @@ const ReplicationSites = ({
   onRefresh: () => void;
   classes: any;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [deleteSiteKey, setIsDeleteSiteKey] = useState<string>("");
   const [editSite, setEditSite] = useState<any>(null);
   const [editEndPointName, setEditEndPointName] = useState<string>("");

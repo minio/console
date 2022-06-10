@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -42,7 +42,7 @@ import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton"
 import Loader from "../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useParams } from "react-router-dom";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 
 interface ITenantMonitoring {
   classes: any;
@@ -60,7 +60,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
 
   const loadingTenant = useSelector(

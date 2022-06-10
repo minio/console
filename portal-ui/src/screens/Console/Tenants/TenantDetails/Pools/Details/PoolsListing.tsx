@@ -16,8 +16,8 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import withStyles from "@mui/styles/withStyles";
-import { AppState } from "../../../../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IPool } from "../../../ListTenants/types";
 import Grid from "@mui/material/Grid";
@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
   });
 
 const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const loadingTenant = useSelector(

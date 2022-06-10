@@ -15,11 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { useDispatch } from "react-redux";
+
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { IDashboardPanel } from "./types";
 import { componentToUse } from "./widgetUtils";
 import { closeZoomPage } from "../dashboardSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IZoomWidget {
   widgetRender: number;
@@ -37,7 +38,7 @@ const ZoomWidget = ({
   timeEnd,
   apiPrefix,
 }: IZoomWidget) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   if (!value) {
     return null;
   }

@@ -15,13 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { SelectChangeEvent } from "@mui/material";
 import get from "lodash/get";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   formFieldStyles,
   modalBasic,
@@ -71,7 +71,7 @@ const TenantSizeMK = ({
 
   formToRender,
 }: ITenantSizeAWSProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const volumeSize = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.volumeSize

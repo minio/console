@@ -18,11 +18,12 @@ import React from "react";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { Box } from "@mui/material";
 import { IDashboardPanel } from "../types";
-import { useDispatch } from "react-redux";
+
 import { openZoomPage } from "../../dashboardSlice";
+import { useAppDispatch } from "../../../../../store";
 
 const ExpandGraphLink = ({ panelItem }: { panelItem: IDashboardPanel }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   return (
     <Box
       sx={{

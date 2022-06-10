@@ -15,13 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -30,40 +23,17 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import BackLink from "../../../common/BackLink";
-import { useDispatch } from "react-redux";
 import { AddAccessRuleIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../../src/common/api";
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store";
 
-interface IAddPolicyProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      margin: "auto",
-      justifyContent: "center",
-      "& div": {
-        width: 150,
-        "@media (max-width: 900px)": {
-          flexFlow: "column",
-        },
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
-
-const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
-  const dispatch = useDispatch();
+const AddPolicyScreen = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [addLoading, setAddLoading] = useState<boolean>(false);
@@ -185,4 +155,4 @@ const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
   );
 };
 
-export default withStyles(styles)(AddPolicyScreen);
+export default AddPolicyScreen;

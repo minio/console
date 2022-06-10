@@ -58,8 +58,9 @@ import {
 import withSuspense from "../Common/Components/withSuspense";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { encodeURLString } from "../../../common/utils";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -87,7 +88,7 @@ const styles = (theme: Theme) =>
   });
 
 const Groups = ({ classes }: IGroupsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);

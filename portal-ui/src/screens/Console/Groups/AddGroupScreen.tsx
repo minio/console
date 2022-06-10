@@ -31,7 +31,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
 import BackLink from "../../../common/BackLink";
-import { useDispatch } from "react-redux";
+
 import { CreateGroupIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
@@ -39,6 +39,7 @@ import api from "../../../../src/common/api";
 
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IAddGroupProps {
   classes: any;
@@ -64,7 +65,7 @@ const styles = (theme: Theme) =>
   });
 
 const AddGroupScreen = ({ classes }: IAddGroupProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [groupName, setGroupName] = useState<string>("");
   const [saving, isSaving] = useState<boolean>(false);

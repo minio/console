@@ -17,8 +17,8 @@
 import React, { Fragment, useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { AppState } from "../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../store";
+import { useSelector } from "react-redux";
 
 import { TraceMessage } from "./types";
 import { Theme } from "@mui/material/styles";
@@ -115,7 +115,7 @@ interface ITrace {
 var c: any = null;
 
 const Trace = ({ classes }: ITrace) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const messages = useSelector((state: AppState) => state.trace.messages);
   const traceStarted = useSelector(

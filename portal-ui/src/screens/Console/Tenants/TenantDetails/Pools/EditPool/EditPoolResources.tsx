@@ -31,8 +31,8 @@ import api from "../../../../../../common/api";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { IQuotaElement, IQuotas } from "../../../ListTenants/utils";
-import { AppState } from "../../../../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import { useSelector } from "react-redux";
 
 import {
   commonFormValidation,
@@ -84,7 +84,7 @@ const styles = (theme: Theme) =>
   });
 
 const PoolResources = ({ classes }: IPoolResourcesProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const storageClasses = useSelector(

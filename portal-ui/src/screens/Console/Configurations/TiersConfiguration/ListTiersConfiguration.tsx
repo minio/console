@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -56,6 +56,7 @@ import { tierTypes } from "./utils";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../../store";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -94,7 +95,7 @@ const styles = (theme: Theme) =>
   });
 
 const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const distributedSetup = useSelector(selDistSet);

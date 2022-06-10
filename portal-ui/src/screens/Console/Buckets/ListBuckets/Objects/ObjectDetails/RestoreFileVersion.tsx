@@ -17,7 +17,7 @@
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { useDispatch } from "react-redux";
+
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
@@ -28,6 +28,7 @@ import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import RecoverIcon from "../../../../../../icons/RecoverIcon";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 interface IRestoreFileVersion {
   classes: any;
@@ -51,7 +52,7 @@ const RestoreFileVersion = ({
   restoreOpen,
   onCloseAndUpdate,
 }: IRestoreFileVersion) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [restoreLoading, setRestoreLoading] = useState<boolean>(false);
 
   const restoreVersion = () => {

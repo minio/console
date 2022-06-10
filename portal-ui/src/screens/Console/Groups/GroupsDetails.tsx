@@ -10,7 +10,6 @@ import {
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 
-import { useDispatch } from "react-redux";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
@@ -44,6 +43,7 @@ import GroupDetailsHeader from "./GroupDetailsHeader";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -107,7 +107,7 @@ export const formatPolicy = (policy: string = ""): string[] => {
 };
 
 const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

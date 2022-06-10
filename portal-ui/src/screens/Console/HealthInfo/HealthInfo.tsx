@@ -19,8 +19,8 @@ import {
   IMessageEvent,
   w3cwebsocket as W3CWebSocket,
 } from "websocket";
-import { AppState } from "../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../store";
+import { useSelector } from "react-redux";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -96,7 +96,7 @@ interface IHealthInfo {
 }
 
 const HealthInfo = ({ classes }: IHealthInfo) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const message = useSelector((state: AppState) => state.healthInfo.message);
 

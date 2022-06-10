@@ -19,8 +19,9 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IEditTenantMonitoringProps {
   tenant: ITenant;
@@ -71,7 +72,7 @@ const EditTenantMonitoringModal = ({
   cpuRequest,
   memRequest,
 }: IEditTenantMonitoringProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
     labels.length > 0 ? [...labels] : [{ key: "", value: "" }]

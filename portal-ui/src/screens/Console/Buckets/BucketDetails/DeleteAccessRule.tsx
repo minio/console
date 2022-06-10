@@ -20,12 +20,13 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { useDispatch } from "react-redux";
+
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeleteAccessRule {
   modalOpen: boolean;
@@ -45,7 +46,7 @@ const DeleteAccessRule = ({
   bucket,
   toDelete,
 }: IDeleteAccessRule) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onDelSuccess = () => onClose();
   const onDelError = (err: ErrorResponseHandler) =>
     dispatch(setErrorSnackMessage(err));

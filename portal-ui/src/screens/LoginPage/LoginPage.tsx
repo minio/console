@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -52,6 +52,7 @@ import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
 import { setErrorSnackMessage, userLogged } from "../../systemSlice";
+import { useAppDispatch } from "../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -286,7 +287,7 @@ interface LoginStrategyPayload {
 }
 
 const Login = ({ classes }: ILoginProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [accessKey, setAccessKey] = useState<string>("");

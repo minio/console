@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -47,6 +47,7 @@ import {
 import { SecureComponent } from "../../../common/SecureComponent";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -69,7 +70,7 @@ const UserServiceAccountsPanel = ({
   user,
   hasPolicy,
 }: IUserServiceAccountsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [records, setRecords] = useState<string[]>([]);

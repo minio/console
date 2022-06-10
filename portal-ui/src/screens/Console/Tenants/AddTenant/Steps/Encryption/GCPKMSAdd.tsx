@@ -17,8 +17,8 @@
 import React, { Fragment, useCallback } from "react";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const GCPKMSAdd = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const gcpProjectID = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpProjectID

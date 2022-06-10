@@ -15,12 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 
 import {
   modalBasic,
@@ -116,7 +116,7 @@ interface OptionPair {
 }
 
 const Affinity = ({ classes }: IAffinityProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const podAffinity = useSelector(
     (state: AppState) => state.editPool.fields.affinity.podAffinity

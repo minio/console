@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,6 +30,7 @@ import get from "lodash/get";
 import api from "../../../../../common/api";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface IPieChartWidget {
   classes: any;
@@ -77,7 +78,7 @@ const PieChartWidget = ({
 
   apiPrefix,
 }: IPieChartWidget) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [dataInner, setDataInner] = useState<object[]>([]);
   const [dataOuter, setDataOuter] = useState<object[]>([]);

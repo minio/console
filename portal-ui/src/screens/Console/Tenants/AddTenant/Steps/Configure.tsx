@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -26,7 +26,7 @@ import {
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
 
-import { AppState } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import { clearValidationError } from "../../utils";
 import {
   commonFormValidation,
@@ -102,7 +102,7 @@ const styles = (theme: Theme) =>
   });
 
 const Configure = ({ classes }: IConfigureProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const exposeMinIO = useSelector(
     (state: AppState) => state.createTenant.fields.configure.exposeMinIO

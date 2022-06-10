@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { DialogContentText } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -25,6 +25,7 @@ import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 interface IDeleteNonCurrentProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -39,7 +40,7 @@ const DeleteNonCurrentVersions = ({
   selectedBucket,
   selectedObject,
 }: IDeleteNonCurrentProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [typeConfirm, setTypeConfirm] = useState<string>("");
 

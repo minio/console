@@ -16,7 +16,7 @@
 
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Box, Button, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -45,6 +45,7 @@ import {
   selDistSet,
   setModalErrorSnackMessage,
 } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -99,7 +100,7 @@ const AddTagModal = ({
   actualInfo,
   classes,
 }: ITagModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
