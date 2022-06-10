@@ -49,6 +49,7 @@ const CapacityItem = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   const [totalUsableFree, setTotalUsableFree] = useState<number>(0);
+  const [totalUsableFreeRatio, setTotalUsableFreeRatio] = useState<number>(0);
   const [totalUsed, setTotalUsed] = useState<number>(0);
   const [totalUsable, setTotalUsable] = useState<number>(0);
 
@@ -100,7 +101,10 @@ const CapacityItem = ({
             });
           });
 
+          const freeRatio = Math.round((tFree / tUsable) * 100);
+
           setTotalUsableFree(tFree);
+          setTotalUsableFreeRatio(freeRatio);
           setTotalUsed(tUsed);
           setTotalUsable(tUsable);
 
@@ -175,7 +179,7 @@ const CapacityItem = ({
             fontSize: 12,
           }}
         >
-          {niceBytesInt(totalUsableFree)}
+          {`${totalUsableFreeRatio}%`}
           <br />
           <Box
             sx={{
@@ -187,7 +191,7 @@ const CapacityItem = ({
               textAlign: "center",
             }}
           >
-            Current Usable Capacity
+            Free
           </Box>
         </Box>
         <PieChart width={110} height={110}>

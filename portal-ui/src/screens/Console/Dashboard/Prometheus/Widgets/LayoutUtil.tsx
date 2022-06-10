@@ -216,13 +216,15 @@ export const resourcesPanelsLayout: DLayoutRowProps[] = [
     },
     columns: [
       {
-        componentId: 11,
+        componentId: 82,
       },
       {
-        componentId: 8,
+        componentId: 74,
       },
     ],
   },
+];
+export const resourcesPanelsLayoutAdvanced: DLayoutRowProps[] = [
   {
     sx: {
       display: "grid",
@@ -232,14 +234,15 @@ export const resourcesPanelsLayout: DLayoutRowProps[] = [
     },
     columns: [
       {
-        componentId: 82,
+        componentId: 11,
       },
       {
-        componentId: 74,
+        componentId: 8,
       },
     ],
   },
 ];
+
 export const RowPanelLayout = ({ children }: { children: any }) => {
   return (
     <Box
