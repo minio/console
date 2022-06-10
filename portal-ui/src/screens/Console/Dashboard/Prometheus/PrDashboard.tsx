@@ -41,6 +41,7 @@ import {
   DLayoutColumnProps,
   DLayoutRowProps,
   resourcesPanelsLayout,
+  resourcesPanelsLayoutAdvanced,
   RowPanelLayout,
   summaryPanelsLayout,
   trafficPanelsLayout,
@@ -192,6 +193,10 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
     return renderPanelItems(resourcesPanelsLayout);
   };
 
+  const renderAdvancedResourcesPanels = () => {
+    return renderPanelItems(resourcesPanelsLayoutAdvanced);
+  };
+
   return (
     <PageLayout>
       {zoomOpen && (
@@ -251,6 +256,10 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
         <TabPanel index={2} value={curTab}>
           <RowPanelLayout>
             {panelInformation.length ? renderResourcesPanels() : null}
+            <h2 style={{ margin: 0, borderBottom: "1px solid #dedede" }}>
+              Advanced
+            </h2>
+            {panelInformation.length ? renderAdvancedResourcesPanels() : null}
           </RowPanelLayout>
         </TabPanel>
       </Grid>
