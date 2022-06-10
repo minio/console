@@ -2138,7 +2138,6 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	}
 
 	minInst, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
-	opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}

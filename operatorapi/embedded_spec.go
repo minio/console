@@ -4219,6 +4219,9 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
+        "fsGroup": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },
@@ -4267,9 +4270,6 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
-        "fsGroup": {
-          "type": "string"
-        },
         "image": {
           "type": "string"
         },
@@ -4305,9 +4305,6 @@ func init() {
         },
         "runAsUser": {
           "type": "string"
-        },
-        "securityContextEnabled": {
-          "type": "boolean"
         },
         "serviceAccountName": {
           "type": "string"
@@ -9604,6 +9601,9 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
+        "fsGroup": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },
@@ -9652,9 +9652,6 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
-        "fsGroup": {
-          "type": "string"
-        },
         "image": {
           "type": "string"
         },
@@ -9690,9 +9687,6 @@ func init() {
         },
         "runAsUser": {
           "type": "string"
-        },
-        "securityContextEnabled": {
-          "type": "boolean"
         },
         "serviceAccountName": {
           "type": "string"

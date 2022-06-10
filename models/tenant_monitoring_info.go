@@ -75,9 +75,6 @@ type TenantMonitoringInfo struct {
 	// run as user
 	RunAsUser string `json:"runAsUser,omitempty"`
 
-	// security context enabled
-	SecurityContextEnabled bool `json:"securityContextEnabled,omitempty"`
-
 	// service account name
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
 
