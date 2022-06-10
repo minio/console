@@ -227,6 +227,7 @@ export interface ITenantLogsStruct {
   diskCapacityGB: number;
   serviceAccountName: string;
   dbImage: string;
+  dbInitImage: string;
   dbLabels: IKeyValue[];
   dbAnnotations: IKeyValue[];
   dbNodeSelector: IKeyValue[];

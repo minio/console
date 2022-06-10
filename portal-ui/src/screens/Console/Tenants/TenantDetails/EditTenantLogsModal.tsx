@@ -53,6 +53,7 @@ interface IEditTenantLogsProps {
   diskCapacityGB: number;
   serviceAccountName: string;
   dbImage: string;
+  dbInitImage: string;
   dbLabels: IKeyValue[];
   dbAnnotations: IKeyValue[];
   dbNodeSelector: IKeyValue[];
@@ -97,6 +98,7 @@ const EditTenantLogsModal = ({
   dbAnnotations,
   dbNodeSelector,
   dbImage,
+  dbInitImage,
   dbServiceAccountName,
   cpuRequest,
   memRequest,
@@ -130,6 +132,7 @@ const EditTenantLogsModal = ({
     dbNodeSelector.length > 0 ? [...dbNodeSelector] : [{ key: "", value: "" }]
   );
   const [newDbImage, setNewDbImage] = useState<string>(dbImage);
+  const [newDbInitImage, setNewDbInitImage] = useState<string>(dbInitImage);
   const [newDbServiceAccountName, setNewDbServiceAccountName] =
     useState<string>(dbServiceAccountName != null ? dbServiceAccountName : "");
   const [labelsError, setLabelsError] = useState<any>({});
@@ -180,6 +183,14 @@ const EditTenantLogsModal = ({
       fieldKey: `dbImage`,
       required: false,
       value: newDbImage,
+      pattern:
+        /^([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9]?)+(\/(([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9])?)+)*:([a-zA-Z0-9])[a-zA-Z0-9-.]{0,127}$/,
+      customPatternMessage: "Invalid image",
+    });
+    tenantLogValidation.push({
+      fieldKey: `dbInitImage`,
+      required: false,
+      value: newDbInitImage,
       pattern:
         /^([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9]?)+(\/(([a-zA-Z0-9])([a-zA-Z0-9-._])*([a-zA-Z0-9])?)+)*:([a-zA-Z0-9])[a-zA-Z0-9-.]{0,127}$/,
       customPatternMessage: "Invalid image",
@@ -243,6 +254,7 @@ const EditTenantLogsModal = ({
   }, [
     newImage,
     newDbImage,
+    newDbInitImage,
     newDiskCapacityGB,
     newServiceAccountName,
     newDbServiceAccountName,
@@ -303,6 +315,7 @@ const EditTenantLogsModal = ({
                   dbAnnotations: trim(newDbAnnotations),
                   dbNodeSelector: trim(newDbNodeSelector),
                   dbImage: newDbImage,
+                  dbInitImage: newDbInitImage,
                   dbServiceAccountName: newDbServiceAccountName,
                   logCPURequest: newCPURequest,
                   logMemRequest: newMemRequest + "Gi",
@@ -326,7 +339,7 @@ const EditTenantLogsModal = ({
               <InputBoxWrapper
                 id={`image`}
                 label={"Image"}
-                placeholder={"Image"}
+                placeholder={"minio/operator:v4.4.22"}
                 name={`image`}
                 value={newImage}
                 onChange={(e) => {
@@ -454,7 +467,7 @@ const EditTenantLogsModal = ({
               <InputBoxWrapper
                 id={`dbImage`}
                 label={"Postgres Image"}
-                placeholder={"Db Image"}
+                placeholder={"library/postgres:13"}
                 name={`dbImage`}
                 value={newDbImage}
                 onChange={(e) => {
@@ -463,6 +476,21 @@ const EditTenantLogsModal = ({
                 }}
                 key={`dbImage`}
                 error={validationErrors[`dbImage`] || ""}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbInitImage`}
+                label={"Postgres Init Image"}
+                placeholder={"library/busybox:1.33.1"}
+                name={`dbInitImage`}
+                value={newDbInitImage}
+                onChange={(e) => {
+                  setNewDbInitImage(e.target.value);
+                  cleanValidation(`dbInitImage`);
+                }}
+                key={`dbInitImage`}
+                error={validationErrors[`dbInitImage`] || ""}
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
