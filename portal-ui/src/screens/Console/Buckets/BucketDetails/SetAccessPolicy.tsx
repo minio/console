@@ -32,8 +32,9 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { ChangeAccessPolicyIcon } from "../../../../icons";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -72,7 +73,7 @@ const SetAccessPolicy = ({
   actualDefinition,
   closeModalAndRefresh,
 }: ISetAccessPolicyProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessPolicy, setAccessPolicy] = useState<string>("");
   const [policyDefinition, setPolicyDefinition] = useState<string>("");

@@ -38,8 +38,9 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
 import { BucketQuotaIcon } from "../../../../icons";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,7 +65,7 @@ const EnableQuota = ({
   selectedBucket,
   closeModalAndRefresh,
 }: IEnableQuotaProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quotaSize, setQuotaSize] = useState<string>("1");

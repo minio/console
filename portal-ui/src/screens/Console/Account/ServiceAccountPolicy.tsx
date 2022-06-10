@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Button } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -34,6 +34,7 @@ import { ChangeAccessPolicyIcon } from "../../../icons";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,7 +69,7 @@ const ServiceAccountPolicy = ({
   selectedAccessKey,
   closeModalAndRefresh,
 }: IServiceAccountPolicyProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   useEffect(() => {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
@@ -49,6 +49,7 @@ import {
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAppDispatch } from "../../../store";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -114,7 +115,7 @@ const AddNotificationEndpoint = ({
   saveAndRefresh,
   classes,
 }: IAddNotificationEndpointProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

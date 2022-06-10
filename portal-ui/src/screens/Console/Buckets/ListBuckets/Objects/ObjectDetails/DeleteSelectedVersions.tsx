@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { DialogContentText } from "@mui/material";
 
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -23,6 +23,7 @@ import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 interface IDeleteSelectedVersionsProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -39,7 +40,7 @@ const DeleteObject = ({
   selectedVersions,
   selectedObject,
 }: IDeleteSelectedVersionsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const onClose = () => closeDeleteModalAndRefresh(false);

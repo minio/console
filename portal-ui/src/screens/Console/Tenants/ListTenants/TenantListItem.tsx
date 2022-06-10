@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import { CapacityValues, ITenant, ValueUnit } from "./types";
@@ -28,6 +28,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import InformationItem from "./InformationItem";
 import TenantCapacity from "./TenantCapacity";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -106,7 +107,7 @@ interface ITenantListItem {
 }
 
 const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const healthStatusToClass = (health_status: string) => {

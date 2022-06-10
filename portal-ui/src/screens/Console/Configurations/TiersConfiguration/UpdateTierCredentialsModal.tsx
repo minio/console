@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,6 +35,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { LockIcon } from "../../../../icons";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface ITierCredentialsModal {
   open: boolean;
@@ -58,7 +59,7 @@ const UpdateTierCredentialsModal = ({
   classes,
   tierData,
 }: ITierCredentialsModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [savingTiers, setSavingTiers] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");

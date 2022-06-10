@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -26,7 +26,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import SizePreview from "../SizePreview";
@@ -57,7 +57,7 @@ const styles = (theme: Theme) =>
   });
 
 const NameTenantField = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const tenantName = useSelector(
     (state: AppState) => state.createTenant.fields.nameTenant.tenantName
   );
@@ -87,7 +87,7 @@ interface INameTenantMainScreen {
 }
 
 const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const selectedStorageClass = useSelector(
     (state: AppState) =>

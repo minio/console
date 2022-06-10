@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 
@@ -32,7 +32,7 @@ import {
   IWizardButton,
   IWizardElement,
 } from "../../Common/GenericWizard/types";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
 import Security from "./Steps/Security";
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const AddTenant = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const classes = useStyles();
 

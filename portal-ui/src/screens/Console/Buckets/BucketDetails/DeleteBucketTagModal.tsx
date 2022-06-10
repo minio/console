@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useDispatch } from "react-redux";
+
 import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -26,6 +26,7 @@ import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeleteBucketTagModal {
   deleteOpen: boolean;
@@ -49,7 +50,7 @@ const DeleteBucketTagModal = ({
   bucketName,
   classes,
 }: IDeleteBucketTagModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [tagKey, tagLabel] = selectedTag;
 
   const onDelSuccess = () => onCloseAndUpdate(true);

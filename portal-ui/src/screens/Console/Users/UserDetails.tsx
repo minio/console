@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -60,6 +60,7 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -90,7 +91,7 @@ interface IGroupItem {
 }
 
 const UserDetails = ({ classes }: IUserDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
 

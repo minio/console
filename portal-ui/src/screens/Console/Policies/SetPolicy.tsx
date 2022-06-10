@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-import { useDispatch } from "react-redux";
+
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -36,6 +36,7 @@ import PolicySelectors from "./PolicySelectors";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface ISetPolicyProps {
   classes: any;
@@ -66,7 +67,7 @@ const SetPolicy = ({
   selectedGroups,
   open,
 }: ISetPolicyProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);

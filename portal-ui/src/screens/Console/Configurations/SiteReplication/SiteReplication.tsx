@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+
 import { Box, DialogContentText, Grid } from "@mui/material";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
@@ -40,6 +40,7 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import AButton from "../../Common/AButton/AButton";
+import { useAppDispatch } from "../../../../store";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -49,7 +50,7 @@ export type ReplicationSite = {
 };
 
 const SiteReplication = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [sites, setSites] = useState([]);

@@ -21,8 +21,9 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { IDashboardPanel } from "../types";
 import Loader from "../../../Common/Loader/Loader";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 const EntityStateStatItem = ({
   panelItem,
@@ -39,7 +40,7 @@ const EntityStateStatItem = ({
   apiPrefix: string;
   statLabel: any;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
 

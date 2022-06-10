@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Box, Button } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -41,7 +41,7 @@ import {
 } from "../../../../../../common/utils";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   DeleteIcon,
   DownloadIcon,
@@ -158,7 +158,7 @@ const ObjectDetailPanel = ({
 
   onClosePanel,
 }: IObjectDetailPanelProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const distributedSetup = useSelector(selDistSet);
   const versionsMode = useSelector(

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -47,6 +47,7 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../../store";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -108,7 +109,7 @@ const styles = (theme: Theme) =>
   });
 
 const ListTenants = ({ classes }: ITenantsList) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);

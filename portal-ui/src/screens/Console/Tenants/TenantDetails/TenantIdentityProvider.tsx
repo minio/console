@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Button, DialogContentText, Typography } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
@@ -40,7 +40,7 @@ import {
 } from "../../../../utils/validationFunctions";
 import { ConfirmModalIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import Loader from "../../Common/Loader/Loader";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
@@ -81,7 +81,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
   const loadingTenant = useSelector(

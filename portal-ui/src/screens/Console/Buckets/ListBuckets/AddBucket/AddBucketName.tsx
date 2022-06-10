@@ -17,11 +17,11 @@
 import React from "react";
 import { setName } from "./addBucketsSlice";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../store";
 
 const AddBucketName = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
   return (

@@ -24,8 +24,8 @@ import { containerForHeader } from "../../../Common/FormComponents/common/styleL
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
-import { AppState } from "../../../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../store";
+import { useSelector } from "react-redux";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../../common/BackLink";
@@ -103,7 +103,7 @@ interface IsetProps {
 }
 
 const AddBucket = ({ classes }: IsetProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const versioningEnabled = useSelector(

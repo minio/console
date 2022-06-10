@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -36,7 +36,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import { useParams } from "react-router-dom";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 
 interface ITenantCSRProps {
   classes: any;
@@ -54,7 +54,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantCSR = ({ classes }: ITenantCSRProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
 
   const loadingTenant = useSelector(

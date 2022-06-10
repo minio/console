@@ -31,8 +31,9 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { BucketEncryptionIcon } from "../../../../icons";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -56,7 +57,7 @@ const EnableBucketEncryption = ({
   selectedBucket,
   closeModalAndRefresh,
 }: IEnableBucketEncryptionProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
   const [encryptionType, setEncryptionType] = useState<string>("disabled");

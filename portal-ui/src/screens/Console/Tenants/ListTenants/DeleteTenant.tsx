@@ -17,7 +17,6 @@
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import { ITenant } from "./types";
-import { useDispatch } from "react-redux";
 
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -28,6 +27,7 @@ import { ConfirmDeleteIcon } from "../../../../icons";
 import WarningMessage from "../../Common/WarningMessage/WarningMessage";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
@@ -40,7 +40,7 @@ const DeleteTenant = ({
   selectedTenant,
   closeDeleteModalAndRefresh,
 }: IDeleteTenant) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [retypeTenant, setRetypeTenant] = useState("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);

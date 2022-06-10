@@ -37,8 +37,9 @@ import {
 import { clearValidationError } from "../utils";
 
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IEditTenantLogsProps {
   tenant: ITenant;
@@ -102,7 +103,7 @@ const EditTenantLogsModal = ({
   dbCPURequest,
   dbMemRequest,
 }: IEditTenantLogsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [newLabels, setNewLabels] = useState<IKeyValue[]>(
     labels.length > 0 ? [...labels] : [{ key: "", value: "" }]

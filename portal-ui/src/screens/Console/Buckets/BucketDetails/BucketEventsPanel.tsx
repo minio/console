@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -45,6 +45,7 @@ import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -63,7 +64,7 @@ interface IBucketEventsProps {
 }
 
 const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);

@@ -18,7 +18,7 @@ import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Button,
   FormControl,
@@ -31,7 +31,7 @@ import {
 import moment from "moment/moment";
 import { ErrorResponseHandler } from "../../../../../src/common/types";
 import api from "../../../../../src/common/api";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 
 import { LogMessage } from "../types";
 import { wsProtocol } from "../../../../utils/wsUtils";
@@ -108,7 +108,7 @@ const SelectStyled = withStyles((theme: Theme) =>
 var c: any = null;
 
 const ErrorLogs = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const messages = useSelector((state: AppState) => state.logs.logMessages);

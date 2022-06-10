@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,7 +30,7 @@ import { IPodListElement } from "../ListTenants/types";
 
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
 import { Grid, InputAdornment, TextField } from "@mui/material";
@@ -49,7 +49,7 @@ const styles = (theme: Theme) =>
   });
 
 const PodsSummary = ({ classes }: IPodsSummary) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { tenantName, tenantNamespace } = useParams();
 

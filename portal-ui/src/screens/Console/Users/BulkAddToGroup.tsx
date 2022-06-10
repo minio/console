@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -32,6 +32,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import { AddMembersToGroupIcon } from "../../../icons";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IAddToGroup {
   open: boolean;
@@ -52,7 +53,7 @@ const BulkAddToGroup = ({
   closeModalAndRefresh,
   classes,
 }: IAddToGroup) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //Local States
   const [saving, isSaving] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<boolean>(false);

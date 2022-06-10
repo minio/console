@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
@@ -54,6 +54,7 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
@@ -76,7 +77,7 @@ interface IUsersProps {
 }
 
 const ListUsers = ({ classes }: IUsersProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [records, setRecords] = useState<User[]>([]);

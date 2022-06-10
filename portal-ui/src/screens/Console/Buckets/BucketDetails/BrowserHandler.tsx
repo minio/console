@@ -15,14 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import get from "lodash/get";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
@@ -50,7 +50,7 @@ const styles = (theme: Theme) =>
   });
 
 const BrowserHandler = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

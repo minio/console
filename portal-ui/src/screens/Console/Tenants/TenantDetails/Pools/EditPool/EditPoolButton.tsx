@@ -16,12 +16,12 @@
 
 import { Button } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { editPoolAsync } from "./thunks/editPoolAsync";
 
 const EditPoolButton = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const requiredPages = ["setup", "affinity", "configure"];
 
   const selectedStorageClass = useSelector(

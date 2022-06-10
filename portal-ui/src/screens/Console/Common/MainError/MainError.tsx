@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import get from "lodash/get";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { Box } from "@mui/material";
 import { AlertCloseIcon } from "../../../../icons";
 import { Portal } from "@mui/base";
@@ -38,7 +38,7 @@ const stopHideTimer = () => {
 };
 
 const MainError = ({ isModal = false }: IMainErrorProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const snackBar = useSelector((state: AppState) => {
     return isModal ? state.system.modalSnackBar : state.system.snackBar;
   });

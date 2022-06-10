@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import { Button, Grid, IconButton } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
@@ -34,6 +34,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import api from "../../../../common/api";
 import RemoveIcon from "../../../../icons/RemoveIcon";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IEditDomains {
   open: boolean;
@@ -74,7 +75,7 @@ const EditDomains = ({
   domains,
   classes,
 }: IEditDomains) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isSending, setIsSending] = useState<boolean>(false);
   const [consoleDomain, setConsoleDomain] = useState<string>("");
   const [minioDomains, setMinioDomains] = useState<string[]>([""]);

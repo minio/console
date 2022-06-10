@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -47,6 +47,7 @@ import {
 } from "../../Configurations/TiersConfiguration/types";
 import { MultiBucketResult } from "../types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -83,7 +84,7 @@ const AddBulkReplicationModal = ({
   classes,
   buckets,
 }: IBulkReplicationModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [tiersList, setTiersList] = useState<ITiersDropDown[]>([]);

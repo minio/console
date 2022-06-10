@@ -22,7 +22,7 @@ import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
 import { baseUrl } from "./history";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   globalSetDistributedSetup,
   operatorMode,
@@ -31,7 +31,7 @@ import {
   userLogged,
 } from "./systemSlice";
 import { SRInfoStateType } from "./types";
-import { AppState } from "./store";
+import { AppState, useAppDispatch } from "./store";
 import { saveSessionResponse } from "./screens/Console/consoleSlice";
 
 interface ProtectedRouteProps {
@@ -39,7 +39,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const isOperatorMode = useSelector(selOpMode);
 

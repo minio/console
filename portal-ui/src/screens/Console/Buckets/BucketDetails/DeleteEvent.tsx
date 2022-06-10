@@ -16,7 +16,7 @@
 
 import React from "react";
 import get from "lodash/get";
-import { useDispatch } from "react-redux";
+
 import { DialogContentText } from "@mui/material";
 import { BucketEvent } from "../types";
 
@@ -25,6 +25,7 @@ import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -39,7 +40,7 @@ const DeleteEvent = ({
   selectedBucket,
   bucketEvent,
 }: IDeleteEventProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) =>
     dispatch(setErrorSnackMessage(err));
